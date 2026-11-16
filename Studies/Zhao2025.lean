@@ -20,7 +20,7 @@ and a duration argument or a measure phrase [repairs the failure](##Zhao2025.le_
 whatever length it names, a length being measured only off points. *Guò* introduces events whose
 trace surpasses their theme; they license *méi-yǒu* and [place the theme strictly
 before](##Zhao2025.exists_snd_lt_of_surpasses) the point of evaluation, where [*le*
-asserts](##Zhao2025.le_get_some_iff_mem_perfect) weak precedence.
+asserts](##Zhao2025.le_get_some_iff_mem_image) the perfect along the trace, on either domain.
 
 ## Implementation notes
 
@@ -175,6 +175,20 @@ theorem not_le_dom_some_lt_fst (hτ : IsLowerSet (range τ)) (m : α) :
 
 end Particles
 
+section LinearOrder
+
+variable [LinearOrder α] {τ : E → NonemptyInterval α} {A : Set E} {a : NonemptyInterval α}
+
+/-- Along any trace, *le* on an existential quantifier asserts the perfect of the traces: the
+evaluation interval lies in their image under the cell of the perfect. -/
+theorem le_get_some_iff_mem_image (h : (le τ (Det.some A) a).Dom) :
+    (le τ (Det.some A) a).get h ↔
+      a ∈ (IntervalAlgebra.toSetRel ViewpointType.perfect.cell).image (τ '' A) := by
+  change (∃ e, e ∈ A ∧ ViewpointType.perfect.ttTSitRelation a (τ e)) ↔ _
+  simp [SetRel.image, ViewpointType.ttTSitRelation_iff]
+
+end LinearOrder
+
 section Time
 
 variable {W T : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop} {w : W}
@@ -186,12 +200,11 @@ theorem not_le_dom_of_hasSubintervalProperty (hP : Aspect.HasSubintervalProperty
     ¬ (le Event.τ (Det.some {e | P w e}) a).Dom :=
   not_not_intro (hasSubintervalProperty_iff_forall_atomDist.1 hP w)
 
-/-- Of an existential quantifier over events in time, *le* asserts the perfect: the evaluation
-time is preceded by an event of the predicate. -/
+-- in time this is the perfect operator: the evaluation time is preceded by an event
 theorem le_get_some_iff_mem_perfect (h : (le Event.τ (Det.some {e | P w e}) a).Dom) :
     (le Event.τ (Det.some {e | P w e}) a).get h ↔
-      a ∈ Aspect.ViewpointType.perfect.denote P w :=
-  exists_congr fun _ ↦ and_comm
+      a ∈ Aspect.ViewpointType.perfect.denote P w := by
+  rw [le_get_some_iff_mem_image, ViewpointType.denote_eq_image]
 
 -- the fragment's perfective holds at no point of evaluation of a predicate without point events
 theorem pure_notMem_denote_le (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
