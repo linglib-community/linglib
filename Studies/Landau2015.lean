@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Clause.Finiteness
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -49,7 +49,7 @@ they are alternatives or act jointly. Obligatory
 
 namespace Landau2015
 
-open Control Binding SetRel
+open Binding SetRel
 
 /-! ### The two tiers -/
 
@@ -131,7 +131,7 @@ inductive Table80Row where
 
 /-- The clause class of an inflected complement on each tier, untensed under predication and
 tensed under logophoric control ((4), (5)). -/
-def Tier.inflectedClass : Tier → EmbeddedTense
+def Tier.inflectedClass : Tier → Clause.EmbeddedTense
   | .predicative => .anaphoric
   | .logophoric => .dependent
 

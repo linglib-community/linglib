@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
-public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Clause.Finiteness
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Studies.Allotey2021
@@ -59,7 +59,7 @@ namespace Ostrove2026
 
 open Binding.MinimalPronoun
 open scoped DistributedMorphology
-open Control Binding
+open Binding
 open Mixtec.SMPM Mixtec.SMPM.Pronouns
 
 /-! ### The clause typology (26) -/
@@ -183,16 +183,16 @@ theorem partialControl_rows : ∀ row ∈ Examples.all,
 
 /-- The clause types on the finiteness scale of [landau-2004], untensed subjunctives being
 C-subjunctives and tensed ones F-subjunctives (§3). -/
-def landauToSMPM : EmbeddedTense → EmbeddedClauseType
+def landauToSMPM : Clause.EmbeddedTense → EmbeddedClauseType
   | .anaphoric => .untensedSubjunctive
   | .dependent => .tensedSubjunctive
   | .independent => .finite
 
 /-- The scale position of a clause type, from its TAM and tense properties. -/
-def smpmToLandau (c : EmbeddedClauseType) : EmbeddedTense :=
+def smpmToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
   .ofFiniteness (UnrestrictedTAM c) (IndependentTense c)
 
-theorem smpmToLandau_landauToSMPM (c : EmbeddedTense) : smpmToLandau (landauToSMPM c) = c := by
+theorem smpmToLandau_landauToSMPM (c : Clause.EmbeddedTense) : smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
 /-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,

@@ -64,7 +64,7 @@ only.
 
 namespace Landau2024a
 
-open Control Landau2015 Interpreter
+open Landau2015 Interpreter
 
 /-! ### The trichotomy (41) -/
 

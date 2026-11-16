@@ -5,7 +5,7 @@ public import Linglib.Fragments.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
 public import Linglib.Syntax.Binding.MinimalPronoun
-public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Clause.Finiteness
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
@@ -71,7 +71,7 @@ comparison with Landau's scale of finiteness is stated for those two.
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Control Binding Ga Ga.Pronouns Morphology
+open Binding.MinimalPronoun Binding Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
@@ -288,7 +288,7 @@ theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' atteste
 /-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
     a mood claim. Unrestricted TAM and independent tense both coincide with the
     complementizer's finiteness (exx 109–111, 118–119). -/
-def gaToLandau (c : EmbeddedClauseType) : EmbeddedTense :=
+def gaToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
   .ofFiniteness c.complementizer.IsFinite c.complementizer.IsFinite
 
 theorem ga_no_dependent (c : EmbeddedClauseType) : gaToLandau c ≠ .dependent := by
