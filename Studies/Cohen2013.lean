@@ -5,6 +5,7 @@ public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.Readings
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Continuation
 public import Studies.Cohen1999
 public import Linglib.Data.Examples.Readers
 
@@ -136,7 +137,7 @@ def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (Q : Set γ 
 /-- Under an indefinite object, reinterpreting the verb entails reinterpreting the verb phrase,
 for any reinterpretation monotone in the property it reinterprets. -/
 theorem reading_word_le_phrase {α β γ : Type*} {op : (α → Prop) → β → Prop} (hop : Monotone op)
-    (N : γ → Prop) (V : γ → α → Prop) :
+    (N : Set γ) (V : γ → α → Prop) :
     reading op (Det.some N) V .word ≤ reading op (Det.some N) V .phrase :=
   fun b ⟨y, hy, h⟩ ↦ hop (fun _ hx ↦ ⟨y, hy, hx⟩) b h
 
@@ -229,7 +230,7 @@ section Engine
 open Interpreter PhraseStructure
 
 variable {E : Type} (j : E) (need : ((E → Prop) → Prop) → E → Prop) (buy : E → E → Prop)
-  (newCoat : E → Prop)
+  (newCoat : Set E)
 
 /-- The domain of the one basic type, the individuals. -/
 abbrev Dom (E : Type) : Unit → Type := fun _ ↦ E
@@ -250,7 +251,7 @@ def negation : Set (Denotation E) :=
 
 /-- *Buy* at its own type and lifted by SHIFT. -/
 def buyReadings : Set (Denotation E) :=
-  {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩, ⟨quant ⇒ ind ⇒ .t, shift buy⟩}
+  {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩, ⟨quant ⇒ ind ⇒ .t, fun Q ↦ shift buy (Quantifier.toCont.symm Q)⟩}
 
 /-- The words of (23) and (25a). -/
 inductive Word
@@ -270,7 +271,7 @@ def lexicon (B : Set (Denotation E)) : Word → Set (Denotation E)
   | .but => English.Coordination.but_.readings
   | .didnt => negation
   | .buy => B
-  | .aNewCoat => {⟨quant, Det.some newCoat⟩}
+  | .aNewCoat => {⟨quant, Quantifier.toCont (Det.some newCoat)⟩}
 
 /-- The readings of a tree by Functional Application, each word being any of its readings. -/
 def readings (B : Set (Denotation E)) (t : Tree Unit Word) : Set (Denotation E) :=
@@ -303,7 +304,7 @@ theorem readings_neededAndBought_unlifted :
 -- (23)
 theorem readings_neededAndBought :
     readings j need newCoat (buyReadings buy) neededAndBought =
-      {⟨.t, need (Det.some newCoat) j ∧ shift buy (Det.some newCoat) j⟩} := by
+      {⟨.t, need (Quantifier.toCont (Det.some newCoat)) j ∧ shift buy (Det.some newCoat) j⟩} := by
   ext d
   simp only [readings, neededAndBought, Tree.mem_readings_typeDriven_phrase_binary,
     Tree.readings_terminal, lexicon, id_eq, Sigma.eta, Set.image_id', Set.mem_singleton_iff,
@@ -326,7 +327,7 @@ theorem readings_neededAndBought :
 verb. -/
 theorem readings_neededButDidntBuy :
     readings j need newCoat (buyReadings buy) neededButDidntBuy =
-      {⟨.t, need (Det.some newCoat) j ∧ ¬ shift buy (Det.some newCoat) j⟩} := by
+      {⟨.t, need (Quantifier.toCont (Det.some newCoat)) j ∧ ¬ shift buy (Det.some newCoat) j⟩} := by
   ext d
   simp only [readings, neededButDidntBuy, Tree.mem_readings_typeDriven_phrase_binary,
     Tree.readings_terminal, lexicon, id_eq, Sigma.eta, Set.image_id', Set.mem_singleton_iff,
