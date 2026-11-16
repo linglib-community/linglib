@@ -61,6 +61,8 @@ def s6 : Datum :=
     language := "kash1280"
     primaryText := "mi·-li ʔa me-ʔe-l pʰak̓úm-mela"
     glossedTokens := [("mi·-li", "there-VISIBLE"), ("ʔa", "I"), ("me-ʔe-l", "your-father-OBJ"), ("pʰak̓úm-mela", "kill-PERFORM")]
+    glossedWords := [⟨[['m', 'i', '·'], ['l', 'i']], [['t', 'h', 'e', 'r', 'e'], ['V', 'I', 'S', 'I', 'B', 'L', 'E']]⟩, ⟨[['ʔ', 'a']], [['I']]⟩, ⟨[['m', 'e'], ['ʔ', 'e'], ['l']], [['y', 'o', 'u', 'r'], ['f', 'a', 't', 'h', 'e', 'r'], ['O', 'B', 'J']]⟩, ⟨[['p', 'ʰ', 'a', 'k', '̓', 'ú', 'm'], ['m', 'e', 'l', 'a']], [['k', 'i', 'l', 'l'], ['P', 'E', 'R', 'F', 'O', 'R', 'M']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "The sight of the children of a man the speaker killed years earlier prompts the remark."
     judgment := .acceptable
     alternatives := []
@@ -74,6 +76,8 @@ def s7 : Datum :=
     language := "kash1280"
     primaryText := "hú·ʔ men s̓í-ya-m ṭa ʔa"
     glossedTokens := [("hú·ʔ", "Yes"), ("men", "thus"), ("s̓í-ya-m", "do-VISUAL-RESP"), ("ṭa", ""), ("ʔa", "I")]
+    glossedWords := [⟨[['h', 'ú', '·', 'ʔ']], [['Y', 'e', 's']]⟩, ⟨[['m', 'e', 'n']], [['t', 'h', 'u', 's']]⟩, ⟨[['s', '̓', 'í'], ['y', 'a'], ['m']], [['d', 'o'], ['V', 'I', 'S', 'U', 'A', 'L'], ['R', 'E', 'S', 'P']]⟩, ⟨[['ṭ', 'a']], [[]]⟩, ⟨[['ʔ', 'a']], [['I']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A response to a remark by someone else."
     judgment := .acceptable
     alternatives := [("men s̓ímela", .acceptable), ("men s̓ímelam", .ungrammatical)]
@@ -113,6 +117,8 @@ def s13 : Datum :=
     language := "kash1280"
     primaryText := "s̓ihta=yacʰma cahno-w"
     glossedTokens := [("s̓ihta=yacʰma", "bird=PL.SUBJ"), ("cahno-w", "sound-FACTUAL")]
+    glossedWords := [⟨[['s', '̓', 'i', 'h', 't', 'a'], ['y', 'a', 'c', 'ʰ', 'm', 'a']], [['b', 'i', 'r', 'd'], ['P', 'L', '.', 'S', 'U', 'B', 'J']]⟩, ⟨[['c', 'a', 'h', 'n', 'o'], ['w']], [['s', 'o', 'u', 'n', 'd'], ['F', 'A', 'C', 'T', 'U', 'A', 'L']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -217,6 +223,8 @@ def s22 : Datum :=
     language := "kash1280"
     primaryText := "kalikakʰ dima· s̓i-qa-c̓-qʰ"
     glossedTokens := [("kalikakʰ", "book"), ("dima·", "holding"), ("s̓i-qa-c̓-qʰ", "make-cause-self-INFER")]
+    glossedWords := [⟨[['k', 'a', 'l', 'i', 'k', 'a', 'k', 'ʰ']], [['b', 'o', 'o', 'k']]⟩, ⟨[['d', 'i', 'm', 'a', '·']], [['h', 'o', 'l', 'd', 'i', 'n', 'g']]⟩, ⟨[['s', '̓', 'i'], ['q', 'a'], ['c', '̓'], ['q', 'ʰ']], [['m', 'a', 'k', 'e'], ['c', 'a', 'u', 's', 'e'], ['s', 'e', 'l', 'f'], ['I', 'N', 'F', 'E', 'R']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "The picture is seen; the act of taking it was not."
     judgment := .acceptable
     alternatives := []
@@ -230,6 +238,8 @@ def s25 : Datum :=
     language := "kash1280"
     primaryText := "mul =í-yow-e· hayu cáhno-w"
     glossedTokens := [("mul", "then"), ("=í-yow-e·", "=ASS-P.E.-NONFINAL"), ("hayu", "dog"), ("cáhno-w", "sound-ABS")]
+    glossedWords := [⟨[['m', 'u', 'l']], [['t', 'h', 'e', 'n']]⟩, ⟨[[], ['í'], ['y', 'o', 'w'], ['e', '·']], [[], ['A', 'S', 'S'], ['P', '.', 'E', '.'], ['N', 'O', 'N', 'F', 'I', 'N', 'A', 'L']]⟩, ⟨[['h', 'a', 'y', 'u']], [['d', 'o', 'g']]⟩, ⟨[['c', 'á', 'h', 'n', 'o'], ['w']], [['s', 'o', 'u', 'n', 'd'], ['A', 'B', 'S']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -243,6 +253,8 @@ def s26 : Datum :=
     language := "kash1280"
     primaryText := "men s̓i-yíʔciʔ-tʰi-miy"
     glossedTokens := [("men", "thus"), ("s̓i-yíʔciʔ-tʰi-miy", "do-PL.HABITUAL-NEG-REMOTE")]
+    glossedWords := [⟨[['m', 'e', 'n']], [['t', 'h', 'u', 's']]⟩, ⟨[['s', '̓', 'i'], ['y', 'í', 'ʔ', 'c', 'i', 'ʔ'], ['t', 'ʰ', 'i'], ['m', 'i', 'y']], [['d', 'o'], ['P', 'L', '.', 'H', 'A', 'B', 'I', 'T', 'U', 'A', 'L'], ['N', 'E', 'G'], ['R', 'E', 'M', 'O', 'T', 'E']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -256,6 +268,8 @@ def s27 : Datum :=
     language := "kash1280"
     primaryText := "mul =í-do-· hayu cáhno-w"
     glossedTokens := [("mul", "then"), ("=í-do-·", "=ASS-QUOT-NONFINAL"), ("hayu", "dog"), ("cáhno-w", "sound-ABS")]
+    glossedWords := [⟨[['m', 'u', 'l']], [['t', 'h', 'e', 'n']]⟩, ⟨[[], ['í'], ['d', 'o'], ['·']], [[], ['A', 'S', 'S'], ['Q', 'U', 'O', 'T'], ['N', 'O', 'N', 'F', 'I', 'N', 'A', 'L']]⟩, ⟨[['h', 'a', 'y', 'u']], [['d', 'o', 'g']]⟩, ⟨[['c', 'á', 'h', 'n', 'o'], ['w']], [['s', 'o', 'u', 'n', 'd'], ['A', 'B', 'S']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -269,6 +283,8 @@ def s28 : Datum :=
     language := "kash1280"
     primaryText := "meʔ mu mi· sikúhtimeʔ=yacʰma ʔi-do-m ʔul"
     glossedTokens := [("meʔ", "but"), ("mu", "that"), ("mi·", "there"), ("sikúhtimeʔ=yacʰma", "drinking=people"), ("ʔi-do-m", "be-QUOT-RESP"), ("ʔul", "already")]
+    glossedWords := [⟨[['m', 'e', 'ʔ']], [['b', 'u', 't']]⟩, ⟨[['m', 'u']], [['t', 'h', 'a', 't']]⟩, ⟨[['m', 'i', '·']], [['t', 'h', 'e', 'r', 'e']]⟩, ⟨[['s', 'i', 'k', 'ú', 'h', 't', 'i', 'm', 'e', 'ʔ'], ['y', 'a', 'c', 'ʰ', 'm', 'a']], [['d', 'r', 'i', 'n', 'k', 'i', 'n', 'g'], ['p', 'e', 'o', 'p', 'l', 'e']]⟩, ⟨[['ʔ', 'i'], ['d', 'o'], ['m']], [['b', 'e'], ['Q', 'U', 'O', 'T'], ['R', 'E', 'S', 'P']]⟩, ⟨[['ʔ', 'u', 'l']], [['a', 'l', 'r', 'e', 'a', 'd', 'y']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "From a conversation in the responsive mode; the event takes place elsewhere."
     judgment := .acceptable
     alternatives := []
@@ -282,6 +298,8 @@ def s29 : Datum :=
     language := "kash1280"
     primaryText := "qacúhse hqamac̓-kʰe =ʔ-do-m ṭa"
     glossedTokens := [("qacúhse", "grass game"), ("hqamac̓-kʰe", "play-FUT"), ("=ʔ-do-m", "=ASS-QUOT-RESP"), ("ṭa", "")]
+    glossedWords := [⟨[['q', 'a', 'c', 'ú', 'h', 's', 'e']], [['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e']]⟩, ⟨[['h', 'q', 'a', 'm', 'a', 'c', '̓'], ['k', 'ʰ', 'e']], [['p', 'l', 'a', 'y'], ['F', 'U', 'T']]⟩, ⟨[[], ['ʔ'], ['d', 'o'], ['m']], [[], ['A', 'S', 'S'], ['Q', 'U', 'O', 'T'], ['R', 'E', 'S', 'P']]⟩, ⟨[['ṭ', 'a']], [[]]⟩]
+    lgrConformance := some .morphemeAligned
     context := "From the same conversation as S28."
     judgment := .acceptable
     alternatives := []
@@ -295,6 +313,8 @@ def s32 : Datum :=
     language := "kash1280"
     primaryText := "kʰe híʔbaya=ʔ-bi-w"
     glossedTokens := [("kʰe", "My"), ("híʔbaya=ʔ-bi-w", "man=ASS-II-ABS")]
+    glossedWords := [⟨[['k', 'ʰ', 'e']], [['M', 'y']]⟩, ⟨[['h', 'í', 'ʔ', 'b', 'a', 'y', 'a'], ['ʔ'], ['b', 'i'], ['w']], [['m', 'a', 'n'], ['A', 'S', 'S'], ['I', 'I'], ['A', 'B', 'S']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A woman saw a man approaching but could not recognize him until he arrived."
     judgment := .acceptable
     alternatives := []

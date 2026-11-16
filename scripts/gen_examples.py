@@ -54,6 +54,10 @@ Behavior:
   them, and no theorem reads them, so the Lean rows that `decide` reduces stay
   small. `verified` (`"page-image"`, `"text-layer"` or `"supplement"`) is how the row was last
   checked against its source.
+- Emits, beside `glossedTokens`, the derived `glossedWords`, each word's surface morphs and morph
+  glosses split at `-` and `=` as lists of characters, and `lgrConformance`, the example's CLDF
+  `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export), so that no theorem splits a
+  string in the kernel.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
   empty nor a Glottocode of `languages.csv`, unknown judgment value (also as
@@ -95,6 +99,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
+from lgr import lgr_conformance, segment  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
@@ -209,6 +214,25 @@ def emit_glossed_tokens(xs, where: str) -> str:
     return "[" + ", ".join(items) + "]"
 
 
+def lean_chars(s: str) -> str:
+    """A `List Char` literal: the kernel reduces it without decoding a string."""
+    esc = {"'": "\\'", "\\": "\\\\", "\n": "\\n", "\t": "\\t"}
+    return "[" + ", ".join(f"'{esc.get(c, c)}'" for c in s) + "]"
+
+
+def emit_glossed_words(xs) -> str:
+    """Emit the `List GlossedWord` of the validated gloss pairs `xs`."""
+    words = []
+    for word, gloss in xs:
+        morphs, glosses = segment(word, gloss)
+        words.append("⟨[" + ", ".join(map(lean_chars, morphs)) + "], ["
+                     + ", ".join(map(lean_chars, glosses)) + "]⟩")
+    return "[" + ", ".join(words) + "]"
+
+
+CONFORMANCE = {"WORD_ALIGNED": ".wordAligned", "MORPHEME_ALIGNED": ".morphemeAligned"}
+
+
 def emit_string_pair_list(xs, where: str) -> str:
     """Emit a List (String × String) literal from JSON.
 
@@ -294,6 +318,11 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     emit_string_list(ex.get("discourseSegments", []), where + ".discourseSegments")
     primary     = ex.get("primaryText") or ""
     glossed     = emit_glossed_tokens(ex.get("glossedTokens", []), where)
+    pairs_      = ex.get("glossedTokens", [])
+    gloss_lines = ""
+    if pairs_:
+        gloss_lines = (f"\n    glossedWords := {emit_glossed_words(pairs_)}"
+                       f"\n    lgrConformance := some {CONFORMANCE[lgr_conformance(pairs_)]}")
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
     verdict     = ex.get("verdict")
@@ -319,7 +348,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     reportedIn := {reported_in}{method_line}
     language := {lean_string(language)}
     primaryText := {lean_string(primary)}
-    glossedTokens := {glossed}
+    glossedTokens := {glossed}{gloss_lines}
     context := {lean_string(context)}
     judgment := {judgment}{verdict_line}
     alternatives := {alternatives}

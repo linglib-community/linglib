@@ -22,6 +22,8 @@ def ex_6 : Datum :=
     language := "loja1235"
     primaryText := "Maria-ka mana mayu-man ri-rka. Mana, Maria-ka mayu-man ri-rka=mi."
     glossedTokens := [("Maria-ka", "Maria-TOP"), ("mana", "no"), ("mayu-man", "river-DIR"), ("ri-rka", "go-PST1"), ("Mana", "no"), ("Maria-ka", "Maria-TOP"), ("mayu-man", "river-DIR"), ("ri-rka=mi", "go-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['g', 'o'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Maria's whereabouts."
     judgment := .acceptable
     alternatives := []
@@ -35,6 +37,8 @@ def ex_7 : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka oveja-ta ranti-rka=mi."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("oveja-ta", "sheep-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A couple is on its house entrance seeing people passing by. One individual says (7)."
     judgment := .unacceptable
     alternatives := [("Juanchu-ka oveja-ta ranti-rka.", .acceptable)]
@@ -48,6 +52,8 @@ def ex_8b : Datum :=
     language := "loja1235"
     primaryText := "Maria-ka wakra-ta ranti-rka-chu? Ari, Maria-ka wakra-ta ranti-rka=mi."
     glossedTokens := [("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka-chu", "buy-PST1-POL"), ("Ari", "yes"), ("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['c', 'h', 'u']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['P', 'O', 'L']]⟩, ⟨[['A', 'r', 'i']], [['y', 'e', 's']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing."
     judgment := .unacceptable
     alternatives := [("Ari, Maria-ka wakra-ta ranti-rka.", .acceptable)]
@@ -61,6 +67,8 @@ def ex_8c : Datum :=
     language := "loja1235"
     primaryText := "Maria-ka wakra-ta ranti-rka-chu? Mana, Maria-ka mana wakra-ta ranti-rka=mi."
     glossedTokens := [("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka-chu", "buy-PST1-POL"), ("Mana", "no"), ("Maria-ka", "Maria-TOP"), ("mana", "no"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['c', 'h', 'u']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['P', 'O', 'L']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing."
     judgment := .unacceptable
     alternatives := [("Mana, Maria-ka mana wakra-ta ranti-rka.", .acceptable)]
@@ -74,6 +82,8 @@ def fn5_i : Datum :=
     language := "loja1235"
     primaryText := "Maria-manta ima tuku-shka? Maria-ka wakra-ta ranti-rka=mi."
     glossedTokens := [("Maria-manta", "Maria-ABL"), ("ima", "what"), ("tuku-shka", "happen-PST2"), ("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['m', 'a', 'n', 't', 'a']], [['M', 'a', 'r', 'i', 'a'], ['A', 'B', 'L']]⟩, ⟨[['i', 'm', 'a']], [['w', 'h', 'a', 't']]⟩, ⟨[['t', 'u', 'k', 'u'], ['s', 'h', 'k', 'a']], [['h', 'a', 'p', 'p', 'e', 'n'], ['P', 'S', 'T', '2']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := [("Maria-ka wakra-ta ranti-rka.", .acceptable)]
@@ -87,6 +97,8 @@ def ex_9 : Datum :=
     language := "loja1235"
     primaryText := "Maria-ka wakra-ta ranti-rka-chu, na? Ari, Maria-ka wakra-ta ranti-rka=mi."
     glossedTokens := [("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka-chu", "buy-PST1-POL"), ("na", "in.fact"), ("Ari", "yes"), ("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['c', 'h', 'u']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['P', 'O', 'L']]⟩, ⟨[['n', 'a']], [['i', 'n', '.', 'f', 'a', 'c', 't']]⟩, ⟨[['A', 'r', 'i']], [['y', 'e', 's']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -100,6 +112,8 @@ def ex_10 : Datum :=
     language := "loja1235"
     primaryText := "Maria-ka mana mayu-man ri-rka-chu? Ari, Maria-ka mayu-man ri-rka=mi."
     glossedTokens := [("Maria-ka", "Maria-TOP"), ("mana", "no"), ("mayu-man", "river-DIR"), ("ri-rka-chu", "go-PST1-POL"), ("Ari", "yes"), ("Maria-ka", "Maria-TOP"), ("mayu-man", "river-DIR"), ("ri-rka=mi", "go-PST1=mi")]
+    glossedWords := [⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a'], ['c', 'h', 'u']], [['g', 'o'], ['P', 'S', 'T', '1'], ['P', 'O', 'L']]⟩, ⟨[['A', 'r', 'i']], [['y', 'e', 's']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['g', 'o'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -113,6 +127,8 @@ def ex_11 : Datum :=
     language := "loja1235"
     primaryText := "Ciertu-chu wakra-ta ranti-rka? Ari, Maria-ka wakra-ta ranti-rka=mi."
     glossedTokens := [("Ciertu-chu", "in.fact-POL"), ("wakra-ta", "cow-ACC"), ("ranti-rka", "buy-PST1"), ("Ari", "yes"), ("Maria-ka", "Maria-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['C', 'i', 'e', 'r', 't', 'u'], ['c', 'h', 'u']], [['i', 'n', '.', 'f', 'a', 'c', 't'], ['P', 'O', 'L']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['A', 'r', 'i']], [['y', 'e', 's']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['k', 'a']], [['M', 'a', 'r', 'i', 'a'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There has been some discussion about Maria's whereabouts, with it being suggested that Maria didn't buy a cow in addition to it being suggested that she did buy one, but the discussion is still open. The individual wants to settle the matter, so they ask the second individual to do so."
     judgment := .acceptable
     alternatives := []
@@ -126,6 +142,8 @@ def ex_18a : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mayu-man ri-rka, chay-ka mana shina-chu."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mayu-man", "river-DIR"), ("ri-rka", "go-PST1"), ("chay-ka", "that-TOP"), ("mana", "no"), ("shina-chu", "like.that-POL")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩, ⟨[['c', 'h', 'a', 'y'], ['k', 'a']], [['t', 'h', 'a', 't'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['s', 'h', 'i', 'n', 'a'], ['c', 'h', 'u']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'a', 't'], ['P', 'O', 'L']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -139,6 +157,8 @@ def ex_18b : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mayu-man ri-rka, mana riku-rka-ni."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mayu-man", "river-DIR"), ("ri-rka", "go-PST1"), ("mana", "no"), ("riku-rka-ni", "see-PST1-1SG")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['r', 'i', 'k', 'u'], ['r', 'k', 'a'], ['n', 'i']], [['s', 'e', 'e'], ['P', 'S', 'T', '1'], ['1', 'S', 'G']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -152,6 +172,8 @@ def ex_19a : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mayu-man ri-shka, chay-ka mana shina-chu."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mayu-man", "river-DIR"), ("ri-shka", "go-PST2"), ("chay-ka", "that-TOP"), ("mana", "no"), ("shina-chu", "like.that-POL")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['s', 'h', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '2']]⟩, ⟨[['c', 'h', 'a', 'y'], ['k', 'a']], [['t', 'h', 'a', 't'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['s', 'h', 'i', 'n', 'a'], ['c', 'h', 'u']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'a', 't'], ['P', 'O', 'L']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -165,6 +187,8 @@ def ex_19b : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mayu-man ri-shka, pi-pash chay-ta mana ni-rka-chu."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mayu-man", "river-DIR"), ("ri-shka", "go-PST2"), ("pi-pash", "no-one"), ("chay-ta", "that-ACC"), ("mana", "no"), ("ni-rka-chu", "say-PST1-POL")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['s', 'h', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '2']]⟩, ⟨[['p', 'i'], ['p', 'a', 's', 'h']], [['n', 'o'], ['o', 'n', 'e']]⟩, ⟨[['c', 'h', 'a', 'y'], ['t', 'a']], [['t', 'h', 'a', 't'], ['A', 'C', 'C']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['n', 'i'], ['r', 'k', 'a'], ['c', 'h', 'u']], [['s', 'a', 'y'], ['P', 'S', 'T', '1'], ['P', 'O', 'L']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -178,6 +202,8 @@ def ex_20 : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka shuk wakra-ta shuwa-rka; chashna=mi."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("shuk", "one"), ("wakra-ta", "cow-ACC"), ("shuwa-rka", "steal-PST1"), ("chashna=mi", "like.this=mi")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['s', 'h', 'u', 'k']], [['o', 'n', 'e']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['s', 'h', 'u', 'w', 'a'], ['r', 'k', 'a']], [['s', 't', 'e', 'a', 'l'], ['P', 'S', 'T', '1']]⟩, ⟨[['c', 'h', 'a', 's', 'h', 'n', 'a'], ['m', 'i']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'i', 's'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They saw Juan doing so, but could not intervene."
     judgment := .unacceptable
     alternatives := []
@@ -191,6 +217,8 @@ def ex_21 : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka shuk wakra-ta shuwa-shka; chashna=mi."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("shuk", "one"), ("wakra-ta", "cow-ACC"), ("shuwa-shka", "steal-PST2"), ("chashna=mi", "like.this=mi")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['s', 'h', 'u', 'k']], [['o', 'n', 'e']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['s', 'h', 'u', 'w', 'a'], ['s', 'h', 'k', 'a']], [['s', 't', 'e', 'a', 'l'], ['P', 'S', 'T', '2']]⟩, ⟨[['c', 'h', 'a', 's', 'h', 'n', 'a'], ['m', 'i']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'i', 's'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They were told that Juan did so, and they trust the source."
     judgment := .acceptable
     alternatives := []
@@ -204,6 +232,8 @@ def fn9_i : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka mayu-man ri-shka; mana shina=mi ka-shka-nka."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("mayu-man", "river-DIR"), ("ri-shka", "go-PST2"), ("mana", "no"), ("shina=mi", "like.this=mi"), ("ka-shka-nka", "be-PST2-CONJ")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['s', 'h', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '2']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['s', 'h', 'i', 'n', 'a'], ['m', 'i']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'i', 's'], ['m', 'i']]⟩, ⟨[['k', 'a'], ['s', 'h', 'k', 'a'], ['n', 'k', 'a']], [['b', 'e'], ['P', 'S', 'T', '2'], ['C', 'O', 'N', 'J']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan went to the river. They were told that Juan did so, but they don't trust the source."
     judgment := .acceptable
     alternatives := []
@@ -217,6 +247,8 @@ def fn10_i : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka shuk wakra-ta shuwa-shka; chashna=mi, chay-ka mana shina-chu."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("shuk", "one"), ("wakra-ta", "cow-ACC"), ("shuwa-shka", "steal-PST2"), ("chashna=mi", "like.this=mi"), ("chay-ka", "that-TOP"), ("mana", "no"), ("shina-chu", "like.that-POL")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['s', 'h', 'u', 'k']], [['o', 'n', 'e']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['s', 'h', 'u', 'w', 'a'], ['s', 'h', 'k', 'a']], [['s', 't', 'e', 'a', 'l'], ['P', 'S', 'T', '2']]⟩, ⟨[['c', 'h', 'a', 's', 'h', 'n', 'a'], ['m', 'i']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'i', 's'], ['m', 'i']]⟩, ⟨[['c', 'h', 'a', 'y'], ['k', 'a']], [['t', 'h', 'a', 't'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['s', 'h', 'i', 'n', 'a'], ['c', 'h', 'u']], [['l', 'i', 'k', 'e', '.', 't', 'h', 'a', 't'], ['P', 'O', 'L']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -230,6 +262,8 @@ def ex_22 : Datum :=
     language := "loja1235"
     primaryText := "Juanchu-ka wakra-ta ranti-rka. Mana, kuchi-ta=mi ranti-rka."
     glossedTokens := [("Juanchu-ka", "Juan-TOP"), ("wakra-ta", "cow-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("kuchi-ta=mi", "pig-ACC=mi"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u'], ['k', 'a']], [['J', 'u', 'a', 'n'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['k', 'u', 'c', 'h', 'i'], ['t', 'a'], ['m', 'i']], [['p', 'i', 'g'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .acceptable
     alternatives := []
@@ -243,6 +277,8 @@ def ex_23 : Datum :=
     language := "loja1235"
     primaryText := "Juanchu oveja-ta ranti-rka. Mana, Maria=mi oveja-ta ranti-rka."
     glossedTokens := [("Juanchu", "Juan"), ("oveja-ta", "sheep-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("Maria=mi", "Maria=mi"), ("oveja-ta", "sheep-ACC"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['J', 'u', 'a', 'n', 'c', 'h', 'u']], [['J', 'u', 'a', 'n']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['M', 'a', 'r', 'i', 'a'], ['m', 'i']], [['M', 'a', 'r', 'i', 'a'], ['m', 'i']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of who bought a sheep at the Sunday market."
     judgment := .acceptable
     alternatives := []
@@ -256,6 +292,8 @@ def ex_25 : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mina-man ri-rka. Mana, Pedro-ka mayu-man=mi ri-rka."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mina-man", "mine-DIR"), ("ri-rka", "go-PST1"), ("Mana", "no"), ("Pedro-ka", "Pedro-TOP"), ("mayu-man=mi", "river-DIR=mi"), ("ri-rka", "go-PST1")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'i', 'n', 'a'], ['m', 'a', 'n']], [['m', 'i', 'n', 'e'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'y', 'u'], ['m', 'a', 'n'], ['m', 'i']], [['r', 'i', 'v', 'e', 'r'], ['D', 'I', 'R'], ['m', 'i']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing Pedro's whereabouts, in particular, where he went for the day."
     judgment := .acceptable
     alternatives := []
@@ -269,6 +307,8 @@ def ex_26 : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mina-man ri-rka. Mana, Pedro-ka mikuna-kuna-ta mercado-pi ranti-chi-rka=mi."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mina-man", "mine-DIR"), ("ri-rka", "go-PST1"), ("Mana", "no"), ("Pedro-ka", "Pedro-TOP"), ("mikuna-kuna-ta", "food-PL-ACC"), ("mercado-pi", "market-LOC"), ("ranti-chi-rka=mi", "buy-CAUS-PST1=mi")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'i', 'n', 'a'], ['m', 'a', 'n']], [['m', 'i', 'n', 'e'], ['D', 'I', 'R']]⟩, ⟨[['r', 'i'], ['r', 'k', 'a']], [['g', 'o'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'i', 'k', 'u', 'n', 'a'], ['k', 'u', 'n', 'a'], ['t', 'a']], [['f', 'o', 'o', 'd'], ['P', 'L'], ['A', 'C', 'C']]⟩, ⟨[['m', 'e', 'r', 'c', 'a', 'd', 'o'], ['p', 'i']], [['m', 'a', 'r', 'k', 'e', 't'], ['L', 'O', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['c', 'h', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['C', 'A', 'U', 'S'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Pedro's whereabouts. Since heading to the mine is an activity that takes all day, it excludes any other activity."
     judgment := .acceptable
     alternatives := []
@@ -282,6 +322,8 @@ def ex_27b : Datum :=
     language := "loja1235"
     primaryText := "Segundo kuchita-ta ranti-rka. Mana, Segundo wakra-ta=mi ranti-rka."
     glossedTokens := [("Segundo", "Segundo"), ("kuchita-ta", "pig-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("Segundo", "Segundo"), ("wakra-ta=mi", "cow-ACC=mi"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o']], [['S', 'e', 'g', 'u', 'n', 'd', 'o']]⟩, ⟨[['k', 'u', 'c', 'h', 'i', 't', 'a'], ['t', 'a']], [['p', 'i', 'g'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o']], [['S', 'e', 'g', 'u', 'n', 'd', 'o']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a'], ['m', 'i']], [['c', 'o', 'w'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .acceptable
     alternatives := []
@@ -296,6 +338,8 @@ def ex_27c : Datum :=
     language := "loja1235"
     primaryText := "Segundo kuchita-ta ranti-rka. Mana, Segundo=mi wakra-ta ranti-rka."
     glossedTokens := [("Segundo", "Segundo"), ("kuchita-ta", "pig-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("Segundo=mi", "Segundo=mi"), ("wakra-ta", "cow-ACC"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o']], [['S', 'e', 'g', 'u', 'n', 'd', 'o']]⟩, ⟨[['k', 'u', 'c', 'h', 'i', 't', 'a'], ['t', 'a']], [['p', 'i', 'g'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o'], ['m', 'i']], [['S', 'e', 'g', 'u', 'n', 'd', 'o'], ['m', 'i']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .unacceptable
     alternatives := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
@@ -309,6 +353,8 @@ def ex_27d : Datum :=
     language := "loja1235"
     primaryText := "Segundo kuchita-ta ranti-rka. Mana, Segundo wakra-ta ranti-rka=mi."
     glossedTokens := [("Segundo", "Segundo"), ("kuchita-ta", "pig-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("Segundo", "Segundo"), ("wakra-ta", "cow-ACC"), ("ranti-rka=mi", "buy-PST1=mi")]
+    glossedWords := [⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o']], [['S', 'e', 'g', 'u', 'n', 'd', 'o']]⟩, ⟨[['k', 'u', 'c', 'h', 'i', 't', 'a'], ['t', 'a']], [['p', 'i', 'g'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['M', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['S', 'e', 'g', 'u', 'n', 'd', 'o']], [['S', 'e', 'g', 'u', 'n', 'd', 'o']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a']], [['c', 'o', 'w'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a'], ['m', 'i']], [['b', 'u', 'y'], ['P', 'S', 'T', '1'], ['m', 'i']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .unacceptable
     alternatives := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
@@ -322,6 +368,8 @@ def ex_28_modifier : Datum :=
     language := "loja1235"
     primaryText := "Shuk Estados Unidos-manta ashpapi llankak Canada-manta=mi ashpapi llankak-wan tupanaku-n."
     glossedTokens := [("Shuk", "a"), ("Estados", "United"), ("Unidos-manta", "States-ABL"), ("ashpapi", "land.LOC"), ("llankak", "work.NMLZ"), ("Canada-manta=mi", "Canada-ABL=mi"), ("ashpapi", "land.LOC"), ("llankak-wan", "work.NMLZ-INST"), ("tupanaku-n", "meet-3")]
+    glossedWords := [⟨[['S', 'h', 'u', 'k']], [['a']]⟩, ⟨[['E', 's', 't', 'a', 'd', 'o', 's']], [['U', 'n', 'i', 't', 'e', 'd']]⟩, ⟨[['U', 'n', 'i', 'd', 'o', 's'], ['m', 'a', 'n', 't', 'a']], [['S', 't', 'a', 't', 'e', 's'], ['A', 'B', 'L']]⟩, ⟨[['a', 's', 'h', 'p', 'a', 'p', 'i']], [['l', 'a', 'n', 'd', '.', 'L', 'O', 'C']]⟩, ⟨[['l', 'l', 'a', 'n', 'k', 'a', 'k']], [['w', 'o', 'r', 'k', '.', 'N', 'M', 'L', 'Z']]⟩, ⟨[['C', 'a', 'n', 'a', 'd', 'a'], ['m', 'a', 'n', 't', 'a'], ['m', 'i']], [['C', 'a', 'n', 'a', 'd', 'a'], ['A', 'B', 'L'], ['m', 'i']]⟩, ⟨[['a', 's', 'h', 'p', 'a', 'p', 'i']], [['l', 'a', 'n', 'd', '.', 'L', 'O', 'C']]⟩, ⟨[['l', 'l', 'a', 'n', 'k', 'a', 'k'], ['w', 'a', 'n']], [['w', 'o', 'r', 'k', '.', 'N', 'M', 'L', 'Z'], ['I', 'N', 'S', 'T']]⟩, ⟨[['t', 'u', 'p', 'a', 'n', 'a', 'k', 'u'], ['n']], [['m', 'e', 'e', 't'], ['3']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
@@ -335,6 +383,8 @@ def ex_28_object : Datum :=
     language := "loja1235"
     primaryText := "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan=mi tupanaku-n."
     glossedTokens := [("Shuk", "a"), ("Estados", "United"), ("Unidos-manta", "States-ABL"), ("ashpapi", "land.LOC"), ("llankak", "work.NMLZ"), ("Canada-manta", "Canada-ABL"), ("ashpapi", "land.LOC"), ("llankak-wan=mi", "work.NMLZ-INST=mi"), ("tupanaku-n", "meet-3")]
+    glossedWords := [⟨[['S', 'h', 'u', 'k']], [['a']]⟩, ⟨[['E', 's', 't', 'a', 'd', 'o', 's']], [['U', 'n', 'i', 't', 'e', 'd']]⟩, ⟨[['U', 'n', 'i', 'd', 'o', 's'], ['m', 'a', 'n', 't', 'a']], [['S', 't', 'a', 't', 'e', 's'], ['A', 'B', 'L']]⟩, ⟨[['a', 's', 'h', 'p', 'a', 'p', 'i']], [['l', 'a', 'n', 'd', '.', 'L', 'O', 'C']]⟩, ⟨[['l', 'l', 'a', 'n', 'k', 'a', 'k']], [['w', 'o', 'r', 'k', '.', 'N', 'M', 'L', 'Z']]⟩, ⟨[['C', 'a', 'n', 'a', 'd', 'a'], ['m', 'a', 'n', 't', 'a']], [['C', 'a', 'n', 'a', 'd', 'a'], ['A', 'B', 'L']]⟩, ⟨[['a', 's', 'h', 'p', 'a', 'p', 'i']], [['l', 'a', 'n', 'd', '.', 'L', 'O', 'C']]⟩, ⟨[['l', 'l', 'a', 'n', 'k', 'a', 'k'], ['w', 'a', 'n'], ['m', 'i']], [['w', 'o', 'r', 'k', '.', 'N', 'M', 'L', 'Z'], ['I', 'N', 'S', 'T'], ['m', 'i']]⟩, ⟨[['t', 'u', 'p', 'a', 'n', 'a', 'k', 'u'], ['n']], [['m', 'e', 'e', 't'], ['3']]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
     alternatives := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
@@ -348,6 +398,8 @@ def ex_29b : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka ima-ta ranti-rka? Pedro-ka oveja-ta=mi ranti-rka."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("ima-ta", "what-ACC"), ("ranti-rka", "buy-PST1"), ("Pedro-ka", "Pedro-TOP"), ("oveja-ta=mi", "sheep-ACC=mi"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['i', 'm', 'a'], ['t', 'a']], [['w', 'h', 'a', 't'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a'], ['m', 'i']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "An individual asks another one about the farm animal that Pedro bought at the Sunday market."
     judgment := .unacceptable
     alternatives := [("Pedro-ka oveja-ta ranti-rka.", .acceptable)]
@@ -361,6 +413,8 @@ def ex_29c : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka ima-ta ranti-rka? Oveja-ta=mi Pedro-ka ranti-rka."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("ima-ta", "what-ACC"), ("ranti-rka", "buy-PST1"), ("Oveja-ta=mi", "sheep-ACC=mi"), ("Pedro-ka", "Pedro-TOP"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['i', 'm', 'a'], ['t', 'a']], [['w', 'h', 'a', 't'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['O', 'v', 'e', 'j', 'a'], ['t', 'a'], ['m', 'i']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "An individual asks another one about the farm animal that Pedro bought at the Sunday market."
     judgment := .unacceptable
     alternatives := [("Oveja-ta Pedro-ka ranti-rka.", .acceptable)]
@@ -374,6 +428,8 @@ def ex_30a : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta=mi ranti-rka."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mana", "no"), ("oveja-ta", "sheep-ACC"), ("ranti-rka", "buy-PST1"), ("Pedro-ka", "Pedro-TOP"), ("wakra-ta=mi", "cow-ACC=mi"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a'], ['m', 'i']], [['c', 'o', 'w'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep."
     judgment := .acceptable
     alternatives := [("Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta ranti-rka.", .acceptable)]
@@ -387,6 +443,8 @@ def ex_30b : Datum :=
     language := "loja1235"
     primaryText := "Pedro-ka mana oveja-ta ranti-rka; wakra-ta=mi Pedro-ka ranti-rka."
     glossedTokens := [("Pedro-ka", "Pedro-TOP"), ("mana", "no"), ("oveja-ta", "sheep-ACC"), ("ranti-rka", "buy-PST1"), ("wakra-ta=mi", "cow-ACC=mi"), ("Pedro-ka", "Pedro-TOP"), ("ranti-rka", "buy-PST1")]
+    glossedWords := [⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['m', 'a', 'n', 'a']], [['n', 'o']]⟩, ⟨[['o', 'v', 'e', 'j', 'a'], ['t', 'a']], [['s', 'h', 'e', 'e', 'p'], ['A', 'C', 'C']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩, ⟨[['w', 'a', 'k', 'r', 'a'], ['t', 'a'], ['m', 'i']], [['c', 'o', 'w'], ['A', 'C', 'C'], ['m', 'i']]⟩, ⟨[['P', 'e', 'd', 'r', 'o'], ['k', 'a']], [['P', 'e', 'd', 'r', 'o'], ['T', 'O', 'P']]⟩, ⟨[['r', 'a', 'n', 't', 'i'], ['r', 'k', 'a']], [['b', 'u', 'y'], ['P', 'S', 'T', '1']]⟩]
+    lgrConformance := some .morphemeAligned
     context := "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep."
     judgment := .acceptable
     alternatives := [("Pedro-ka mana oveja-ta ranti-rka; wakra-ta Pedro-ka ranti-rka.", .acceptable)]

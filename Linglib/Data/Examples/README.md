@@ -52,6 +52,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
+| `glossedWords`, `lgrConformance` | derived, not written | the generator segments each word of `glossedTokens` into morphs and morph glosses at `-` and `=`, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
@@ -192,6 +193,17 @@ Quick reference:
 - Subscript indices for coreference (`Mary₁ ... her₁`) — not yet
   representable in the schema; `comment` field for now
 
+### Alignment
+
+The generator emits each row's gloss line segmented, as `Datum.glossedWords`, so that a study
+reads morphs and category labels without splitting a string in the kernel, and records the
+example's `LGR_Conformance` as CLDF defines it: `MORPHEME_ALIGNED` when every word is segmented
+as its gloss is and some word is segmented, otherwise `WORD_ALIGNED`. A word the source prints
+with a different segmentation than its gloss (`képet` glossed `picture-ACC`) is transcribed as
+printed. It keeps its category labels and lexical gloss (`GlossedWord.labels`,
+`GlossedWord.features`); only a reader that pairs a morph with its gloss requires
+`GlossedWord.IsAligned`.
+
 ## File-format style
 
 Pretty-printed JSON, but **compact `glossedTokens`**: pack 3–4
@@ -243,15 +255,6 @@ aimed at. Known gaps:
   (Bakay et al. 2026, syntactic minimal pairs).
 - **Paradigm clusters** where N sentences only mean something together
   (Reinhart's (11a)–(11d)).
-- **Alignment level of the gloss line.** A word whose surface and gloss segment differently
-  (1,263 of 33,423 glossed words, in 116 files, mostly as the source prints them) is dropped by
-  `Datum.glossedWords` together with its category labels. CLDF records the level of an example
-  as `LGR_Conformance` (`WORD_ALIGNED`, `MORPHEME_ALIGNED`), which the export already derives
-  (`lgr_conformance` in `scripts/export_examples_cldf.py`) and `pyigt` checks before reading
-  morphs. The plan is to have the generator use that one derivation, segment the gloss line and
-  emit the level on the Lean row under CLDF's name, so that a reader of morphs requires
-  `MORPHEME_ALIGNED`, a reader of a word's labels accepts both, and Lean splits no strings in
-  the kernel.
 - **Declared abbreviations.** A gloss element counts as a category label when it has no
   lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
   work list its own abbreviations; a data file would declare them and the generator would check

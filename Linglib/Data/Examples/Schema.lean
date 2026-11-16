@@ -24,6 +24,8 @@ sentence-level counterpart of `Data/Wordlist/`.
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
   `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
+* `GlossedWord`, `LGRConformance`: a word of the gloss line segmented into morphs, and the
+  conformance of an example with the Leipzig Glossing Rules.
 
 ## Implementation notes
 
@@ -96,6 +98,25 @@ inductive Datum.Method where
   | description
   deriving DecidableEq, Repr
 
+/-- The conformance of an example with the Leipzig Glossing Rules, CLDF's `LGR_Conformance`. -/
+inductive LGRConformance where
+  /-- `WORD_ALIGNED`: each word has its gloss (Rule 1). -/
+  | wordAligned
+  /-- `MORPHEME_ALIGNED`: every word is segmented as its gloss is, and some word is segmented
+  (Rule 2). -/
+  | morphemeAligned
+  deriving DecidableEq, Repr
+
+/-- A word of the gloss line as the Leipzig rules structure it: its surface morphs and the
+glosses of its morphs, each split at the affix boundary `-` and the clitic boundary `=`. The two
+lists have the same length exactly when the word is segmented as its gloss is. -/
+structure GlossedWord where
+  /-- The surface morphs, without the punctuation written around them. -/
+  morphs : List (List Char)
+  /-- The glosses of the morphs. -/
+  glosses : List (List Char)
+  deriving DecidableEq, Repr
+
 /-- A `Datum` is a piece of data a paper reports with one of its examples
 [tonhauser-matthewson-2016]: an expression of a language with its gloss, the context it is judged
 in, the judgment, the forms and readings the paper judges with it, and the paper's own
@@ -117,6 +138,11 @@ structure Datum where
   /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
   source gives no gloss. -/
   glossedTokens : List (String × String)
+  /-- The words of `glossedTokens` segmented into morphs, which the generator derives. -/
+  glossedWords : List GlossedWord := []
+  /-- The `LGR_Conformance` column, which the generator derives from `glossedTokens`; `none`
+  when the source gives no gloss. -/
+  lgrConformance : Option LGRConformance := none
   /-- The scenario the source gives for the judgment; empty when it gives none. -/
   context : String
   /-- The judgment the source reports for the expression in the context. -/
