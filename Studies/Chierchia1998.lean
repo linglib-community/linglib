@@ -218,7 +218,7 @@ theorem carlson_mem_image_iff {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k : E} {κ : S → Part E}
     {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (hk : M.RealizedByInstances inst k)
     (P : Set Stage) : k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
-  Set.ext hinst ▸ Carlson1977.Model.mem_image_iff hk P
+  Set.ext (a := {x | x ~[inst] k}) hinst ▸ Carlson1977.Model.mem_image_iff hk P
 
 /-- Two dogs, `0` and `1`, and a cat, `2`, each with one stage at its own place; an individual is
 a set of animals, and a stage realizes each individual containing its animal. -/
@@ -337,8 +337,7 @@ reads it existentially. -/
 def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
     (route : E → E → S → Prop) : Set S :=
   N.gen ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C)
-    {p | Quantifier.Det.some (Kind.up (Kind.down computer) p.2)
-      (route · p.1 p.2)}
+    {p | Quantifier.Det.some (Kind.up (Kind.down computer) p.2) {x | route x p.1 p.2}}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
 existential over its kind's instances (p. 368). -/
@@ -354,7 +353,7 @@ predication (31c) wherever the kind has a normal instance. -/
 theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
     (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C)) :
-    Quantifier.Det.some (Kind.up (Kind.down dog) s') (bark · s') :=
+    Quantifier.Det.some (Kind.up (Kind.down dog) s') {x | bark x s'} :=
   ⟨x, (N.normal_subset s _ hx).1, h hx⟩
 
 end Generic
