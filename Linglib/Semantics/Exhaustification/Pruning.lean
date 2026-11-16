@@ -236,7 +236,7 @@ theorem infClosure_diff_subset_prunedReadings (h : Separating I p) (hne : I.None
         ⟨hts hq, hrt ▸ Finset.inf'_le id hq⟩
     · obtain ⟨q, hq⟩ := ht
       exact (hrt ▸ Finset.inf'_le id hq).trans (subset_biUnion_of_mem_supClosure (hts hq))
-  refine (mem_prunedReadings_iff h hne).2 ⟨_, fun _ hq ↦ hq.1, fun q hIE ↦ ?_, hrC⟩
+  refine (mem_prunedReadings_iff h hne).2 ⟨_, Set.sep_subset _ _, fun q hIE ↦ ?_, hrC⟩
   have hfin := (I.finite_toSet.image (p)).supClosure.subset
     (fun _ hq ↦ hq.1 : {q ∈ supClosure (p '' I) | r ⊆ q} ⊆ _)
   have hmw := (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ q hIE.1).1 hIE

@@ -142,7 +142,7 @@ variable (I : Interpretation Sig U)
 def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Desc Sig → Prop
   | .sortAssign t σ => ∃ v ∈ I.termDenot g t u, I.S v ≤ σ
   | .pathEq t₁ t₂ => ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u
-  | .rel ρ xs => I.R ρ fun i ↦ g (xs i)
+  | .rel ρ xs => (fun i ↦ g (xs i)) ∈ I.R ρ
   | .neg d => ¬ SatisfiesOn D g u d
   | .and d e => SatisfiesOn D g u d ∧ SatisfiesOn D g u e
   | .or d e => SatisfiesOn D g u d ∨ SatisfiesOn D g u e
@@ -156,7 +156,7 @@ def Satisfies (g : ℕ → U) (u : U) (d : Desc Sig) : Prop :=
   I.SatisfiesOn {w | I.IsComponentOf u w} g u d
 
 instance decidableSatisfiesOn [Fintype U] [DecidableEq U] [DecidableLE Srt] (D : Set U)
-    [DecidablePred (· ∈ D)] [∀ ρ, DecidablePred (I.R ρ)] (g : ℕ → U) (u : U) :
+    [DecidablePred (· ∈ D)] [∀ ρ, DecidablePred (· ∈ I.R ρ)] (g : ℕ → U) (u : U) :
     (d : Desc Sig) → Decidable (I.SatisfiesOn D g u d)
   | .sortAssign _ σ => Option.decidableExistsMem (p := (I.S · ≤ σ)) _
   | .pathEq _ t₂ => Option.decidableExistsMem (p := (· ∈ I.termDenot g t₂ u)) _
@@ -173,7 +173,7 @@ instance decidableSatisfiesOn [Fintype U] [DecidableEq U] [DecidableLE Srt] (D :
     unfold SatisfiesOn; infer_instance
 
 instance decidableSatisfies [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
-    [∀ ρ, DecidablePred (I.R ρ)] (g : ℕ → U) (u : U) (d : Desc Sig) :
+    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (g : ℕ → U) (u : U) (d : Desc Sig) :
     Decidable (I.Satisfies g u d) :=
   inferInstanceAs (Decidable (I.SatisfiesOn _ g u d))
 
@@ -187,7 +187,7 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
   Iff.rfl
 
 @[simp] theorem satisfiesOn_rel {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → ℕ} :
-    I.SatisfiesOn D g u (.rel ρ xs) ↔ I.R ρ fun i ↦ g (xs i) := Iff.rfl
+    I.SatisfiesOn D g u (.rel ρ xs) ↔ (fun i ↦ g (xs i)) ∈ I.R ρ := Iff.rfl
 
 @[simp] theorem satisfiesOn_neg : I.SatisfiesOn D g u d.neg ↔ ¬ I.SatisfiesOn D g u d := Iff.rfl
 
@@ -232,7 +232,7 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
   Iff.rfl
 
 @[simp] theorem satisfies_rel {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → ℕ} :
-    I.Satisfies g u (.rel ρ xs) ↔ I.R ρ fun i ↦ g (xs i) := Iff.rfl
+    I.Satisfies g u (.rel ρ xs) ↔ (fun i ↦ g (xs i)) ∈ I.R ρ := Iff.rfl
 
 @[simp] theorem satisfies_neg : I.Satisfies g u d.neg ↔ ¬ I.Satisfies g u d := Iff.rfl
 
@@ -339,7 +339,7 @@ variable (I : Interpretation Sig U) {G H : Grammar Sig} {u : U}
 def Models (G : Grammar Sig) : Prop := ∀ u : U, ∀ d ∈ G, I.Satisfies (fun _ ↦ u) u d
 
 instance [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
-    [∀ ρ, DecidablePred (I.R ρ)] (G : Grammar Sig) : Decidable (I.Models G) := by
+    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (G : Grammar Sig) : Decidable (I.Models G) := by
   unfold Models; infer_instance
 
 variable {I}

@@ -153,7 +153,7 @@ def clauseSignature : Reading → Clause → ProjectivitySignature
 def clausePolarity (ct : Reading) (c : Clause) : SignType := (clauseSignature ct c).sign
 
 /-- The function of a clause under a reading, the other clause held fixed, on truth sets. -/
-def clauseMap (ct : Reading) : Clause → Set W → Set W
+noncomputable def clauseMap (ct : Reading) : Clause → Set W → Set W
   | .antecedent => fun p' ↦ Trivalent.posExt (ct.denote cond p' q)
   | .consequent => fun q' ↦ Trivalent.posExt (ct.denote cond p q')
 

@@ -163,7 +163,7 @@ theorem speaker_literalListener_apply_singleton_le (hα : 0 < α) [IsProbability
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hu),
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from h u hu)]
   exact ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦
-    Set.indicator_le_indicator_of_subset h (fun _ ↦ zero_le) v) _
+    Set.indicator_le_indicator_of_subset (fun v hv ↦ h v hv) (fun _ ↦ zero_le) v) _
 
 /-- Among the utterances her belief entails, the speaker at no cost prefers the one of smaller
 prior mass. -/
