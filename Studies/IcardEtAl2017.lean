@@ -68,12 +68,10 @@ instance : ∀ s, DecidablePred (· ∈ effect s)
 
 /-- `strength x y s` is the actual causal strength of `C = 1` for `E = 1` when `C = A = E = 1`,
 under the priors `x` of `C` and `y` of `A`, eq. (1). -/
-noncomputable def strength (x y : I) (s : CausalStructure) : ℝ≥0∞ :=
+noncomputable def strength (x y : I) (s : CausalStructure) : ℝ :=
   score (prior x y) (fun _ ↦ true) (effect s) {c}
 
 variable {x y : I}
-
-theorem strength_ne_top {s : CausalStructure} : strength x y s ≠ ∞ := score_ne_top
 
 private theorem ber_real_true (q : I) : Ber(true, false, q).real {true} = q := by
   simp
@@ -357,25 +355,26 @@ theorem necessity_conjunctive (hx : x < 1) :
 
 -- Table 2
 theorem sufficiency_conjunctive (hx : x < 1) :
-    sufficiency (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} =
-      Ber(true, false, y) {true} := by
+    sufficiency (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} = y := by
   rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hx)]
-  simp [preimage_update_c, measure_pi_cause]
+  simp only [Bool.not_true, preimage_update_c, sdiff_empty, compl_empty, probReal_univ, div_one]
+  exact real_cause_a_true
 
 -- Table 2
 theorem sufficiency_disjunctive (hx : x < 1) (hy : y < 1) :
     sufficiency (prior x y) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
-  have hy' : prior x y (cause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
-    rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero hy
+  have hy' : (prior x y).real (cause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
+    rw [compl_cause_singleton, Bool.not_true, real_cause_a_false]
+    exact (sub_pos.2 (show (y : ℝ) < 1 from hy)).ne'
   rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hx)]
   simp only [Bool.not_true, preimage_update_c]
-  rw [← compl_eq_univ_sdiff, ENNReal.div_self hy' (measure_ne_top _ _)]
+  rw [← compl_eq_univ_sdiff, div_self hy']
 
 /-- The sufficiency that forces the cause on and redraws every other variable,
 `P(E | do(C = 1))`. -/
 noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measure (ι → Bool))
-    (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
-  μ {w | S.piecewise w₀ w ∈ E}
+    (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ :=
+  μ.real {w | S.piecewise w₀ w ∈ E}
 
 -- §4.3
 theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hx : x < 1) (hy : y < 1) :
@@ -386,52 +385,46 @@ theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hx : x < 1) (h
     ext w; simp [Finset.piecewise_singleton]
   unfold resampleSufficiency
   cases s
-  · rw [sufficiency_conjunctive hx, h, preimage_update_c, measure_pi_cause, Finset.prod_singleton,
-      ite_eq_right (by decide)]
-  · rw [sufficiency_disjunctive hx hy, h, preimage_update_c, measure_univ]
+  · rw [sufficiency_conjunctive hx, h, preimage_update_c, real_cause_a_true]
+  · rw [sufficiency_disjunctive hx hy, h, preimage_update_c, probReal_univ]
 
 /-! ### The measure (§4.4) -/
 
 -- (3)
-theorem toReal_strength_conjunctive (hx : x < 1) :
-    (strength x y .conjunctive).toReal = x * y - x + 1 := by
+theorem strength_conjunctive (hx : x < 1) : strength x y .conjunctive = x * y - x + 1 := by
   rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hx),
     sufficiency_conjunctive hx]
   simp only [Bool.not_true, ↓reduceIte]
   rw [ite_eq_right (show Function.update (fun _ : Cause ↦ true) c false ∉ effect .conjunctive
-      by decide), ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
-    (measure_ne_top _ _), ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def,
-    ← measureReal_def, ber_real_true, ber_real_true, ber_real_false]
+      by decide), ber_real_true, ber_real_false]
   ring
 
 -- (2)
-theorem toReal_strength_disjunctive (hx : x < 1) (hy : y < 1) :
-    (strength x y .disjunctive).toReal = x := by
+theorem strength_disjunctive (hx : x < 1) (hy : y < 1) : strength x y .disjunctive = x := by
   rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hx),
     sufficiency_disjunctive hx hy]
   simp only [Bool.not_true, ↓reduceIte]
   rw [ite_eq_left (show Function.update (fun _ : Cause ↦ true) c false ∈ effect .disjunctive
-      by decide), mul_one, add_zero, ← measureReal_def, ber_real_true]
+      by decide), mul_one, add_zero, ber_real_true]
 
 /-- The measure meets all four desiderata (§4.4, §5). -/
 theorem strength_desiderata : AbnormalInflation strength ∧ Supersession strength ∧
     NoSupersessionWithDisjunction strength ∧ AbnormalDeflation strength := by
   refine ⟨fun y hy x₁ hx₁ x₂ hx₂ hx ↦ ?_, fun x hx y₁ _ y₂ _ hy ↦ ?_,
     fun x hx y₁ hy₁ y₂ hy₂ ↦ ?_, fun y hy x₁ hx₁ x₂ hx₂ hx ↦ ?_⟩
-  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
-      toReal_strength_conjunctive hx₁.2, toReal_strength_conjunctive hx₂.2]
+  · dsimp only
+    rw [strength_conjunctive hx₁.2, strength_conjunctive hx₂.2]
     have : (x₁ : ℝ) < x₂ := hx
     have : (y : ℝ) < 1 := hy.2
     nlinarith
-  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
-      toReal_strength_conjunctive hx.2, toReal_strength_conjunctive hx.2]
+  · dsimp only
+    rw [strength_conjunctive hx.2, strength_conjunctive hx.2]
     have : (y₁ : ℝ) < y₂ := hy
     have : (0 : ℝ) < x := hx.1
     nlinarith
-  · rw [← ENNReal.toReal_eq_toReal_iff' strength_ne_top strength_ne_top,
-      toReal_strength_disjunctive hx.2 hy₁.2, toReal_strength_disjunctive hx.2 hy₂.2]
-  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
-      toReal_strength_disjunctive hx₁.2 hy.2, toReal_strength_disjunctive hx₂.2 hy.2]
+  · rw [strength_disjunctive hx.2 hy₁.2, strength_disjunctive hx.2 hy₂.2]
+  · dsimp only
+    rw [strength_disjunctive hx₁.2 hy.2, strength_disjunctive hx₂.2 hy.2]
     exact hx
 
 /-! ### The sampling algorithm (§4.4) -/
@@ -474,25 +467,22 @@ theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w�
 
 -- (1)
 theorem integral_hit_step [IsFiniteMeasure μ] :
-    ∫ z, hit w₀ E S z ∂(step μ w₀ E S) = (score μ w₀ E S).toReal := by
+    ∫ z, hit w₀ E S z ∂(step μ w₀ E S) = score μ w₀ E S := by
   have h (b : Bool) : (fun w ↦ decide (w ∈ cause w₀ S)) ⁻¹' {b} =
       if b then cause w₀ S else (cause w₀ S)ᶜ := by cases b <;> ext <;> simp
   rw [step, Measure.integral_compProd Integrable.of_finite, integral_fintype Integrable.of_finite]
   simp only [Fintype.sum_bool, hit, test_apply, ↓reduceIte, Bool.false_eq_true]
   rw [integral_indicator_one .of_discrete, integral_indicator_one .of_discrete,
     map_measureReal_apply (by fun_prop) .of_discrete,
-    map_measureReal_apply (by fun_prop) .of_discrete, h, h, score,
-    ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) sufficiency_ne_top)
-      (ENNReal.mul_ne_top (measure_ne_top _ _) necessity_ne_top),
-    ENNReal.toReal_mul, ENNReal.toReal_mul]
-  simp [sufficiency, necessity, measureReal_def, smul_eq_mul]
+    map_measureReal_apply (by fun_prop) .of_discrete, h, h, score]
+  simp [sufficiency, necessity, smul_eq_mul]
 
 /-- The sampling algorithm converges, in that on almost every run of independent steps the
 proportion of hits tends to the actual causal strength, eq. (1). -/
 theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀ E S)] :
     ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S),
       Tendsto (fun K : ℕ ↦ (K : ℝ)⁻¹ * ∑ k ∈ Finset.range K, hit w₀ E S (ω k)) atTop
-        (𝓝 (score μ w₀ E S).toReal) := by
+        (𝓝 (score μ w₀ E S)) := by
   set P := Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S
   have hmeas : Measurable (hit w₀ E S) := measurable_of_countable _
   have hlaw (n : ℕ) : P.map (· n) = step μ w₀ E S := Measure.infinitePi_map_eval _ n

@@ -3,6 +3,7 @@ module
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic
+public import Linglib.Core.Probability.Independence.Pi
 
 /-!
 # Actual causal strength
@@ -15,6 +16,11 @@ measure, and a [cause](##CausalStrength.cause) is a set of variables showing the
 round, as Konuk, Quillien and Mascarenhas extend the measure to plural causes. Under a product
 measure a single cause [scores](##CausalStrength.score_singleton) its probability times its
 sufficiency, plus its absence's probability when flipping it removes the outcome.
+
+## Implementation notes
+
+The three quantities are real numbers, mathlib's `Measure.real` of a conditional probability, since
+the sources state them by equations and inequalities between probabilities.
 
 ## References
 
@@ -50,6 +56,9 @@ theorem dependsOn_cause : DependsOn (· ∈ cause w₀ S) S := by
   simp only [mem_cause, eq_iff_iff]
   exact forall₂_congr fun i hi ↦ by rw [h i hi]
 
+theorem dependsOn_compl_cause : DependsOn (· ∈ (cause w₀ S)ᶜ) S := fun _ _ h ↦ by
+  simp only [mem_compl_iff, dependsOn_cause h]
+
 variable [DecidableEq ι]
 
 theorem cause_inter_cause_sdiff (h : S ⊆ T) : cause w₀ S ∩ cause w₀ (T \ S) = cause w₀ T := by
@@ -79,21 +88,33 @@ variable [Fintype ι] {μ : Measure (ι → Bool)} {E : Set (ι → Bool)}
 fails when the urns of `S` are redrawn from `μ`, short of all showing their actual draws, and every
 other urn keeps its actual draw. -/
 noncomputable def necessity (μ : Measure (ι → Bool)) (w₀ : ι → Bool) (E : Set (ι → Bool))
-    (S : Finset ι) : ℝ≥0∞ :=
-  μ[{w | S.piecewise w w₀ ∉ E} | (cause w₀ S)ᶜ]
+    (S : Finset ι) : ℝ :=
+  μ[|(cause w₀ S)ᶜ].real {w | S.piecewise w w₀ ∉ E}
 
 /-- The sufficiency of the plural cause `S` for the outcome `E` is the probability, over the
 worlds of `μ` where neither the cause nor the outcome holds, that forcing the cause on produces the
 outcome. -/
 noncomputable def sufficiency (μ : Measure (ι → Bool)) (w₀ : ι → Bool) (E : Set (ι → Bool))
-    (S : Finset ι) : ℝ≥0∞ :=
-  μ[{w | S.piecewise w₀ w ∈ E} | (cause w₀ S)ᶜ ∩ Eᶜ]
+    (S : Finset ι) : ℝ :=
+  μ[|(cause w₀ S)ᶜ ∩ Eᶜ].real {w | S.piecewise w₀ w ∈ E}
 
 /-- The score of the plural cause `S` for the outcome `E` weights its sufficiency by its
 probability and its necessity by the probability of its absence. -/
 noncomputable def score (μ : Measure (ι → Bool)) (w₀ : ι → Bool) (E : Set (ι → Bool))
-    (S : Finset ι) : ℝ≥0∞ :=
-  μ (cause w₀ S) * sufficiency μ w₀ E S + μ (cause w₀ S)ᶜ * necessity μ w₀ E S
+    (S : Finset ι) : ℝ :=
+  μ.real (cause w₀ S) * sufficiency μ w₀ E S + μ.real (cause w₀ S)ᶜ * necessity μ w₀ E S
+
+omit [Fintype ι] in
+theorem necessity_nonneg : 0 ≤ necessity μ w₀ E S := measureReal_nonneg
+
+omit [Fintype ι] in
+theorem sufficiency_nonneg : 0 ≤ sufficiency μ w₀ E S := measureReal_nonneg
+
+omit [Fintype ι] in
+theorem necessity_le_one : necessity μ w₀ E S ≤ 1 := measureReal_le_one
+
+omit [Fintype ι] in
+theorem sufficiency_le_one : sufficiency μ w₀ E S ≤ 1 := measureReal_le_one
 
 omit [Fintype ι] in
 theorem necessity_eq_zero (h : ∀ w, S.piecewise w w₀ ∈ E) : necessity μ w₀ E S = 0 := by
@@ -103,7 +124,8 @@ theorem necessity_eq_one [IsFiniteMeasure μ] (h : ∀ w ∉ cause w₀ S, S.pie
     (hc : μ (cause w₀ S)ᶜ ≠ 0) : necessity μ w₀ E S = 1 := by
   have : (cause w₀ S)ᶜ ∩ {w | S.piecewise w w₀ ∉ E} = (cause w₀ S)ᶜ :=
     inter_eq_left.2 fun w hw ↦ h w hw
-  rw [necessity, cond_apply .of_discrete, this, ENNReal.inv_mul_cancel hc (measure_ne_top _ _)]
+  rw [necessity, measureReal_def, cond_apply .of_discrete, this,
+    ENNReal.inv_mul_cancel hc (measure_ne_top _ _), ENNReal.toReal_one]
 
 omit [Fintype ι] in
 theorem sufficiency_eq_one [IsFiniteMeasure μ] (h : ∀ w, S.piecewise w₀ w ∈ E)
@@ -112,23 +134,31 @@ theorem sufficiency_eq_one [IsFiniteMeasure μ] (h : ∀ w, S.piecewise w₀ w �
   simp [sufficiency, h]
 
 theorem mul_necessity [IsFiniteMeasure μ] :
-    μ (cause w₀ S)ᶜ * necessity μ w₀ E S = μ ((cause w₀ S)ᶜ ∩ {w | S.piecewise w w₀ ∉ E}) := by
-  rw [necessity, mul_comm, cond_mul_eq_inter .of_discrete _ μ]
+    μ.real (cause w₀ S)ᶜ * necessity μ w₀ E S =
+      μ.real ((cause w₀ S)ᶜ ∩ {w | S.piecewise w w₀ ∉ E}) := by
+  rw [necessity, measureReal_def, measureReal_def, ← ENNReal.toReal_mul, mul_comm,
+    cond_mul_eq_inter .of_discrete _ μ, measureReal_def]
+
+omit [Fintype ι] in
+theorem score_nonneg : 0 ≤ score μ w₀ E S :=
+  add_nonneg (mul_nonneg measureReal_nonneg sufficiency_nonneg)
+    (mul_nonneg measureReal_nonneg necessity_nonneg)
 
 theorem score_le_one [IsProbabilityMeasure μ] : score μ w₀ E S ≤ 1 := by
-  calc score μ w₀ E S ≤ μ (cause w₀ S) * 1 + μ (cause w₀ S)ᶜ * 1 :=
-        add_le_add (mul_le_mul_right prob_le_one _) (mul_le_mul_right prob_le_one _)
-    _ = 1 := by rw [mul_one, mul_one, measure_add_measure_compl .of_discrete, measure_univ]
-
-theorem score_ne_top [IsProbabilityMeasure μ] : score μ w₀ E S ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top score_le_one
+  have h := probReal_compl_eq_one_sub (μ := μ) (s := cause w₀ S) .of_discrete
+  have h₁ := mul_le_of_le_one_right (measureReal_nonneg (μ := μ) (s := cause w₀ S))
+    (sufficiency_le_one (μ := μ) (w₀ := w₀) (E := E) (S := S))
+  have h₂ := mul_le_of_le_one_right (measureReal_nonneg (μ := μ) (s := (cause w₀ S)ᶜ))
+    (necessity_le_one (μ := μ) (w₀ := w₀) (E := E) (S := S))
+  rw [score]
+  linarith
 
 theorem score_eq_one [IsProbabilityMeasure μ] (hsuf : ∀ w, S.piecewise w₀ w ∈ E)
     (hnec : ∀ w ∉ cause w₀ S, S.piecewise w w₀ ∉ E) (hc : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) :
     score μ w₀ E S = 1 := by
   have hc' : μ (cause w₀ S)ᶜ ≠ 0 := fun h ↦ hc (measure_mono_null inter_subset_left h)
   rw [score, sufficiency_eq_one hsuf hc, necessity_eq_one hnec hc', mul_one, mul_one,
-    measure_add_measure_compl .of_discrete, measure_univ]
+    probReal_compl_eq_one_sub .of_discrete, add_sub_cancel]
 
 theorem necessity_singleton [IsFiniteMeasure μ] [DecidablePred (· ∈ E)] {X : ι}
     (hc : μ (cause w₀ {X})ᶜ ≠ 0) :
@@ -141,22 +171,9 @@ theorem necessity_singleton [IsFiniteMeasure μ] [DecidablePred (· ∈ E)] {X :
   split_ifs with h
   · have : (cause w₀ {X})ᶜ ∩ {w | ({X} : Finset ι).piecewise w w₀ ∉ E} = ∅ :=
       eq_empty_iff_forall_notMem.2 fun w ⟨hw, hn⟩ ↦ hn (by rw [key w hw]; exact h)
-    rw [necessity, cond_apply .of_discrete, this, measure_empty, mul_zero]
+    rw [necessity, measureReal_def, cond_apply .of_discrete, this, measure_empty, mul_zero,
+      ENNReal.toReal_zero]
   · exact necessity_eq_one (fun w hw ↦ by rw [key w hw]; exact h) hc
-
-omit [Fintype ι] in
-theorem sufficiency_le_one : sufficiency μ w₀ E S ≤ 1 := prob_le_one
-
-omit [Fintype ι] in
-theorem necessity_le_one : necessity μ w₀ E S ≤ 1 := prob_le_one
-
-omit [Fintype ι] in
-theorem sufficiency_ne_top : sufficiency μ w₀ E S ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top sufficiency_le_one
-
-omit [Fintype ι] in
-theorem necessity_ne_top : necessity μ w₀ E S ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top necessity_le_one
 
 end Defs
 
@@ -174,21 +191,6 @@ theorem measureReal_pi_cause : (Measure.pi ν).real (cause v S) = ∏ i ∈ S, (
 theorem measure_pi_compl_cause_singleton (X : ι) :
     Measure.pi ν (cause v {X})ᶜ = ν X {!v X} := by
   rw [compl_cause_singleton, measure_pi_cause, Finset.prod_singleton]
-
-/-- Under a product measure, events on disjoint sets of variables are independent. -/
-theorem indepSet_pi_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn (· ∈ A) S)
-    (hB : DependsOn (· ∈ B) T) (h : Disjoint S T) : IndepSet A B (Measure.pi ν) := by
-  have hind := (iIndepFun_pi (μ := ν) (X := fun _ ↦ id) fun _ ↦ aemeasurable_id).indepFun_finset
-    S T h fun _ ↦ measurable_pi_apply _
-  have key : ∀ {C : Set (ι → Bool)} {U : Finset ι}, DependsOn (· ∈ C) U →
-      C = (fun w (i : U) ↦ w i) ⁻¹' ((fun w (i : U) ↦ w i) '' C) := by
-    intro C U hC
-    ext w
-    refine ⟨fun hw ↦ ⟨w, hw, rfl⟩, fun ⟨w', hw', heq⟩ ↦ ?_⟩
-    have : (w' ∈ C) = (w ∈ C) := hC fun i hi ↦ congrFun heq ⟨i, hi⟩
-    exact this ▸ hw'
-  rw [key hA, key hB, indepSet_iff_measure_inter_eq_mul .of_discrete .of_discrete _]
-  exact hind.measure_inter_preimage_eq_mul _ _ .of_discrete .of_discrete
 
 variable [DecidableEq ι]
 
@@ -220,8 +222,9 @@ theorem update_mem_cause_iff {X : ι} (hX : X ∉ S) (w : ι → Bool) (b : Bool
 
 theorem sufficiency_singleton {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
     sufficiency (Measure.pi ν) w₀ E {X} =
-      Measure.pi ν ((Function.update · X (w₀ X)) ⁻¹' E \ (Function.update · X (!w₀ X)) ⁻¹' E) /
-        Measure.pi ν ((Function.update · X (!w₀ X)) ⁻¹' E)ᶜ := by
+      (Measure.pi ν).real
+          ((Function.update · X (w₀ X)) ⁻¹' E \ (Function.update · X (!w₀ X)) ⁻¹' E) /
+        (Measure.pi ν).real ((Function.update · X (!w₀ X)) ⁻¹' E)ᶜ := by
   have h₁ : cause (fun _ ↦ !w₀ X) {X} ∩ Eᶜ =
       cause (fun _ ↦ !w₀ X) {X} ∩ ((Function.update · X (!w₀ X)) ⁻¹' E)ᶜ := by
     ext w
@@ -238,23 +241,25 @@ theorem sufficiency_singleton {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
         ((Function.update · X (w₀ X)) ⁻¹' E \ (Function.update · X (!w₀ X)) ⁻¹' E) := by
     rw [inter_assoc, inter_comm _ (_ ⁻¹' E), ← sdiff_eq]
     exact measure_pi_cause_singleton_inter fun w b ↦ by simp
-  rw [sufficiency, compl_cause_singleton, h₁, cond_apply .of_discrete, h₂, hnum, hden,
-    ← ENNReal.div_eq_inv_mul, ENNReal.mul_div_mul_left _ _ hX (measure_ne_top _ _)]
+  rw [sufficiency, measureReal_def, compl_cause_singleton, h₁, cond_apply .of_discrete, h₂, hnum,
+    hden, ← ENNReal.div_eq_inv_mul, ENNReal.mul_div_mul_left _ _ hX (measure_ne_top _ _),
+    ENNReal.toReal_div, measureReal_def, measureReal_def]
 
 /-- The score of a single cause is its probability times its sufficiency, plus the probability of
 its absence when flipping it in the actual round removes the outcome. -/
 theorem score_singleton [DecidablePred (· ∈ E)] {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
-    score (Measure.pi ν) w₀ E {X} = ν X {w₀ X} * sufficiency (Measure.pi ν) w₀ E {X} +
-      if Function.update w₀ X (!w₀ X) ∈ E then 0 else ν X {!w₀ X} := by
+    score (Measure.pi ν) w₀ E {X} = (ν X).real {w₀ X} * sufficiency (Measure.pi ν) w₀ E {X} +
+      if Function.update w₀ X (!w₀ X) ∈ E then 0 else (ν X).real {!w₀ X} := by
   rw [score, necessity_singleton (measure_pi_compl_cause_singleton (ν := ν) X ▸ hX),
-    measure_pi_cause, Finset.prod_singleton, measure_pi_compl_cause_singleton]
+    measureReal_pi_cause, Finset.prod_singleton, measureReal_def (s := (cause w₀ {X})ᶜ),
+    measure_pi_compl_cause_singleton, ← measureReal_def]
   split_ifs <;> simp
 
 /-- When the outcome is that the urns `T` all show their actual draws, the score of a part `S` of
 `T` is the probability that `S` is absent plus the probability of the outcome. -/
 theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) :
     score (Measure.pi ν) w₀ (cause w₀ T) S =
-      Measure.pi ν (cause w₀ S)ᶜ + Measure.pi ν (cause w₀ T) := by
+      (Measure.pi ν).real (cause w₀ S)ᶜ + (Measure.pi ν).real (cause w₀ T) := by
   have hnec : (cause w₀ S)ᶜ ∩ {w | S.piecewise w w₀ ∉ cause w₀ T} = (cause w₀ S)ᶜ :=
     inter_eq_left.2 fun w hw ↦ by
       rw [mem_ofPred_eq, piecewise_mem_cause, Finset.inter_eq_left.2 hST]; exact hw
@@ -262,24 +267,19 @@ theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠
     ext w; exact piecewise_self_mem_cause
   have hcond : (cause w₀ S)ᶜ ∩ (cause w₀ T)ᶜ = (cause w₀ S)ᶜ :=
     inter_eq_left.2 (compl_subset_compl.2 (cause_subset_cause hST))
-  have hT : cause w₀ T = cause w₀ S ∩ cause w₀ (T \ S) := by
-    rw [cause_inter_cause_sdiff hST]
-  have hdep : DependsOn (· ∈ (cause w₀ S)ᶜ) S := fun _ _ h ↦ by
-    simp only [mem_compl_iff, dependsOn_cause h]
-  rw [score, mul_necessity, hnec, sufficiency, hcond, hsuf, (indepSet_pi_of_dependsOn hdep
-    dependsOn_cause Finset.disjoint_sdiff).cond_apply .of_discrete hc, hT, (indepSet_pi_of_dependsOn dependsOn_cause dependsOn_cause
-      Finset.disjoint_sdiff).measure_inter_eq_mul, add_comm]
+  rw [score, mul_necessity, hnec, sufficiency, hcond, hsuf,
+    (indepSet_pi_of_dependsOn dependsOn_compl_cause dependsOn_cause
+      Finset.disjoint_sdiff).cond_real_apply .of_discrete hc,
+    ← (indepSet_pi_of_dependsOn dependsOn_cause dependsOn_cause
+      Finset.disjoint_sdiff).measureReal_inter_eq_mul, cause_inter_cause_sdiff hST, add_comm]
 
 theorem score_pi_cause_lt_iff {S' : Finset ι} (hS : S ⊆ T) (hS' : S' ⊆ T)
     (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) (hc' : Measure.pi ν (cause w₀ S')ᶜ ≠ 0) :
     score (Measure.pi ν) w₀ (cause w₀ T) S < score (Measure.pi ν) w₀ (cause w₀ T) S' ↔
-      Measure.pi ν (cause w₀ S') < Measure.pi ν (cause w₀ S) := by
-  rw [score_pi_cause hS hc, score_pi_cause hS' hc',
-    ENNReal.add_lt_add_iff_right (measure_ne_top _ _), prob_compl_eq_one_sub .of_discrete,
-    prob_compl_eq_one_sub .of_discrete]
-  exact (ENNReal.cancel_of_ne ENNReal.one_ne_top).tsub_lt_tsub_iff_left_of_le
-    (ENNReal.cancel_of_ne (measure_ne_top _ _)) prob_le_one
-
+      (Measure.pi ν).real (cause w₀ S') < (Measure.pi ν).real (cause w₀ S) := by
+  rw [score_pi_cause hS hc, score_pi_cause hS' hc', probReal_compl_eq_one_sub .of_discrete,
+    probReal_compl_eq_one_sub .of_discrete]
+  constructor <;> intro h <;> linarith
 
 end Product
 
