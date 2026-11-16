@@ -253,8 +253,8 @@ theorem exists_donkey_eq_true_iff [Nonempty E] :
   obtain ⟨F, hF⟩ := Classical.skolem.1 fun s ↦
     show ∃ g : ChoiceFunction E, (∃ x ∈ G s, VP s x) → VP s (g (G s)) from
       (em (∃ x ∈ G s, VP s x)).elim
-        (fun hs ↦ ((ChoiceFunction.exists_apply_iff_of_nonempty (hs.imp fun _ h ↦ h.1) (VP s)).2 hs).imp
-          fun _ h _ ↦ h)
+        (fun hs ↦ ((ChoiceFunction.exists_apply_iff_of_nonempty (hs.imp fun _ h ↦ h.1)
+          (VP s)).2 hs).imp fun _ h _ ↦ h)
         fun hs ↦ ⟨.epsilon, fun h ↦ (hs h).elim⟩
   exact ⟨F, fun y hy hG ↦ hF (b y) (h y hy hG)⟩
 
