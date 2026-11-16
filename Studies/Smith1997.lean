@@ -7,7 +7,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 # Smith (1997): The Parameter of Aspect
 
 This file formalizes Smith's two-component theory, in which a sentence's aspectual meaning
-combines a aspectual class (`AspectualClass`) and an independently chosen viewpoint
+combines a situation type (`AspectualClass`) and an independently chosen viewpoint
 (`ViewpointType`).
 
 ## Implementation notes
