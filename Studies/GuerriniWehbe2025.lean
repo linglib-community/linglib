@@ -26,7 +26,7 @@ felicitous only if its assertion is informative once its presupposition is accom
 (`Presupposition.PostAccommodationInformative`, the paper's (8)). *She read the books* is
 infelicitous where Mary is known to have read some of them, *the candidates lost* where at most one
 candidate can win, and their negations where the universal is known to fail, while the quantified
-counterparts are fine (`judgments_10`, `judgments_13`).
+counterparts are fine (`postAccommodationInformative_pexPlural_iff`, `election`).
 
 ## Implementation notes
 
@@ -203,18 +203,22 @@ variable {W : Type*}
 variable {Atom : Type*} [DecidableEq Atom] {D x : Finset Atom} {P : Atom → W → Prop}
   {R : Set (Set W)}
 
--- (10a), (13d)
-theorem not_informative_pexPlural :
-    ¬ PostAccommodationInformative (⋃ b ∈ x ∩ D, atom P b) (pexPlural D x P R) := fun h ↦
-  let ⟨_, hw, h⟩ := postAccommodationInformative_iff.1 h
-  (pexIEII_eq_false_iff.1 h).2 hw
+/-- A plural predication under `pex` is informative after accommodation exactly when the context
+leaves open that no atom satisfies the predicate, however the alternatives are pruned: *she read
+the books* is uninformative where Mary is known to have read some of them, (10a), and *the
+candidates lost* where at most one can win, (13d). -/
+theorem postAccommodationInformative_pexPlural_iff {C : Set W} :
+    PostAccommodationInformative C (pexPlural D x P R) ↔ ∃ w ∈ C, ∀ a ∈ x, a ∈ D → ¬ P a w := by
+  simp only [postAccommodationInformative_iff, pexPlural_eq_false_iff]
 
--- (10b), (12b), (13c), (23)
-theorem not_informative_compl (h : Separating (x ∩ D) (atom P)) (hcard : 1 < (x ∩ D).card)
-    (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
-    ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} ((pexPlural D x P R)ᶜ) := fun hi ↦
-  let ⟨_, hw, hf⟩ := postAccommodationInformative_iff.1 hi
-  hw ((pexPlural_eq_true_iff h hcard hR).1 (Trivalent.compl_eq_false_iff.1 hf))
+/-- A negated plural predication under `pex` is informative after accommodation exactly when the
+context leaves open that every atom satisfies the predicate: *she didn't read the books* is
+uninformative where Mary is known not to have read all of them, (10b), (12b), (13c), (23). -/
+theorem postAccommodationInformative_compl_pexPlural_iff (h : Separating (x ∩ D) (atom P))
+    (hcard : 1 < (x ∩ D).card) (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) {C : Set W} :
+    PostAccommodationInformative C (pexPlural D x P R)ᶜ ↔ ∃ w ∈ C, ∀ a ∈ x, a ∈ D → P a w := by
+  simp only [postAccommodationInformative_iff, Pi.compl_apply, Trivalent.compl_eq_false_iff,
+    pexPlural_eq_true_iff h hcard hR]
 
 end Informativity
 
@@ -270,94 +274,37 @@ theorem localAccommodation_nonMaximal :
 
 end Students
 
-/-! ### The judgments of §3
+/-! ### One winner at most (§3)
 
-Each sentence is judged against the common ground its context sets up. Worlds record which books
-Mary read, which teammates John is married to, which candidates won, or which students smiled. -/
+Worlds record which of two candidates won, and the rules of the election allow at most one
+winner. -/
 
-section Judgments
+section Election
 
 open Finset
 
--- (9)
-theorem judgments_9 :
-    (Examples.ex_9a.judgment = .acceptable ↔
-      PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
-        (Trivalent.condEvent (fun w ↦ w.1 = 10) (fun w ↦ w.2 = true))) ∧
-    (Examples.ex_9b.judgment = .acceptable ↔
-      PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
-        fun w ↦ Trivalent.ofProp (w.1 = 10 ∧ w.2 = true)) :=
-  ⟨iff_of_false (by decide) fun h ↦ by
-      obtain ⟨_, hw, h⟩ := postAccommodationInformative_iff.1 h
-      simp_all,
-    iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨(3, true), rfl, by decide⟩)⟩
-
-private theorem subset_not_forall {n : ℕ} :
-    {w : Finset (Fin n) | w ≠ univ} ⊆ {w | ¬ ∀ a ∈ univ, a ∈ univ → holds a w} :=
-  fun _ hw hall ↦ hw (eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a))
-
-/-- In (10), *she read the books* is uninformative given that Mary read some of them, and *she
-didn't read the books* given that she did not read all. -/
-theorem judgments_10 :
-    (Examples.ex_10a.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w.Nonempty}
-        (pexPlural univ univ holds (supClosure (Set.range (atom holds))))) ∧
-    (Examples.ex_10b.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
-  ⟨iff_of_false (by decide) fun h ↦ not_informative_pexPlural
-      (h.mono fun _ ⟨a, ha⟩ ↦ Set.mem_biUnion (by simp) ha),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
-      (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
-
--- (12)
-theorem judgments_12 :
-    (Examples.ex_12a.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        fun w ↦ Trivalent.ofProp (w = ∅)) ∧
-    (Examples.ex_12b.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
-  ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
-      (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
-
-/-- In (13), with at most one winner, *none of the candidates won* and *all of the candidates lost*
-are informative, and their plural-definite counterparts are not. -/
-theorem judgments_13 :
-    (Examples.ex_13a.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        fun w ↦ Trivalent.ofProp (w = ∅)) ∧
-    (Examples.ex_13b.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        fun w ↦ Trivalent.ofProp (∀ a, a ∉ w)) ∧
-    (Examples.ex_13c.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) ∧
-    (Examples.ex_13d.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
+/-- In (13), with at most one winner, *none of the candidates won* is informative, and the plural
+definites *the candidates didn't win* and *the candidates lost* are not: accommodating homogeneity
+leaves only the worlds where no candidate won. -/
+theorem election :
+    PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
+        (fun w ↦ Trivalent.ofProp (w = ∅)) ∧
+      ¬ PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
+        (pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ ∧
+      ¬ PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
         (pexPlural univ univ (fun (a : Fin 2) (w : Finset (Fin 2)) ↦ a ∉ w)
-          (supClosure (Set.range (atom fun a w ↦ a ∉ w))))) :=
-  ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
-      (fun a _ ↦ subset_supClosure (Set.mem_range_self a))
-      (h.mono fun w hw hall ↦ by
-        rw [eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a)] at hw
-        exact absurd hw (by decide)),
-    iff_of_false (by decide) fun h ↦ not_informative_pexPlural (h.mono fun w hw ↦ by
-      obtain ⟨a, -, ha⟩ := exists_mem_notMem_of_card_lt_card (s := w) (t := univ)
-        ((Set.mem_ofPred_eq.mp hw).trans_lt (by decide))
-      exact Set.mem_biUnion (by simp) ha)⟩
+          (supClosure (Set.range (atom fun a w ↦ a ∉ w)))) := by
+  refine ⟨postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩, ?_, ?_⟩
+  · rw [postAccommodationInformative_compl_pexPlural_iff (separating_holds _) (by decide)
+      fun a _ ↦ subset_supClosure (Set.mem_range_self a)]
+    rintro ⟨w, hw, hall⟩
+    rw [eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a)] at hw
+    exact absurd hw (by decide)
+  · rw [postAccommodationInformative_pexPlural_iff]
+    rintro ⟨w, hw, hall⟩
+    rw [eq_univ_of_forall fun a ↦ not_not.1 (hall a (mem_univ a) (mem_univ a))] at hw
+    exact absurd hw (by decide)
 
--- (23)
-theorem judgments_23 :
-    Examples.ex_23.judgment = .acceptable ↔
-      PostAccommodationInformative {w : Finset (Fin 3) | w ≠ univ}
-        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ) :=
-  iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
-    (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)
-
-end Judgments
+end Election
 
 end GuerriniWehbe2025
