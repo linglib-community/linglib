@@ -241,7 +241,7 @@ scoped instance : AntidomainMonoid (Update S) where
       map_eq_mul := fun D₁ D₂ ↦ by
         simp only [mul_def, test_comp_test, dom_comp, dom_test]
         rw [← Set.compl_union, ← preimage_union, Set.union_compl_self, preimage_univ_right]
-      modusPonens := fun D₁ D₂ ↦ by
+      map_mul_mul_self := fun D₁ D₂ ↦ by
         ext ⟨i, j⟩
         simp only [mul_def]
         rw [mem_comp_test]

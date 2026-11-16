@@ -6,8 +6,8 @@ public import Mathlib.Order.BooleanAlgebra.Basic
 /-!
 # The Boolean algebra of tests of an antidomain monoid
 
-The tests of an antidomain monoid are the fixed points of the double antidomain, which are the
-antidomain elements. Under the product as meet, dynamic disjunction as join and the antidomain as
+The tests of an antidomain monoid are its antidomain elements, the fixed points of the double
+antidomain. Under the product as meet, dynamic disjunction as join and the antidomain as
 complement they form [a Boolean algebra](##AntidomainMonoid.Test), as
 [desharnais-jipsen-struth-2009] show. Dynamic disjunction therefore
 [distributes over a product of tests](##AntidomainMonoid.dor_antidomain_antidomain_mul).
@@ -123,7 +123,7 @@ theorem le_iff_mul_eq : p ≤ q ↔ (p : M) * q = p :=
 
 end Test
 
-/-- The test of the domain of an element. -/
+/-- The double antidomain, as a map onto the tests. -/
 def toTest (x : M) : Test M := ⟨∼∼x, antidomain_antidomain_antidomain _⟩
 
 @[simp, norm_cast] theorem coe_toTest : (toTest x : M) = ∼∼x := rfl

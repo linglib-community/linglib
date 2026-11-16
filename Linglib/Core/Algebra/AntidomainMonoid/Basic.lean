@@ -5,9 +5,11 @@ public import Mathlib.Algebra.GroupWithZero.Defs
 /-!
 # Antidomain monoids
 
-`[UPSTREAM]` An antidomain monoid is a monoid with zero and an operation `∼` sending an element
-to the test of where it cannot be executed. The binary relations on a type are the motivating
-example, with `∼R` the identity on the points outside the domain of `R`. The axioms are the
+An antidomain monoid is a monoid with zero and a unary operation `∼`, the antidomain. The
+binary relations on a type under composition are the motivating example, with `∼R` the identity
+relation on the complement of the domain of `R`. In general `∼x` annihilates `x` on the left,
+and is [the largest antidomain element that does](##IsAntidomain.eq_mul_map_of_mul_eq_zero).
+The axioms are the
 five equations of [desharnais-jipsen-struth-2009], whose name this is; they
 [are equivalent](##IsAntidomain.of_distrib) to those of [hollenberg-1997], which prove every
 equation true of relations, and they [determine the operation](##IsAntidomain.unique) from the
@@ -40,21 +42,20 @@ monoids that are not algebras of relations; the instance is not stated.
 
 variable {M : Type*}
 
-/-- An operation on a monoid with zero is an antidomain operation, or a dynamic negation, when it
-satisfies the equations of [desharnais-jipsen-struth-2009]. -/
+/-- An operation on a monoid with zero is an antidomain operation when it satisfies the
+equations of [desharnais-jipsen-struth-2009]. -/
 @[mk_iff] structure IsAntidomain [MonoidWithZero M] (a : M → M) : Prop where
-  /-- An element cannot be executed where its antidomain holds. -/
+  /-- The antidomain of `x` annihilates `x` on the left. -/
   mul_self (x : M) : a x * x = 0
   /-- Antidomain elements commute. -/
   comm (x y : M) : a x * a y = a y * a x
-  /-- Testing its domain before an element changes nothing. -/
+  /-- The double antidomain of `x` is a left identity for `x`. -/
   map_map_mul_self (x : M) : a (a x) * x = x
-  /-- The antidomain of `x` is the meet of where `x` cannot be followed by `y` and where it
-  cannot be followed by the antidomain of `y`. -/
+  /-- The antidomain of `x` is the product of the antidomains of `x * y` and `x * a y`. -/
   map_eq_mul (x y : M) : a x = a (x * y) * a (x * a y)
-  /-- Modus ponens: after `x`, from where `x` cannot be followed by `y`, `y` cannot be
-  executed. -/
-  modusPonens (x y : M) : a (x * y) * x = a (x * y) * x * a y
+  /-- The antidomain of `x * y`, followed by `x`, is absorbed on the right by the antidomain
+  of `y`. -/
+  map_mul_mul_self (x y : M) : a (x * y) * x = a (x * y) * x * a y
 
 namespace IsAntidomain
 
@@ -62,15 +63,15 @@ variable [MonoidWithZero M] {a b : M → M}
 
 theorem map_one (h : IsAntidomain a) : a 1 = 0 := by simpa using h.mul_self 1
 
-/-- Identity definition. -/
+/-- The antidomain of zero is one. -/
 theorem map_zero (h : IsAntidomain a) : a 0 = 1 := by simpa [h.map_one] using h.map_map_mul_self 1
 
-/-- Triple negation law. -/
+/-- The antidomain is its own third iterate. -/
 theorem map_map_map (h : IsAntidomain a) (x : M) : a (a (a x)) = a x := by
   have := h.map_eq_mul (a (a x)) x
   rwa [h.map_map_mul_self, h.mul_self, h.map_zero, mul_one] at this
 
-/-- Test idempotency. -/
+/-- Antidomain elements are idempotent. -/
 theorem mul_self_eq (h : IsAntidomain a) (x : M) : a x * a x = a x := by
   simpa [h.map_map_map] using h.map_map_mul_self (a x)
 
@@ -83,10 +84,10 @@ private theorem map_map_mul_eq_mul_left (h : IsAntidomain a) (p q : M) :
       _ = a (a p * a q) * a (a (a p * a q)) * a (a p * a (a q)) := by
           rw [mul_assoc, h.comm (a p * a (a q)), ← mul_assoc]
       _ = 0 := by rw [h.comm, h.mul_self, zero_mul]
-  have := h.modusPonens (a (a (a p * a q))) (a (a p))
+  have := h.map_mul_mul_self (a (a (a p * a q))) (a (a p))
   rwa [h.comm (a (a p * a q)) (a p), h0, h.map_zero, one_mul, h.map_map_map] at this
 
-/-- Test composition. -/
+/-- A product of antidomain elements is fixed by the double antidomain. -/
 theorem map_map_mul (h : IsAntidomain a) (x y : M) : a (a (a x * a y)) = a x * a y := by
   have hy := h.map_map_mul_eq_mul_left y x
   rw [h.comm y x] at hy
@@ -101,21 +102,22 @@ theorem eq_mul_map_of_mul_eq_zero (h : IsAntidomain a) {t x : M} (hx : a t * x =
   rw [hx, h.map_zero, one_mul] at this
   rw [← h.map_map_mul, ← this, h.map_map_map]
 
-/-- Range test. -/
+/-- The antidomain of a product sees its second factor only through its double antidomain. -/
 theorem map_mul_map_map (h : IsAntidomain a) (x y : M) : a (x * a (a y)) = a (x * y) := by
   have hv : x * a (a y) * y = x * y := by rw [mul_assoc, h.map_map_mul_self]
   have h₁ : a (x * a (a y)) * (x * y) = 0 := by rw [← hv, ← mul_assoc, h.mul_self, zero_mul]
   have h₂ : a (x * y) * (x * a (a y)) = 0 := by
-    have := h.modusPonens (x * a (a y)) y
+    have := h.map_mul_mul_self (x * a (a y)) y
     rw [hv] at this
     rw [this, mul_assoc, mul_assoc, h.mul_self, mul_zero, mul_zero]
   rw [h.eq_mul_map_of_mul_eq_zero h₁, h.comm, ← h.eq_mul_map_of_mul_eq_zero h₂]
 
-/-- Where `x` cannot be followed by `y` or by `z`, it can be followed by neither. -/
+/-- The antidomain of `x * a (a y * a z)` is the product of the antidomains of `x * y` and
+`x * z`. -/
 theorem map_mul_map_mul (h : IsAntidomain a) (x y z : M) :
     a (x * a (a y * a z)) = a (x * y) * a (x * z) := by
   have hA : a (x * a (a y * a z)) * x = a (x * a (a y * a z)) * x * (a y * a z) := by
-    have := h.modusPonens x (a (a y * a z))
+    have := h.map_mul_mul_self x (a (a y * a z))
     rwa [h.map_map_mul] at this
   have hAB : a (x * a (a y * a z)) = a (x * a (a y * a z)) * a (x * y) :=
     h.eq_mul_map_of_mul_eq_zero
@@ -125,12 +127,12 @@ theorem map_mul_map_mul (h : IsAntidomain a) (x y z : M) :
       (by rw [← mul_assoc, hA]; simp only [mul_assoc, h.mul_self, mul_zero])
   have hwq : a (x * y) * a (x * z) * x = a (x * y) * a (x * z) * x * a z :=
     calc a (x * y) * a (x * z) * x = a (x * y) * (a (x * z) * x) := mul_assoc ..
-      _ = a (x * y) * (a (x * z) * x * a z) := congrArg (a (x * y) * ·) (h.modusPonens x z)
+      _ = a (x * y) * (a (x * z) * x * a z) := congrArg (a (x * y) * ·) (h.map_mul_mul_self x z)
       _ = a (x * y) * a (x * z) * x * a z := by simp only [mul_assoc]
   have hwp : a (x * y) * a (x * z) * x = a (x * y) * a (x * z) * x * a y :=
     calc a (x * y) * a (x * z) * x = a (x * z) * (a (x * y) * x) := by
           rw [h.comm (x * y) (x * z), mul_assoc]
-      _ = a (x * z) * (a (x * y) * x * a y) := congrArg (a (x * z) * ·) (h.modusPonens x y)
+      _ = a (x * z) * (a (x * y) * x * a y) := congrArg (a (x * z) * ·) (h.map_mul_mul_self x y)
       _ = a (x * y) * a (x * z) * x * a y := by
           rw [h.comm (x * y) (x * z)]; simp only [mul_assoc]
   have hw : a (x * y) * a (x * z) * x * a (a y * a z) = 0 :=
@@ -149,7 +151,7 @@ theorem map_mul_map_mul (h : IsAntidomain a) (x y z : M) :
         rw [mul_assoc, ← h.map_map_mul (x * y) (x * z), h.comm]
     _ = a (x * y) * a (x * z) := hBC.symm
 
-/-- Distribution, in the form of [hollenberg-1997]. -/
+/-- The distribution axiom of [hollenberg-1997]. -/
 theorem distrib (h : IsAntidomain a) (x y z : M) :
     a (x * a (a y * a z)) = a (a (a (x * y) * a (x * z))) := by
   rw [h.map_mul_map_mul, h.map_map_mul]
@@ -158,20 +160,20 @@ theorem distrib (h : IsAntidomain a) (x y z : M) :
 theorem of_distrib (map_zero : a 0 = 1) (mul_self : ∀ x, a x * x = 0)
     (comm : ∀ x y, a x * a y = a y * a x) (map_map_mul_self : ∀ x, a (a x) * x = x)
     (map_map_mul : ∀ x y, a (a (a x * a y)) = a x * a y)
-    (modusPonens : ∀ x y, a (x * y) * x = a (x * y) * x * a y)
+    (map_mul_mul_self : ∀ x y, a (x * y) * x = a (x * y) * x * a y)
     (distrib : ∀ x y z, a (x * a (a y * a z)) = a (a (a (x * y) * a (x * z)))) :
     IsAntidomain a where
   mul_self := mul_self
   comm := comm
   map_map_mul_self := map_map_mul_self
-  modusPonens := modusPonens
+  map_mul_mul_self := map_mul_mul_self
   map_eq_mul x y := by
     have := distrib x y (a y)
     rwa [comm, mul_self, map_zero, mul_one, map_map_mul] at this
 
 theorem map_mul_eq_left (ha : IsAntidomain a) (hb : IsAntidomain b) (x : M) :
     a x * b x = a x := by
-  have h := hb.modusPonens (a x) x
+  have h := hb.map_mul_mul_self (a x) x
   rw [ha.mul_self, hb.map_zero, one_mul] at h
   exact h.symm
 
@@ -207,7 +209,7 @@ end IsAntidomain
 
 /-- An antidomain monoid is a monoid with zero and an antidomain operation `∼`. -/
 class AntidomainMonoid (M : Type*) extends MonoidWithZero M where
-  /-- The antidomain of `x` is the test of where `x` cannot be executed. -/
+  /-- The antidomain operation. -/
   antidomain : M → M
   /-- The antidomain satisfies the axioms. -/
   isAntidomain : IsAntidomain antidomain
@@ -218,10 +220,12 @@ namespace AntidomainMonoid
 
 variable [AntidomainMonoid M] (x y z : M)
 
-/-- Dynamic implication holds where every execution of `x` can be followed by one of `y`. -/
+/-- Dynamic implication is the antidomain of `x * ∼y`. On relations it is the identity on the
+points all of whose images under `x` lie in the domain of `y`. -/
 def dimp : M := ∼(x * ∼y)
 
-/-- Dynamic disjunction holds where `x` or `y` can be executed. -/
+/-- Dynamic disjunction is the antidomain of `∼x * ∼y`. On relations it is the identity on the
+union of the domains of `x` and `y`. -/
 def dor : M := ∼(∼x * ∼y)
 
 theorem dimp_def : dimp x y = ∼(x * ∼y) := rfl
@@ -247,7 +251,8 @@ theorem antidomain_mul_antidomain_comm : ∼x * ∼y = ∼y * ∼x := isAntidoma
 @[simp] theorem antidomain_mul_antidomain_antidomain : ∼(x * ∼∼y) = ∼(x * y) :=
   isAntidomain.map_mul_map_map x y
 
-theorem antidomain_mul_mul_self : ∼(x * y) * x = ∼(x * y) * x * ∼y := isAntidomain.modusPonens x y
+theorem antidomain_mul_mul_self : ∼(x * y) * x = ∼(x * y) * x * ∼y :=
+  isAntidomain.map_mul_mul_self x y
 
 theorem antidomain_mul_dor : ∼(x * dor y z) = ∼(dor (x * y) (x * z)) :=
   isAntidomain.distrib x y z
@@ -268,7 +273,7 @@ theorem antidomain_mul : ∼(x * y) = dimp x ∼y := (antidomain_mul_antidomain_
 
 theorem dimp_antidomain_antidomain : dimp x ∼∼y = dimp x y := by simp [dimp]
 
-/-- Dynamic implication curries over composition. -/
+/-- Dynamic implication curries over the product. -/
 theorem dimp_dimp : dimp x (dimp y z) = dimp (x * y) z := by simp [dimp, mul_assoc]
 
 theorem dimp_antidomain_comm : dimp ∼x y = dimp ∼y x := by
