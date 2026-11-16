@@ -85,6 +85,12 @@ theorem kLE_iff {a b : Trivalent} : a ≤ₖ b ↔ a = .undefined ∨ a = b := b
 
 @[simp] theorem undefined_kLE (a : Trivalent) : .undefined ≤ₖ a := KLE.undefined a
 
+/-- A value has at most the information of another when the other is true if it is and false if
+it is. -/
+theorem kLE_iff_eq_true_imp_eq_false_imp {a b : Trivalent} :
+    a ≤ₖ b ↔ (a = .true → b = .true) ∧ (a = .false → b = .false) := by
+  rw [kLE_iff]; cases a <;> cases b <;> decide
+
 /-- The truth order and the knowledge order differ: `false` is below `undefined` in the truth
 order but not in the knowledge order. -/
 theorem truthOrder_ne_knowledgeOrder :

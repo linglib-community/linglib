@@ -45,7 +45,7 @@ and local accommodation [fits best](##MartyEtAl2026.modelFits_best).
 namespace MartyEtAl2026
 
 open Quantifier Presupposition
-open Trivalent (Designation deployQuantifier ofProp posExt gapExt posExt_subset repairs_eq_Icc
+open Trivalent (Designation deployQuantifier ofProp posExt gapExt posExt_subset
   UniversalEntailment UniversalPresupposition)
 
 /-! ### The interpretive options of §2 -/
@@ -118,7 +118,7 @@ variable {Q A}
 
 theorem deployQuantifier_eq_true_iff (hQ : UniversalEntailment Set.univ (deployQuantifier Q)) :
     deployQuantifier Q A = .true ↔ universalProjection Q A = .true := by
-  have hrep : posExt A ∈ Trivalent.repairs A := repairs_eq_Icc A ▸ ⟨le_rfl, posExt_subset A⟩
+  have hrep : posExt A ∈ Trivalent.interval A := ⟨le_rfl, posExt_subset A⟩
   constructor
   · intro h
     have hdef : ∀ e, A e ≠ .undefined := fun e ↦ hQ A h e trivial
@@ -130,10 +130,10 @@ theorem deployQuantifier_eq_true_iff (hQ : UniversalEntailment Set.univ (deployQ
     split_ifs at h with hdef
     rw [Trivalent.deployQuantifier_eq_supervaluationOn, Trivalent.supervaluationOn_eq_true_iff]
     intro X hX
-    rw [repairs_eq_Icc] at hX
+    obtain ⟨hX₁, hX₂⟩ := Trivalent.mem_interval.1 hX
     have hX' : X = posExt A := by
-      refine le_antisymm (fun u hu ↦ ?_) hX.1
-      have := hX.2 hu
+      refine le_antisymm (fun u hu ↦ ?_) hX₁
+      have := hX₂ hu
       simp only [Set.mem_compl_iff, Trivalent.mem_negExt] at this
       rcases Trivalent.trichotomy (A u) with h' | h' | h'
       · exact absurd h' this

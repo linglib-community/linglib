@@ -53,19 +53,19 @@ def UniversalPresupposition (R : Set α) (T : (α → Trivalent) → Trivalent) 
 
 variable {Q : Set α → Prop} {R : Set α}
 
-/-- Over a domain `R`, a property of sets that holds of the repairs of a trivalent predicate only
-when the predicate is defined throughout `R` is one that never holds of both a set and the set with
-one more element of `R`. -/
-theorem forall_repairs_imp_iff (P : Set α → Prop) (R : Set α) :
-    (∀ A : α → Trivalent, (∀ X ∈ repairs A, P X) → ∀ a ∈ R, A a ≠ .undefined) ↔
+/-- Over a domain `R`, a property of sets that holds throughout the interval of a trivalent
+predicate only when the predicate is defined throughout `R` is one that never holds of both a set
+and the set with one more element of `R`. -/
+theorem forall_mem_interval_imp_iff (P : Set α → Prop) (R : Set α) :
+    (∀ A : α → Trivalent, (∀ X ∈ interval A, P X) → ∀ a ∈ R, A a ≠ .undefined) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
   constructor
   · rintro h B a haR haB ⟨hB, hC⟩
     refine h (ofIcc B (insert a B)) (fun X hX ↦ ?_) a haR (by simp [ofIcc, haB])
-    rw [repairs_ofIcc (Set.subset_insert a B)] at hX
+    rw [interval_ofIcc (Set.subset_insert a B)] at hX
     rcases (Set.covBy_insert haB).eq_or_eq hX.1 hX.2 with rfl | rfl <;> assumption
   · intro h A hA a haR ha0
-    rw [repairs_eq_Icc] at hA
+    simp only [mem_interval] at hA
     exact h (posExt A) a haR (by simp [ha0]) ⟨hA _ ⟨le_rfl, posExt_subset A⟩,
       hA _ ⟨Set.subset_insert _ _, Set.insert_subset (by simp [ha0]) (posExt_subset A)⟩⟩
 
@@ -76,7 +76,7 @@ the set with one more element of `R`. -/
 theorem universalEntailment_deployQuantifier_iff :
     UniversalEntailment R (deployQuantifier Q) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (Q B ∧ Q (insert a B)) := by
-  rw [← forall_repairs_imp_iff]
+  rw [← forall_mem_interval_imp_iff]
   simp [UniversalEntailment, deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_true_iff]
 
 /-- A deployed quantifier has a universal anti-entailment over `R` when it never fails of both a set
@@ -84,9 +84,9 @@ and the set with one more element of `R`. -/
 theorem universalAntiEntailment_deployQuantifier_iff :
     UniversalAntiEntailment R (deployQuantifier Q) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (¬ Q B ∧ ¬ Q (insert a B)) := by
-  rw [← forall_repairs_imp_iff (fun B ↦ ¬ Q B)]
+  rw [← forall_mem_interval_imp_iff (fun B ↦ ¬ Q B)]
   simp [UniversalAntiEntailment, deployQuantifier_eq_supervaluationOn,
-    supervaluationOn_eq_false_iff, repairs_nonempty]
+    supervaluationOn_eq_false_iff, posExt_subset]
 
 /-- A deployed quantifier has a universal anti-entailment exactly when its complement has a
 universal entailment. -/
