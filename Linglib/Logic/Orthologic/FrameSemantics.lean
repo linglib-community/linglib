@@ -62,7 +62,7 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
   | var p => rfl
   | neg φ ih =>
     rw [show Formula.eval V φ.neg = (Formula.eval V φ)ᶜ from rfl, Concept.coe_compl, ← ih]
-    exact Set.ext fun _ ↦ F.mem_upperPolar_ortho.symm
+    exact Set.ext fun _ ↦ (F.mem_upperPolar_ortho (A := {s | Support _ _ s φ})).symm
   | and φ ψ ihφ ihψ =>
     rw [show Formula.eval V (φ.and ψ) = Formula.eval V φ ⊓ Formula.eval V ψ from rfl,
       Concept.coe_inf, ← ihφ, ← ihψ]
