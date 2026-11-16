@@ -396,10 +396,10 @@ private theorem off_self : off g v v = 0 := by
   rw [Graph.blockHead_self hF, Graph.blockHead_eq_self_iff hF hy] at h'
   exact lt_irrefl _ (h' ▸ hlt)
 
-private theorem size_eq_phraseLength {c : g.siblings v} (hc : (c : Fin n) ≠ v) :
-    size g v c = g.phraseLength c := by
+private theorem size_eq_card_yield {c : g.siblings v} (hc : (c : Fin n) ≠ v) :
+    size g v c = #(g.yield c).toFinset := by
   have hadj : g.Adj v c := (Graph.mem_siblings_iff.1 c.2).resolve_left hc
-  rw [size, Graph.phraseLength]
+  rw [size]
   congr 1
   ext y
   simp only [mem_filter, mem_univ, true_and, Set.mem_toFinset]
@@ -437,20 +437,20 @@ private theorem nr_injective : Function.Injective fun c ↦ (nr c) :=
 
 /-- Between the head and `c`, the boundary distance counts the words of the blocks. -/
 private theorem boundaryDist_eq_size (c : g.siblings v) :
-    boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c =
+    boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ #(g.yield c).toFinset) v' c =
       boundaryDist (σ.trans (g.siblingArrangement v)) (size g v) v' c :=
-  boundaryDist_congr _ fun _ hd _ ↦ (size_eq_phraseLength hF fun e ↦ hd (Subtype.ext e)).symm
+  boundaryDist_congr _ fun _ hd _ ↦ (size_eq_card_yield hF fun e ↦ hd (Subtype.ext e)).symm
 
 private theorem before_eq_of_lt {c : g.siblings v} (hvc : (nr v') < (nr c)) :
     before g v σ c = before g v σ v' +
-      boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
+      boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ #(g.yield c).toFinset) v' c := by
   have h : Precedes (σ.trans (g.siblingArrangement v)) v' c := hvc
   rw [boundaryDist_eq_size σ hF, before_eq_sum, before_eq_sum, sum_precedes_of_precedes _ h,
     boundaryDist_of_precedes _ h, size_self hF, add_assoc]
 
 private theorem before_eq_of_gt {c : g.siblings v} (hcv : (nr c) < (nr v')) :
     before g v σ v' + 1 = before g v σ c + size g v c +
-      boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
+      boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ #(g.yield c).toFinset) v' c := by
   have h : Precedes (σ.trans (g.siblingArrangement v)) c v' := hcv
   rw [boundaryDist_eq_size σ hF, boundaryDist_comm, before_eq_sum, before_eq_sum,
     sum_precedes_of_precedes _ h, boundaryDist_of_precedes _ h]
@@ -525,9 +525,9 @@ private theorem Graph.dist_reorderRank_of_ne {u w : Fin n} (hu : u ≠ v)
 
 private theorem Graph.dist_reorderRank_add_boundaryDist (c : g.siblings v) :
     Nat.dist (g.reorderRank v σ v) (g.reorderRank v σ c) +
-        (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c) v' c =
+        (g.siblingArrangement v).boundaryDist (fun c ↦ #(g.yield c).toFinset) v' c =
       Nat.dist v c +
-        boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
+        boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ #(g.yield c).toFinset) v' c := by
   by_cases hcv : c = v'
   · subst hcv; simp
   have hcv' : (c : Fin n) ≠ v := fun h ↦ hcv (Subtype.ext h)
@@ -545,8 +545,8 @@ private theorem Graph.dist_reorderRank_add_boundaryDist (c : g.siblings v) :
   have hb := before_self_eq (σ := σ) hσ
   have hoff := off_lt_size hF hcv'
   have hone : boundaryDist ((1 : Equiv.Perm (g.siblings v)).trans (g.siblingArrangement v))
-      (fun c ↦ g.phraseLength c) v' c = (g.siblingArrangement v).boundaryDist
-      (fun c ↦ g.phraseLength c) v' c := rfl
+      (fun c ↦ #(g.yield c).toFinset) v' c = (g.siblingArrangement v).boundaryDist
+      (fun c ↦ #(g.yield c).toFinset) v' c := rfl
   have hne : (nr c) ≠ (nr v') := fun h ↦ hcv (nr_injective σ h)
   rcases lt_or_gt_of_ne hne with hlt | hgt
   · have e1 := before_eq_of_gt (σ := σ) hF hlt
@@ -577,9 +577,10 @@ the head's own links change. This is the observation behind the first step of
 [gildea-temperley-2007]'s proof that their linearization is optimal (p. 186). -/
 theorem Graph.totalLength_reorderDependents_add :
     (g.reorderDependents v σ).totalLength +
-        ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c) v' c =
+        ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ #(g.yield c).toFinset) v' c =
       g.totalLength +
-        ∑ c, boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
+        ∑ c, boundaryDist (σ.trans (g.siblingArrangement v))
+          (fun c ↦ #(g.yield c).toFinset) v' c := by
   have hrest : ∑ u ∈ univ.erase v, ∑ w ∈ g.children u,
       Nat.dist (g.reorderRank v σ u) (g.reorderRank v σ w) =
       ∑ u ∈ univ.erase v, ∑ w ∈ g.children u, Nat.dist u w :=
@@ -613,13 +614,13 @@ include hP
 
 theorem Graph.totalLength_le_reorderDependents
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v')
-    (h : MonovaryOn (fun c : g.siblings v ↦ g.phraseLength c) (g.siblingArrangement v)
+    (h : MonovaryOn (fun c : g.siblings v ↦ #(g.yield c).toFinset) (g.siblingArrangement v)
       ↑((g.siblingArrangement v).after v')) :
     g.totalLength ≤ (g.reorderDependents v σ).totalLength := by
   have hσ' : {c | σ c ≠ c} ⊆ ↑((g.siblingArrangement v).after v') :=
     Equiv.Perm.coe_support_eq_set_support σ ▸ coe_subset.2 hσ
   have := Graph.totalLength_reorderDependents_add hF hP (after_trans hσ')
-  have := sum_boundaryDist_le (fun c : g.siblings v ↦ g.phraseLength c) hσ' h
+  have := sum_boundaryDist_le (fun c : g.siblings v ↦ #(g.yield c).toFinset) hσ' h
   omega
 
 /-- When the phrases after `v` grow outward, a reordering of them is strictly longer exactly when
@@ -628,15 +629,15 @@ after a head ([futrell-levy-gibson-2020]). This is the first step of [gildea-tem
 optimality proof (p. 186), on the side after the head. -/
 theorem Graph.totalLength_lt_reorderDependents_iff
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v')
-    (h : MonovaryOn (fun c : g.siblings v ↦ g.phraseLength c) (g.siblingArrangement v)
+    (h : MonovaryOn (fun c : g.siblings v ↦ #(g.yield c).toFinset) (g.siblingArrangement v)
       ↑((g.siblingArrangement v).after v')) :
     g.totalLength < (g.reorderDependents v σ).totalLength ↔
-      ¬ MonovaryOn (fun c : g.siblings v ↦ g.phraseLength c) (σ.trans (g.siblingArrangement v))
+      ¬ MonovaryOn (fun c : g.siblings v ↦ #(g.yield c).toFinset) (σ.trans (g.siblingArrangement v))
         ↑(after (σ.trans (g.siblingArrangement v)) v') := by
   have hσ' : {c | σ c ≠ c} ⊆ ↑((g.siblingArrangement v).after v') :=
     Equiv.Perm.coe_support_eq_set_support σ ▸ coe_subset.2 hσ
   have := Graph.totalLength_reorderDependents_add hF hP (after_trans hσ')
-  rw [← sum_boundaryDist_lt_iff (fun c : g.siblings v ↦ g.phraseLength c) hσ' h]
+  rw [← sum_boundaryDist_lt_iff (fun c : g.siblings v ↦ #(g.yield c).toFinset) hσ' h]
   omega
 
 end Transport

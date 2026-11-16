@@ -117,7 +117,7 @@ theorem fig1_isForest_not_isTree :
 
 -- Figure 1
 theorem fig1_not_isProjective :
-    fig1.projection 0 = [0, 2, 3, 4, 5, 6] ∧ ¬ fig1.IsProjective := by
+    (fig1.yield 0).toFinset = {0, 2, 3, 4, 5, 6} ∧ ¬ fig1.IsProjective := by
   decide
 
 /-! ### Figure 2: planarity

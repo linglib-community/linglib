@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Combinatorics.Digraph.Orientation
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Linglib.Morphology.Word.Basic
 
@@ -29,8 +27,8 @@ the dominance relation it is stated through.
 * `Graph L n` is a dependency graph on `n` words: a token at every position,
   an optional label on every ordered pair of positions (head to
   dependent), and a root position.
-* `Graph.toDigraph` and `Graph.toSimpleGraph` are the directed and
-  undirected views of a graph as mathlib's graph carriers.
+* `Graph.toSimpleGraph` is the undirected view of a graph as mathlib's
+  `SimpleGraph`.
 * `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
   representation; `HasUnrepresentedArg` says that an enhanced graph gives
   a position an argument relation its basic graph lacks.
@@ -100,18 +98,11 @@ instance (a b : Fin n) : Decidable (g.Linked a b) :=
 theorem Linked.symm {g : Graph L n} {a b : Fin n} (h : g.Linked a b) :
     g.Linked b a := Or.symm h
 
-/-! ### Views onto mathlib's graph carriers -/
+/-! ### The undirected view -/
 
-/-- The graph as a mathlib `Digraph` on positions. -/
-def toDigraph : Digraph (Fin n) := ⟨g.Adj⟩
-
-@[simp] theorem toDigraph_adj (v w : Fin n) : g.toDigraph.Adj v w ↔ g.Adj v w :=
-  Iff.rfl
-
-/-- The graph's undirected view: mathlib's orientation-forgetting
-`Digraph.toSimpleGraphInclusive` applied to `toDigraph`. Planarity and
-catena connectivity are stated through it. -/
-def toSimpleGraph : SimpleGraph (Fin n) := g.toDigraph.toSimpleGraphInclusive
+/-- The graph's undirected view, which links distinct positions joined by an arc in either
+direction. Catena connectivity is stated through it. -/
+def toSimpleGraph : SimpleGraph (Fin n) := .fromRel g.Adj
 
 @[simp] theorem toSimpleGraph_adj (v w : Fin n) :
     g.toSimpleGraph.Adj v w ↔ v ≠ w ∧ g.Linked v w := Iff.rfl
