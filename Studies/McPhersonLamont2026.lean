@@ -400,7 +400,7 @@ theorem ercB_eq_neg : ercB = -ercA := by
 /-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so the
 grammar they present is the inconsistent one, and no ranking of the four faithfulness constraints
 derives both attested forms. -/
-theorem parallel_OT_inadequate : Grammar.ofERCs {ercA, ercB} = ⊥ := by
+theorem parallel_OT_inadequate : (Grammar.ofERCs {ercA, ercB} : Grammar (Fin 4) 4) = ⊥ := by
   refine Grammar.eq_bot_iff_extent.2 (Set.eq_empty_of_forall_notMem fun r hr ↦ ?_)
   refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩ (hr (Set.mem_insert _ _)) ?_
   rw [← ercB_eq_neg]

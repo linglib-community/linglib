@@ -281,7 +281,7 @@ theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output �
       (hvp i hi)).2 fun α hα ↦ h α (mem_ercs.2 ⟨i, hi, hα⟩)
 
 /-- The grammar of a problem is the grammar that its winner–loser ERCs present. -/
-def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar n := .ofERCs P.ercs
+def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar (Fin n) n := .ofERCs P.ercs
 
 /-- Provided no competitor ties the target's violation profile, the rankings of a problem's
     grammar are those that realize its target. -/
@@ -381,7 +381,7 @@ namespace RealizationProblem
     (`Ranking.exists_isLinearExtension`), this is never vacuous. -/
 def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     (r : Fin n → Fin n → Prop) : Prop :=
-  ∀ σ, σ.IsLinearExtension r → P.realizedByRanking σ
+  ∀ σ : Ranking (Fin n) n, σ.IsLinearExtension r → P.realizedByRanking σ
 
 /-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
@@ -408,7 +408,7 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
   obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
-  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension r
+  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension (n := n) r
   exact ⟨σ, hreal σ hσ⟩
 
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable

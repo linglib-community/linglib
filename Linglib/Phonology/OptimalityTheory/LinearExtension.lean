@@ -17,11 +17,11 @@ a freely ranked stratum preserves it.
 
 ## Implementation notes
 
-A relation is an unbundled `r : Fin n → Fin n → Prop` with `[IsPartialOrder (Fin n) r]` where
-needed, never a `PartialOrder (Fin n)` value, since a class-typed binder would become a local
-instance and capture the `≤` and `<` notation that must keep meaning the positional order of
-`Fin n`. This is mathlib's idiom for orders treated as data, as in `extend_partialOrder`. A
-permutation `g` of the constraints is an automorphism of `r` when `g ⁻¹'o r = r`.
+A relation is an unbundled `r : ι → ι → Prop` on the constraints `ι` with `[IsPartialOrder ι r]`
+where needed, never a `PartialOrder ι` value, since a class-typed binder would become a local
+instance and capture the `≤` and `<` notation. This is mathlib's idiom for orders treated as
+data, as in `extend_partialOrder`. A permutation `g` of the constraints is an automorphism of `r`
+when `g ⁻¹'o r = r`, and acts on a ranking `σ` by `σ.trans g`.
 
 ## References
 
@@ -37,7 +37,7 @@ namespace OptimalityTheory
 
 open Finset
 
-variable {n : ℕ}
+variable {ι : Type*} {n : ℕ}
 
 /-! ### Linear extensions -/
 
@@ -50,20 +50,54 @@ instance {α : Type*} : IsPartialOrder α (· = ·) where
 
 namespace Ranking
 
-variable {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n}
+variable {r : ι → ι → Prop} {σ : Ranking ι n} {g : Equiv.Perm ι}
 
 /-- The ranking `σ` is a *linear extension* of the relation `r` when it ranks `a` at least as high
 as `b` whenever `r a b`. -/
-def IsLinearExtension (σ : Ranking (Fin n) n) (r : Fin n → Fin n → Prop) : Prop :=
+def IsLinearExtension (σ : Ranking ι n) (r : ι → ι → Prop) : Prop :=
   r ≤ σ.toRel
 
-instance (σ : Ranking (Fin n) n) (r : Fin n → Fin n → Prop) [DecidableRel r] :
+instance [Fintype ι] (σ : Ranking ι n) (r : ι → ι → Prop) [DecidableRel r] :
     Decidable (σ.IsLinearExtension r) :=
   decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
 
+/-- A linear extension strictly ranks distinct related constraints. -/
+theorem IsLinearExtension.dominates (hσ : σ.IsLinearExtension r) {a b : ι} (hab : r a b)
+    (hne : a ≠ b) : σ.Dominates a b :=
+  (toRel_iff_dominates σ hne).1 (hσ a b hab)
+
+theorem isLinearExtension_toRel (σ : Ranking ι n) : σ.IsLinearExtension σ.toRel :=
+  le_refl σ.toRel
+
+/-- Composing with a permutation `g` of the constraints turns the linear extensions of the
+pullback of `r` along `g` into those of `r`. -/
+theorem isLinearExtension_trans_iff :
+    IsLinearExtension (σ.trans g) r ↔ σ.IsLinearExtension (g ⁻¹'o r) :=
+  ⟨fun h a b hab ↦ by simpa [toRel] using h (g a) (g b) hab,
+   fun h a b hab ↦ h (g.symm a) (g.symm b) (by simpa [Order.Preimage] using hab)⟩
+
+/-- The linear extensions of a grammar are closed under the permutations of the constraints that
+preserve it. -/
+theorem IsLinearExtension.trans_of_preimage_eq (hg : g ⁻¹'o r = r)
+    (hσ : σ.IsLinearExtension r) : IsLinearExtension (σ.trans g) r :=
+  isLinearExtension_trans_iff.2 (hg.symm ▸ hσ)
+
+section Fintype
+
+variable [Fintype ι]
+
+/-- Every grammar has a linear extension, by Szpilrajn's theorem. -/
+theorem exists_isLinearExtension (r : ι → ι → Prop) [IsPartialOrder ι r]
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.IsLinearExtension r := by
+  obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
+  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq s hn
+  exact ⟨σ, hsub⟩
+
+variable [DecidableEq ι]
+
 /-- The linear extensions of a grammar: Anttila's tableaux, the total rankings among which the
 grammar chooses at each evaluation. -/
-def linearExtensions (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (Ranking (Fin n) n) :=
+def linearExtensions (r : ι → ι → Prop) [DecidableRel r] : Finset (Ranking ι n) :=
   {σ | σ.IsLinearExtension r}
 
 @[simp]
@@ -71,44 +105,24 @@ theorem mem_linearExtensions [DecidableRel r] :
     σ ∈ linearExtensions r ↔ σ.IsLinearExtension r := by
   simp [linearExtensions]
 
-theorem isLinearExtension_toRel (σ : Ranking (Fin n) n) : σ.IsLinearExtension σ.toRel :=
-  le_refl σ.toRel
-
 /-- A ranking is the only linear extension of its own order. -/
 @[simp]
-theorem linearExtensions_toRel (σ : Ranking (Fin n) n) : linearExtensions σ.toRel = {σ} := by
+theorem linearExtensions_toRel (σ : Ranking ι n) : linearExtensions σ.toRel = {σ} := by
   ext τ
   rw [mem_linearExtensions, mem_singleton, IsLinearExtension, Ranking.toRel_le_toRel_iff, eq_comm]
 
 /-- Every ranking is a linear extension of the discrete grammar. -/
 @[simp]
-theorem linearExtensions_eq (n : ℕ) :
-    linearExtensions (· = · : Fin n → Fin n → Prop) = univ :=
+theorem linearExtensions_eq (ι : Type*) [Fintype ι] [DecidableEq ι] (n : ℕ) :
+    linearExtensions (· = · : ι → ι → Prop) = (univ : Finset (Ranking ι n)) :=
   eq_univ_of_forall fun _ ↦ mem_linearExtensions.2 fun _ _ h ↦ h ▸ le_refl _
 
-/-- Composing with a permutation `g` of the constraints turns the linear extensions of the
-pullback of `r` along `g` into those of `r`. -/
-theorem isLinearExtension_mul_iff :
-    (g * σ).IsLinearExtension r ↔ σ.IsLinearExtension (g ⁻¹'o r) :=
-  ⟨fun h a b hab ↦ by simpa using h (g a) (g b) hab,
-   fun h a b hab ↦ by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa [Order.Preimage] using hab)⟩
+theorem linearExtensions_nonempty (r : ι → ι → Prop) [IsPartialOrder ι r]
+    [DecidableRel r] (hn : Fintype.card ι = n := by simp) :
+    (linearExtensions (n := n) r).Nonempty :=
+  (exists_isLinearExtension r hn).imp fun _ ↦ mem_linearExtensions.2
 
-/-- The linear extensions of a grammar are closed under the permutations of the constraints that
-preserve it. -/
-theorem IsLinearExtension.mul (hg : g ⁻¹'o r = r) (hσ : σ.IsLinearExtension r) :
-    (g * σ).IsLinearExtension r :=
-  isLinearExtension_mul_iff.2 (hg.symm ▸ hσ)
-
-/-- Every grammar has a linear extension, by Szpilrajn's theorem. -/
-theorem exists_isLinearExtension (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] :
-    ∃ σ : Ranking (Fin n) n, σ.IsLinearExtension r := by
-  obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
-  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq (n := n) s
-  exact ⟨σ, hsub⟩
-
-theorem linearExtensions_nonempty (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
-    [DecidableRel r] : (linearExtensions r).Nonempty :=
-  (exists_isLinearExtension r).imp fun _ ↦ mem_linearExtensions.2
+end Fintype
 
 end Ranking
 
@@ -120,22 +134,21 @@ the stratified domination hierarchy of [tesar-smolensky-1995], whose strata are 
 
 section Stratified
 
-variable {s : ℕ} {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
-  {d d' : Fin n}
+variable {s : ℕ} {stratumOf : ι → Fin s} {inner : ι → ι → Prop} {k : Fin s}
+  {d d' : ι}
 
 /-- The stratified grammar of a stratum assignment and an inner order: the lexicographic order
 `Prod.Lex` pulled back along `a ↦ (stratumOf a, a)`, so that strata compare strictly and `inner`
 applies within a stratum. -/
-def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) :
-    Fin n → Fin n → Prop :=
+def stratified (stratumOf : ι → Fin s) (inner : ι → ι → Prop) : ι → ι → Prop :=
   fun a b ↦ Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
 
-theorem stratified_iff {a b : Fin n} :
+theorem stratified_iff {a b : ι} :
     stratified stratumOf inner a b ↔
       stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b :=
   Prod.lex_iff
 
-instance [IsPartialOrder (Fin n) inner] : IsPartialOrder (Fin n) (stratified stratumOf inner) where
+instance [IsPartialOrder ι inner] : IsPartialOrder ι (stratified stratumOf inner) where
   refl a := Prod.Lex.right _ (refl_of inner a)
   trans _ _ _ := Prod.Lex.trans
   antisymm _ _ hab hba := congrArg Prod.snd (antisymm hab hba)
@@ -145,11 +158,11 @@ instance [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
 
 /-- A stratified grammar is invariant under the transposition of two constraints of a stratum on
 which the inner order is discrete. -/
-theorem swap_preimage_stratified [Std.Refl inner]
+theorem swap_preimage_stratified [DecidableEq ι] [Std.Refl inner]
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (hd : stratumOf d = k) (hd' : stratumOf d' = k) :
     Equiv.swap d d' ⁻¹'o stratified stratumOf inner = stratified stratumOf inner := by
-  have h_str (x : Fin n) : stratumOf (Equiv.swap d d' x) = stratumOf x := by
+  have h_str (x : ι) : stratumOf (Equiv.swap d d' x) = stratumOf x := by
     rcases eq_or_ne x d with rfl | hxd
     · rw [Equiv.swap_apply_left, hd', hd]
     rcases eq_or_ne x d' with rfl | hxd'
@@ -165,7 +178,7 @@ theorem swap_preimage_stratified [Std.Refl inner]
       exact refl_of inner a
     · obtain rfl : a = b := h_triv a b hk (heq ▸ hk) h
       exact refl_of inner _
-  · have hne {x c : Fin n} (hx : stratumOf x ≠ k) (hc : stratumOf c = k) : x ≠ c :=
+  · have hne {x c : ι} (hx : stratumOf x ≠ k) (hc : stratumOf c = k) : x ≠ c :=
       fun h ↦ hx (h ▸ hc)
     rw [Equiv.swap_apply_of_ne_of_ne (hne hk hd) (hne hk hd'),
       Equiv.swap_apply_of_ne_of_ne (hne (heq ▸ hk) hd) (hne (heq ▸ hk) hd')]

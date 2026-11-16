@@ -101,9 +101,6 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
 
-@[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
-  Iff.rfl
-
 /-- A ranking acts on a lex-ordered vector by reordering it by rank, so that coordinate `p` of `r •
 v` is the value of `v` at the constraint ranked `p`-th. With this convention the action of `Sₙ` is a
 right action, `(r * s) • v = s • r • v`. -/
@@ -115,12 +112,6 @@ instance {α : Type*} : SMul (Ranking (Fin n) n) (Lex (Fin n → α)) :=
 
 @[simp] theorem one_smul {α : Type*} (v : Lex (Fin n → α)) : (1 : Ranking (Fin n) n) • v = v :=
   rfl
-
-theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
-    ∃ r : Ranking (Fin n) n, r.Dominates i j := by
-  rcases lt_or_gt_of_ne hij with h | h
-  · exact ⟨1, one_dominates_iff.mpr h⟩
-  · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
 
 /-! ### Adjacent transpositions -/
 
@@ -227,9 +218,6 @@ theorem toRel_iff_dominates {i j : ι} (hij : i ≠ j) :
   rw [toRel_iff]
   simp [hij]
 
-@[simp] theorem toRel_mul (g σ : Ranking (Fin n) n) (i j : Fin n) :
-    (g * σ).toRel i j ↔ σ.toRel (g⁻¹ i) (g⁻¹ j) := Iff.rfl
-
 variable {r} {σ τ : Ranking ι n}
 
 theorem toRel_injective : Function.Injective (toRel (ι := ι) (n := n)) := by
@@ -274,6 +262,19 @@ theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι 
   simp only [toRel] at this
   rw [Dominates, ← not_le, this, not_le]
   rfl
+
+/-- Any two distinct constraints are ranked in either order by some ranking. -/
+theorem exists_dominates [Fintype ι] [DecidableEq ι] {i j : ι} (hij : i ≠ j)
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.Dominates i j := by
+  let e := Fintype.equivFinOfCardEq hn
+  obtain ⟨σ, hσ⟩ := exists_dominates_iff (fun c ↦ if c = i then 0 else (e c : ℕ) + 1)
+    (fun c d hcd ↦ by
+      by_cases hc : c = i <;> by_cases hd : d = i <;> simp only [hc, hd, ite_true, ite_false] at hcd
+      · exact hc.trans hd.symm
+      · omega
+      · omega
+      · exact e.injective (Fin.ext (by omega))) hn
+  exact ⟨σ, (hσ i j).2 (by simp [hij.symm])⟩
 
 end Ranking
 end OptimalityTheory
