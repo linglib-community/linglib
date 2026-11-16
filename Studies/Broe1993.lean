@@ -17,7 +17,8 @@ set supports are ordered by inclusion of the classes they denote, which is the c
 formal concept analysis for the relation between the segments of an inventory and the feature
 values they bear: a node of the lattice of `Representations` is a class of segments together with
 the feature values its members share. Its classes are
-[the natural classes of the inventory and the empty class](##Broe1993.mem_classes_iff).
+[the natural classes of the inventory and the empty class](##Broe1993.mem_classes_iff), and under
+inclusion they [are the lattice](##Broe1993.classesOrderIso).
 
 Redundancy is read off the order. The node of a feature value is the class of the segments that
 bear it, and a redundancy rule $p \to q$ holds of the inventory exactly when
@@ -140,6 +141,23 @@ theorem classes_eq (I : Finset Segment) :
   ext S
   simp only [mem_classes_iff, Finset.mem_insert, Finset.mem_filter, Finset.mem_powerset]
   exact or_congr_right ⟨fun h ↦ ⟨h.subset, h⟩, And.right⟩
+
+/-- The lattice of descriptions (5) is the lattice of denotations (6) with its nodes relabelled:
+the classes of an inventory under inclusion are its lattice of representations. -/
+noncomputable def classesOrderIso (I : Finset Segment) : classes I ≃o Representations I :=
+  RelIso.ofSurjective
+    (OrderEmbedding.ofMapLEIff (fun S ↦ ofIsExtent _ _ (mem_classes.1 S.2).2) fun S _ ↦
+      ⟨fun h x hx ↦ h (a := ⟨x, (mem_classes.1 S.2).1 hx⟩) hx, fun h _ hx ↦ h hx⟩)
+    fun c ↦ by
+      classical
+      obtain ⟨T, hTI, hT⟩ : ∃ T : Finset Segment, T ⊆ I ∧ {x : I | (x : Segment) ∈ T} = c.extent :=
+        ⟨(Finset.univ.filter (· ∈ c.extent)).map (.subtype _), fun x hx ↦ by
+          obtain ⟨y, -, rfl⟩ := Finset.mem_map.1 hx
+          exact y.2, by ext x; simp⟩
+      exact ⟨⟨T, mem_classes.2 ⟨hTI, hT ▸ c.isExtent_extent⟩⟩, Concept.ext hT⟩
+
+@[simp] theorem extent_classesOrderIso (S : classes I) :
+    (classesOrderIso I S).extent = {x : I | (x : Segment) ∈ (S : Finset Segment)} := rfl
 
 /-- A redundancy rule `p → q` holds of an inventory exactly when the node of `p` lies below the
 node of `q`: the dominance relation of the lattice is the redundancy of its feature values. -/
