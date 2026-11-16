@@ -475,8 +475,7 @@ instance (v : Verb) : Decidable (Volitional v) := by unfold Volitional; infer_in
 
 /-- A row's sentence is negated when one of its words is glossed as negation. -/
 def Negated (row : Datum) : Prop :=
-  ∃ w ∈ row.glossedWords,
-    Morphology.Features.ofLabels w.labels .polarity = (UD.Polarity.Neg : Flat _)
+  ∃ w ∈ row.glossedWords, w.features .polarity = (UD.Polarity.Neg : Flat _)
 
 instance (row : Datum) : Decidable (Negated row) := by unfold Negated; infer_instance
 

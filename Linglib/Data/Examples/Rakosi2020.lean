@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rakosi2020` — typed example data
@@ -26,7 +28,7 @@ def ex_1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
 
 def ex_1b : Datum :=
   { id := "rakosi2020_1b"
@@ -39,7 +41,7 @@ def ex_1b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
 
 def ex_2a : Datum :=
   { id := "rakosi2020_2a"
@@ -52,7 +54,7 @@ def ex_2a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "atomic"), ("anaphor", "egymás")] }
 
 def ex_2b : Datum :=
   { id := "rakosi2020_2b"
@@ -65,12 +67,27 @@ def ex_2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "atomic"), ("anaphor", "maga")] }
+
+def ex_3a : Datum :=
+  { id := "rakosi2020_3a"
+    source := ⟨"rakosi-2020", "(3a)"⟩
+    reportedIn := none
+    method := some .corpus
+    language := "hung1274"
+    primaryText := "Látom magunk-at ülni az autóban."
+    glossedTokens := [("Látom", "see.1SG"), ("magunk-at", "ourselves-ACC"), ("ülni", "sit.INF"), ("az", "the"), ("autóban.", "car.in")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
 def ex_3b : Datum :=
   { id := "rakosi2020_3b"
     source := ⟨"rakosi-2020", "(3b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "Sokszor sajnálom magunk-at."
     glossedTokens := [("Sokszor", "often"), ("sajnálom", "feel_sorry.1SG"), ("magunk-at.", "ourselves-ACC")]
@@ -78,7 +95,7 @@ def ex_3b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
+    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
 def ex_4a : Datum :=
   { id := "rakosi2020_4a"
@@ -91,7 +108,7 @@ def ex_4a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("referential", .acceptable), ("bound variable", .ungrammatical)]
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
+    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
 def ex_4b : Datum :=
   { id := "rakosi2020_4b"
@@ -104,7 +121,7 @@ def ex_4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "magunk")] }
+    paperFeatures := [("antecedent", "plural"), ("anaphor", "magunk")] }
 
 def ex_4c : Datum :=
   { id := "rakosi2020_4c"
@@ -117,7 +134,7 @@ def ex_4c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
 
 def ex_5a : Datum :=
   { id := "rakosi2020_5a"
@@ -130,7 +147,7 @@ def ex_5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
 
 def ex_5b : Datum :=
   { id := "rakosi2020_5b"
@@ -143,7 +160,7 @@ def ex_5b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "atomic"), ("anaphor", "maguk")] }
 
 def ex_6 : Datum :=
   { id := "rakosi2020_6"
@@ -156,7 +173,59 @@ def ex_6 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "egymás")] }
+
+def ex_7a : Datum :=
+  { id := "rakosi2020_7a"
+    source := ⟨"rakosi-2020", "(7a)"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "A gyerek-ek látták a kép-et."
+    glossedTokens := [("A", "the"), ("gyerek-ek", "child-PL"), ("látták", "saw.3PL"), ("a", "the"), ("kép-et.", "picture-ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "plural")] }
+
+def ex_7a_ : Datum :=
+  { id := "rakosi2020_7a_"
+    source := ⟨"rakosi-2020", "(7a')"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "A gyerek-ek látta a kép-et."
+    glossedTokens := [("A", "the"), ("gyerek-ek", "child-PL"), ("látta", "saw.3SG"), ("a", "the"), ("kép-et.", "picture-ACC")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "plural")] }
+
+def ex_7b : Datum :=
+  { id := "rakosi2020_7b"
+    source := ⟨"rakosi-2020", "(7b)"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "Két gyerek látta a kép-et."
+    glossedTokens := [("Két", "two"), ("gyerek", "child"), ("látta", "saw.3SG"), ("a", "the"), ("kép-et.", "picture-ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Minden gyerek látta a kép-et.", .acceptable), ("Néhány gyerek látta a kép-et.", .acceptable), ("Két gyerek-ek látta a kép-et.", .ungrammatical)]
+    readings := []
+    paperFeatures := [("antecedent", "quantified")] }
+
+def ex_7b_ : Datum :=
+  { id := "rakosi2020_7b_"
+    source := ⟨"rakosi-2020", "(7b')"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "Két gyerek látták a kép-et."
+    glossedTokens := [("Két", "two"), ("gyerek", "child"), ("látták", "saw.3PL"), ("a", "the"), ("kép-et.", "picture-ACC")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_8a : Datum :=
   { id := "rakosi2020_8a"
@@ -169,7 +238,7 @@ def ex_8a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
 
 def ex_8a_ : Datum :=
   { id := "rakosi2020_8a_"
@@ -182,7 +251,7 @@ def ex_8a_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
 
 def ex_8b : Datum :=
   { id := "rakosi2020_8b"
@@ -195,7 +264,7 @@ def ex_8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
 
 def ex_8b_ : Datum :=
   { id := "rakosi2020_8b_"
@@ -208,12 +277,13 @@ def ex_8b_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
 
 def ex_9a : Datum :=
   { id := "rakosi2020_9a"
     source := ⟨"rakosi-2020", "(9a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "A szobában három kisgyerek kergeti egymás-t."
     glossedTokens := [("A", "the"), ("szobában", "room.in"), ("három", "three"), ("kisgyerek", "little.child"), ("kergeti", "chase.3SG"), ("egymás-t.", "each_other-ACC")]
@@ -221,7 +291,7 @@ def ex_9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
 def ex_9b : Datum :=
   { id := "rakosi2020_9b"
@@ -234,12 +304,13 @@ def ex_9b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
 def ex_9c : Datum :=
   { id := "rakosi2020_9c"
     source := ⟨"rakosi-2020", "(9c)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "Otthon mindenki szerette egymás-t."
     glossedTokens := [("Otthon", "home"), ("mindenki", "everyone"), ("szerette", "loved.3SG"), ("egymás-t.", "each_other-ACC")]
@@ -247,12 +318,13 @@ def ex_9c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
 def ex_9d : Datum :=
   { id := "rakosi2020_9d"
     source := ⟨"rakosi-2020", "(9d)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "A sokaságban senki se keresi egymás-t."
     glossedTokens := [("A", "the"), ("sokaságban", "crowd.in"), ("senki", "nobody"), ("se", "not"), ("keresi", "search_for.3SG"), ("egymás-t.", "each_other-ACC")]
@@ -260,7 +332,33 @@ def ex_9d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
+
+def ex_10 : Datum :=
+  { id := "rakosi2020_10"
+    source := ⟨"rakosi-2020", "(10)"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "Kati és Éva látta a képet."
+    glossedTokens := [("Kati", "Kati"), ("és", "and"), ("Éva", "Éva"), ("látta", "saw.3SG"), ("a", "the"), ("képet.", "picture-ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "coordinate")] }
+
+def ex_10_ : Datum :=
+  { id := "rakosi2020_10_"
+    source := ⟨"rakosi-2020", "(10')"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "Kati és Éva látták a képet."
+    glossedTokens := [("Kati", "Kati"), ("és", "and"), ("Éva", "Éva"), ("látták", "saw.3PL"), ("a", "the"), ("képet.", "picture-ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_11a : Datum :=
   { id := "rakosi2020_11a"
@@ -273,7 +371,7 @@ def ex_11a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
 
 def ex_11a_ : Datum :=
   { id := "rakosi2020_11a_"
@@ -286,7 +384,7 @@ def ex_11a_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
 
 def ex_11b : Datum :=
   { id := "rakosi2020_11b"
@@ -299,7 +397,7 @@ def ex_11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
 
 def ex_11b_ : Datum :=
   { id := "rakosi2020_11b_"
@@ -312,7 +410,7 @@ def ex_11b_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
 
 def ex_12 : Datum :=
   { id := "rakosi2020_12"
@@ -325,7 +423,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
 
 def ex_12_ : Datum :=
   { id := "rakosi2020_12_"
@@ -338,7 +436,20 @@ def ex_12_ : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
+
+def ex_13 : Datum :=
+  { id := "rakosi2020_13"
+    source := ⟨"rakosi-2020", "(13)"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "A személyzet úgy gondolta, hogy ők már eleget dolgoztak."
+    glossedTokens := [("A", "the"), ("személyzet", "staff"), ("úgy", "so"), ("gondolta,", "thought.3SG"), ("hogy", "that"), ("ők", "they"), ("már", "already"), ("eleget", "enough"), ("dolgoztak.", "worked.3PL")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
 
 def ex_14 : Datum :=
   { id := "rakosi2020_14"
@@ -349,14 +460,28 @@ def ex_14 : Datum :=
     glossedTokens := [("A", "the"), ("személyzet", "staff"), ("fáradt", "tired"), ("volt.", "was.3SG")]
     context := ""
     judgment := .acceptable
-    alternatives := [("A személyzet fáradt voltak.", .ungrammatical)]
+    alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg")] }
+    paperFeatures := [("antecedent", "collective")] }
+
+def ex_14_ : Datum :=
+  { id := "rakosi2020_14_"
+    source := ⟨"rakosi-2020", "(14')"⟩
+    reportedIn := none
+    language := "hung1274"
+    primaryText := "A személyzet fáradt voltak."
+    glossedTokens := [("A", "the"), ("személyzet", "staff"), ("fáradt", "tired"), ("voltak.", "were.3PL")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_15a : Datum :=
   { id := "rakosi2020_15a"
     source := ⟨"rakosi-2020", "(15a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "A személyzet riadtan nézte egymás-t."
     glossedTokens := [("A", "the"), ("személyzet", "staff"), ("riadtan", "frightened"), ("nézte", "watch.3SG"), ("egymás-t.", "each_other-ACC")]
@@ -364,12 +489,13 @@ def ex_15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
 def ex_15b : Datum :=
   { id := "rakosi2020_15b"
     source := ⟨"rakosi-2020", "(15b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "A Facebookon szidta egymás-t a család."
     glossedTokens := [("A", "the"), ("Facebookon", "Facebook.on"), ("szidta", "cursed.3SG"), ("egymás-t", "each_other-ACC"), ("a", "the"), ("család.", "family")]
@@ -377,12 +503,13 @@ def ex_15b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
 def ex_15c : Datum :=
   { id := "rakosi2020_15c"
     source := ⟨"rakosi-2020", "(15c)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "A pár az interneten találta meg egymás-t."
     glossedTokens := [("A", "the"), ("pár", "couple"), ("az", "the"), ("interneten", "internet.on"), ("találta", "found.3SG"), ("meg", "PRT"), ("egymás-t.", "each_other-ACC")]
@@ -390,7 +517,7 @@ def ex_15c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
 def ex_16 : Datum :=
   { id := "rakosi2020_16"
@@ -403,7 +530,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
+    paperFeatures := [("antecedent", "collective"), ("anaphor", "maga")] }
 
 def ex_16_ : Datum :=
   { id := "rakosi2020_16_"
@@ -416,7 +543,7 @@ def ex_16_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
+    paperFeatures := [("antecedent", "collective"), ("anaphor", "maguk")] }
 
 def ex_17 : Datum :=
   { id := "rakosi2020_17"
@@ -429,12 +556,13 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := [("Péter és Éva az-t gondolja, hogy ő szereti egymás-t.", .ungrammatical)]
     readings := [("broad scope", .acceptable)]
-    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
 
 def ex_18 : Datum :=
   { id := "rakosi2020_18"
     source := ⟨"rakosi-2020", "(18)"⟩
     reportedIn := none
+    method := some .corpus
     language := "hung1274"
     primaryText := "Álmomban két macska voltam, és játszottam egymás-sal."
     glossedTokens := [("Álmomban", "dream.POSS.1SG.in"), ("két", "two"), ("macska", "cat"), ("voltam,", "was.1SG"), ("és", "and"), ("játszottam", "played.1SG"), ("egymás-sal.", "each_other-with")]
@@ -442,8 +570,32 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := [("Álmomban két macska voltam, és én játszottam egymás-sal.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("semanticNumber", "plural"), ("verb", "1sg"), ("anaphor", "egymás")] }
+    paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
 
-def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_14, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_7a, ex_7a_, ex_7b, ex_7b_, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_10, ex_10_, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_13, ex_14, ex_14_, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
+
+/-- The subject antecedents the paper compares. -/
+inductive Antecedent where
+  /-- atomic: a singular noun phrase denoting one individual -/
+  | atomic
+  /-- plural: a plural noun phrase -/
+  | plural
+  /-- inclusive: a singular subject included in the reference of a plural reflexive (§2) -/
+  | inclusive
+  /-- quantified: a quantified noun phrase, whose noun head is singular (§3) -/
+  | quantified
+  /-- coordinate: two conjoined singular noun phrases (§4) -/
+  | coordinate
+  /-- collective: a singular collective noun (§5) -/
+  | collective
+  /-- boundPro: a singular null pronoun bound by a plural in a higher clause (§6) -/
+  | boundPro
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Antecedent :=
+  e.parse? "antecedent" [("atomic", .atomic), ("plural", .plural), ("inclusive", .inclusive),
+    ("quantified", .quantified), ("coordinate", .coordinate), ("collective", .collective),
+    ("boundPro", .boundPro)]
 
 end Rakosi2020.Examples

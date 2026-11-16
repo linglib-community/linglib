@@ -11,24 +11,33 @@ public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Fragments.Hungarian.Reciprocals
 public import Linglib.Data.Examples.Rakosi2020
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Morphology.Word.Leipzig
 
 /-!
 # Rákosi (2020): Reciprocal anaphors in singular constructions in Hungarian
 
-An antecedent has a grammatical number, which the verb agrees in, and a semantic number, that of
-the individuals it denotes. Quantified, coordinate and collective antecedents and bound singular
-variables can be grammatically singular and semantically plural. A Hungarian plural reflexive
-needs the plural verb, the reciprocal *egymás* only the semantic plural. Over the paper's
-examples this file proves the two licensing conditions and the double dissociation between them:
-a bound reflexive's judgment is a function of its agreement with the verb and not of the
-antecedent's semantic number, the reciprocal's a function of the semantic number and not of the
-agreement.
+A Hungarian subject can trigger singular agreement on the verb and yet supply a plurality: a
+quantified noun phrase, a coordination of singulars, a collective noun, and a null pronoun bound
+by a plural all do, and [the verb's number follows the kind of subject](##verb_agreement). A
+reflexive [is acceptable exactly when it agrees with the verb](##reflexive_acceptable_iff_agree),
+so these subjects reject the plural reflexive, whereas the invariable reciprocal *egymás*
+[needs only the plurality](##reciprocal_acceptable_iff) and is
+[accepted with a singular verb in all four constructions](##reciprocal_with_singular_verb). The
+two conditions dissociate: the reflexive's judgment
+[is not a function of its antecedent](##not_factorsThrough_antecedent), nor the reciprocal's
+[of the verb's number](##not_factorsThrough_verbNumber).
 
-## Main definitions
+## Implementation notes
 
-* `Rakosi2020.HasAnaphor`: the anaphor of a row is a given pronoun of the fragment.
-* `Rakosi2020.verbAgr?`, `Rakosi2020.semanticNumber?`: the person and number the verb agrees in,
-  and the semantic number of the antecedent.
+* The verb's agreement is read off the gloss line, and the reflexive's features off
+  `Hungarian.Pronouns.reflexives`; a row records only the kind of its antecedent, a level of
+  `Examples.Antecedent`, and the form of its anaphor.
+* The plural reflexive with a singular subject included in its reference is acceptable without
+  agreeing, but only as a referential pronoun: where the paper tests the bound reading,
+  [it is available exactly under agreement](##boundVariable_iff_agree).
+* `Examples.Antecedent.SuppliesPlurality` holds of the bound null pronoun, which the paper calls
+  a singular variable: the plurality is that of its binder.
 
 ## References
 
@@ -40,7 +49,30 @@ agreement.
 namespace Rakosi2020
 
 open Hungarian.Pronouns Hungarian.Reciprocals
-open Examples (all)
+open Examples (all Antecedent antecedent)
+
+/-! ### Antecedents -/
+
+namespace Examples.Antecedent
+
+/-- The numbers of the verb that agrees with the antecedent: plural with a plural noun phrase,
+either number with a coordination, and singular otherwise. -/
+def agreement : Antecedent → Finset Number
+  | plural => {.plural}
+  | coordinate => {.singular, .plural}
+  | _ => {.singular}
+
+/-- The antecedent gives a reciprocal a plurality to distribute over: it denotes one, or, as a
+bound variable, ranges over the members of one. The inclusive subject is "not plural in any
+sense". -/
+def SuppliesPlurality : Antecedent → Prop
+  | atomic | inclusive => False
+  | _ => True
+
+instance : DecidablePred SuppliesPlurality := fun a ↦ by
+  cases a <;> unfold SuppliesPlurality <;> infer_instance
+
+end Examples.Antecedent
 
 /-! ### The rows -/
 
@@ -56,73 +88,74 @@ def rowsWith (p : Pronoun) : Set Datum := {e | e ∈ all ∧ HasAnaphor e p}
 instance (p : Pronoun) : DecidablePred (· ∈ rowsWith p) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The features of the verb the anaphor is an argument of, read off the gloss line: the last
+word glossed with a person. -/
+def verb? (e : Datum) : Option Morphology.Features :=
+  (e.glossedWords.map (·.features)).reverse.find? fun f ↦ (f .person).isSome
+
+/-- The number of the verb. -/
+def verbNumber? (e : Datum) : Option Number := (verb? e).bind (· .number)
+
 theorem hasAnaphor_of_feature :
     ∀ e ∈ all, ∀ f ∈ e.feature? "anaphor",
       HasAnaphor e egymas.toPronoun ∨ ∃ r ∈ reflexives, HasAnaphor e r.toPronoun := by
   decide
 
-/-- The person and number the verb agrees in. -/
-def verbAgr? (e : Datum) : Option (Person × Number) :=
-  e.parse? "verb" [("1sg", (.first, .singular)), ("1pl", (.first, .plural)),
-    ("3sg", (.third, .singular)), ("3pl", (.third, .plural))]
+theorem isSome_verbNumber : ∀ e ∈ all, (verbNumber? e).isSome := by decide
 
-/-- The semantic number of the antecedent: singular if it denotes one individual, plural if it
-denotes a plurality or, as the bound singular variable of §6, ranges over one. -/
-def semanticNumber? (e : Datum) : Option Number :=
-  e.parse? "semanticNumber" [("singular", .singular), ("plural", .plural)]
+/-! ### Verb agreement -/
 
-/-- The row is the inclusive reference of §2, a singular subject included in the reference of a
-plural reflexive. -/
-def InclusiveReference (e : Datum) : Prop := e.feature? "antecedent" = some "inclusive"
-
-instance (e : Datum) : Decidable (InclusiveReference e) := inferInstanceAs (Decidable (_ = _))
+-- (7), (10), (14)
+theorem verb_agreement :
+    Datum.Checks (fun e ↦ if e.feature? "anaphor" = none then
+        (antecedent e).bind fun a ↦ (verbNumber? e).map (a, ·) else none)
+      (fun p ↦ .ofProp (p.2 ∈ p.1.agreement)) all 8 := by
+  decide
 
 /-! ### The reflexive -/
 
-/-- A bound reflexive, one outside the inclusive reference of §2, is acceptable exactly when it
-agrees with the verb in person and number. -/
+/-- A reflexive whose subject is not merely included in its reference is acceptable exactly when
+it agrees with the verb in person and number. -/
 theorem reflexive_acceptable_iff_agree :
-    ∀ e ∈ all, ¬ InclusiveReference e → ∀ r ∈ reflexives, HasAnaphor e r.toPronoun →
-      ∀ v ∈ verbAgr? e, (e.judgment = .acceptable ↔
-        HasPhi.Agree r.toPronoun (Agreement.Bundle.personNumber v.1 v.2)) := by
+    ∀ e ∈ all, antecedent e ≠ some .inclusive → ∀ r ∈ reflexives, HasAnaphor e r.toPronoun →
+      ∀ v ∈ verb? e, (e.judgment = .acceptable ↔ HasPhi.Agree r.toPronoun v) := by
   decide
 
-/-- The reflexive's judgment is not a function of the antecedent's semantic number ((11a), (11b')).
--/
-theorem not_factorsThrough_semanticNumber :
+-- (4a), (4b)
+theorem boundVariable_iff_agree :
+    ∀ e ∈ all, ∀ r ∈ reflexives, HasAnaphor e r.toPronoun → ∀ v ∈ verb? e,
+      ∀ j ∈ e.readings.lookup "bound variable",
+        (j = .acceptable ↔ HasPhi.Agree r.toPronoun v) := by
+  decide
+
+/-- The reflexive's judgment is not a function of its antecedent: a coordination takes the
+singular reflexive with a singular verb and rejects it with a plural one ((11a), (11b')). -/
+theorem not_factorsThrough_antecedent :
     ¬ ((rowsWith maga.toPronoun).domRestrict Datum.judgment).FactorsThrough
-      ((rowsWith maga.toPronoun).domRestrict semanticNumber?) := fun h ↦
+      ((rowsWith maga.toPronoun).domRestrict antecedent) := fun h ↦
   absurd (@h ⟨Examples.ex_11a, by decide⟩ ⟨Examples.ex_11b_, by decide⟩ rfl) (by decide)
 
 /-! ### The reciprocal -/
 
-/-- The reciprocal is acceptable exactly when its antecedent is semantically plural. -/
+/-- The reciprocal is acceptable exactly when its antecedent supplies a plurality. -/
 theorem reciprocal_acceptable_iff :
     ∀ e ∈ all, HasAnaphor e egymas.toPronoun →
-      (e.judgment = .acceptable ↔ semanticNumber? e = some .plural) := by
+      ∃ a ∈ antecedent e, (e.judgment = .acceptable ↔ a.SuppliesPlurality) := by
   decide
 
-/-- The reciprocal's judgment is not a function of verb agreement ((2a), (12)). -/
-theorem not_factorsThrough_verbAgr :
+/-- The reciprocal's judgment is not a function of the verb's number: a singular verb rejects it
+with an atomic subject and takes it with a coordination ((2a), (12)). -/
+theorem not_factorsThrough_verbNumber :
     ¬ ((rowsWith egymas.toPronoun).domRestrict Datum.judgment).FactorsThrough
-      ((rowsWith egymas.toPronoun).domRestrict verbAgr?) := fun h ↦
-  absurd (@h ⟨Examples.ex_2a, by decide⟩ ⟨Examples.ex_12, by decide⟩ rfl) (by decide)
+      ((rowsWith egymas.toPronoun).domRestrict verbNumber?) := fun h ↦
+  absurd (@h ⟨Examples.ex_2a, by decide⟩ ⟨Examples.ex_12, by decide⟩ (by decide)) (by decide)
 
-/-- In each of §§3–6, the reciprocal is accepted with a singular verb and a semantically plural
-antecedent. -/
+/-- With each of the four antecedents of §§3–6, the reciprocal is accepted with a singular
+verb. -/
 theorem reciprocal_with_singular_verb :
-    ∀ n ∈ [3, 4, 5, 6], ∃ e ∈ all, e.nat? "section" = some n ∧ HasAnaphor e egymas.toPronoun ∧
-      (∀ v ∈ verbAgr? e, v.2 = .singular) ∧ semanticNumber? e = some .plural ∧
-        e.judgment = .acceptable := by
-  decide
-
-/-! ### Inclusive reference -/
-
-/-- The inclusive reflexive of §2 is never read as a bound variable, so its disagreement with the
-verb is no counterexample to `reflexive_acceptable_iff_agree`. -/
-theorem inclusive_not_bound :
-    ∀ e ∈ all, InclusiveReference e → ∀ r ∈ reflexives, HasAnaphor e r.toPronoun →
-      e.readings.lookup "bound variable" ≠ some .acceptable := by
+    ∀ a ∈ [Antecedent.quantified, .coordinate, .collective, .boundPro], ∃ e ∈ all,
+      antecedent e = some a ∧ HasAnaphor e egymas.toPronoun ∧
+        verbNumber? e = some .singular ∧ e.judgment = .acceptable := by
   decide
 
 end Rakosi2020

@@ -268,7 +268,7 @@ material precedes the *hogy*-clause, finiteness is the `PST` gloss label, every 
 paper being past, and the stem matches `Hungarian.Verbs.Verb.stem` exactly. -/
 def matrixWord? (e : Datum) : Option (GlossedWord × Hungarian.Verbs.Verb) :=
   (e.glossedWords.takeWhile fun w ↦ w.lexicalGloss? != some "that".toList).findSome? fun w ↦
-    if Morphology.Features.ofLabels w.labels .tense == (UD.Tense.Past : Flat _) then
+    if w.features .tense == (UD.Tense.Past : Flat _) then
       (verbs.find? fun v ↦ w.stem == v.stem.toList).map (w, ·)
     else none
 
