@@ -108,7 +108,7 @@ theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extens
     u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
   have hX' : Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X := hX
   refine ⟨hu, fun v hv hvu ↦ atLeastAsGoodAs_iff_verified_subset.2 fun q hq ↦ ⟨hq.1, huX q ?_⟩⟩
-  exact hX'.le_of_ge ⟨fun _ hq' ↦ hq'.1, v, hv, fun _ hq' ↦ hq'.2⟩
+  exact hX'.le_of_ge (y := verified b w v) ⟨fun _ hq' ↦ hq'.1, v, hv, fun _ hq' ↦ hq'.2⟩
     (fun q' hq' ↦ atLeastAsGoodAs_iff_verified_subset.1 hvu ⟨hX'.prop.1 hq', huX q' hq'⟩) hq
 
 /-- Frank's union is Kratzer's best worlds under the promoted priorities. -/

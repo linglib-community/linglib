@@ -144,7 +144,7 @@ theorem atomistic_iff_generates : Atomistic Z ↔ Generates (atomsIn Z) Z := by
   refine ⟨fun h ↦ .of_subset (fun _ ha ↦ ha.1.1) fun b hb ↦ ?_, fun h b hb ↦ ?_⟩
   · exact ⟨_, inter_subset_right, h b hb⟩
   · obtain ⟨Y, hY, rfl⟩ := h.subset_sumClosure hb
-    exact (sSup_le fun _ ha ↦ ha.1).antisymm
+    exact (sSup_le (s := Iic _ ∩ _) fun _ ha ↦ ha.1).antisymm
       (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
 
 theorem atomsIn_eq_of_pairwiseDisjoint (hZ : Z.PairwiseDisjoint id) : atomsIn Z = Z \ {⊥} :=
@@ -187,7 +187,8 @@ The distribution set of `x` relative to `Z` is `Iic x ∩ Z`, the book's `(x] �
 
 theorem sSup_Iic_inter (hx : x ∈ sumClosure Z) : sSup (Iic x ∩ Z) = x := by
   obtain ⟨Y, hY, rfl⟩ := hx
-  exact (sSup_le fun _ h ↦ h.1).antisymm (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
+  exact (sSup_le (s := Iic _ ∩ _) fun _ h ↦ h.1).antisymm
+    (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
 
 /-- `card Z x` is the cardinality of `x` relative to `Z`, the number of its `Z`-parts. -/
 noncomputable def card (Z : Set B) (x : B) : ℕ := (Iic x ∩ Z).ncard
