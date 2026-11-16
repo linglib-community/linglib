@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Linglib.Pragmatics.Probabilistic.Recursion
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Core.Probability.UniformOn

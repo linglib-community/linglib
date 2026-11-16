@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Linglib.Fragments.English.Adjectives
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Nouwen (2024): The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers

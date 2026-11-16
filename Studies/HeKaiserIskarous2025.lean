@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Data.Examples.HeKaiserIskarous2025
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # He, Kaiser and Iskarous (2025): Modeling sentence polarity asymmetries

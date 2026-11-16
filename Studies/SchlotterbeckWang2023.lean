@@ -2,8 +2,8 @@ module
 
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Pragmatics.Probabilistic.Incremental
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Schlotterbeck & Wang (2023): An incremental RSA model for adjective ordering preferences

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Pragmatics.Probabilistic.QUD
+public import Linglib.Pragmatics.Probabilistic.Parse
 
 /-!
 # Spector (2017): The pragmatics of plural predication: Homogeneity and non-maximality within the Rational Speech Act model

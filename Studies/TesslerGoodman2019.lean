@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Tessler and Goodman (2019): The Language of Generalization

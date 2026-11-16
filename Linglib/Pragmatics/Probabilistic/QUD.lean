@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Basic
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Speakers who address a question
@@ -40,26 +41,6 @@ namespace RSA
 
 variable {W U X : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSingletonClass U]
   [MeasurableSpace X] [MeasurableSingletonClass X]
-
-/-- A literal listener's probability of an answer is the prior mass of the states with that
-answer where the utterance is true, over the prior mass of the states where it is true. -/
-theorem listener_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
-    [Countable U] (μ : Measure W) (sem : U → Set W) (q : W → X) (u : U) (x : X) :
-    (listener μ (truthful sem)).map q u {x} = μ (sem u ∩ q ⁻¹' {x}) / μ (sem u) := by
-  rw [Kernel.map_apply_singleton, listener_truthful_apply, cond_apply .of_discrete,
-    ENNReal.div_eq_inv_mul]
-
-/-- Within a finite context set, a literal listener's probability of an answer is the prior mass
-of the states of the set where the utterance is true and that have the answer, over the prior
-mass of the states of the set where it is true. -/
-theorem listener_restrict_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
-    [Countable U] [DecidableEq X] (μ : Measure W) (C : Finset W) (sem : U → Set W)
-    [∀ u, DecidablePred (· ∈ sem u)] (q : W → X) (u : U) (x : X) :
-    (listener (μ.restrict ↑C) (truthful sem)).map q u {x} =
-      μ ↑((C.filter (· ∈ sem u)).filter (q · = x)) / μ ↑(C.filter (· ∈ sem u)) := by
-  rw [listener_truthful_map_apply_singleton, Measure.restrict_apply .of_discrete,
-    Measure.restrict_apply .of_discrete]
-  congr 2 <;> ext <;> simp [and_comm, and_left_comm]
 
 omit [MeasurableSingletonClass U] in
 /-- A coarser question raises the listener's probability of the answer at a state. -/
@@ -176,35 +157,5 @@ theorem cond_listener_prod_qudSpeaker_preimage {B : Type*} [MeasurableSpace B]
   · calc ∫⁻ p, qudSpeaker α C L (q p.2) p.1 {u} ∂μ.prod ν ≤ ∫⁻ _, 1 ∂μ.prod ν :=
           lintegral_mono fun _ ↦ prob_le_one
       _ = (μ.prod ν) Set.univ := by rw [lintegral_one]
-
-/-! ### Utterances that name a coordinate -/
-
-section Coordinate
-
-variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B] [DiscreteMeasurableSpace A]
-  [Countable A] (π π' : Measure A) [IsFiniteMeasure π]
-  [IsFiniteMeasure π'] (κ : Kernel A B) [IsMarkovKernel κ]
-
-omit [IsFiniteMeasure π'] in
-/-- At a prior that composes a prior over the coordinate named with a kernel to the rest, the
-literal listener of an utterance that names a value of positive prior believes that value and the
-kernel there. -/
-theorem listener_truthful_preimage_fst_compProd {a : A} (ha : π {a} ≠ 0) :
-    listener (π ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) a =
-      Measure.dirac a ⊗ₘ κ := by
-  rw [listener_truthful_apply' (π ⊗ₘ κ) _ a (measurable_fst (measurableSet_singleton a))]
-  exact Measure.cond_preimage_fst_singleton_compProd π κ ha (measure_ne_top _ _)
-
-/-- The literal listener of utterances that name a coordinate does not depend on the prior over
-that coordinate, so long as it leaves every value possible. -/
-theorem listener_truthful_preimage_fst_compProd_congr (hπ : ∀ a, π {a} ≠ 0)
-    (hπ' : ∀ a, π' {a} ≠ 0) :
-    listener (π ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) =
-      listener (π' ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) :=
-  Kernel.ext fun a ↦ by
-    rw [listener_truthful_preimage_fst_compProd π κ (hπ a),
-      listener_truthful_preimage_fst_compProd π' κ (hπ' a)]
-
-end Coordinate
 
 end RSA

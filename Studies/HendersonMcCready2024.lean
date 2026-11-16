@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Henderson and McCready (2024): Signaling without Saying: The Semantics and Pragmatics of Dogwhistles

@@ -4,9 +4,9 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Pragmatics.Probabilistic.Parse
 
 /-!
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework

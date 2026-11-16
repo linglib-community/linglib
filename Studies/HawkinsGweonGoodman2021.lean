@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Hawkins, Gweon and Goodman (2021): The division of labor in communication

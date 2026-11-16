@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Linglib.Pragmatics.Probabilistic.QUD
 
 /-!

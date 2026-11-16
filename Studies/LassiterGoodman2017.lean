@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Lassiter and Goodman (2017): Adjectival Vagueness in a Bayesian Model of Interpretation

@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.Probabilistic.Parse
 public import Linglib.Core.Data.Multiset.Dominates
 public import Linglib.Core.Probability.UniformOn
 
@@ -22,7 +24,7 @@ rationality it is an inequality of naturals.
 
 * There are no new kernels: the literal listener is `RSA.listener` at the uniform prior and the
   truthful channel, and the speaker is `RSA.speaker` at no cost, abbreviated `L₀` and `S₁[α]`.
-  What holds at every prior is proved in `Linglib.Pragmatics.Probabilistic.Basic` and specialized
+  What holds at every prior is proved in `Linglib.Pragmatics.Probabilistic.Literal` and specialized
   here.
 * Meanings are `Finset`-valued, so that extension sizes, and with them the hypotheses of the
   comparison lemmas, are decidable.

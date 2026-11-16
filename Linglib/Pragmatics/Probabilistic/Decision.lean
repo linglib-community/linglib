@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.Probabilistic.Parse
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!

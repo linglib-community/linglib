@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Yoon, Tessler, Goodman and Frank (2020): Polite Speech Emerges From Competing Social Goals

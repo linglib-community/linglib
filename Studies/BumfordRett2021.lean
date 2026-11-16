@@ -1,8 +1,9 @@
 module
 
 public import Studies.Rett2015b
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Bumford and Rett (2021): Rationalizing evaluativity
