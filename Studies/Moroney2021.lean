@@ -257,7 +257,7 @@ theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
         demDenotation N d R g s = Definite.unique R g s) ↔
       ∀ x, x ∈ N.image d.deixis := by
   refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
-  · have hb : x ∈ (Definite.unique fun (_ : ℕ → E) (_ : W) y ↦ y = x) g s :=
+  · have hb : x ∈ (Definite.unique fun (_ : ℕ → E) (_ : W) ↦ {x}) g s :=
       Definite.mem_unique.2 ⟨rfl, fun _ ↦ id⟩
     exact ((mem_demDenotation N d).1 (h _ (Part.dom_iff_mem.2 ⟨x, hb⟩) ▸ hb)).2
   · obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 hR
