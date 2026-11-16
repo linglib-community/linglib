@@ -23,9 +23,13 @@ summative [relates each object to one event](##Aspect.SINC.gue_of_sum). The refe
 of the object carry over to the verb phrase: [cumulativity](##Aspect.vp_cum) along a summative
 relation, [quantization](##Aspect.vp_qua) along a relation with unique participants that maps to
 subobjects, and [divisiveness](##Aspect.mo_iff_forall_div_vp) along exactly the relations that
-map to objects. For a thematic function these are a sum homomorphism and an injective one, so
-*drink milk* [is cumulative](##Aspect.vp_cum_graph) and *drink two liters of milk*
-[quantized](##Aspect.vp_qua_graph).
+map to objects. For a relation with unique participants that maps to objects the first two
+conditions are exact as well: it is [summative](##Aspect.sum_iff_forall_cum_vp) iff cumulativity
+carries over from every object predicate, and it
+[maps to subobjects](##Aspect.mso_iff_forall_qua_vp) iff quantization does. A thematic function
+that preserves sums is such a relation, so *drink milk*
+[is cumulative](##Aspect.vp_cum_graph), and an injective one maps to subobjects, so *drink two
+liters of milk* [is quantized](##Aspect.vp_qua_graph).
 
 ## Implementation notes
 
@@ -301,10 +305,54 @@ theorem vp_qua [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MSO θ) (h
     let ⟨_, hlt', hθ'⟩ := hm hθ hlt
     hObj (hU.eq hθz (SetRel.mem_inv.1 hθ') ▸ hz) hy hlt'.ne hlt'.le
 
+/-- Quantization carries over to the verb phrase from every object predicate iff the objects of
+properly nested events are properly nested, in either direction. -/
+theorem forall_qua_vp_iff [PartialOrder α] [PartialOrder β] :
+    (∀ OBJ : α → Prop, QUA OBJ → QUA (VP θ OBJ)) ↔
+      ∀ ⦃x y e e'⦄, x ~[θ] e → y ~[θ] e' → e' < e → x < y ∨ y < x := by
+  refine ⟨fun h x y _ _ hx hy hlt ↦ by_contra fun hn ↦ ?_, fun h OBJ hO e' ⟨y, hy, hθy⟩ e
+    ⟨x, hx, hθx⟩ hne hle ↦ ?_⟩
+  · have hO : QUA (fun z ↦ z = x ∨ z = y) := by
+      rintro a (rfl | rfl) b (rfl | rfl) hab hle
+      · exact hab rfl
+      · exact hn (.inl (lt_of_le_of_ne hle hab))
+      · exact hn (.inr (lt_of_le_of_ne hle hab))
+      · exact hab rfl
+    exact h _ hO ⟨y, .inr rfl, hy⟩ ⟨x, .inl rfl, hx⟩ hlt.ne hlt.le
+  · rcases h hθx hθy (lt_of_le_of_ne hle hne) with hxy | hyx
+    · exact hO hx hy hxy.ne hxy.le
+    · exact hO hy hx hyx.ne hyx.le
+
+/-- For a relation with unique participants that maps to objects, mapping to subobjects is
+exactly what carries quantization from every object predicate to the verb phrase. -/
+theorem mso_iff_forall_qua_vp [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MO θ) :
+    MSO θ ↔ ∀ OBJ : α → Prop, QUA OBJ → QUA (VP θ OBJ) :=
+  ⟨fun h _ hO ↦ vp_qua hU h hO, fun h _ _ hxe _ hlt ↦
+    let ⟨y, hy, hθy⟩ := hm hxe hlt.le
+    ⟨y, (forall_qua_vp_iff.1 h hxe (SetRel.mem_inv.1 hθy) hlt).resolve_left hy.not_gt, hθy⟩⟩
+
 variable [SemilatticeSup α] [SemilatticeSup β]
 
 /-- A summative relation carries cumulativity from the object to the verb phrase. -/
 theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) := SupClosed.relImage hθ hObj
+
+/-- For a relation with unique participants that maps to objects, summativity is exactly what
+carries cumulativity from every object predicate to the verb phrase. -/
+theorem sum_iff_forall_cum_vp (hU : UP θ) (hm : MO θ) :
+    SUM θ ↔ ∀ OBJ : α → Prop, CUM OBJ → CUM (VP θ OBJ) := by
+  refine ⟨fun h _ hO ↦ vp_cum h hO, fun h ⟨x, e⟩ hx ⟨y, e'⟩ hy ↦ ?_⟩
+  obtain ⟨z, hz, hθz⟩ := h (· ∈ supClosure {x, y}) supClosed_supClosure
+    ⟨x, subset_supClosure (.inl rfl), hx⟩ ⟨y, subset_supClosure (.inr rfl), hy⟩
+  have hle : z ≤ x ⊔ y := by
+    have : x ⊔ y ∈ upperBounds (supClosure {x, y}) := by
+      rw [upperBounds_supClosure]; rintro _ (rfl | rfl) <;> simp
+    exact this hz
+  obtain ⟨x', hx', hθx'⟩ := hm hθz (le_sup_left : e ≤ e ⊔ e')
+  obtain ⟨y', hy', hθy'⟩ := hm hθz (le_sup_right : e' ≤ e ⊔ e')
+  obtain rfl : x' = x := hU.eq (SetRel.mem_inv.1 hθx') hx
+  obtain rfl : y' = y := hU.eq (SetRel.mem_inv.1 hθy') hy
+  obtain rfl : z = x' ⊔ y' := le_antisymm hle (sup_le hx' hy')
+  exact hθz
 
 /-- Along a summative relation with unique participants, a verb phrase is cumulative only if the
 object predicate holds of the sum of any two of its objects that the relation relates to
