@@ -14,10 +14,10 @@ A glossed token is already structured: the Leipzig Glossing Rules segment the su
 its gloss at the same affix and clitic boundaries (Rule 2), separate by periods the several
 metalanguage elements that render one object-language element (Rule 4), and write grammatical
 category labels in capitals (Rule 3), so a row's gloss line determines a morph-by-morph token
-stream without any analysis beyond the source's own. The generator segments each word into a
-`GlossedWord` of `Data/Examples/Schema.lean`, the row's `glossedWords`, and this file reads that
-structure: a gloss element is a category label or a lexical gloss by its capitalization, and a
-word is aligned when it is segmented as its gloss is. Readers built on it consult the row's form
+stream without any analysis beyond the source's own. The generator pairs each word's morphemes
+with their glosses in a `GlossedWord` of `Data/Examples/Schema.lean`, the row's `glossedWords`,
+and this file reads that structure: a gloss element is a category label or a lexical gloss by
+its capitalization. Readers built on it consult the row's form
 rather than a curated feature, the first step from annotated stimuli toward parsed ones.
 
 ## Main definitions
@@ -28,7 +28,8 @@ rather than a curated feature, the first step from annotated stimuli toward pars
 * `Gloss.elements`, `Gloss.IsLabel`, `Gloss.labels`: the period-separated elements of a morph's
   gloss, an element being a category label when written without lower-case letters, and the
   labels of a gloss.
-* `GlossedWord.IsAligned`: the word is segmented as its gloss is.
+* `GlossedWord.IsValid`, `GlossedWord.morphs`, `GlossedWord.glosses`, `GlossedWord.form`: the
+  word has its morphemes, their forms and glosses, and the word without separators.
 * `Datum.glossedWord?`: the glossed word of a row printed as a given form.
 * `GlossedWord.stem`, `GlossedWord.wordform`, `GlossedWord.labels`,
   `GlossedWord.lexicalGloss?`, `GlossedWord.lexicalMorph?`: the first surface morph and the
@@ -39,9 +40,9 @@ rather than a curated feature, the first step from annotated stimuli toward pars
 
 * Everything is defined on `List Char`: the kernel reduces list operations where the positional
   `String` primitives get stuck, and the readers built here are consumed by `decide`.
-* A word whose surface and gloss segment differently, as CLDF's `WORD_ALIGNED` examples have
-  them, keeps its category labels and its lexical gloss; only the pairing of a morph with its
-  gloss, `GlossedWord.lexicalMorph?`, needs `GlossedWord.IsAligned`.
+* A word that is not valid, its surface and gloss segmented differently, has no morphemes but
+  keeps its category labels and its lexical gloss, read off its gloss; `GlossedWord.stem` and
+  `GlossedWord.lexicalMorph?` need the morphemes.
 
 ## References
 
@@ -152,12 +153,29 @@ namespace GlossedWord
 
 variable (w : GlossedWord)
 
-/-- The word is segmented as its gloss is (Rule 2), so that each morph has its gloss. -/
-def IsAligned : Prop := w.morphs.length = w.glosses.length
+/-- The word and its gloss are segmented alike (Rule 2), so the word has its morphemes: `pyigt`'s
+`GlossedWord.is_valid`. -/
+def IsValid : Prop := w.glossedMorphemes ≠ []
 
-instance : Decidable w.IsAligned := inferInstanceAs (Decidable (_ = _))
+instance : Decidable w.IsValid := inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The word's first surface morph, decapitalized: the form that a lexicon keys. -/
+/-- The forms of the word's morphemes. -/
+def morphs : List (List Char) := w.glossedMorphemes.map (·.morpheme)
+
+/-- The glosses of the word's morphemes; of a word that is not valid, its gloss split at the
+morpheme separators. -/
+def glosses : List (List Char) :=
+  if w.IsValid then w.glossedMorphemes.map (·.gloss) else Gloss.split ['-', '=', '~'] w.gloss
+
+/-- The word without morpheme separators and the punctuation around it, `pyigt`'s
+`GlossedWord.form`. -/
+def form : List Char :=
+  if w.IsValid then w.morphs.flatten else Gloss.trim (w.word.filter (· ∉ ['-', '=', '~']))
+
+/-- The word's form, decapitalized: the form that a lexicon keys. -/
+def wordform : List Char := w.form.map Gloss.toLower
+
+/-- The word's first morpheme, decapitalized. -/
 def stem : List Char := (w.morphs.headD []).map Gloss.toLower
 
 /-- The category labels among the elements of the word's glosses. -/
@@ -168,16 +186,11 @@ def labels : List (List Char) :=
 def lexicalGloss? : Option (List Char) :=
   w.glosses.find? fun g ↦ !decide (Gloss.IsLabel g)
 
-/-- The surface morph of the word's first lexical gloss, decapitalized, where the word is
-segmented as its gloss is: the form that a lexicon of roots keys. -/
+/-- The morpheme of the word's first lexical gloss, decapitalized: the form that a lexicon of
+roots keys. -/
 def lexicalMorph? : Option (List Char) :=
-  if w.IsAligned then
-    ((w.morphs.zip w.glosses).find? fun m ↦ !decide (Gloss.IsLabel m.2)).map
-      (·.1.map Gloss.toLower)
-  else none
-
-/-- The word's surface form: its morphs joined, decapitalized. -/
-def wordform : List Char := w.morphs.flatten.map Gloss.toLower
+  (w.glossedMorphemes.find? fun m ↦ !decide (Gloss.IsLabel m.gloss)).map
+    (·.morpheme.map Gloss.toLower)
 
 end GlossedWord
 

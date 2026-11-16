@@ -52,7 +52,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
-| `glossedWords`, `lgrConformance` | derived, not written | the generator segments each word of `glossedTokens` into morphs and morph glosses at `-` and `=`, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
+| `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
@@ -195,14 +195,21 @@ Quick reference:
 
 ### Alignment
 
-The generator emits each row's gloss line segmented, as `Datum.glossedWords`, so that a study
-reads morphs and category labels without splitting a string in the kernel, and records the
-example's `LGR_Conformance` as CLDF defines it: `MORPHEME_ALIGNED` when every word is segmented
-as its gloss is and some word is segmented, otherwise `WORD_ALIGNED`. A word the source prints
-with a different segmentation than its gloss (`képet` glossed `picture-ACC`) is transcribed as
-printed. It keeps its category labels and lexical gloss (`GlossedWord.labels`,
-`GlossedWord.features`); only a reader that pairs a morph with its gloss requires
-`GlossedWord.IsAligned`.
+The generator emits each row's gloss line as `Datum.glossedWords`, modelled on `pyigt`'s
+`GlossedWord` and `GlossedMorpheme`: a word with its gloss and, when the two are segmented alike
+by the same separators (`-`, `=`, and `~` for reduplication), the pairs of a morpheme and its
+gloss. A study reads morphemes and category labels from it without splitting a string in the
+kernel. The generator also records the example's `LGR_Conformance` as the CLDF export derives
+it: `MORPHEME_ALIGNED` when every word is segmented as its gloss is and some word is segmented,
+otherwise `WORD_ALIGNED`.
+
+A word the source prints with a different segmentation than its gloss (`képet` glossed
+`picture-ACC`) is transcribed as printed. It has no morphemes (`GlossedWord.IsValid` fails) but
+keeps its category labels and lexical gloss (`GlossedWord.labels`, `GlossedWord.features`).
+
+Two departures from `pyigt`: a morpheme's form drops only the punctuation of `scripts/lgr.py`,
+so that an apostrophe stays inside a word, and a word that is not valid has no morpheme pairs
+where `pyigt` keeps those before the mismatch.
 
 ## File-format style
 

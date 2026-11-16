@@ -1,5 +1,6 @@
 """The Leipzig Glossing Rules as the example data applies them: the conformance level of an
-example (CLDF's `LGR_Conformance`) and the segmentation of a word and its gloss into morphs.
+example (CLDF's `LGR_Conformance`) and the pairing of a word's morphemes with their glosses, which
+follows `pyigt.lgrmorphemes.GlossedWord`.
 
 Shared by `gen_examples.py`, which emits the level and the segmented words on each Lean row, and
 `export_examples_cldf.py`, which writes the level to the CLDF dataset, so that the two cannot
@@ -12,7 +13,11 @@ import re
 # sentence marks. It is dropped from surface morphs, so that `tükörben.` is the morph `tükörben`.
 PUNCT = '()[],.!?;:"…'
 
-BOUNDARY = re.compile("[-=]")
+# The morpheme separators of `pyigt.lgrmorphemes`: the affix boundary and the clitic boundary of
+# Rule 2 and the reduplication boundary of Rule 10.
+MORPHEME_SEPARATORS = "-=~"
+
+_SPLIT = re.compile("([" + re.escape(MORPHEME_SEPARATORS) + "])")
 
 
 def lgr_conformance(pairs):
@@ -28,9 +33,26 @@ def lgr_conformance(pairs):
     return "MORPHEME_ALIGNED" if aligned and segmented else "WORD_ALIGNED"
 
 
-def segment(word, gloss):
-    """The surface morphs of `word`, punctuation dropped, and the morph glosses of `gloss`, each
-    split at the affix boundary `-` and the clitic boundary `=`. The two lists have the same
-    length exactly when the word is segmented as its gloss is."""
-    morphs = ["".join(c for c in m if c not in PUNCT) for m in BOUNDARY.split(word)]
-    return morphs, BOUNDARY.split(gloss)
+def glossed_morphemes(word, gloss):
+    """The (morpheme, gloss, separator) triples of a word, as `pyigt`'s `GlossedWord` pairs
+    them, or `None` when the word is not valid: its gloss has a different number of morphemes,
+    or a different separator somewhere. The separator is the one before the morpheme, `None` for
+    the first, and the morpheme is given without the punctuation written around it."""
+    mm, gg = _SPLIT.split(word), _SPLIT.split(gloss)
+    if len(mm) != len(gg):
+        return None
+    out, sep = [], None
+    for m, g in zip(mm, gg):
+        if m in MORPHEME_SEPARATORS and len(m) == 1:
+            if m != g:
+                return None
+            sep = m
+            continue
+        if not m and not g:
+            continue
+        form = "".join(c for c in m if c not in PUNCT)
+        if not form or not g:
+            return None
+        out.append((form, g, sep))
+        sep = None
+    return out or None

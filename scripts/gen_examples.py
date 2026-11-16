@@ -54,10 +54,10 @@ Behavior:
   them, and no theorem reads them, so the Lean rows that `decide` reduces stay
   small. `verified` (`"page-image"`, `"text-layer"` or `"supplement"`) is how the row was last
   checked against its source.
-- Emits, beside `glossedTokens`, the derived `glossedWords`, each word's surface morphs and morph
-  glosses split at `-` and `=` as lists of characters, and `lgrConformance`, the example's CLDF
-  `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export), so that no theorem splits a
-  string in the kernel.
+- Emits, beside `glossedTokens`, the derived `glossedWords`, each word with its gloss and, when
+  the two are segmented alike, its morpheme-gloss pairs, as `pyigt` models a glossed word, and
+  `lgrConformance`, the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF
+  export). They are lists of characters, so that no theorem splits a string in the kernel.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
   empty nor a Glottocode of `languages.csv`, unknown judgment value (also as
@@ -99,7 +99,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
-from lgr import lgr_conformance, segment  # noqa: E402
+from lgr import glossed_morphemes, lgr_conformance  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
@@ -224,9 +224,11 @@ def emit_glossed_words(xs) -> str:
     """Emit the `List GlossedWord` of the validated gloss pairs `xs`."""
     words = []
     for word, gloss in xs:
-        morphs, glosses = segment(word, gloss)
-        words.append("⟨[" + ", ".join(map(lean_chars, morphs)) + "], ["
-                     + ", ".join(map(lean_chars, glosses)) + "]⟩")
+        gms = glossed_morphemes(word, gloss) or []
+        items = ", ".join(
+            f"⟨{lean_chars(m)}, {lean_chars(g)}, {'none' if sep is None else f'some {lean_chars(sep)[1:-1]}'}⟩"
+            for m, g, sep in gms)
+        words.append(f"⟨{lean_chars(word)}, {lean_chars(gloss)}, [{items}]⟩")
     return "[" + ", ".join(words) + "]"
 
 

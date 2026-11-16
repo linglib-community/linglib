@@ -24,8 +24,9 @@ sentence-level counterpart of `Data/Wordlist/`.
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
   `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
-* `GlossedWord`, `LGRConformance`: a word of the gloss line segmented into morphs, and the
-  conformance of an example with the Leipzig Glossing Rules.
+* `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
+  morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
+  Leipzig Glossing Rules.
 
 ## Implementation notes
 
@@ -107,14 +108,28 @@ inductive LGRConformance where
   | morphemeAligned
   deriving DecidableEq, Repr
 
-/-- A word of the gloss line as the Leipzig rules structure it: its surface morphs and the
-glosses of its morphs, each split at the affix boundary `-` and the clitic boundary `=`. The two
-lists have the same length exactly when the word is segmented as its gloss is. -/
+/-- A morpheme of a word with its gloss, `pyigt`'s `GlossedMorpheme`. -/
+structure GlossedMorpheme where
+  /-- The form of the morpheme, without the punctuation written around it. -/
+  morpheme : List Char
+  /-- The gloss of the morpheme. -/
+  gloss : List Char
+  /-- The separator before the morpheme: `-` for an affix, `=` for a clitic and `~` for a
+  reduplicant; `none` for the first morpheme of the word. -/
+  sep : Option Char := none
+  deriving DecidableEq, Repr
+
+/-- A word of the gloss line with its gloss, `pyigt`'s `GlossedWord`: the word and the gloss as
+the source prints them, and the pairs of a morpheme and its gloss, which the word has when it and
+its gloss are segmented alike, by the same separators in the same order (Rule 2). -/
 structure GlossedWord where
-  /-- The surface morphs, without the punctuation written around them. -/
-  morphs : List (List Char)
-  /-- The glosses of the morphs. -/
-  glosses : List (List Char)
+  /-- The word, as printed. -/
+  word : List Char
+  /-- Its gloss, as printed. -/
+  gloss : List Char
+  /-- Its morphemes with their glosses; empty when the word and the gloss are segmented
+  differently. -/
+  glossedMorphemes : List GlossedMorpheme := []
   deriving DecidableEq, Repr
 
 /-- A `Datum` is a piece of data a paper reports with one of its examples
@@ -138,7 +153,7 @@ structure Datum where
   /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
   source gives no gloss. -/
   glossedTokens : List (String × String)
-  /-- The words of `glossedTokens` segmented into morphs, which the generator derives. -/
+  /-- The words of `glossedTokens` with their morphemes, which the generator derives. -/
   glossedWords : List GlossedWord := []
   /-- The `LGR_Conformance` column, which the generator derives from `glossedTokens`; `none`
   when the source gives no gloss. -/
