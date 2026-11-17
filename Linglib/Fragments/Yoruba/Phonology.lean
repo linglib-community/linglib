@@ -29,7 +29,7 @@ The feature values come from the PHOIBLE chart, which codes the tongue-root cont
 ## Main results
 
 * `Yoruba.subset_yor`: the vowels are those of PHOIBLE's Yoruba inventory.
-* `Yoruba.hasValue_atr_iff`: the advanced vowels are /i e o u/.
+* `Yoruba.atr_eq_true_iff`: the advanced vowels are /i e o u/.
 
 ## References
 
@@ -76,8 +76,8 @@ theorem subset_yor : vowels ⊆ Inventories.Yoruba.yor.featureMatrices.image vow
   Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
 /-- The advanced vowels are /i e o u/. -/
-theorem hasValue_atr_iff :
-    ∀ x ∈ vowels, x.HasValue .atr true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
+theorem atr_eq_true_iff :
+    ∀ x ∈ vowels, x .atr = true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
   decide
 
 end Yoruba

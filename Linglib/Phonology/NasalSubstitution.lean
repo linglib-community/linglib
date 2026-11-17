@@ -60,8 +60,7 @@ def placeAssimilation (trigger : Segment) : Rule where
 /-- The nasals of the inventory `I` at the place of `s`: the natural class of the major
 articulator values of `s` among the nasals of `I`. -/
 def homorganicNasals (I : Finset Segment) (s : Segment) : Finset Segment :=
-  (s.restrict Feature.majorArticulators).naturalClass
-    (Sonority.nasal.description.naturalClass I)
+  naturalClass (s.restrict Feature.majorArticulators) (naturalClass Sonority.nasal.description I)
 
 /-- `realize I N s` is the nasal `s` as a phoneme of the inventory `I`: the nasal of `I` at its
 place if there is exactly one, and the nasal `N` otherwise. Other segments are unchanged. -/
@@ -96,7 +95,7 @@ variable {I : Finset Segment} {trigger N s x y : Segment}
 
 @[simp] theorem mem_homorganicNasals :
     y ∈ homorganicNasals I s ↔
-      y ∈ I ∧ y.IsNasal ∧ s.restrict Feature.majorArticulators ≤ y := by
+      y ∈ I ∧ y.IsNasal ∧ (s.restrict Feature.majorArticulators) ≤ y := by
   simp [homorganicNasals, ← Segment.isNasal_iff_le, and_assoc]
 
 theorem realize_of_not_isNasal (h : ¬ s.IsNasal) : realize I N s = s := by
@@ -114,7 +113,8 @@ theorem realize_of_card_ne_one (h : s.IsNasal)
 /-- A segment that has taken the major articulators of `x` has the nasals of `x` at its
 place. -/
 theorem homorganicNasals_piecewise :
-    homorganicNasals I (Feature.majorArticulators.piecewise x N) = homorganicNasals I x := by
+    homorganicNasals I (Segment.piecewise Feature.majorArticulators x N) =
+      homorganicNasals I x := by
   rw [homorganicNasals, Segment.restrict_piecewise, homorganicNasals]
 
 /-! ### Substitution -/
@@ -123,7 +123,8 @@ theorem homorganicNasals_piecewise :
 trigger, and `x` itself is unchanged. -/
 theorem placeAssimilation_apply_pair (y : Segment) :
     (placeAssimilation trigger).apply [y, x] =
-      [if y.IsNasal ∧ trigger ≤ x then Feature.majorArticulators.piecewise x y else y, x] := by
+      [if y.IsNasal ∧ trigger ≤ x then Segment.piecewise Feature.majorArticulators x y else y,
+        x] := by
   rw [Rule.apply_cons_of_leftReach_eq_zero rfl, Rule.apply_cons_of_leftReach_eq_zero rfl]
   by_cases h : y.IsNasal ∧ trigger ≤ x <;>
     simp [h, Rule.verdict, placeAssimilation, MatchesLeft, MatchesRight, Effect.apply,
@@ -131,7 +132,7 @@ theorem placeAssimilation_apply_pair (y : Segment) :
 
 theorem substitute_eq : substitute I trigger N x =
     realize I N (if N.IsNasal ∧ trigger ≤ x then
-      Feature.majorArticulators.piecewise x N else N) := by
+      Segment.piecewise Feature.majorArticulators x N else N) := by
   simp only [substitute, assimilate, placeAssimilation_apply_pair, List.map_cons, List.head_cons]
 
 /-- Substitution is assimilation together with the loss of the consonant: the nasal `N` and a
@@ -143,10 +144,11 @@ theorem assimilate_pair (hx : ¬ x.IsNasal) :
     List.head_cons, realize_of_not_isNasal hx]
 
 private theorem isNasal_piecewise (hN : N.IsNasal) :
-    Segment.IsNasal (Feature.majorArticulators.piecewise x N) := by
-  rwa [Segment.IsNasal, Segment.HasValue, Segment.HasValue,
-    Finset.piecewise_eq_of_notMem _ _ _ (by decide),
-    Finset.piecewise_eq_of_notMem _ _ _ (by decide)]
+    Segment.IsNasal (Segment.piecewise Feature.majorArticulators x N) := by
+  have ha : Feature.approximant ∉ Feature.majorArticulators := by decide
+  have hs : Feature.sonorant ∉ Feature.majorArticulators := by decide
+  simpa [Segment.IsNasal, Segment.piecewise, Finset.piecewise_eq_of_notMem _ _ _ ha,
+    Finset.piecewise_eq_of_notMem _ _ _ hs] using hN
 
 /-- The substituted nasal is the nasal of the inventory at the place of the consonant, when the
 inventory has exactly one. -/

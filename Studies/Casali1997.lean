@@ -234,10 +234,10 @@ structure IsOfKind (c : Context) (k : Data.Hiatus.JunctureKind) : Prop where
   rightKind : c.rightKind = (kinds k).2
 
 /-- The paper's schematic consonant, the natural class [+consonantal]. -/
-def C : Segment := .ofSpecs [(.consonantal, true)]
+def C : Segment := [+consonantal]
 
 /-- The paper's schematic vowel, the natural class [+syllabic, −consonantal]. -/
-def V : Segment := .ofSpecs [(.syllabic, true), (.consonantal, false)]
+def V : Segment := [+syllabic, −consonantal]
 
 /-- The paper's schematic juncture `/CV₁ + V₂C/` at the survey's kind `k`, at the start of an
 utterance. -/

@@ -1,7 +1,6 @@
 module
 
-public import Mathlib.Data.Finset.Lattice.Fold
-public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Natural classes
@@ -9,42 +8,26 @@ public import Linglib.Phonology.Segmental.Defs
 This file defines the natural classes of an inventory. In Hayes's definition a natural class
 is any complete set of sounds of a language that share the same value for a feature or set of
 features, so that /p t k/ are the voiceless stops of English and not of Persian, which has /q/
-as well. A feature description is an underspecified segment `d`, a segment `x` has the values
-of `d` when `d ≤ x`, and the natural class of `d` in an inventory is the set of its members
-above `d`.
+as well. The [natural class](##Phonology.naturalClass) of a feature matrix in an inventory is the
+set of its segments that include the matrix.
 
-What the segments of a set share is their meet, the description Albright and Hayes's minimal
-generalization reduces two differing segments to, and the natural class of that meet is the
-smallest natural class containing the set. A set is a natural class exactly when it is that
-smallest class, which makes the property decidable, and two natural classes that overlap meet
-in a natural class. Ordered by inclusion and with the empty set at the bottom, the natural
-classes form Broe's lattice of representations.
-
-## Main definitions
-
-* `Phonology.Segment.naturalClass`: the members of an inventory that have the values of a
-  description.
-* `Phonology.IsNaturalClass`: a nonempty set of segments is the natural class of some
-  description.
-
-## Main results
-
-* `Phonology.Segment.subset_naturalClass_iff`: a set lies in the natural class of `d` exactly
-  when it lies in the inventory and `d` is a lower bound of it, the Galois connection between
-  sets of segments and descriptions.
-* `Phonology.Segment.naturalClass_inf'_subset_iff`: the natural class of what a set shares is the
-  smallest natural class containing the set.
-* `Phonology.isNaturalClass_iff`: a set is a natural class exactly when it is the natural class
-  of what its members share.
-* `Phonology.IsNaturalClass.inter`: two overlapping natural classes meet in a natural class.
+[What the segments of a set share](##Phonology.sharedSpecs) is the feature values they all
+have, which Albright and Hayes's minimal generalization reduces two differing segments to, and
+the segments with those values are
+[the smallest natural class containing the set](##Phonology.extent_sharedSpecs_subset_iff).
+A set is a natural class [exactly when it is that smallest class](##Phonology.isNaturalClass_iff),
+which makes the property decidable, and
+[two natural classes meet in a natural class](##Phonology.IsNaturalClass.inter). Ordered by
+inclusion, the natural classes form Broe's lattice of representations.
 
 ## Implementation notes
 
-Descriptions are ordered by subsumption and natural classes by inclusion, and the two maps
-`naturalClass` and `Finset.inf'` form an antitone Galois connection, that of formal concept
-analysis for the relation `d ≤ x`. The meet of the empty set would be an inconsistent
-description, which `Segment` lacks, so the statements about meets are for nonempty sets, and
-a natural class is nonempty by definition.
+The theory is that of formal concept analysis for the relation of a segment to the feature
+values it has: [the segments with a set of values](##Phonology.extent) and `sharedSpecs` form
+an [antitone Galois connection](##Phonology.subset_extent_iff) between sets of segments and
+sets of feature values. A set with both values of a feature is the set of values of no feature
+matrix and no segment has it, so the empty set is a natural class, the bottom of the lattice,
+and what the empty set shares is every feature value.
 
 ## References
 
@@ -57,94 +40,111 @@ a natural class is nonempty by definition.
 
 namespace Phonology
 
-variable {I S T : Finset Segment} {d x : Segment}
+variable {I J S T : Finset Segment} {A B : Finset (Feature × Bool)} {d x : Segment}
+  {f : Feature} {v : Bool}
 
-namespace Segment
+/-! ### The Galois connection -/
 
-/-- The natural class of a description `d` in an inventory `I` is the complete set of segments
-of `I` that have the values of `d`. -/
-def naturalClass (d : Segment) (I : Finset Segment) : Finset Segment := I.filter (d ≤ ·)
+/-- The segments of an inventory that have every feature value in a set. -/
+def extent (A : Finset (Feature × Bool)) (I : Finset Segment) : Finset Segment :=
+  I.filter fun x ↦ ∀ p ∈ A, x p.1 = some p.2
 
-@[simp] theorem mem_naturalClass : x ∈ d.naturalClass I ↔ x ∈ I ∧ d ≤ x := Finset.mem_filter
+@[simp] theorem mem_extent : x ∈ extent A I ↔ x ∈ I ∧ A ⊆ x.specs := by
+  rw [extent, Finset.mem_filter, Segment.subset_specs_iff]
 
-theorem naturalClass_subset (d : Segment) (I : Finset Segment) : d.naturalClass I ⊆ I :=
+theorem extent_subset (A : Finset (Feature × Bool)) (I : Finset Segment) : extent A I ⊆ I :=
   Finset.filter_subset _ _
 
-@[simp] theorem naturalClass_bot (I : Finset Segment) : (⊥ : Segment).naturalClass I = I :=
-  Finset.filter_true_of_mem fun _ _ ↦ bot_le
+@[simp] theorem extent_empty (I : Finset Segment) : extent ∅ I = I :=
+  Finset.filter_true_of_mem fun _ _ ↦ by simp
 
-theorem naturalClass_anti (I : Finset Segment) : Antitone (naturalClass · I) :=
-  fun _ _ h ↦ Finset.monotone_filter_right I fun _ _ he ↦ h.trans he
+theorem extent_anti (I : Finset Segment) : Antitone (extent · I) := fun _ _ h _ hx ↦
+  mem_extent.2 ⟨(mem_extent.1 hx).1, h.trans (mem_extent.1 hx).2⟩
 
-theorem naturalClass_mono (d : Segment) : Monotone d.naturalClass :=
+theorem extent_union (A B : Finset (Feature × Bool)) (I : Finset Segment) :
+    extent (A ∪ B) I = extent A I ∩ extent B I := by
+  ext x
+  simp only [mem_extent, Finset.mem_inter, Finset.union_subset_iff]
+  tauto
+
+/-- What the segments of a set share: the feature values they all have. -/
+def sharedSpecs (S : Finset Segment) : Finset (Feature × Bool) :=
+  Finset.univ.filter fun p ↦ ∀ x ∈ S, x p.1 = some p.2
+
+@[simp] theorem mem_sharedSpecs : (f, v) ∈ sharedSpecs S ↔ ∀ x ∈ S, x f = some v := by
+  simp [sharedSpecs]
+
+/-- A set of feature values is among what a set shares exactly when each member has it. -/
+theorem subset_sharedSpecs_iff : A ⊆ sharedSpecs S ↔ ∀ x ∈ S, A ⊆ x.specs := by
+  simp only [Finset.subset_iff, Prod.forall, mem_sharedSpecs, Segment.mem_specs]
+  exact ⟨fun h x hx f v hd ↦ h f v hd x hx, fun h f v hd x hx ↦ h x hx f v hd⟩
+
+/-- A set of segments has a set of feature values exactly when it lies in the inventory and
+its members share them. -/
+theorem subset_extent_iff : S ⊆ extent A I ↔ S ⊆ I ∧ A ⊆ sharedSpecs S := by
+  simp only [Finset.subset_iff (s₁ := S), mem_extent, forall_and, subset_sharedSpecs_iff]
+
+theorem subset_extent_sharedSpecs (hS : S ⊆ I) : S ⊆ extent (sharedSpecs S) I :=
+  subset_extent_iff.2 ⟨hS, subset_rfl⟩
+
+/-- The segments with what a set shares are the smallest such class containing the set. -/
+theorem extent_sharedSpecs_subset_iff (hS : S ⊆ I) :
+    extent (sharedSpecs S) I ⊆ extent A I ↔ S ⊆ extent A I :=
+  ⟨(subset_extent_sharedSpecs hS).trans, fun h ↦ extent_anti I (subset_extent_iff.1 h).2⟩
+
+/-! ### Natural classes -/
+
+/-- The natural class of a feature matrix `d` in an inventory `I` is the complete set of
+segments of `I` that include `d`. -/
+def naturalClass (d : Segment) (I : Finset Segment) : Finset Segment := I.filter (d ≤ ·)
+
+@[simp] theorem mem_naturalClass : x ∈ naturalClass d I ↔ x ∈ I ∧ d ≤ x :=
+  Finset.mem_filter
+
+theorem naturalClass_eq_extent (d : Segment) (I : Finset Segment) :
+    naturalClass d I = extent d.specs I := by
+  ext x; rw [mem_naturalClass, mem_extent, Segment.le_iff_specs_subset]
+
+theorem naturalClass_subset (d : Segment) (I : Finset Segment) : naturalClass d I ⊆ I :=
+  Finset.filter_subset _ _
+
+theorem naturalClass_mono (d : Segment) : Monotone (naturalClass d) :=
   fun _ _ h ↦ Finset.filter_subset_filter _ h
 
-/-- A set lies in the natural class of `d` exactly when it lies in the inventory and `d` is
-below each of its members. -/
-theorem subset_naturalClass_iff :
-    S ⊆ d.naturalClass I ↔ S ⊆ I ∧ d ∈ lowerBounds (S : Set Segment) := by
-  simp only [Finset.subset_iff, mem_naturalClass, mem_lowerBounds, Finset.mem_coe, imp_and,
-    forall_and]
+/-- A set lies in the natural class of `d` exactly when it lies in the inventory and its
+members share the values of `d`. -/
+theorem subset_naturalClass_iff : S ⊆ naturalClass d I ↔ S ⊆ I ∧ d.specs ⊆ sharedSpecs S := by
+  rw [naturalClass_eq_extent, subset_extent_iff]
 
-theorem subset_naturalClass_iff_le_inf' (hS : S ⊆ I) (hne : S.Nonempty) :
-    S ⊆ d.naturalClass I ↔ d ≤ S.inf' hne id := by
-  rw [subset_naturalClass_iff, le_isGLB_iff (Finset.isGLB_inf' hne), and_iff_right hS]
-
-theorem subset_naturalClass_inf' (hS : S ⊆ I) (hne : S.Nonempty) :
-    S ⊆ (S.inf' hne id).naturalClass I :=
-  (subset_naturalClass_iff_le_inf' hS hne).2 le_rfl
-
-/-- The natural class of what a set shares is the smallest natural class containing the
-set. -/
-theorem naturalClass_inf'_subset_iff (hS : S ⊆ I) (hne : S.Nonempty) :
-    (S.inf' hne id).naturalClass I ⊆ d.naturalClass I ↔ S ⊆ d.naturalClass I :=
-  ⟨(subset_naturalClass_inf' hS hne).trans,
-    fun h ↦ naturalClass_anti I ((subset_naturalClass_iff_le_inf' hS hne).1 h)⟩
-
-end Segment
-
-open Segment
-
-/-- A nonempty set of segments is a natural class of the inventory `I` when it is the complete
-set of segments of `I` that have the values of some description. -/
-def IsNaturalClass (I S : Finset Segment) : Prop :=
-  S.Nonempty ∧ ∃ d : Segment, d.naturalClass I = S
-
-theorem IsNaturalClass.nonempty (h : IsNaturalClass I S) : S.Nonempty := h.1
+/-- A set of segments is a natural class of the inventory `I` when it is the complete set of
+segments of `I` that have some set of feature values. -/
+def IsNaturalClass (I S : Finset Segment) : Prop := ∃ A, extent A I = S
 
 theorem IsNaturalClass.subset (h : IsNaturalClass I S) : S ⊆ I := by
-  obtain ⟨-, d, rfl⟩ := h; exact d.naturalClass_subset I
+  obtain ⟨A, rfl⟩ := h; exact extent_subset A I
 
-theorem isNaturalClass_naturalClass (h : (d.naturalClass I).Nonempty) :
-    IsNaturalClass I (d.naturalClass I) :=
-  ⟨h, d, rfl⟩
+theorem isNaturalClass_naturalClass (d : Segment) (I : Finset Segment) :
+    IsNaturalClass I (naturalClass d I) :=
+  ⟨d.specs, (naturalClass_eq_extent d I).symm⟩
 
-theorem isNaturalClass_self (h : I.Nonempty) : IsNaturalClass I I := ⟨h, ⊥, naturalClass_bot I⟩
+theorem isNaturalClass_self (I : Finset Segment) : IsNaturalClass I I := ⟨∅, extent_empty I⟩
 
-/-- A set is a natural class exactly when it is the natural class of what its members
+/-- A set is a natural class exactly when it is the set of segments with what its members
 share. -/
-theorem isNaturalClass_iff :
-    IsNaturalClass I S ↔ ∃ hne : S.Nonempty, (S.inf' hne id).naturalClass I = S := by
-  refine ⟨fun h ↦ ⟨h.1, ?_⟩, fun ⟨hne, h⟩ ↦ ⟨hne, _, h⟩⟩
-  have hS := h.subset
-  obtain ⟨hne, d, rfl⟩ := h
-  exact (subset_naturalClass_inf' hS hne).antisymm'
-    ((naturalClass_inf'_subset_iff hS hne).2 subset_rfl)
+theorem isNaturalClass_iff : IsNaturalClass I S ↔ extent (sharedSpecs S) I = S := by
+  refine ⟨?_, fun h ↦ ⟨_, h⟩⟩
+  rintro ⟨A, rfl⟩
+  have hI := extent_subset A I
+  exact ((extent_sharedSpecs_subset_iff hI).2 subset_rfl).antisymm (subset_extent_sharedSpecs hI)
 
 instance (I S : Finset Segment) : Decidable (IsNaturalClass I S) :=
   decidable_of_iff _ isNaturalClass_iff.symm
 
-/-- Two natural classes that overlap meet in a natural class, that of what their common members
-share. -/
-theorem IsNaturalClass.inter (hS : IsNaturalClass I S) (hT : IsNaturalClass I T)
-    (hST : (S ∩ T).Nonempty) : IsNaturalClass I (S ∩ T) := by
-  obtain ⟨-, d, rfl⟩ := hS
-  obtain ⟨-, e, rfl⟩ := hT
-  have hI : d.naturalClass I ∩ e.naturalClass I ⊆ I :=
-    Finset.inter_subset_left.trans (d.naturalClass_subset I)
-  refine isNaturalClass_iff.2 ⟨hST, (subset_naturalClass_inf' hI hST).antisymm' ?_⟩
-  exact Finset.subset_inter
-    ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_left)
-    ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_right)
+/-- Two natural classes meet in a natural class, that of their feature values together. -/
+theorem IsNaturalClass.inter (hS : IsNaturalClass I S) (hT : IsNaturalClass I T) :
+    IsNaturalClass I (S ∩ T) := by
+  obtain ⟨A, rfl⟩ := hS
+  obtain ⟨B, rfl⟩ := hT
+  exact ⟨A ∪ B, extent_union A B I⟩
 
 end Phonology

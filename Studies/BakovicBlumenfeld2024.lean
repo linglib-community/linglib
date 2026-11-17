@@ -250,10 +250,10 @@ end Replacement
 /-! ### Segments of the Bedouin Arabic, Polish and hypothetical examples -/
 
 /-- A consonant, as a rule context. -/
-def C : Segment := Segment.ofSpecs [(.syllabic, false)]
+def C : Segment := [−syllabic]
 
 /-- A vowel, as a rule context. -/
-def V : Segment := Segment.ofSpecs [(.syllabic, true)]
+def V : Segment := [+syllabic]
 
 namespace Chart
 
@@ -300,8 +300,8 @@ def palatalization : Rule := { target := k, effect := .replace č, rightContext 
 
 /-- Final devoicing `[−son] → [−voi] / __ #` of (6). -/
 def devoicing : Rule where
-  target := Segment.ofSpecs [(.sonorant, false)]
-  effect := .changeFeatures (Segment.ofSpecs [(.voice, false)])
+  target := [−sonorant]
+  effect := .changeFeatures [−voice]
   rightContext := [.wordBoundary]
 
 -- (22): *kiki* breaks into two palatalizable pieces
@@ -321,8 +321,8 @@ theorem feeds_kike : Feeds finalRaising.apply (inputRank palatalization.apply) [
 
 /-- Vocalization `[−cons] → [+syll] / C __ #` of (5). -/
 def vocalization : Rule where
-  target := Segment.ofSpecs [(.consonantal, false)]
-  effect := .changeFeatures (Segment.ofSpecs [(.syllabic, true)])
+  target := [−consonantal]
+  effect := .changeFeatures [+syllabic]
   leftContext := [.seg C]
   rightContext := [.wordBoundary]
 
@@ -353,7 +353,7 @@ theorem underapplication_bedouin :
 def raisingPolish : Rule where
   target := o
   effect := .replace u
-  rightContext := [.seg (Segment.ofSpecs [(.voice, true), (.nasal, false)]), .wordBoundary]
+  rightContext := [.seg [+voice, −nasal], .wordBoundary]
 
 -- (6), Figure 5: devoicing bleeds raising at *ʒwob*, *ʒwop*, *ʒwub*, *ʒwup*
 theorem bleeding_polish : Bleeding devoicing.apply raisingPolish.apply [ezh, w, o, b]

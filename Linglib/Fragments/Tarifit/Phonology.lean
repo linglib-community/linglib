@@ -42,7 +42,7 @@ namespace Tarifit
 /-- The departure of a pharyngealized consonant from the plain one, for the consonants PHOIBLE
 has no pharyngealized glyph of. [+RTR] is PHOIBLE's coding of pharyngealization; [hayes-2009]
 adds [+dorsal, −high, +low, −front, +back] instead (p. 88). -/
-def pharyngealization : Segment := .ofSpecs [(.rtr, true)]
+def pharyngealization : Segment := [+rtr]
 
 /-! ### Stops -/
 
@@ -145,7 +145,7 @@ def «ʒˤ» : Segment := .ofChart FeatureMatrix.last.«ʒˤ»
 [afkir-zellou-2025] lists only geminated (p. 7). PHOIBLE has /ʃˤ/ and /ʃʷ/ but no glyph with both
 articulations, so it is the plain fricative with the last-phase values of both. -/
 def «ʃˤʷ» : Segment :=
-  .ofChart .«ʃ» (.ofSpecs [(.rtr, true), (.labial, true), (.round, true), (.labiodental, false)])
+  .ofChart .«ʃ» [+rtr, +labial, +round, −labiodental]
 
 /-- The voiceless uvular fricative /χ/. -/
 def χ : Segment := .ofChart .«χ»
@@ -166,7 +166,7 @@ def ħ : Segment := .ofChart .«ħ»
 [afkir-zellou-2025] lists it with the fricatives (p. 7); it is a sonorant approximant here because
 their text calls it "a vowel-conditioning sonorant like /r/" (p. 41). -/
 def «ʕ» : Segment :=
-  .ofChart .«ʕ» (.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)])
+  .ofChart .«ʕ» [−consonantal, +sonorant, +approximant]
 
 /-- The voiceless glottal fricative /h/. -/
 def h : Segment := .ofChart .«h»

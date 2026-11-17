@@ -74,18 +74,18 @@ variable (I : Finset Segment)
 /-- An [ATR] contrast among the vowels of `I` satisfying `P` is a [+ATR] member whose [−ATR]
 twin is also a member. -/
 def HasContrastAmong (P : Segment → Prop) [DecidablePred P] : Prop :=
-  ∃ v ∈ I, P v ∧ v.HasValue .atr true ∧ v.setFeature .atr false ∈ I
+  ∃ v ∈ I, P v ∧ v .atr = true ∧ v.setFeature .atr false ∈ I
 
 instance (P : Segment → Prop) [DecidablePred P] : Decidable (HasContrastAmong I P) := by
   unfold HasContrastAmong; infer_instance
 
 /-- The high vowels. -/
-def IsHigh (v : Segment) : Prop := v.HasValue .high true
+def IsHigh (v : Segment) : Prop := v .high = true
 
-instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (v.HasValue _ _))
+instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The mid vowels. -/
-def IsMid (v : Segment) : Prop := v.HasValue .high false ∧ v.HasValue .low false
+def IsMid (v : Segment) : Prop := v .high = false ∧ v .low = false
 
 instance : DecidablePred IsMid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 

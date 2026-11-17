@@ -229,52 +229,52 @@ never ends a word ([hayes-2009] p. 54). -/
 def finals : Finset Segment := English.Phonology.inventory.erase h
 
 theorem filter_matchesLeft_single (k : Segment) (I : Finset Segment) :
-    I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = k.naturalClass I := by
+    I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = naturalClass k I := by
   simp only [matchesLeft_single_iff]; rfl
 
 -- (6)
 theorem learned_vote_need :
     learned [vote, need] = [.seg (t ⊓ d)] ∧
-      (t ⊓ d).naturalClass finals = {t, d} := by
+      naturalClass (t ⊓ d) finals = {t, d} := by
   decide
 
 -- footnote 4
 theorem learned_rub_sag_plan :
     learned [rub, sag, plan] = [.seg (b ⊓ g ⊓ n)] ∧
-      d ∈ (b ⊓ g ⊓ n).naturalClass finals := by
+      d ∈ naturalClass (b ⊓ g ⊓ n) finals := by
   decide
 
 /-- The voiced segments, as a description. -/
-def voiced : Segment := Segment.ofSpecs [(.voice, true)]
+def voiced : Segment := [+voice]
 
 /-- The voiceless segments, as a description. -/
-def voiceless : Segment := Segment.ofSpecs [(.voice, false)]
+def voiceless : Segment := [−voice]
 
 -- (7b)
 theorem learned_voiced :
     learned [rub, sag, plan, love, flow] = [.seg (b ⊓ g ⊓ n ⊓ v ⊓ o)] ∧
-      (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass finals =
-        voiced.naturalClass finals \ {l} ∧
-      (b ⊓ g ⊓ n ⊓ v ⊓ o ⊓ l).naturalClass finals =
-        voiced.naturalClass finals := by
+      naturalClass (b ⊓ g ⊓ n ⊓ v ⊓ o) finals =
+        naturalClass voiced finals \ {l} ∧
+      naturalClass (b ⊓ g ⊓ n ⊓ v ⊓ o ⊓ l) finals =
+        naturalClass voiced finals := by
   decide
 
 -- (7b)
 theorem learned_voiceless :
     learned [jump, miss, laugh] = [.seg (p ⊓ s ⊓ f)] ∧
-      (p ⊓ s ⊓ f).naturalClass finals =
-        voiceless.naturalClass finals \ {k} ∧
-      (p ⊓ s ⊓ f ⊓ k).naturalClass finals =
-        voiceless.naturalClass finals := by
+      naturalClass (p ⊓ s ⊓ f) finals =
+        naturalClass voiceless finals \ {k} ∧
+      naturalClass (p ⊓ s ⊓ f ⊓ k) finals =
+        naturalClass voiceless finals := by
   decide
 
 /-- The island (8) is `-t` after a voiceless fricative. -/
 def voicelessFricative : Segment :=
-  Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)]
+  [−sonorant, +continuant, −voice]
 
 -- (8)
 theorem naturalClass_voicelessFricative :
-    voicelessFricative.naturalClass finals = {f, θ, s, esh} := by
+    naturalClass voicelessFricative finals = {f, θ, s, esh} := by
   decide
 
 -- (8)

@@ -101,7 +101,7 @@ def Feature.majorArticulators : Finset Feature := {.labial, .coronal, .dorsal}
 /-- The major articulators of a segment, the major articulator features it is specified `+` for:
 Halle, Vaux and Wolfe's designated articulators ([halle-vaux-wolfe-2000] §1.2.2). -/
 def Segment.articulators (s : Segment) : Finset Feature :=
-  Feature.majorArticulators.filter (s.HasValue · true)
+  Feature.majorArticulators.filter (s · = true)
 
 /-- Two segments are homorganic when they agree on the major articulator features. -/
 def Segment.Homorganic (s t : Segment) : Prop := Set.EqOn s t ↑Feature.majorArticulators

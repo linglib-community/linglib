@@ -35,7 +35,7 @@ with the features McCarthy and Prince's corono-dorsal analysis adds.
 
 * `Akan.subset_aka`: the vowels are those of PHOIBLE's Akan inventory.
 * `Akan.vowel_apply`: a vowel has the chart's values off [ATR] and [tense].
-* `Akan.hasValue_atr_iff`: the advanced vowels are /i e o u/.
+* `Akan.atr_eq_true_iff`: the advanced vowels are /i e o u/.
 * `Akan.restrict_tcCurl_eq_k`: the affricate has the stop's values off the four features
   palatalization writes.
 
@@ -102,8 +102,8 @@ theorem subset_aka : vowels ⊆ Inventories.Akan.aka.featureMatrices.image vowel
   Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
 /-- Dolphyne's advanced set is /i e o u/. -/
-theorem hasValue_atr_iff :
-    ∀ x ∈ vowels, x.HasValue .atr true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
+theorem atr_eq_true_iff :
+    ∀ x ∈ vowels, x .atr = true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
   decide
 
 /-! ### The velar–palatal alternation -/
@@ -114,8 +114,7 @@ onto a dorsal that keeps [+dorsal] (the paragraph after their (125)); [+distribu
 release are the values PHOIBLE's /tɕ/ ends in. PHOIBLE's /tɕ/ is [+anterior] and ends as a
 fricative, so the affricate is built on the stop and not taken from its chart entry. -/
 def palatalized : Segment :=
-  Segment.ofSpecs [(.coronal, true), (.anterior, false), (.distributed, true),
-    (.delayedRelease, true)]
+  [+coronal, −anterior, +distributed, +delayedRelease]
 
 /-- The voiceless velar stop /k/. -/
 def k : Segment := .ofChart .«k»
@@ -133,13 +132,13 @@ theorem restrict_tcCurl_eq_k :
   decide
 
 theorem k_tcCurl_coronal :
-    k.HasValue .coronal false ∧ tcCurl.HasValue .coronal true := by
+    k .coronal = false ∧ tcCurl .coronal = true := by
   decide
 
 theorem tcCurl_isComplex : tcCurl.IsComplex := by decide
 
 theorem smallCapitalI_front_a_not_front :
-    smallCapitalI.HasValue .front true ∧ a.HasValue .front false := by
+    smallCapitalI .front = true ∧ a .front = false := by
   decide
 
 end Akan

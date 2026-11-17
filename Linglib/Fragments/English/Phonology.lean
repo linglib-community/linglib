@@ -197,7 +197,7 @@ def transcribe (xs : List String) : Option (List Segment) :=
 
 /-- The nasals are the complete set of [+nasal] sounds. -/
 theorem naturalClass_nasal :
-    (Segment.ofSpecs [(.nasal, true)]).naturalClass inventory = {m, n, ŋ} := by
+    naturalClass [+nasal] inventory = {m, n, ŋ} := by
   decide
 
 /-- The voiceless stops /p t k/ are a natural class. -/
@@ -220,20 +220,17 @@ theorem not_isNaturalClass_stops_liquids :
 /-- Preglottalization glottalizes a voiceless stop word-finally,
 `[−cont, −voice] → [+c.g.] / __ ]word`. -/
 def preglottalization : Rule where
-  target := Segment.ofSpecs
-    [(Phonology.Feature.continuant, false), (Phonology.Feature.voice, false)]
-  effect := .changeFeatures (Segment.ofSpecs [(Phonology.Feature.constrGlottis, true)])
+  target := [−continuant, −voice]
+  effect := .changeFeatures [+constrGlottis]
   rightContext := [.wordBoundary]
 
 /-- Postnasal /t/ deletion removes a voiceless coronal stop between a nasal and a vowel,
 `[−cont, +cor, +ant, −voice] → ∅ / [+nasal] __ [+syll]`. -/
 def postnasalDeletion : Rule where
-  target := Segment.ofSpecs
-    [(Phonology.Feature.continuant, false), (Phonology.Feature.coronal, true),
-     (Phonology.Feature.anterior, true), (Phonology.Feature.voice, false)]
+  target := [−continuant, +coronal, +anterior, −voice]
   effect := .delete
-  leftContext := [.seg (Segment.ofSpecs [(Phonology.Feature.nasal, true)])]
-  rightContext := [.seg (Segment.ofSpecs [(Phonology.Feature.syllabic, true)])]
+  leftContext := [.seg [+nasal]]
+  rightContext := [.seg [+syllabic]]
 
 /-! ### The beginnings of words -/
 
