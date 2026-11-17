@@ -38,6 +38,11 @@ slot for length, and
 * Segmental faithfulness is read off `io` by the `Coindexation` counters; this file adds only
   the counters that need a parse or the mora correspondence.
 
+## TODO
+
+* With morae corresponding in order, MAX-μ is the surplus of input morae over output morae and
+  DEP-μ the surplus of output morae; neither is proved.
+
 ## References
 
 * [prince-smolensky-1993]
@@ -100,6 +105,18 @@ def ftBinViol : ℕ := P.feet.countP fun t ↦ ((syllableLeaves t).map P.form.we
 /-- ONSET: a violation for each syllable without an onset. -/
 def onsetViol : ℕ := #(P.form.syllables.filter fun s ↦ P.form.onset s = ∅)
 
+theorem onsetViol_eq_zero_iff :
+    P.onsetViol = 0 ↔ ∀ s ∈ P.form.syllables, (P.form.onset s).Nonempty := by
+  simp [onsetViol, Finset.filter_eq_empty_iff, Finset.nonempty_iff_ne_empty]
+
+/-- NOSHAREDMORA ([broselow-chen-huffman-1997]): a violation for each mora linked to more than
+one segment. -/
+def noSharedMoraViol : ℕ := #(P.form.morae.filter fun m ↦ 1 < #(P.form.moraSpan m))
+
+theorem noSharedMoraViol_eq_zero_iff :
+    P.noSharedMoraViol = 0 ↔ ∀ m ∈ P.form.morae, #(P.form.moraSpan m) ≤ 1 := by
+  simp [noSharedMoraViol, Finset.filter_eq_empty_iff]
+
 /-- *COMPLEXCODA: a violation for each syllable with more than one coda segment. -/
 def complexCodaViol : ℕ := #(P.form.syllables.filter fun s ↦ 2 ≤ #(P.form.coda s))
 
@@ -147,11 +164,28 @@ def orderMoraCorr : Finset (Mora × Mora) :=
 /-- The candidate with its morae corresponding in order. -/
 def withOrderMoraCorr : Candidate α := { c with moraCorr := c.orderMoraCorr }
 
+@[simp] theorem withOrderMoraCorr_io : c.withOrderMoraCorr.io = c.io := rfl
+
+@[simp] theorem withOrderMoraCorr_input : c.withOrderMoraCorr.input = c.input := rfl
+
+@[simp] theorem withOrderMoraCorr_output : c.withOrderMoraCorr.output = c.output := rfl
+
+@[simp] theorem withOrderMoraCorr_moraCorr : c.withOrderMoraCorr.moraCorr = c.orderMoraCorr := rfl
+
 /-- IDENT under a reading `g` of a parse at a slot: a violation for each corresponding pair
 whose readings are both specified and differ. Reading a feature of the melody is
 [mccarthy-prince-1995]'s IDENT(F), and reading `Parse.weightAt` is identity of length. -/
 def identViol {β : Type*} [DecidableEq β] (g : Parse α → ℕ → Option β) : ℕ :=
   c.pairs.countP fun p ↦ ∃ a ∈ g c.input p.1, ∃ b ∈ g c.output p.2, a ≠ b
+
+/-- A reading on which every corresponding pair agrees is not violated. -/
+theorem identViol_eq_zero {β : Type*} [DecidableEq β] {g : Parse α → ℕ → Option β}
+    (h : ∀ p ∈ c.pairs, g c.input p.1 = g c.output p.2) : c.identViol g = 0 := by
+  refine List.countP_eq_zero.2 fun p hp ↦ ?_
+  simp only [decide_eq_true_eq]
+  rintro ⟨a, ha, b, hb, hab⟩
+  rw [h p hp] at ha
+  exact hab (Option.some.inj ((Option.mem_def.1 ha).symm.trans (Option.mem_def.1 hb)))
 
 /-- MAX-μ: a violation for each mora of the input without a correspondent. -/
 def maxMoraViol : ℕ :=
@@ -160,6 +194,20 @@ def maxMoraViol : ℕ :=
 /-- DEP-μ: a violation for each mora of the output without a correspondent. -/
 def depMoraViol : ℕ :=
   #(c.output.form.morae.filter fun m' ↦ ∀ m ∈ c.input.form.morae, (m, m') ∉ c.moraCorr)
+
+theorem maxMoraViol_eq_zero_iff :
+    c.maxMoraViol = 0 ↔
+      ∀ m ∈ c.input.form.morae, ∃ m' ∈ c.output.form.morae, (m, m') ∈ c.moraCorr := by
+  simp [maxMoraViol, Finset.filter_eq_empty_iff]
+
+theorem depMoraViol_eq_zero_iff :
+    c.depMoraViol = 0 ↔
+      ∀ m' ∈ c.output.form.morae, ∃ m ∈ c.input.form.morae, (m, m') ∈ c.moraCorr := by
+  simp [depMoraViol, Finset.filter_eq_empty_iff]
+
+theorem maxMoraViol_le : c.maxMoraViol ≤ #c.input.form.morae := Finset.card_filter_le _ _
+
+theorem depMoraViol_le : c.depMoraViol ≤ #c.output.form.morae := Finset.card_filter_le _ _
 
 end Candidate
 
