@@ -21,6 +21,11 @@ the generalization behind free choice without a conjunctive alternative and behi
 implicature account of homogeneity, where the disjuncts are the atoms of a plurality and pruning
 to the size-`m` alternatives gives the non-maximal readings.
 
+Exhaustifying a sub-disjunction over the same closure affirms its disjuncts and denies the others
+(`exhIEII_supClosure_biUnion`): its `minterm`, the cell of the partition the disjuncts induce
+where exactly those disjuncts hold. The disjuncts form an independent family
+(`IsIndependentFamily`) when every minterm is satisfiable.
+
 ## References
 
 * [bar-lev-2021]
@@ -236,17 +241,164 @@ theorem hsplit_supClosure :
   fun _ _ j hj hji ↦ ⟨{j}, by simpa, Set.mem_supClosure_image.2 ⟨{j}, by simp, by simpa, rfl⟩,
     by simp, by simpa using hji.symm⟩
 
+/-! ### Minterms
+
+The minterm of a set `T` of disjuncts holds where the disjuncts that hold are exactly those of
+`T`. The minterms of the subsets of `I` are the cells of the partition the disjuncts induce, and
+every Boolean combination of the disjuncts is a union of them. -/
+
+section Minterm
+
+variable {S T : Finset ι} {w : World}
+
+variable (I p) in
+/-- The worlds where the disjuncts of `I` that hold are exactly those of `T`. -/
+def minterm (T : Finset ι) : Set World := {w | ∀ i ∈ I, w ∈ p i ↔ i ∈ T}
+
+@[simp] theorem mem_minterm : w ∈ minterm I p T ↔ ∀ i ∈ I, w ∈ p i ↔ i ∈ T := Iff.rfl
+
+theorem minterm_self : minterm I p I = ⋂ i ∈ I, p i := by
+  ext w; simp +contextual
+
+theorem minterm_empty : minterm I p ∅ = (⋃ i ∈ I, p i)ᶜ := by
+  ext w; simp
+
+/-- A world lies in the minterm of one subset of the disjuncts only. -/
+theorem eq_of_mem_minterm (hS : S ⊆ I) (hT : T ⊆ I) (hwS : w ∈ minterm I p S)
+    (hwT : w ∈ minterm I p T) : S = T :=
+  Finset.Subset.antisymm (fun i hi ↦ (hwT i (hS hi)).1 ((hwS i (hS hi)).2 hi))
+    fun i hi ↦ (hwS i (hT hi)).1 ((hwT i (hT hi)).2 hi)
+
+theorem minterm_subset_biUnion (hT : T ⊆ I) (hne : T.Nonempty) :
+    minterm I p T ⊆ ⋃ i ∈ I, p i :=
+  fun _ hw ↦ let ⟨i, hi⟩ := hne; Set.mem_biUnion (hT hi) ((hw i (hT hi)).2 hi)
+
+/-- A disjunction is the disjunction of the minterms of the nonempty sets of its disjuncts. -/
+theorem biUnion_mem_supClosure_minterm (hI : I.Nonempty) :
+    (⋃ i ∈ I, p i) ∈ supClosure (minterm I p '' {T | T ⊆ I ∧ T.Nonempty}) := by
+  classical
+  refine Set.mem_supClosure_image.2 ⟨I.powerset.erase ∅, ⟨I, by simp [hI.ne_empty]⟩,
+    fun T hT ↦ by simpa [Finset.nonempty_iff_ne_empty, and_comm] using hT,
+    Set.Subset.antisymm (Set.iUnion₂_subset fun T hT ↦ ?_) fun w hw ↦ ?_⟩
+  · obtain ⟨hne, hTI⟩ := Finset.mem_erase.1 hT
+    exact minterm_subset_biUnion (Finset.mem_powerset.1 hTI) (Finset.nonempty_iff_ne_empty.2 hne)
+  · obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 hw
+    exact Set.mem_biUnion (x := I.filter (w ∈ p ·)) (Finset.mem_erase.2
+      ⟨Finset.ne_empty_of_mem (Finset.mem_filter.2 ⟨hi, hwi⟩),
+        Finset.mem_powerset.2 (Finset.filter_subset _ _)⟩) fun j hj ↦ by simp [hj]
+
+variable (I p) in
+/-- The disjuncts form an independent family: every set of them is the set of those that hold at
+some world. -/
+def IsIndependentFamily : Prop := ∀ T ⊆ I, (minterm I p T).Nonempty
+
+namespace IsIndependentFamily
+
+variable (h : IsIndependentFamily I p)
+include h
+
+theorem separating (hI : I.Nonempty) : Separating I p := by
+  classical exact .of_forall_subset (fun T hT _ ↦ h T hT) hI
+
+theorem minterm_subset_minterm_iff (hS : S ⊆ I) (hT : T ⊆ I) :
+    minterm I p S ⊆ minterm I p T ↔ S = T :=
+  ⟨fun hsub ↦ let ⟨_, hw⟩ := h S hS; eq_of_mem_minterm hS hT hw (hsub hw), fun h ↦ h ▸ subset_rfl⟩
+
+theorem minterm_subset_biUnion_iff (hT : T ⊆ I) :
+    minterm I p T ⊆ ⋃ i ∈ I, p i ↔ T.Nonempty := by
+  refine ⟨fun hsub ↦ ?_, minterm_subset_biUnion hT⟩
+  obtain ⟨w, hw⟩ := h T hT
+  obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 (hsub hw)
+  exact ⟨i, (hw i hi).1 hwi⟩
+
+theorem not_minterm_subset_compl_minterm (hT : T ⊆ I) :
+    ¬ minterm I p T ⊆ (minterm I p T)ᶜ :=
+  fun hsub ↦ let ⟨_, hw⟩ := h T hT; hsub hw hw
+
+end IsIndependentFamily
+
+end Minterm
+
+/-- A disjunction is innocently excludable against a sub-disjunction of separated disjuncts
+exactly when the two share no disjunct. -/
+theorem isInnocentlyExcludable_supClosure_biUnion_iff {T : Finset ι} (hTI : T ⊆ I)
+    (hsingle : ∀ i ∈ T, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) {S : Finset ι} (hS : S ⊆ I)
+    (hSne : S.Nonempty) :
+    IsInnocentlyExcludable (supClosure (p '' I)) (⋃ i ∈ T, p i) (⋃ i ∈ S, p i) ↔ Disjoint S T := by
+  have hmem (R : Finset ι) (hR : R ⊆ I) (hne : R.Nonempty) : ⋃ i ∈ R, p i ∈ supClosure (p '' I) :=
+    Set.mem_supClosure_image.2 ⟨R, hne, hR, rfl⟩
+  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem S hS hSne), Finset.disjoint_left]
+  refine ⟨fun h i hiS hiT ↦ ?_, fun h u hu huq ↦ ?_⟩
+  · obtain ⟨w, hw⟩ := hsingle i hiT
+    refine h ⟨Set.mem_biUnion hiT ((hw i (hTI hiT)).2 rfl), fun v hv hle q ⟨hq, hwq⟩ ↦ ⟨hq, ?_⟩⟩
+      (Set.mem_biUnion hiS ((hw i (hTI hiT)).2 rfl))
+    obtain ⟨k, hk, hvk⟩ := Set.mem_iUnion₂.1 hv
+    have hki : k = i := (hw k (hTI hk)).1 <| by
+      simpa using (hle ⟨hmem {k} (by simpa using hTI hk) (by simp), by simpa using hvk⟩).2
+    obtain ⟨R, -, hR, rfl⟩ := Set.mem_supClosure_image.1 hq
+    obtain ⟨j, hj, hwj⟩ := Set.mem_iUnion₂.1 hwq
+    exact Set.mem_biUnion hj ((hw j (hR hj)).1 hwj ▸ hki ▸ hvk)
+  · obtain ⟨j, hj, huj⟩ := Set.mem_iUnion₂.1 huq
+    obtain ⟨i, hi, hui⟩ := Set.mem_iUnion₂.1 hu.1
+    obtain ⟨w, hw⟩ := hsingle i hi
+    have hle := hu.2 (Set.mem_biUnion hi ((hw i (hTI hi)).2 rfl) : w ∈ ⋃ i ∈ T, p i)
+      fun q ⟨hq, hwq⟩ ↦ ⟨hq, by
+        obtain ⟨R, -, hR, rfl⟩ := Set.mem_supClosure_image.1 hq
+        obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 hwq
+        exact Set.mem_biUnion hk ((hw k (hR hk)).1 hwk ▸ hui)⟩
+    have : w ∈ p j := by
+      simpa using (hle ⟨hmem {j} (by simpa using hS hj) (by simp), by simpa using huj⟩).2
+    exact h hj ((hw j (hS hj)).1 this ▸ hi)
+
+/-- Exhaustifying a sub-disjunction over the closure of all the disjuncts under disjunction
+affirms its disjuncts and denies the others. -/
+theorem exhIEII_supClosure_biUnion {T : Finset ι} (hTI : T ⊆ I) (hne : T.Nonempty)
+    (hsingle : ∀ i ∈ T, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hT : (minterm I p T).Nonempty) :
+    exhIEII (supClosure (p '' I)) (⋃ i ∈ T, p i) = minterm I p T := by
+  have hcell : cell (supClosure (p '' I)) (⋃ i ∈ T, p i) = minterm I p T := by
+    ext w
+    refine ⟨fun ⟨_, hIE, hII⟩ i hi ↦ ⟨fun hwi ↦ ?_, fun hiT ↦ ?_⟩, fun hw ↦ ⟨?_, ?_, ?_⟩⟩
+    · by_contra hiT
+      refine hIE _ ((isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle (S := {i})
+        (by simpa using hi) (by simp)).2 (by simpa using hiT)) (by simpa using hwi)
+    · have := hII (⋃ j ∈ ({i} : Finset ι), p j)
+        (Set.mem_supClosure_image.2 ⟨{i}, by simp, by simpa using hi, rfl⟩) fun h ↦ by
+          have := (isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle (S := {i})
+            (by simpa using hi) (by simp)).1 h
+          simp_all
+      simpa using this
+    · obtain ⟨i, hi⟩ := hne
+      exact Set.mem_biUnion hi ((hw i (hTI hi)).2 hi)
+    · intro q hq hwq
+      obtain ⟨S, hSne, hS, rfl⟩ := Set.mem_supClosure_image.1 hq.1
+      obtain ⟨j, hj, hwj⟩ := Set.mem_iUnion₂.1 hwq
+      exact Finset.disjoint_left.1
+        ((isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle hS hSne).1 hq) hj
+        ((hw j (hS hj)).1 hwj)
+    · intro r hr hnr
+      obtain ⟨S, hSne, hS, rfl⟩ := Set.mem_supClosure_image.1 hr
+      rw [isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle hS hSne,
+        Finset.not_disjoint_iff] at hnr
+      obtain ⟨j, hjS, hjT⟩ := hnr
+      exact Set.mem_biUnion hjS ((hw j (hS hjS)).2 hjT)
+  rw [exhIEII_eq_cell_of_cell_nonempty _ _ (hcell ▸ hT), hcell]
+
+/-- In an independent family, exhaustifying a sub-disjunction over the closure of all the disjuncts
+under disjunction gives its minterm. -/
+theorem IsIndependentFamily.exhIEII_supClosure_biUnion (h : IsIndependentFamily I p)
+    {T : Finset ι} (hTI : T ⊆ I) (hne : T.Nonempty) :
+    exhIEII (supClosure (p '' I)) (⋃ i ∈ T, p i) = minterm I p T :=
+  Exhaustification.exhIEII_supClosure_biUnion hTI hne
+    (fun i hi ↦ (h {i} (by simpa using hTI hi)).imp fun _ hw j hj ↦ (hw j hj).trans (by simp))
+    (h T hTI)
+
 /-- Exhaustifying a disjunction of separated disjuncts over its closure under disjunction gives
 their conjunction. -/
 theorem exhIEII_supClosure (h : Separating I p) (hI : I.Nonempty) :
     exhIEII (supClosure (p '' I)) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
-  obtain ⟨i, hi⟩ := hI
-  rw [exhIEII_eq_inter_sInter le_rfl ⟨i, hi⟩ h.all
-      (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single),
-    Set.sInter_supClosure,
-    Set.sInter_image]
-  simp only [Finset.mem_coe]
-  exact Set.inter_eq_right.2 fun w hw ↦ Set.mem_biUnion hi (Set.mem_iInter₂.1 hw i hi)
+  obtain ⟨w, hw⟩ := h.all
+  rw [exhIEII_supClosure_biUnion subset_rfl hI h.single ⟨w, fun i hi ↦ iff_of_true (hw i hi) hi⟩,
+    minterm_self]
 
 theorem hsplit_image :
     ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ p '' ↑I ∧ j ∈ S ∧ i ∉ S :=

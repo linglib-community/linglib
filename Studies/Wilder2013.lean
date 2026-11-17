@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Wilder2013
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
+public import Linglib.Semantics.Focus.Polarity
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Clause.Basic
@@ -18,11 +19,13 @@ public import Linglib.Fragments.English.Particles
 
 Emphatic *do* is the *do*-support forced by the polarity head Σ holding the affirmative morpheme,
 so [emphatic assertion has the syntax of negation](##Clause.doSupport_negative_iff_positive). Its
-emphasis is focus on Σ, which evokes [the polar question](##generate_polarityFocus), and a polar
-question is not informative, so [any antecedent makes the clause Given](##given_polarityFocus) in
-Schwarzschild's sense. A contrastive topic on such a sentence therefore indicates [a strategy of
-polar questions](##ctValue_polarityFocus) in Büring's sense, and whatever its other foci the
-sentence is [incongruent with a constituent question](##not_congruent_sigmaFocus). On these
+emphasis is focus on Σ, which evokes [the polar question](##Focus.generate_polarityFocus), and a
+polar question is not informative, so
+[any antecedent makes the clause Given](##given_polarityFocus) in Schwarzschild's sense. A
+contrastive topic on such a sentence therefore indicates
+[a strategy of polar questions](##ctValue_polarityFocus) in Büring's sense, and whatever its other
+foci the
+sentence is [incongruent with a constituent question](##not_congruent_sigma_focused). On these
 grounds the account [fits every judgment](##checks_predicted) of the two sentence types.
 
 ## Implementation notes
@@ -141,69 +144,29 @@ theorem emphaticDo_and_not_polarityFocus :
 
 end Clause
 
-/-! ### Focus on Σ -/
-
 variable {W : Type*}
-
-/-- An F-marked affirmative Σ over a clause meaning, whose alternatives are those of the clause
-under each value of Σ (73). -/
-def sigmaFocus (m : WithAlternatives (Set W)) : WithAlternatives (Set W) :=
-  WithAlternatives.map₂ (· • ·) (.focused Polarity.positive) m
-
-/-- Polarity focus, an F-marked Σ over a proposition with no other focus. -/
-def polarityFocus (p : Set W) : WithAlternatives (Set W) := sigmaFocus (.unfeatured p)
-
-@[simp] theorem polarityFocus_ordinary (p : Set W) : (polarityFocus p).ordinary = p := rfl
-
-theorem polarityFocus_alternatives_eq_orbit (p : Set W) :
-    (polarityFocus p).alternatives = MulAction.orbit Polarity p := by
-  simp [polarityFocus, sigmaFocus, Set.image2_singleton_right, MulAction.orbit]
-
--- p. 153: the focus alternative set of an emphatic *do* sentence expressing `p` is `{p, ¬p}`.
-theorem polarityFocus_alternatives (p : Set W) :
-    (polarityFocus p).alternatives = {p, pᶜ} :=
-  (polarityFocus_alternatives_eq_orbit p).trans (Polarity.orbit_eq_pair_compl p)
-
-theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
-  (WithAlternatives.WellFormed.focused _).map₂ (WithAlternatives.WellFormed.unfeatured _)
-
--- p. 154: polarity focus evokes the polar question the sentence answers.
-theorem generate_polarityFocus (p : Set W) :
-    Question.generate (polarityFocus p).alternatives = Question.polar p := by
-  rw [polarityFocus_alternatives_eq_orbit, Question.polar_eq_generate_orbit]
-
--- Focus on Σ adds the negation of each alternative of the clause.
-theorem compl_mem_alternatives_sigmaFocus {m : WithAlternatives (Set W)} {a : Set W}
-    (ha : a ∈ (sigmaFocus m).alternatives) : aᶜ ∈ (sigmaFocus m).alternatives := by
-  obtain ⟨s, -, b, hb, rfl⟩ := ha
-  exact ⟨Polarity.negative * s, trivial, b, hb,
-    (mul_smul _ _ _).trans (Polarity.negative_smul_set _)⟩
-
-theorem alternatives_subset_sigmaFocus (m : WithAlternatives (Set W)) :
-    m.alternatives ⊆ (sigmaFocus m).alternatives :=
-  fun a ha ↦ ⟨.positive, trivial, a, ha, Polarity.positive_smul a⟩
 
 /-! ### Congruence -/
 
 -- (59), (60)
 theorem congruent_polarityFocus {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    Congruent (Question.polar p).alt (polarityFocus p).alternatives := by
-  rw [Congruent, polarityFocus_alternatives_eq_orbit, Question.alt_polar_eq_orbit hne hnu]
+    (polarityFocus p).alternatives = (Question.polar p).alt := by
+  rw [polarityFocus_alternatives_eq_orbit, Question.alt_polar_eq_orbit hne hnu]
 
 /-- A sentence with emphatic *do* is incongruent with a constituent question one of whose answers
 has a negation that is no answer, whatever its other foci: a contrastive-topic sentence directly
 answering such a question rejects *do* ((113), (114)). -/
-theorem not_congruent_sigmaFocus {Q : Question W} {a : Set W} (ha : a ∈ Q.alt)
+theorem not_congruent_sigma_focused {Q : Question W} {a : Set W} (ha : a ∈ Q.alt)
     (hc : aᶜ ∉ Q.alt) (m : WithAlternatives (Set W)) :
-    ¬ Congruent Q.alt (sigmaFocus m).alternatives := fun h ↦
-  hc (h ▸ compl_mem_alternatives_sigmaFocus (h ▸ ha))
+    (sigma .focused m).alternatives ≠ Q.alt := fun h ↦
+  hc (h ▸ compl_mem_alternatives_sigma_focused (h ▸ ha))
 
 -- (113b), (114b): Rooth's containment admits emphatic *do* once another focus answers the
 -- question, so it cannot reject *do* there.
-theorem admits_sigmaFocus {q : Set (Set W)} {m : WithAlternatives (Set W)}
+theorem admits_sigma_focused {q : Set (Set W)} {m : WithAlternatives (Set W)}
     (h : (Antecedent.question q).Admits m.alternatives) :
-    (Antecedent.question q).Admits (sigmaFocus m).alternatives :=
-  h.mono (alternatives_subset_sigmaFocus m)
+    (Antecedent.question q).Admits (sigma .focused m).alternatives :=
+  h.mono (alternatives_subset_sigma .focused m)
 
 -- (51)
 theorem assertion_neg_resolves_polarityFocus {p : Set W} (hne : p ≠ ∅) :
@@ -253,7 +216,7 @@ theorem given_polarityFocus (a p : Set W) : Given a (polarityFocus p) :=
 
 -- p. 156: without F on Σ, the negated antecedent (71a) does not make the clause (71b) Given.
 theorem not_given_compl_of_unfeatured {p : Set W} (hp : p ≠ Set.univ) :
-    ¬ Given pᶜ (WithAlternatives.map₂ (· • ·) (.unfeatured Polarity.positive) (.unfeatured p)) := by
+    ¬ Given pᶜ (sigma .unfeatured (.unfeatured p)) := by
   simpa [Given, Question.info_generate] using hp
 
 /-! ### Contrastive topic and strategies -/
@@ -327,8 +290,8 @@ inductive Answers
 the polar question whether its proposition `p` holds, its only focus being Σ, or with a
 constituent question `Q`, whatever the focus structure `m` under Σ. -/
 def Answers.Congruent : Answers → Set W → WithAlternatives (Set W) → Question W → Prop
-  | .polar, p, _, _ => Focus.Congruent (Question.polar p).alt (polarityFocus p).alternatives
-  | .constituent, _, m, Q => Focus.Congruent Q.alt (sigmaFocus m).alternatives
+  | .polar, p, _, _ => (polarityFocus p).alternatives = (Question.polar p).alt
+  | .constituent, _, m, Q => (sigma .focused m).alternatives = Q.alt
 
 -- Emphatic *do* is congruent with the question a sentence answers exactly when it is polar.
 theorem Answers.congruent_iff (k : Answers) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
@@ -336,7 +299,7 @@ theorem Answers.congruent_iff (k : Answers) {p : Set W} (hne : p ≠ ∅) (hnu :
     (hc : aᶜ ∉ Q.alt) : k.Congruent p m Q ↔ k = .polar := by
   cases k
   · simpa [Answers.Congruent] using congruent_polarityFocus hne hnu
-  · simpa [Answers.Congruent] using not_congruent_sigmaFocus ha hc m
+  · simpa [Answers.Congruent] using not_congruent_sigma_focused ha hc m
 
 /-- An emphatic *do* sentence of a row: the Verum-focus pattern (46), named after [hohle-1992], or
 the contrastive-topic pattern (47) with its marked constituent and the form of the question it
