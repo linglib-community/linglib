@@ -205,7 +205,7 @@ def matchTheory : ConstraintSystem Input Candidate Con where
     | i => correspondence.marks x c i
 
 theorem phrase_le (x : Input) (c : Candidate) :
-    correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
+    correspondence.marks x c .phrase ≤ matchTheory.marks x c .phrase := by
   have hx : (x.phrases.map (·.span)).Nodup ∧
       ∀ a ∈ x.phrases, a.head ∈ Set.Ico a.span.fst a.span.snd := by
     obtain ⟨_ | _, _ | _, _ | _, _ | _⟩ := x <;> decide
@@ -253,12 +253,12 @@ theorem language_kimIs :
 
 private theorem final_le_medial :
     ∀ c ∈ candidates kimIsLeaving, c.form = .enclitic → ∃ d ∈ candidates kimIs, d.form = .enclitic ∧
-      ∀ i, matchTheory.con i (kimIs, d) ≤ matchTheory.con i (kimIsLeaving, c) := by
+      ∀ i, matchTheory.marks kimIs d i ≤ matchTheory.marks kimIsLeaving c i := by
   decide +kernel
 
 private theorem medial_le_final :
     ∀ d ∈ candidates kimIs, ∃ c ∈ candidates kimIsLeaving,
-      ∀ i, matchTheory.con i (kimIsLeaving, c) ≤ matchTheory.con i (kimIs, d) := by
+      ∀ i, matchTheory.marks kimIsLeaving c i ≤ matchTheory.marks kimIs d i := by
   decide +kernel
 
 /-- Under every ranking of standard Match Theory, enclisis in *Kim 's leaving* implies enclisis in

@@ -319,8 +319,8 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
     {r : Ranking.Enumeration ι n} {k : ℕ} (hk : k + 1 < n) {i : I}
     (hne : S.language r i ≠ S.language (r.swapAt k hk) i) :
     ∃ x ∈ S.language r i, ∃ y ∈ S.language (r.swapAt k hk) i,
-      (∀ j < (⟨k, by omega⟩ : Fin n), S.con (r j) (i, x) = S.con (r j) (i, y)) ∧
-        S.con (r ⟨k, by omega⟩) (i, x) < S.con (r ⟨k, by omega⟩) (i, y) := by
+      (∀ j < (⟨k, by omega⟩ : Fin n), S.marks i x (r j) = S.marks i y (r j)) ∧
+        S.marks i x (r ⟨k, by omega⟩) < S.marks i y (r ⟨k, by omega⟩) := by
   have hgen : (S.gen i).Nonempty := by
     by_contra h0
     rw [Finset.not_nonempty_iff_eq_empty] at h0
@@ -328,18 +328,18 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
       (Finset.subset_empty.1 (h0 ▸ Tableau.optimal_subset)).symm)
   obtain ⟨x, hx⟩ := ConstraintSystem.language_nonempty (r := r) hgen
   obtain ⟨y, hy⟩ := ConstraintSystem.language_nonempty (r := r.swapAt k hk) hgen
-  have hxy : (fun c ↦ S.con c (i, x)) ≠ fun c ↦ S.con c (i, y) := fun he ↦ hne <|
+  have hxy : (fun c ↦ S.marks i x c) ≠ fun c ↦ S.marks i y c := fun he ↦ hne <|
     Finset.ext fun o ↦ by
       rw [ConstraintSystem.mem_language_iff_of_mem hx, ConstraintSystem.mem_language_iff_of_mem hy]
       exact and_congr_right fun _ ↦ forall_congr' fun c ↦ by rw [congrFun he c]
   have hne' {e : Ranking.Enumeration ι n} {v w : ι → ℕ} (h : v ≠ w) : toLex (v ∘ e) ≠ toLex
       (w ∘ e) :=
     fun he ↦ h (funext fun c ↦ by simpa using congrFun (toLex.injective he) (e.symm c))
-  have hlt : toLex ((fun c ↦ S.con c (i, x)) ∘ r) < toLex ((fun c ↦ S.con c (i, y)) ∘ r) :=
+  have hlt : toLex ((fun c ↦ S.marks i x c) ∘ r) < toLex ((fun c ↦ S.marks i y c) ∘ r) :=
     lt_of_le_of_ne (Tableau.le_of_mem_optimal hx (show y ∈ S.gen i from Tableau.optimal_subset hy))
       (hne' hxy)
-  have hlt' : toLex ((fun c ↦ S.con c (i, y)) ∘ r.swapAt k hk) <
-      toLex ((fun c ↦ S.con c (i, x)) ∘ r.swapAt k hk) :=
+  have hlt' : toLex ((fun c ↦ S.marks i y c) ∘ r.swapAt k hk) <
+      toLex ((fun c ↦ S.marks i x c) ∘ r.swapAt k hk) :=
     lt_of_le_of_ne (Tableau.le_of_mem_optimal hy (show x ∈ S.gen i from Tableau.optimal_subset hx))
       (hne' hxy.symm)
   have hcov : (⟨k, Nat.lt_of_succ_lt hk⟩ : Fin n) ⋖ ⟨k + 1, hk⟩ :=
@@ -361,8 +361,8 @@ theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
   obtain ⟨I, O, S, rfl⟩ := h
   intro c
   let g (i : I) (r : Ranking.Enumeration ι n) : ℕ :=
-    if h : (S.language r i).Nonempty then S.con c (i, h.choose) else 0
-  have hg_of_mem {i r o} (ho : o ∈ S.language r i) : g i r = S.con c (i, o) := by
+    if h : (S.language r i).Nonempty then S.marks i h.choose c else 0
+  have hg_of_mem {i r o} (ho : o ∈ S.language r i) : g i r = S.marks i o c := by
     have hne : (S.language r i).Nonempty := ⟨o, ho⟩
     simp only [g, hne, ↓reduceDIte]
     exact ConstraintSystem.con_eq_of_mem_language hne.choose_spec ho c

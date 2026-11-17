@@ -80,7 +80,7 @@ omit [Fintype ι] [DecidableEq ι] in
 any probability measure on rankings, a partially ordered grammar's or stochastic OT's, the
 candidates' probabilities sum to one. -/
 theorem sum_measure_setOf_picksAt (μ : Measure (Ranking.Enumeration ι n)) [IsProbabilityMeasure μ]
-    (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
+    (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.marks i o)) (S.gen i)) :
     ∑ o ∈ S.gen i, μ {σ | S.PicksAt σ i o} = 1 := by
   rw [← measure_biUnion_finset (f := fun o ↦ {σ | S.PicksAt σ i o})
       (fun _ _ _ _ hne ↦ Set.disjoint_left.mpr fun _ h h' ↦ hne (h.unique h'))
@@ -92,7 +92,7 @@ theorem sum_measure_setOf_picksAt (μ : Measure (Ranking.Enumeration ι n)) [IsP
 
 /-- The linear extensions of a grammar are partitioned by the candidate they pick. -/
 theorem sum_card_filter_picksAt [DecidableEq Output] [DecidableRel r] (h_ne : (S.gen i).Nonempty)
-    (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
+    (h_inj : Set.InjOn (fun o ↦ (S.marks i o)) (S.gen i)) :
     ∑ o ∈ S.gen i, #{σ ∈ Ranking.Enumeration.linearExtensions (n := n) r | S.PicksAt σ i o} =
       #(Ranking.Enumeration.linearExtensions (n := n) r) := by
   classical
@@ -107,11 +107,11 @@ theorem sum_card_filter_picksAt [DecidableEq Output] [DecidableRel r] (h_ne : (S
 
 theorem card_filter_picksAt_binary_add [DecidableEq Output] [DecidableRel r] {o₁ o₂ : Output}
     (h_two : S.gen i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
-    (h_vp : (S.con · (i, o₁)) ≠ (S.con · (i, o₂))) :
+    (h_vp : (S.marks i o₁) ≠ (S.marks i o₂)) :
     #{σ ∈ Ranking.Enumeration.linearExtensions (n := n) r | S.PicksAt σ i o₁} +
         #{σ ∈ Ranking.Enumeration.linearExtensions (n := n) r | S.PicksAt σ i o₂} =
       #(Ranking.Enumeration.linearExtensions (n := n) r) := by
-  have h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i) := by
+  have h_inj : Set.InjOn (fun o ↦ (S.marks i o)) (S.gen i) := by
     intro o ho o' ho' hvv
     rw [h_two] at ho ho'
     simp only [coe_insert, Set.mem_insert_iff, coe_singleton, Set.mem_singleton_iff] at ho ho'
@@ -149,7 +149,7 @@ omit [Fintype ι] [DecidableEq ι] in
 satisfy the candidate's ERCs: Anttila's $n/t$ as a ratio of r-volumes. -/
 theorem Grammar.Enumeration.uniformOn_extent_picksAt (G : Grammar.Enumeration ι n)
     (ho : o ∈ S.gen i)
-    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
+    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.marks i o) ≠ (S.marks i o')) :
     uniformOn G.extent {σ | S.PicksAt σ i o} =
       ((G ⊓ .ofERCs (S.ercs i o)).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
   rw [← Grammar.Enumeration.uniformOn_extent]
@@ -174,8 +174,8 @@ constraint that favors it is ranked by the grammar above every constraint that f
 rival. -/
 theorem Ranking.Enumeration.IsLinearExtension.picksAt (hσ : σ.IsLinearExtension r)
     (ho : o ∈ S.gen i)
-    (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ w, S.con w (i, o) < S.con w (i, o') ∧
-      ∀ l, S.con l (i, o') < S.con l (i, o) → r w l) :
+    (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ w, S.marks i o w < S.marks i o' w ∧
+      ∀ l, S.marks i o' l < S.marks i o l → r w l) :
     S.PicksAt σ i o :=
   Tableau.ofRanking_optimal_eq_singleton_iff.2 ⟨ho, fun o' ho' hne ↦
     (h o' ho' hne).imp fun w ⟨hw, hl⟩ ↦ ⟨hw, fun l hlt ↦ lt_of_le_of_ne (hσ w l (hl l hlt))
@@ -318,9 +318,9 @@ satisfies the winner–loser ERC of `chosen` against `other`. -/
 theorem picksAt_binary_iff_lex_pos (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (σ : Ranking.Enumeration ι n) :
     S.PicksAt σ i chosen ↔
-      toLex 0 < toLex (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other)) ∘ σ) :=
+      toLex 0 < toLex (ercOfProfiles (S.marks i chosen) (S.marks i other) ∘ σ) :=
   (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans
-    (lex_pos_ercOfProfiles_iff_lt σ (S.con · (i, chosen)) (S.con · (i, other))).symm
+    (lex_pos_ercOfProfiles_iff_lt σ (S.marks i chosen) (S.marks i other)).symm
 
 omit [DecidableEq ι] in
 /-- A ranking picks `chosen` from the candidates `{chosen, other}` exactly when the earliest
@@ -362,7 +362,7 @@ theorem uniformOn_real_picksAt_binary [IsPartialOrder ι r] [DecidableRel r]
       (#(favoring S.con i chosen other ∩ D) : ℝ) / #D := by
   have h : {σ | S.PicksAt σ i chosen} =
       {σ : Ranking.Enumeration ι n |
-        toLex 0 < toLex (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other)) ∘ σ)} :=
+        toLex 0 < toLex (ercOfProfiles (S.marks i chosen) (S.marks i other) ∘ σ)} :=
     Set.ext fun σ ↦ picksAt_binary_iff_lex_pos h_two h_ne σ
   rw [h]
   exact ERC.uniformOn_real_lex_pos hD h_lead h_aut hn
@@ -394,7 +394,7 @@ Later strata, and any inner ranking among them, are irrelevant. -/
 theorem card_filter_picksAt_stratified_binary [IsPartialOrder ι inner] [DecidableRel inner]
     (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
+    (h_tie : ∀ c, stratumOf c < k → S.marks i chosen c = S.marks i other c)
     (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) :
     #{σ ∈ Ranking.Enumeration.linearExtensions (n := n) (stratified stratumOf inner) |
         S.PicksAt σ i chosen} *
@@ -417,7 +417,7 @@ the rate `|favoring ∩ Dₖ| / |Dₖ|` of the deciding stratum `k`. -/
 theorem uniformOn_real_picksAt_stratified_binary [IsPartialOrder ι inner]
     [DecidableRel inner] (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
+    (h_tie : ∀ c, stratumOf c < k → S.marks i chosen c = S.marks i other c)
     (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty)
     (hn : Fintype.card ι = n := by simp) :
     (uniformOn ((Ranking.Enumeration.linearExtensions (stratified stratumOf inner) :
@@ -438,7 +438,7 @@ stratum before some stratum whose active constraints all favor it. -/
 theorem picksAt_stratified_of_dominates
     (hσ : σ.IsLinearExtension (stratified stratumOf inner)) (ho : o ∈ S.gen i)
     (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ k : Fin s,
-      (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
+      (∀ c, stratumOf c < k → S.marks i o c = S.marks i o' c) ∧
       ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
       (active S.con i o o').filter (stratumOf · = k) ⊆ favoring S.con i o o') :
     S.PicksAt σ i o :=
@@ -454,7 +454,7 @@ omit [DecidableEq Output] in
 theorem uniformOn_picksAt_stratified_eq_one [IsPartialOrder ι inner] [DecidableRel inner]
     (ho : o ∈ S.gen i)
     (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ k : Fin s,
-      (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
+      (∀ c, stratumOf c < k → S.marks i o c = S.marks i o' c) ∧
       ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
       (active S.con i o o').filter (stratumOf · = k) ⊆ favoring S.con i o o')
     (hn : Fintype.card ι = n := by simp) :

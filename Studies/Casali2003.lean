@@ -195,8 +195,8 @@ def system : ConstraintSystem Word Word Con where
 variable {s} {r : Ranking Con}
 
 private theorem picksAt_iff {w o : Word} : (system s).PicksAt r w o ↔ ∀ o', o' ≠ o →
-    ∃ c, (system s).con c (w, o) < (system s).con c (w, o') ∧
-      ∀ c', (system s).con c' (w, o') < (system s).con c' (w, o) → r.Dominates c c' := by
+    ∃ c, (system s).marks w o c < (system s).marks w o' c ∧
+      ∀ c', (system s).marks w o' c' < (system s).marks w o c' → r.Dominates c c' := by
   simp [ConstraintSystem.picksAt_iff_exists_dominates, system]
 
 /-- Affixes take the root's value, whatever the inputs, exactly under the rankings with HARMONY

@@ -680,13 +680,13 @@ theorem Tableau.dominates_of_mem_ofRanking_optimal {C : Type*} {con : Constraint
 /-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/
 def ConstraintSystem.ercs {I O : Type*} (S : ConstraintSystem I O ι) (i : I) (o : O) :
     Set (ERC ι) :=
-  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.con · (i, o)) (S.con · (i, o')) = α}
+  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.marks i o) (S.marks i o') = α}
 
 /-- A ranking picks a candidate whose violations differ from every rival's iff it satisfies the
 candidate's ERC against each rival ([prince-2002]). -/
 theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy {I O : Type*}
     {S : ConstraintSystem I O ι} {σ : Ranking.Enumeration ι n} {i : I} {o : O} (ho : o ∈ S.gen i)
-    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
+    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.marks i o) ≠ (S.marks i o')) :
     S.PicksAt σ i o ↔ ∀ α ∈ S.ercs i o, α.SatisfiedBy σ := by
   refine ⟨fun h α hα ↦ ?_, fun h ↦ ConstraintSystem.picksAt_iff.2 ⟨ho, fun o' ho' hne ↦ ?_⟩⟩
   · obtain ⟨o', ho', hne, rfl⟩ := hα
@@ -702,7 +702,7 @@ def ConstraintSystem.ercGrammar {I O : Type*} (S : ConstraintSystem I O ι)
     (r : Ranking.Enumeration ι n) :
     Set (ERC ι) :=
   {α | ∃ i, ∃ w ∈ S.language r i, ∃ o ∈ S.gen i,
-    ercOfProfiles (S.con · (i, w)) (S.con · (i, o)) = α}
+    ercOfProfiles (S.marks i w) (S.marks i o) = α}
 
 /-- The rankings that satisfy the ERC grammar of a language are exactly those with that
 language, so the ERC grammar characterizes the ranking grammar ([merchant-prince-2022]). -/

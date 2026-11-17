@@ -66,7 +66,7 @@ theorem typology_iff {r' : Ranking.Enumeration ι n} : S.typology r r' ↔ S.lan
 /-- A ranking selects `o` alone at an input iff `o` is a candidate whose violations, read in
 rank order, are lexicographically below every other candidate's. -/
 theorem language_eq_singleton_iff : S.language r i = {o} ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
-    toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
+    toLex (fun k ↦ S.marks i o (r k)) < toLex (fun k ↦ S.marks i o' (r k)) :=
   Tableau.optimal_eq_singleton_iff
 
 theorem language_nonempty (h : (S.gen i).Nonempty) : (S.language r i).Nonempty :=
@@ -76,19 +76,20 @@ theorem language_nonempty_iff : (S.language r i).Nonempty ↔ (S.gen i).Nonempty
   ⟨fun ⟨o, ho⟩ ↦ ⟨o, Tableau.optimal_subset ho⟩, language_nonempty⟩
 
 theorem con_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' ∈ S.language r i)
-    (C : ι) : S.con C (i, o) = S.con C (i, o') := by
+    (C : ι) : S.marks i o C = S.marks i o' C := by
   have h := le_antisymm (Tableau.le_of_mem_optimal ho (Tableau.optimal_subset ho'))
     (Tableau.le_of_mem_optimal ho' (Tableau.optimal_subset ho))
-  simpa [tableau, Tableau.profile] using congrFun (congrArg ofLex h) (r.symm C)
+  simpa [tableau, Tableau.profile, ConstraintSystem.con] using
+    congrFun (congrArg ofLex h) (r.symm C)
 
 /-- The language of a ranking at an input consists of the candidates with the violations of any
 one of its winners. -/
 theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
-    o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.con C (i, o') = S.con C (i, o) := by
+    o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.marks i o' C = S.marks i o C := by
   refine ⟨fun h ↦ ⟨Tableau.optimal_subset h, con_eq_of_mem_language h ho⟩, fun ⟨hg, he⟩ ↦ ?_⟩
   have hp : (S.tableau r i).profile o' = (S.tableau r i).profile o := by
     simp only [tableau, Tableau.profile, ViolationProfile.of, Tableau.ofRanking_constraints,
-      Function.comp_apply, conAt_apply, he]
+      Function.comp_apply, conAt_apply, ConstraintSystem.con, he]
   exact Tableau.mem_optimal_iff.2 ⟨hg, fun d hd ↦ hp ▸ Tableau.le_of_mem_optimal ho hd⟩
 
 /-! ### Sole winners -/
@@ -101,14 +102,14 @@ def PicksAt : Prop := S.language r i = {o}
 /-- A ranking picks `o` iff `o` is a candidate whose violations, read in rank order, are
 lexicographically below every other candidate's. -/
 theorem picksAt_iff : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
-    toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
+    toLex (fun k ↦ S.marks i o (r k)) < toLex (fun k ↦ S.marks i o' (r k)) :=
   language_eq_singleton_iff
 
 /-- A ranking picks `o` iff `o` is a candidate and, against each rival, some constraint
 preferring `o` dominates every constraint preferring the rival. -/
 theorem picksAt_iff_exists_dominates : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
-    ∃ c, S.con c (i, o) < S.con c (i, o') ∧
-      ∀ c', S.con c' (i, o') < S.con c' (i, o) → r.Dominates c c' :=
+    ∃ c, S.marks i o c < S.marks i o' c ∧
+      ∀ c', S.marks i o' c' < S.marks i o c' → r.Dominates c c' :=
   Tableau.ofRanking_optimal_eq_singleton_iff
 
 /-- Picking is decided by comparing the candidate with each rival, without computing the set of
@@ -120,7 +121,7 @@ theorem PicksAt.unique {o' : O} (h : S.PicksAt r i o) (h' : S.PicksAt r i o') : 
 
 /-- A ranking picks some candidate at an input whose candidates have distinct violations. -/
 theorem exists_picksAt (h : (S.gen i).Nonempty)
-    (hinj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (r : Ranking.Enumeration ι n) :
+    (hinj : Set.InjOn (fun o ↦ (S.marks i o)) (S.gen i)) (r : Ranking.Enumeration ι n) :
     ∃ o ∈ S.gen i, S.PicksAt r i o := by
   obtain ⟨o, ho⟩ := language_nonempty (r := r) h
   refine ⟨o, Tableau.optimal_subset ho, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩

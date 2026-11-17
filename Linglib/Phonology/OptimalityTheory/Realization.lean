@@ -58,7 +58,7 @@ def ercs (P : RealizationProblem Input Output ι) : Set (ERC ι) :=
 
 theorem mem_ercs {P : RealizationProblem Input Output ι} {α : ERC ι} :
     α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.gen i, o ≠ P.target i ∧
-      ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o)) = α := by
+      ercOfProfiles (P.marks i (P.target i)) (P.marks i o) = α := by
   simp only [ercs, Set.mem_iUnion, exists_prop]
   rfl
 
@@ -67,7 +67,7 @@ theorem mem_ercs {P : RealizationProblem Input Output ι} {α : ERC ι} :
 theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output ι}
     {σ : Ranking.Enumeration ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
-      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+      (P.marks i (P.target i)) ≠ (P.marks i o)) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by
   refine ⟨fun h α hα ↦ ?_, fun h i hi ↦ ?_⟩
   · obtain ⟨i, hi, hα⟩ := mem_ercs.1 hα
@@ -84,7 +84,7 @@ def grammar (P : RealizationProblem Input Output ι) : Grammar.Enumeration ι n 
 theorem mem_extent_grammar {P : RealizationProblem Input Output ι}
     {σ : Ranking.Enumeration ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
-      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+      (P.marks i (P.target i)) ≠ (P.marks i o)) :
     σ ∈ (P.grammar (n := n)).extent ↔ P.realizedByRanking σ :=
   (realizedByRanking_iff_satisfiedBy hvp).symm
 
@@ -101,7 +101,7 @@ instance [Fintype ι] [DecidableEq ι] [DecidableEq Output]
 theorem isOTRealizable_iff_extent_nonempty [Fintype ι]
     {P : RealizationProblem Input Output ι}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
-      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+      (P.marks i (P.target i)) ≠ (P.marks i o)) :
     P.IsOTRealizable ↔ (P.grammar : Grammar ι).extent.Nonempty :=
   exists_congr fun _ ↦ (mem_extent_grammar hvp).symm
 
@@ -119,7 +119,7 @@ def realizedByPartialOrder (n : ℕ) (P : RealizationProblem Input Output ι) (r
 theorem realizedByPartialOrder_iff_le [DecidableEq ι] {P : RealizationProblem Input Output ι}
     {r : ι → ι → Prop}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
-      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+      (P.marks i (P.target i)) ≠ (P.marks i o)) :
     P.realizedByPartialOrder n r ↔ Grammar.Enumeration.ofRel r ≤ P.grammar (n := n) := by
   rw [← Concept.extent_subset_extent_iff]
   exact ⟨fun h σ hσ ↦ (mem_extent_grammar hvp).2 (h σ (Grammar.Enumeration.mem_extent_ofRel.1 hσ)),

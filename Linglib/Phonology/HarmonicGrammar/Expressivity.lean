@@ -211,11 +211,11 @@ def _root_.OptimalityTheory.RealizationProblem.IsHGRealizable [Fintype ι]
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
     (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking.Enumeration ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
-  set M := (X.sup fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o))) + 1
-  have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.con k (i, o) ≤ M := fun i hi o ho k ↦
-    ((Finset.le_sup (f := (S.con · (i, o))) (Finset.mem_univ k)).trans
-      ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (S.con · (i, o))) ho).trans
-        (Finset.le_sup (f := fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o)))
+  set M := (X.sup fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.marks i o)) + 1
+  have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.marks i o k ≤ M := fun i hi o ho k ↦
+    ((Finset.le_sup (f := (S.marks i o)) (Finset.mem_univ k)).trans
+      ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (S.marks i o)) ho).trans
+        (Finset.le_sup (f := fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.marks i o))
           hi))).trans (Nat.le_succ _)
   refine ⟨expWeights n M ∘ σ.symm, fun k ↦ (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
   rw [ConstraintSystem.hgLanguage, ConstraintSystem.language,
