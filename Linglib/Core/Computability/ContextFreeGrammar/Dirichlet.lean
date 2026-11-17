@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Measure
@@ -13,7 +18,8 @@ independently across nonterminals: [the prior](##DirichletPCFG.prior) is a measu
 over the grammar. With the rule weights integrated out, the rules applied at a nonterminal are
 draws from a Pólya urn over its rules weighted by their pseudo-counts, so the expected probability
 of a corpus [depends only on its rule counts](##DirichletPCFG.lintegral_prod_map_ruleWeight_prior)
-and [factors](##DirichletPCFG.countsProb_add) through the posterior given part of them. The PCFG of [mean rule weights](##DirichletPCFG.mean) is the predictive rule distribution.
+and [factors](##DirichletPCFG.countsProb_add) through the posterior given part of them. The PCFG
+of [mean rule weights](##DirichletPCFG.mean) is the predictive rule distribution.
 
 ## Implementation notes
 
@@ -24,6 +30,7 @@ The mean PCFG of the posterior given a corpus is the proposal grammar of the Has
 ## TODO
 
 * The law of a corpus as a measure, the PCFG derivation measure mixed over the prior.
+* `DirichletPCFG.mean` is the mean of the prior: `∫⁻ W, W.weight r ∂M.prior = M.mean.weight r`.
 * With unit pseudo-counts the posterior density is the likelihood, so the posterior mode is
   the relative frequencies of the counts.
 
@@ -34,11 +41,9 @@ The mean PCFG of the posterior given a corpus is the proposal grammar of the Has
 
 @[expose] public section
 
-open Finset MeasureTheory ProbabilityTheory RoseTree
+open Convexity Finset MeasureTheory ProbabilityTheory RoseTree
 
 namespace PCFG
-
-open Convexity
 
 variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
@@ -66,6 +71,7 @@ theorem ofSimplex_weight (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInpu
   obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
   exact dite_eq_left hmem
 
+@[fun_prop]
 theorem measurable_ofSimplex : Measurable (ofSimplex (G := G)) := by
   refine measurable_comap_iff.mpr (measurable_pi_iff.mpr fun r ↦ ?_)
   by_cases h : r ∈ G.rules
@@ -151,6 +157,14 @@ across nonterminals. -/
 noncomputable def prior : Measure (PCFG G) :=
   (Measure.pi fun a : G.inputs ↦ dirichlet (M.urn a)).map PCFG.ofSimplex
 
+instance : IsProbabilityMeasure M.prior := by
+  have (a : G.inputs) : Nonempty (G.rulesWithInput a) :=
+    (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr a.2).to_subtype
+  have (a : G.inputs) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
+    isProbabilityMeasure_dirichlet (M.urn_pos a)
+  exact (Measure.isProbabilityMeasure_map_iff PCFG.measurable_ofSimplex.aemeasurable).mpr
+    inferInstance
+
 /-- The probability `∏ r, W.weight r ^ x r` of a corpus with rule counts `x`, integrated against
 the prior, is the probability of the counts
 ([johnson-griffiths-goldwater-2007] Equation 3). -/
@@ -160,7 +174,7 @@ theorem lintegral_prod_pow_prior (x : ContextFreeRule T G.NT → ℕ) :
     (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr a.2).to_subtype
   have (a : G.inputs) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
     isProbabilityMeasure_dirichlet (M.urn_pos a)
-  have hX (a : G.inputs) : Measurable fun t : Convexity.StdSimplex ℝ
+  have hX (a : G.inputs) : Measurable fun t : StdSimplex ℝ
       (G.rulesWithInput a) ↦ ∏ r, ENNReal.ofReal (t.weights r) ^ x r := by
     fun_prop
   rw [prior, lintegral_map (by fun_prop) PCFG.measurable_ofSimplex,
@@ -197,8 +211,9 @@ private theorem sum_ofReal_pseudo_ne_zero {r : ContextFreeRule T G.NT} (hr : r �
     single_le_sum (f := fun r ↦ ENNReal.ofReal (M.pseudo r)) (fun _ _ ↦ zero_le)
       (G.mem_rulesWithInput_input hr)).ne'
 
-/-- The mean of the prior is the PCFG of normalized pseudo-counts. It is the predictive rule
-distribution, and for the posterior given rule counts the posterior predictive one. -/
+/-- The PCFG of normalized pseudo-counts, the predictive rule distribution. On a tree with at most
+one node per nonterminal it gives
+[the probability under the prior](##DirichletPCFG.ruleWeight_mean). -/
 noncomputable def mean : PCFG G :=
   PCFG.normalize fun r ↦ .ofReal (M.pseudo r)
 

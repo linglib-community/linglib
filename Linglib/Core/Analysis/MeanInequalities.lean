@@ -13,9 +13,11 @@ public import Mathlib.Analysis.MeanInequalities
 For weights $p$ summing to $1$ and $q$ summing to at most $1$,
 [Gibbs' inequality](##ENNReal.prod_rpow_le_prod_rpow_self) says
 $\prod_i q_i^{p_i} \le \prod_i p_i^{p_i}$: the geometric mean of $q$ weighted by $p$ is greatest
-at $q = p$. Its logarithm is the statement that the cross-entropy of $q$ relative to $p$ is at
-least the entropy of $p$, which mathlib has for measures as `InformationTheory.klDiv_nonneg`. It
-is the weighted inequality of arithmetic and geometric means applied to the ratios $q_i / p_i$.
+at $q = p$. It is the weighted inequality of arithmetic and geometric means applied to the ratios
+$q_i / p_i$, which [bounds the left side by $\sum_i q_i$ times the
+right](##ENNReal.prod_rpow_le_sum_mul_prod_rpow_self) with no condition on $q$. Its logarithm says
+the cross-entropy of $q$ relative to $p$ is at least the entropy of $p$; mathlib has that for
+measures as `InformationTheory.integral_llr_add_sub_measure_univ_nonneg`.
 
 With the relative frequencies of counts $x$ as the weights, it
 [bounds the likelihood of the counts](##ENNReal.prod_pow_le_prod_div_sum_pow) under any $q$ by
@@ -59,15 +61,24 @@ private theorem sum_mul_div_le (hp : ∀ i ∈ s, 0 ≤ p i) (hq : ∀ i ∈ s, 
 
 variable (s p q)
 
+/-- **Gibbs' inequality**, homogeneous in `q`: the geometric mean of `q` weighted by `p` is at
+most the total of `q` times the geometric mean of `p` weighted by itself. -/
+theorem prod_rpow_le_sum_mul_prod_rpow_self (hp : ∀ i ∈ s, 0 ≤ p i) (hp' : ∑ i ∈ s, p i = 1)
+    (hq : ∀ i ∈ s, 0 ≤ q i) :
+    ∏ i ∈ s, q i ^ p i ≤ (∑ i ∈ s, q i) * ∏ i ∈ s, p i ^ p i := by
+  rw [prod_congr rfl (rpow_eq_div_rpow_mul_rpow_self hp hq), prod_mul_distrib]
+  exact mul_le_mul_of_nonneg_right
+    ((geom_mean_le_arith_mean_weighted s p _ hp hp' fun i hi ↦
+      div_nonneg (hq i hi) (hp i hi)).trans (sum_le_sum (sum_mul_div_le hp hq)))
+    (prod_nonneg fun i hi ↦ rpow_nonneg (hp i hi) _)
+
 /-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
 `1`, is greatest at `q = p`. -/
 theorem prod_rpow_le_prod_rpow_self (hp : ∀ i ∈ s, 0 ≤ p i) (hp' : ∑ i ∈ s, p i = 1)
     (hq : ∀ i ∈ s, 0 ≤ q i) (hq' : ∑ i ∈ s, q i ≤ 1) :
-    ∏ i ∈ s, q i ^ p i ≤ ∏ i ∈ s, p i ^ p i := by
-  rw [prod_congr rfl (rpow_eq_div_rpow_mul_rpow_self hp hq), prod_mul_distrib]
-  exact mul_le_of_le_one_left (prod_nonneg fun i hi ↦ rpow_nonneg (hp i hi) _) <|
-    (geom_mean_le_arith_mean_weighted s p _ hp hp' fun i hi ↦ div_nonneg (hq i hi) (hp i hi)).trans
-      ((sum_le_sum (sum_mul_div_le hp hq)).trans hq')
+    ∏ i ∈ s, q i ^ p i ≤ ∏ i ∈ s, p i ^ p i :=
+  (prod_rpow_le_sum_mul_prod_rpow_self s p q hp hp' hq).trans
+    (mul_le_of_le_one_left (prod_nonneg fun i hi ↦ rpow_nonneg (hp i hi) _) hq')
 
 /-- **Gibbs' inequality, equality case**: the geometric mean of `q` weighted by `p`, over `q`
 summing to at most `1`, attains its greatest value only at `q = p`. -/
@@ -123,11 +134,11 @@ namespace ENNReal
 
 variable {ι : Type*} (s : Finset ι)
 
-/-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
-`1`, is greatest at `q = p`. -/
-theorem prod_rpow_le_prod_rpow_self (p : ι → ℝ≥0) (q : ι → ℝ≥0∞) (hp : ∑ i ∈ s, p i = 1)
-    (hq : ∑ i ∈ s, q i ≤ 1) :
-    ∏ i ∈ s, q i ^ (p i : ℝ) ≤ ∏ i ∈ s, (p i : ℝ≥0∞) ^ (p i : ℝ) := by
+/-- **Gibbs' inequality**, homogeneous in `q`: the geometric mean of `q` weighted by `p` is at
+most the total of `q` times the geometric mean of `p` weighted by itself. -/
+theorem prod_rpow_le_sum_mul_prod_rpow_self (p : ι → ℝ≥0) (q : ι → ℝ≥0∞)
+    (hp : ∑ i ∈ s, p i = 1) :
+    ∏ i ∈ s, q i ^ (p i : ℝ) ≤ (∑ i ∈ s, q i) * ∏ i ∈ s, (p i : ℝ≥0∞) ^ (p i : ℝ) := by
   have hsplit : ∀ i ∈ s, q i ^ (p i : ℝ) = (q i / p i) ^ (p i : ℝ) * (p i : ℝ≥0∞) ^ (p i : ℝ) :=
     fun i _ ↦ by
       rcases eq_or_ne (p i) 0 with h | h
@@ -135,8 +146,15 @@ theorem prod_rpow_le_prod_rpow_self (p : ι → ℝ≥0) (q : ι → ℝ≥0∞)
       · rw [← mul_rpow_of_nonneg _ _ (p i).coe_nonneg,
           ENNReal.div_mul_cancel (coe_ne_zero.mpr h) coe_ne_top]
   rw [prod_congr rfl hsplit, prod_mul_distrib]
-  exact mul_le_of_le_one_left' <| (geom_mean_le_arith_mean_weighted s p _ hp).trans <|
-    (sum_le_sum fun _ _ ↦ mul_div_le).trans hq
+  gcongr
+  exact (geom_mean_le_arith_mean_weighted s p _ hp).trans (sum_le_sum fun _ _ ↦ mul_div_le)
+
+/-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
+`1`, is greatest at `q = p`. -/
+theorem prod_rpow_le_prod_rpow_self (p : ι → ℝ≥0) (q : ι → ℝ≥0∞) (hp : ∑ i ∈ s, p i = 1)
+    (hq : ∑ i ∈ s, q i ≤ 1) :
+    ∏ i ∈ s, q i ^ (p i : ℝ) ≤ ∏ i ∈ s, (p i : ℝ≥0∞) ^ (p i : ℝ) :=
+  (prod_rpow_le_sum_mul_prod_rpow_self s p q hp).trans (mul_le_of_le_one_left' hq)
 
 /-- **Gibbs' inequality, equality case**: the geometric mean of `q` weighted by `p`, over `q`
 summing to at most `1`, attains its greatest value only at `q = p`. -/

@@ -15,7 +15,7 @@ A PCFG is a multitype Galton–Watson process whose types are the symbols: a ter
 offspring, and a nonterminal's offspring is the right-hand side of a rule at it chosen with its
 weight. The law of its family tree is the derivation measure, under which a tree has
 [the product of its rule weights](##PCFG.derivationMeasure_singleton). It is
-[a sub-probability kernel](##PCFG.derivationMeasure_apply_univ_le_one). Total mass one, the
+[a sub-probability kernel](##PCFG.derivationMeasure_univ_le_one). Total mass one, the
 grammar almost surely producing a finite derivation, is tightness in [chi-geman-1998], consistency
 in [booth-thompson-1973] and properness in [chi-1999]. The relative-frequency estimate from a
 corpus of licensed trees is [tight](##PCFG.isProbabilityMeasure_derivationMeasure_ofCounts) at the
@@ -62,6 +62,8 @@ noncomputable def offspring : Symbol T G.NT → Measure (List (Symbol T G.NT))
   | .terminal _ => Measure.dirac []
   | .nonterminal A => ∑ r ∈ G.rulesWithInput A, W.weight r • Measure.dirac r.output
 
+@[simp] theorem offspring_terminal (a : T) : W.offspring (.terminal a) = Measure.dirac [] := rfl
+
 theorem offspring_nonterminal_apply (A : G.NT) (s : Set (List (Symbol T G.NT))) :
     W.offspring (.nonterminal A) s =
       ∑ r ∈ G.rulesWithInput A, W.weight r * s.indicator 1 r.output := by
@@ -80,7 +82,7 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
           if r = ⟨A, syms⟩ then W.weight r else 0 from ?_, Finset.sum_ite_eq']
     · split_ifs with h
       · rfl
-      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (G.mem_rulesWithInput_input h')]
+      · rw [W.weight_eq_zero_of_notMem _ fun h' ↦ h (G.mem_rulesWithInput_input h')]
     · obtain ⟨-, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
       by_cases hs : r.output = syms
       · rw [Set.indicator_of_mem (by simpa using hs), ite_eq_left (by cases r; simp_all)]
@@ -95,7 +97,7 @@ theorem offspring_nonterminal_univ (A : G.NT) :
 
 theorem offspring_univ_le_one (s : Symbol T G.NT) : W.offspring s Set.univ ≤ 1 := by
   cases s with
-  | terminal a => simp [offspring]
+  | terminal a => simp
   | nonterminal A => exact (W.offspring_nonterminal_univ A).trans_le (W.sum_weight_le_one A)
 
 variable [Countable T] [Countable G.NT]
@@ -111,7 +113,7 @@ theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.inputs) :
     IsMarkovKernel W.galtonWatson :=
   ⟨fun s ↦ ⟨by
     cases s with
-    | terminal a => simp [offspring]
+    | terminal a => simp
     | nonterminal A => exact (W.offspring_nonterminal_univ A).trans (W.sum_weight A (h A))⟩⟩
 
 /-- The Galton–Watson weight of a derivation tree is the product of its rule weights. -/
@@ -142,12 +144,12 @@ theorem derivationMeasure_singleton (t : RoseTree (Symbol T G.NT)) (s : Symbol T
   split_ifs <;> rfl
 
 /-- The derivation measure is a sub-probability measure at every symbol. -/
-theorem derivationMeasure_apply_univ_le_one (s : Symbol T G.NT) :
+theorem derivationMeasure_univ_le_one (s : Symbol T G.NT) :
     W.derivationMeasure s Set.univ ≤ 1 :=
   GaltonWatson.law_univ_le_one W.galtonWatson s
 
 instance : IsFiniteKernel W.derivationMeasure :=
-  ⟨⟨1, ENNReal.one_lt_top, W.derivationMeasure_apply_univ_le_one⟩⟩
+  ⟨⟨1, ENNReal.one_lt_top, W.derivationMeasure_univ_le_one⟩⟩
 
 /-! ### Expectations over the offspring -/
 
@@ -236,7 +238,7 @@ theorem isProbabilityMeasure_derivationMeasure_ofCounts (hD : ∀ t ∈ D, t.Lic
     obtain ⟨⟨s, ks⟩, hp, rfl⟩ := List.mem_map.mp hs
     have hlic := licensed_iff_forall_mem_localTrees.mp (hD t' ht') _ hp
     cases s with
-    | terminal a => simp [offspring]
+    | terminal a => simp
     | nonterminal A =>
       exact ((ofCounts (ruleCounts D)).offspring_nonterminal_univ A).trans
         ((ofCounts (ruleCounts D)).sum_weight A (ContextFreeGrammar.mem_inputs.mpr ⟨_, hlic, rfl⟩))
@@ -252,7 +254,7 @@ theorem isProbabilityMeasure_derivationMeasure_ofCounts (hD : ∀ t ∈ D, t.Lic
       (Multiset.mem_map_of_mem (fun t' ↦ S.indicator 1 t'.value) ht)) (le_of_eq ?_)
     rw [RoseTree.sum_map_localTrees_eq_sum_ruleCounts hD
         (F := fun p ↦ ∫⁻ l, (l.map (S.indicator 1)).sum ∂(ofCounts (ruleCounts D)).offspring p.1)
-        fun a ↦ by simp [offspring],
+        fun a ↦ by simp,
       RoseTree.sum_map_localTrees_eq_sum_ruleCounts hD
         (F := fun p ↦ (p.2.map (S.indicator 1)).sum) fun a ↦ by simp]
     simp only [nsmul_eq_mul]

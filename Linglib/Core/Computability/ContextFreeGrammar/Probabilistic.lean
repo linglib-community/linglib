@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Analysis.MeanInequalities
@@ -132,7 +137,7 @@ structure PCFG {T : Type*} (G : ContextFreeGrammar T) where
   /-- The weight of a rule. -/
   weight : ContextFreeRule T G.NT → ℝ≥0∞
   /-- Rules outside the grammar have weight `0`. -/
-  weight_eq_zero_of_not_mem : ∀ r ∉ G.rules, weight r = 0
+  weight_eq_zero_of_notMem : ∀ r ∉ G.rules, weight r = 0
   /-- Weights sum to one over the rules sharing the input of a rule of the grammar. -/
   finsum_weight : ∀ r ∈ G.rules,
     ∑ᶠ r' ∈ {r' | r' ∈ G.rules ∧ r'.input = r.input}, weight r' = 1
@@ -141,14 +146,14 @@ namespace PCFG
 
 variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
-attribute [simp] weight_eq_zero_of_not_mem
+attribute [simp] weight_eq_zero_of_notMem
 
 /-- A PCFG from weights that vanish off the grammar and sum to one over the rules at each
 nonterminal the grammar has a rule for. -/
 def mk' (weight : ContextFreeRule T G.NT → ℝ≥0∞) (h0 : ∀ r ∉ G.rules, weight r = 0)
     (hsum : ∀ a ∈ G.inputs, ∑ r ∈ G.rulesWithInput a, weight r = 1) : PCFG G where
   weight := weight
-  weight_eq_zero_of_not_mem := h0
+  weight_eq_zero_of_notMem := h0
   finsum_weight r hr := by
     rw [← ContextFreeGrammar.coe_rulesWithInput, finsum_mem_coe_finset]
     exact hsum _ (G.input_mem_inputs hr)
@@ -173,6 +178,9 @@ theorem weight_le_one (r : ContextFreeRule T G.NT) : W.weight r ≤ 1 := by
   · exact (Finset.single_le_sum (f := W.weight) (fun _ _ ↦ zero_le)
       (G.mem_rulesWithInput_input hr)).trans (W.sum_weight_le_one r.input)
   · simp [hr]
+
+theorem weight_ne_top (r : ContextFreeRule T G.NT) : W.weight r ≠ ⊤ :=
+  ne_top_of_le_ne_top ENNReal.one_ne_top (W.weight_le_one r)
 
 section
 
@@ -282,7 +290,7 @@ theorem prod_pow_eq_prod_ofCounts_pow_iff (x : ContextFreeRule T G.NT → ℕ) :
     ENNReal.prod_eq_prod_iff_of_le (fun a _ ↦ W.prod_pow_le_prod_ofCounts_pow_aux x a)
       (fun a _ ↦ Finset.prod_ne_zero_iff.mpr fun r hr ↦ ?_)
       fun a _ ↦ ENNReal.prod_ne_top fun r _ ↦
-        ENNReal.pow_ne_top (ne_top_of_le_ne_top ENNReal.one_ne_top ((ofCounts x).weight_le_one r))]
+        ENNReal.pow_ne_top ((ofCounts x).weight_ne_top r)]
   · refine ⟨fun h r hr hX ↦ ?_, fun h a _ ↦ ?_⟩
     · have ha := h r.input (G.input_mem_inputs hr)
       rw [prod_ofCounts_pow,
@@ -302,6 +310,18 @@ theorem prod_pow_eq_prod_ofCounts_pow_iff (x : ContextFreeRule T G.NT → ℕ) :
       rw [ofCounts_weight hmem hX]
       exact pow_ne_zero _ (ENNReal.div_ne_zero.mpr
         ⟨by exact_mod_cast h.ne', by simp [← Nat.cast_sum]⟩)
+
+/-- When every nonterminal with a rule has a counted rule, the relative frequencies are the only
+PCFG giving the counts their greatest likelihood. -/
+theorem prod_pow_eq_prod_ofCounts_pow_iff_eq {x : ContextFreeRule T G.NT → ℕ}
+    (hx : ∀ a ∈ G.inputs, ∑ r ∈ G.rulesWithInput a, x r ≠ 0) :
+    ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
+      W = ofCounts x := by
+  rw [prod_pow_eq_prod_ofCounts_pow_iff]
+  refine ⟨fun h ↦ PCFG.ext (funext fun r ↦ ?_), fun h _ _ _ ↦ by rw [h]⟩
+  by_cases hr : r ∈ G.rules
+  · exact h r hr (hx _ (G.input_mem_inputs hr))
+  · simp [hr]
 
 /-! ### Corpora -/
 
