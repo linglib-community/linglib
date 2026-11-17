@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Hom.CompleteLattice
 public import Linglib.Logic.Aristotelian.Morphism
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Square.Hom
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Fin.VecNotation

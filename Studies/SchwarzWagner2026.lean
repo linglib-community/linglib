@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.SchwarzWagner2026
+public import Linglib.Logic.Aristotelian.Square.Hom
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
@@ -444,8 +445,8 @@ def sqAt : Square (Set W) where
 
 variable {A X}
 
-theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  (Det.square_relations hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+theorem squareRelations_sqAt (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
+  (Det.squareRelations_square hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
     { toFun Q := {w | Q (X w)}
       map_sup' _ _ := rfl
       map_inf' _ _ := rfl
@@ -674,7 +675,7 @@ theorem simplex_subset_squareOf (c : Case) : simplex A X c ⊆ {(squareOf (sqAt 
       simp only [mem_insert_iff, mem_singleton_iff, squareOf, Square.inner] at hq ⊢
       tauto
 
-theorem squareOf_relations (h : SquareRelations (sqAt A X)) (c : Case) :
+theorem squareRelations_squareOf (h : SquareRelations (sqAt A X)) (c : Case) :
     SquareRelations (squareOf (sqAt A X) c) := by
   cases c <;> first | exact h | exact h.inner
 
@@ -730,7 +731,7 @@ theorem not_blocked_iff (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X
     (c : Case) (e : Excluded) :
     ¬ Blocked (simplex A X c) ((squareOf (sqAt A X) c).I \ excl (sqAt A X) c e)
       (squareOf (sqAt A X) c).I ↔ e = .scalar ∨ c = .minimal := by
-  have hr := squareOf_relations h c
+  have hr := squareRelations_squareOf h c
   have hn := squareOf_triangle_ne hne c
   cases e
   · simpa [excl] using not_blocked_I_sdiff_A hr hn (simplex_subset_squareOf c)

@@ -6,40 +6,26 @@ public import Mathlib.Order.Hom.Set
 /-!
 # The Aristotelian relations
 
-Logical geometry studies four relations between elements `x`, `y` of a Boolean algebra, the
-*Aristotelian relations* ([demey-smessaert-2018], [demey-smessaert-2024]):
+Two elements $x$ and $y$ of a bounded order are *contrary* when they are disjoint but not
+codisjoint, $x \sqcap y = \bot$ and $x \sqcup y \ne \top$, and *subcontrary* when they are
+codisjoint but not disjoint. Together with complementarity (`IsCompl`, *contradiction*) and the
+strict order (`<`, *subalternation*) these are the four Aristotelian relations. In the algebra
+`Set W` of propositions, contraries cannot both be true and subcontraries cannot both be false.
 
-| Relation       | Definition                    | Here                 |
-|----------------|-------------------------------|----------------------|
-| contradictory  | `x ⊓ y = ⊥` and `x ⊔ y = ⊤`   | `IsCompl x y`        |
-| contrary       | `x ⊓ y = ⊥` and `x ⊔ y ≠ ⊤`   | `IsContrary x y`     |
-| subcontrary    | `x ⊓ y ≠ ⊥` and `x ⊔ y = ⊤`   | `IsSubcontrary x y`  |
-| subalternation | `x ⊓ y = x` and `x ⊔ y ≠ x`   | `x < y`              |
-
-Contradiction and subalternation are mathlib's `IsCompl` and `<`, so only contrariety and
-subcontrariety are defined here. Taking the algebra to be `Set W`, the Lindenbaum–Tarski algebra
-of a logic, or `Fin n → Bool` gives the relations between propositions, between formulas, and
-between bitstrings.
-
-The first three relations sort a pair by whether it can hold together and whether it can fail
-together, [`Disjoint`](##Aristotelian.disjoint_iff_isCompl_or_isContrary) and
-[`Codisjoint`](##Aristotelian.codisjoint_iff_isCompl_or_isSubcontrary), and no pair stands in two
-of them. Subcontrariety is [contrariety in the dual order](##Aristotelian.isContrary_toDual_iff),
-and since complementation reverses the order, [negating both members of a pair exchanges the
-two](##Aristotelian.isContrary_compl_compl). Negating one member instead turns either relation
-into subalternation: `x` is [contrary to `yᶜ`](##Aristotelian.isContrary_compl_right_iff) exactly
-when `x < y`, and [subcontrary to it](##Aristotelian.isSubcontrary_compl_right_iff) exactly when
-`y < x`. The relations are distinct only away from the bounds: `⊥` is both
-[contrary to](##Aristotelian.isContrary_bot_left) and a subaltern of every element other than
-`⊥` and `⊤`, while a contrary of `y` that lies below `y` is `⊥` (`Disjoint.eq_bot_of_le`).
+The two relations are [order dual](##Aristotelian.isContrary_toDual_iff) to each other, and [a
+disjoint pair is either contradictory or
+contrary](##Aristotelian.disjoint_iff_isCompl_or_isContrary). In a Boolean algebra, [$x$ is
+contrary to $y$ if and only if $x < y^c$](##Aristotelian.isContrary_iff_lt_compl) and
+[subcontrary to $y$ if and only if $y^c < x$](##Aristotelian.isSubcontrary_iff_compl_lt), so
+[complementing both elements exchanges contrariety and
+subcontrariety](##Aristotelian.isContrary_compl_compl).
 
 ## Implementation notes
 
-`IsContrary` and `IsSubcontrary` are defined in a bounded partial order, as `IsCompl` is, and
-neither asks its members to differ from `⊥` and `⊤`. [smessaert-demey-2014] sort a pair twice
-over, by the four cells of `(Disjoint x y, Codisjoint x y)` into an *opposition* relation and
-by the four cells of `(x ≤ y, y ≤ x)` into an *implication* relation. Every pair falls in
-exactly one cell of each, so neither family gets a type of its own.
+Neither relation asks its elements to differ from $\bot$ and $\top$, so [$\bot$ is contrary to
+every $x \ne \top$](##Aristotelian.isContrary_bot_left), among them the elements it lies
+strictly below. The opposition and implication relations, which are the four cells of
+`(Disjoint x y, Codisjoint x y)` and of `(x ≤ y, y ≤ x)`, are not given types of their own.
 
 ## References
 

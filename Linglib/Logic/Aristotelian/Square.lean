@@ -1,10 +1,7 @@
 module
 
 public import Linglib.Logic.Aristotelian.Basic
-public import Mathlib.Data.Finset.BooleanAlgebra
-public import Mathlib.Data.Finset.Lattice.Prod
 public import Mathlib.Order.Hom.BoundedLattice
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The square of opposition
@@ -17,29 +14,18 @@ it [`A` entails `I`](##SquareRelations.subalternAI), [`E` entails
 fail](##SquareRelations.subcontrIO). Its instances for generalized quantifiers and for modals
 live with those theories.
 
-Such a square divides its algebra into three pairwise disjoint parts, `E`, `A`, and between them
-the conjunction `I ⊓ O` of the two particulars: the vertices of Horn's triangle of opposition.
-Horn traces this trichotomy to De Morgan and to Jespersen's tripartition into *all*, *some* and
-*none*, whose middle term is neither the `I` nor the `O` corner but their conjunction; modally
-the vertices are the impossible, the contingent and the necessary. The middle vertex decides how
-much of the square is left: `A` and `E` are [contrary](##SquareRelations.isContrary_AE_iff), `I`
-and `O` [subcontrary](##SquareRelations.isSubcontrary_IO_iff) and the two entailments
-[strict](##SquareRelations.lt_AI_iff) exactly when it is not `⊥`, and when no vertex is `⊥` the
-three are [pairwise contrary](##SquareRelations.pairwise_isContrary_triangle).
-
-Read as sets of vertices, the corners form a square in `Finset Triangle`, and it is the generic
-one: the squares of a Boolean algebra `α` that satisfy the relations [correspond
-to](##squareRelationsEquivHom) the bounded lattice homomorphisms `Finset Triangle → α`, each
-square being the image of that one.
+Between the universals lies the conjunction `I ⊓ O` of the two particulars, Jespersen's *some
+but not all* and the modal contingent, which is [what `A` and `E` leave
+uncovered](##SquareRelations.inf_IO_eq). It decides how much of the square is left: `A` and `E`
+are [contrary](##SquareRelations.isContrary_AE_iff), `I` and `O`
+[subcontrary](##SquareRelations.isSubcontrary_IO_iff) and the two entailments
+[strict](##SquareRelations.lt_AI_iff) exactly when it is not `⊥`.
 
 ## Implementation notes
 
 `SquareRelations` asks only that `A` and `E` be disjoint, where Horn's contraries may also both
 fail; that half is `I ⊓ O ≠ ⊥` and is left to the theorems that need it, so that a square whose
 restrictor has one member, or whose modal base settles the prejacent, is still a square.
-
-The vertices are ordered by the affirmative corners they lie in, which is the scale
-*none* < *some but not all* < *all*.
 
 ## References
 
@@ -66,16 +52,6 @@ structure Square (α : Type*) where
   /-- `O` is the particular negative corner (*not every*, `¬□p`, `¬Bel p`). -/
   O : α
 
-/-- The vertices of the triangle of opposition, in scale order. -/
-inductive Triangle where
-  /-- *None*, the universal negative `E`. -/
-  | none
-  /-- *Some but not all*, the conjunction of the two particulars `I` and `O`. -/
-  | someNotAll
-  /-- *All*, the universal affirmative `A`. -/
-  | all
-  deriving DecidableEq, Repr, Fintype
-
 namespace Square
 
 /-- The image of a square under a map of its corners. -/
@@ -99,16 +75,6 @@ theorem map_inner (f : α → β) (sq : Square α) : sq.inner.map f = (sq.map f)
 /-- The square on two universals has their complements for particulars. -/
 @[simps]
 def ofUniversals [Compl α] (a e : α) : Square α := ⟨a, e, eᶜ, aᶜ⟩
-
-/-- The element of a square at a vertex of its triangle. -/
-def triangle [Min α] (sq : Square α) : Triangle → α
-  | .none => sq.E
-  | .someNotAll => sq.I ⊓ sq.O
-  | .all => sq.A
-
-theorem map_triangle [Min α] [Min β] [FunLike F α β] [InfHomClass F α β] (f : F) (sq : Square α)
-    (t : Triangle) : (sq.map f).triangle t = f (sq.triangle t) := by
-  cases t <;> simp [triangle]
 
 end Square
 
@@ -217,150 +183,5 @@ theorem isSubcontrary_IO_iff (h : SquareRelations sq) :
   rw [isSubcontrary_iff, and_iff_right h.subcontrIO, disjoint_iff]
 
 end SquareRelations
-
-/-! ### The corners as sets of vertices -/
-
-namespace Triangle
-
-/-- The corners of the square, each given as the set of vertices at which it holds. -/
-def corners : Square (Finset Triangle) :=
-  ⟨{.all}, {.none}, {.someNotAll, .all}, {.none, .someNotAll}⟩
-
-/-- The element of `corners` at each vertex is that vertex's singleton. -/
-theorem triangle_corners (t : Triangle) : corners.triangle t = {t} := by
-  cases t <;> decide
-
-/-- The corners as sets of vertices satisfy the relations of the square. -/
-theorem squareRelations_corners : SquareRelations corners :=
-  .of_disjoint (by decide) (by decide) (by decide)
-
-/-- A vertex lies below another when the other lies in every affirmative corner that it does. -/
-instance : LE Triangle :=
-  ⟨fun s t ↦ (s ∈ corners.I → t ∈ corners.I) ∧ (s ∈ corners.A → t ∈ corners.A)⟩
-
-instance : DecidableLE Triangle := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-instance : LinearOrder Triangle where
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
-  le_total := by decide
-  toDecidableLE := inferInstance
-
-instance : BoundedOrder Triangle where
-  top := .all
-  le_top := by decide
-  bot := .none
-  bot_le := by decide
-
-theorem bot_eq_none : (⊥ : Triangle) = .none := rfl
-
-theorem top_eq_all : (⊤ : Triangle) = .all := rfl
-
-/-- *Some* holds above the bottom vertex. -/
-theorem mem_corners_I {t : Triangle} : t ∈ corners.I ↔ ⊥ < t := by decide +revert
-
-/-- *All* holds at the top vertex. -/
-theorem mem_corners_A {t : Triangle} : t ∈ corners.A ↔ t = ⊤ := by decide +revert
-
-theorem mem_corners_O {t : Triangle} : t ∈ corners.O ↔ t < ⊤ := by decide +revert
-
-theorem mem_corners_E {t : Triangle} : t ∈ corners.E ↔ t = ⊥ := by decide +revert
-
-end Triangle
-
-/-! ### The triangle -/
-
-namespace SquareRelations
-
-open Function Finset
-
-/-- The vertices of a square are pairwise disjoint. -/
-theorem pairwise_disjoint_triangle (h : SquareRelations sq) :
-    Pairwise (Disjoint on sq.triangle) := by
-  have hA : Disjoint sq.A (sq.I ⊓ sq.O) := by
-    rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_left)
-  have hE : Disjoint sq.E (sq.I ⊓ sq.O) := by
-    rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_right)
-  rintro (_ | _ | _) (_ | _ | _) hne <;> first
-    | exact absurd rfl hne
-    | simp only [onFun, Square.triangle]
-  exacts [hE, h.contraryAE.symm, hE.symm, hA.symm, h.contraryAE, hA]
-
-/-- The vertices of a square join to `⊤`. -/
-theorem sup_triangle (h : SquareRelations sq) : univ.sup sq.triangle = ⊤ := by
-  rw [show (univ : Finset Triangle) = {.none, .someNotAll, .all} by decide, sup_insert, sup_insert,
-    sup_singleton]
-  exact (congrArg _ h.inf_IO_sup_A).trans h.contradEI.sup_eq_top
-
-/-- The vertices of a square none of which is `⊥` are distinct. -/
-theorem triangle_injective (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
-    Injective sq.triangle := fun s t hst ↦
-  by_contra fun hs ↦ hne s <| disjoint_self.1 <| by
-    simpa only [onFun, ← hst] using h.pairwise_disjoint_triangle hs
-
-/-- The vertices of a square none of which is `⊥` are pairwise contrary: any two leave room for
-the third. -/
-theorem pairwise_isContrary_triangle (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
-    Pairwise (IsContrary on sq.triangle) := fun s t hst ↦ by
-  obtain ⟨r, hrs, hrt⟩ : ∃ r, r ≠ s ∧ r ≠ t := by decide +revert
-  refine ⟨h.pairwise_disjoint_triangle hst, fun hc ↦ hne r <| disjoint_top.1 ?_⟩
-  rw [← hc.eq_top]
-  exact (h.pairwise_disjoint_triangle hrs).sup_right (h.pairwise_disjoint_triangle hrt)
-
-/-- The homomorphism of a square sends a set of vertices to the join of its elements there. -/
-def triangleHom (h : SquareRelations sq) : BoundedLatticeHom (Finset Triangle) α where
-  toFun s := s.sup sq.triangle
-  map_sup' _ _ := sup_union
-  map_inf' s t := by
-    refine le_antisymm (le_inf (sup_mono inter_subset_left) (sup_mono inter_subset_right)) ?_
-    rw [sup_inf_sup]
-    refine Finset.sup_le fun ⟨i, j⟩ hij ↦ ?_
-    obtain ⟨hi, hj⟩ := mem_product.1 hij
-    obtain rfl | hne := eq_or_ne i j
-    · exact inf_le_left.trans (le_sup (mem_inter.2 ⟨hi, hj⟩))
-    · exact (h.pairwise_disjoint_triangle hne).le_bot.trans bot_le
-  map_top' := h.sup_triangle
-  map_bot' := sup_empty
-
-@[simp] theorem triangleHom_apply (h : SquareRelations sq) (s : Finset Triangle) :
-    h.triangleHom s = s.sup sq.triangle := rfl
-
-/-- A square with the relations is the image of the corners as sets of vertices. -/
-theorem map_triangleHom_corners (h : SquareRelations sq) :
-    Triangle.corners.map h.triangleHom = sq := by
-  ext
-  · exact sup_singleton
-  · exact sup_singleton
-  · exact (sup_insert.trans (congrArg _ sup_singleton)).trans h.inf_IO_sup_A
-  · exact (sup_insert.trans (congrArg _ sup_singleton)).trans (sup_comm _ _ |>.trans h.inf_IO_sup_E)
-
-/-- A homomorphism from sets of vertices is the homomorphism of the square it sends the corners
-to. -/
-theorem triangleHom_map_corners (f : BoundedLatticeHom (Finset Triangle) α) :
-    (Triangle.squareRelations_corners.map f).triangleHom = f := by
-  ext s
-  rw [triangleHom_apply]
-  conv_rhs => rw [← s.sup_singleton_eq_self, map_finset_sup]
-  exact sup_congr rfl fun t _ ↦ by
-    rw [Square.map_triangle, Triangle.triangle_corners, Function.comp_apply]
-
-end SquareRelations
-
-/-- The squares of a Boolean algebra that satisfy the relations are the images of the corners as
-sets of vertices under the bounded lattice homomorphisms from `Finset Triangle`. -/
-def squareRelationsEquivHom :
-    {sq : Square α // SquareRelations sq} ≃ BoundedLatticeHom (Finset Triangle) α where
-  toFun sq := sq.2.triangleHom
-  invFun f := ⟨Triangle.corners.map f, Triangle.squareRelations_corners.map f⟩
-  left_inv sq := Subtype.ext sq.2.map_triangleHom_corners
-  right_inv := SquareRelations.triangleHom_map_corners
-
-/-- A square satisfies the relations exactly when it is the image of the corners as sets of
-vertices under a bounded lattice homomorphism. -/
-theorem squareRelations_iff_exists_hom :
-    SquareRelations sq ↔ ∃ f : BoundedLatticeHom (Finset Triangle) α, Triangle.corners.map f = sq :=
-  ⟨fun h ↦ ⟨h.triangleHom, h.map_triangleHom_corners⟩,
-    fun ⟨f, hf⟩ ↦ hf ▸ Triangle.squareRelations_corners.map f⟩
 
 end Aristotelian
