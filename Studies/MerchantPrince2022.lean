@@ -66,35 +66,34 @@ section RowGrammar
 variable {C : Type*} [DecidableEq C] {n : ℕ}
 
 /-- The ERC set of a tableau row `w` collects `w`'s winner–loser ERCs against every other
-candidate, the ranking conditions a leg must satisfy for `w` to be optimal ([prince-2002]). -/
-def rowERCs (t : Tableau C n) (w : C) : Finset (ERC (Fin n)) :=
-  (t.candidates.erase w).image (tableauERC t w)
+candidate, the ranking conditions a leg must satisfy for `w` to be optimal ([prince-2002]).
+`v c k` is the number of violations of the constraint `k` by the candidate `c`. -/
+def rowERCs (v : C → Fin n → ℕ) (s : Finset C) (w : C) : Finset (ERC (Fin n)) :=
+  (s.erase w).image fun l ↦ ercOfProfiles (v w) (v l)
 
 /-- The **grammar of a tableau row** is the grammar that the row's ERC set presents
 ([merchant-prince-2022]; [merchant-riggle-2016]). It has a leg exactly when `w` is an optimum
 that no competitor harmonically bounds. -/
-def rowGrammar (t : Tableau C n) (w : C) : Grammar.Enumeration (Fin n) n :=
-  Grammar.Enumeration.ofERCs ↑(rowERCs t w)
+def rowGrammar (v : C → Fin n → ℕ) (s : Finset C) (w : C) : Grammar.Enumeration (Fin n) n :=
+  Grammar.Enumeration.ofERCs ↑(rowERCs v s w)
 
-@[simp] theorem mem_rowGrammar_extent {t : Tableau C n} {w : C} {r : Ranking.Enumeration
-    (Fin n) n} :
-    r ∈ (rowGrammar t w).extent ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α :=
+@[simp] theorem mem_rowGrammar_extent {v : C → Fin n → ℕ} {s : Finset C} {w : C}
+    {r : Ranking.Enumeration (Fin n) n} :
+    r ∈ (rowGrammar v s w).extent ↔ ∀ α ∈ rowERCs v s w, ERC.SatisfiedBy r α :=
   Grammar.Enumeration.mem_extent_ofERCs
 
-theorem mem_rowGrammar_extent_iff_lex {t : Tableau C n} {w : C} {r : Ranking.Enumeration
-    (Fin n) n} :
-    r ∈ (rowGrammar t w).extent ↔
-      ∀ l ∈ t.candidates.erase w,
-        r • t.profile w ≤ r • t.profile l := by
+theorem mem_rowGrammar_extent_iff_lex {v : C → Fin n → ℕ} {s : Finset C} {w : C}
+    {r : Ranking.Enumeration (Fin n) n} :
+    r ∈ (rowGrammar v s w).extent ↔ ∀ l ∈ s.erase w, r.profile v w ≤ r.profile v l := by
   rw [mem_rowGrammar_extent]
   unfold rowERCs
   constructor
   · intro hsat l hl
-    exact (tableauERC_satisfiedBy_iff t r w l).mp
+    exact (satisfiedBy_ercOfProfiles_iff_le r (v w) (v l)).mp
       (hsat _ (Finset.mem_image.mpr ⟨l, hl, rfl⟩))
   · intro hlex α hα
     obtain ⟨l, hl, rfl⟩ := Finset.mem_image.mp hα
-    exact (tableauERC_satisfiedBy_iff t r w l).mpr (hlex l hl)
+    exact (satisfiedBy_ercOfProfiles_iff_le r (v w) (v l)).mpr (hlex l hl)
 
 end RowGrammar
 

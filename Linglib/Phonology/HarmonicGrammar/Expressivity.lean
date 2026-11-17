@@ -166,6 +166,20 @@ theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type
     rw [harmonyScore, harmonyScore, neg_le_neg_iff]
     exact ((Pi.strictMonoOn_sum_mul hw).le_iff_le (hM a ha) (hM b hb)).symm
 
+/-- With exponentially separated weights, read onto the constraints along the ranking and
+bounding every violation, the optimal candidates under a ranking are the HG winners. -/
+theorem _root_.OptimalityTheory.Ranking.Enumeration.optimal_eq_argmax_harmonyScore
+    {C ι : Type*} [Fintype ι] {n M : ℕ} {w : Fin n → ℝ}
+    (σ : Ranking.Enumeration ι n) (v : C → ι → ℕ) (s : Finset C)
+    (hw : ExponentiallySeparated w M) (hM : ∀ c ∈ s, ∀ k, v c k ≤ M) :
+    σ.optimal v s = s.argmax (harmonyScore (fun k c ↦ v c k) (w ∘ σ.symm)) := by
+  rw [Ranking.Enumeration.optimal_eq_tableau,
+    Tableau.optimal_eq_argmax_harmonyScore _ hw fun c hc p ↦ hM c hc (σ p)]
+  congr 1
+  funext c
+  simp only [harmonyScore, comp_equiv_symm_dotProduct]
+  rfl
+
 /-! ### MaxEnt → OT limit -/
 
 /-- Scaling exponentially separated weights concentrates MaxEnt on the sole OT winner, which is the
@@ -173,14 +187,15 @@ sole HG winner (`Tableau.optimal_eq_argmax_harmonyScore`). -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
-    (hopt : (Tableau.ofList Finset.univ ranking).optimal = {c_opt}) :
+    (hopt : Constraint.eval Finset.univ ranking = {c_opt}) :
     Tendsto (fun α : ℝ ↦
       (maxEnt (ConstraintSet.violations ranking.get) (α • expWeights ranking.length M)).real
         {c_opt}) atTop (𝓝 1) := by
   refine tendsto_maxEnt_smul_atTop (T := ConstraintSet.violations ranking.get)
     (w := expWeights ranking.length M) ?_
-  rw [harmony_violations, ← hopt, Tableau.optimal_eq_argmax_harmonyScore _
-    (expWeights_separated _ M hM) fun c _ p ↦ hbound c _ (List.get_mem ranking p)]
+  rw [harmony_violations, ← hopt, ← Tableau.optimal_ofList,
+    Tableau.optimal_eq_argmax_harmonyScore _
+      (expWeights_separated _ M hM) fun c _ p ↦ hbound c _ (List.get_mem ranking p)]
   rfl
 
 /-! ## Realizability
@@ -219,11 +234,8 @@ theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [
           hi))).trans (Nat.le_succ _)
   refine ⟨expWeights n M ∘ σ.symm, fun k ↦ (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
   rw [ConstraintSystem.hgLanguage, ConstraintSystem.language,
-    Ranking.Enumeration.optimal_eq_tableau, Tableau.optimal_eq_argmax_harmonyScore _
-    (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho (σ k)]
-  congr 1
-  funext o
-  simp only [harmonyScore, comp_equiv_symm_dotProduct]
+    σ.optimal_eq_argmax_harmonyScore (S.marks i) (S.gen i)
+      (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho k]
   rfl
 
 /-- An OT-realizable problem is HG-realizable. -/
