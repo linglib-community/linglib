@@ -504,10 +504,9 @@ theorem judgments_11 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) (hnone : μ {
           (speaker μ α C (readings meaning) .justSome).real {.someButNotAll} ↔
         μ.real {.justSome} * Real.exp (C .someButNotAll - C .notAll) <
           μ.real (literal .notAll)) ∧
-      PostAccommodationInformative {w | μ {w} ≠ 0} (meaning .some) := by
+      ({w | μ {w} ≠ 0} ∩ Trivalent.negExt (meaning .some)).Nonempty := by
   have hjs : 0 < μ.real {World.justSome} := ENNReal.toReal_pos hsome (measure_ne_top _ _)
-  refine ⟨rfl, rfl, ?_, ?_, postAccommodationInformative_iff.2
-    ⟨.none, hnone, pexIE_eq_false_iff.2 (by simp [literal])⟩⟩
+  refine ⟨rfl, rfl, ?_, ?_, ⟨.none, hnone, pexIE_eq_false_iff.2 (by simp [literal])⟩⟩
   · rw [speaker_readings_real_lt_iff hα hsome (meaning_some_eq_true_iff.2 rfl)
       (meaning_someButNotAll_eq_true_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
     exact neg_log_sub_lt_iff hjs (measureReal_literal_pos (by simp [literal]) hsome)
@@ -522,16 +521,15 @@ theorem judgments_14 [IsProbabilityMeasure μ] (hα : 0 < α) (hsome : μ {.just
       ((speaker μ α C (readings meaning) .justSome).real {.some} <
           (speaker μ α C (readings meaning) .justSome).real {.null} ↔
         Real.exp (-C .some) < 1 - μ.real {.none}) ∧
-      (μ {.none} = 0 → ¬ PostAccommodationInformative {w | μ {w} ≠ 0} (meaning .some)) := by
-  refine ⟨rfl, ?_, fun hnone h ↦ ?_⟩
+      (μ {.none} = 0 → Disjoint {w | μ {w} ≠ 0} (Trivalent.negExt (meaning .some))) := by
+  refine ⟨rfl, ?_, fun hnone ↦ Set.disjoint_left.2 fun w hw hf ↦ ?_⟩
   · have hlit : literal .some = {World.none}ᶜ := by
       ext w; cases w <;> simp [literal]
     rw [speaker_real_lt_null_iff readings_null hCnull hα hsome
       (forall_mem_readings_iff.2 (meaning_some_eq_true_iff.2 rfl)), iSup_measure_readings,
       readings_lp_meaning, hlit, ← measureReal_def,
       probReal_compl_eq_one_sub (measurableSet_singleton _)]
-  · obtain ⟨w, hw, hf⟩ := postAccommodationInformative_iff.1 h
-    cases w <;> simp_all [meaning, pexIE_eq_false_iff, literal]
+  · cases w <;> simp_all [meaning, pexIE_eq_false_iff, literal]
 
 -- (15), (14)
 theorem judgments_15 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) :

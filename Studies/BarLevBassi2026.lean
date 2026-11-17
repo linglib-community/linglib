@@ -80,17 +80,16 @@ that entails that some atom satisfies the predicate. Focus plays no part, so *sh
 books*, (16), and *he worked on his PHONOLOGY papers*, (39a), are predicted to be as odd as *she
 read the books*, (3a), in the same contexts. -/
 theorem not_informative_of_subset (hC : C ⊆ ⋃ a ∈ x, atom P a) :
-    ¬ PostAccommodationInformative C (pexPlural x x P R) := fun hi ↦
-  let ⟨_, hw, hn⟩ := postAccommodationInformative_pexPlural_iff.1 hi
-  let ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 (hC hw)
-  hn a ha ha hPa
+    Disjoint C (Trivalent.negExt (pexPlural x x P R)) :=
+  Set.disjoint_left.2 fun _ hw hf ↦
+    let ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 (hC hw)
+    pexPlural_eq_false_iff.1 hf a ha ha hPa
 
 -- (13), (14): where no atom need satisfy the predicate the plural predication is informative, so
 -- the presupposition does not explain its oddness as an answer to *none, some or all?*.
 theorem informative_univ (h : ∃ w, ∀ a ∈ x, ¬ P a w) :
-    PostAccommodationInformative Set.univ (pexPlural x x P R) :=
-  let ⟨w, hw⟩ := h
-  postAccommodationInformative_pexPlural_iff.2 ⟨w, trivial, fun a ha _ ↦ hw a ha⟩
+    (Trivalent.negExt (pexPlural x x P R)).Nonempty :=
+  h.imp fun _ hw ↦ pexPlural_eq_false_iff.2 fun a ha _ ↦ hw a ha
 
 end Informativity
 

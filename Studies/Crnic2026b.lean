@@ -38,7 +38,7 @@ exception set](##pex_but_no_eq_true_iff).
   changes nothing (`exhOnly_inter_excludable`).
 * Relevance over the context is `Exhaustification.IsAllowableRestriction` over the subtype of the
   context, with each *only*-alternative restricted to it by preimage (`onlyCtx`).
-* The ranking (58) of Informativity, `Presupposition.PostAccommodationInformative`, over Weakening
+* The ranking (58) of Informativity, falsity somewhere in the context, over Weakening
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
   `Trivalent.posExt`.
 
@@ -361,14 +361,14 @@ theorem mem_excludable_party {Y : Finset Guest} :
 
 -- Table 1, (48), (57)
 theorem table_1 :
-    Presupposition.PostAccommodationInformative univ (exhOnly party partyOnly party {gal}) ∧
+    (Trivalent.negExt (exhOnly party partyOnly party {gal})).Nonempty ∧
     Weakening party partyOnly (excludable party partyOnly {gal}) {gal} ∧
     ¬ Weakening party partyOnly {{charlie}} {gal} := by
   have hE : {tal} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
   have hC : {charlie} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
-  refine ⟨Presupposition.postAccommodationInformative_iff.2 ⟨{gal, tal}, mem_univ _, ?_⟩,
+  refine ⟨⟨{gal, tal}, ?_⟩,
     (weakening_iff _ ⟨_, hE⟩ subset_rfl).2 rfl, fun h ↦ ?_⟩
-  · rw [exhOnly_gal, Focus.only_eq_false_iff]
+  · rw [exhOnly_gal, Trivalent.mem_negExt, Focus.only_eq_false_iff]
     simp [partyOnly]
   · have := ((weakening_iff _ (singleton_nonempty _) (singleton_subset_iff.2 hC)).1 h).ge hE
     simp at this
@@ -431,15 +431,14 @@ theorem excludable_ranks :
 assertion, (39), (40), while pruning to *only [non-academic]* leaves the presupposition that Gal is
 an academic, which does not, at the cost of the Weakening Constraint, (41)–(44). -/
 theorem table_2 :
-    ¬ Presupposition.PostAccommodationInformative oneRank (exhOnly ranks ladder ranks {grad}) ∧
-    Presupposition.PostAccommodationInformative oneRank
-      (exhOnly ranks ladder {{nonAcademic}} {grad}) ∧
+    Disjoint oneRank (Trivalent.negExt (exhOnly ranks ladder ranks {grad})) ∧
+    (oneRank ∩ Trivalent.negExt (exhOnly ranks ladder {{nonAcademic}} {grad})).Nonempty ∧
     ¬ Weakening ranks ladder {{nonAcademic}} {grad} := by
   refine ⟨?_, ?_, fun h ↦ ?_⟩
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.disjoint_iff_inter_eq_empty, ← Set.not_nonempty_iff_eq_empty, Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ subset_rfl, mem_only_ladder, mem_ranks, oneRank]
     decide
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge
@@ -449,13 +448,12 @@ theorem table_2 :
 -- Pruning to *only [postdoc]* satisfies and violates the constraints (41) does, and under negation
 -- conveys that Gal is a professor where (41) conveys that she is a postdoc or a professor
 theorem pruned_postdoc :
-    Presupposition.PostAccommodationInformative oneRank
-      (exhOnly ranks ladder {{postdoc}} {grad}) ∧
+    (oneRank ∩ Trivalent.negExt (exhOnly ranks ladder {{postdoc}} {grad})).Nonempty ∧
     ¬ Weakening ranks ladder {{postdoc}} {grad} ∧ ∀ w ∈ oneRank,
       ((exhOnly ranks ladder {{nonAcademic}} {grad} w)ᶜ = .true ↔ w = {postdoc} ∨ w = {professor}) ∧
       ((exhOnly ranks ladder {{postdoc}} {grad} w)ᶜ = .true ↔ w = {professor}) := by
   refine ⟨?_, fun h ↦ ?_, ?_⟩
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge

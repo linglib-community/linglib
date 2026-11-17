@@ -35,8 +35,8 @@ is false somewhere in the context.
 * `subset_compl_gapExt_meetMiddle_iff`, `subset_compl_gapExt_compl_joinMiddle_iff`,
   `subset_compl_gapExt_joinMiddle_iff`: the filtering connectives are admittance in the local
   contexts.
-* `PostAccommodationInformative`, `postAccommodationInformative_iff`: informativity after
-  accommodation is falsity somewhere in the context.
+* `inter_compl_gapExt_subset_posExt_iff`: a sentence is uninformative after accommodation exactly
+  when it is false nowhere in the context.
 
 ## References
 
@@ -120,23 +120,14 @@ theorem subset_compl_gapExt_joinMiddle_iff :
 Accommodating the presupposition of a sentence restricts the context to where the sentence is
 defined. Doron and Wehbe's constraint asks that the sentence still be informative there. -/
 
-/-- A sentence is informative after accommodation in `C`, [doron-wehbe-2022]'s
-Post-Accommodation Informativity, when the context with its presupposition accommodated does not
-entail it. -/
-def PostAccommodationInformative (C : Set W) (p : W → Trivalent) : Prop :=
-  ¬ C ∩ (Trivalent.gapExt p)ᶜ ⊆ Trivalent.posExt p
-
-/-- A sentence is informative after accommodation exactly when it is false somewhere in the
-context ([spector-2025], (3) and (4)). -/
-theorem postAccommodationInformative_iff :
-    PostAccommodationInformative C p ↔ ∃ w ∈ C, p w = .false := by
-  simp only [PostAccommodationInformative, Set.subset_def, Set.mem_inter_iff,
-    Trivalent.mem_compl_gapExt, Trivalent.mem_posExt, not_forall, exists_prop, and_assoc]
-  exact exists_congr fun w ↦ and_congr_right fun _ ↦ by cases p w <;> decide
-
-theorem PostAccommodationInformative.mono {C' : Set W} (h : PostAccommodationInformative C p)
-    (hC : C ⊆ C') : PostAccommodationInformative C' p :=
-  let ⟨w, hw, hp⟩ := postAccommodationInformative_iff.1 h
-  postAccommodationInformative_iff.2 ⟨w, hC hw, hp⟩
+/-- With the presupposition of `p` accommodated, the context entails `p` exactly when `p` is
+false nowhere in it. [doron-wehbe-2022]'s Post-Accommodation Informativity asks of a felicitous
+utterance that it not be entailed in this way, that `(C ∩ negExt p).Nonempty`
+([spector-2025], (3) and (4)). -/
+theorem inter_compl_gapExt_subset_posExt_iff :
+    C ∩ (Trivalent.gapExt p)ᶜ ⊆ Trivalent.posExt p ↔ Disjoint C (Trivalent.negExt p) := by
+  simp only [Set.subset_def, Set.disjoint_left, Set.mem_inter_iff, Trivalent.mem_compl_gapExt,
+    Trivalent.mem_posExt, Trivalent.mem_negExt, and_imp]
+  exact forall₂_congr fun w _ ↦ by cases p w <;> decide
 
 end Presupposition

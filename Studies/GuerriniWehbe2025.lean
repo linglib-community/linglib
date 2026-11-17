@@ -4,6 +4,7 @@ public import Studies.BarLev2021
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Data.Examples.GuerriniWehbe2025
+public import Studies.DelPinalBassiSauerland2024
 
 /-!
 # Guerrini and Wehbe (2025): Homogeneity as presuppositional exhaustification
@@ -11,36 +12,40 @@ public import Linglib.Data.Examples.GuerriniWehbe2025
 Guerrini and Wehbe derive homogeneity by presuppositional exhaustification. A plural definite
 contributes Bar-Lev's existential pluralization, and the operator `pex` of Del Pinal, Bassi and
 Sauerland asserts it while presupposing that its subdomain alternatives are all true or all false.
-Accommodating the presupposition yields the universal reading as long as no alternative for a
-single atom is pruned (`pexPlural_eq_true_iff`), and pruning those yields non-maximal readings, all
-but `m - 1` of the atoms for the alternatives over `m` of them
-(`pexPlural_subDisjsOfCard_eq_true_iff`), at least two of three students for the pairs of (21)
-(`pexPlural_pairs_eq_true_iff`). Under negation the presupposition projects and the negated
-existential already entails it, so pruning has no effect (`pexPlural_eq_false_iff`).
-Non-maximality under negation needs local accommodation below negation and a second `pex` over the
-negated universal, which is the positive case for the negated predicate
-(`localAccommodation_nonMaximal`).
-
-Homogeneity is thus a presupposition, which a constraint on accommodation detects: a sentence is
-felicitous only if its assertion is informative once its presupposition is accommodated
-(`Presupposition.PostAccommodationInformative`, the paper's (8)). *She read the books* is
-infelicitous where Mary is known to have read some of them, *the candidates lost* where at most one
-candidate can win, and their negations where the universal is known to fail, while the quantified
-counterparts are fine (`postAccommodationInformative_pexPlural_iff`, `election`).
+Accommodating the presupposition [yields the universal reading](##pexPlural_eq_true_iff), and
+pruning alternatives [weakens it](##pexPlural_subDisjsOfCard_eq_true_iff) to a non-maximal one.
+Under negation the negated existential already entails the presupposition, so
+[pruning has no effect](##pexPlural_eq_false_iff), and a non-maximal reading
+[needs local accommodation](##localAccommodation_pruned_eq_true_iff) below negation. Homogeneity is
+thus a presupposition, and a plural definite is odd
+[where accommodating it leaves the assertion uninformative](##judgments).
 
 ## Implementation notes
 
-A plurality is the domain of Bar-Lev's existential pluralization, the disjunction of its atoms,
-and the alternatives are his subdomain alternatives, the sub-disjunctions, all of which are
-innocently includable (`Exhaustification.isInnocentlyIncludable_iff_of_subset_supClosure`).
-The common ground is a set of worlds and accommodation intersects it with the presupposition.
-The higher `pex` of (24) and (27) does not change the truth conditions of a negated plural and
-is not modelled.
+* A plurality is the domain of Bar-Lev's existential pluralization, the disjunction of its atoms,
+  and the alternatives are his subdomain alternatives, the sub-disjunctions, all of which are
+  innocently includable.
+* `pex` is `Exhaustification.pexIEII`, whose homogeneity presupposition ranges over the relevant
+  includable alternatives other than the prejacent. The paper's statement for the plural ranges
+  over every subdomain, the whole domain among them. The two agree wherever some relevant
+  alternative is true when the prejacent is, as in every case here.
+* The common ground is a set of worlds. A sentence is informative once its presupposition is
+  accommodated when it is false somewhere in the common ground
+  (`Presupposition.inter_compl_gapExt_subset_posExt_iff`).
+* The higher `pex` over a negated plural does not change its truth conditions and is not
+  modelled, and local accommodation below negation is the positive case for the negated
+  predicate.
+* The rows of §3 are read through four columns: the noun phrase, the polarity, whether the
+  predicate is the context's or its antonym, and what the context establishes. Worlds record
+  which of two atoms satisfy the context's predicate.
 
 ## TODO
 
-* The comparison with Križ and Chemla's gap judgments (§5.1) and with Paillé (§5.2).
-* Projection from non-monotonic quantifiers, free choice and the modal cases of §6.
+* The comparison with Križ and Chemla's gap judgments and with Paillé.
+* Projection from non-monotonic quantifiers, the cancellation contrast under negation, and the
+  neg-raising rows, which are informative where a homogeneity presupposition would make them
+  trivial.
+* The habitual, generic, bare plural, predicate and conditional rows have no model here.
 
 ## References
 
@@ -194,42 +199,14 @@ end Pruning
 
 end Plural
 
-/-! ### Post-Accommodation Informativity (§3) -/
-
-section Informativity
-
-variable {W : Type*}
-
-variable {Atom : Type*} [DecidableEq Atom] {D x : Finset Atom} {P : Atom → W → Prop}
-  {R : Set (Set W)}
-
-/-- A plural predication under `pex` is informative after accommodation exactly when the context
-leaves open that no atom satisfies the predicate, however the alternatives are pruned: *she read
-the books* is uninformative where Mary is known to have read some of them, (10a), and *the
-candidates lost* where at most one can win, (13d). -/
-theorem postAccommodationInformative_pexPlural_iff {C : Set W} :
-    PostAccommodationInformative C (pexPlural D x P R) ↔ ∃ w ∈ C, ∀ a ∈ x, a ∈ D → ¬ P a w := by
-  simp only [postAccommodationInformative_iff, pexPlural_eq_false_iff]
-
-/-- A negated plural predication under `pex` is informative after accommodation exactly when the
-context leaves open that every atom satisfies the predicate: *she didn't read the books* is
-uninformative where Mary is known not to have read all of them, (10b), (12b), (13c), (23). -/
-theorem postAccommodationInformative_compl_pexPlural_iff (h : Separating (x ∩ D) (atom P))
-    (hcard : 1 < (x ∩ D).card) (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) {C : Set W} :
-    PostAccommodationInformative C (pexPlural D x P R)ᶜ ↔ ∃ w ∈ C, ∀ a ∈ x, a ∈ D → P a w := by
-  simp only [postAccommodationInformative_iff, Pi.compl_apply, Trivalent.compl_eq_false_iff,
-    pexPlural_eq_true_iff h hcard hR]
-
-end Informativity
-
 /-! ### Three students (§4, §5)
 
 Worlds record who smiled, and `holds a w` says that `a` smiled at `w`. -/
 
 section Students
 
-/-- In (21), pruning to pairs of the three students makes *the students smiled* true after
-accommodation iff at least two smiled. -/
+-- (21): pruning to pairs of the three students leaves *the students smiled* true iff at least two
+-- smiled.
 theorem pexPlural_pairs_eq_true_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = .true ↔
       2 ≤ w.card := by
@@ -251,60 +228,145 @@ theorem localAccommodation_eq_true_iff (w : Finset (Fin 3)) :
     fun a _ ↦ subset_supClosure (Set.mem_range_self a), Finset.eq_empty_iff_forall_notMem]
   simp
 
-/-- In (32)–(34), pruning the alternative for the third student makes *the students didn't smile*
-true when only that student smiled, a non-maximal reading under negation. -/
-theorem localAccommodation_nonMaximal :
+/-- In (32)–(34), with the homogeneity presupposition accommodated below negation and the
+alternative for the third student pruned, *the students didn't smile* is true exactly when neither
+of the other two smiled, a non-maximal reading under negation. -/
+theorem localAccommodation_pruned_eq_true_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ notSmiled
-      (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) {2} = .true := by
+      (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) w = .true ↔
+        0 ∉ w ∧ 1 ∉ w := by
   rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff separating_not ⟨0, by simp⟩]
-  refine ⟨.inl ?_, Set.mem_biUnion (x := 0) (by simp) (by decide)⟩
-  rintro _ ⟨-, hq, hne⟩
-  obtain ⟨S, ⟨c, hc⟩, rfl⟩ := Set.mem_supClosure_range.1 hq
-  by_contra hout
-  refine hne (Set.mem_singleton_iff.2
-    ((congrArg (fun S ↦ ⋃ b ∈ S, atom notSmiled b) ?_).trans (Finset.set_biUnion_singleton 2 _)))
-  ext a
-  refine ⟨fun ha ↦ ?_, fun ha ↦ ?_⟩
-  · by_contra h2
-    exact hout (Set.mem_biUnion ha (by simpa [atom, notSmiled] using h2))
-  · rw [Finset.mem_singleton.1 ha]
-    by_contra h2
-    have hc2 : c ≠ 2 := fun h ↦ h2 (h ▸ hc)
-    exact hout (Set.mem_biUnion hc (by simpa [atom, notSmiled] using hc2))
+  have hne2 {T : Finset (Fin 3)} {a : Fin 3} (ha : a ∈ T) (ha2 : a ≠ 2) :
+      ⋃ b ∈ T, atom notSmiled b ≠ atom notSmiled 2 := fun h ↦
+    (h ▸ Set.mem_biUnion ha (by simpa [atom, notSmiled] using ha2) :
+      ({2} : Finset (Fin 3)) ∈ atom notSmiled 2) (Finset.mem_singleton_self 2)
+  have hmem (T : Finset (Fin 3)) (hcard : T.card < 3) {a : Fin 3} (ha : a ∈ T) (ha2 : a ≠ 2) :
+      ⋃ b ∈ T, atom notSmiled b ∈
+        supClosure (atom notSmiled '' ↑(Finset.univ ∩ Finset.univ : Finset (Fin 3))) \
+          {⋃ b ∈ Finset.univ ∩ Finset.univ, atom notSmiled b} ∩
+          (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) :=
+    ⟨⟨Set.mem_supClosure_image.2 ⟨T, ⟨a, ha⟩, by simp, rfl⟩,
+        biUnion_ne_of_card_lt separating_not (by simp) (by simpa using hcard)⟩,
+      Set.mem_supClosure_range.2 ⟨T, ⟨a, ha⟩, rfl⟩, hne2 ha ha2⟩
+  constructor
+  · rintro ⟨hhom | hhom, hw⟩
+    · have h0 := hhom _ (hmem {0} (by decide) (Finset.mem_singleton_self 0) (by decide))
+      have h1 := hhom _ (hmem {1} (by decide) (Finset.mem_singleton_self 1) (by decide))
+      simpa [atom, notSmiled] using And.intro h0 h1
+    · obtain ⟨a, -, ha⟩ := Set.mem_iUnion₂.1 hw
+      by_cases ha2 : a = 2
+      · subst ha2
+        exact absurd (Set.mem_biUnion (x := 2) (s := ↑({0, 2} : Finset (Fin 3))) (by simp) ha)
+          (hhom _ (hmem {0, 2} (by decide) (a := 0) (by simp) (by decide)))
+      · exact absurd (Set.mem_biUnion (Finset.mem_singleton_self a) ha)
+          (hhom _ (hmem {a} (by simp) (Finset.mem_singleton_self a) ha2))
+  · rintro ⟨h0, h1⟩
+    refine ⟨.inl ?_, Set.mem_biUnion (x := 0) (by simp) h0⟩
+    rintro _ ⟨-, hq, hne⟩
+    obtain ⟨S, ⟨c, hc⟩, rfl⟩ := Set.mem_supClosure_range.1 hq
+    by_contra hout
+    refine hne (Set.mem_singleton_iff.2
+      ((congrArg (fun S ↦ ⋃ b ∈ S, atom notSmiled b) ?_).trans (Finset.set_biUnion_singleton 2 _)))
+    have h2 (a : Fin 3) (ha : a ∈ S) : a = 2 := by
+      by_contra ha2
+      refine hout (Set.mem_biUnion ha ?_)
+      fin_cases a
+      exacts [h0, h1, absurd rfl ha2]
+    exact Finset.eq_singleton_iff_unique_mem.2 ⟨h2 c hc ▸ hc, h2⟩
 
 end Students
 
-/-! ### One winner at most (§3)
+/-! ### The judgments of §3
 
-Worlds record which of two candidates won, and the rules of the election allow at most one
-winner. -/
+Each row is a sentence against what its context establishes. Worlds record which of two atoms
+satisfy the context's predicate: the books Mary read, the teammates John is married to, the
+candidates who won, the students who smiled. -/
 
-section Election
+section Judgments
 
-open Finset
+open Finset Examples
 
-/-- In (13), with at most one winner, *none of the candidates won* is informative, and the plural
-definites *the candidates didn't win* and *the candidates lost* are not: accommodating homogeneity
-leaves only the worlds where no candidate won. -/
-theorem election :
-    PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        (fun w ↦ Trivalent.ofProp (w = ∅)) ∧
-      ¬ PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        (pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ ∧
-      ¬ PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        (pexPlural univ univ (fun (a : Fin 2) (w : Finset (Fin 2)) ↦ a ∉ w)
-          (supClosure (Set.range (atom fun a w ↦ a ∉ w)))) := by
-  refine ⟨postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩, ?_, ?_⟩
-  · rw [postAccommodationInformative_compl_pexPlural_iff (separating_holds _) (by decide)
-      fun a _ ↦ subset_supClosure (Set.mem_range_self a)]
-    rintro ⟨w, hw, hall⟩
-    rw [eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a)] at hw
-    exact absurd hw (by decide)
-  · rw [postAccommodationInformative_pexPlural_iff]
-    rintro ⟨w, hw, hall⟩
-    rw [eq_univ_of_forall fun a ↦ not_not.1 (hall a (mem_univ a) (mem_univ a))] at hw
-    exact absurd hw (by decide)
+/-- What a context establishes about a world. -/
+def _root_.GuerriniWehbe2025.Examples.Known.Holds : Known → Finset (Fin 2) → Prop
+  | .some, w => w.Nonempty
+  | .notAll, w => w ≠ univ
+  | .atMostOne, w => w.card ≤ 1
 
-end Election
+instance (k : Known) : DecidablePred k.Holds := fun w ↦ by
+  cases k <;> unfold Known.Holds <;> infer_instance
+
+/-- A row's predicate, the context's or its antonym, of an atom at a world. -/
+def _root_.GuerriniWehbe2025.Examples.Predicate.holds : Predicate → Fin 2 → Finset (Fin 2) → Prop
+  | .base, a, w => a ∈ w
+  | .antonym, a, w => a ∉ w
+
+instance (P : Predicate) (a : Fin 2) (w : Finset (Fin 2)) : Decidable (P.holds a w) := by
+  cases P <;> unfold Predicate.holds <;> infer_instance
+
+/-- The sentence of a row: a plural definite is a plural predication under `pex`, negated in a
+negative sentence, and its quantified counterpart says that all or that none of the atoms satisfy
+the predicate. -/
+noncomputable def sentence : Nominal → Examples.Polarity → Predicate → Finset (Fin 2) → Trivalent
+  | .definitePlural, .positive, P =>
+    pexPlural univ univ P.holds (supClosure (Set.range (atom P.holds)))
+  | .definitePlural, .negative, P =>
+    (pexPlural univ univ P.holds (supClosure (Set.range (atom P.holds))))ᶜ
+  | .quantifier, .positive, P => fun w ↦ .ofProp (∀ a, P.holds a w)
+  | .quantifier, .negative, P => fun w ↦ .ofProp (∀ a, ¬ P.holds a w)
+
+private theorem separating_predicate (P : Predicate) :
+    Separating (univ ∩ univ) (atom P.holds) := by
+  cases P <;> exact ⟨by decide, by decide⟩
+
+/-- Where the sentence of a row is false: a plural definite where no atom satisfies the
+predicate, its negation where all do, and a quantified sentence where its quantifier fails. -/
+def IsFalse : Nominal → Examples.Polarity → Predicate → Finset (Fin 2) → Prop
+  | .definitePlural, .positive, P, w => ∀ a, ¬ P.holds a w
+  | .definitePlural, .negative, P, w => ∀ a, P.holds a w
+  | .quantifier, .positive, P, w => ¬ ∀ a, P.holds a w
+  | .quantifier, .negative, P, w => ¬ ∀ a, ¬ P.holds a w
+
+instance (n : Nominal) (p : Examples.Polarity) (P : Predicate) : DecidablePred (IsFalse n p P) :=
+  fun w ↦ by cases n <;> cases p <;> unfold IsFalse <;> infer_instance
+
+theorem sentence_eq_false_iff (n : Nominal) (p : Examples.Polarity) (P : Predicate)
+    (w : Finset (Fin 2)) : sentence n p P w = .false ↔ IsFalse n p P w := by
+  cases n <;> cases p
+  · simp [sentence, IsFalse, pexPlural_eq_false_iff]
+  · simp [sentence, IsFalse, Trivalent.compl_eq_false_iff,
+      pexPlural_eq_true_iff (separating_predicate P) (by decide)
+        fun a _ ↦ subset_supClosure (Set.mem_range_self a)]
+  · simp [sentence, IsFalse, Trivalent.ofProp]
+  · simp [sentence, IsFalse, Trivalent.ofProp]
+
+-- Four nested readers of a row exceed the default size of an instance search.
+set_option synthInstance.maxSize 1024 in
+private theorem judgments_aux :
+    ∀ e ∈ all, ∀ k ∈ known e, ∀ n ∈ nominal e, ∀ p ∈ polarity e, ∀ P ∈ predicate e,
+      (e.judgment = .acceptable ↔ ∃ w, k.Holds w ∧ IsFalse n p P w) := by
+  decide
+
+/-- A sentence of §3 is acceptable exactly when it is informative once its presupposition is
+accommodated, false somewhere in what its context establishes: the plural definites of (10),
+(12b), (13c), (13d) and (23) are not, where the quantified (12a), (13a) and (13b) are. -/
+theorem judgments :
+    ∀ e ∈ all, ∀ k ∈ known e, ∀ n ∈ nominal e, ∀ p ∈ polarity e, ∀ P ∈ predicate e,
+      (e.judgment = .acceptable ↔
+        ({w | k.Holds w} ∩ Trivalent.negExt (sentence n p P)).Nonempty) := by
+  intro e he k hk n hn p hp P hP
+  rw [judgments_aux e he k hk n hn p hp P hP]
+  simp only [Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Trivalent.mem_negExt,
+    sentence_eq_false_iff]
+
+end Judgments
+
+/-! ### Free choice (§6.2) -/
+
+-- (41), (42): with free choice derived by `pex`, *she can eat cake or candy* is false nowhere
+-- that Mary is allowed cake, so uninformative there, though the sentence is acceptable.
+theorem disjoint_preimage_negExt_pexPossOr {W : Type*} (R : SetRel W W) (a b : Set W) :
+    Disjoint (R.preimage a) (Trivalent.negExt (DelPinalBassiSauerland2024.pexPossOr R a b)) :=
+  Set.disjoint_left.2 fun _ hw hf ↦
+    (pexIEII_eq_false_iff.1 hf).2 (by rw [SetRel.preimage_union]; exact .inl hw)
 
 end GuerriniWehbe2025
