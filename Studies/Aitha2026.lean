@@ -9,6 +9,7 @@ public import Linglib.Fragments.Telugu.Case
 public import Linglib.Fragments.Telugu.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.Stratal
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Foot
@@ -28,7 +29,7 @@ vocabulary that reads case heads can only
 the next syllable inside the prosodic word. It is the phonology of one underlying *-am-ni*,
 derived in Kiparsky's Stratal OT from prespecified stress on the singular suffix *-ni*. The
 strata are needed: the consonant that deletes inside the word is kept before a postposition, and
-[no single ranking of the constraints selects both outputs](##not_exists_ranking).
+[no ranking makes the outputs of both strata optimal](##wordGrammar_inf_phraseGrammar).
 
 ## Implementation notes
 
@@ -45,7 +46,9 @@ constraints, and a tableau is evaluated under every total ranking that extends i
 diagram. The Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below
 *DIST-0 as well: the quantifier tableau, with ONSET marked on each candidate whose *an* has no
 onset, has the paper's winner under a ranking only if both dominate ONSET
-(`onset_dominated`).
+(`onset_dominated`). A stratum is also a grammar in the sense of `OptimalityTheory.Grammar`, the
+rankings under which the winners of its tableaux are optimal, and the diagram's grammar lies
+below it.
 
 The marks of the Stem-level tableau are computed from each parse's feet by the paper's
 definitions of the three constraints, a mark of FT-BIN for each foot that is not bimoraic and a
@@ -497,14 +500,14 @@ theorem wordQ_optimal (hσ : σ.IsLinearExtension word) :
     (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal = {.deleteNi} :=
   Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
 
-/-- Any ranking that selects the winner of (63) has IDENT-STRESS and *DIST-0 above ONSET. -/
+-- any ranking under which the winner of (63) is optimal has IDENT-STRESS and *DIST-0 above ONSET
 theorem onset_dominated
-    (h : (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal = {.deleteNi}) :
+    (h : .deleteNi ∈ (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal) :
     σ.Dominates .identStress .onset ∧ σ.Dominates .distZero .onset :=
-  ⟨Tableau.dominates_of_ofRanking_optimal_eq_singleton h (d := .deleteIMResyllabify)
-      (Finset.mem_univ _) (by decide) (by decide) (by decide),
-    Tableau.dominates_of_ofRanking_optimal_eq_singleton h (d := .deleteI)
-      (Finset.mem_univ _) (by decide) (by decide) (by decide)⟩
+  ⟨Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteIMResyllabify)
+      (Finset.mem_univ _) (by decide) (by decide),
+    Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteI)
+      (Finset.mem_univ _) (by decide) (by decide)⟩
 
 /-! ### Phrase-level phonology -/
 
@@ -567,36 +570,76 @@ theorem outputs_attested :
       WordCandQ.deleteNi.form = PhraseCandQ.faithful.form := by
   decide
 
-/-! ### Reranking -/
+/-! ### The grammars of the strata -/
 
-open Stratal
+open Stratal Finset
 
-/-- No single ranking of the constraints selects both the dative with /m/ deleted inside the
-word and the postpositional phrase with /m/ kept: the first needs *DIST-0 above MAX and the
-second MAX above *DIST-0. -/
-theorem not_exists_ranking :
-    ¬ ∃ σ : Ranking Con 9,
-      (Tableau.ofRanking WordCandDat.marks σ Finset.univ).optimal = {.deleteMLengthen} ∧
-        (Tableau.ofRanking PhraseCandP.marks σ Finset.univ).optimal = {.faithful} := by
-  rintro ⟨σ, hw, hp⟩
-  have h₁ : σ.Dominates .distZero .max :=
-    Tableau.dominates_of_ofRanking_optimal_eq_singleton hw (d := .faithful)
-      (Finset.mem_univ _) (by decide) (by decide) (by decide)
-  have h₂ : σ.Dominates .max .distZero :=
-    Tableau.dominates_of_ofRanking_optimal_eq_singleton hp (d := .deleteMLengthen)
-      (Finset.mem_univ _) (by decide) (by decide) (by decide)
-  exact lt_asymm h₁ h₂
+/-- The grammar of the Word level: the rankings under which the winners of (59), (62) and (63)
+are optimal. -/
+def wordGrammar : Grammar Con 9 :=
+  .ofWinner WordCandDat.marks univ .deleteMLengthen ⊓ .ofWinner WordCandNom.marks univ .deleteNi ⊓
+    .ofWinner WordCandQ.marks univ .deleteNi
 
--- (63), (67): nor does one ranking leave *an* without an onset in the word and give it one after
-theorem not_exists_ranking_onset :
-    ¬ ∃ σ : Ranking Con 9,
-      (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal = {.deleteNi} ∧
-        (Tableau.ofRanking PhraseCandQ.marks σ Finset.univ).optimal = {.resyllabify} := by
-  rintro ⟨σ, hw, hp⟩
-  have h₂ : σ.Dominates .onset .identStress :=
-    Tableau.dominates_of_ofRanking_optimal_eq_singleton hp (d := .faithful)
-      (Finset.mem_univ _) (by decide) (by decide) (by decide)
-  exact lt_asymm (onset_dominated hw).1 h₂
+/-- The grammar of the Phrase level: the rankings under which the winners of (66) and (67) are
+optimal. -/
+def phraseGrammar : Grammar Con 9 :=
+  .ofWinner PhraseCandP.marks univ .faithful ⊓ .ofWinner PhraseCandQ.marks univ .resyllabify
+
+private theorem ofRel_le_ofWinner {C : Type*} [Fintype C] {con : ConstraintSet C Con}
+    {r : Con → Con → Prop} {w : C}
+    (h : ∀ σ : Ranking Con 9, σ.IsLinearExtension r →
+      (Tableau.ofRanking con σ univ).optimal = {w}) :
+    (Grammar.ofRel r : Grammar Con 9) ≤ .ofWinner con univ w :=
+  Concept.extent_subset_extent_iff.1 fun σ hσ ↦ (Grammar.mem_extent_ofWinner (mem_univ _)).2 <|
+    h σ (Grammar.mem_extent_ofRel.1 hσ) ▸ mem_singleton_self _
+
+/-- The diagram (64) suffices for the Word level: each of its total rankings selects the winners
+of the three Word-level tableaux. -/
+theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
+  le_inf (le_inf (ofRel_le_ofWinner fun _ ↦ wordDat_optimal)
+    (ofRel_le_ofWinner fun _ ↦ wordNom_optimal)) (ofRel_le_ofWinner fun _ ↦ wordQ_optimal)
+
+-- (68) suffices for the Phrase level
+theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
+  le_inf (ofRel_le_ofWinner fun _ ↦ phraseP_optimal) (ofRel_le_ofWinner fun _ ↦ phraseQ_optimal)
+
+/-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
+def alignRLast : Ranking Con 9 :=
+  .ofList [.distZero, .identStress, .ftBin, .complexCoda, .maxMora, .max, .identLength, .onset,
+    .alignR]
+
+-- the three tableaux do not fix the place of ALIGN-RIGHT, which the diagram puts above MAX(μ):
+-- their winners are optimal with it ranked last
+theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
+  have hmem : alignRLast ∈ wordGrammar.extent :=
+    ⟨⟨(Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide),
+      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩,
+      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩
+  have hext : alignRLast.IsLinearExtension word :=
+    Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
+  exact absurd hext (by decide)
+
+instance : Nonempty Con := ⟨.max⟩
+
+-- (59), (66): *DIST-0 above MAX in the word, MAX above *DIST-0 in the phrase
+theorem ofWinner_dat_inf_ofWinner_postposition :
+    Grammar.ofWinner WordCandDat.marks univ .deleteMLengthen ⊓
+      .ofWinner PhraseCandP.marks univ .faithful = (⊥ : Grammar Con 9) :=
+  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun σ ⟨hw, hp⟩ ↦
+    lt_asymm
+      (Tableau.dominates_of_mem_ofRanking_optimal (i := Con.distZero) (j := .max)
+        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hw) (d := .faithful) (mem_univ _)
+        (by decide) (by decide))
+      (Tableau.dominates_of_mem_ofRanking_optimal
+        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hp) (d := .deleteMLengthen) (mem_univ _)
+        (by decide) (by decide))
+
+/-- The strata are different grammars: no ranking of the constraints makes the winners of the
+Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
+deletes inside the word is kept before a postposition. -/
+theorem wordGrammar_inf_phraseGrammar : wordGrammar ⊓ phraseGrammar = ⊥ :=
+  eq_bot_mono (inf_le_inf (inf_le_left.trans inf_le_left) inf_le_left)
+    ofWinner_dat_inf_ofWinner_postposition
 
 -- (68): *DIST-0 and ALIGN-RIGHT against MAX, the prosodic against the segmental faithfulness
 -- constraints, and IDENT-STRESS against ONSET
@@ -606,7 +649,7 @@ theorem reranked :
       Reranked word phrase .identStress .onset := by
   decide
 
--- neither diagram ranks FT-BIN and *DIST-0 at the Word level
+-- the Word-level diagram does not rank FT-BIN and *DIST-0
 example : ¬ Reranked word phrase .distZero .ftBin := by decide
 
 end Aitha2026

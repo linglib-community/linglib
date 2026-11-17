@@ -297,14 +297,6 @@ theorem ofRanking_optimal_eq_singleton_of_rel {R : ι → ι → Prop} (hr : R �
   ofRanking_optimal_eq_singleton_iff.2 ⟨hc, fun d hd hne ↦
     (h d hd hne).imp fun i ⟨hi, hj⟩ ↦ ⟨hi, fun j hjd ↦ hr i j (hj j hjd)⟩⟩
 
-/-- A ranking argument: when `c` is the sole winner under a ranking and `i` is the only
-constraint preferring it to a competitor `d`, `i` dominates every constraint preferring `d`. -/
-theorem dominates_of_ofRanking_optimal_eq_singleton {i j : ι}
-    (h : (ofRanking con r candidates).optimal = {c}) (hd : d ∈ candidates) (hne : d ≠ c)
-    (hi : ∀ k, con k c < con k d → k = i) (hj : con j d < con j c) : r.Dominates i j := by
-  obtain ⟨k, hk, hdom⟩ := (ofRanking_optimal_eq_singleton_iff.1 h).2 d hd hne
-  exact hi k hk ▸ hdom j hj
-
 /-- A candidate that violates every constraint at least as often as a competitor, and some
 constraint more often, is *harmonically bounded*: it is optimal under no ranking of the
 constraint set. -/
