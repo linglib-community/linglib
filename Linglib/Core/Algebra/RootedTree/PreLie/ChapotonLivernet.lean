@@ -352,7 +352,9 @@ def liftTree (f : α → A) : UnorderedTree α → A :=
 @[simp] theorem liftTree_leaf (f : α → A) (a : α) : liftTree f (leaf a) = f a := by
   rw [← node_zero, liftTree_node, Multiset.map_zero, brace_zero]
 
-private theorem sum_map_insertionMultiset {φ : UnorderedTree α → A} {g : Multiset A → A}
+/-- Summing over the graftings of `S` into a forest is summing over the ways to multiply one
+value by the value of `S`, for a map `φ` on trees that is multiplicative on the forest. -/
+theorem sum_map_insertionMultiset_singleton {φ : UnorderedTree α → A} {g : Multiset A → A}
     (hg : ∀ s M : Multiset A, g (s.sum ::ₘ M) = (s.map fun u ↦ g (u ::ₘ M)).sum)
     (F : Multiset (UnorderedTree α)) (S : UnorderedTree α)
     (hF : ∀ T ∈ F, ((T ◁ S).map φ).sum = φ T * φ S) :
@@ -380,7 +382,7 @@ theorem sum_map_liftTree_insertSum (f : α → A) (T S : UnorderedTree α) :
   | node a F ih =>
     rw [insertSum_node, Multiset.map_cons, Multiset.sum_cons, Multiset.map_map, liftTree_node,
       liftTree_node, Multiset.map_cons, brace_cons,
-      ← sum_map_insertionMultiset (brace_sum_cons (f a)) F S ih]
+      ← sum_map_insertionMultiset_singleton (brace_sum_cons (f a)) F S ih]
     simp only [Function.comp_def, liftTree_node]
     abel
 

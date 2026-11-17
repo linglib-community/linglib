@@ -10,31 +10,15 @@ public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 /-!
 # The grafting pre-Lie product on rooted trees
 
-This file defines the grafting product `T ◁ S` of two rooted trees: the multiset of the trees
-obtained by grafting `S` onto one vertex of `T`, that is, by making `S` a new child of that
-vertex. Chapoton and Livernet show that this product makes the rooted trees a basis of the free
-pre-Lie algebra; Foissy extends it to typed decorated trees.
-
-The product is the one-guest case of the multi-insertion `insertion T gs`, which grafts every
-guest of `gs` at once, on planar trees and on nonplanar ones alike. Everything here is read off
-that general construction: the sum-over-vertices formula, the recursion on the root, and the
-pre-Lie identity.
-
-## Main definitions
-
-* `RoseTree.insertSum`: the grafting product on planar trees, with notation `T ◁ S`.
-* `UnorderedTree.insertSum`: the grafting product on nonplanar trees.
-
-## Main results
-
-* `RoseTree.insertSum_eq_map_multiGraft`: `T ◁ S` sums the graftings of `S` over the vertices
-  of `T`.
-* `RoseTree.insertSum_node`: grafting at the root, or recursively inside one child.
-* `RoseTree.card_insertSum`, `UnorderedTree.card_insertSum`: one summand per vertex of `T`.
-* `UnorderedTree.insertSum_bind_insertSum`: grafting `S₁` into `T` and then `S₂` into the result
-  is grafting `S₁ ◁ S₂` into `T` plus grafting `S₁` and `S₂` into `T` at once.
-* `UnorderedTree.insertSum_assoc_symm`: the associator of the grafting product is symmetric in
-  its last two arguments, the right pre-Lie identity.
+The grafting product `T ◁ S` of two rooted trees is the multiset of the trees obtained by
+grafting `S` onto one vertex of `T`, that is, by making `S` a new child of that vertex. It has
+[one summand for each vertex](##RoseTree.insertSum_eq_map_multiGraft) of `T`, the new child
+[at the root or inside one child](##RoseTree.insertSum_node), and is the one-guest case of the
+multi-insertion `insertion T gs`, which grafts every guest of `gs` at once. On nonplanar trees,
+grafting `S₁` and then `S₂` is
+[grafting `S₁ ◁ S₂`, plus grafting both at once](##UnorderedTree.insertSum_bind_insertSum), so the
+associator is [symmetric in its last two arguments](##UnorderedTree.insertSum_assoc_symm). This is
+the right pre-Lie identity, by which Chapoton and Livernet make the rooted trees a pre-Lie algebra.
 
 ## Implementation notes
 
