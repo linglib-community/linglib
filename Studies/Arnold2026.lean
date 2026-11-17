@@ -154,7 +154,7 @@ kind the speaker intends (§5). -/
 
 /-- At Konnelly and Cowper's second stage, personal *they* for a gendered singular referential
 antecedent needs a homophonous ungendered entry (§5). -/
-theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : KonnellyCowper2020.Gender}
+theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : ReferentGender}
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms .two a ∧ "they" ∈ forms .two { a with lexical := none } :=
   have hi : ¬ Antecedent.Inanimate { a with lexical := none } := nofun
@@ -163,7 +163,7 @@ theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : KonnellyCowper2
 
 /-- *My mother*, a lexically gendered noun for a referent of known gender outside a quantifier,
 as in Konnelly and Cowper's (26). -/
-def myMother : Antecedent := ⟨.singular, .referential, some (.gender .fem), some .fem⟩
+def myMother : Antecedent := ⟨.singular, .referential, some (.gender .female), some .female⟩
 
 /-- The third-stage grammar admits *my mother … they* (§6.2), though in some common grounds neither
 kind's condition holds, a would-be counterexample. -/

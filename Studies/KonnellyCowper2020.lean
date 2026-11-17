@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.English.Pronouns
+public import Linglib.Semantics.Reference.Gender
 public import Linglib.Data.Examples.KonnellyCowper2020
 public import Linglib.Data.Examples.Readers
 
@@ -60,21 +61,15 @@ inductive Feature
   | fem
   deriving DecidableEq, Repr, Fintype
 
-/-- The binary genders n may bear. -/
-inductive Gender
-  | masc
-  | fem
-  deriving DecidableEq, Repr, Fintype
-
-/-- The feature of a gender. -/
-def Gender.feature : Gender → Feature
-  | .masc => .masc
-  | .fem => .fem
+/-- The feature n bears for a gender, [masc] or [fem]. -/
+def genderFeature : ReferentGender → Feature
+  | .male => .masc
+  | .female => .fem
 
 /-- The class a noun bears lexically, a gender on n, as for *mother* and *Susan*, or [inanim] on
 Num, as for *watch* (§4.1). -/
 inductive Class
-  | gender (g : Gender)
+  | gender (g : ReferentGender)
   | inanim
   deriving DecidableEq, Repr
 
@@ -162,7 +157,7 @@ structure Antecedent where
   /-- The class its noun bears lexically. -/
   lexical : Option Class
   /-- The binary gender the discourse assigns its referent, if any. -/
-  referentGender : Option Gender
+  referentGender : Option ReferentGender
   deriving DecidableEq, Repr
 
 namespace Antecedent
@@ -175,7 +170,7 @@ def Inanimate : Prop := a.lexical = some .inanim
 instance : Decidable a.Inanimate := inferInstanceAs (Decidable (_ = _))
 
 /-- The gender its noun bears lexically. -/
-def lexicalGender : Option Gender :=
+def lexicalGender : Option ReferentGender :=
   match a.lexical with
   | some (.gender g) => some g
   | _ => none
@@ -188,7 +183,7 @@ end Antecedent
 
 /-- The gender features n may bear at a stage. Without a lexical gender, n bears the referent's
 gender obligatorily at Stage 1, optionally at Stage 2, and as a modifier at Stage 3. -/
-def Stage.genders (s : Stage) (a : Antecedent) : List (Option Gender) :=
+def Stage.genders (s : Stage) (a : Antecedent) : List (Option ReferentGender) :=
   if a.Inanimate then [none] else
   match s.genderContrastivity, a.lexicalGender with
   | .nonContrastive, _ => [none, a.referentGender]
@@ -198,7 +193,7 @@ def Stage.genders (s : Stage) (a : Antecedent) : List (Option Gender) :=
 /-- The bundles a pronoun with antecedent `a` may spell out at stage `s`, the features of Num with
 the gender of n where it is copied, which a quantifier makes optional. -/
 def bundles (s : Stage) (a : Antecedent) : List (Finset Feature) :=
-  List.map (fun g ↦ a.numFeatures ∪ (g.map Gender.feature).toFinset)
+  List.map (fun g ↦ a.numFeatures ∪ (g.map genderFeature).toFinset)
     ((if a.det = .quantifier then [none] else []) ++ s.genders a)
 
 /-- The pronoun forms available for an antecedent at a stage. -/
@@ -209,7 +204,7 @@ def forms (s : Stage) (a : Antecedent) : List String := (bundles s a).filterMap 
 variable {s : Stage} {a : Antecedent}
 
 -- (15), (21)
-theorem lexical_forces_gender {g : Gender} (h : s.genderContrastivity = .contrastive)
+theorem lexical_forces_gender {g : ReferentGender} (h : s.genderContrastivity = .contrastive)
     (hl : a.lexical = some (.gender g)) : s.genders a = [some g] := by
   simp [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender, h, hl]
 
@@ -237,7 +232,7 @@ theorem they_mem_forms_iff (hs : a.number = .singular) (hi : ¬ a.Inanimate) :
     · exact .inr hg
   | some g =>
     exfalso
-    cases g <;> simp [Antecedent.numFeatures, hs, hi, Gender.feature] at hsp <;> revert hsp <;>
+    cases g <;> simp [Antecedent.numFeatures, hs, hi, genderFeature] at hsp <;> revert hsp <;>
       decide
 
 /-- At Stage 1, n of an animate antecedent may lack a gender only for a noun with none whose
@@ -264,7 +259,7 @@ theorem stage3_they (hi : ¬ a.Inanimate) : "they" ∈ forms .three a :=
   they_mem_forms (.inl (none_mem_genders_three hi)) hi
 
 -- §4.2
-theorem they_not_mem_forms_of_lexical {g : Gender} (h : s.genderContrastivity = .contrastive)
+theorem they_not_mem_forms_of_lexical {g : ReferentGender} (h : s.genderContrastivity = .contrastive)
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms s a := by
   rw [they_mem_forms_iff hs (by simp [Antecedent.Inanimate, hl]), lexical_forces_gender h hl]
@@ -311,12 +306,12 @@ theorem it_of_inanimate (hs : a.number = .singular) (hi : a.Inanimate) :
 
 /-- The antecedent a row describes, with `g` as the gender of a referent the row says only is
 known. -/
-def Antecedent.ofRow (g : Gender) (e : Datum) : Option Antecedent := do
+def Antecedent.ofRow (g : ReferentGender) (e : Datum) : Option Antecedent := do
   let det ← e.parse? "antecedent" [("quantified", .quantifier), ("referential", .referential)]
-  let lexical ← e.parse? "noun" [("ungendered", none), ("fem", some (.gender .fem)),
-    ("masc", some (.gender .masc)), ("inanimate", some .inanim)]
+  let lexical ← e.parse? "noun" [("ungendered", none), ("fem", some (.gender .female)),
+    ("masc", some (.gender .male)), ("inanimate", some .inanim)]
   let referentGender ← e.parse? "referent"
-    [("unknown", none), ("known", some g), ("fem", some .fem), ("masc", some .masc)]
+    [("unknown", none), ("known", some g), ("fem", some .female), ("masc", some .male)]
   pure ⟨if e.feature? "number" = some "plural" then .plural else .singular, det, lexical,
     referentGender⟩
 
@@ -351,7 +346,7 @@ abbrev BjorkmanCondition (pronoun antecedent : Finset Feature) : Prop := anteced
 
 /-- The features a discourse associates with an antecedent, those of its Num and of its noun. -/
 def Antecedent.features (a : Antecedent) : Finset Feature :=
-  a.numFeatures ∪ (a.lexicalGender.map Gender.feature).toFinset
+  a.numFeatures ∪ (a.lexicalGender.map genderFeature).toFinset
 
 -- (23)
 theorem bjorkman_women_they : BjorkmanCondition {.fem} {.fem} ∧ spellout {.fem} = some "they" := by

@@ -4,6 +4,7 @@ public import Mathlib.Order.Interval.Set.Defs
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Person.Features
@@ -293,17 +294,6 @@ end Number
 
 /-! ### Gender -/
 
-/-- A gendered entity domain has disjoint sets of referents gendered masculine and gendered
-feminine, as socially constituted. Grammatical gender presupposes it, and a referent may be
-gendered neither way. -/
-class Gendered (E : Type*) where
-  /-- The referents gendered masculine. -/
-  masculine : Set E
-  /-- The referents gendered feminine. -/
-  feminine : Set E
-  /-- No referent is gendered both ways. -/
-  disjoint : Disjoint masculine feminine
-
 namespace Gender
 
 variable {E : Type*} [Gendered E] (x : E)
@@ -337,5 +327,14 @@ the decomposition as a fact about referents. -/
 theorem dom_neuter_subset_dom_feminine :
     dom (E := E) (some .Neut) ⊆ dom (some .Fem) :=
   Finset.inf_mono (by decide : Features.feminine ⊆ Features.neuter)
+
+/-- The gender a word restricts its referents to, realized on a pronoun, is defined of every
+referent the word admits: a pronoun agreeing with *mother* or *father* presupposes nothing the
+noun does not already require. -/
+theorem referents_subset_dom (g : ReferentGender) :
+    g.referents ⊆ dom (E := E) (some g.toUD) := by
+  cases g
+  · simp [ReferentGender.toUD]
+  · exact fun x hx ↦ (mem_dom_feminine x).2 (Gendered.disjoint.notMem_of_mem_right hx)
 
 end Gender
