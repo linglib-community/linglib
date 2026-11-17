@@ -171,35 +171,45 @@ theorem sum_eq_sSup [CompleteBooleanAlgebra α] (P : α → Prop) (hP : ∃ x, P
 
 section Subtype
 
-private theorem overlap_of_overlap_subtype [PartialOrder α] {x y : {x : α // ¬ IsBot x}}
-    (h : Overlap x y) : Overlap x.1 y.1 :=
+variable [PartialOrder α] {p : α → Prop} (hp : ∀ x, p x ↔ ¬ IsBot x)
+
+include hp
+
+private theorem overlap_of_overlap_subtype {x y : {x // p x}} (h : Overlap x y) :
+    Overlap x.1 y.1 :=
   let ⟨z, _, hzx, hzy⟩ := h
-  ⟨z, z.2, hzx, hzy⟩
+  ⟨z, (hp z).1 z.2, hzx, hzy⟩
 
-variable [PartialOrder α] [IsClassicalMereology α]
+variable [IsClassicalMereology α]
 
-private theorem eq_of_isBot_subtype {m : {x : α // ¬ IsBot x}} (hm : IsBot m)
-    (x : {x : α // ¬ IsBot x}) : x = m := by
+private theorem eq_of_isBot_subtype {m : {x // p x}} (hm : IsBot m) (x : {x // p x}) :
+    x = m := by
   refine le_antisymm (Subtype.coe_le_coe.1 ?_) (hm x)
   by_contra h
   obtain ⟨z, -, hz, hzm⟩ := StronglySupplemented.exists_not_overlap h
-  exact hzm ⟨m, m.2, hm ⟨z, hz⟩, le_rfl⟩
+  exact hzm ⟨m, (hp m).1 m.2, hm ⟨z, (hp z).2 hz⟩, le_rfl⟩
 
-/-- The non-null individuals of a classical mereology form a classical mereology, as the
-nonempty subsets of a set do under inclusion ([champollion-krifka-2016]). -/
-instance instSubtypeNotIsBot : IsClassicalMereology {x : α // ¬ IsBot x} where
+/-- The non-null individuals of a classical mereology, picked out by any predicate, form a
+classical mereology. -/
+theorem subtype : IsClassicalMereology {x // p x} where
   exists_not_overlap x y h := by
     obtain ⟨z, hzx, hz, hzy⟩ := StronglySupplemented.exists_not_overlap
       (fun h' ↦ h (Subtype.coe_le_coe.1 h') : ¬ x.1 ≤ y.1)
-    exact ⟨⟨z, hz⟩, hzx, fun hb ↦ hzy ⟨z, hz, le_rfl, hb y⟩,
-      fun ho ↦ hzy (overlap_of_overlap_subtype ho)⟩
+    exact ⟨⟨z, (hp z).2 hz⟩, hzx, fun hb ↦ hzy ⟨z, hz, le_rfl, hb y⟩,
+      fun ho ↦ hzy (overlap_of_overlap_subtype hp ho)⟩
   exists_isSum P := fun ⟨a, ha⟩ ↦ by
     obtain ⟨t, ht⟩ := exists_isSum (fun x : α ↦ ∃ h, P ⟨x, h⟩) ⟨a, a.2, ha⟩
-    have ht0 : ¬ IsBot t := fun hb ↦ a.2 (hb.mono (ht.1 a ⟨a.2, ha⟩))
-    refine ⟨⟨t, ht0⟩, fun x hx ↦ ht.1 x ⟨x.2, hx⟩, fun y hy hy0 ↦ ?_⟩
-    obtain ⟨x, ⟨hx0, hx⟩, p, hp0, hpy, hpx⟩ := ht.2 y hy y.2
-    exact ⟨⟨x, hx0⟩, hx, ⟨p, hp0⟩,
-      fun hb ↦ hy0 (eq_of_isBot_subtype hb y ▸ hb), hpy, hpx⟩
+    have ht0 : ¬ IsBot t := fun hb ↦ (hp a).1 a.2 (hb.mono (ht.1 a ⟨a.2, ha⟩))
+    refine ⟨⟨t, (hp t).2 ht0⟩, fun x hx ↦ ht.1 x ⟨x.2, hx⟩, fun y hy hy0 ↦ ?_⟩
+    obtain ⟨x, ⟨hx0, hx⟩, q, hq0, hqy, hqx⟩ := ht.2 y hy ((hp y).1 y.2)
+    exact ⟨⟨x, hx0⟩, hx, ⟨q, (hp q).2 hq0⟩,
+      fun hb ↦ hy0 (eq_of_isBot_subtype hp hb y ▸ hb), hqy, hqx⟩
+
+omit hp in
+/-- The non-null individuals of a classical mereology form a classical mereology, as the
+nonempty subsets of a set do under inclusion ([champollion-krifka-2016]). -/
+instance instSubtypeNotIsBot : IsClassicalMereology {x : α // ¬ IsBot x} :=
+  subtype fun _ ↦ Iff.rfl
 
 end Subtype
 

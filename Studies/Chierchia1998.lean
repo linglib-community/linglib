@@ -172,14 +172,7 @@ hold of the atom. -/
 example {P : Unit → Set (Individual Bool)}
     (hP : ∀ x, x ∈ P () ↔ x ≠ .atom true ∧ ∀ y ≤ x, Atom y → y = .atom true) :
     Kind.up (Kind.down P) () ≠ P () ∪ {.atom true} := by
-  have hf : Atom (Individual.atom false) := by
-    refine ⟨fun h ↦ absurd (h (.atom true) (Set.mem_singleton false)) (by simp [Individual.atom]),
-      fun y _ hyf ↦ ?_⟩
-    obtain ⟨b, hb⟩ := y.2
-    obtain rfl : b = false := hyf hb
-    intro a ha
-    rw [Set.mem_singleton_iff.1 ha]
-    exact hb
+  have hf : Atom (Individual.atom false) := Individual.atom_atom false
   have h0 : ∀ x, x ∉ P () := fun x hx ↦ by
     obtain ⟨hne, hat⟩ := (hP x).1 hx
     by_cases hx0 : false ∈ x.1

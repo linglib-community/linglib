@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology.Atomic
+public import Linglib.Semantics.Mereology.Classical
 public import Linglib.Semantics.Plurality.Number
 
 /-!
@@ -45,8 +46,8 @@ and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClo
 `supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
 is a stronger assumption, which enters only through `Mereology.SupIsSum`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
-own model of nonempty sets of atoms has no bottom (`Individual`). Where the carrier has one,
-`*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
+own model of nonempty sets of atoms (`Individual`) is a classical mereology. Where the carrier has
+one, `*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
 
 ## References
 
@@ -236,8 +237,9 @@ end Finset
 
 /-! ### Link's model
 
-An individual is a nonempty set of atoms, an atom its singleton, and sum is union. The empty set
-is no individual, so the carrier has no bottom. -/
+An individual is a nonempty set of atoms, an atom its singleton, and sum is union. The
+individuals are the non-null elements of the Boolean algebra of sets, so they form a classical
+mereology, atomic and with no null individual once there are two atoms. -/
 
 section Link
 
@@ -250,6 +252,26 @@ instance : SemilatticeSup (Individual α) := Subtype.semilatticeSup fun _ _ hx _
 
 /-- The atomic individual `Individual.atom a` is the singleton of `a`. -/
 def Individual.atom (a : α) : Individual α := ⟨{a}, Set.singleton_nonempty a⟩
+
+instance : IsClassicalMereology (Individual α) :=
+  .subtype fun s ↦ by rw [isBot_iff_eq_bot, Set.bot_eq_empty, Set.nonempty_iff_ne_empty]
+
+instance [Nontrivial α] : NoBotOrder (Individual α) where
+  exists_not_ge x :=
+    let ⟨a, ha⟩ := x.2
+    let ⟨b, hb⟩ := exists_ne a
+    ⟨.atom b, fun h ↦ hb.symm (h ha)⟩
+
+/-- With two atoms or more, the singletons are atoms. -/
+theorem Individual.atom_atom [Nontrivial α] (a : α) : Atom (Individual.atom a) :=
+  atom_iff_isMin.2 fun y hy b hb ↦ by
+    obtain ⟨c, hc⟩ := y.2
+    rwa [Set.mem_singleton_iff.1 hb, ← Set.mem_singleton_iff.1 (hy hc)]
+
+instance [Nontrivial α] : Atomic (Individual α) where
+  exists_atom_le x _ :=
+    let ⟨a, ha⟩ := x.2
+    ⟨.atom a, Individual.atom_atom a, Set.singleton_subset_iff.2 ha⟩
 
 end Link
 
