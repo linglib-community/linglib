@@ -19,7 +19,7 @@ lattice. The meet of two grammars has the rankings they share, the join is the l
 containing the rankings of both, the shared ranking information of Merchant and Riggle, the top
 has every ranking, and the bottom is the grammar of all conditions. A grammar with a ranking
 determines an antimatroid, and for the grammar of a partial order its feasible sets are the
-[order ideals](##OptimalityTheory.Grammar.toAntimatroid_ofRel_isFeasible).
+[order ideals](##OptimalityTheory.Grammar.Enumeration.toAntimatroid_ofRel_isFeasible).
 
 ## Implementation notes
 

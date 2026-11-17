@@ -19,8 +19,8 @@ quantitatively: a candidate that wins under $n$ of the $t$ linear extensions has
 $n/t$, so the grammar is the uniform measure on its linear extensions and the
 [probabilities of the candidates sum to one](##sum_measure_setOf_picksAt). The same measure is
 defined on any `Grammar.Enumeration`, where a candidate's probability is the
-[share of the grammar's rankings](##OptimalityTheory.Grammar.uniformOn_extent_picksAt) that
-satisfy the candidate's ERCs.
+[share of the grammar's rankings](##OptimalityTheory.Grammar.Enumeration.uniformOn_extent_picksAt)
+that satisfy the candidate's ERCs.
 
 A ranking satisfies an ERC strictly when its earliest non-neutral constraint is winner-preferring.
 When the grammar ranks a set `D` of the non-neutral constraints above the others and its
