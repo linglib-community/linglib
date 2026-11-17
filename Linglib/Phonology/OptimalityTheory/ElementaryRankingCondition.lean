@@ -657,6 +657,13 @@ theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : Constra
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
     (satisfiedBy_ercOfProfiles_iff_le r (con · w) (con · l)).symm
 
+/-- A candidate is optimal under a ranking iff the ranking satisfies its ERC against every
+competitor. -/
+theorem Ranking.Enumeration.mem_optimal_iff_satisfiedBy {C : Type*} (σ : Ranking.Enumeration ι n)
+    (v : C → ι → ℕ) (s : Finset C) (w : C) :
+    w ∈ σ.optimal v s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (v w) (v l)).SatisfiedBy σ :=
+  Tableau.ofRanking_mem_optimal_iff_satisfiedBy (fun k c ↦ v c k) σ s w
+
 /-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
 competitor `d` is dominated by some constraint preferring `c`. -/
 theorem Tableau.exists_dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
@@ -713,16 +720,16 @@ theorem ConstraintSystem.forall_ercGrammar_satisfiedBy_iff {I O : Type*}
   · rcases (S.gen i).eq_empty_or_nonempty with he | hne
     · have h0 (ρ : Ranking.Enumeration ι n) : S.language ρ i = ∅ :=
         Finset.eq_empty_of_forall_notMem fun o ho ↦
-          Finset.notMem_empty o (he ▸ (Tableau.optimal_subset ho : o ∈ S.gen i))
+          Finset.notMem_empty o (he ▸ ConstraintSystem.language_subset ho)
       rw [h0, h0]
     · obtain ⟨w, hw⟩ := ConstraintSystem.language_nonempty (r := r) hne
       have hw' : w ∈ S.language r' i :=
-        (Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).2
-          ⟨Tableau.optimal_subset hw, fun o ho ↦ h _ ⟨i, w, hw, o, ho, rfl⟩⟩
+        (r'.mem_optimal_iff_satisfiedBy (S.marks i) (S.gen i) w).2
+          ⟨ConstraintSystem.language_subset hw, fun o ho ↦ h _ ⟨i, w, hw, o, ho, rfl⟩⟩
       ext o
       rw [ConstraintSystem.mem_language_iff_of_mem hw', ConstraintSystem.mem_language_iff_of_mem hw]
   · obtain ⟨i, w, hw, o, ho, rfl⟩ := hα
-    exact ((Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).1
+    exact ((r'.mem_optimal_iff_satisfiedBy (S.marks i) (S.gen i) w).1
       (by rw [h]; exact hw : w ∈ S.language r' i)).2 o ho
 
 end OptimalityTheory

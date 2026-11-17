@@ -219,7 +219,7 @@ theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [
           hi))).trans (Nat.le_succ _)
   refine ⟨expWeights n M ∘ σ.symm, fun k ↦ (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
   rw [ConstraintSystem.hgLanguage, ConstraintSystem.language,
-    Tableau.optimal_eq_argmax_harmonyScore _
+    Ranking.Enumeration.optimal_eq_tableau, Tableau.optimal_eq_argmax_harmonyScore _
     (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho (σ k)]
   congr 1
   funext o

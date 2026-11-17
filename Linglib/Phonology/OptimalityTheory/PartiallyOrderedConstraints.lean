@@ -177,7 +177,7 @@ theorem Ranking.Enumeration.IsLinearExtension.picksAt (hσ : σ.IsLinearExtensio
     (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ w, S.marks i o w < S.marks i o' w ∧
       ∀ l, S.marks i o' l < S.marks i o l → r w l) :
     S.PicksAt σ i o :=
-  Tableau.ofRanking_optimal_eq_singleton_iff.2 ⟨ho, fun o' ho' hne ↦
+  Ranking.Enumeration.optimal_eq_singleton_iff.2 ⟨ho, fun o' ho' hne ↦
     (h o' ho' hne).imp fun w ⟨hw, hl⟩ ↦ ⟨hw, fun l hlt ↦ lt_of_le_of_ne (hσ w l (hl l hlt))
       fun heq ↦ lt_asymm hw (σ.symm.injective heq ▸ hlt)⟩⟩
 
@@ -319,7 +319,7 @@ theorem picksAt_binary_iff_lex_pos (h_two : S.gen i = {chosen, other}) (h_ne : c
     (σ : Ranking.Enumeration ι n) :
     S.PicksAt σ i chosen ↔
       toLex 0 < toLex (ercOfProfiles (S.marks i chosen) (S.marks i other) ∘ σ) :=
-  (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans
+  (Ranking.Enumeration.optimal_eq_singleton_iff_pair h_two h_ne).trans
     (lex_pos_ercOfProfiles_iff_lt σ (S.marks i chosen) (S.marks i other)).symm
 
 omit [DecidableEq ι] in

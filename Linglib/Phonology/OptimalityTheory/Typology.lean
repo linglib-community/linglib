@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Algebra.BigOperators.Pi
 
 /-!
@@ -45,13 +45,9 @@ namespace ConstraintSystem
 
 variable {I O ι : Type*} {n : ℕ} (S : ConstraintSystem I O ι) (r : Ranking.Enumeration ι n) (i : I)
 
-/-- The tableau of an input under a ranking evaluates its candidates by the system's constraints
-in rank order. -/
-def tableau : Tableau O n := Tableau.ofRanking (S.conAt i) r (S.gen i)
-
-/-- The **language** of a ranking assigns each input the winners of its tableau
+/-- The **language** of a ranking assigns each input its optimal candidates
 ([merchant-prince-2022]). -/
-def language : Finset O := (S.tableau r i).optimal
+def language : Finset O := r.optimal (S.marks i) (S.gen i)
 
 /-- The **typology** of a system identifies the rankings with the same language, so that its
 classes, the ranking grammars, partition the rankings ([merchant-prince-2022]). -/
@@ -63,34 +59,29 @@ theorem typology_iff {r' : Ranking.Enumeration ι n} : S.typology r r' ↔ S.lan
     S.language r' :=
   Iff.rfl
 
+theorem language_subset : S.language r i ⊆ S.gen i := Ranking.Enumeration.optimal_subset
+
 /-- A ranking selects `o` alone at an input iff `o` is a candidate whose violations, read in
 rank order, are lexicographically below every other candidate's. -/
 theorem language_eq_singleton_iff : S.language r i = {o} ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
-    toLex (fun k ↦ S.marks i o (r k)) < toLex (fun k ↦ S.marks i o' (r k)) :=
-  Tableau.optimal_eq_singleton_iff
+    r.profile (S.marks i) o < r.profile (S.marks i) o' :=
+  Finset.argmin_eq_singleton_iff
 
 theorem language_nonempty (h : (S.gen i).Nonempty) : (S.language r i).Nonempty :=
-  Tableau.optimal_nonempty h
+  Ranking.Enumeration.optimal_nonempty h
 
 theorem language_nonempty_iff : (S.language r i).Nonempty ↔ (S.gen i).Nonempty :=
-  ⟨fun ⟨o, ho⟩ ↦ ⟨o, Tableau.optimal_subset ho⟩, language_nonempty⟩
-
-theorem con_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' ∈ S.language r i)
-    (C : ι) : S.marks i o C = S.marks i o' C := by
-  have h := le_antisymm (Tableau.le_of_mem_optimal ho (Tableau.optimal_subset ho'))
-    (Tableau.le_of_mem_optimal ho' (Tableau.optimal_subset ho))
-  simpa [tableau, Tableau.profile, ConstraintSystem.con] using
-    congrFun (congrArg ofLex h) (r.symm C)
+  ⟨fun ⟨o, ho⟩ ↦ ⟨o, language_subset ho⟩, language_nonempty⟩
 
 /-- The language of a ranking at an input consists of the candidates with the violations of any
 one of its winners. -/
 theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
-    o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.marks i o' C = S.marks i o C := by
-  refine ⟨fun h ↦ ⟨Tableau.optimal_subset h, con_eq_of_mem_language h ho⟩, fun ⟨hg, he⟩ ↦ ?_⟩
-  have hp : (S.tableau r i).profile o' = (S.tableau r i).profile o := by
-    simp only [tableau, Tableau.profile, ViolationProfile.of, Tableau.ofRanking_constraints,
-      Function.comp_apply, conAt_apply, ConstraintSystem.con, he]
-  exact Tableau.mem_optimal_iff.2 ⟨hg, fun d hd ↦ hp ▸ Tableau.le_of_mem_optimal ho hd⟩
+    o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ S.marks i o' = S.marks i o :=
+  Ranking.Enumeration.mem_optimal_iff_of_mem ho
+
+theorem marks_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' ∈ S.language r i) :
+    S.marks i o = S.marks i o' :=
+  ((mem_language_iff_of_mem ho').1 ho).2
 
 /-! ### Sole winners -/
 
@@ -102,7 +93,7 @@ def PicksAt : Prop := S.language r i = {o}
 /-- A ranking picks `o` iff `o` is a candidate whose violations, read in rank order, are
 lexicographically below every other candidate's. -/
 theorem picksAt_iff : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
-    toLex (fun k ↦ S.marks i o (r k)) < toLex (fun k ↦ S.marks i o' (r k)) :=
+    r.profile (S.marks i) o < r.profile (S.marks i) o' :=
   language_eq_singleton_iff
 
 /-- A ranking picks `o` iff `o` is a candidate and, against each rival, some constraint
@@ -110,7 +101,7 @@ preferring `o` dominates every constraint preferring the rival. -/
 theorem picksAt_iff_exists_dominates : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
     ∃ c, S.marks i o c < S.marks i o' c ∧
       ∀ c', S.marks i o' c' < S.marks i o c' → r.Dominates c c' :=
-  Tableau.ofRanking_optimal_eq_singleton_iff
+  Ranking.Enumeration.optimal_eq_singleton_iff
 
 /-- Picking is decided by comparing the candidate with each rival, without computing the set of
 winners. -/
@@ -120,13 +111,11 @@ theorem PicksAt.unique {o' : O} (h : S.PicksAt r i o) (h' : S.PicksAt r i o') : 
   Finset.singleton_injective (h.symm.trans h')
 
 /-- A ranking picks some candidate at an input whose candidates have distinct violations. -/
-theorem exists_picksAt (h : (S.gen i).Nonempty)
-    (hinj : Set.InjOn (fun o ↦ (S.marks i o)) (S.gen i)) (r : Ranking.Enumeration ι n) :
-    ∃ o ∈ S.gen i, S.PicksAt r i o := by
+theorem exists_picksAt (h : (S.gen i).Nonempty) (hinj : Set.InjOn (S.marks i) (S.gen i))
+    (r : Ranking.Enumeration ι n) : ∃ o ∈ S.gen i, S.PicksAt r i o := by
   obtain ⟨o, ho⟩ := language_nonempty (r := r) h
-  refine ⟨o, Tableau.optimal_subset ho, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
-  exact hinj (Tableau.optimal_subset ho') (Tableau.optimal_subset ho)
-    (funext (con_eq_of_mem_language ho' ho))
+  refine ⟨o, language_subset ho, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
+  exact hinj (language_subset ho') (language_subset ho) (marks_eq_of_mem_language ho' ho)
 
 section Joint
 
@@ -135,12 +124,12 @@ variable [Fintype I] [DecidableEq I] (S r)
 /-- The language of the joint system is the product of the system's languages, so a tuple wins
 iff each of its candidates wins at its input ([prince-2015]). -/
 theorem language_joint : S.joint.language r () = Fintype.piFinset (S.language r) := by
-  have hprofile : (S.joint.tableau r ()).profile = fun g ↦ ∑ i, (S.tableau r i).profile (g i) :=
+  have hprofile : r.profile (S.joint.marks ()) = fun g ↦ ∑ i, r.profile (S.marks i) (g i) :=
     funext fun g ↦ funext fun p ↦
-      (Finset.sum_apply p _ fun i ↦ ofLex ((S.tableau r i).profile (g i))).symm
+      (Finset.sum_apply p _ fun i ↦ ofLex (r.profile (S.marks i) (g i))).symm
   ext f
-  rw [Fintype.mem_piFinset, language, Tableau.optimal, hprofile]
-  exact Finset.mem_argmin_piFinset_sum S.gen fun i ↦ (S.tableau r i).profile
+  rw [Fintype.mem_piFinset, language, Ranking.Enumeration.optimal, hprofile]
+  exact Finset.mem_argmin_piFinset_sum S.gen fun i ↦ r.profile (S.marks i)
 
 variable {S}
 

@@ -268,8 +268,8 @@ theorem matchTheory_enclitic_final_of_medial (r : Ranking Con)
     Form.enclitic ∈ (matchTheory.language r kimIs).image (·.form) := by
   obtain ⟨c, hc, hce⟩ := Finset.mem_image.1 h
   obtain ⟨d, hd, hde, hdc⟩ :=
-    final_le_medial c (Tableau.optimal_subset hc) hce
-  exact Finset.mem_image.2 ⟨d, Tableau.ofRanking_mem_optimal_of_forall_le hc hd hdc
+    final_le_medial c (ConstraintSystem.language_subset hc) hce
+  exact Finset.mem_image.2 ⟨d, Ranking.Enumeration.mem_optimal_of_forall_le hc hd hdc
     medial_le_final, hde⟩
 
 /-- Existential correspondence draws the line: under `priorityFirst` an enclitic wins in
