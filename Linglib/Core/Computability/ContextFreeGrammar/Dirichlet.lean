@@ -45,89 +45,18 @@ open Convexity Finset MeasureTheory ProbabilityTheory RoseTree
 
 namespace PCFG
 
-variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT]
+variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] [DecidableEq T]
 
-variable [DecidableEq T]
-
-/-- The PCFG whose rule distribution at each nonterminal is a given probability vector over the
-rules there. -/
-noncomputable def ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) : PCFG G :=
-  mk' (fun r ↦
-      if h : r ∈ G.rules then
-        .ofReal ((θ ⟨r.input, G.input_mem_inputs h⟩).weights ⟨r, G.mem_rulesWithInput_input h⟩)
-      else 0)
-    (fun _ hr ↦ dite_eq_right hr) fun a ha ↦ by
-    rw [← Finset.sum_attach, ← Finset.univ_eq_attach,
-      Finset.sum_congr rfl (g := fun r ↦ ENNReal.ofReal ((θ ⟨a, ha⟩).weights r)) fun r _ ↦ by
-        obtain ⟨r, hr⟩ := r
-        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-        exact dite_eq_left hmem,
-      ← ENNReal.ofReal_sum_of_nonneg fun r _ ↦ (θ ⟨a, ha⟩).weights_nonneg r,
-      StdSimplex.total_of_fintype, ENNReal.ofReal_one]
-
-theorem ofSimplex_weight (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) {a : G.NT}
-    (ha : a ∈ G.inputs) {r : ContextFreeRule T G.NT} (hr : r ∈ G.rulesWithInput a) :
-    (ofSimplex θ).weight r = .ofReal ((θ ⟨a, ha⟩).weights ⟨r, hr⟩) := by
-  obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-  exact dite_eq_left hmem
-
-@[fun_prop]
-theorem measurable_ofSimplex : Measurable (ofSimplex (G := G)) := by
+/-- The PCFG of a family of real probability vectors depends measurably on the family. -/
+theorem measurable_ofSimplex_ofReal :
+    Measurable fun θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a) ↦
+      ofSimplex fun a ↦ (θ a).ofReal := by
   refine measurable_comap_iff.mpr (measurable_pi_iff.mpr fun r ↦ ?_)
   by_cases h : r ∈ G.rules
-  · simp only [Function.comp_def, ofSimplex, mk'_weight, dite_eq_left h]
+  · simp only [Function.comp_def, ofSimplex, mk'_weight, dite_eq_left h, StdSimplex.ofReal_weights]
     fun_prop
   · simp only [Function.comp_def, ofSimplex, mk'_weight, dite_eq_right h]
     exact measurable_const
-
-/-- The rule distribution of a PCFG at a nonterminal the grammar has a rule for, as a probability
-vector over the rules there. -/
-noncomputable def toSimplex (W : PCFG G) (a : G.inputs) : StdSimplex ℝ (G.rulesWithInput a) where
-  weights := Finsupp.equivFunOnFinite.symm fun r ↦ (W.weight r).toReal
-  nonneg := fun _ ↦ ENNReal.toReal_nonneg
-  total := by
-    rw [Finsupp.sum_fintype _ _ fun _ ↦ rfl, Finsupp.coe_equivFunOnFinite_symm,
-      Finset.sum_coe_sort (G.rulesWithInput a) fun r ↦ (W.weight r).toReal,
-      ← ENNReal.toReal_sum fun r _ ↦ W.weight_ne_top r, W.sum_weight a a.2, ENNReal.toReal_one]
-
-omit [DecidableEq T] in
-@[simp]
-theorem toSimplex_weights (W : PCFG G) (a : G.inputs) (r : G.rulesWithInput a) :
-    (W.toSimplex a).weights r = (W.weight r).toReal := rfl
-
-theorem ofSimplex_toSimplex (W : PCFG G) : ofSimplex W.toSimplex = W := by
-  refine PCFG.ext (funext fun r ↦ ?_)
-  by_cases hr : r ∈ G.rules
-  · rw [ofSimplex_weight _ (G.input_mem_inputs hr) (G.mem_rulesWithInput_input hr),
-      toSimplex_weights, ENNReal.ofReal_toReal (W.weight_ne_top r)]
-  · simp [hr]
-
-theorem toSimplex_ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) :
-    (ofSimplex θ).toSimplex = θ := by
-  refine funext fun a ↦ StdSimplex.weights_inj.mp (Finsupp.ext fun r ↦ ?_)
-  rw [toSimplex_weights, ofSimplex_weight θ a.2 r.2,
-    ENNReal.toReal_ofReal ((θ a).weights_nonneg r)]
-
-omit [DecidableEq T] in
-theorem measurable_toSimplex : Measurable (toSimplex (G := G)) :=
-  measurable_pi_iff.mpr fun _ ↦
-    (StdSimplex.measurableEmbedding_weights _).measurable_comp_iff.mp <|
-      measurable_pi_iff.mpr fun r ↦ (measurable_weight (r : ContextFreeRule T G.NT)).ennreal_toReal
-
-/-- PCFGs over `G` are the families of probability vectors over the rules at each nonterminal the
-grammar has a rule for. -/
-noncomputable def simplexEquiv : PCFG G ≃ᵐ ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a) where
-  toFun := toSimplex
-  invFun := ofSimplex
-  left_inv := ofSimplex_toSimplex
-  right_inv := toSimplex_ofSimplex
-  measurable_toFun := measurable_toSimplex
-  measurable_invFun := measurable_ofSimplex
-
-@[simp] theorem simplexEquiv_apply (W : PCFG G) : simplexEquiv W = W.toSimplex := rfl
-
-@[simp] theorem simplexEquiv_symm_apply (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) :
-    simplexEquiv.symm θ = ofSimplex θ := rfl
 
 end PCFG
 
@@ -204,45 +133,40 @@ variable [DecidableEq T]
 on the probability vectors over its rules with their pseudo-counts as parameters, independently
 across nonterminals. -/
 noncomputable def prior : Measure (PCFG G) :=
-  (Measure.pi fun a : G.inputs ↦ dirichlet (M.urn a)).map PCFG.simplexEquiv.symm
+  (Measure.pi fun a : G.inputs ↦ dirichlet (M.urn a)).map fun θ ↦
+    PCFG.ofSimplex fun a ↦ (θ a).ofReal
 
 instance : IsProbabilityMeasure M.prior := by
-  have (a : G.inputs) : Nonempty (G.rulesWithInput a) :=
-    (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr a.2).to_subtype
   have (a : G.inputs) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
     isProbabilityMeasure_dirichlet (M.urn_pos a)
   exact (Measure.isProbabilityMeasure_map_iff
-    PCFG.simplexEquiv.symm.measurable.aemeasurable).mpr inferInstance
+    PCFG.measurable_ofSimplex_ofReal.aemeasurable).mpr inferInstance
 
 /-- The probability `∏ r, W.weight r ^ x r` of a corpus with rule counts `x`, integrated against
 the prior, is the probability of the counts
 ([johnson-griffiths-goldwater-2007] Equation 3). -/
 theorem lintegral_prod_pow_prior (x : ContextFreeRule T G.NT → ℕ) :
     ∫⁻ W, ∏ r ∈ G.rules, W.weight r ^ x r ∂M.prior = .ofReal (M.countsProb x) := by
-  have (a : G.inputs) : Nonempty (G.rulesWithInput a) :=
-    (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr a.2).to_subtype
   have (a : G.inputs) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
     isProbabilityMeasure_dirichlet (M.urn_pos a)
   have hX (a : G.inputs) : Measurable fun t : StdSimplex ℝ
       (G.rulesWithInput a) ↦ ∏ r, ENNReal.ofReal (t.weights r) ^ x r := by
     fun_prop
-  rw [prior, lintegral_map_equiv,
-    lintegral_congr fun θ ↦ show ∏ r ∈ G.rules, (PCFG.simplexEquiv.symm θ).weight r ^ x r =
-      ∏ a : G.inputs, ∏ r : G.rulesWithInput a, ENNReal.ofReal ((θ a).weights r) ^ x r from ?_,
+  have hpt (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) :
+      ∏ r ∈ G.rules, (PCFG.ofSimplex fun a ↦ (θ a).ofReal).weight r ^ x r =
+        ∏ a : G.inputs, ∏ r : G.rulesWithInput a, ENNReal.ofReal ((θ a).weights r) ^ x r := by
+    rw [PCFG.prod_weight_pow, PCFG.toSimplex_ofSimplex]
+    rfl
+  rw [prior, lintegral_map (by fun_prop) PCFG.measurable_ofSimplex_ofReal, lintegral_congr hpt,
     lintegral_prod_eq_prod_lintegral_of_indepFun univ _
       (iIndepFun_pi fun a ↦ (hX a).aemeasurable) fun a ↦ (hX a).comp (measurable_pi_apply a),
     countsProb, ← prod_coe_sort G.inputs fun a ↦ polyaUrnProb (M.urn a) fun r ↦ x r,
     ENNReal.ofReal_prod_of_nonneg
       fun (a : G.inputs) _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
-  · refine prod_congr rfl fun a _ ↦ ?_
-    have h := MeasurePreserving.lintegral_comp
-      (measurePreserving_eval (μ := fun a : G.inputs ↦ dirichlet (M.urn a)) a) (hX a)
-    rw [← lintegral_prod_pow_dirichlet (M.urn_pos a), ← h]
-  · rw [← G.prod_inputs_prod_rulesWithInput, ← prod_coe_sort]
-    refine prod_congr rfl fun a _ ↦ ?_
-    rw [← prod_coe_sort]
-    exact prod_congr rfl fun r _ ↦ by
-      rw [PCFG.simplexEquiv_symm_apply, PCFG.ofSimplex_weight θ a.2 r.2]
+  refine prod_congr rfl fun a _ ↦ ?_
+  have h := MeasurePreserving.lintegral_comp
+    (measurePreserving_eval (μ := fun a : G.inputs ↦ dirichlet (M.urn a)) a) (hX a)
+  rw [← lintegral_prod_pow_dirichlet (M.urn_pos a), ← h]
 
 /-- The expected probability under the prior of a corpus of derivation trees the grammar licenses
 is the probability of its rule counts. -/
@@ -273,18 +197,17 @@ theorem mean_weight {a : G.NT} (r : G.rulesWithInput a) :
   obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
   have hpos : 0 < ∑ r' : G.rulesWithInput r.input, M.urn r.input r' :=
     sum_pos (fun r' _ ↦ M.urn_pos _ r') ⟨⟨r, hr⟩, mem_univ _⟩
-  rw [mean, PCFG.normalize_weight hmem (M.sum_ofReal_pseudo_ne_zero hmem) (by simp),
+  rw [mean, PCFG.normalize_weight ⟨r, hr⟩ (M.sum_ofReal_pseudo_ne_zero hmem) (by simp),
     ENNReal.ofReal_div_of_pos hpos, urn,
     ENNReal.ofReal_sum_of_nonneg fun r' _ ↦ (M.urn_pos _ r').le]
   congr 1
   exact (sum_coe_sort (G.rulesWithInput r.input) fun r' ↦ ENNReal.ofReal (M.pseudo r')).symm
 
-theorem mean_weight_lt_mean_weight_iff {a : G.NT} {r r' : ContextFreeRule T G.NT}
-    (hr : r ∈ G.rulesWithInput a) (hr' : r' ∈ G.rulesWithInput a) :
+theorem mean_weight_lt_mean_weight_iff {a : G.NT} (r r' : G.rulesWithInput a) :
     M.mean.weight r < M.mean.weight r' ↔ M.pseudo r < M.pseudo r' := by
-  rw [mean, PCFG.normalize_weight_lt_normalize_weight_iff hr hr' (by simp),
+  rw [mean, PCFG.normalize_weight_lt_normalize_weight_iff r r' (by simp),
     ENNReal.ofReal_lt_ofReal_iff
-      (M.pseudo_pos r' (ContextFreeGrammar.mem_rulesWithInput.mp hr').1)]
+      (M.pseudo_pos r' (ContextFreeGrammar.mem_rulesWithInput.mp r'.2).1)]
 
 /-- Counts with at most one counted rule at each nonterminal have, under the mean PCFG, their
 probability under the prior. -/

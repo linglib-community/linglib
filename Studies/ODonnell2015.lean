@@ -418,8 +418,8 @@ counts (§3.5.5, §3.3, p. 74). -/
 theorem dmpcfg_ness_lt_ion (h : Realizes D) :
     (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ness.rule <
       (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ion.rule := by
-  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff Suffix.ness.rule_mem
-    Suffix.ion.rule_mem).mpr ?_
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff ⟨_, Suffix.ness.rule_mem⟩
+    ⟨_, Suffix.ion.rule_mem⟩).mpr ?_
   change tokens D .ness < tokens D .ion
   rw [h.tokens_eq, h.tokens_eq]
   decide
@@ -430,8 +430,8 @@ theorem mag_ness_lt_ion (hD : ∀ t ∈ D, t.Licensed (suffixGrammar ι).License
     (h : Realizes D) :
     (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ness.rule <
       (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ion.rule := by
-  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff Suffix.ness.rule_mem
-    Suffix.ion.rule_mem).mpr ?_
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff ⟨_, Suffix.ness.rule_mem⟩
+    ⟨_, Suffix.ion.rule_mem⟩).mpr ?_
   rw [FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output,
     FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output]
   change (wordTypes D .ness).card < (wordTypes D .ion).card

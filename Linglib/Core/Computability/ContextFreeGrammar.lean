@@ -180,6 +180,9 @@ theorem mem_rulesWithInput_input (hr : r ∈ g.rules) : r ∈ g.rulesWithInput r
 theorem rulesWithInput_nonempty_iff : (g.rulesWithInput a).Nonempty ↔ a ∈ g.inputs := by
   simp [Finset.Nonempty, mem_inputs]
 
+instance (a : g.inputs) : Nonempty (g.rulesWithInput a) :=
+  (rulesWithInput_nonempty_iff.mpr a.2).to_subtype
+
 theorem rulesWithInput_eq_empty_iff : g.rulesWithInput a = ∅ ↔ a ∉ g.inputs := by
   rw [← rulesWithInput_nonempty_iff, Finset.not_nonempty_iff_eq_empty]
 
