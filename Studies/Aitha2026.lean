@@ -6,6 +6,7 @@ public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Telugu.Adpositions
 public import Linglib.Fragments.Telugu.Case
+public import Linglib.Fragments.Telugu.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Phonology.OptimalityTheory.Stratal
@@ -51,8 +52,8 @@ definitions of the three constraints, a mark of FT-BIN for each foot that is not
 mark of ALL-FT-LEFT for each syllable between a foot and the left edge. The marks of the other
 tableaux are the printed cells.
 
-Syllable weight is read off the transcription: a syllable is heavy when its vowel is long or a
-consonant closes it.
+Syllable weight is that of `Telugu.Phonology.initialSyllable` on the transcribed form of the
+morpheme after the noun stem.
 
 ## TODO
 
@@ -176,20 +177,9 @@ theorem strongN_eq :
 
 /-! ### The weak alternation -/
 
-/-- The long vowels of the transcription. -/
-def longVowels : List Char := "āīūēōǣ".toList
-
-/-- The short vowels of the transcription. -/
-def shortVowels : List Char := "aiueo".toList
-
-/-- The weight of the first syllable of a transcribed form: heavy when its vowel is long or a
-consonant closes it, and light otherwise. -/
-def weight (s : List Char) : Syllable.Weight :=
-  match s.dropWhile (· ∉ shortVowels ++ longVowels) with
-  | [] => .light
-  | v :: rest =>
-    if v ∈ longVowels ∨ (rest.take 2).all (· ∉ shortVowels ++ longVowels) ∧ rest ≠ [] then .heavy
-    else .light
+/-- The weight of the first syllable of a romanized form. -/
+def weight? (s : List Char) : Option Syllable.Weight :=
+  (Telugu.Phonology.transcribe s).map fun w ↦ (Telugu.Phonology.initialSyllable w).weight
 
 /-- What follows the n exponent: the kind of the morpheme and the weight of its first
 syllable. -/
@@ -212,9 +202,10 @@ instance : DecidablePred Long := fun f ↦ inferInstanceAs (Decidable (∃ x ∈
 /-- What follows n in a cell of the paradigm: the first exponent of the case, if it has one, or
 the postposition *lō*. -/
 def Cell.following : Cell → Option Following
-  | .case c => c.exponents.head?.map fun m ↦ ⟨.case, weight m.form.toList⟩
+  | .case c => c.exponents.head?.bind fun m ↦ (weight? m.form.toList).map (⟨.case, ·⟩)
   | .postposition =>
-    Telugu.Adpositions.lō.morphs.head?.map fun m ↦ ⟨.postposition, weight m.form.toList⟩
+    Telugu.Adpositions.lō.morphs.head?.bind fun m ↦
+      (weight? m.form.toList).map (⟨.postposition, ·⟩)
 
 /-- The form of a singular weak noun in a cell: long before a light syllable inside the prosodic
 word, and short otherwise. -/
@@ -296,7 +287,8 @@ def following? (e : Datum) : Option Following := do
   let k ← Examples.follower e
   let i := (w.glosses.idxOf? "n".toList).getD 0
   let m ← w.morphs[i + 1]?
-  pure ⟨k, weight m⟩
+  let x ← weight? m
+  pure ⟨k, x⟩
 
 -- (1), (2), fn. 6
 theorem strong_rows :
