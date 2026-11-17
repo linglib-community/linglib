@@ -287,6 +287,29 @@ theorem ofRanking_optimal_eq_singleton_iff :
   simp only [optimal_eq_singleton_iff, ofRanking_candidates,
     ofRanking_profile_lt_iff_exists_dominates]
 
+/-- Ties do not depend on the ranking: beside a winner, the winners are the candidates with the
+same violations. -/
+theorem ofRanking_mem_optimal_iff_of_mem (hc : c ∈ (ofRanking con r candidates).optimal) :
+    d ∈ (ofRanking con r candidates).optimal ↔ d ∈ candidates ∧ ∀ i, con i d = con i c := by
+  constructor
+  · intro hd
+    refine ⟨optimal_subset hd, fun i ↦ ?_⟩
+    have h := le_antisymm (le_of_mem_optimal hd (optimal_subset hc))
+      (le_of_mem_optimal hc (optimal_subset hd))
+    simpa using congrFun (congrArg ofLex h) (r.symm i)
+  · rintro ⟨hd, h⟩
+    have he : (ofRanking con r candidates).profile d = (ofRanking con r candidates).profile c :=
+      congrArg toLex (funext fun p ↦ h (r p))
+    exact mem_optimal_iff.2 ⟨hd, fun e he' ↦ he ▸ le_of_mem_optimal hc he'⟩
+
+/-- A winner is the sole winner iff no other candidate has the same violations. -/
+theorem ofRanking_optimal_eq_singleton_iff_of_mem (hc : c ∈ (ofRanking con r candidates).optimal) :
+    (ofRanking con r candidates).optimal = {c} ↔
+      ∀ d ∈ candidates, (∀ i, con i d = con i c) → d = c := by
+  refine ⟨fun h d hd he ↦ ?_, fun h ↦ Finset.eq_singleton_iff_unique_mem.2 ⟨hc, fun d hd ↦ ?_⟩⟩
+  · exact Finset.mem_singleton.1 (h ▸ (ofRanking_mem_optimal_iff_of_mem hc).2 ⟨hd, he⟩)
+  · exact h d (optimal_subset hd) ((ofRanking_mem_optimal_iff_of_mem hc).1 hd).2
+
 /-- A candidate is the sole winner under every ranking that extends a relation `R` on the
 constraints, such as the Hasse diagram an analysis prints, if against each competitor some
 constraint preferring it is `R`-above every constraint preferring the competitor. -/

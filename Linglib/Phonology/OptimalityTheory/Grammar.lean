@@ -242,6 +242,49 @@ theorem Grammar.ofRel_le_ofWinner_iff [Fintype ι] [IsTrans ι r] [Std.Antisymm 
   exact ⟨fun h d hd ↦ (Grammar.mem_intent_ofRel hn).1 (h ⟨d, Finset.mem_coe.2 hd, rfl⟩),
     by rintro h _ ⟨d, hd, rfl⟩; exact (Grammar.mem_intent_ofRel hn).2 (h d hd)⟩
 
+/-! ### Diagrams given by their edges
+
+A printed Hasse diagram lists the edges of an order, its transitive reduction, and the ERCs
+that hold of the diagram are those that hold of the order it generates. `below R a` computes the
+constraints reachable from `a` along the edges `R`, so that an ERC is checked against a diagram
+as the paper draws it. -/
+
+/-- The constraints that the edges `R` put below `a`: those reachable from `a` in one or more
+steps. -/
+def below [Fintype ι] (R : ι → ι → Prop) [DecidableRel R] (a : ι) : Finset ι :=
+  (fun S ↦ S ∪ S.biUnion fun b ↦ Finset.univ.filter (R b))^[Fintype.card ι]
+    (Finset.univ.filter (R a))
+
+theorem transGen_of_mem_below [Fintype ι] {R : ι → ι → Prop} [DecidableRel R]
+    {a b : ι} (h : b ∈ below R a) : Relation.TransGen R a b := by
+  have key : ∀ (k : ℕ) (S : Finset ι), (∀ c ∈ S, Relation.TransGen R a c) →
+      ∀ c ∈ (fun S ↦ S ∪ S.biUnion fun b ↦ Finset.univ.filter (R b))^[k] S,
+        Relation.TransGen R a c := by
+    intro k
+    induction k with
+    | zero => exact fun S hS ↦ hS
+    | succ k ih =>
+      intro S hS
+      rw [Function.iterate_succ_apply]
+      refine ih _ fun c hc ↦ ?_
+      rcases Finset.mem_union.1 hc with hc | hc
+      · exact hS c hc
+      · obtain ⟨b, hb, hbc⟩ := Finset.mem_biUnion.1 hc
+        exact (hS b hb).tail (by simpa using hbc)
+  exact key _ _ (fun c hc ↦ .single (by simpa using hc)) b h
+
+/-- If each ERC of a winner holds of the constraints the edges of a diagram put below one
+another, the grammar of the diagram lies below the grammar of the winner: the winner is optimal
+under every ranking that extends the diagram. -/
+theorem Grammar.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r] {C : Type*}
+    {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
+    (h : ∀ d ∈ candidates, (ercOfProfiles (con · w) (con · d)).Holds fun a b ↦ b ∈ below r a) :
+    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofWinner con candidates w :=
+  Concept.extent_subset_extent_iff.1 fun σ hσ ↦ by
+    rintro _ ⟨d, hd, rfl⟩
+    exact ((h d hd).mono fun _ _ ↦ transGen_of_mem_below).satisfiedBy
+      (Grammar.mem_extent_ofRel.1 hσ).transGen
+
 theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
     (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.linearExtensions (n := n) r) := by
   ext σ

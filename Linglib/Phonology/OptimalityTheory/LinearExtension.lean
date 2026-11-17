@@ -77,6 +77,14 @@ theorem IsLinearExtension.eq_of_rel_of_rel {s : ι → ι → Prop} (hσ : σ.Is
     (hσ' : σ.IsLinearExtension s) {a b : ι} (hab : r a b) (hba : s b a) : a = b :=
   antisymm_of σ.toRel (hσ a b hab) (hσ' b a hba)
 
+/-- A ranking that extends a relation extends its transitive closure, so a diagram may be given
+by its edges. -/
+theorem IsLinearExtension.transGen (hσ : σ.IsLinearExtension r) :
+    σ.IsLinearExtension (Relation.TransGen r) := fun a b h ↦ by
+  induction h with
+  | single h => exact hσ _ _ h
+  | tail _ h ih => exact le_trans ih (hσ _ _ h)
+
 theorem isLinearExtension_toRel (σ : Ranking ι n) : σ.IsLinearExtension σ.toRel :=
   le_refl σ.toRel
 

@@ -46,10 +46,9 @@ The paper's Vocabulary Items for the strong nouns list the roots each exponent f
 one feature here, borne by the roots on it, so each exponent has one item, and the items cover
 every row of the paper's table of strong nouns, which gives entries for two of its rows.
 
-The Word- and Phrase-level rankings are the paper's Hasse diagrams, as relations on the
-constraints, and a tableau is evaluated under every total ranking that extends its stratum's
-diagram. The Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below
-*DIST-0 as well: the winner of the quantifier tableau is optimal under a ranking only if *DIST-0
+The Word- and Phrase-level rankings are the paper's Hasse diagrams, given by their edges, and a
+tableau is evaluated under every total ranking that extends its stratum's diagram. The
+Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below *DIST-0 as well: the winner of the quantifier tableau is optimal under a ranking only if *DIST-0
 dominates ONSET (`onset_dominated`). A stratum is also a grammar in the sense of
 `OptimalityTheory.Grammar`, the rankings under which the winners of its tableaux are optimal, and
 the diagram's grammar lies below it.
@@ -349,47 +348,37 @@ inductive Con where
   | distZero | alignR | identStress | ftBin | complexCoda | maxMora | max | identLength | onset
   deriving DecidableEq, Repr, Fintype
 
-/-- (64): the Word-level ranking. *DIST-0, ALIGN-RIGHT, IDENT-STRESS, FT-BIN and *COMPLEX-CODA
-dominate MAX(μ), which dominates MAX and IDENT-length, and IDENT-STRESS and *DIST-0 dominate
-ONSET. -/
+/-- (64): the edges of the Word-level diagram. *DIST-0, ALIGN-RIGHT, IDENT-STRESS, FT-BIN and
+*COMPLEX-CODA are above MAX(μ), which is above MAX and IDENT-length, and IDENT-STRESS and *DIST-0
+are above ONSET. -/
 def word (a b : Con) : Prop :=
-  a = b ∨
-    match b with
-    | .maxMora => a ∈ [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda]
-    | .max | .identLength =>
-      a ∈ [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora]
-    | .onset => a ∈ [Con.distZero, .identStress]
-    | _ => False
+  match b with
+  | .maxMora => a ∈ [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda]
+  | .max | .identLength => a = .maxMora
+  | .onset => a ∈ [Con.distZero, .identStress]
+  | _ => False
 
-/-- (68): the Phrase-level ranking. FT-BIN, ONSET, IDENT-length and MAX dominate IDENT-STRESS,
-which dominates *DIST-0, which dominates ALIGN-RIGHT and MAX(μ). -/
+/-- (68): the edges of the Phrase-level diagram. FT-BIN, ONSET, IDENT-length and MAX are above
+IDENT-STRESS, which is above *DIST-0, which is above ALIGN-RIGHT and MAX(μ). -/
 def phrase (a b : Con) : Prop :=
-  a = b ∨
-    match b with
-    | .identStress => a ∈ [Con.ftBin, .onset, .identLength, .max]
-    | .distZero => a ∈ [Con.ftBin, .onset, .identLength, .max, .identStress]
-    | .alignR | .maxMora => a ∈ [Con.ftBin, .onset, .identLength, .max, .identStress, .distZero]
-    | _ => False
+  match b with
+  | .identStress => a ∈ [Con.ftBin, .onset, .identLength, .max]
+  | .distZero => a = .identStress
+  | .alignR | .maxMora => a = .distZero
+  | _ => False
 
 instance : DecidableRel word := fun a b ↦ by unfold word; cases b <;> exact inferInstance
 
 instance : DecidableRel phrase := fun a b ↦ by unfold phrase; cases b <;> exact inferInstance
 
-instance : IsPartialOrder Con word where
-  refl _ := .inl rfl
-  trans := by decide
-  antisymm := by decide
+/-- The order a diagram generates: `a` is above `b` when edges lead from `a` down to `b`. -/
+abbrev Above (R : Con → Con → Prop) [DecidableRel R] (a b : Con) : Prop := b ∈ below R a
 
-instance : IsPartialOrder Con phrase where
-  refl _ := .inl rfl
-  trans := by decide
-  antisymm := by decide
+example : (Ranking.ofList [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora,
+    .max, .identLength, .onset]).IsLinearExtension word := by decide
 
-example : ∃ σ : Ranking Con 9, σ.IsLinearExtension word :=
-  Ranking.exists_isLinearExtension word (by decide)
-
-example : ∃ σ : Ranking Con 9, σ.IsLinearExtension phrase :=
-  Ranking.exists_isLinearExtension phrase (by decide)
+example : (Ranking.ofList [Con.ftBin, .onset, .identLength, .max, .identStress, .distZero,
+    .alignR, .maxMora, .complexCoda]).IsLinearExtension phrase := by decide
 
 variable {σ : Ranking Con 9}
 
@@ -563,19 +552,33 @@ theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
     σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal :=
   Grammar.mem_extent_ofWinner (List.mem_toFinset.2 h)
 
-/-- The ERCs of the winner against the candidates hold of a relation: against each candidate,
+/-- The ERCs of the winner against the candidates hold of a diagram: against each candidate,
 every constraint preferring it is below one preferring the winner. -/
-def Holds (t : Evaluation) (R : Con → Con → Prop) : Prop :=
-  ∀ d ∈ t.candidates, (ercOfProfiles (t.marks · t.winner) (t.marks · d)).Holds R
+def Holds (t : Evaluation) (R : Con → Con → Prop) [DecidableRel R] : Prop :=
+  ∀ d ∈ t.candidates, (ercOfProfiles (t.marks · t.winner) (t.marks · d)).Holds (Above R)
 
 instance (t : Evaluation) (R : Con → Con → Prop) [DecidableRel R] : Decidable (t.Holds R) :=
   inferInstanceAs (Decidable (∀ d ∈ t.candidates, _))
 
--- the winner is optimal under every total ranking extending a partial order of which its ERCs
--- hold
-theorem Holds.ofRel_le [IsTrans Con R] [Std.Antisymm R] (h : t.Holds R) :
-    .ofRel R ≤ t.grammar :=
-  (Grammar.ofRel_le_ofWinner_iff (by decide)).2 fun d hd ↦ h d (List.mem_toFinset.1 hd)
+variable [DecidableRel R]
+
+-- the winner is optimal under every total ranking extending a diagram of which its ERCs hold
+theorem Holds.ofRel_le (h : t.Holds R) : .ofRel R ≤ t.grammar :=
+  Grammar.ofRel_le_ofWinner_of_holds_below fun d hd ↦ h d (List.mem_toFinset.1 hd)
+
+/-- The winner is a candidate, and no other candidate has its marks. -/
+def Unique (t : Evaluation) : Prop :=
+  t.winner ∈ t.candidates ∧
+    ∀ d ∈ t.candidates, (∀ k, t.marks k d = t.marks k t.winner) → d = t.winner
+
+instance (t : Evaluation) : Decidable t.Unique := inferInstanceAs (Decidable (_ ∧ _))
+
+-- the winner is the sole optimal candidate under every total ranking extending the order
+theorem Holds.optimal_eq (h : t.Holds R) (hu : t.Unique)
+    (hσ : σ.IsLinearExtension R) : (t.tableau σ).optimal = {t.winner} :=
+  (Tableau.ofRanking_optimal_eq_singleton_iff_of_mem <| (mem_extent_grammar hu.1).1 <|
+    Concept.extent_subset_extent_iff.2 h.ofRel_le (Grammar.mem_extent_ofRel.2 hσ)).2
+      fun d hd ↦ hu.2 d (List.mem_toFinset.1 hd)
 
 end Evaluation
 
@@ -626,13 +629,33 @@ def quantifiedPhrase : Evaluation where
       "(ˈsa.mu).(ˌdrā).(ˌman).(ˌta.ṭi).ni", "(ˈsa.mu).(ˌdra).(ˌman).(ˌta.ṭi).ni"]
   winner := "(ˈsa.mu).dra.(ˌman).(ˌta.ṭi).ni"
 
+/-- The Word-level tableaux (59), (62) and (63). -/
+def wordTableaux : List Evaluation := [dativeWord, nominativeWord, quantifiedWord]
+
+/-- The Phrase-level tableaux (66) and (67). -/
+def phraseTableaux : List Evaluation := [postpositional, quantifiedPhrase]
+
 -- (64) suffices for the Word level: the ERCs of the winners of (59), (62) and (63) hold of it
-theorem holds_word : ∀ t ∈ [dativeWord, nominativeWord, quantifiedWord], t.Holds word := by
+theorem holds_word : ∀ t ∈ wordTableaux, t.Holds word := by
   decide
 
 -- (68) suffices for (66) and (67)
-theorem holds_phrase : ∀ t ∈ [postpositional, quantifiedPhrase], t.Holds phrase := by
+theorem holds_phrase : ∀ t ∈ phraseTableaux, t.Holds phrase := by
   decide
+
+-- no other candidate of a tableau has its winner's marks
+theorem unique : ∀ t ∈ wordTableaux ++ phraseTableaux, t.Unique := by
+  decide
+
+-- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
+theorem optimal_word (hσ : σ.IsLinearExtension word) :
+    ∀ t ∈ wordTableaux, (t.tableau σ).optimal = {t.winner} :=
+  fun t ht ↦ (holds_word t ht).optimal_eq (unique t (List.mem_append_left _ ht)) hσ
+
+-- (66), (67): the winners are the sole optimal candidates under every ranking of (68)
+theorem optimal_phrase (hσ : σ.IsLinearExtension phrase) :
+    ∀ t ∈ phraseTableaux, (t.tableau σ).optimal = {t.winner} :=
+  fun t ht ↦ (holds_phrase t ht).optimal_eq (unique t (List.mem_append_right _ ht)) hσ
 
 -- any ranking under which the winner of (63) is optimal has *DIST-0 above ONSET
 theorem onset_dominated (h : quantifiedWord.winner ∈ (quantifiedWord.tableau σ).optimal) :
@@ -791,12 +814,14 @@ theorem wordGrammar_inf_phraseGrammar : wordGrammar ⊓ phraseGrammar = ⊥ :=
 -- (68): *DIST-0 and ALIGN-RIGHT against MAX, the prosodic against the segmental faithfulness
 -- constraints, and IDENT-STRESS against ONSET
 theorem reranked :
-    Reranked word phrase .distZero .max ∧ Reranked word phrase .alignR .max ∧
-      Reranked word phrase .identStress .max ∧ Reranked word phrase .maxMora .identLength ∧
-      Reranked word phrase .identStress .onset := by
+    Reranked (Above word) (Above phrase) .distZero .max ∧
+      Reranked (Above word) (Above phrase) .alignR .max ∧
+      Reranked (Above word) (Above phrase) .identStress .max ∧
+      Reranked (Above word) (Above phrase) .maxMora .identLength ∧
+      Reranked (Above word) (Above phrase) .identStress .onset := by
   decide
 
 -- the Word-level diagram does not rank FT-BIN and *DIST-0
-example : ¬ Reranked word phrase .distZero .ftBin := by decide
+example : ¬ Reranked (Above word) (Above phrase) .distZero .ftBin := by decide
 
 end Aitha2026
