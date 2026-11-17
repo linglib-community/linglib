@@ -52,17 +52,17 @@ open OptimalityTheory
 
 variable {M : Type*}
 
-/-- The σ-weight content of a foot node's direct σ-daughters. -/
-def footContent (cs : List Tree) : List Syllable.Weight :=
+/-- The content of a foot node: the marks of its direct σ-daughters, their weights in a `Tree`. -/
+def footContent (cs : List (RoseTree (Constituent Level M))) : List M :=
   cs.filterMap fun c => match c with
-    | .node a [] => a.weight?
+    | .node a [] => if a.level = .syl then some a.mark else none
     | _ => none
 
-/-- The feet of a prosodic tree are the σ-weight contents of its `f`-nodes. -/
-def feet : Tree → List (List Syllable.Weight) := fun t => go t where
-  go : Tree → List (List Syllable.Weight)
+/-- The feet of a prosodic tree are the contents of its `f`-nodes. -/
+def feet : RoseTree (Constituent Level M) → List (List M) := fun t => go t where
+  go : RoseTree (Constituent Level M) → List (List M)
     | .node a cs => (if a.level = .ft then [footContent cs] else []) ++ goList cs
-  goList : List Tree → List (List Syllable.Weight)
+  goList : List (RoseTree (Constituent Level M)) → List (List M)
     | [] => []
     | t :: ts => go t ++ goList ts
 

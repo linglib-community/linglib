@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Prosody.Mora
-public import Linglib.Phonology.Prosody.Hierarchy
+public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.Prosody.Grid
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 
@@ -57,10 +57,6 @@ namespace OptimalityTheory
 
 open Prosody Finset
 
-/-- The syllable leaves of a prosodic tree, by mark. -/
-def _root_.Prosody.syllableLeaves {M : Type*} (t : RoseTree (Constituent Level M)) : List M :=
-  t.subtrees.filterMap fun s ↦ if s.value.level = .syl then some s.value.mark else none
-
 /-- The morae of a form in order of their heads, and by index under one head. -/
 def _root_.Prosody.MoraicForm.moraList {α : Type*} (X : MoraicForm α) : List Mora :=
   (List.range X.melody.length).flatMap fun i ↦
@@ -94,14 +90,13 @@ def stressAt (i : ℕ) : ℕ := (P.form.syllables.filter (i ∈ P.form.yield ·)
 /-- The number of morae at a slot. -/
 def weightAt (i : ℕ) : ℕ := #(P.form.moraeAt i)
 
-/-- The feet of the structure above the syllable. -/
-def feet : List (RoseTree (Constituent Level ℕ)) :=
-  P.above.flatMap fun t ↦ t.subtrees.filter fun s ↦ s.value.level = .ft
+/-- The feet of the structure above the syllable, each the names of its syllables. -/
+def feet : List (List ℕ) := P.above.flatMap Prosody.feet
 
 /-- FT-BIN(μ), minimal binarity: a violation for each foot whose syllables carry fewer than two
 morae together, a degenerate foot. A foot of more than two morae is the business of a separate
 constraint on maximal binarity. -/
-def ftBinViol : ℕ := P.feet.countP fun t ↦ ((syllableLeaves t).map P.form.weight).sum < 2
+def ftBinViol : ℕ := P.feet.countP fun f ↦ (f.map P.form.weight).sum < 2
 
 /-- ONSET: a violation for each syllable without an onset. -/
 def onsetViol : ℕ := #(P.form.syllables.filter fun s ↦ P.form.onset s = ∅)
