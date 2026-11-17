@@ -173,10 +173,10 @@ def word : Cand4 → List Seg
 
 -- (43)
 theorem allophony : ∀ input ∈ inputs,
-    (Tableau.ofList {.a, .b, .c, .d}
+    Constraint.eval {.a, .b, .c, .d}
       [Constraint.comap word nvOral, Constraint.comap word vNas,
        fun w ↦ (Correspondence.Coindexation.parallel input (word w)).identViolFeature nasal
-         .lhs .rhs]).optimal =
+         .lhs .rhs] =
       {Cand4.d} := by
   decide
 

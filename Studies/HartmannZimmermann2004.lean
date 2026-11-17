@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.FinCases
 public import Linglib.Core.Logic.Function.FactorsThrough
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Basic
@@ -169,11 +169,11 @@ def alignFocus : Constraint Prosody.Tree :=
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length
 
 theorem focused_parse_separates :
-    (Tableau.ofList {wrapped, separated} [alignFocus, starPhi]).optimal
+    Constraint.eval {wrapped, separated} [alignFocus, starPhi]
       = {separated} := by decide
 
 theorem neutral_parse_wraps :
-    (Tableau.ofList {wrapped, separated} [starPhi]).optimal
+    Constraint.eval {wrapped, separated} [starPhi]
       = {wrapped} := by decide
 
 theorem separated_edge_wrapped_internal :

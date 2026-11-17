@@ -12,7 +12,7 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Insid
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.Stratal
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Foot
 public import Mathlib.Tactic.DeriveFintype
 public import Studies.Caha2009
@@ -344,7 +344,7 @@ def stemRanking : List (Constraint StemCandidate) :=
     fun c ↦ c.toFooting.footOffsets.sum]
 
 -- (49)
-theorem stem_optimal : (Tableau.ofList Finset.univ stemRanking).optimal = {.trochees} := by decide
+theorem stem_optimal : Constraint.eval Finset.univ stemRanking = {.trochees} := by decide
 
 /-! ### The rankings of the Word and the Phrase -/
 

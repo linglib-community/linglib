@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Grid
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Basic
 public import Mathlib.Order.Interval.Finset.Nat
@@ -69,28 +69,28 @@ def footing (input : List ℕ) : List (Constraint MetricalTree) :=
 
 -- Table 2
 theorem table2 :
-    (Tableau.ofList
+    Constraint.eval
       {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
        .om false [.ft true [.σ 1, .σ 2 true], .σ 1, .σ 1],
        .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]}
-      (footing [1, 1, 1, 1])).optimal =
+      (footing [1, 1, 1, 1]) =
       {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 -- Table 4
 theorem table4 :
-    (Tableau.ofList
+    Constraint.eval
       {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
        .om false [.σ 1, .ft true [.σ 1, .σ 2 true], .σ 1],
        .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]}
-      (footing [1, 1, 2, 1])).optimal =
+      (footing [1, 1, 2, 1]) =
       {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
   decide
 
 -- Table 6
 theorem table6 :
-    (Tableau.ofList {.om false [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]}
-      (footing [1, 2])).optimal = {.om false [.ft true [.σ 1 true, .σ 1]]} := by
+    Constraint.eval {.om false [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]}
+      (footing [1, 2]) = {.om false [.ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 /-! ### Words in isolation -/

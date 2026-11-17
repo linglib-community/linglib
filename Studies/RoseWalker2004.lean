@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
@@ -430,8 +430,8 @@ def kudumukila : List Cand :=
 it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
 stays oral. -/
 theorem kudumukila_winner :
-    (Tableau.ofList kudumukila.toFinset
-      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList))))).optimal =
+    Constraint.eval kudumukila.toFinset
+      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList)))) =
       {kudumukila[0]} := by
   decide +kernel
 

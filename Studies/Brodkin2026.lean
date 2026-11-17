@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Word
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
@@ -389,8 +389,8 @@ theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
     (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
       matchOmega x, matchPhi x]) ⟨h.neighborhood false, .sisters, footed, true⟩)
     (hp : priority vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩ ∈ Fs) :
-    ⟨{Feature.head h} ⟷ h.long, .separate⟩ ∉ (Tableau.ofList
-      (candidates vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩) Fs).optimal := by
+    ⟨{Feature.head h} ⟷ h.long, .separate⟩ ∉ Constraint.eval
+      (candidates vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩) Fs := by
   set x : Input := ⟨h.neighborhood false, .sisters, footed, true⟩
   have hle : ∀ F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
       matchOmega x, matchPhi x]) x,
@@ -399,6 +399,7 @@ theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
   have hlt : priority vocabulary x ⟨{Feature.head h} ⟷ h.short, .joined⟩ <
       priority vocabulary x ⟨{Feature.head h} ⟷ h.long, .separate⟩ := by
     cases h <;> cases footed <;> decide
+  rw [← Tableau.optimal_ofList]
   refine Tableau.notMem_optimal_of_lt (c := ⟨{Feature.head h} ⟷ h.short, .joined⟩)
     (by rw [Tableau.ofList_candidates]; cases h <;> cases footed <;> decide)
     (Pi.toLex_strictMono ?_)
@@ -485,9 +486,9 @@ theorem optimal_item_eq_of_two_le
   have z {s : Finset Candidate} {F : Constraint Candidate} (hs : (⟨i, p⟩ : Candidate) ∈ s)
       (h0 : F ⟨i, p⟩ = 0) : (⟨i, p⟩ : Candidate) ∈ s.argmin F :=
     Finset.mem_argmin.2 ⟨hs, fun _ _ ↦ h0.trans_le (Nat.zero_le _)⟩
-  rw [tableau, Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons,
-    Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons] at hc
-  obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Tableau.optimal_subset hc)
+  rw [tableau, Tableau.optimal_ofList, Constraint.eval_cons, Constraint.eval_cons,
+    Constraint.eval_cons, Constraint.eval_cons] at hc
+  obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Constraint.eval_subset hc)
   exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1
     ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
@@ -495,10 +496,10 @@ theorem optimal_item_eq_of_two_le
 /-- PRIORITY undominated selects the Subset Principle's winner. -/
 theorem winner?_eq_some_item_of_mem_optimal
     (hv : v.Pairwise fun i j ↦ j.specificity ≤ i.specificity) {Fs : List (Constraint Candidate)}
-    (hc : c ∈ (Tableau.ofList (candidates v x) (priority v x :: Fs)).optimal) :
+    (hc : c ∈ Constraint.eval (candidates v x) (priority v x :: Fs)) :
     winner? v x.neighborhood = some c.item := by
-  rw [Tableau.optimal_ofList_cons] at hc
-  obtain ⟨hcs, hmin⟩ := Finset.mem_argmin.1 (Tableau.optimal_subset hc)
+  rw [Constraint.eval_cons] at hc
+  obtain ⟨hcs, hmin⟩ := Finset.mem_argmin.1 (Constraint.eval_subset hc)
   rw [winner?_eq_head?_applicable hv]
   obtain ⟨i, hi⟩ := Option.isSome_iff_exists.1
     (List.isSome_head?.2 (List.ne_nil_of_mem (mem_candidates.1 hcs).1))
@@ -508,7 +509,7 @@ theorem winner?_eq_some_item_of_mem_optimal
   rw [hi, h0]
 
 theorem winner?_vocabulary_eq_some_item_of_mem_optimal {Fs : List (Constraint Candidate)}
-    (hc : c ∈ (Tableau.ofList (candidates vocabulary x) (priority vocabulary x :: Fs)).optimal) :
+    (hc : c ∈ Constraint.eval (candidates vocabulary x) (priority vocabulary x :: Fs)) :
     winner? vocabulary x.neighborhood = some c.item :=
   winner?_eq_some_item_of_mem_optimal vocabulary_pairwise hc
 

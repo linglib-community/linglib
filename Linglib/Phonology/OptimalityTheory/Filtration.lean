@@ -139,4 +139,48 @@ theorem Tableau.optimal_ofRanking_eq_filtration (con : ConstraintSet C ι)
   rw [List.map_ofFn, List.map_ofFn, List.ofFn_le_ofFn_iff]
   rfl
 
+/-! ### Evaluation along a list of constraints -/
+
+section Eval
+
+variable {F : Constraint C} {Fs Gs : List (Constraint C)}
+
+/-- Eval: the candidates of `s` that are optimal under the constraints `Fs`, most dominant first.
+It is filtration with each constraint counting its own violations. -/
+def Constraint.eval (s : Finset C) (Fs : List (Constraint C)) : Finset C :=
+  filtration Function.eval s Fs
+
+@[simp] theorem Constraint.eval_nil : Constraint.eval s [] = s := rfl
+
+theorem Constraint.eval_cons :
+    Constraint.eval s (F :: Fs) = Constraint.eval (s.argmin F) Fs := rfl
+
+theorem Constraint.eval_append :
+    Constraint.eval s (Fs ++ Gs) = Constraint.eval (Constraint.eval s Fs) Gs :=
+  filtration_append
+
+theorem Constraint.eval_subset : Constraint.eval s Fs ⊆ s := filtration_subset
+
+theorem Constraint.eval_nonempty (hs : s.Nonempty) : (Constraint.eval s Fs).Nonempty :=
+  filtration_nonempty hs
+
+@[simp] theorem Constraint.eval_singleton : Constraint.eval {c} Fs = {c} :=
+  Finset.Subset.antisymm eval_subset <| Finset.singleton_subset_iff.2 <| by
+    obtain ⟨d, hd⟩ := eval_nonempty (Fs := Fs) (Finset.singleton_nonempty c)
+    exact Finset.mem_singleton.1 (eval_subset hd) ▸ hd
+
+/-- A candidate that does strictly best on the most dominant constraint is the sole winner. -/
+theorem Constraint.eval_cons_eq_singleton (hc : c ∈ s) (h : ∀ d ∈ s, d ≠ c → F c < F d) :
+    Constraint.eval s (F :: Fs) = {c} := by
+  rw [eval_cons, Finset.argmin_eq_singleton_iff.2 ⟨hc, h⟩, eval_singleton]
+
+/-- The winners of the tableau of a list of constraints are the candidates Eval keeps. -/
+theorem Tableau.optimal_ofList (s : Finset C) (Fs : List (Constraint C)) :
+    (Tableau.ofList s Fs).optimal = Constraint.eval s Fs := by
+  induction Fs generalizing s with
+  | nil => exact Tableau.optimal_ofList_nil
+  | cons F Fs ih => rw [Tableau.optimal_ofList_cons, ih, Constraint.eval_cons]
+
+end Eval
+
 end OptimalityTheory

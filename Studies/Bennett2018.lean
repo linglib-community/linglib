@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Word
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Match
 
 /-!
@@ -215,15 +215,15 @@ theorem prosodySyntaxMatch_pos_of_subCat {t : Tree} {i m : ℕ} (h : subCat [i] 
 /-- A high-attaching prefix is parsed recursively: under `SubCat ≫ Match (ω, X⁰)`, with
 Match (X⁰, ω) undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
-    (Tableau.ofList {nested 1, flat 1, phrasal}
-      [matchWord [word 1], subCat [0], prosodySyntaxMatch .om [word 1]]).optimal = {nested 1} := by
+    Constraint.eval {nested 1, flat 1, phrasal}
+      [matchWord [word 1], subCat [0], prosodySyntaxMatch .om [word 1]] = {nested 1} := by
   decide
 
 /-- A low-attaching prefix, carrying no frame, is parsed flat: Match (ω, X⁰) alone rules out the
 extra ω. -/
 theorem low_prefix_flat :
-    (Tableau.ofList {nested 1, flat 1, phrasal}
-      [matchWord [word 1], prosodySyntaxMatch .om [word 1]]).optimal = {flat 1} := by
+    Constraint.eval {nested 1, flat 1, phrasal}
+      [matchWord [word 1], prosodySyntaxMatch .om [word 1]] = {flat 1} := by
   decide
 
 -- (22): three stacked high prefixes each realise their frame only in the recursive parse, at the

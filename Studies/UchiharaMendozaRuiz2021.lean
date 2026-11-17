@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Wordlist.UchiharaMendozaRuiz2021
 
 /-!
@@ -214,7 +214,7 @@ def typologyCandidates : Finset Word :=
 
 /-- The optima for an input of `n` moras under the ranking `r` of the four constraints. -/
 def typologyOptimal (n : ℕ) (r : List (Fin 4)) : Finset Word :=
-  (Tableau.ofList typologyCandidates (r.map (constraintsF n))).optimal
+  Constraint.eval typologyCandidates (r.map (constraintsF n))
 
 /-- The rankings of the four constraints. -/
 def rankings : List (List (Fin 4)) := ([0, 1, 2, 3] : List (Fin 4)).permutations'

@@ -388,7 +388,7 @@ theorem Con.atBase_derivation (c : Con) (rel : OORelation) {b i d d' : List Char
 
 theorem eval_eq {n : ℕ} (σ : Ranking.Enumeration Con n) (b i w : List Char) (rel : OORelation) :
     eval σ b i w rel =
-      (Tableau.ofList (accentings w) (List.ofFn fun p ↦ (σ p).violations rel b i)).optimal := by
+      Constraint.eval (accentings w) (List.ofFn fun p ↦ (σ p).violations rel b i) := by
   rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
     show ((fun k ↦ (k rel).atDerived ∘ derivation b i) ∘ fun p ↦ (σ p).eval) =
       fun p ↦ (σ p).violations rel b i from funext fun p ↦ Con.atDerived_derivation _ _ _ _]
@@ -538,7 +538,7 @@ theorem Con.atBase_derivation (c : Con) {b i d d' : List Char} :
 
 theorem eval_eq {n : ℕ} (σ : Ranking.Enumeration Con n) (b i w : List Char) :
     eval σ b i w =
-      (Tableau.ofList (tonePatterns w) (List.ofFn fun p ↦ (σ p).violations b i)).optimal := by
+      Constraint.eval (tonePatterns w) (List.ofFn fun p ↦ (σ p).violations b i) := by
   rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
     show ((fun k ↦ (k .dominant).atDerived ∘ derivation b i) ∘ fun p ↦ (σ p).eval) =
       fun p ↦ (σ p).violations b i from funext fun p ↦ Con.atDerived_derivation _ _ _]

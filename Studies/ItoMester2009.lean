@@ -24,8 +24,8 @@ evidence of Section 3 supports for English and German, selects the recursive wor
   substrate's `Prosody.noRec` and Parse-into-ω its `Prosody.parseInto`; FtBin at the word level
   is defined here, and Lex-to-ω(L) is the substrate's Align-L of the lexical word's span to the
   ω spans.
-* A ranking is the list of its constraints, most dominant first, and the candidates are filtered
-  along it. The winning recursive structure is a legal prosodic word of the substrate,
+* A ranking is the list of its constraints, most dominant first, evaluated by
+  `Constraint.eval`. The winning recursive structure is a legal prosodic word of the substrate,
   No-Recursion being violable.
 
 ## References
@@ -93,28 +93,28 @@ theorem one_violation_each :
 /-! ### The factorial typology and the ranking for English and German -/
 
 theorem fullOmega_optimum :
-    filtration Function.eval candidates [lexToOmega, parseInto .om, noRec, subminimalOmega] =
+    Constraint.eval candidates [lexToOmega, parseInto .om, noRec, subminimalOmega] =
       {fullOmega} := by
   decide
 
 theorem amalgamated_optimum :
-    filtration Function.eval candidates [subminimalOmega, parseInto .om, noRec, lexToOmega] =
+    Constraint.eval candidates [subminimalOmega, parseInto .om, noRec, lexToOmega] =
       {amalgamated} := by
   decide
 
 theorem phiAttached_optimum :
-    filtration Function.eval candidates [subminimalOmega, lexToOmega, noRec, parseInto .om] =
+    Constraint.eval candidates [subminimalOmega, lexToOmega, noRec, parseInto .om] =
       {phiAttached} := by
   decide
 
 -- (33), (34)
 theorem adjoined_attached_tie :
-    filtration Function.eval candidates [subminimalOmega, lexToOmega] =
+    Constraint.eval candidates [subminimalOmega, lexToOmega] =
       {omegaAdjoined, phiAttached} := by
   decide
 
 theorem omegaAdjunction_optimum :
-    filtration Function.eval candidates [subminimalOmega, lexToOmega, parseInto .om, noRec] =
+    Constraint.eval candidates [subminimalOmega, lexToOmega, parseInto .om, noRec] =
       {omegaAdjoined} := by
   decide
 
