@@ -45,6 +45,7 @@ vertex makes the new children `[S₂, S₁]`, where grafting both at once makes 
 
 * [chapoton-livernet-2001]
 * [foissy-2021]
+* [oudom-guin-2008]
 -/
 
 @[expose] public section
@@ -163,6 +164,26 @@ theorem map_mk_bind_insertionForest : ∀ (F : List (RoseTree α)) (S₁ S₂ : 
     abel
 end
 
+mutual
+/-- Every summand of `T ◁ S` has the vertices of `T` and those of `S`. -/
+theorem numNodes_of_mem_insertSum : ∀ {T S X : RoseTree α}, X ∈ T ◁ S →
+    X.numNodes = T.numNodes + S.numNodes
+  | node a cs, S, X, h => by
+    rw [insertSum_node, Multiset.mem_cons, Multiset.mem_map] at h
+    obtain rfl | ⟨L, hL, rfl⟩ := h
+    · simp only [numNodes_node, List.map_cons, List.sum_cons]; omega
+    · simp only [numNodes_node, sum_map_numNodes_of_mem_insertionForest hL]; omega
+private theorem sum_map_numNodes_of_mem_insertionForest : ∀ {F : List (RoseTree α)}
+    {S : RoseTree α} {L : List (RoseTree α)}, L ∈ insertionForest F [S] →
+    (L.map numNodes).sum = (F.map numNodes).sum + S.numNodes
+  | [], S, L, h => by simp at h
+  | T :: F, S, L, h => by
+    rw [insertionForest_cons_singleton, Multiset.mem_add, Multiset.mem_map, Multiset.mem_map] at h
+    obtain ⟨X, hX, rfl⟩ | ⟨L', hL', rfl⟩ := h
+    · simp only [List.map_cons, List.sum_cons, numNodes_of_mem_insertSum hX]; omega
+    · simp only [List.map_cons, List.sum_cons, sum_map_numNodes_of_mem_insertionForest hL']; omega
+end
+
 /-- Grafting is not associative, since `(0 ◁ 1) ◁ 2` has two summands and `0 ◁ (1 ◁ 2)` one. -/
 example : (leaf 0 ◁ leaf 1).bind (· ◁ leaf 2) ≠ (leaf 1 ◁ leaf 2).bind (leaf 0 ◁ ·) := by
   decide
@@ -188,8 +209,29 @@ theorem card_insertSum (T S : UnorderedTree α) : Multiset.card (T ◁ S) = T.nu
     change Multiset.card (mk t ◁ mk s) = (mk t).numNodes
     rw [mk_insertSum, Multiset.card_map, RoseTree.card_insertSum, numNodes_mk]
 
+/-- Grafting into a node either adds a child at the root or grafts inside the children. -/
+theorem insertSum_node (a : α) (F : Multiset (UnorderedTree α)) (S : UnorderedTree α) :
+    node a F ◁ S = node a (S ::ₘ F) ::ₘ (insertionMultiset F {S}).map (node a) := by
+  rw [insertSum, insertion_node, ← Multiset.cons_zero, Multiset.antidiagonal_cons,
+    Multiset.antidiagonal_zero]
+  simp only [insertionMultiset_zero_right, add_comm, Multiset.map_singleton, Prod.map_apply, id,
+    Multiset.cons_bind, Multiset.singleton_bind, Multiset.cons_zero, Multiset.singleton_add,
+    add_zero]
+  rw [add_comm, Multiset.singleton_add, add_comm F, Multiset.singleton_add]
+
+/-- Every summand of `T ◁ S` has the vertices of `T` and those of `S`. -/
+theorem numNodes_of_mem_insertSum {T S X : UnorderedTree α} (h : X ∈ T ◁ S) :
+    X.numNodes = T.numNodes + S.numNodes := by
+  induction T using Quotient.inductionOn with | h t =>
+  induction S using Quotient.inductionOn with | h s =>
+  rw [quot_mk_eq_mk, quot_mk_eq_mk, mk_insertSum, Multiset.mem_map] at h
+  obtain ⟨x, hx, rfl⟩ := h
+  rw [numNodes_mk, RoseTree.numNodes_of_mem_insertSum hx]
+  rfl
+
 /-- Grafting `S₁` then `S₂` into `T` is grafting `S₁ ◁ S₂` into `T` plus grafting both at once, the
-degree-two case of Oudom and Guin's Proposition 3.7. -/
+degree-two case of the recursion by which [oudom-guin-2008] extend a pre-Lie product to the
+symmetric algebra. -/
 theorem insertSum_bind_insertSum (T S₁ S₂ : UnorderedTree α) :
     (T ◁ S₁).bind (· ◁ S₂) = (S₁ ◁ S₂).bind (T ◁ ·) + insertion T {S₁, S₂} := by
   induction T using Quotient.inductionOn with | h t =>

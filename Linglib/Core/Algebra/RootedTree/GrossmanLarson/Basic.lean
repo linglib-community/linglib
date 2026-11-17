@@ -354,8 +354,7 @@ noncomputable def ι : ChapotonLivernet R α →ₗ[R] GrossmanLarson R α :=
 
 @[simp] theorem ι_of (T : UnorderedTree α) :
     ι (ChapotonLivernet.of T : ChapotonLivernet R α) = of {T} := by
-  ext; simp [ι, ChapotonLivernet.coeffLinearEquiv, ChapotonLivernet.coeffAddEquiv,
-    ChapotonLivernet.coeffEquiv]
+  ext; simp [ι]
 
 theorem ι_injective : Function.Injective (ι : ChapotonLivernet R α → GrossmanLarson R α) := by
   have h : LinearIndependent R (ofTree : UnorderedTree α → ConnesKreimer R (UnorderedTree α)) :=
@@ -375,8 +374,8 @@ theorem toConnesKreimer_ι_mul (x y : ChapotonLivernet R α) :
     | add y₁ y₂ h₁ h₂ => simp [mul_add, h₁, h₂]
     | single S b =>
       rw [ChapotonLivernet.single_eq_smul_of T, ChapotonLivernet.single_eq_smul_of S]
-      simp [smul_mul_smul_comm, ChapotonLivernet.of_mul_of, ChapotonLivernet.graft,
-        map_multiset_sum, Multiset.map_map, smul_smul, mul_comm a b]
+      simp [smul_mul_smul_comm, ChapotonLivernet.of_mul_of, map_multiset_sum, Multiset.map_map,
+        smul_smul, mul_comm a b]
 
 /-- The product of one-tree forests is their disjoint union plus their insertion,
 `x ⋆ y = x y + x ∘ y`. -/
