@@ -249,6 +249,23 @@ theorem insertSum_assoc_symm (T S₁ S₂ : UnorderedTree α) :
   rw [insertSum_bind_insertSum, insertSum_bind_insertSum T S₂ S₁, Multiset.pair_comm]
   abel
 
+theorem insertion_zero (T : UnorderedTree α) : insertion T 0 = {T} := by
+  induction T using Quotient.inductionOn with | h t =>
+  exact (insertion_mk t []).trans
+    (by rw [RoseTree.insertion_nil_guests, Multiset.map_singleton]; rfl)
+
+/-- Grafting into a forest grafts into its first tree or into the rest. -/
+theorem insertionMultiset_cons_singleton (T : UnorderedTree α) (F : Multiset (UnorderedTree α))
+    (S : UnorderedTree α) :
+    insertionMultiset (T ::ₘ F) {S} =
+      (T ◁ S).map (· ::ₘ F) + (insertionMultiset F {S}).map (T ::ₘ ·) := by
+  rw [insertionMultiset_cons, ← Multiset.cons_zero S, Multiset.antidiagonal_cons,
+    Multiset.antidiagonal_zero]
+  simp only [insertionMultiset_zero_right, insertion_zero, Multiset.map_singleton, Prod.map_apply,
+    id, Multiset.cons_bind, Multiset.singleton_bind, Multiset.cons_zero, Multiset.singleton_add,
+    Multiset.bind_singleton, insertSum]
+  exact add_comm _ _
+
 theorem insertionMultiset_singleton_singleton (T S : UnorderedTree α) :
     insertionMultiset {T} {S} = (T ◁ S).map ({·}) :=
   insertionMultiset_singleton T {S}

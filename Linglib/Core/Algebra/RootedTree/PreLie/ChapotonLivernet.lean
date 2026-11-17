@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.NonAssoc.PreLie.Brace
 public import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 public import Mathlib.Algebra.Algebra.NonUnitalSubalgebra
 public import Mathlib.Algebra.BigOperators.Finsupp.Basic
@@ -24,10 +25,12 @@ expression symmetric in `S` and `U`. This is the
 [right pre-Lie identity](##ChapotonLivernet.mul_mul_add_mul_mul), so over a commutative ring the
 product is right pre-Lie and its commutator a Lie bracket.
 
-Chapoton and Livernet show that this is the free pre-Lie algebra on `α`. Of freeness this file
-proves uniqueness: the one-vertex trees
-[generate the algebra](##ChapotonLivernet.adjoin_range_of_leaf), so a homomorphism
-[is determined by its values on them](##ChapotonLivernet.hom_ext).
+This is [the free pre-Lie algebra](##ChapotonLivernet.lift) on `α`, as Chapoton and Livernet
+show. The one-vertex trees [generate it](##ChapotonLivernet.adjoin_range_of_leaf), which gives
+uniqueness. For existence, a tree is sent to
+[the brace of its root's value and its children's values](##ChapotonLivernet.liftTree_node);
+the recursion that defines the brace is the rule for
+[grafting onto a tree](##ChapotonLivernet.sum_map_liftTree_insertSum).
 
 ## Implementation notes
 
@@ -38,12 +41,6 @@ first factor onto the second gives a left pre-Lie algebra, `(ChapotonLivernet R 
 The carrier is a structure over its coefficients `coeff : UnorderedTree α →₀ R`, as for
 `MonoidAlgebra`. Its operations are defined on `coeff` and the instances pulled back along it, so
 that the `ℕ`- and `ℤ`-actions agree with the module structure by reducible unfolding.
-
-## TODO
-
-* Existence for the universal property: every `f : α → A` into a right pre-Lie algebra extends
-  to a homomorphism `ChapotonLivernet R α →ₙₐ[R] A`, which with `hom_ext` gives
-  `lift : (α → A) ≃ (ChapotonLivernet R α →ₙₐ[R] A)`.
 
 ## References
 
@@ -334,6 +331,106 @@ theorem hom_ext {A : Type*} [NonUnitalNonAssocSemiring A] [Module R A]
     NonUnitalAlgebra.adjoin_le (Set.range_subset_iff.mpr h)
   rw [adjoin_range_of_leaf] at hle
   exact NonUnitalAlgHom.ext fun x ↦ hle trivial
+
+/-! ### The universal property -/
+
+section Lift
+
+open RightPreLieRing
+
+variable {A : Type*} [RightPreLieRing A] [RightPreLieAlgebra R A]
+
+/-- The value on a tree of the homomorphism that extends `f`: the brace of the root's value
+and the values of its children. -/
+def liftTree (f : α → A) : UnorderedTree α → A :=
+  fold fun a ks ↦ brace (f a) ks
+
+@[simp] theorem liftTree_node (f : α → A) (a : α) (F : Multiset (UnorderedTree α)) :
+    liftTree f (node a F) = brace (f a) (F.map (liftTree f)) :=
+  fold_node _ a F
+
+@[simp] theorem liftTree_leaf (f : α → A) (a : α) : liftTree f (leaf a) = f a := by
+  rw [← node_zero, liftTree_node, Multiset.map_zero, brace_zero]
+
+private theorem sum_map_insertionMultiset {φ : UnorderedTree α → A} {g : Multiset A → A}
+    (hg : ∀ s M : Multiset A, g (s.sum ::ₘ M) = (s.map fun u ↦ g (u ::ₘ M)).sum)
+    (F : Multiset (UnorderedTree α)) (S : UnorderedTree α)
+    (hF : ∀ T ∈ F, ((T ◁ S).map φ).sum = φ T * φ S) :
+    ((insertionMultiset F {S}).map fun G ↦ g (G.map φ)).sum =
+      (((F.map φ).mulOnce (φ S)).map g).sum := by
+  induction F using Multiset.induction_on generalizing g with
+  | empty => simp [insertionMultiset_zero_left_of_ne_zero]
+  | cons T F ih =>
+    have hg' : ∀ s M : Multiset A,
+        g (φ T ::ₘ s.sum ::ₘ M) = (s.map fun u ↦ g (φ T ::ₘ u ::ₘ M)).sum := fun s M ↦ by
+      simp only [Multiset.cons_swap (φ T)]
+      exact hg s _
+    rw [insertionMultiset_cons_singleton, Multiset.map_add, Multiset.sum_add, Multiset.map_map,
+      Multiset.map_map, Multiset.map_cons, Multiset.mulOnce_cons, Multiset.map_cons,
+      Multiset.sum_cons, Multiset.map_map, ← hF T (Multiset.mem_cons_self T F), hg,
+      Multiset.map_map]
+    simp only [Function.comp_def, Multiset.map_cons]
+    rw [ih (g := fun M ↦ g (φ T ::ₘ M)) hg' fun T' hT' ↦ hF T' (Multiset.mem_cons_of_mem hT')]
+
+/-- The tree map is multiplicative: the values of the graftings of `S` onto `T` sum to the
+product of the values. -/
+theorem sum_map_liftTree_insertSum (f : α → A) (T S : UnorderedTree α) :
+    ((T ◁ S).map (liftTree f)).sum = liftTree f T * liftTree f S := by
+  induction T with
+  | node a F ih =>
+    rw [insertSum_node, Multiset.map_cons, Multiset.sum_cons, Multiset.map_map, liftTree_node,
+      liftTree_node, Multiset.map_cons, brace_cons,
+      ← sum_map_insertionMultiset (brace_sum_cons (f a)) F S ih]
+    simp only [Function.comp_def, liftTree_node]
+    abel
+
+variable (R) in
+/-- The homomorphism that extends `f : α → A` from the one-vertex trees. -/
+def liftHom (f : α → A) : ChapotonLivernet R α →ₙₐ[R] A where
+  toFun := (basis R α).constr R (liftTree f)
+  map_smul' r x := map_smul _ r x
+  map_zero' := map_zero _
+  map_add' := map_add _
+  map_mul' x y := by
+    have hof (T : UnorderedTree α) :
+        (basis R α).constr R (liftTree f) (of T) = liftTree f T :=
+      (basis R α).constr_basis R (liftTree f) T
+    induction x using induction_linear with
+    | zero => simp
+    | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add, h₁, h₂]
+    | single T a =>
+    induction y using induction_linear with
+    | zero => simp
+    | add y₁ y₂ h₁ h₂ => simp only [mul_add, map_add, h₁, h₂]
+    | single S b =>
+      rw [single_eq_smul_of T a, single_eq_smul_of S b, smul_mul_smul_comm, map_smul, map_smul,
+        map_smul, smul_mul_smul_comm, of_mul_of, map_multiset_sum, Multiset.map_map, hof, hof,
+        ← sum_map_liftTree_insertSum]
+      simp only [Function.comp_def, hof]
+
+@[simp] theorem liftHom_of (f : α → A) (T : UnorderedTree α) :
+    liftHom R f (of T) = liftTree f T :=
+  (basis R α).constr_basis R (liftTree f) T
+
+variable (R) in
+/-- The rooted trees labelled by `α` are the free right pre-Lie algebra on `α`: a function from
+`α` to a right pre-Lie algebra extends uniquely to a homomorphism. -/
+def lift : (α → A) ≃ (ChapotonLivernet R α →ₙₐ[R] A) where
+  toFun := liftHom R
+  invFun F a := F (of (leaf a))
+  left_inv f := funext fun a ↦ (liftHom_of f _).trans (liftTree_leaf f a)
+  right_inv _ := hom_ext fun a ↦ (liftHom_of _ _).trans (liftTree_leaf _ a)
+
+@[simp] theorem lift_symm_apply (F : ChapotonLivernet R α →ₙₐ[R] A) (a : α) :
+    (lift R).symm F a = F (of (leaf a)) := rfl
+
+@[simp] theorem lift_of_leaf (f : α → A) (a : α) : lift R f (of (leaf a)) = f a :=
+  (liftHom_of f _).trans (liftTree_leaf f a)
+
+theorem lift_of (f : α → A) (T : UnorderedTree α) : lift R f (of T) = liftTree f T :=
+  liftHom_of f T
+
+end Lift
 
 end CommRing
 
