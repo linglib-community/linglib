@@ -8,6 +8,7 @@ public import Linglib.Fragments.Telugu.Adpositions
 public import Linglib.Fragments.Telugu.Case
 public import Linglib.Fragments.Telugu.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.Stratal
@@ -26,7 +27,10 @@ vocabulary that reads case heads can only
 [cut a paradigm into contiguous stretches](##isContiguous_strongN). The weak one
 (*samudr-am* ~ *samudr-āni* 'ocean') has the nominative form again in the genitive, so
 [no such vocabulary derives it](##weakN_ne_subsetPrinciple), and it reads the weight of
-the next syllable inside the prosodic word. It is the phonology of one underlying *-am-ni*,
+the next syllable inside the prosodic word. Nor can an exponent of n be chosen by that syllable:
+insertion runs from the root outward, and
+[n is realized before anything outside it has an exponent](##light_notMem_contextAt). The
+alternation is the phonology of one underlying *-am-ni*,
 derived in Kiparsky's Stratal OT from prespecified stress on the singular suffix *-ni*. The
 strata are needed: the consonant that deletes inside the word is kept before a postposition, and
 [no ranking makes the outputs of both strata optimal](##wordGrammar_inf_phraseGrammar).
@@ -60,9 +64,10 @@ morpheme after the noun stem.
 
 ## TODO
 
-* The paper's argument that the weak alternation cannot be allomorphy conditioned by the
-  following syllable rests on insertion from the root outward; it is not stated on
-  `DistributedMorphology.ComplexHead.insertAll`.
+* The strong items read [ACC] on the bundle of n, which stands for the case heads outside it;
+  they are not run through `DistributedMorphology.ComplexHead.insertAll`, and the paper's
+  contrast between the strong alternation, which reaches across a postposed quantifier, and the
+  weak one, which needs adjacency, is not stated on the engine's two localities.
 * The Stem-level tableaux for the sandhi of *pandem* 'bet' and *peḷḷām* 'wife' and the Stem-level
   Hasse diagram are not formalized.
 * The marks of the Word- and Phrase-level tableaux are not computed from representations of the
@@ -233,29 +238,6 @@ theorem weakN_ne_subsetPrinciple {F E : Type*} [DecidableEq F]
   rw [h] at hc
   exact not_isContiguous_weakN <| (isContiguous_comp_iff (h := fun a ↦ some (exp a))
     ((Option.some_injective E).comp hexp)).1 hc
-
-/-! ### The singular suffix -/
-
-/-- The exponent of n that the singular suffix follows. -/
-inductive NExponent where
-  | am
-  deriving DecidableEq, Repr
-
-/-- The exponents of Num in the singular. -/
-inductive NumExponent where
-  | ni | null
-  deriving DecidableEq, Repr
-
-/-- (40): Num is *-ni* after the exponent *-am* of n and null elsewhere. The context is the
-morpheme to the left, already realized when Num is. -/
-def numItems : RuleSet (VocabularyItem NExponent NumExponent) :=
-  [⟨{(-1, .am)}, .ni⟩, ∅ ⟷ .null]
-
--- (41)
-theorem numItems_am :
-    subsetPrinciple numItems { focus := ∅, leftCtx := [{.am}] } = some .ni ∧
-      subsetPrinciple numItems { focus := ∅, leftCtx := [∅] } = some .null := by
-  decide
 
 /-! ### The rows -/
 
@@ -570,6 +552,80 @@ theorem outputs_attested :
       WordCandQ.deleteNi.form = PhraseCandQ.faithful.form := by
   decide
 
+/-! ### Insertion from the root outward -/
+
+/-- The features of the morphemes of a weak noun, and of their exponents once inserted. -/
+inductive PF where
+  /-- The root is on the list of roots the n exponent *-am* follows. -/
+  | weak
+  /-- The nominalizer. -/
+  | n
+  /-- Singular Num. -/
+  | num
+  /-- A case head. -/
+  | case (c : Telugu.Case)
+  /-- The exponent is *-am*. -/
+  | am
+  /-- The first syllable of the exponent is light. -/
+  | light
+  deriving DecidableEq, Repr
+
+/-- An inserted exponent presents whether it is *-am* and whether its first syllable is light. -/
+def expFeatures (e : String) : Finset PF :=
+  (if e = "am" then {.am} else ∅) ∪
+    if weight? e.toList = some Syllable.Weight.light then {.light} else ∅
+
+/-- The case suffixes of `Telugu.Case`, null where a case has none. -/
+def caseItems : List (VocabularyItem PF String) :=
+  [Telugu.Case.nom, .acc, .gen, .dat].map fun c ↦
+    {.case c} ⟷ (c.exponents.head?.map (·.form)).getD ""
+
+/-- The Vocabulary Items of a weak noun: n is *-am* after the roots on its list, and (40) Num is
+*-ni* after the exponent *-am* and null elsewhere. -/
+def weakItems : List (VocabularyItem PF String) :=
+  [⟨{(0, .n), (-1, .weak)}, "am"⟩, ⟨{(0, .num), (-1, .am)}, "ni"⟩, {.num} ⟷ ""] ++ caseItems
+
+/-- (30): the rejected analysis has a second exponent of n, *-āni*, before a light syllable. -/
+def pcsaItems : List (VocabularyItem PF String) :=
+  [⟨{(0, .n), (-1, .weak)}, "am"⟩, ⟨{(0, .n), (-1, .weak), (1, .light)}, "āni"⟩] ++ caseItems
+
+/-- The complex head of *samudram* 'ocean' with the heads `hs` above its root. -/
+def ocean (hs : List (Finset PF)) : ComplexHead (Morpheme PF String) (Morpheme PF String) :=
+  ⟨⟨{.weak}, some "samudr", .after⟩, hs.map fun fs ↦ ⟨fs, none, .after⟩⟩
+
+/-- The exponents of a complex head after insertion from the root outward. -/
+def spell (voc : List (VocabularyItem PF String))
+    (w : ComplexHead (Morpheme PF String) (Morpheme PF String)) : List String :=
+  (w.insertAll (· = "") voc .hierarchical expFeatures .nondeletion).exponents
+
+-- (41), (57): insertion gives the inputs of the Word-level tableaux, *-ni* after *-am*
+theorem spell_weakItems :
+    (spell weakItems (ocean [{.n}, {.num}, {.case .dat}])).flatMap (·.toList) =
+        WordCandDat.faithful.form.toList ∧
+      (spell weakItems (ocean [{.n}, {.num}, {.case .nom}])).flatMap (·.toList) =
+        WordCandNom.destress.form.toList := by
+  decide
+
+/-- When n is inserted the morphemes outside it are bare and present no exponent, so an item of n
+that asks for a light syllable after it does not apply, whatever follows. -/
+theorem light_notMem_contextAt (w : ComplexHead (Morpheme PF String) (Morpheme PF String))
+    (hw : ∀ s ∈ w.heads, s.exp = none) (hl : ∀ s ∈ w.heads, PF.light ∉ s.feats) :
+    ((1 : ℤ), PF.light) ∉ w.contextAt (· = "") .hierarchical expFeatures 0 := by
+  have h := w.nth_contextAt_hierarchical (· = "") (expFeatures := expFeatures) (i := 0) (j := 1)
+    (Nat.zero_le _) one_ne_zero
+  simp only [Nat.cast_one, Nat.cast_zero, sub_zero] at h
+  rw [Neighborhood.mem_def, h, List.getD_eq_getElem?_getD, List.getElem?_map]
+  cases hs : w.heads[1]? with
+  | none => simp
+  | some s =>
+    have hm := List.mem_of_getElem? hs
+    simp [ComplexHead.visible_of_exp_none (hw s hm), hl s hm]
+
+-- (30) inserts *-am* in every case, the dative and accusative included
+theorem spell_pcsaItems :
+    ∀ c : Telugu.Case, (spell pcsaItems (ocean [{.n}, {.case c}]))[1]? = some "am" := by
+  decide
+
 /-! ### The grammars of the strata -/
 
 open Stratal Finset
@@ -593,8 +649,7 @@ private theorem ofRel_le_ofWinner {C : Type*} [Fintype C] {con : ConstraintSet C
   Concept.extent_subset_extent_iff.1 fun σ hσ ↦ (Grammar.mem_extent_ofWinner (mem_univ _)).2 <|
     h σ (Grammar.mem_extent_ofRel.1 hσ) ▸ mem_singleton_self _
 
-/-- The diagram (64) suffices for the Word level: each of its total rankings selects the winners
-of the three Word-level tableaux. -/
+-- (64) suffices for the Word level: each of its total rankings selects the three winners
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
   le_inf (le_inf (ofRel_le_ofWinner fun _ ↦ wordDat_optimal)
     (ofRel_le_ofWinner fun _ ↦ wordNom_optimal)) (ofRel_le_ofWinner fun _ ↦ wordQ_optimal)
