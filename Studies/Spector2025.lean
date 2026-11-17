@@ -319,8 +319,7 @@ theorem speaker_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w �
       ⟨by simp, rfl⟩⟩
   rw [speaker, maximinSpeaker_real_singleton_lt_iff
     (b := fun w ↦ Measure.count.prod (Measure.dirac w)) hα.le hb]
-  simp only [essInf_prod_dirac_parseListener, Measure.count_singleton, ne_eq, one_ne_zero,
-    not_false_eq_true, iInf_pos]
+  simp only [essInf_prod_dirac_parseListener, essInf_count]
   rw [← ENNReal.toReal_lt_toReal (weight_ne_top hα.le w _) (weight_ne_top hα.le w _),
     weight_toReal hw hσ, weight_toReal hw hτ, Real.exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
   constructor <;> intro h <;> linarith

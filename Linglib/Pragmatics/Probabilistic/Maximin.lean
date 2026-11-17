@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Core.MeasureTheory.Function.EssSup
 public import Linglib.Pragmatics.Probabilistic.Speaker
+public import Mathlib.MeasureTheory.Function.EssSup
 
 /-!
 # The MaxiMin speaker
@@ -36,10 +36,23 @@ speaker when her belief is a point mass, but she depends on her belief only thro
 it entertains, not through their probabilities. -/
 
 private theorem essInf_ne_top [Countable W] {β ν : Measure W} [IsFiniteMeasure ν]
-    (hβ : ∃ w, β {w} ≠ 0) : essInf (fun w ↦ ν {w}) β ≠ ∞ := by
-  obtain ⟨w, hw⟩ := hβ
-  rw [essInf_eq_biInf]
-  exact ne_top_of_le_ne_top (measure_ne_top ν {w}) (iInf₂_le w hw)
+    (hβ : ∃ w, β {w} ≠ 0) : essInf (fun w ↦ ν {w}) β ≠ ∞ :=
+  let ⟨w, hw⟩ := hβ
+  ne_top_of_le_ne_top (measure_ne_top ν {w}) (ae_iff_of_countable.1 ae_essInf_le w hw)
+
+/-- On a finite space the essential infimum is attained at a point of positive mass, so it
+vanishes exactly when the function does at such a point. -/
+private theorem essInf_eq_zero_iff [Finite W] {β : Measure W} {f : W → ℝ≥0∞} :
+    essInf f β = 0 ↔ ∃ w, β {w} ≠ 0 ∧ f w = 0 := by
+  refine ⟨fun h ↦ ?_, fun ⟨w, hw, h0⟩ ↦
+    le_bot_iff.1 <| (ae_iff_of_countable.1 ae_essInf_le w hw).trans_eq h0⟩
+  cases isEmpty_or_nonempty {w // β {w} ≠ 0}
+  · have : ⊤ ≤ essInf f β := le_essInf_of_ae_le ⊤ <| ae_iff_of_countable.2 fun w hw ↦
+      isEmptyElim (⟨w, hw⟩ : {w // β {w} ≠ 0})
+    simp [h] at this
+  · obtain ⟨⟨w, hw⟩, hmin⟩ := Finite.exists_min fun x : {w // β {w} ≠ 0} ↦ f x
+    exact ⟨w, hw, le_bot_iff.1 <|
+      (le_essInf_of_ae_le (f w) (ae_iff_of_countable.2 fun v hv ↦ hmin ⟨v, hv⟩)).trans_eq h⟩
 
 section MaxiMin
 
@@ -83,9 +96,10 @@ entertains. -/
 theorem maximinSpeaker_apply_singleton_eq_zero_iff (hα : 0 < α) (hb : ∃ w, b o {w} ≠ 0) :
     maximinSpeaker α C L b o {u} = 0 ↔ ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
   rw [maximinSpeaker_apply_singleton, ENNReal.div_eq_zero_iff,
-    or_iff_left (ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (essInf_ne_top hb) _),
+    or_iff_left (ENNReal.sum_ne_top.2 fun _ _ ↦
+      ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (essInf_ne_top hb) _),
     mul_eq_zero, or_iff_left (ENNReal.ofReal_exp_ne_zero _), ENNReal.rpow_eq_zero_iff_of_pos hα,
-    ENNReal.essInf_eq_zero_iff]
+    essInf_eq_zero_iff]
 
 /-- The MaxiMin speaker produces exactly the utterances the expected-utility speaker produces. -/
 theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o)] (hα : 0 < α)

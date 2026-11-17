@@ -71,20 +71,15 @@ theorem geomMean_prod_dirac_parseListener [Fintype ι] [Fintype W] :
   simp only [Measure.geomMean_prod, Measure.geomMean_dirac, parseListener_apply_singleton]
 
 omit [MeasurableSpace U] in
-/-- Under the belief `ν.prod (dirac w)` the essential infimum of the listener's mass is the least
-value of the parses' listeners at `w` over the parses `ν` allows. -/
-theorem essInf_prod_dirac_parseListener [Countable ι] [Countable W] :
+/-- Under the belief `ν.prod (dirac w)` the essential infimum of the listener's mass is that of
+the parses' listeners at `w` under `ν`. -/
+theorem essInf_prod_dirac_parseListener [SFinite ν] :
     essInf (fun p ↦ parseListener L u {p}) (ν.prod (Measure.dirac w)) =
-      ⨅ (i) (_ : ν {i} ≠ 0), L i u {w} := by
-  rw [essInf_eq_biInf]
-  refine le_antisymm (le_iInf₂ fun i hi ↦ ?_) (le_iInf₂ fun p hp ↦ ?_)
-  · rw [← parseListener_apply_singleton L u i w]
-    exact iInf₂_le (f := fun p (_ : ν.prod (Measure.dirac w) {p} ≠ 0) ↦ parseListener L u {p})
-      (i, w) ((Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, w)).2 ⟨hi, rfl⟩)
-  · obtain ⟨i, v⟩ := p
-    obtain ⟨hi, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, v)).1 hp
-    rw [parseListener_apply_singleton]
-    exact iInf₂_le (f := fun i (_ : ν {i} ≠ 0) ↦ L i u {v}) i hi
+      essInf (fun i ↦ L i u {w}) ν := by
+  rw [Measure.prod_dirac]
+  refine ((measurableEmbedding_prod_mk_right w).essSup_map_measure (β := ℝ≥0∞ᵒᵈ)).trans ?_
+  simp only [Function.comp_def, parseListener_apply_singleton]
+  rfl
 
 omit [MeasurableSpace U] in
 private theorem exists_prod_dirac_parseListener_eq_zero_iff :
