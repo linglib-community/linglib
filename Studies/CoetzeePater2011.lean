@@ -202,7 +202,7 @@ def conditions : ImposedRanking → Finset (ERC (Fin 4))
   | .starCTOverMaxFinal => {simpleERC 0 3}
 
 /-- The grammar of a row of (13), the one its ranking conditions present. -/
-def grammar (g : ImposedRanking) : Grammar (Fin 4) 4 := .ofERCs ↑(conditions g)
+def grammar (g : ImposedRanking) : Grammar.Enumeration (Fin 4) 4 := .ofERCs ↑(conditions g)
 
 /-- The rankings of a grammar of (13) as a finite set, for counting. -/
 def extensions (g : ImposedRanking) : Finset (Ranking.Enumeration (Fin 4) 4) :=
@@ -210,7 +210,7 @@ def extensions (g : ImposedRanking) : Finset (Ranking.Enumeration (Fin 4) 4) :=
 
 theorem coe_extensions (g : ImposedRanking) :
     (extensions g : Set (Ranking.Enumeration (Fin 4) 4)) = (grammar g).extent :=
-  Grammar.coe_linearExtensions _
+  Grammar.Enumeration.coe_linearExtensions _
 
 /-- The probability that a grammar of (13) deletes in `ctx`, the share of its rankings that
 delete (9). -/

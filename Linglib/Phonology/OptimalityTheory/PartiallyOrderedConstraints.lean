@@ -18,7 +18,7 @@ extensions, a total ranking, whose sole winner is the output. Anttila reads the 
 quantitatively: a candidate that wins under $n$ of the $t$ linear extensions has probability
 $n/t$, so the grammar is the uniform measure on its linear extensions and the
 [probabilities of the candidates sum to one](##sum_measure_setOf_picksAt). The same measure is
-defined on any `Grammar`, where a candidate's probability is the
+defined on any `Grammar.Enumeration`, where a candidate's probability is the
 [share of the grammar's rankings](##OptimalityTheory.Grammar.uniformOn_extent_picksAt) that
 satisfy the candidate's ERCs.
 
@@ -127,30 +127,32 @@ profiles a candidate is picked exactly by the rankings that satisfy its ERC agai
 its probability is the number of rankings of the grammar that satisfy those ERCs over the number
 of all its rankings, the two counts that [riggle-2010] calls r-volumes. -/
 
-section Grammar
+section Grammar.Enumeration
 
 open scoped ENNReal
 
 omit [Fintype ι] [DecidableEq ι] in
-theorem Grammar.isProbabilityMeasure_uniformOn (G : Grammar ι n) (h : G.extent.Nonempty) :
+theorem Grammar.Enumeration.isProbabilityMeasure_uniformOn (G : Grammar.Enumeration ι n)
+    (h : G.extent.Nonempty) :
     IsProbabilityMeasure (uniformOn G.extent) :=
   ProbabilityTheory.isProbabilityMeasure_uniformOn G.extent.toFinite h
 
 omit [Fintype ι] [DecidableEq ι] in
 /-- The uniform measure on the rankings of a grammar gives another grammar the share of the
 rankings that the two have in common. -/
-theorem Grammar.uniformOn_extent (G H : Grammar ι n) :
+theorem Grammar.Enumeration.uniformOn_extent (G H : Grammar.Enumeration ι n) :
     uniformOn G.extent H.extent = ((G ⊓ H).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
   rw [uniformOn_apply_of_finite G.extent.toFinite, Concept.extent_inf]
 
 omit [Fintype ι] [DecidableEq ι] in
 /-- The probability of a candidate under a grammar is the share of the grammar's rankings that
 satisfy the candidate's ERCs: Anttila's $n/t$ as a ratio of r-volumes. -/
-theorem Grammar.uniformOn_extent_picksAt (G : Grammar ι n) (ho : o ∈ S.gen i)
+theorem Grammar.Enumeration.uniformOn_extent_picksAt (G : Grammar.Enumeration ι n)
+    (ho : o ∈ S.gen i)
     (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
     uniformOn G.extent {σ | S.PicksAt σ i o} =
       ((G ⊓ .ofERCs (S.ercs i o)).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
-  rw [← Grammar.uniformOn_extent]
+  rw [← Grammar.Enumeration.uniformOn_extent]
   congr 1
   ext σ
   exact ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy ho hvp
@@ -158,11 +160,11 @@ theorem Grammar.uniformOn_extent_picksAt (G : Grammar ι n) (ho : o ∈ S.gen i)
 omit [Fintype ι] [DecidableEq ι] in
 /-- A grammar predicts a candidate, giving it nonzero probability, iff the candidate wins under
 one of its rankings ([anttila-1997]). -/
-theorem Grammar.uniformOn_extent_picksAt_ne_zero_iff (G : Grammar ι n) :
+theorem Grammar.Enumeration.uniformOn_extent_picksAt_ne_zero_iff (G : Grammar.Enumeration ι n) :
     uniformOn G.extent {σ | S.PicksAt σ i o} ≠ 0 ↔ ∃ σ ∈ G.extent, S.PicksAt σ i o :=
   uniformOn_ne_zero_iff G.extent.toFinite
 
-end Grammar
+end Grammar.Enumeration
 
 /-! ### Categorical outcomes -/
 

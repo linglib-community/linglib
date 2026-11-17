@@ -553,7 +553,7 @@ def comparative : List (ERC Con) :=
 
 /-- The grammar of the tableau: the rankings that satisfy its comparative tableau, those under
 which its winner is optimal. -/
-def grammar : Grammar Con 9 := .ofERCs {α | α ∈ t.comparative}
+def grammar : Grammar Con := .ofERCs {α | α ∈ t.comparative}
 
 /-- The segments of the winner. -/
 def output : List Segment := (read t.segs t.winner).output
@@ -562,8 +562,8 @@ variable {t} {R : Con → Con → Prop}
 
 theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
     σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal := by
-  rw [grammar, comparative, Grammar.ofERCs_comparative]
-  exact Grammar.mem_extent_ofWinner (List.mem_toFinset.2 h)
+  rw [grammar, comparative, Grammar.Enumeration.ofERCs_comparative]
+  exact Grammar.Enumeration.mem_extent_ofWinner (List.mem_toFinset.2 h)
 
 -- a winner whose comparative tableau holds of a diagram and has no neutral row is the sole
 -- optimal candidate under every total ranking extending the diagram
@@ -571,7 +571,7 @@ theorem optimal_eq (hw : t.winner ∈ t.candidates) (hle : .ofRel R ≤ t.gramma
     (hne : ∀ α ∈ t.comparative, ∃ k, α k ≠ .e) (hσ : σ.IsLinearExtension R) :
     (t.tableau σ).optimal = {t.winner} :=
   Tableau.ofRanking_optimal_eq_singleton_of_comparative ((mem_extent_grammar hw).1 <|
-    Concept.extent_subset_extent_iff.2 hle (Grammar.mem_extent_ofRel.2 hσ)) hne
+    Concept.extent_subset_extent_iff.2 hle (Grammar.Enumeration.mem_extent_ofRel.2 hσ)) hne
 
 end Evaluation
 
@@ -795,28 +795,28 @@ open Stratal
 
 /-- The grammar of the Word level: the rankings under which the winners of (59), (62) and (63)
 are optimal. -/
-def wordGrammar : Grammar Con 9 :=
+def wordGrammar : Grammar Con :=
   dativeWord.grammar ⊓ nominativeWord.grammar ⊓ quantifiedWord.grammar
 
 /-- The grammar of the Phrase level: the rankings under which the winners of (66) and (67) are
 optimal. -/
-def phraseGrammar : Grammar Con 9 := postpositional.grammar ⊓ quantifiedPhrase.grammar
+def phraseGrammar : Grammar Con := postpositional.grammar ⊓ quantifiedPhrase.grammar
 
 -- the grammars of the diagrams lie below the grammars of the strata
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
   le_inf (le_inf
-    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+    (Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below fun α hα ↦
       holds_word α (List.mem_append_left _ (List.mem_append_left _ hα)))
-    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+    (Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below fun α hα ↦
       holds_word α (List.mem_append_left _ (List.mem_append_right _ hα))))
-    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+    (Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below fun α hα ↦
       holds_word α (List.mem_append_right _ hα))
 
 theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
   le_inf
-    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+    (Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below fun α hα ↦
       holds_phrase α (List.mem_append_left _ hα))
-    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+    (Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below fun α hα ↦
       holds_phrase α (List.mem_append_right _ hα))
 
 -- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
@@ -861,7 +861,7 @@ theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
       fun α hα ↦ satisfiedBy_alignRLast α (List.mem_append_left _ (List.mem_append_right _ hα))⟩,
       fun α hα ↦ satisfiedBy_alignRLast α (List.mem_append_right _ hα)⟩
   have hext : alignRLast.IsLinearExtension word :=
-    Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
+    Grammar.Enumeration.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
   exact absurd hext (by decide)
 
 instance : Nonempty Con := ⟨.max⟩
@@ -870,7 +870,7 @@ instance : Nonempty Con := ⟨.max⟩
 -- winner one of them above *DIST-0, and the two rows fuse to one with no winner-preferring
 -- constraint
 theorem dativeWord_inf_postpositional : dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
-  Grammar.ofERCs_inf_ofERCs_eq_bot (α := .ofWL [.distZero] [.max, .identLength])
+  Grammar.Enumeration.ofERCs_inf_ofERCs_eq_bot (α := .ofWL [.distZero] [.max, .identLength])
     (β := .ofWL [.max, .identLength] [.distZero])
     (show _ ∈ dativeWord.comparative by rw [comparative_dativeWord]; decide +kernel)
     (show _ ∈ postpositional.comparative by rw [comparative_postpositional]; decide +kernel)

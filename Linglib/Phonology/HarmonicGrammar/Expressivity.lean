@@ -283,7 +283,8 @@ theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output �
       (hvp i hi)).2 fun α hα ↦ h α (mem_ercs.2 ⟨i, hi, hα⟩)
 
 /-- The grammar of a problem is the grammar that its winner–loser ERCs present. -/
-def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar (Fin n) n := .ofERCs P.ercs
+def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar.Enumeration
+    (Fin n) n := .ofERCs P.ercs
 
 /-- Provided no competitor ties the target's violation profile, the rankings of a problem's
     grammar are those that realize its target. -/
@@ -396,10 +397,10 @@ theorem realizedByPartialOrder_iff_le {P : RealizationProblem Input Output (Fin 
     {r : Fin n → Fin n → Prop}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
-    P.realizedByPartialOrder r ↔ Grammar.ofRel r ≤ P.grammar := by
+    P.realizedByPartialOrder r ↔ Grammar.Enumeration.ofRel r ≤ P.grammar := by
   rw [← Concept.extent_subset_extent_iff]
-  exact ⟨fun h σ hσ ↦ (mem_extent_grammar hvp).2 (h σ (Grammar.mem_extent_ofRel.1 hσ)),
-    fun h σ hσ ↦ (mem_extent_grammar hvp).1 (h (Grammar.mem_extent_ofRel.2 hσ))⟩
+  exact ⟨fun h σ hσ ↦ (mem_extent_grammar hvp).2 (h σ (Grammar.Enumeration.mem_extent_ofRel.1 hσ)),
+    fun h σ hσ ↦ (mem_extent_grammar hvp).1 (h (Grammar.Enumeration.mem_extent_ofRel.2 hσ))⟩
 
 end RealizationProblem
 

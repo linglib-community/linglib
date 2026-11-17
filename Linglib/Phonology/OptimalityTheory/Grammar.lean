@@ -44,14 +44,19 @@ variable {ι : Type*} {n : ℕ}
 /-- An *Optimality-theoretic grammar* over the constraints `ι`: a formal concept of the satisfaction
 relation between rankings and ERCs. Its extent is the set of its rankings and its intent the set
 of ERCs that all of them satisfy. -/
-abbrev Grammar (ι : Type*) (n : ℕ) := Concept (Ranking.Enumeration ι n) (ERC ι) ERC.SatisfiedBy
+abbrev Grammar.Enumeration (ι : Type*) (n : ℕ) :=
+  Concept (Ranking.Enumeration ι n) (ERC ι) ERC.SatisfiedBy
 
-namespace Grammar
+/-- The grammars over the constraints `ι`, with rankings given by the constraints alone. What is
+proved of a `Grammar.Enumeration ι n` holds of it. -/
+abbrev Grammar (ι : Type*) [Fintype ι] := Grammar.Enumeration ι (Fintype.card ι)
 
-variable {E E' : Set (ERC ι)} {σ : Ranking.Enumeration ι n} {G : Grammar ι n}
+namespace Grammar.Enumeration
+
+variable {E E' : Set (ERC ι)} {σ : Ranking.Enumeration ι n} {G : Grammar.Enumeration ι n}
 
 /-- The grammar presented by a set of ERCs, whose rankings are those satisfying all of them. -/
-abbrev ofERCs (E : Set (ERC ι)) : Grammar ι n := Concept.ofAttributes _ E
+abbrev ofERCs (E : Set (ERC ι)) : Grammar.Enumeration ι n := Concept.ofAttributes _ E
 
 theorem mem_extent_ofERCs : σ ∈ (ofERCs E).extent ↔ ∀ α ∈ E, α.SatisfiedBy σ := Iff.rfl
 
@@ -63,13 +68,13 @@ theorem coe_linearExtensions [Fintype ι] [DecidableEq ι] (E : Finset (ERC ι))
   rfl
 
 /-- Two sets of ERCs present the same grammar iff the same rankings satisfy them. -/
-theorem ofERCs_eq_iff : (ofERCs E : Grammar ι n) = ofERCs E' ↔
+theorem ofERCs_eq_iff : (ofERCs E : Grammar.Enumeration ι n) = ofERCs E' ↔
     ∀ σ : Ranking.Enumeration ι n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
   Concept.extent_injective.eq_iff.symm.trans Set.ext_iff
 
 /-- Over at least one constraint the bottom grammar has no ranking, since no ranking satisfies
 the ERC with every constraint loser-preferring. -/
-theorem extent_bot [Nonempty ι] : (⊥ : Grammar ι n).extent = ∅ := by
+theorem extent_bot [Nonempty ι] : (⊥ : Grammar.Enumeration ι n).extent = ∅ := by
   obtain ⟨i⟩ := ‹Nonempty ι›
   refine Set.eq_empty_of_forall_notMem fun σ hσ ↦ ?_
   have h : ERC.SatisfiedBy σ (fun _ ↦ .L) :=
@@ -85,7 +90,7 @@ theorem eq_bot_iff_extent [Nonempty ι] : G = ⊥ ↔ G.extent = ∅ :=
 /-- Two grammars share no ranking when an ERC of the one and an ERC of the other fuse to an ERC
 with an `L` and no `W`. -/
 theorem ofERCs_inf_ofERCs_eq_bot [Nonempty ι] {α β : ERC ι} (hα : α ∈ E) (hβ : β ∈ E')
-    (h : (α.fuse β).IsContradictory) : (ofERCs E ⊓ ofERCs E' : Grammar ι n) = ⊥ :=
+    (h : (α.fuse β).IsContradictory) : (ofERCs E ⊓ ofERCs E' : Grammar.Enumeration ι n) = ⊥ :=
   eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun _ ⟨h₁, h₂⟩ ↦
     ERC.not_satisfiedBy_of_isContradictory_fuse h (h₁ hα) (h₂ hβ)
 
@@ -93,7 +98,8 @@ theorem ofERCs_inf_ofERCs_eq_bot [Nonempty ι] {α β : ERC ι} (hα : α ∈ E)
 
 /-- The antimatroid of a grammar with a ranking: the antimatroid of its conditions, whose feasible
 sets are the top segments of its rankings (`toAntimatroid_isFeasible`). -/
-def toAntimatroid [Fintype ι] (G : Grammar ι n) (h : G.extent.Nonempty) : Antimatroid ι :=
+def toAntimatroid [Fintype ι] (G : Grammar.Enumeration ι n)
+    (h : G.extent.Nonempty) : Antimatroid ι :=
   ERC.toAntimatroid G.intent (h.imp fun _ hσ _ hα ↦ G.rel_extent_intent hσ hα)
 
 theorem toAntimatroid_isFeasible [Fintype ι] (h : G.extent.Nonempty) (S : Set ι) :
@@ -103,11 +109,11 @@ theorem toAntimatroid_isFeasible [Fintype ι] (h : G.extent.Nonempty) (S : Set �
 
 /-- The antimatroid of the grammar that a set of ERCs presents is the antimatroid of the set. -/
 theorem toAntimatroid_ofERCs_isFeasible [Fintype ι]
-    (h : (ofERCs E : Grammar ι n).extent.Nonempty) (S : Set ι) :
+    (h : (ofERCs E : Grammar.Enumeration ι n).extent.Nonempty) (S : Set ι) :
     ((ofERCs E).toAntimatroid h).IsFeasible S ↔ ERC.IsFeasible n E S :=
   toAntimatroid_isFeasible h S
 
-end Grammar
+end Grammar.Enumeration
 
 /-! ### The grammar of a winner -/
 
@@ -118,12 +124,13 @@ variable {C : Type*} {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
 
 /-- The grammar of a winner among the candidates of a tableau, presented by its ERC against each
 candidate. -/
-def Grammar.ofWinner (con : ConstraintSet C ι) (candidates : Finset C) (w : C) : Grammar ι n :=
+def Grammar.Enumeration.ofWinner (con : ConstraintSet C ι) (candidates : Finset C)
+    (w : C) : Grammar.Enumeration ι n :=
   .ofERCs ((fun l ↦ ercOfProfiles (con · w) (con · l)) '' candidates)
 
 /-- The rankings of the grammar of a winner are those under which it is optimal. -/
-theorem Grammar.mem_extent_ofWinner (hw : w ∈ candidates) :
-    σ ∈ (Grammar.ofWinner con candidates w).extent ↔
+theorem Grammar.Enumeration.mem_extent_ofWinner (hw : w ∈ candidates) :
+    σ ∈ (Grammar.Enumeration.ofWinner con candidates w).extent ↔
       w ∈ (Tableau.ofRanking con σ candidates).optimal := by
   rw [Tableau.ofRanking_mem_optimal_iff_satisfiedBy, and_iff_right hw]
   exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
@@ -134,9 +141,10 @@ def comparative (con : ConstraintSet C ι) (w : C) (losers : List C) : List (ERC
   losers.map fun d ↦ ercOfProfiles (con · w) (con · d)
 
 /-- The grammar of a winner is the grammar its comparative tableau presents. -/
-theorem Grammar.ofERCs_comparative [DecidableEq C] (l : List C) :
-    (Grammar.ofERCs {α | α ∈ comparative con w (l.filter (· ≠ w))} : Grammar ι n) =
-      Grammar.ofWinner con l.toFinset w := by
+theorem Grammar.Enumeration.ofERCs_comparative [DecidableEq C] (l : List C) :
+    (Grammar.Enumeration.ofERCs {α | α ∈ comparative con w (l.filter
+        (· ≠ w))} : Grammar.Enumeration ι n) =
+      Grammar.Enumeration.ofWinner con l.toFinset w := by
   refine Concept.ext (Set.ext fun σ ↦ ⟨fun h ↦ ?_, fun h α hα ↦ ?_⟩)
   · rintro _ ⟨d, hd, rfl⟩
     by_cases hdw : d = w
@@ -162,14 +170,16 @@ theorem Tableau.ofRanking_optimal_eq_singleton_of_comparative [DecidableEq C] {l
 
 /-- Two winners are optimal together under no ranking when an ERC of the one and an ERC of the
 other fuse to an ERC with an `L` and no `W`. -/
-theorem Grammar.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
+theorem Grammar.Enumeration.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
     {con' : ConstraintSet C' ι} {candidates' : Finset C'} {w' : C'} {d : C} {d' : C'}
     (hd : d ∈ candidates) (hd' : d' ∈ candidates')
     (h : ((ercOfProfiles (con · w) (con · d)).fuse
       (ercOfProfiles (con' · w') (con' · d'))).IsContradictory) :
-    (Grammar.ofWinner con candidates w ⊓ Grammar.ofWinner con' candidates' w' : Grammar ι n) =
+    (Grammar.Enumeration.ofWinner con candidates w ⊓
+      Grammar.Enumeration.ofWinner con' candidates' w' : Grammar.Enumeration ι n) =
       ⊥ :=
-  Grammar.ofERCs_inf_ofERCs_eq_bot ⟨d, Finset.mem_coe.2 hd, rfl⟩ ⟨d', Finset.mem_coe.2 hd', rfl⟩ h
+  Grammar.Enumeration.ofERCs_inf_ofERCs_eq_bot ⟨d, Finset.mem_coe.2 hd, rfl⟩
+    ⟨d', Finset.mem_coe.2 hd', rfl⟩ h
 
 end Winner
 
@@ -209,10 +219,10 @@ theorem ERC.isSimple_or_isTrivial_of_mem_ofRel {α : ERC ι} (hα : α ∈ ERC.o
   exact simpleERC_isSimple_or_isTrivial a b
 
 /-- The grammar of a relation on the constraints, whose rankings are its linear extensions. -/
-def Grammar.ofRel (r : ι → ι → Prop) : Grammar ι n := .ofERCs (ERC.ofRel r)
+def Grammar.Enumeration.ofRel (r : ι → ι → Prop) : Grammar.Enumeration ι n := .ofERCs (ERC.ofRel r)
 
-@[simp] theorem Grammar.mem_extent_ofRel :
-    σ ∈ (Grammar.ofRel r).extent ↔ σ.IsLinearExtension r :=
+@[simp] theorem Grammar.Enumeration.mem_extent_ofRel :
+    σ ∈ (Grammar.Enumeration.ofRel r).extent ↔ σ.IsLinearExtension r :=
   ERC.forall_mem_ofRel_satisfiedBy_iff
 
 omit [DecidableEq ι] in
@@ -275,22 +285,24 @@ theorem ERC.holds_iff_forall_satisfiedBy [Fintype ι] [ht : IsTrans ι r] [ha : 
 
 /-- The intent of the grammar of a transitive antisymmetric relation: the ERCs that hold of
 it. -/
-theorem Grammar.mem_intent_ofRel [Fintype ι] [IsTrans ι r] [Std.Antisymm r] {α : ERC ι}
+theorem Grammar.Enumeration.mem_intent_ofRel [Fintype ι] [IsTrans ι r] [Std.Antisymm r] {α : ERC ι}
     (hn : Fintype.card ι = n := by simp) :
-    α ∈ (Grammar.ofRel r : Grammar ι n).intent ↔ α.Holds r := by
+    α ∈ (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n).intent ↔ α.Holds r := by
   rw [ERC.holds_iff_forall_satisfiedBy hn, ← Concept.upperPolar_extent]
-  exact forall_congr' fun σ ↦ by rw [Grammar.mem_extent_ofRel]
+  exact forall_congr' fun σ ↦ by rw [Grammar.Enumeration.mem_extent_ofRel]
 
 /-- The grammar of a diagram lies below the grammar of a winner iff each of the winner's ERCs
 holds of the diagram: the winner is optimal under every ranking that extends the diagram. -/
-theorem Grammar.ofRel_le_ofWinner_iff [Fintype ι] [IsTrans ι r] [Std.Antisymm r] {C : Type*}
+theorem Grammar.Enumeration.ofRel_le_ofWinner_iff [Fintype ι] [IsTrans ι r] [Std.Antisymm r]
+    {C : Type*}
     {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
     (hn : Fintype.card ι = n := by simp) :
-    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofWinner con candidates w ↔
+    (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n) ≤
+        Grammar.Enumeration.ofWinner con candidates w ↔
       ∀ d ∈ candidates, (ercOfProfiles (con · w) (con · d)).Holds r := by
-  rw [Grammar.ofWinner, Concept.le_ofAttributes_iff]
-  exact ⟨fun h d hd ↦ (Grammar.mem_intent_ofRel hn).1 (h ⟨d, Finset.mem_coe.2 hd, rfl⟩),
-    by rintro h _ ⟨d, hd, rfl⟩; exact (Grammar.mem_intent_ofRel hn).2 (h d hd)⟩
+  rw [Grammar.Enumeration.ofWinner, Concept.le_ofAttributes_iff]
+  exact ⟨fun h d hd ↦ (Grammar.Enumeration.mem_intent_ofRel hn).1 (h ⟨d, Finset.mem_coe.2 hd, rfl⟩),
+    by rintro h _ ⟨d, hd, rfl⟩; exact (Grammar.Enumeration.mem_intent_ofRel hn).2 (h d hd)⟩
 
 /-! ### Diagrams given by their edges
 
@@ -325,42 +337,51 @@ theorem transGen_of_mem_below [Fintype ι] {R : ι → ι → Prop} [DecidableRe
 
 /-- If each ERC of a set holds of the constraints the edges of a diagram put below one another,
 the grammar of the diagram lies below the grammar the set presents. -/
-theorem Grammar.ofRel_le_ofERCs_of_holds_below [Fintype ι] [DecidableRel r] {E : Set (ERC ι)}
+theorem Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below [Fintype ι] [DecidableRel r] {E : Set
+    (ERC ι)}
     (h : ∀ α ∈ E, α.Holds fun a b ↦ b ∈ below r a) :
-    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofERCs E :=
+    (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n) ≤ Grammar.Enumeration.ofERCs E :=
   Concept.extent_subset_extent_iff.1 fun _ hσ α hα ↦
     ((h α hα).mono fun _ _ ↦ transGen_of_mem_below).satisfiedBy
-      (Grammar.mem_extent_ofRel.1 hσ).transGen
+      (Grammar.Enumeration.mem_extent_ofRel.1 hσ).transGen
 
 /-- If each ERC of a winner holds of the constraints the edges of a diagram put below one
 another, the grammar of the diagram lies below the grammar of the winner: the winner is optimal
 under every ranking that extends the diagram. -/
-theorem Grammar.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r] {C : Type*}
+theorem Grammar.Enumeration.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r]
+    {C : Type*}
     {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
     (h : ∀ d ∈ candidates, (ercOfProfiles (con · w) (con · d)).Holds fun a b ↦ b ∈ below r a) :
-    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofWinner con candidates w :=
-  Grammar.ofRel_le_ofERCs_of_holds_below (by rintro _ ⟨d, hd, rfl⟩; exact h d hd)
+    (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n) ≤
+        Grammar.Enumeration.ofWinner con candidates w :=
+  Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below (by rintro _ ⟨d, hd, rfl⟩; exact h d hd)
 
-theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
-    (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.Enumeration.linearExtensions
+theorem Grammar.Enumeration.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
+    (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n).extent =
+        ↑(Ranking.Enumeration.linearExtensions
         (n := n) r) := by
   ext σ
-  rw [Grammar.mem_extent_ofRel, Finset.mem_coe, Ranking.Enumeration.mem_linearExtensions]
+  rw [Grammar.Enumeration.mem_extent_ofRel, Finset.mem_coe,
+    Ranking.Enumeration.mem_linearExtensions]
 
 /-- A ranking is the only ranking of the grammar of its own order. -/
-theorem Grammar.extent_ofRel_toRel (σ : Ranking.Enumeration ι n) :
-    (Grammar.ofRel σ.toRel).extent = {σ} := by
+theorem Grammar.Enumeration.extent_ofRel_toRel (σ : Ranking.Enumeration ι n) :
+    (Grammar.Enumeration.ofRel σ.toRel).extent = {σ} := by
   ext τ
-  rw [Grammar.mem_extent_ofRel, Set.mem_singleton_iff, Ranking.Enumeration.IsLinearExtension,
+  rw [Grammar.Enumeration.mem_extent_ofRel, Set.mem_singleton_iff,
+    Ranking.Enumeration.IsLinearExtension,
     Ranking.Enumeration.toRel_le_toRel_iff, eq_comm]
 
 /-- The grammar of a partial order has a ranking. -/
-theorem Grammar.extent_ofRel_nonempty [Fintype ι] (r : ι → ι → Prop) [IsPartialOrder ι r]
-    (hn : Fintype.card ι = n := by simp) : (Grammar.ofRel r : Grammar ι n).extent.Nonempty :=
-  (Ranking.Enumeration.exists_isLinearExtension r hn).imp fun _ ↦ Grammar.mem_extent_ofRel.2
+theorem Grammar.Enumeration.extent_ofRel_nonempty [Fintype ι] (r : ι → ι → Prop)
+    [IsPartialOrder ι r]
+    (hn : Fintype.card ι = n := by simp) :
+        (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n).extent.Nonempty :=
+  (Ranking.Enumeration.exists_isLinearExtension r hn).imp fun _ ↦
+    Grammar.Enumeration.mem_extent_ofRel.2
 
 private theorem forall_isFeasible_ofRel_iff [Fintype ι]
-    (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)
+    (h : (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n).extent.Nonempty)
     {S : Finset ι} :
     (∀ α ∈ ERC.ofRel r, ERC.IsFeasible n {α} (S : Set ι)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
@@ -384,12 +405,12 @@ private theorem forall_isFeasible_ofRel_iff [Fintype ι]
 /-- The feasible sets of the antimatroid of a relation's grammar are its order ideals, the sets
 containing every constraint that the relation ranks above one of their members
 ([dilworth-1940], [merchant-riggle-2016]). -/
-theorem Grammar.toAntimatroid_ofRel_isFeasible [Fintype ι]
-    (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)
+theorem Grammar.Enumeration.toAntimatroid_ofRel_isFeasible [Fintype ι]
+    (h : (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n).extent.Nonempty)
     {S : Finset ι} :
-    ((Grammar.ofRel r).toAntimatroid h).IsFeasible (↑S : Set ι) ↔
+    ((Grammar.Enumeration.ofRel r).toAntimatroid h).IsFeasible (↑S : Set ι) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
-  refine (Grammar.toAntimatroid_ofERCs_isFeasible (E := ERC.ofRel r) h _).trans ?_
+  refine (Grammar.Enumeration.toAntimatroid_ofERCs_isFeasible (E := ERC.ofRel r) h _).trans ?_
   rw [ERC.isFeasible_iff_forall_singleton_of_simple h
     fun _ ↦ ERC.isSimple_or_isTrivial_of_mem_ofRel]
   exact forall_isFeasible_ofRel_iff h

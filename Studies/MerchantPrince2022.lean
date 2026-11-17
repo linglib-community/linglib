@@ -73,13 +73,13 @@ def rowERCs (t : Tableau C n) (w : C) : Finset (ERC (Fin n)) :=
 /-- The **grammar of a tableau row** is the grammar that the row's ERC set presents
 ([merchant-prince-2022]; [merchant-riggle-2016]). It has a leg exactly when `w` is an optimum
 that no competitor harmonically bounds. -/
-def rowGrammar (t : Tableau C n) (w : C) : Grammar (Fin n) n :=
-  Grammar.ofERCs ↑(rowERCs t w)
+def rowGrammar (t : Tableau C n) (w : C) : Grammar.Enumeration (Fin n) n :=
+  Grammar.Enumeration.ofERCs ↑(rowERCs t w)
 
 @[simp] theorem mem_rowGrammar_extent {t : Tableau C n} {w : C} {r : Ranking.Enumeration
     (Fin n) n} :
     r ∈ (rowGrammar t w).extent ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α :=
-  Grammar.mem_extent_ofERCs
+  Grammar.Enumeration.mem_extent_ofERCs
 
 theorem mem_rowGrammar_extent_iff_lex {t : Tableau C n} {w : C} {r : Ranking.Enumeration
     (Fin n) n} :
