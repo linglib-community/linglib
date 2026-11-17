@@ -394,8 +394,9 @@ variable {σ : Ranking Con}
 
 A candidate is written as the paper prints it, with feet in parentheses, syllables separated by
 periods and stress marks, and is read against the segments of its input: each of its segments has
-the position of the input segment it continues, a long vowel taking one position twice. Its marks
-are computed from that. -/
+the position of the input segment it continues, a long vowel taking one position twice. The
+form is converted to a candidate of the substrate, a moraic form of the input and of the output
+in correspondence, and its marks are computed from that. -/
 
 /-- A syllable of a candidate: its segments with their positions in the input, and whether it
 is printed with a stress mark. -/
@@ -404,7 +405,7 @@ structure Syl where
   stressed : Bool
   deriving DecidableEq
 
-/-- A parse: feet, each a list of syllables, and syllables outside the feet. -/
+/-- A printed form: feet, each a list of syllables, and syllables outside the feet. -/
 abbrev Printed := List (List Syl ⊕ Syl)
 
 /-- The stress marks. -/
