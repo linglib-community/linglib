@@ -121,6 +121,19 @@ theorem Grammar.mem_extent_ofWinner (hw : w ∈ candidates) :
   rw [Tableau.ofRanking_mem_optimal_iff_satisfiedBy, and_iff_right hw]
   exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
 
+/-- Two winners are optimal together under no ranking when an ERC of the one and an ERC of the
+other fuse to an ERC with an `L` and no `W`. -/
+theorem Grammar.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
+    {con' : ConstraintSet C' ι} {candidates' : Finset C'} {w' : C'} {d : C} {d' : C'}
+    (hd : d ∈ candidates) (hd' : d' ∈ candidates')
+    (h : ((ercOfProfiles (con · w) (con · d)).fuse
+      (ercOfProfiles (con' · w') (con' · d'))).IsContradictory) :
+    (Grammar.ofWinner con candidates w ⊓ Grammar.ofWinner con' candidates' w' : Grammar ι n) =
+      ⊥ :=
+  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun _ ⟨h₁, h₂⟩ ↦
+    ERC.not_satisfiedBy_of_isContradictory_fuse h (h₁ ⟨d, Finset.mem_coe.2 hd, rfl⟩)
+      (h₂ ⟨d', Finset.mem_coe.2 hd', rfl⟩)
+
 end Winner
 
 /-! ### The grammars of a typology -/

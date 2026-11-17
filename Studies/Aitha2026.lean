@@ -638,15 +638,15 @@ def phraseTableaux : List Evaluation := [postpositional, quantifiedPhrase]
 
 -- (64) suffices for the Word level: the ERCs of the winners of (59), (62) and (63) hold of it
 theorem holds_word : ∀ t ∈ wordTableaux, t.Holds word := by
-  decide
+  decide +kernel
 
 -- (68) suffices for (66) and (67)
 theorem holds_phrase : ∀ t ∈ phraseTableaux, t.Holds phrase := by
-  decide
+  decide +kernel
 
 -- no other candidate of a tableau has its winner's marks
 theorem unique : ∀ t ∈ wordTableaux ++ phraseTableaux, t.Unique := by
-  decide
+  decide +kernel
 
 -- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
 theorem optimal_word (hσ : σ.IsLinearExtension word) :
@@ -662,7 +662,7 @@ theorem optimal_phrase (hσ : σ.IsLinearExtension phrase) :
 theorem onset_dominated (h : quantifiedWord.winner ∈ (quantifiedWord.tableau σ).optimal) :
     σ.Dominates .distZero .onset :=
   Tableau.dominates_of_mem_ofRanking_optimal h (d := "(ˈsa.mu).(ˌdram).(ˌnan).(ˌta.ṭi).ni")
-    (by decide) (by decide) (by decide)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- The morphs of the noun of a row, without the null ones. -/
 def surface? (e : Datum) : Option (List Char) :=
@@ -673,7 +673,7 @@ theorem outputs_attested :
     (surface? Examples.ocean_nom).map segments = some nominativeWord.output ∧
       (surface? Examples.ocean_dat).map segments = some dativeWord.output ∧
       (surface? Examples.ocean_whole_acc).map segments = some quantifiedPhrase.output := by
-  decide
+  decide +kernel
 
 /-! ### Insertion from the root outward -/
 
@@ -727,7 +727,7 @@ theorem spell_weakItems :
         dativeWord.segs ∧
       segments ((spell weakItems (ocean [{.n}, {.num}, {.case .nom}])).flatMap (·.toList)) =
         nominativeWord.segs := by
-  decide
+  decide +kernel
 
 /-- When n is inserted the morphemes outside it are bare and present no exponent, so an item of n
 that asks for a light syllable after it does not apply, whatever follows. -/
@@ -747,7 +747,7 @@ theorem light_notMem_contextAt (w : ComplexHead (Morpheme PF String) (Morpheme P
 -- (30) inserts *-am* in every case, the dativeWord and accusative included
 theorem spell_pcsaItems :
     ∀ c : Telugu.Case, (spell pcsaItems (ocean [{.n}, {.case c}]))[1]? = some "am" := by
-  decide
+  decide +kernel
 
 /-! ### The grammars of the strata -/
 
@@ -764,11 +764,11 @@ def phraseGrammar : Grammar Con 9 := postpositional.grammar ⊓ quantifiedPhrase
 
 -- the grammars of the diagrams lie below the grammars of the strata
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
-  le_inf (le_inf (holds_word _ (by decide)).ofRel_le (holds_word _ (by decide)).ofRel_le)
-    (holds_word _ (by decide)).ofRel_le
+  le_inf (le_inf (holds_word _ (by decide +kernel)).ofRel_le (holds_word _ (by decide +kernel)).ofRel_le)
+    (holds_word _ (by decide +kernel)).ofRel_le
 
 theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
-  le_inf (holds_phrase _ (by decide)).ofRel_le (holds_phrase _ (by decide)).ofRel_le
+  le_inf (holds_phrase _ (by decide +kernel)).ofRel_le (holds_phrase _ (by decide +kernel)).ofRel_le
 
 /-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
 def alignRLast : Ranking Con 9 :=
@@ -779,31 +779,21 @@ def alignRLast : Ranking Con 9 :=
 -- their winners are optimal with it ranked last
 theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
   have hmem : alignRLast ∈ wordGrammar.extent :=
-    ⟨⟨(dativeWord.mem_extent_grammar (by decide)).2 (by decide),
-      (nominativeWord.mem_extent_grammar (by decide)).2 (by decide)⟩,
-      (quantifiedWord.mem_extent_grammar (by decide)).2 (by decide)⟩
+    ⟨⟨(dativeWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel),
+      (nominativeWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel)⟩,
+      (quantifiedWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel)⟩
   have hext : alignRLast.IsLinearExtension word :=
     Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
-  exact absurd hext (by decide)
+  exact absurd hext (by decide +kernel)
 
 instance : Nonempty Con := ⟨.max⟩
 
--- (59), (66): *DIST-0 above MAX and IDENT-length in the word, one of them above it in the phrase
-theorem dativeWord_inf_postpositional :
-    dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
-  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun σ ⟨hw, hp⟩ ↦ by
-    have hw := (dativeWord.mem_extent_grammar (by decide)).1 hw
-    obtain ⟨i, hi, hdom⟩ := Tableau.exists_dominates_of_mem_ofRanking_optimal
-      ((postpositional.mem_extent_grammar (by decide)).1 hp) (d := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)")
-      (by decide) (j := .distZero) (by decide)
-    have key : ∀ k, postpositional.marks k postpositional.winner <
-        postpositional.marks k "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)" → k = .max ∨ k = .identLength := by
-      decide
-    rcases key i hi with rfl | rfl
-    · exact lt_asymm hdom (Tableau.dominates_of_mem_ofRanking_optimal hw
-        (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)") (by decide) (by decide) (by decide))
-    · exact lt_asymm hdom (Tableau.dominates_of_mem_ofRanking_optimal hw
-        (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)") (by decide) (by decide) (by decide))
+-- (59), (66): the dative winner needs *DIST-0 above MAX and IDENT-length, the postpositional
+-- winner one of them above *DIST-0, and the two conditions fuse to one with no winner-preferring
+-- constraint
+theorem dativeWord_inf_postpositional : dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
+  Grammar.ofWinner_inf_ofWinner_eq_bot (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)")
+    (d' := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)") (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- The strata are different grammars: no ranking of the constraints makes the winners of the
 Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
@@ -820,9 +810,9 @@ theorem reranked :
       Reranked (Above word) (Above phrase) .identStress .max ∧
       Reranked (Above word) (Above phrase) .maxMora .identLength ∧
       Reranked (Above word) (Above phrase) .identStress .onset := by
-  decide
+  decide +kernel
 
 -- the Word-level diagram does not rank FT-BIN and *DIST-0
-example : ¬ Reranked (Above word) (Above phrase) .distZero .ftBin := by decide
+example : ¬ Reranked (Above word) (Above phrase) .distZero .ftBin := by decide +kernel
 
 end Aitha2026

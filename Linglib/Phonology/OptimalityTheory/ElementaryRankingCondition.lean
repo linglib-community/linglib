@@ -65,10 +65,9 @@ exactly when the ranking satisfies its ERC against every competitor.
 
 ## TODO
 
-Prince's fusion calculus. The fusion of two ERCs is computed coordinatewise, with `L`
-absorbing, `e` the identity, and each value idempotent. Its main results, in terms of
+Prince's fusion calculus has its first result here, that a ranking satisfying two ERCs satisfies
+their fusion (`ERC.SatisfiedBy.fuse`). Its other main results, in terms of
 `ERC.linearExtensions`:
-* a set of ERCs entails its fusion;
 * a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`;
 * a set entails an ERC iff the fusion of some subset entails it.
 
@@ -185,6 +184,66 @@ theorem Holds.mono {R S : ι → ι → Prop} {α : ERC ι} (h : α.Holds R) (hR
 /-- A ranking satisfies an ERC iff the ERC holds of its dominance. -/
 theorem satisfiedBy_iff_holds : α.SatisfiedBy r ↔ α.Holds r.Dominates :=
   satisfiedBy_iff_dominance r α
+
+/-! ### Fusion -/
+
+/-- The fusion of two ERC values ([prince-2002]): `L` absorbs, `e` is the identity, and each
+value is idempotent. -/
+def _root_.OptimalityTheory.ERCVal.fuse : ERCVal → ERCVal → ERCVal
+  | .L, _ | _, .L => .L
+  | .W, _ | _, .W => .W
+  | .e, .e => .e
+
+/-- The fusion of two ERCs, coordinatewise. -/
+def fuse (α β : ERC ι) : ERC ι := fun k ↦ (α k).fuse (β k)
+
+variable {r α} {β : ERC ι} {k : ι}
+
+theorem fuse_eq_L_iff : α.fuse β k = .L ↔ α k = .L ∨ β k = .L := by
+  unfold fuse
+  cases α k <;> cases β k <;> decide
+
+theorem fuse_eq_W_iff :
+    α.fuse β k = .W ↔ (α k = .W ∨ β k = .W) ∧ α k ≠ .L ∧ β k ≠ .L := by
+  unfold fuse
+  cases α k <;> cases β k <;> decide
+
+/-- A ranking that satisfies two ERCs satisfies their fusion. -/
+theorem SatisfiedBy.fuse (hα : α.SatisfiedBy r) (hβ : β.SatisfiedBy r) :
+    (α.fuse β).SatisfiedBy r := by
+  rw [satisfiedBy_iff_holds] at hα hβ ⊢
+  intro j hj
+  -- some constraint preferring a winner dominates `j`
+  obtain ⟨i₀, hi₀, hi₀j⟩ : ∃ i, (α i = .W ∨ β i = .W) ∧ r.Dominates i j := by
+    rcases fuse_eq_L_iff.1 hj with h | h
+    · exact (hα j h).imp fun i hi ↦ ⟨Or.inl hi.1, hi.2⟩
+    · exact (hβ j h).imp fun i hi ↦ ⟨Or.inr hi.1, hi.2⟩
+  -- take the most dominant such constraint
+  let P : Finset (Fin n) := {p | α (r p) = .W ∨ β (r p) = .W}
+  have hP : P.Nonempty := ⟨r.symm i₀, by simpa [P] using hi₀⟩
+  have hmem := P.min'_mem hP
+  have hmin : ∀ i, (α i = .W ∨ β i = .W) → P.min' hP ≤ r.symm i := fun i hi ↦
+    P.min'_le _ (by simpa [P] using hi)
+  refine ⟨r (P.min' hP), fuse_eq_W_iff.2 ⟨by simpa [P] using hmem, fun h ↦ ?_, fun h ↦ ?_⟩, ?_⟩
+  · obtain ⟨i, hi, hd⟩ := hα _ h
+    exact absurd (hmin i (Or.inl hi)) (not_le.2 (by simpa [Ranking.Dominates] using hd))
+  · obtain ⟨i, hi, hd⟩ := hβ _ h
+    exact absurd (hmin i (Or.inr hi)) (not_le.2 (by simpa [Ranking.Dominates] using hd))
+  · exact lt_of_le_of_lt (by simpa using hmin i₀ hi₀) hi₀j
+
+/-- No ranking satisfies an ERC with an `L` and no `W`. -/
+theorem IsContradictory.not_satisfiedBy (h : α.IsContradictory) : ¬ α.SatisfiedBy r :=
+  fun hs ↦ by
+    obtain ⟨k, hk⟩ := h.2
+    obtain ⟨i, hi, -⟩ := (satisfiedBy_iff_holds r α).1 hs k hk
+    exact h.1 i hi
+
+/-- Two ERCs whose fusion has an `L` and no `W` are satisfied by no ranking together. -/
+theorem not_satisfiedBy_of_isContradictory_fuse (h : (α.fuse β).IsContradictory)
+    (hα : α.SatisfiedBy r) : ¬ β.SatisfiedBy r :=
+  fun hβ ↦ h.not_satisfiedBy (hα.fuse hβ)
+
+variable (r α)
 
 instance : Decidable (α.SatisfiedBy r) :=
   inferInstanceAs (Decidable (toLex 0 ≤ toLex (α ∘ r)))
