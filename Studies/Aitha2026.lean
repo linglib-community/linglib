@@ -13,6 +13,7 @@ public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.Stratal
 public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Phonology.OptimalityTheory.Candidate
 public import Linglib.Phonology.Prosody.Foot
 public import Mathlib.Tactic.DeriveFintype
 public import Studies.Caha2009
@@ -404,7 +405,7 @@ structure Syl where
   deriving DecidableEq
 
 /-- A parse: feet, each a list of syllables, and syllables outside the feet. -/
-abbrev Parse := List (List Syl ⊕ Syl)
+abbrev Printed := List (List Syl ⊕ Syl)
 
 /-- The stress marks. -/
 def stressMarks : List Char := ['ˈ', 'ˌ']
@@ -442,13 +443,13 @@ def chunk {α : Type*} : List α → List ℕ → List (List α)
   | l, n :: ns => l.take n :: chunk (l.drop n) ns
 
 /-- The syllables `l` grouped as the printed feet and strays `raw`. -/
-def regroup : List (List (List Char) ⊕ List Char) → List Syl → Parse
+def regroup : List (List (List Char) ⊕ List Char) → List Syl → Printed
   | [], _ => []
   | .inl f :: r, l => .inl (l.take f.length) :: regroup r (l.drop f.length)
   | .inr _ :: r, l => (l.head?.map Sum.inr).toList ++ regroup r l.tail
 
 /-- The parse of a printed form against the segments of an input. -/
-def read (input : List Segment) (s : String) : Parse :=
+def read (input : List Segment) (s : String) : Printed :=
   let raw := split s.toList [] none
   let σs := raw.flatMap (Sum.elim id ([·]))
   let segs := σs.map fun σ ↦ segments (σ.filter (· ∉ stressMarks))
@@ -471,27 +472,76 @@ def morae (s : Syl) : ℕ := (s.rime.takeWhile (·.1.IsSyllabic)).length + if s.
 
 end Syl
 
-namespace Parse
+namespace Printed
 
 /-- The syllables of a parse, in order. -/
-def syllables (p : Parse) : List Syl := p.flatMap (Sum.elim id ([·]))
-
-/-- The input positions of the segments of a parse. -/
-def positions (p : Parse) : List ℕ := p.syllables.flatMap fun s ↦ s.segs.map (·.2)
+def syllables (p : Printed) : List Syl := p.flatMap (Sum.elim id ([·]))
 
 /-- The segments of a parse. -/
-def output (p : Parse) : List Segment := p.syllables.flatMap fun s ↦ s.segs.map (·.1)
+def output (p : Printed) : List Segment := p.syllables.flatMap fun s ↦ s.segs.map (·.1)
 
-/-- The syllables of a parse with their stress, which a syllable has when it is in a foot or
-printed with a stress mark. -/
-def stress (p : Parse) : List (Syl × Option Bool) :=
-  p.flatMap fun
-    | .inl f => f.map fun s ↦ (s, some s.stressed)
-    | .inr s => [(s, if s.stressed then some true else none)]
+end Printed
 
-end Parse
+namespace Syl
 
-/-- The marks of a candidate `c` for an input `I` whose first `stem` segments are the Stem.
+/-- The vowel of a syllable, its halves if it is long. -/
+def vowel (s : Syl) : List (Segment × ℕ) := s.rime.takeWhile (·.1.IsSyllabic)
+
+/-- The slots of a syllable: its segments, a long vowel one slot, each with the input positions
+it stands for. -/
+def slots (s : Syl) : List (Segment × List ℕ) :=
+  s.onset.map (fun x ↦ (x.1, [x.2])) ++
+    (s.vowel.head?.map fun v ↦ (v.1, s.vowel.map (·.2))).toList ++ s.coda.map fun x ↦ (x.1, [x.2])
+
+end Syl
+
+/-- Each syllable with the slot of its nucleus, the first syllable starting at slot `o`. -/
+def nuclei : List Syl → ℕ → List (ℕ × Syl)
+  | [], _ => []
+  | s :: r, o => (o + s.onset.length, s) :: nuclei r (o + s.slots.length)
+
+/-- The feet of a parse as the indices of their syllables, the next syllable being the `k`-th. -/
+def feetIdx : Printed → ℕ → List (List ℕ)
+  | [], _ => []
+  | .inl f :: r, k => (List.range f.length).map (k + ·) :: feetIdx r (k + f.length)
+  | .inr _ :: r, k => feetIdx r (k + 1)
+
+/-- The parse a printed form stands for: a mora for each half of a vowel and one for a coda,
+headed by its first consonant; the printed feet; and a grid mark on each stressed syllable. -/
+def Printed.toParse (p : Printed) : Parse Segment :=
+  let ns := nuclei p.syllables 0
+  { form := Prosody.MoraicForm.ofLines (p.syllables.flatMap fun s ↦ s.slots.map (·.1))
+      (syllableMora := (ns.flatMap fun x ↦
+        [(x.1, Prosody.Mora.of x.1)] ++ (if 2 ≤ x.2.vowel.length then [(x.1, .of x.1 1)] else []) ++
+          if x.2.coda = [] then [] else [(x.1, .of (x.1 + 1))]).toFinset)
+      (syllableSegment := (ns.flatMap fun x ↦
+        (List.range x.2.onset.length).map (fun j ↦ (x.1, x.1 - x.2.onset.length + j)) ++
+          (List.range (x.2.coda.length - 1)).map fun j ↦ (x.1, x.1 + 2 + j)).toFinset)
+      (moraSegment := (ns.flatMap fun x ↦
+        [(Prosody.Mora.of x.1, x.1)] ++ (if 2 ≤ x.2.vowel.length then [(.of x.1 1, x.1)] else []) ++
+          if x.2.coda = [] then [] else [(.of (x.1 + 1), x.1 + 1)]).toFinset)
+    above := (feetIdx p 0).map fun f ↦
+      .node ⟨.ft, 0⟩ (f.map fun j ↦ .node ⟨.syl, ((ns.map (·.1)).getD j 0)⟩ [])
+    grid := p.syllables.map fun s ↦ if s.stressed then 1 else 0 }
+
+/-- The candidate of a printed output `c` for a printed input `I`: slots correspond when they
+stand for a common position, and morae in order. -/
+def candidate (I c : Printed) : Candidate Segment :=
+  let si := I.syllables.flatMap Syl.slots
+  let so := c.syllables.flatMap Syl.slots
+  Candidate.withOrderMoraCorr
+    { io := .ofPairs (fun | .lhs => si.map (·.1) | .rhs => so.map (·.1))
+        [(.lhs, .rhs, si.zipIdx.flatMap fun x ↦ so.zipIdx.filterMap fun y ↦
+          if ∃ q ∈ x.1.2, q ∈ y.1.2 then some (x.2, y.2) else none)]
+      input := I.toParse
+      output := c.toParse }
+
+/-- The stress of a slot, where its syllable is in a foot or stressed. -/
+def specified (P : Parse Segment) (i : ℕ) : Option ℕ :=
+  if P.stressAt i ≠ 0 ∨ ∃ t ∈ P.feet, ∃ s ∈ Prosody.syllableLeaves t, i ∈ P.form.yield s
+  then some (P.stressAt i) else none
+
+/-- The marks of a candidate whose first `stem` input slots are the Stem.
 * (58) *DIST-0: a coda consonant before an onset consonant of the same sonority.
 * (60) ALIGN-RIGHT(Stem, σ): the last segment of the Stem is not the last of a syllable.
 * (61) IDENT-STRESS: a mora whose stress differs from that of its input mora.
@@ -501,26 +551,25 @@ end Parse
 * MAX: a segment of the input without one in the candidate.
 * IDENT-length: a vowel of the candidate longer than in the input.
 * ONSET: a syllable that begins with its vowel. -/
-def violations (I : Parse) (stem : ℕ) (c : Parse) : Con → ℕ :=
-  let σs := c.syllables
+def marksOf (stem : ℕ) (c : Candidate Segment) : Con → ℕ :=
+  let X := c.output.form
+  let σs := c.output.syllableList
   fun
-  | .distZero => (σs.zip σs.tail).countP fun p ↦
-      ∃ x ∈ p.1.coda.getLast?, ∃ y ∈ p.2.onset.head?,
-        Sonority.ofSegment x.1 = Sonority.ofSegment y.1
+  | .distZero => (σs.zip σs.tail).countP fun p : ℕ × ℕ ↦ decide <|
+      ∃ x ∈ X.coda p.1, (∀ z ∈ X.coda p.1, z ≤ x) ∧ ∃ y ∈ X.onset p.2, (∀ z ∈ X.onset p.2, y ≤ z) ∧
+        ∃ a ∈ X.melody[x]?, ∃ b ∈ X.melody[y]?, Sonority.ofSegment a = Sonority.ofSegment b
   | .alignR =>
-      if ∀ e ∈ (c.positions.filter (· < stem)).getLast?,
-        ∃ s ∈ σs, (s.segs.map (·.2)).getLast? = some e then 0 else 1
-  | .identStress => (σs.map fun s ↦
-      (s.rime.head?.toList ++ s.coda.head?.toList).countP fun h ↦
-        ∃ t ∈ I.stress, h.2 ∈ t.1.segs.map (·.2) ∧ ∃ b ∈ t.2, b ≠ s.stressed).sum
-  | .ftBin => (c.filterMap Sum.getLeft?).countP fun f ↦ (f.map Syl.morae).sum ≠ 2
-  | .complexCoda => σs.countP (2 ≤ ·.coda.length)
-  | .maxMora => (I.syllables.map Syl.morae).sum - (σs.map Syl.morae).sum
-  | .max => (I.positions.toFinset \ c.positions.toFinset).card
-  | .identLength =>
-      (c.positions.length - c.positions.toFinset.card) -
-        (I.positions.length - I.positions.toFinset.card)
-  | .onset => σs.countP (·.onset = [])
+      if ∀ e ∈ ((c.pairs.filter fun p : ℕ × ℕ ↦ p.1 < stem).map Prod.snd).max?,
+        ∃ s ∈ X.syllables, e ∈ X.yield s ∧ ∀ z ∈ X.yield s, z ≤ e then 0 else 1
+  | .identStress => c.pairs.countP fun p : ℕ × ℕ ↦ decide <|
+      (X.moraeAt p.2).Nonempty ∧ ∃ b ∈ specified c.input p.1, b ≠ c.output.stressAt p.2
+  | .ftBin => c.output.ftBinViol
+  | .complexCoda => c.output.complexCodaViol
+  | .maxMora => c.maxMoraViol
+  | .max => c.io.maxViol .lhs .rhs
+  | .identLength => c.identViol fun P i ↦
+      (P.form.melody[i]?).bind fun x ↦ if x.IsSyllabic then some (P.weightAt i) else none
+  | .onset => c.output.onsetViol
 
 /-- A tableau as the paper prints it: the input, the candidates and the winner. -/
 structure Evaluation where
@@ -539,8 +588,16 @@ def segs : List Segment := segments (t.input.toList.filter (· ∉ "(). ".toList
 /-- The Stem of the paper's tableaux, *samudr-am*. -/
 def stem : ℕ := (segments "samudram".toList).length
 
+/-- The Stem in slots of the input. -/
+def stemSlots : ℕ :=
+  ((read t.segs t.input).syllables.flatMap Syl.slots).countP fun x ↦ ∀ q ∈ x.2, q < stem
+
+/-- The candidate a printed form stands for. -/
+def candidate (c : String) : Candidate Segment :=
+  Aitha2026.candidate (read t.segs t.input) (read t.segs c)
+
 /-- The marks of the tableau. -/
-def marks (c : String) : Con → ℕ := violations (read t.segs t.input) stem (read t.segs c)
+def marks (c : String) : Con → ℕ := marksOf t.stemSlots (t.candidate c)
 
 /-- The optimal candidates under a ranking: those that survive filtration along it. -/
 def optimal (σ : Ranking Con) : Finset String :=

@@ -9,7 +9,6 @@ public import Linglib.Phonology.Prosody.Mora
 public import Linglib.Phonology.Prosody.Hierarchy
 public import Linglib.Phonology.Prosody.Grid
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Mathlib.Data.Finset.Sort
 
 /-!
 # Candidates
@@ -21,7 +20,7 @@ by a `Coindexation`, and the morae correspond independently of their segments
 ([broselow-chen-huffman-1997]). The input is parsed like the output, so faithfulness compares
 prosody with prosody: identity of corresponding slots under any reading of a parse is the one
 counter [`Candidate.identViol`](##OptimalityTheory.Candidate.identViol), read at the morae of a
-slot for length and at the stress of its syllable for stress, and
+slot for length, and
 [MAX-μ](##OptimalityTheory.Candidate.maxMoraViol) and
 [DEP-μ](##OptimalityTheory.Candidate.depMoraViol) count the morae left without correspondents.
 
@@ -34,8 +33,8 @@ slot for length and at the stress of its syllable for stress, and
 * The input and output strings live in the coindexation, and each parse's melody repeats its
   side's string; a study's constructor builds the parses over `io.string`, as
   `Candidate.ofIO` does.
-* The mora correspondence is a field of its own, and `Candidate.headMoraCorr` is the one the
-  segments induce, for candidates printed without one.
+* The mora correspondence is a field of its own, and `Candidate.orderMoraCorr` pairs the morae
+  in order, for candidates printed without one.
 * Segmental faithfulness is read off `io` by the `Coindexation` counters; this file adds only
   the counters that need a parse or the mora correspondence.
 
@@ -57,6 +56,12 @@ open Prosody Finset
 def _root_.Prosody.syllableLeaves {M : Type*} (t : RoseTree (Constituent Level M)) : List M :=
   t.subtrees.filterMap fun s ↦ if s.value.level = .syl then some s.value.mark else none
 
+/-- The morae of a form in order of their heads, and by index under one head. -/
+def _root_.Prosody.MoraicForm.moraList {α : Type*} (X : MoraicForm α) : List Mora :=
+  (List.range X.melody.length).flatMap fun i ↦
+    (List.range (X.morae.sup (·.idx) + 1)).filterMap fun k ↦
+      if (⟨i, k⟩ : Mora) ∈ X.morae then some ⟨i, k⟩ else none
+
 /-- A parse: a moraic form, prosodic structure above the syllable as trees whose syllable
 leaves name the form's syllables, and a metrical grid over the syllables in nucleus order. -/
 structure Parse (α : Type*) where
@@ -72,7 +77,7 @@ namespace Parse
 variable {α : Type*} (P : Parse α)
 
 /-- The syllables in nucleus order. -/
-def syllableList : List ℕ := P.form.syllables.sort (· ≤ ·)
+def syllableList : List ℕ := (List.range P.form.melody.length).filter (· ∈ P.form.syllables)
 
 /-- The stress of the syllable named `s`, its column of the grid. -/
 def stress (s : ℕ) : ℕ := P.grid.getD (P.syllableList.idxOf s) 0
@@ -127,25 +132,26 @@ def ofIO (io : Correspondence.Coindexation BinaryRole α)
     output := { form := (MoraicForm.ofLines (io.string .rhs) wordSyllable syllableMora
       wordSegment syllableSegment moraSegment) } }
 
-/-- The corresponding slot pairs: each input position with the positions of its
-correspondents. -/
+/-- The corresponding slot pairs: an input position and an output position that share an index
+of the coindexation. -/
 def pairs : List (ℕ × ℕ) :=
-  (c.io.form .lhs).zipIdx.flatMap fun x ↦ (x.1.2 .rhs).map fun o ↦ (x.2, o)
+  (c.io.form .lhs).zipIdx.flatMap fun x ↦ (c.io.form .rhs).zipIdx.filterMap fun y ↦
+    if ∃ k ∈ x.1.2 .rhs, k ∈ y.1.2 .lhs then some (x.2, y.2) else none
 
-/-- The correspondence of morae that the segments induce: a mora of the input and a mora of the
-output correspond when their heads do and they are the same mora of their head. -/
-def headMoraCorr : Finset (Mora × Mora) :=
-  (c.input.form.morae ×ˢ c.output.form.morae).filter fun p ↦
-    (p.1.slot, p.2.slot) ∈ c.pairs ∧ p.1.idx = p.2.idx
+/-- The correspondence of morae in order: the `k`-th mora of the input, by head and then by
+index, with the `k`-th mora of the output. A mora survives a change of head, as in compensatory
+lengthening, and the surplus of either side has no correspondent. -/
+def orderMoraCorr : Finset (Mora × Mora) :=
+  (c.input.form.moraList.zip c.output.form.moraList).toFinset
 
-/-- The candidate with the mora correspondence its segments induce. -/
-def withHeadMoraCorr : Candidate α := { c with moraCorr := c.headMoraCorr }
+/-- The candidate with its morae corresponding in order. -/
+def withOrderMoraCorr : Candidate α := { c with moraCorr := c.orderMoraCorr }
 
 /-- IDENT under a reading `g` of a parse at a slot: a violation for each corresponding pair
-whose readings differ. Reading a feature of the melody is [mccarthy-prince-1995]'s IDENT(F);
-reading `Parse.weightAt` is identity of length, and `Parse.stressAt` identity of stress. -/
-def identViol (g : Parse α → ℕ → ℕ) : ℕ :=
-  c.pairs.countP fun p ↦ g c.input p.1 ≠ g c.output p.2
+whose readings are both specified and differ. Reading a feature of the melody is
+[mccarthy-prince-1995]'s IDENT(F), and reading `Parse.weightAt` is identity of length. -/
+def identViol {β : Type*} [DecidableEq β] (g : Parse α → ℕ → Option β) : ℕ :=
+  c.pairs.countP fun p ↦ ∃ a ∈ g c.input p.1, ∃ b ∈ g c.output p.2, a ≠ b
 
 /-- MAX-μ: a violation for each mora of the input without a correspondent. -/
 def maxMoraViol : ℕ :=
