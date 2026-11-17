@@ -28,6 +28,7 @@ every principle holds of every entity.
   on the described entity.
 * `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
   formulae satisfies them under every assignment.
+* `HPSG.RSRL.Interpretation.Embedding.satisfies`: satisfaction is invariant under embeddings.
 * `HPSG.RSRL.Interpretation.forall_satisfies_map_toDesc_iff`: an entity satisfies a list of
   constraints exactly when it satisfies those that its sort inherits.
 
@@ -357,6 +358,55 @@ theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
 
 theorem Models.mono (hI : I.Models H) (hGH : G ⊆ H) : I.Models G :=
   fun u d hd ↦ hI u d (hGH hd)
+
+/-! ### Embeddings -/
+
+namespace Embedding
+
+variable {V : Type*} {J : Interpretation Sig V} (f : Embedding I J) {D : Set U} {g : ℕ → U}
+  {d : Desc Sig}
+
+/-- An entity satisfies a formula with quantifiers over `D` exactly when its image under an
+embedding satisfies it with quantifiers over the image of `D`. -/
+theorem satisfiesOn_image :
+    J.SatisfiesOn (f '' D) (f ∘ g) (f u) d ↔ I.SatisfiesOn D g u d := by
+  induction d generalizing g with
+  | sortAssign t σ =>
+    rw [satisfiesOn_sortAssign, satisfiesOn_sortAssign, ← coe_toHom, f.toHom.termDenot_comp]
+    cases I.termDenot g t u <;> simp
+  | pathEq t₁ t₂ =>
+    rw [satisfiesOn_pathEq, satisfiesOn_pathEq, ← coe_toHom, f.toHom.termDenot_comp,
+      f.toHom.termDenot_comp]
+    rcases I.termDenot g t₁ u with _ | a <;> rcases I.termDenot g t₂ u with _ | b <;>
+      simp [f.injective.eq_iff, eq_comm]
+  | rel ρ xs => exact f.map_R (xs := fun i ↦ g (xs i))
+  | neg d ih => exact not_congr ih
+  | and d e ihd ihe => exact and_congr ihd ihe
+  | or d e ihd ihe => exact or_congr ihd ihe
+  | imp d e ihd ihe => exact imp_congr ihd ihe
+  | ex x d ih =>
+    simp only [satisfiesOn_ex, Set.exists_mem_image, ← ih, Function.comp_update]
+  | all x d ih =>
+    simp only [satisfiesOn_all, Set.forall_mem_image, ← ih, Function.comp_update]
+
+/-- Satisfaction is invariant under embeddings: an entity satisfies a formula exactly when its
+image does, since the components of the image are the images of the components. -/
+theorem satisfies : J.Satisfies (f ∘ g) (f u) d ↔ I.Satisfies g u d := by
+  rw [Satisfies, ← coe_toHom, ← f.toHom.image_isComponentOf, coe_toHom, satisfiesOn_image,
+    Satisfies]
+
+/-- An interpretation that embeds into a model of a grammar is a model of it. -/
+theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
+  fun u d hd ↦ (f.satisfies (g := fun _ ↦ u)).1 (hJ (f u) d hd)
+
+/-- A model of a grammar that embeds onto an interpretation makes it a model. -/
+theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
+    (hI : I.Models G) : J.Models G :=
+  fun v d hd ↦ by
+    obtain ⟨u, rfl⟩ := hf v
+    exact (f.satisfies (g := fun _ ↦ u)).2 (hI u d hd)
+
+end Embedding
 
 end Interpretation
 
