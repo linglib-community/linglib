@@ -540,12 +540,11 @@ def segs : List Segment := segments (t.input.toList.filter (· ∉ "(). ".toList
 def stem : ℕ := (segments "samudram".toList).length
 
 /-- The marks of the tableau. -/
-def marks : ConstraintSet String Con :=
-  fun k c ↦ violations (read t.segs t.input) stem (read t.segs c) k
+def marks (c : String) : Con → ℕ := violations (read t.segs t.input) stem (read t.segs c)
 
-/-- The tableau under a ranking. -/
-def tableau (σ : Ranking Con) : Tableau String 9 :=
-  .ofRanking t.marks σ t.candidates.toFinset
+/-- The optimal candidates under a ranking: those that survive filtration along it. -/
+def optimal (σ : Ranking Con) : Finset String :=
+  filtration t.marks t.candidates.toFinset (List.ofFn σ)
 
 /-- The comparative tableau: the ERC of the winner against each other candidate. -/
 def comparative : List (ERC Con) :=
@@ -561,7 +560,7 @@ def output : List Segment := (read t.segs t.winner).output
 variable {t} {R : Con → Con → Prop}
 
 theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
-    σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal := by
+    σ ∈ t.grammar.extent ↔ t.winner ∈ t.optimal σ := by
   rw [grammar, comparative, Grammar.Enumeration.ofERCs_comparative]
   exact Grammar.Enumeration.mem_extent_ofWinner (List.mem_toFinset.2 h)
 
@@ -569,8 +568,8 @@ theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
 -- optimal candidate under every total ranking extending the diagram
 theorem optimal_eq (hw : t.winner ∈ t.candidates) (hle : .ofRel R ≤ t.grammar)
     (hne : ∀ α ∈ t.comparative, ∃ k, α k ≠ .e) (hσ : σ.IsLinearExtension R) :
-    (t.tableau σ).optimal = {t.winner} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_comparative ((mem_extent_grammar hw).1 <|
+    t.optimal σ = {t.winner} :=
+  filtration_eq_singleton_of_comparative ((mem_extent_grammar hw).1 <|
     Concept.extent_subset_extent_iff.2 hle (Grammar.Enumeration.mem_extent_ofRel.2 hσ)) hne
 
 end Evaluation
@@ -697,7 +696,7 @@ theorem exists_ne_e : ∀ α ∈ wordRows ++ phraseRows, ∃ k, α k ≠ .e := b
   decide +kernel
 
 -- any ranking under which the winner of (63) is optimal has *DIST-0 above ONSET
-theorem onset_dominated (h : quantifiedWord.winner ∈ (quantifiedWord.tableau σ).optimal) :
+theorem onset_dominated (h : quantifiedWord.winner ∈ quantifiedWord.optimal σ) :
     σ.Dominates .distZero .onset :=
   ERC.SatisfiedBy.dominates (α := .ofWL [.distZero] [.max, .onset])
     ((quantifiedWord.mem_extent_grammar (by decide)).2 h
@@ -821,9 +820,9 @@ theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
 
 -- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
 theorem optimal_word (hσ : σ.IsLinearExtension word) :
-    (dativeWord.tableau σ).optimal = {dativeWord.winner} ∧
-      (nominativeWord.tableau σ).optimal = {nominativeWord.winner} ∧
-      (quantifiedWord.tableau σ).optimal = {quantifiedWord.winner} :=
+    dativeWord.optimal σ = {dativeWord.winner} ∧
+      nominativeWord.optimal σ = {nominativeWord.winner} ∧
+      quantifiedWord.optimal σ = {quantifiedWord.winner} :=
   ⟨Evaluation.optimal_eq (by decide) (ofRel_word_le.trans (inf_le_left.trans inf_le_left))
       (fun α hα ↦ exists_ne_e α (List.mem_append_left _ (List.mem_append_left _
         (List.mem_append_left _ hα)))) hσ,
@@ -835,8 +834,8 @@ theorem optimal_word (hσ : σ.IsLinearExtension word) :
 
 -- (66), (67): the winners are the sole optimal candidates under every ranking of (68)
 theorem optimal_phrase (hσ : σ.IsLinearExtension phrase) :
-    (postpositional.tableau σ).optimal = {postpositional.winner} ∧
-      (quantifiedPhrase.tableau σ).optimal = {quantifiedPhrase.winner} :=
+    postpositional.optimal σ = {postpositional.winner} ∧
+      quantifiedPhrase.optimal σ = {quantifiedPhrase.winner} :=
   ⟨Evaluation.optimal_eq (by decide) (ofRel_phrase_le.trans inf_le_left)
       (fun α hα ↦ exists_ne_e α (List.mem_append_right _ (List.mem_append_left _ hα))) hσ,
     Evaluation.optimal_eq (by decide) (ofRel_phrase_le.trans inf_le_right)
