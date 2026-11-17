@@ -17,29 +17,16 @@ namespace GuerriniWehbe2025.Examples
 
 def ex_9a : Datum :=
   { id := "guerriniwehbe2025_9a"
-    source := ⟨"guerrini-wehbe-2025", "(9a)"⟩
+    source := ⟨"guerrini-wehbe-2025", "(9)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "All 10 of John's kids are adopted!"
     glossedTokens := []
     context := "I knew that all of John's kids are adopted but today I discovered something amazing."
     judgment := .unacceptable
-    alternatives := []
+    alternatives := [("John has 10 adopted kids!", .acceptable)]
     readings := []
     paperFeatures := [("presupposition", "John has 10 kids")] }
-
-def ex_9b : Datum :=
-  { id := "guerriniwehbe2025_9b"
-    source := ⟨"guerrini-wehbe-2025", "(9b)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "John has 10 adopted kids!"
-    glossedTokens := []
-    context := "I knew that all of John's kids are adopted but today I discovered something amazing."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [] }
 
 def ex_10a : Datum :=
   { id := "guerriniwehbe2025_10a"
@@ -67,81 +54,42 @@ def ex_10b : Datum :=
     readings := []
     paperFeatures := [] }
 
-def ex_12a : Datum :=
-  { id := "guerriniwehbe2025_12a"
-    source := ⟨"guerrini-wehbe-2025", "(12a)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "John isn't married to any of his teammates."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [] }
-
 def ex_12b : Datum :=
   { id := "guerriniwehbe2025_12b"
-    source := ⟨"guerrini-wehbe-2025", "(12b)"⟩
+    source := ⟨"guerrini-wehbe-2025", "(12)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John isn't married to his teammates."
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [] }
-
-def ex_13a : Datum :=
-  { id := "guerriniwehbe2025_13a"
-    source := ⟨"guerrini-wehbe-2025", "(13a)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "None of the candidates won."
-    glossedTokens := []
-    context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [] }
-
-def ex_13b : Datum :=
-  { id := "guerriniwehbe2025_13b"
-    source := ⟨"guerrini-wehbe-2025", "(13b)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "All of the candidates lost."
-    glossedTokens := []
-    context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
-    judgment := .acceptable
-    alternatives := []
+    alternatives := [("John isn't married to any of his teammates.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
 def ex_13c : Datum :=
   { id := "guerriniwehbe2025_13c"
-    source := ⟨"guerrini-wehbe-2025", "(13c)"⟩
+    source := ⟨"guerrini-wehbe-2025", "(13a), (13c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The candidates didn't win."
     glossedTokens := []
     context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
     judgment := .unacceptable
-    alternatives := []
+    alternatives := [("None of the candidates won.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
 def ex_13d : Datum :=
   { id := "guerriniwehbe2025_13d"
-    source := ⟨"guerrini-wehbe-2025", "(13d)"⟩
+    source := ⟨"guerrini-wehbe-2025", "(13b), (13d)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The candidates lost."
     glossedTokens := []
     context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
     judgment := .unacceptable
-    alternatives := []
+    alternatives := [("All of the candidates lost.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -160,27 +108,14 @@ def ex_23 : Datum :=
 
 def fn3_ia : Datum :=
   { id := "guerriniwehbe2025_fn3_ia"
-    source := ⟨"guerrini-wehbe-2025", "fn. 3 (i-a)"⟩
+    source := ⟨"guerrini-wehbe-2025", "fn. 3 (i)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "It's crazy, I didn't realize this was possible. Somehow.. John married his teammates."
+    primaryText := "John married his teammates."
     glossedTokens := []
-    context := ""
+    context := "It's crazy, I didn't realize this was possible. Somehow.."
     judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [] }
-
-def fn3_ib : Datum :=
-  { id := "guerriniwehbe2025_fn3_ib"
-    source := ⟨"guerrini-wehbe-2025", "fn. 3 (i-b)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "It's crazy, I didn't realize this was possible. Somehow.. John married all of his teammates."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
+    alternatives := [("John married all of his teammates.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -327,6 +262,6 @@ def fn20_i : Datum :=
     readings := []
     paperFeatures := [("phenomenon", "neg-raising")] }
 
-def all : List Datum := [ex_9a, ex_9b, ex_10a, ex_10b, ex_12a, ex_12b, ex_13a, ex_13b, ex_13c, ex_13d, ex_23, fn3_ia, fn3_ib, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_44c, ex_44d, ex_44e, ex_47a, ex_47b, fn20_i]
+def all : List Datum := [ex_9a, ex_10a, ex_10b, ex_12b, ex_13c, ex_13d, ex_23, fn3_ia, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_44c, ex_44d, ex_44e, ex_47a, ex_47b, fn20_i]
 
 end GuerriniWehbe2025.Examples

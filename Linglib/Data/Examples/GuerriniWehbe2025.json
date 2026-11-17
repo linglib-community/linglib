@@ -1,7 +1,7 @@
 [
   {
     "id": "guerriniwehbe2025_9a",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9a)"},
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9)"},
     "language": "stan1293",
     "primaryText": "All 10 of John's kids are adopted!",
     "discourseSegments": [],
@@ -9,24 +9,13 @@
     "translation": "",
     "context": "I knew that all of John's kids are adopted but today I discovered something amazing.",
     "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "John has 10 adopted kids!", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [
       ["presupposition", "John has 10 kids"]
     ],
-    "verified": "page-image"
-  },
-  {
-    "id": "guerriniwehbe2025_9b",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9b)"},
-    "language": "stan1293",
-    "primaryText": "John has 10 adopted kids!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "I knew that all of John's kids are adopted but today I discovered something amazing.",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -58,79 +47,49 @@
     "verified": "page-image"
   },
   {
-    "id": "guerriniwehbe2025_12a",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12a)"},
-    "language": "stan1293",
-    "primaryText": "John isn't married to any of his teammates.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
     "id": "guerriniwehbe2025_12b",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12b)"},
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12)"},
     "language": "stan1293",
     "primaryText": "John isn't married to his teammates.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "guerriniwehbe2025_13a",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13a)"},
-    "language": "stan1293",
-    "primaryText": "None of the candidates won.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "guerriniwehbe2025_13b",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13b)"},
-    "language": "stan1293",
-    "primaryText": "All of the candidates lost.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "John isn't married to any of his teammates.", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
     "id": "guerriniwehbe2025_13c",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13c)"},
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13a), (13c)"},
     "language": "stan1293",
     "primaryText": "The candidates didn't win.",
     "glossedTokens": [],
     "translation": "",
     "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
     "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "None of the candidates won.", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
     "id": "guerriniwehbe2025_13d",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13d)"},
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13b), (13d)"},
     "language": "stan1293",
     "primaryText": "The candidates lost.",
     "glossedTokens": [],
     "translation": "",
     "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
     "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "All of the candidates lost.", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
@@ -151,34 +110,17 @@
   },
   {
     "id": "guerriniwehbe2025_fn3_ia",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-a)"},
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i)"},
     "language": "stan1293",
-    "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married his teammates.",
-    "discourseSegments": [
-      "It's crazy, I didn't realize this was possible. Somehow..",
-      "John married his teammates."
-    ],
+    "primaryText": "John married his teammates.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "It's crazy, I didn't realize this was possible. Somehow..",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "guerriniwehbe2025_fn3_ib",
-    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-b)"},
-    "language": "stan1293",
-    "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married all of his teammates.",
-    "discourseSegments": [
-      "It's crazy, I didn't realize this was possible. Somehow..",
-      "John married all of his teammates."
+    "alternatives": [
+      {"form": "John married all of his teammates.", "judgment": "acceptable"}
     ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"

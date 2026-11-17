@@ -40,9 +40,11 @@ thus a presupposition, and a plural definite is odd
 * The higher `pex` over a negated plural does not change its truth conditions and is not
   modelled, and local accommodation below negation is the positive case for the negated
   predicate.
-* A row of §3 is linked to the fragment entries its sentence shows: the article, possessive,
-  quantifier or polarity item of its noun phrase and its negative auxiliary, each
-  [attested among its words](##links_attested). Whether it is quantified and whether it is
+* A row of §3 holds a plural definite and, as its alternatives, the quantified counterparts the
+  paper judges in the same context. Each sentence is linked to the fragment entries it shows:
+  the article, possessive, quantifier or polarity item of its noun phrase and its negative
+  auxiliary, each
+  [attested among its words](##rows_attested). Whether it is quantified and whether it is
   negative are read off the entries. What its context establishes is stated here from the paper's
   description of the context, as is that *lose* is the antonym of *win*, which the fragment does
   not relate. Worlds record which of two atoms satisfy the context's predicate.
@@ -363,7 +365,7 @@ private theorem separating_predicate (b : Bool) :
     Separating (univ ∩ univ) (atom (predicate b)) := by
   cases b <;> exact ⟨by decide, by decide⟩
 
-/-- A row's link to the fragment and to its context. -/
+/-- A sentence's link to the fragment. -/
 structure Link where
   /-- The noun phrase the predicate applies to. -/
   np : NounPhrase
@@ -371,8 +373,6 @@ structure Link where
   aux : Option Auxiliary := none
   /-- The predicate is the antonym of the one the context is stated with, *lose* for *win*. -/
   antonym : Bool := false
-  /-- What the context establishes. -/
-  known : Known
 
 namespace Link
 
@@ -384,31 +384,53 @@ instance : DecidablePred Negative := fun _ ↦ inferInstanceAs (Decidable (_ ∨
 /-- The predicate of the sentence, of an atom at a world. -/
 abbrev holds (l : Link) : Fin 2 → Finset (Fin 2) → Prop := predicate l.antonym
 
-/-- The linked forms occur among the words of the sentence, and the quantifier a context states
-its content with among the words of the context. -/
-def Attested (l : Link) (e : Datum) : Prop :=
-  l.np.form.toList ∈ Gloss.tokens e.primaryText ∧
-    (∀ a ∈ l.aux, a.form.toList ∈ Gloss.tokens e.primaryText) ∧
-    ∀ q ∈ l.known.determiner, e.context = "" ∨ q.form.toList ∈ Gloss.tokens e.context
+/-- The linked forms occur among the words of the sentence. -/
+def Attested (l : Link) (text : String) : Prop :=
+  l.np.form.toList ∈ Gloss.tokens text ∧ ∀ a ∈ l.aux, a.form.toList ∈ Gloss.tokens text
 
-instance (l : Link) (e : Datum) : Decidable (l.Attested e) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance (l : Link) (text : String) : Decidable (l.Attested text) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Link
 
-/-- The rows of §3 with the entries their sentences show. -/
-def links : List (Datum × Link) :=
-  [(ex_10a, ⟨.definite Determiners.the, none, false, .some⟩),
-    (ex_10b, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .notAll⟩),
-    (ex_12a, ⟨.polarityItem PolarityItems.any, some Auxiliaries.isnt, false, .notAll⟩),
-    (ex_12b, ⟨.possessed Pronouns.his, some Auxiliaries.isnt, false, .notAll⟩),
-    (ex_13a, ⟨.quantified Determiners.none_, none, false, .atMostOne⟩),
-    (ex_13b, ⟨.quantified Determiners.all, none, true, .atMostOne⟩),
-    (ex_13c, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .atMostOne⟩),
-    (ex_13d, ⟨.definite Determiners.the, none, true, .atMostOne⟩),
-    (ex_23, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .notAll⟩)]
+/-- A row of §3: what its context establishes, the link of its sentence, and the links of the
+quantified counterparts the row judges in the same context. -/
+structure Row where
+  datum : Datum
+  known : Known
+  link : Link
+  alternatives : List Link := []
 
-theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
+namespace Row
+
+/-- The sentences a row judges, each with its judgment and its link. -/
+def judged (r : Row) : List (String × Judgment × Link) :=
+  (r.datum.primaryText, r.datum.judgment, r.link) ::
+    (r.datum.alternatives.zip r.alternatives).map fun p ↦ (p.1.1, p.1.2, p.2)
+
+/-- Each sentence of the row shows its linked forms, every counterpart is linked, and the
+quantifier with which a context sentence states what it establishes is among its words. -/
+def Attested (r : Row) : Prop :=
+  (∀ s ∈ r.judged, s.2.2.Attested s.1) ∧ r.alternatives.length = r.datum.alternatives.length ∧
+    ∀ q ∈ r.known.determiner, r.datum.context = "" ∨ q.form.toList ∈ Gloss.tokens r.datum.context
+
+instance (r : Row) : Decidable r.Attested := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+end Row
+
+/-- The rows of §3 with the entries their sentences show. -/
+def rows : List Row :=
+  [⟨ex_10a, .some, ⟨.definite Determiners.the, none, false⟩, []⟩,
+    ⟨ex_10b, .notAll, ⟨.definite Determiners.the, some Auxiliaries.didnt, false⟩, []⟩,
+    ⟨ex_12b, .notAll, ⟨.possessed Pronouns.his, some Auxiliaries.isnt, false⟩,
+      [⟨.polarityItem PolarityItems.any, some Auxiliaries.isnt, false⟩]⟩,
+    ⟨ex_13c, .atMostOne, ⟨.definite Determiners.the, some Auxiliaries.didnt, false⟩,
+      [⟨.quantified Determiners.none_, none, false⟩]⟩,
+    ⟨ex_13d, .atMostOne, ⟨.definite Determiners.the, none, true⟩,
+      [⟨.quantified Determiners.all, none, true⟩]⟩,
+    ⟨ex_23, .notAll, ⟨.definite Determiners.the, some Auxiliaries.didnt, false⟩, []⟩]
+
+theorem rows_attested : ∀ r ∈ rows, r.Attested := by decide +kernel
 
 /-- The sentence of a row: a plural definite is a plural predication under `pex`, negated in a
 negative sentence, and its quantified counterpart says that all or that none of the atoms satisfy
@@ -443,17 +465,17 @@ theorem sentence_eq_false_iff (l : Link) (w : Finset (Fin 2)) :
   · simp [pexPlural_eq_false_iff]
 
 private theorem judgments_aux :
-    ∀ p ∈ links, (p.1.judgment = .acceptable ↔ ∃ w, p.2.known.Holds w ∧ IsFalse p.2 w) := by
+    ∀ r ∈ rows, ∀ s ∈ r.judged, (s.2.1 = .acceptable ↔ ∃ w, r.known.Holds w ∧ IsFalse s.2.2 w) := by
   decide
 
 /-- A sentence of §3 is acceptable exactly when it is informative once its presupposition is
 accommodated, false somewhere in what its context establishes: the plural definites of (10),
 (12b), (13c), (13d) and (23) are not, where the quantified (12a), (13a) and (13b) are. -/
 theorem judgments :
-    ∀ p ∈ links, (p.1.judgment = .acceptable ↔
-      ({w | p.2.known.Holds w} ∩ Trivalent.negExt (sentence p.2)).Nonempty) := by
-  intro p hp
-  rw [judgments_aux p hp]
+    ∀ r ∈ rows, ∀ s ∈ r.judged, (s.2.1 = .acceptable ↔
+      ({w | r.known.Holds w} ∩ Trivalent.negExt (sentence s.2.2)).Nonempty) := by
+  intro r hr s hs
+  rw [judgments_aux r hr s hs]
   simp only [Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Trivalent.mem_negExt,
     sentence_eq_false_iff]
 

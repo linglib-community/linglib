@@ -1,219 +1,50 @@
 [
   {
-    "id": "barlevbassi2026_3a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(3a)"},
+    "id": "barlevbassi2026_3",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(3)"},
     "language": "stan1293",
-    "primaryText": "I knew that Ann read at least some of the books. But today I learned that... she read the books.",
-    "discourseSegments": [
-      "I knew that Ann read at least some of the books. But today I learned that...",
-      "she read the books."
-    ],
+    "primaryText": "she read the books.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "I knew that Ann read at least some of the books. But today I learned that...",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_3b"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_3b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(3b)"},
-    "language": "stan1293",
-    "primaryText": "I knew that Ann read at least some of the books. But today I learned that... she read ALL the books.",
-    "discourseSegments": [
-      "I knew that Ann read at least some of the books. But today I learned that...",
-      "she read ALL the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_9a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(9a)"},
-    "language": "stan1293",
-    "primaryText": "I knew that Ann didn't read all of the books. But today I learned that... she didn't read the books.",
-    "discourseSegments": [
-      "I knew that Ann didn't read all of the books. But today I learned that...",
-      "she didn't read the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_9b"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_9b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(9b)"},
-    "language": "stan1293",
-    "primaryText": "I knew that Ann didn't read all of the books. But today I learned that... she didn't read ANY of the books.",
-    "discourseSegments": [
-      "I knew that Ann didn't read all of the books. But today I learned that...",
-      "she didn't read ANY of the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_11b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(11b)"},
-    "language": "stan1293",
-    "primaryText": "Did Ann read some of the books, or all of them? Ann read the books.",
-    "discourseSegments": [
-      "Did Ann read some of the books, or all of them?",
-      "Ann read the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_21b_ii"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_13b_i",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(13a-i), (13b)"},
-    "language": "stan1293",
-    "primaryText": "Did Ann read none of the books, some of the books, or all of the books? Ann read the books.",
-    "discourseSegments": [
-      "Did Ann read none of the books, some of the books, or all of the books?",
-      "Ann read the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_21b_ii"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_13b_ii",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(13a-ii), (13b)"},
-    "language": "stan1293",
-    "primaryText": "Did Ann read none of the books, or all of them? Ann read the books.",
-    "discourseSegments": [
-      "Did Ann read none of the books, or all of them?",
-      "Ann read the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_21b_ii"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_15",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(15)"},
-    "language": "stan1293",
-    "primaryText": "Yesterday she read some of the newspapers. Today she read the newspapers.",
-    "discourseSegments": [
-      "Yesterday she read some of the newspapers.",
-      "Today she read the newspapers."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_22b"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_16",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(16)"},
-    "language": "stan1293",
-    "primaryText": "A: I know that Mary read some of the books, but I suspect that she didn't read all of them. B: No, don't worry, she DID read the books.",
-    "discourseSegments": [
-      "A: I know that Mary read some of the books, but I suspect that she didn't read all of them.",
-      "B: No, don't worry, she DID read the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_23Bprime"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_17B",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(17B)"},
-    "language": "stan1293",
-    "primaryText": "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment). B: No, don't worry, she DID stop smoking.",
-    "discourseSegments": [
-      "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment).",
-      "B: No, don't worry, she DID stop smoking."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_17Bprime",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(17B')"},
-    "language": "stan1293",
-    "primaryText": "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment). B: No, don't worry, she DID smoke in the past.",
-    "discourseSegments": [
-      "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment).",
-      "B: No, don't worry, she DID smoke in the past."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_21b_ii",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(21b-ii)"},
-    "language": "stan1293",
-    "primaryText": "Did Ann read none of the books, some of the books, or all of them? Ann read ALL the books.",
-    "discourseSegments": [
-      "Did Ann read none of the books, some of the books, or all of them?",
-      "Ann read ALL the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
     "alternatives": [
+      {"form": "she read ALL the books.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_9",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "she didn't read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Ann didn't read all of the books. But today I learned that...",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "she didn't read ANY of the books.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_11",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(11), (21)"},
+    "language": "stan1293",
+    "primaryText": "Ann read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Did Ann read some of the books, or all of them?",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Ann read ALL the books.", "judgment": "acceptable"},
       {"form": "Ann read all the books.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -221,19 +52,53 @@
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_22b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(22b)"},
+    "id": "barlevbassi2026_13_i",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(13a-i), (13b), (21)"},
     "language": "stan1293",
-    "primaryText": "Yesterday she read some of the newspapers. Today she read ALL the newspapers.",
-    "discourseSegments": [
-      "Yesterday she read some of the newspapers.",
-      "Today she read ALL the newspapers."
-    ],
+    "primaryText": "Ann read the books.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
-    "judgment": "acceptable",
+    "context": "Did Ann read none of the books, some of the books, or all of the books?",
+    "judgment": "unacceptable",
     "alternatives": [
+      {"form": "Ann read ALL the books.", "judgment": "acceptable"},
+      {"form": "Ann read all the books.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_13_ii",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(13a-ii), (13b), (21)"},
+    "language": "stan1293",
+    "primaryText": "Ann read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Did Ann read none of the books, or all of them?",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Ann read ALL the books.", "judgment": "acceptable"},
+      {"form": "Ann read all the books.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_15",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(15), (22)"},
+    "language": "stan1293",
+    "primaryText": "Today she read the newspapers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Yesterday she read some of the newspapers.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Today she read ALL the newspapers.", "judgment": "acceptable"},
       {"form": "Today she read all the newspapers.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -241,18 +106,71 @@
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_23Bprime",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(23B')"},
+    "id": "barlevbassi2026_16",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(16), (23)"},
     "language": "stan1293",
-    "primaryText": "A: I know that Mary read some of the books, but I suspect that she didn't read all of them. B': No, don't worry, she DID read all the books.",
-    "discourseSegments": [
-      "A: I know that Mary read some of the books, but I suspect that she didn't read all of them.",
-      "B': No, don't worry, she DID read all the books."
-    ],
+    "primaryText": "B: No, don't worry, she DID read the books.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "A: I know that Mary read some of the books, but I suspect that she didn't read all of them.",
     "judgment": "acceptable",
+    "alternatives": [
+      {"form": "B': No, don't worry, she DID read all the books.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_17",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(17)"},
+    "language": "stan1293",
+    "primaryText": "B: No, don't worry, she DID stop smoking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment).",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "B': No, don't worry, she DID smoke in the past.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_19",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(19)"},
+    "language": "stan1293",
+    "primaryText": "she read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Ann read at least one of the books. But today I learned that...",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "she read ALL the books.", "judgment": "acceptable"},
+      {"form": "she read all the books.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlevbassi2026_20",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "she didn't read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Ann didn't read at least one of the books. But today I learned that...",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "she didn't read ANY of the books.", "judgment": "acceptable"},
+      {"form": "she didn't read any of the books.", "judgment": "unacceptable"}
+    ],
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
@@ -261,71 +179,31 @@
     "id": "barlevbassi2026_37",
     "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(37)"},
     "language": "stan1293",
-    "primaryText": "Q: Did she not read all the books? A: No, she DID read the books.",
-    "discourseSegments": [
-      "Q: Did she not read all the books?",
-      "A: No, she DID read the books."
-    ],
+    "primaryText": "A: No, she DID read the books.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "Q: Did she not read all the books?",
     "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_37_all"]
+    "alternatives": [
+      {"form": "A: No, she DID read all the books.", "judgment": "acceptable"}
     ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_37_all",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(37)"},
-    "language": "stan1293",
-    "primaryText": "Q: Did she not read all the books? A: No, she DID read all the books.",
-    "discourseSegments": [
-      "Q: Did she not read all the books?",
-      "A: No, she DID read all the books."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_38a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(38a)"},
+    "id": "barlevbassi2026_38",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(38)"},
     "language": "stan1293",
-    "primaryText": "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently... he worked on his phonology papers today.",
-    "discourseSegments": [
-      "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently...",
-      "he worked on his phonology papers today."
-    ],
+    "primaryText": "he worked on his phonology papers today.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently...",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_38b"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_38b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(38b)"},
-    "language": "stan1293",
-    "primaryText": "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently... he worked on ALL of his phonology papers today.",
-    "discourseSegments": [
-      "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently...",
-      "he worked on ALL of his phonology papers today."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
     "alternatives": [
+      {"form": "he worked on ALL of his phonology papers today.", "judgment": "acceptable"},
       {"form": "he worked on all of his phonology papers today.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -333,44 +211,25 @@
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_39a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(39a)"},
+    "id": "barlevbassi2026_39",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(39)"},
     "language": "stan1293",
-    "primaryText": "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently... he worked on his PHONOLOGY papers today.",
-    "discourseSegments": [
-      "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently...",
-      "he worked on his PHONOLOGY papers today."
-    ],
+    "primaryText": "he worked on his PHONOLOGY papers today.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently...",
     "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_39b"]
+    "alternatives": [
+      {"form": "he worked on all of his PHONOLOGY papers today.", "judgment": "acceptable"}
     ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_39b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(39b)"},
-    "language": "stan1293",
-    "primaryText": "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently... he worked on all of his PHONOLOGY papers today.",
-    "discourseSegments": [
-      "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently...",
-      "he worked on all of his PHONOLOGY papers today."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_41a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(41a)"},
+    "id": "barlevbassi2026_41",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(41)"},
     "language": "stan1293",
     "primaryText": "John is not married to his teammates.",
     "discourseSegments": [],
@@ -378,29 +237,16 @@
     "translation": "",
     "context": "A monogamous society.",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_41b"]
+    "alternatives": [
+      {"form": "John is not married to any of his teammates.", "judgment": "acceptable"}
     ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_41b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(41b)"},
-    "language": "stan1293",
-    "primaryText": "John is not married to any of his teammates.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A monogamous society.",
-    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_42a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(42a)"},
+    "id": "barlevbassi2026_42",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(42)"},
     "language": "stan1293",
     "primaryText": "I checked in during round three and my uncles were still in the game.",
     "discourseSegments": [],
@@ -408,55 +254,36 @@
     "translation": "",
     "context": "In a game of Knuckle, at the end of each round, the person who has more cards than anybody else cashes in and leaves the game. If at the end of a round no player has more cards than anybody else, then all the players stay in the game. Last Saturday night, 5 of my uncles sat down for a long game of Knuckle.",
     "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["counterpart", "barlevbassi2026_42b"]
+    "alternatives": [
+      {"form": "I checked in during round three and all my uncles were still in the game.", "judgment": "acceptable"}
     ],
-    "verified": "page-image"
-  },
-  {
-    "id": "barlevbassi2026_42b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(42b)"},
-    "language": "stan1293",
-    "primaryText": "I checked in during round three and all my uncles were still in the game.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "In a game of Knuckle, at the end of each round, the person who has more cards than anybody else cashes in and leaves the game. If at the end of a round no player has more cards than anybody else, then all the players stay in the game. Last Saturday night, 5 of my uncles sat down for a long game of Knuckle.",
-    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_44b",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(44b)"},
+    "id": "barlevbassi2026_44",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(44)"},
     "language": "stan1293",
-    "primaryText": "Did she read any of the books? She read the books.",
-    "discourseSegments": [
-      "Did she read any of the books?",
-      "She read the books."
-    ],
+    "primaryText": "She read the books.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "Did she read any of the books?",
     "judgment": "questionable",
     "readings": [],
     "paperFeatures": [],
     "verified": "page-image"
   },
   {
-    "id": "barlevbassi2026_45a",
-    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(45a)"},
+    "id": "barlevbassi2026_45",
+    "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "(45)"},
     "language": "stan1293",
-    "primaryText": "The mayor is friends with some of the people building the highway, but... she's not MARRIED to those people (so it may not look good but it's not illegal).",
-    "discourseSegments": [
-      "The mayor is friends with some of the people building the highway, but...",
-      "she's not MARRIED to those people (so it may not look good but it's not illegal)."
-    ],
+    "primaryText": "she's not MARRIED to those people (so it may not look good but it's not illegal).",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "The mayor is friends with some of the people building the highway, but...",
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [],
@@ -466,14 +293,11 @@
     "id": "barlevbassi2026_fn18_i",
     "source": {"bibkey": "bar-lev-bassi-2026", "paperLabel": "fn. 18 (i)"},
     "language": "stan1293",
-    "primaryText": "Q: Is she married to any of her teammates? A: No, she is NOT married to her teammates.",
-    "discourseSegments": [
-      "Q: Is she married to any of her teammates?",
-      "A: No, she is NOT married to her teammates."
-    ],
+    "primaryText": "A: No, she is NOT married to her teammates.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "Q: Is she married to any of her teammates?",
     "judgment": "unacceptable",
     "readings": [],
     "paperFeatures": [],

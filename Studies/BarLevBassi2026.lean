@@ -9,6 +9,7 @@ public import Linglib.Data.Examples.Gloss
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.English.Pronouns
 
 /-!
 # Bar-Lev and Bassi (2026): Infelicity with homogeneity
@@ -36,10 +37,10 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
   F-marked.
 * The atoms are an independent family: every set of them is the set of those satisfying the
   predicate at some world.
-* A row is read through its quantified counterpart, which the paper pairs it with. The word
-  printed in capitals there shows the background question, by which fragment entry it is: a
-  quantifier or an auxiliary. This is the paper's method of taking the stress of the overt
-  quantifier as the guide to the question.
+* A row holds a plural definite and, as its alternatives, the quantified counterparts the paper
+  judges in the same context. The word printed in capitals in an acceptable counterpart shows the
+  background question, by which fragment entry it is: a quantifier or an auxiliary. This is the
+  paper's method of taking the stress of the overt quantifier as the guide to the question.
 
 ## TODO
 
@@ -285,9 +286,9 @@ A plural definite is odd where its quantified counterpart needs stress on the qu
 stress on the counterpart shows the background question, and the plural definite is acceptable
 when the head that question asks to be F-marked is pronounced. -/
 
-/-- The word a row prints in capitals, the bearer of its focal stress. -/
-def stressed? (e : Datum) : Option (List Char) :=
-  (((Gloss.split [' '] e.primaryText.toList).map Gloss.trim).find? fun t ↦
+/-- The word a sentence prints in capitals, the bearer of its focal stress. -/
+def stressed? (s : String) : Option (List Char) :=
+  (((Gloss.split [' '] s.toList).map Gloss.trim).find? fun t ↦
     2 ≤ t.length ∧ ∀ c ∈ t, c.isUpper).map (·.map Gloss.toLower)
 
 open English in
@@ -300,17 +301,24 @@ def background? (w : List Char) : Option Background :=
   else if w ∈ Auxiliaries.allAuxiliaries.map (·.form.toList) then some .polar
   else none
 
-/-- The quantified counterpart of a row with a plural definite. -/
-def counterpart? (e : Datum) : Option Datum :=
-  (e.feature? "counterpart").bind fun id ↦ Examples.all.find? (·.id = id)
+open English in
+/-- The sentence of a row has a plural definite: the definite article or a genitive pronoun is
+among its words. -/
+def HasDefinite (e : Datum) : Prop :=
+  ∃ f ∈ [Determiners.the.form, Pronouns.my.form, Pronouns.his.form],
+    f.toList ∈ Gloss.tokens e.primaryText
 
-/-- The homogeneity-focus generalization (18): a plural definite whose quantified counterpart
-shows a background question is acceptable exactly when the head that question asks to be
-F-marked is pronounced. It is odd in (3a), (9a), (11), (13), (15) and (38a), where *ALL* or *ANY*
-bears the stress, and fine in (16) and (37), where *DID* does. -/
+instance (e : Datum) : Decidable (HasDefinite e) := inferInstanceAs (Decidable (∃ f ∈ _, _))
+
+/-- The homogeneity-focus generalization (18). A row holds a plural definite and, as its
+alternatives, the quantified counterparts judged in the same context. Where an acceptable
+counterpart shows a background question, the plural definite is acceptable exactly when the head
+that question asks to be F-marked is pronounced: it is odd in (3), (9), (11), (13), (15), (19),
+(20) and (38), where *ALL* or *ANY* bears the stress, and fine in (16) and (37), where *DID*
+does. -/
 theorem judgments :
-    ∀ e ∈ Examples.all, ∀ c ∈ counterpart? e, ∀ s ∈ stressed? c, ∀ q ∈ background? s,
-      (e.judgment = .acceptable ↔ q.head.Overt) := by
+    ∀ e ∈ Examples.all, HasDefinite e → ∀ a ∈ e.alternatives, a.2 = .acceptable →
+      ∀ s ∈ stressed? a.1, ∀ q ∈ background? s, (e.judgment = .acceptable ↔ q.head.Overt) := by
   decide +kernel
 
 /-! ### The presupposition of the question (§6)
