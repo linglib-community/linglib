@@ -12,7 +12,7 @@ each agent, which is KD45, and a commitment accessibility `O_{a,b}` for each ord
 agents, which is K45. Commitment is transitive and Euclidean but not serial, so that an agent may
 be committed to a contradiction. Belief `B_a π` and commitment `C_{a,b} π` are `ModalLogic.Box`
 along these relations, `C_{a,b} π` holds exactly on the commitment proposition
-`Commitment.committed`, and the update of the thesis is the performative update
+`k ⊢[O] φ`, and the update of the thesis is the performative update
 `Commitment.perform`. What `a` is committed to towards `b` at a world is a commitment state of
 `Commitment.Basic`.
 
@@ -119,6 +119,11 @@ theorem restrictCommitment_restrictCommitment :
     (c.restrictCommitment a b π).restrictCommitment a b τ = c.restrictCommitment a b (π ∩ τ) :=
   Frame.ext rfl perform_perform
 
+theorem restrictCommitment_comm (a' b' : A) :
+    (c.restrictCommitment a b π).restrictCommitment a' b' τ =
+      (c.restrictCommitment a' b' τ).restrictCommitment a b π :=
+  Frame.ext rfl perform_comm
+
 theorem restrictCommitment_mono (h : π ⊆ τ) (k : A × A) :
     (c.restrictCommitment a b π).commitment k ⊆ (c.restrictCommitment a b τ).commitment k :=
   perform_mono h k
@@ -135,7 +140,7 @@ def Believes : Prop :=
 def Committed : Prop :=
   □[c.commitment (a, b)] (· ∈ π) w
 
-theorem setOf_committed : {w | c.Committed a b π w} = committed c.commitment (a, b) π := rfl
+theorem setOf_committed : {w | c.Committed a b π w} = ((a, b) ⊢[c.commitment] π) := rfl
 
 /-- The performative update commits `a` towards `b` to `π`, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`
 ([van-der-leer-2026] Theorem 25 at the level of states). -/
