@@ -47,8 +47,8 @@ connectives from the Strong Kleene ones but not the converse.
 ## Implementation notes
 
 The API mirrors `Mathlib.ModelTheory` (`Realize`, per-constructor `@[simp]` lemmas, `⊨` notation),
-and consequence is the multiple-conclusion, list-based `MixedConsequence` rather than theories as
-sets. The language has no constants, so `⊤` and `⊥` are `p ∨ ¬p` and `p ∧ ¬p` for an atom `p`, and
+and consequence is the multiple-conclusion `MixedConsequence` between sets of formulas. The
+language has no constants, so `⊤` and `⊥` are `p ∨ ¬p` and `p ∧ ¬p` for an atom `p`, and
 the model sending every atom to `undefined` voids every formula under the Strong Kleene tables.
 
 ## References
@@ -63,7 +63,8 @@ namespace Trivalent
 
 open Trivalent
 
-open Consequence (IsDual MixedConsequence mixedConsequence_iff_dual)
+open Consequence (IsDual MixedConsequence mixedConsequence_iff_dual
+  mixedConsequence_singleton_singleton)
 
 /-- Propositional formulas over an atom type, built by negation, conjunction, disjunction and the
 conditional. -/
@@ -277,7 +278,7 @@ end Formula
 /-- Mixed consequence under the connectives `C` takes premises at standard `m` and conclusions at
 standard `n`. -/
 abbrev Consequence {Atom : Type*} (C : Connectives) (m n : Trivalent.Designation)
-    (Γ Δ : List (Formula Atom)) : Prop :=
+    (Γ Δ : Set (Formula Atom)) : Prop :=
   MixedConsequence (Formula.Realize C · m) (Formula.Realize C · n) Γ Δ
 
 /-! ### Meta-theorems -/
@@ -289,8 +290,8 @@ variable {Atom : Type*}
 /-- Negation dualizes consequence, so K3 and LP are each other's duals ([cobreros-etal-2012], Lemma
 6). -/
 theorem consequence_iff_dual {C : Connectives} {m n : Trivalent.Designation}
-    {Γ Δ : List (Formula Atom)} :
-    Consequence C m n Γ Δ ↔ Consequence C n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=
+    {Γ Δ : Set (Formula Atom)} :
+    Consequence C m n Γ Δ ↔ Consequence C n.dual m.dual (.neg '' Δ) (.neg '' Γ) :=
   mixedConsequence_iff_dual (Formula.isDual C m) (Formula.isDual C n)
 
 theorem eval_const_undefined (φ : Formula Atom) :
@@ -319,11 +320,10 @@ theorem lp_all_satisfiable (φ : Formula Atom) :
 /-- Explosion fails in LP, since `{a ∧ ¬a} ⊭ b` with countermodel `M a = .undefined` and
 `M b = .false`. -/
 theorem lp_no_explosion :
-    ∃ (φ ψ : Formula Bool), ¬Consequence .strongKleene .lp .lp [.conj φ (.neg φ)] [ψ] := by
+    ∃ (φ ψ : Formula Bool), ¬Consequence .strongKleene .lp .lp {.conj φ (.neg φ)} {ψ} := by
   refine ⟨.atom Bool.true, .atom Bool.false, fun h ↦ ?_⟩
-  have := h (fun b ↦ if b then .undefined else .false) fun γ hγ ↦ by
-    simp only [List.mem_singleton] at hγ; subst hγ
-    simp [Formula.Realize, Connectives.strongKleene]
+  have := mixedConsequence_singleton_singleton.1 h (fun b ↦ if b then .undefined else .false)
+    (by simp [Formula.Realize, Connectives.strongKleene])
   simp [Formula.Realize] at this
 
 end Trivalent
