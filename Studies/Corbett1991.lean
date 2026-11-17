@@ -170,10 +170,9 @@ def system : Gender.AssignmentSystem (Bool × Option ReferentGender) Unit Value 
     | (true, some .male) => some .masc
     | (true, some .female) => some .fem
     | _ => none
-  formal _ := none
-  residue := .neut
+  formal _ := .neut
 
-theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ ↦ rfl
+theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ _ ↦ rfl
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨aaN, rfl⟩
 
@@ -216,10 +215,9 @@ acronyms and indeclinables (Figure 3.4) are not modelled. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) (Option Declension) Value where
   semantic := Option.map Value.ofReferentGender
   formal
-    | some .I => some .masc
-    | some .II | some .III => some .fem
-    | _ => none
-  residue := .neut
+    | some .I => .masc
+    | some .II | some .III => .fem
+    | _ => .neut
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨djadja, rfl⟩
 
@@ -228,7 +226,7 @@ theorem assign_eq_gender :
   decide
 
 theorem djadja_precedence :
-    system.formal (declension djadja) = some .fem ∧
+    system.formal (declension djadja) = .fem ∧
       system.assign sem declension djadja = .masc := by
   decide
 
@@ -262,13 +260,11 @@ def animate : Option Evaluative × Animacy → Option _root_.Swahili.Gender
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
 to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
-book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
-never reached. -/
+book's 11/10 and 15 are not among them). -/
 def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
   semantic s := [augmentative, diminutive, animate].findSome? (· s)
-  formal := some
-  residue := .genderE
+  formal := id
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨kitoto, rfl⟩
 
@@ -303,8 +299,7 @@ def sem (n : Afar.Gender.Noun) : Option ReferentGender := n.referentGender
 the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Value where
   semantic := Option.map Value.ofReferentGender
-  formal acc := if acc then some .fem else none
-  residue := .masc
+  formal acc := if acc then .fem else .masc
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨abba, rfl⟩
 
@@ -313,7 +308,7 @@ theorem assign_eq_gender :
   decide
 
 theorem abba_precedence :
-    system.formal abba.finalAccentedVowel = some .fem ∧
+    system.formal abba.finalAccentedVowel = .fem ∧
       system.assign sem Noun.finalAccentedVowel abba = .masc := by
   decide
 
@@ -329,8 +324,7 @@ def sem (n : Hausa.Noun) : Option ReferentGender := n.referentGender
 /-- The referents' sex first; then a noun in *-ā* is feminine, the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Gender.Value where
   semantic := Option.map Gender.Value.ofReferentGender
-  formal aa := if aa then some .feminine else none
-  residue := .masculine
+  formal aa := if aa then .feminine else .masculine
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨uba, rfl⟩
 
