@@ -214,7 +214,7 @@ theorem isContrary_AE_iff (h : SquareRelations sq) :
 /-- The particulars are subcontrary exactly when they can hold together. -/
 theorem isSubcontrary_IO_iff (h : SquareRelations sq) :
     IsSubcontrary sq.I sq.O ↔ sq.I ⊓ sq.O ≠ ⊥ := by
-  rw [IsSubcontrary, and_iff_left h.subcontrIO, disjoint_iff]
+  rw [isSubcontrary_iff, and_iff_right h.subcontrIO, disjoint_iff]
 
 end SquareRelations
 
