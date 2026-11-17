@@ -76,7 +76,7 @@ theorem IsRootedAt.isFull {r : U} (h : I.IsRootedAt r) : I.IsFull :=
 /-- An entity of a generated sub-interpretation satisfies a formula there, with quantifiers over
 `D`, exactly when it satisfies it in the whole interpretation with quantifiers over the image of
 `D`. -/
-theorem satisfiesOn_generated {D : Set {v // I.IsComponentOf r v}} {d : Desc Sig}
+theorem satisfiesOn_generated {D : Set {v // I.IsComponentOf r v}} {d : Formula Sig}
     {g : ℕ → {v // I.IsComponentOf r v}} :
     (I.generated r).SatisfiesOn D g v d ↔
       I.SatisfiesOn (Subtype.val '' D) (Subtype.val ∘ g) v d :=
@@ -84,7 +84,7 @@ theorem satisfiesOn_generated {D : Set {v // I.IsComponentOf r v}} {d : Desc Sig
 
 /-- An entity of a generated sub-interpretation satisfies a formula there exactly when it
 satisfies it in the whole interpretation. -/
-theorem satisfies_generated {d : Desc Sig} {g : ℕ → {v // I.IsComponentOf r v}} :
+theorem satisfies_generated {d : Formula Sig} {g : ℕ → {v // I.IsComponentOf r v}} :
     (I.generated r).Satisfies g v d ↔ I.Satisfies (Subtype.val ∘ g) v d :=
   (I.generatedEmbedding r).satisfies.symm
 

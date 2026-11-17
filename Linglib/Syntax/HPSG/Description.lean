@@ -5,32 +5,15 @@ public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Basic
 
 /-!
-# RSRL descriptions
+# RSRL formulae, descriptions and grammars
 
-This file defines the description language of RSRL and its satisfaction relation, with the
-quantifiers ranging over a given set. In RSRL they range over the components of the described
-entity. A grammar is a list of principles, and an interpretation is a model of a grammar when
-every principle holds of every entity.
-
-## Main definitions
-
-* `HPSG.RSRL.Desc`: a formula of the description language.
-* `HPSG.RSRL.Desc.IsColonFree`: no term of the formula starts at the described entity.
-* `HPSG.RSRL.Interpretation.SatisfiesOn`: satisfaction with quantifiers over a given set.
-* `HPSG.RSRL.Interpretation.Satisfies`: satisfaction with quantifiers over the components.
-* `HPSG.RSRL.Interpretation.Models`: every entity satisfies every principle of the grammar.
-* `HPSG.RSRL.Constraint`: a principle that requires the entities of one sort to satisfy a formula.
-
-## Main results
-
-* `HPSG.RSRL.Interpretation.satisfiesOn_congr`: satisfaction depends only on the free variables.
-* `HPSG.RSRL.Interpretation.satisfiesOn_iff_of_isColonFree`: a colon-free formula does not depend
-  on the described entity.
-* `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
-  formulae satisfies them under every assignment.
-* `HPSG.RSRL.Interpretation.Embedding.satisfies`: satisfaction is invariant under embeddings.
-* `HPSG.RSRL.Interpretation.forall_satisfies_map_toDesc_iff`: an entity satisfies a list of
-  constraints exactly when it satisfies those that its sort inherits.
+This file defines the formulae of RSRL and their satisfaction relation, whose quantifiers range
+over the components of the described entity. A description is a formula with no free variables,
+a grammar is a set of descriptions, and an interpretation is a model of a grammar when every
+description of the grammar describes every entity. Satisfaction is [invariant under
+embeddings](##HPSG.RSRL.Interpretation.Embedding.satisfies), so an interpretation that embeds
+into a model [is a model](##HPSG.RSRL.Interpretation.Embedding.models), and a model that
+contains an exhaustive model [is exhaustive](##HPSG.RSRL.Interpretation.Embedding.isExhaustive).
 
 ## Implementation notes
 
@@ -39,9 +22,10 @@ conjunction, disjunction and existential quantification are defined from them, a
 `FirstOrder.Language.BoundedFormula`, so that an induction on formulae has six cases; the
 `satisfiesOn_and`, `satisfiesOn_or` and `satisfiesOn_ex` lemmas give the clauses of
 [richter-2024] for the defined ones. As in Richter's syntax, a relation symbol applies to
-variables only. `Models` evaluates each principle at `u` under the constant assignment
-`fun _ ↦ u`, which makes it decidable on a finite universe and is immaterial for closed
-principles.
+variables only. `SatisfiesOn` takes the range of the quantifiers as an argument, which
+`Satisfies` sets to the components. A model satisfies its principles under every assignment;
+`models_iff` reduces this to the assignment of every variable to the described entity, which is
+what makes `Models` decidable for a grammar given by a list on a finite universe.
 
 ## References
 
@@ -58,7 +42,7 @@ universe u v
 variable {Srt : Type u} [PartialOrder Srt]
 
 /-- A formula of the description language ([richter-2024], Definition 4). -/
-inductive Desc (Sig : Signature Srt) where
+inductive Formula (Sig : Signature Srt) where
   /-- The sort assignment `t ∼ σ` says that `t` denotes an entity whose sort is at least as
   specific as `σ`. -/
   | sortAssign (t : Term Sig) (σ : Srt)
@@ -68,45 +52,45 @@ inductive Desc (Sig : Signature Srt) where
   relation `ρ`. -/
   | rel (ρ : Sig.Rel) (xs : Fin (Sig.arity ρ) → ℕ)
   /-- Negation. -/
-  | neg (d : Desc Sig)
+  | neg (d : Formula Sig)
   /-- Classical implication. -/
-  | imp (d e : Desc Sig)
+  | imp (d e : Formula Sig)
   /-- The formula `all x d` says that `d` holds when `x` is any component of the described
   entity. -/
-  | all (x : ℕ) (d : Desc Sig)
+  | all (x : ℕ) (d : Formula Sig)
 
 variable {Sig : Signature Srt} {U : Type v}
 
-namespace Desc
+namespace Formula
 
 /-- Conjunction. -/
-protected def and (d e : Desc Sig) : Desc Sig := (d.imp e.neg).neg
+protected def and (d e : Formula Sig) : Formula Sig := (d.imp e.neg).neg
 
 /-- Disjunction. -/
-protected def or (d e : Desc Sig) : Desc Sig := d.neg.imp e
+protected def or (d e : Formula Sig) : Formula Sig := d.neg.imp e
 
 /-- The formula `ex x d` says that `d` holds when `x` is some component of the described
 entity. -/
-def ex (x : ℕ) (d : Desc Sig) : Desc Sig := (all x d.neg).neg
+def ex (x : ℕ) (d : Formula Sig) : Formula Sig := (all x d.neg).neg
 
 /-- The biconditional of two formulae. -/
-protected def iff (d e : Desc Sig) : Desc Sig := (d.imp e).and (e.imp d)
+protected def iff (d e : Formula Sig) : Formula Sig := (d.imp e).and (e.imp d)
 
 /-- The formula `∀ x₀ (x₀ ≈ x₀)`, which every entity satisfies, in place of a constant for
 truth. -/
-def top : Desc Sig := .all 0 (.pathEq (.var 0) (.var 0))
+def top : Formula Sig := .all 0 (.pathEq (.var 0) (.var 0))
 
 /-- The negation of `top`, which no entity satisfies. -/
-def bot : Desc Sig := top.neg
+def bot : Formula Sig := top.neg
 
 /-- The conjunction of a list of formulae. -/
-def conj (ds : List (Desc Sig)) : Desc Sig := ds.foldr Desc.and top
+def conj (ds : List (Formula Sig)) : Formula Sig := ds.foldr Formula.and top
 
 /-- The disjunction of a list of formulae. -/
-def disj (ds : List (Desc Sig)) : Desc Sig := ds.foldr Desc.or bot
+def disj (ds : List (Formula Sig)) : Formula Sig := ds.foldr Formula.or bot
 
 /-- The variables that occur free in a formula ([richter-2024], Definition 5). -/
-def freeVars : Desc Sig → Finset ℕ
+def freeVars : Formula Sig → Finset ℕ
   | sortAssign t _ => t.freeVars
   | pathEq t₁ t₂ => t₁.freeVars ∪ t₂.freeVars
   | rel _ xs => Finset.univ.image xs
@@ -114,17 +98,20 @@ def freeVars : Desc Sig → Finset ℕ
   | imp d e => d.freeVars ∪ e.freeVars
   | all x d => d.freeVars.erase x
 
-@[simp] theorem freeVars_and (d e : Desc Sig) : (d.and e).freeVars = d.freeVars ∪ e.freeVars := rfl
+@[simp] theorem freeVars_and (d e : Formula Sig) :
+    (d.and e).freeVars = d.freeVars ∪ e.freeVars := rfl
 
-@[simp] theorem freeVars_or (d e : Desc Sig) : (d.or e).freeVars = d.freeVars ∪ e.freeVars := rfl
+@[simp] theorem freeVars_or (d e : Formula Sig) : (d.or e).freeVars = d.freeVars ∪ e.freeVars := rfl
 
-@[simp] theorem freeVars_ex (x : ℕ) (d : Desc Sig) : (ex x d).freeVars = d.freeVars.erase x := rfl
+@[simp] theorem freeVars_ex (x : ℕ) (d : Formula Sig) :
+    (ex x d).freeVars = d.freeVars.erase x := rfl
 
-@[simp] theorem freeVars_iff (d e : Desc Sig) : (d.iff e).freeVars = d.freeVars ∪ e.freeVars := by
-  simp [Desc.iff, freeVars, Finset.union_comm]
+@[simp] theorem freeVars_iff (d e : Formula Sig) :
+    (d.iff e).freeVars = d.freeVars ∪ e.freeVars := by
+  simp [Formula.iff, freeVars, Finset.union_comm]
 
 /-- A formula is colon-free when none of its terms starts at the described entity. -/
-def IsColonFree : Desc Sig → Prop
+def IsColonFree : Formula Sig → Prop
   | sortAssign t _ => t.IsColonFree
   | pathEq t₁ t₂ => t₁.IsColonFree ∧ t₂.IsColonFree
   | rel _ _ => True
@@ -144,7 +131,7 @@ instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
     have := decidableIsColonFree e
     inferInstanceAs (Decidable (d.IsColonFree ∧ e.IsColonFree))
 
-end Desc
+end Formula
 
 namespace Interpretation
 
@@ -154,7 +141,7 @@ variable (I : Interpretation Sig U)
 
 /-- The entity `u` satisfies a formula under the assignment `g` with the quantifiers ranging over
 `D`, an atomic formula with an undefined term being false. -/
-def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Desc Sig → Prop
+def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Formula Sig → Prop
   | .sortAssign t σ => ∃ v ∈ I.termDenot g t u, I.S v ≤ σ
   | .pathEq t₁ t₂ => ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u
   | .rel ρ xs => (fun i ↦ g (xs i)) ∈ I.R ρ
@@ -164,12 +151,12 @@ def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Desc Sig → Prop
 
 /-- The entity `u` satisfies a formula under the assignment `g` when the quantifiers range over
 the components of `u` ([richter-2024], Definition 14). -/
-def Satisfies (g : ℕ → U) (u : U) (d : Desc Sig) : Prop :=
+def Satisfies (g : ℕ → U) (u : U) (d : Formula Sig) : Prop :=
   I.SatisfiesOn {w | I.IsComponentOf u w} g u d
 
 instance decidableSatisfiesOn [Fintype U] [DecidableEq U] [DecidableLE Srt] (D : Set U)
     [DecidablePred (· ∈ D)] [∀ ρ, DecidablePred (· ∈ I.R ρ)] (g : ℕ → U) (u : U) :
-    (d : Desc Sig) → Decidable (I.SatisfiesOn D g u d)
+    (d : Formula Sig) → Decidable (I.SatisfiesOn D g u d)
   | .sortAssign _ σ => Option.decidableExistsMem (p := (I.S · ≤ σ)) _
   | .pathEq _ t₂ => Option.decidableExistsMem (p := (· ∈ I.termDenot g t₂ u)) _
   | .rel .. => by unfold SatisfiesOn; infer_instance
@@ -185,11 +172,11 @@ instance decidableSatisfiesOn [Fintype U] [DecidableEq U] [DecidableLE Srt] (D :
     unfold SatisfiesOn; infer_instance
 
 instance decidableSatisfies [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
-    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (g : ℕ → U) (u : U) (d : Desc Sig) :
+    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (g : ℕ → U) (u : U) (d : Formula Sig) :
     Decidable (I.Satisfies g u d) :=
   inferInstanceAs (Decidable (I.SatisfiesOn _ g u d))
 
-variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
+variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Formula Sig}
 
 @[simp] theorem satisfiesOn_sortAssign {t : Term Sig} {σ : Srt} :
     I.SatisfiesOn D g u (.sortAssign t σ) ↔ ∃ v ∈ I.termDenot g t u, I.S v ≤ σ := Iff.rfl
@@ -224,19 +211,19 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
 
 @[simp] theorem satisfiesOn_ex {x : ℕ} :
     I.SatisfiesOn D g u (.ex x d) ↔ ∃ w ∈ D, I.SatisfiesOn D (Function.update g x w) u d := by
-  simp only [Desc.ex, satisfiesOn_neg, satisfiesOn_all, not_forall, not_not, exists_prop]
+  simp only [Formula.ex, satisfiesOn_neg, satisfiesOn_all, not_forall, not_not, exists_prop]
 
 @[simp] theorem satisfiesOn_top : I.SatisfiesOn D g u .top := fun _ _ ↦ ⟨_, rfl, rfl⟩
 
 @[simp] theorem satisfiesOn_bot : ¬ I.SatisfiesOn D g u .bot := not_not_intro satisfiesOn_top
 
-@[simp] theorem satisfiesOn_conj {ds : List (Desc Sig)} :
+@[simp] theorem satisfiesOn_conj {ds : List (Formula Sig)} :
     I.SatisfiesOn D g u (.conj ds) ↔ ∀ d ∈ ds, I.SatisfiesOn D g u d := by
-  induction ds <;> simp_all [Desc.conj]
+  induction ds <;> simp_all [Formula.conj]
 
-@[simp] theorem satisfiesOn_disj {ds : List (Desc Sig)} :
+@[simp] theorem satisfiesOn_disj {ds : List (Formula Sig)} :
     I.SatisfiesOn D g u (.disj ds) ↔ ∃ d ∈ ds, I.SatisfiesOn D g u d := by
-  induction ds <;> simp_all [Desc.disj]
+  induction ds <;> simp_all [Formula.disj]
 
 @[simp] theorem satisfies_sortAssign {t : Term Sig} {σ : Srt} :
     I.Satisfies g u (.sortAssign t σ) ↔ ∃ v ∈ I.termDenot g t u, I.S v ≤ σ := Iff.rfl
@@ -333,52 +320,104 @@ theorem satisfiesOn_iff_of_isColonFree (hd : d.IsColonFree) :
 
 end Interpretation
 
-/-! ### Grammars and models -/
+/-! ### Descriptions and grammars -/
 
-/-- A grammar over a signature is a list of formulae, its principles
+/-- A description is a formula with no free variables ([richter-2024], Definition 6). -/
+@[ext] structure Description (Sig : Signature Srt) where
+  /-- The formula. -/
+  toFormula : Formula Sig
+  /-- The formula has no free variables. -/
+  freeVars_toFormula : toFormula.freeVars = ∅ := by decide
+
+attribute [coe] Description.toFormula
+attribute [simp] Description.freeVars_toFormula
+
+instance : Coe (Description Sig) (Formula Sig) := ⟨Description.toFormula⟩
+
+/-- A grammar over a signature is a set of descriptions, its principles
 ([richter-2024], Definition 16). -/
-abbrev Grammar (Sig : Signature Srt) := List (Desc Sig)
+abbrev Grammar (Sig : Signature Srt) := Set (Description Sig)
+
+/-- The grammar whose principles are the members of a list. -/
+def Grammar.ofList (ds : List (Description Sig)) : Grammar Sig := {d | d ∈ ds}
+
+@[simp] theorem Grammar.mem_ofList {ds : List (Description Sig)} {d : Description Sig} :
+    d ∈ Grammar.ofList ds ↔ d ∈ ds := Iff.rfl
+
+@[simp] theorem Grammar.ofList_append (ds es : List (Description Sig)) :
+    Grammar.ofList (ds ++ es) = Grammar.ofList ds ∪ Grammar.ofList es :=
+  Set.ext fun _ ↦ List.mem_append
 
 namespace Interpretation
 
-variable (I : Interpretation Sig U) {G H : Grammar Sig} {u : U}
+variable (I : Interpretation Sig U) {G H : Grammar Sig} {u : U} {d : Description Sig}
 
-/-- An interpretation is a model of a grammar when every entity satisfies every principle
+/-- The entities that a description describes, those that satisfy it under every assignment
+([richter-2024], Definition 15). -/
+def denotation (d : Description Sig) : Set U := {u | ∀ g, I.Satisfies g u d}
+
+/-- The entities that every description of a theory describes ([richter-2024], Definition 17). -/
+def theoryDenotation (θ : Set (Description Sig)) : Set U := {u | ∀ d ∈ θ, u ∈ I.denotation d}
+
+/-- An interpretation is a model of a grammar when every principle describes every entity
 ([richter-2024], Definition 18). -/
-def Models (G : Grammar Sig) : Prop := ∀ u : U, ∀ d ∈ G, I.Satisfies (fun _ ↦ u) u d
+def Models (G : Grammar Sig) : Prop := ∀ d ∈ G, ∀ (g : ℕ → U) (u : U), I.Satisfies g u d
 
-instance [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
-    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (G : Grammar Sig) : Decidable (I.Models G) := by
-  unfold Models; infer_instance
+/-- A model of a grammar is exhaustive when every theory that describes some entity of some
+model of the grammar describes one of its entities ([richter-2024], Definition 19). -/
+structure IsExhaustive (G : Grammar Sig) : Prop where
+  /-- An exhaustive model is a model. -/
+  models : I.Models G
+  /-- A theory with a nonempty denotation in a model has one in an exhaustive model. -/
+  nonempty_theoryDenotation (θ : Set (Description Sig)) ⦃U' : Type v⦄
+    (I' : Interpretation Sig U') : I'.Models G → (I'.theoryDenotation θ).Nonempty →
+      (I.theoryDenotation θ).Nonempty
 
 variable {I}
 
-/-- A model of a grammar of closed formulae satisfies them under every assignment. -/
-theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
-    I.Models G ↔ ∀ (g : ℕ → U) (u : U), ∀ d ∈ G, I.Satisfies g u d :=
-  ⟨fun h g u d hd ↦ (satisfies_iff_of_freeVars_eq_empty (hG d hd) _ g).1 (h u d hd),
-    fun h u ↦ h _ u⟩
+/-- An entity is described by a description exactly when it satisfies it under the assignment
+of every variable to itself, since a description has no free variables. -/
+theorem mem_denotation_iff : u ∈ I.denotation d ↔ I.Satisfies (fun _ ↦ u) u d :=
+  ⟨fun h ↦ h _, fun h g ↦ (satisfies_iff_of_freeVars_eq_empty d.freeVars_toFormula _ g).1 h⟩
 
-@[simp] theorem models_nil : I.Models [] := fun _ _ h ↦ absurd h List.not_mem_nil
+@[simp] theorem mem_theoryDenotation {θ : Set (Description Sig)} :
+    u ∈ I.theoryDenotation θ ↔ ∀ d ∈ θ, u ∈ I.denotation d := Iff.rfl
 
-@[simp] theorem models_append : I.Models (G ++ H) ↔ I.Models G ∧ I.Models H := by
-  simp only [Models, List.mem_append, or_imp, forall_and]
+theorem models_iff_theoryDenotation_eq_univ : I.Models G ↔ I.theoryDenotation G = Set.univ := by
+  simp only [Set.eq_univ_iff_forall, mem_theoryDenotation]
+  exact ⟨fun h u d hd g ↦ h d hd g u, fun h d hd g u ↦ h u d hd g⟩
+
+/-- An interpretation is a model of a grammar exactly when every entity satisfies every
+principle under the assignment of every variable to that entity. -/
+theorem models_iff : I.Models G ↔ ∀ d ∈ G, ∀ u, I.Satisfies (fun _ ↦ u) u d :=
+  ⟨fun h d hd u ↦ h d hd _ u, fun h d hd _ u ↦ mem_denotation_iff.2 (h d hd u) _⟩
+
+instance [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
+    [∀ ρ, DecidablePred (· ∈ I.R ρ)] (ds : List (Description Sig)) :
+    Decidable (I.Models (.ofList ds)) :=
+  decidable_of_iff (∀ d ∈ ds, ∀ u, I.Satisfies (fun _ ↦ u) u d)
+    ⟨fun h ↦ models_iff.2 h, fun h ↦ models_iff.1 h⟩
+
+@[simp] theorem models_empty : I.Models ∅ := fun _ h ↦ absurd h (Set.notMem_empty _)
+
+@[simp] theorem models_union : I.Models (G ∪ H) ↔ I.Models G ∧ I.Models H := by
+  simp only [Models, Set.mem_union, or_imp, forall_and]
 
 theorem Models.mono (hI : I.Models H) (hGH : G ⊆ H) : I.Models G :=
-  fun u d hd ↦ hI u d (hGH hd)
+  fun d hd ↦ hI d (hGH hd)
 
 /-! ### Embeddings -/
 
 namespace Embedding
 
 variable {V : Type*} {J : Interpretation Sig V} (f : Embedding I J) {D : Set U} {g : ℕ → U}
-  {d : Desc Sig}
+  {φ : Formula Sig}
 
 /-- An entity satisfies a formula with quantifiers over `D` exactly when its image under an
 embedding satisfies it with quantifiers over the image of `D`. -/
 theorem satisfiesOn_image :
-    J.SatisfiesOn (f '' D) (f ∘ g) (f u) d ↔ I.SatisfiesOn D g u d := by
-  induction d generalizing g with
+    J.SatisfiesOn (f '' D) (f ∘ g) (f u) φ ↔ I.SatisfiesOn D g u φ := by
+  induction φ generalizing g with
   | sortAssign t σ =>
     rw [satisfiesOn_sortAssign, satisfiesOn_sortAssign, HomClass.termDenot_comp]
     cases I.termDenot g t u <;> simp
@@ -395,19 +434,35 @@ theorem satisfiesOn_image :
 
 /-- Satisfaction is invariant under embeddings: an entity satisfies a formula exactly when its
 image does, since the components of the image are the images of the components. -/
-theorem satisfies : J.Satisfies (f ∘ g) (f u) d ↔ I.Satisfies g u d := by
+theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
   rw [Satisfies, ← HomClass.image_isComponentOf, satisfiesOn_image, Satisfies]
+
+/-- A description describes an entity exactly when it describes its image under an embedding. -/
+@[simp] theorem apply_mem_denotation : f u ∈ J.denotation d ↔ u ∈ I.denotation d := by
+  rw [mem_denotation_iff, mem_denotation_iff]
+  exact f.satisfies (g := fun _ ↦ u)
+
+@[simp] theorem apply_mem_theoryDenotation {θ : Set (Description Sig)} :
+    f u ∈ J.theoryDenotation θ ↔ u ∈ I.theoryDenotation θ := by
+  simp only [mem_theoryDenotation, apply_mem_denotation]
 
 /-- An interpretation that embeds into a model of a grammar is a model of it. -/
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
-  fun u d hd ↦ (f.satisfies (g := fun _ ↦ u)).1 (hJ (f u) d hd)
+  fun d hd g u ↦ f.satisfies.1 (hJ d hd (f ∘ g) (f u))
 
 /-- A model of a grammar that embeds onto an interpretation makes it a model. -/
 theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
     (hI : I.Models G) : J.Models G :=
-  fun v d hd ↦ by
+  models_iff.2 fun d hd v ↦ by
     obtain ⟨u, rfl⟩ := hf v
-    exact (f.satisfies (g := fun _ ↦ u)).2 (hI u d hd)
+    exact (f.satisfies (g := fun _ ↦ u)).2 (hI d hd _ u)
+
+/-- A model of a grammar into which an exhaustive model embeds is exhaustive. -/
+theorem isExhaustive {V : Type v} {J : Interpretation Sig V} (f : Embedding I J)
+    (hI : I.IsExhaustive G) (hJ : J.Models G) : J.IsExhaustive G :=
+  ⟨hJ, fun θ _ I' hI' hθ ↦
+    let ⟨u, hu⟩ := hI.nonempty_theoryDenotation θ I' hI' hθ
+    ⟨f u, f.apply_mem_theoryDenotation.2 hu⟩⟩
 
 end Embedding
 
@@ -415,23 +470,31 @@ end Interpretation
 
 /-! ### Constraints on sorts -/
 
-/-- A constraint `σ ⇒ d` requires every entity whose sort is at least as specific as `σ` to
-satisfy the formula `d`. -/
+/-- A constraint `σ ⇒ φ` requires every entity whose sort is at least as specific as `σ` to
+satisfy the formula `φ`, which has no free variables. -/
 structure Constraint (Sig : Signature Srt) where
   /-- The sort that the constraint applies to. -/
   sort : Srt
   /-- The formula that the entities of that sort satisfy. -/
-  body : Desc Sig
+  body : Formula Sig
+  /-- The body has no free variables. -/
+  freeVars_body : body.freeVars = ∅ := by decide
 
 namespace Constraint
 
+attribute [simp] freeVars_body
+
 /-- The formula that states a constraint. -/
-@[coe] def toDesc (c : Constraint Sig) : Desc Sig := (Desc.sortAssign .colon c.sort).imp c.body
+def toFormula (c : Constraint Sig) : Formula Sig := (Formula.sortAssign .colon c.sort).imp c.body
 
-instance : Coe (Constraint Sig) (Desc Sig) := ⟨toDesc⟩
+@[simp] theorem freeVars_toFormula (c : Constraint Sig) : c.toFormula.freeVars = ∅ := by
+  simp [toFormula, Formula.freeVars, Term.freeVars]
 
-@[simp] theorem freeVars_toDesc (c : Constraint Sig) : c.toDesc.freeVars = c.body.freeVars := by
-  simp [toDesc, Desc.freeVars, Term.freeVars]
+/-- The description that states a constraint. -/
+@[coe, simps] def toDescription (c : Constraint Sig) : Description Sig :=
+  ⟨c.toFormula, c.freeVars_toFormula⟩
+
+instance : Coe (Constraint Sig) (Description Sig) := ⟨toDescription⟩
 
 /-- The constraints among `C` that the sort `σ` inherits, those on `σ` and on its supersorts. -/
 def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Constraint Sig) :=
@@ -443,24 +506,27 @@ namespace Interpretation
 
 variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {g : ℕ → U} {u : U}
 
-@[simp] theorem satisfies_toDesc {c : Constraint Sig} :
-    I.Satisfies g u c.toDesc ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
-  simp [Constraint.toDesc]
+@[simp] theorem satisfies_toFormula {c : Constraint Sig} :
+    I.Satisfies g u c.toFormula ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
+  simp [Constraint.toFormula]
 
-/-- An entity satisfies the formulae that state a list of constraints exactly when it satisfies
-the bodies of the constraints that its sort inherits. -/
-theorem forall_satisfies_map_toDesc_iff [DecidableLE Srt] :
-    (∀ d ∈ C.map Constraint.toDesc, I.Satisfies g u d) ↔
+/-- An entity satisfies the descriptions that state a list of constraints exactly when it
+satisfies the bodies of the constraints that its sort inherits. -/
+theorem forall_satisfies_map_toDescription_iff [DecidableLE Srt] :
+    (∀ d ∈ Grammar.ofList (C.map Constraint.toDescription), I.Satisfies g u d) ↔
       ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by
   simp [Constraint.inherited]
 
-theorem models_map_toDesc_iff [DecidableLE Srt] : I.Models (C.map Constraint.toDesc) ↔
-    ∀ u, ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u c.body :=
-  forall_congr' fun _ ↦ forall_satisfies_map_toDesc_iff
+theorem models_ofList_map_toDescription_iff [DecidableLE Srt] :
+    I.Models (.ofList (C.map Constraint.toDescription)) ↔
+      ∀ u, ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u c.body :=
+  models_iff.trans
+    ⟨fun h u ↦ forall_satisfies_map_toDescription_iff.1 fun d hd ↦ h d hd u,
+      fun h d hd u ↦ forall_satisfies_map_toDescription_iff.2 (h u) d hd⟩
 
 theorem Models.satisfies_body {G : Grammar Sig} (hI : I.Models G) {c : Constraint Sig}
-    (hc : c.toDesc ∈ G) (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
-  satisfies_toDesc.1 (hI u _ hc) hu
+    (hc : c.toDescription ∈ G) (hu : I.S u ≤ c.sort) : I.Satisfies g u c.body :=
+  satisfies_toFormula.1 (hI _ hc g u) hu
 
 end Interpretation
 

@@ -218,8 +218,9 @@ instance {U : Type*} (ρ : sig.Rel) : DecidablePred (· ∈ @noRel U ρ) := fun 
 
 /-- The headed construction of [sag-2010]: the mother of a headed construct has the category of
 its head daughter. -/
-def headedPrinciple : Constraint sig :=
-  ⟨.headedCxt, .pathEq (.path [.MTR, .CAT]) (.path [.HDDTR, .CAT])⟩
+def headedPrinciple : Constraint sig where
+  sort := .headedCxt
+  body := .pathEq (.path [.MTR, .CAT]) (.path [.HDDTR, .CAT])
 
 /-- The filler-head construction ([sag-2010] (58), [sag-2012] (141)). The head daughter is
 verbal. The filler daughter shares its category, its `GAP` list and its index with the first
@@ -236,77 +237,89 @@ def fillerHeadPrinciple : Constraint sig where
 
 /-- The core clause construction of [sag-2010]: the mother of a core clause is finite or
 infinitival. -/
-def corePrinciple : Constraint sig :=
-  ⟨.coreCl, .sortAssign (.path [.MTR, .CAT, .VFORM]) .core⟩
+def corePrinciple : Constraint sig where
+  sort := .coreCl
+  body := .sortAssign (.path [.MTR, .CAT, .VFORM]) .core
 
 /-- The mother of a declarative clause has an austinean semantic type. -/
-def declarativePrinciple : Constraint sig :=
-  ⟨.declarativeCl, .sortAssign (.path [.MTR, .SEM]) .austinean⟩
+def declarativePrinciple : Constraint sig where
+  sort := .declarativeCl
+  body := .sortAssign (.path [.MTR, .SEM]) .austinean
 
 /-- The mother of an interrogative clause denotes a question. -/
-def interrogativePrinciple : Constraint sig :=
-  ⟨.interrogativeCl, .sortAssign (.path [.MTR, .SEM]) .question⟩
+def interrogativePrinciple : Constraint sig where
+  sort := .interrogativeCl
+  body := .sortAssign (.path [.MTR, .SEM]) .question
 
 /-- The mother of an exclamative clause denotes a fact. -/
-def exclamativePrinciple : Constraint sig :=
-  ⟨.exclamativeCl, .sortAssign (.path [.MTR, .SEM]) .fact⟩
+def exclamativePrinciple : Constraint sig where
+  sort := .exclamativeCl
+  body := .sortAssign (.path [.MTR, .SEM]) .fact
 
 /-- The relative construction ([sag-2010] (91)): the mother of a relative clause is neither
 inverted nor independent. -/
-def relativePrinciple : Constraint sig :=
-  ⟨.relativeCl, .and (.sortAssign (.path [.MTR, .CAT, .INV]) .minus)
-    (.sortAssign (.path [.MTR, .CAT, .IC]) .minus)⟩
+def relativePrinciple : Constraint sig where
+  sort := .relativeCl
+  body := .and (.sortAssign (.path [.MTR, .CAT, .INV]) .minus)
+    (.sortAssign (.path [.MTR, .CAT, .IC]) .minus)
 
 /-- The topicalization construction ([sag-2010] (61)). The filler daughter is nonverbal. The head
 daughter is an uninverted, independent, finite projection of a verb, which excludes the
 complementizer-headed clause that a the-clause allows, and it has exactly one gap. The mother is
 austinean. -/
-def topPrinciple : Constraint sig :=
-  ⟨.topCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+def topPrinciple : Constraint sig where
+  sort := .topCl
+  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
     (.and (.sortAssign (.path [.HDDTR, .CAT]) .verb)
       (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
         (.and (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)
           (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
             (.and (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)
-              (.sortAssign (.path [.MTR, .SEM]) .austinean))))))⟩
+              (.sortAssign (.path [.MTR, .SEM]) .austinean))))))
 
 /-- The wh-exclamative construction ([sag-2010] (70)). The filler daughter is nonverbal, and the
 head daughter is uninverted and finite and has exactly one gap. -/
-def whExclPrinciple : Constraint sig :=
-  ⟨.whExclCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+def whExclPrinciple : Constraint sig where
+  sort := .whExclCl
+  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
     (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
       (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
-        (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)))⟩
+        (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)))
 
 /-- The nonsubject wh-interrogative construction ([sag-2010] (80)). The filler daughter is
 nonverbal, and the head daughter is inverted exactly when it is independent. -/
-def nsWhIntPrinciple : Constraint sig :=
-  ⟨.nsWhIntCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.pathEq (.path [.HDDTR, .CAT, .INV]) (.path [.HDDTR, .CAT, .IC]))⟩
+def nsWhIntPrinciple : Constraint sig where
+  sort := .nsWhIntCl
+  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+    (.pathEq (.path [.HDDTR, .CAT, .INV]) (.path [.HDDTR, .CAT, .IC]))
 
 /-- The wh-relative construction ([sag-2010] (90)) gives the mother the semantic type of a
 modifier. -/
-def whRelPrinciple : Constraint sig :=
-  ⟨.whRelCl, .sortAssign (.path [.MTR, .SEM]) .modifier⟩
+def whRelPrinciple : Constraint sig where
+  sort := .whRelCl
+  body := .sortAssign (.path [.MTR, .SEM]) .modifier
 
 /-- The finite wh-relative construction ([sag-2010] (92)). The mother is finite and the filler
 daughter nominal, a noun phrase or a prepositional phrase. -/
-def finWhRelPrinciple : Constraint sig :=
-  ⟨.finWhRelCl, .and (.sortAssign (.path [.MTR, .CAT, .VFORM]) .fin)
-    (.sortAssign (.path [.FILLERDTR, .CAT]) .nominal)⟩
+def finWhRelPrinciple : Constraint sig where
+  sort := .finWhRelCl
+  body := .and (.sortAssign (.path [.MTR, .CAT, .VFORM]) .fin)
+    (.sortAssign (.path [.FILLERDTR, .CAT]) .nominal)
 
 /-- The infinitival wh-relative construction of [sag-2010]. The filler daughter is a
 prepositional phrase and the head daughter is infinitival. -/
-def infWhRelPrinciple : Constraint sig :=
-  ⟨.infWhRelCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .prep)
-    (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .inf)⟩
+def infWhRelPrinciple : Constraint sig where
+  sort := .infWhRelCl
+  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .prep)
+    (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .inf)
 
 /-- The the-clause construction ([sag-2010] (108)). The filler daughter is nonverbal, and the
 head daughter is finite and has exactly one gap. -/
-def thePrinciple : Constraint sig :=
-  ⟨.theCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+def thePrinciple : Constraint sig where
+  sort := .theCl
+  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
     (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
-      (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist))⟩
+      (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist))
 
 /-- The constructions of the fragment. -/
 def constraints : List (Constraint sig) :=
@@ -316,9 +329,7 @@ def constraints : List (Constraint sig) :=
     thePrinciple]
 
 /-- The grammar of the fragment. -/
-def grammar : Grammar sig := constraints.map Constraint.toDesc
-
-theorem freeVars_grammar : ∀ d ∈ grammar, d.freeVars = ∅ := by decide
+abbrev grammar : Grammar sig := .ofList (constraints.map Constraint.toDescription)
 
 /-- The signature admits the paths of the filler-head construction from the sort it constrains,
 and it admits no filler daughter in a coordinate construct. -/
@@ -356,7 +367,7 @@ theorem forall_satisfies_grammar_iff_of_nsWhIntCl (hu : I.S u = .nsWhIntCl) :
     (∀ d ∈ grammar, I.Satisfies g u d) ↔
       ∀ c ∈ [headedPrinciple, fillerHeadPrinciple, corePrinciple, interrogativePrinciple,
         nsWhIntPrinciple], I.Satisfies g u c.body := by
-  rw [grammar, Interpretation.forall_satisfies_map_toDesc_iff, hu]
+  rw [grammar, Interpretation.forall_satisfies_map_toDescription_iff, hu]
   rfl
 
 /-- In a model of the grammar, the mother of a filler-head construct has a `GAP` list of sort
@@ -438,8 +449,8 @@ theorem listMem_iff {x l : U} :
 /-- The principle that defines `member`. The entity `x` is a member of `L` exactly when `L` is a
 nonempty list and `x` is its first element or a member of its rest. The rest reaches the
 relation through the bound variable `2`, since a relation symbol applies to variables. -/
-def memberDef : Desc sig :=
-  .all 0 (.all 1 (.iff (.rel .member ![0, 1])
+def memberDef : Description sig where
+  toFormula := .all 0 (.all 1 (.iff (.rel .member ![0, 1])
     (.and (.sortAssign (.var 1) .nelist)
       (.or (.pathEq (.var 0) (.feat (.var 1) .FIRST))
         (.ex 2 (.and (.pathEq (.var 2) (.feat (.var 1) .REST)) (.rel .member ![0, 2])))))))
@@ -483,9 +494,8 @@ private theorem and_or_listMem_iff (hI : I.IsWellTyped) {x l : U} :
 
 theorem models_memberDef_of_forall (hI : I.IsWellTyped)
     (h : ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
-      (![x, l] ∈ I.R .member ↔ ListMem I x l)) : I.Models [memberDef] := by
-  intro u d hd
-  rw [List.mem_singleton.1 hd]
+      (![x, l] ∈ I.R .member ↔ ListMem I x l)) : I.Models {memberDef} := by
+  rintro d rfl g u
   refine satisfies_memberDef_iff.2 fun x hx l hl ↦ ?_
   rw [h u x l hx hl, ← and_or_listMem_iff hI]
   exact and_congr_right fun _ ↦ or_congr_right <| exists_congr fun y ↦
@@ -496,10 +506,10 @@ interpretation models it exactly when `member` holds of two components of an ent
 the first is an element of the second. -/
 theorem models_memberDef_iff (hI : I.IsWellTyped)
     (hwf : WellFounded fun b a ↦ I.A .REST a = some b) :
-    I.Models [memberDef] ↔ ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
+    I.Models {memberDef} ↔ ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
       (![x, l] ∈ I.R .member ↔ ListMem I x l) := by
   refine ⟨fun hM u x l hx hl ↦ ?_, models_memberDef_of_forall hI⟩
-  have hu := satisfies_memberDef_iff.1 (hM u _ (List.mem_singleton_self _))
+  have hu := satisfies_memberDef_iff.1 (hM _ rfl (fun _ ↦ u) u)
   induction l using hwf.induction with
   | h l ih =>
     rw [hu x hx l hl, ← and_or_listMem_iff hI]
