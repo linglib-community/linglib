@@ -26,7 +26,7 @@ def ex_89b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex_90 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "cole1982_89b")] }
 
@@ -56,7 +56,7 @@ def ex_332 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -71,7 +71,7 @@ def ex_333 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

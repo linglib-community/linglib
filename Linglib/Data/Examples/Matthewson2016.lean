@@ -26,7 +26,7 @@ def ex25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "k'a"), ("test", "deniability")] }
 
@@ -41,7 +41,7 @@ def ex26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "lákw7a"), ("test", "deniability")] }
 
@@ -56,7 +56,7 @@ def ex27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "k'a"), ("test", "deniability")] }
 
@@ -71,7 +71,7 @@ def ex28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "It smelled as if the pie was good, but there was too much salt so it was actually horrible."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "lákw7a"), ("test", "deniability")] }
 
@@ -86,7 +86,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You're wondering where your friend is. You notice his rod and tackle box are not in their usual place."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "ima('a)"), ("reportedFrom", "Peterson 2010, p. 161")] }
 
@@ -101,7 +101,7 @@ def ex38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "ima('a)"), ("reportedFrom", "Matthewson 2013a, p. 361")] }
 
@@ -116,7 +116,7 @@ def ex39 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I am watching people clean out a cooler and throw away various things."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "o'qa"), ("downwardEntailing", "false"), ("reportedFrom", "Deal 2011, p. 574")] }
 
@@ -131,7 +131,7 @@ def ex40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "As in (39)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "o'qa"), ("downwardEntailing", "true"), ("reportedFrom", "Deal 2011, p. 574")] }
 
@@ -146,7 +146,7 @@ def ex42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "mat"), ("force", "possibility"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
@@ -161,7 +161,7 @@ def ex42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "cmay"), ("force", "possibility"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
@@ -176,7 +176,7 @@ def ex43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "mat"), ("force", "necessity"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
@@ -191,7 +191,7 @@ def ex43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "cmay"), ("force", "necessity"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
@@ -206,7 +206,7 @@ def ex57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Stacey bought a bone for Pat's pet, thinking it might be a dog. Later, she finds out the pet is a snake. When Pat asks her why she bought a bone, she says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("flavor", "epistemic"), ("perspective", "past"), ("reportedFrom", "Louie 2012")] }
 
@@ -221,7 +221,7 @@ def ex58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Your neighbour doesn't show up for work and you know there's been a flu going around. You send your son to bring her hot soup. She actually took the day off because her apartment flooded, so she asks why you sent her soup in the middle of the day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("flavor", "epistemic"), ("perspective", "past"), ("reportedFrom", "Laturnus 2012")] }
 
@@ -236,7 +236,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "When you looked out of your window earlier today the ground was wet, so it looked like it might have rained. But you find out later that sprinklers had been watering the ground."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "k'a"), ("flavor", "epistemic"), ("perspective", "past")] }
 
@@ -251,7 +251,7 @@ def ex60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, p. 366")] }
 
@@ -266,7 +266,7 @@ def ex61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, water was falling, so it looked like it was raining. But you found out later it was the gutters leaking."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, p. 363")] }
 
@@ -281,7 +281,7 @@ def ex62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("reportedFrom", "Matthewson 2013a, p. 366")] }
 
@@ -296,7 +296,7 @@ def ex63a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "past"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
@@ -311,7 +311,7 @@ def ex63b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear pattering on the roof."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "present"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
@@ -326,7 +326,7 @@ def ex63c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear thunder, so you think it might rain soon."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "future"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
@@ -341,7 +341,7 @@ def ex64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("force", "weak"), ("flavor", "epistemic"), ("reportedFrom", "Matthewson et al. 2012, p. 224")] }
 
@@ -356,7 +356,7 @@ def ex65 : Datum :=
     lgrConformance := some .wordAligned
     context := "Tom wasn't fishing yesterday, and you were wondering about his health. But today you see him fishing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("flavor", "epistemic"), ("reportedFrom", "Matthewson et al. 2012, p. 228")] }
 
@@ -371,7 +371,7 @@ def ex66 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("force", "strong"), ("flavor", "epistemic"), ("reportedFrom", "Seiter 1980, p. 13")] }
 
@@ -386,7 +386,7 @@ def ex67 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "maeke"), ("force", "weak"), ("flavor", "circumstantial"), ("reportedFrom", "Seiter 1980, p. 140")] }
 
@@ -401,7 +401,7 @@ def ex68 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "lata"), ("force", "strong"), ("flavor", "deontic"), ("reportedFrom", "Seiter 1980, p. 133")] }
 

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "A: Who did Mary invite to the party?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mary invited only John and Mike.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "A: Is John graduating this Spring?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "No, John is only a sophomore.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Only the thought of you sends shivers down my spine.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "A: Where did Mary go for her vacation this year?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "She only went to Spain and Portugal.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "A: What is Mary's job at the hospital?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "She is only an intern.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I really expected a suite but only got a single room with 2 beds.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -144,7 +144,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "London police expected a turnout of 100000 but only 15000 showed up. What happened?", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "A: How good was the food?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The food was only amazing!", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "A: How big is the Empire State Building?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The Empire State Building is just huge!", "judgment": "acceptable"},
       {"form": "The Empire State Building is just enormous!", "judgment": "acceptable"}
     ],
@@ -210,7 +210,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"]
@@ -229,7 +229,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"]
@@ -248,7 +248,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
@@ -267,7 +267,7 @@
     "translation": "",
     "context": "Many gardeners are finding the new selections of miniature amaryllis more to their liking. ... don't be misled by the word \"miniature.\"",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
@@ -286,7 +286,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
@@ -305,7 +305,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
@@ -324,7 +324,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Fafen, the daughter only older than Siri, had done the family duty and become a monk.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -347,7 +347,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
@@ -366,7 +366,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
@@ -385,7 +385,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
@@ -404,7 +404,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
@@ -423,7 +423,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"],
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"],
@@ -463,7 +463,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
@@ -483,7 +483,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"],
@@ -503,7 +503,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
@@ -523,7 +523,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
@@ -543,7 +543,7 @@
     "translation": "",
     "context": "What GPA is sufficient for Jason to stay in the program?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
@@ -563,7 +563,7 @@
     "translation": "",
     "context": "A: Why is the lamp broken?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I was sitting there and the lamp only broke!", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -586,7 +586,7 @@
     "translation": "",
     "context": "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unexplanatory"]
@@ -608,7 +608,7 @@
     "translation": "",
     "context": "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unexplanatory"]
@@ -627,7 +627,7 @@
     "translation": "",
     "context": "A: Why did you make mango-mousse cake?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "weakExplanation"],
@@ -647,7 +647,7 @@
     "translation": "",
     "context": "A: How did Mary get into the bar?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "weakExplanation"],
@@ -667,7 +667,7 @@
     "translation": "",
     "context": "A: What is a proton?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
@@ -688,7 +688,7 @@
     "translation": "",
     "context": "A: Why are you mad?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
@@ -709,7 +709,7 @@
     "translation": "",
     "context": "A: What kind of dog is Fido?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
@@ -730,7 +730,7 @@
     "translation": "",
     "context": "A: What happened to your relationship?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
@@ -751,7 +751,7 @@
     "translation": "",
     "context": "A: What happened at the church?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
@@ -772,7 +772,7 @@
     "translation": "",
     "context": "A: How did John do on the exam?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He only got a B.",
         "judgment": "acceptable"
@@ -812,7 +812,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Alphonso simply grabbed whatever tool was handy.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -834,7 +834,7 @@
     "translation": "",
     "context": "A: Is Fafen older than Siri?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
@@ -853,7 +853,7 @@
     "translation": "",
     "context": "A: How much older than Siri is Fafen?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
@@ -874,7 +874,7 @@
     "translation": "",
     "context": "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
@@ -894,7 +894,7 @@
     "translation": "",
     "context": "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
@@ -914,7 +914,7 @@
     "translation": "",
     "context": "Q: How full is the tank?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"],
@@ -934,7 +934,7 @@
     "translation": "",
     "context": "A: When did your sister get here?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
@@ -955,7 +955,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Roughly speaking, this essay is perfect.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -977,7 +977,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Roughly speaking, this theater is empty.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -999,7 +999,7 @@
     "translation": "",
     "context": "Q: How tasty is that soup?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"]
@@ -1018,7 +1018,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The door is completely closed!", "judgment": "acceptable"},
       {"form": "The door is absolutely closed!", "judgment": "acceptable"}
     ],
@@ -1041,7 +1041,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The tank is completely full!", "judgment": "acceptable"},
       {"form": "The tank is absolutely full!", "judgment": "acceptable"}
     ],
@@ -1064,7 +1064,7 @@
     "translation": "",
     "context": "A: Which emotions was the funeral full of?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"]
@@ -1083,7 +1083,7 @@
     "translation": "",
     "context": "A: How do pink bathrooms compare to other-color bathrooms?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"]
@@ -1105,7 +1105,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "complementExclusion"],
@@ -1125,7 +1125,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "complementExclusion"],
@@ -1148,7 +1148,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"],
@@ -1171,7 +1171,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "C: Yes! Even a goldfish will make him happy.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1196,7 +1196,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "B': No, it isn't! I found it too verbose.", "judgment": "acceptable"},
       {"form": "B'': I don't think so. I hate how pretentious it sounds.", "judgment": "acceptable"}
     ],

@@ -27,7 +27,7 @@ def ex1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -43,7 +43,7 @@ def ex1_ap : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "antipassive"), ("remnant", "object")] }
 
@@ -59,7 +59,7 @@ def ex2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -75,7 +75,7 @@ def ex2_ap : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "antipassive"), ("remnant", "object")] }
 
@@ -91,7 +91,7 @@ def ex3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -107,7 +107,7 @@ def ex3_ap : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "antipassive"), ("remnant", "object")] }
 
@@ -123,7 +123,7 @@ def ex11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "transitive"), ("target", "agentFocus"), ("remnant", "subject")] }
 
@@ -139,7 +139,7 @@ def ex35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -155,7 +155,7 @@ def ex36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -171,7 +171,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -187,7 +187,7 @@ def ex55 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -203,7 +203,7 @@ def ex51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "agentFocus"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -219,7 +219,7 @@ def ex52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "passive"), ("target", "agentFocus"), ("remnant", "subject")] }
 
@@ -235,7 +235,7 @@ def ex53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "antipassive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -249,7 +249,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "intransitive"), ("target", "transitive"), ("remnant", "object")] }
 
@@ -263,7 +263,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "transitiveTo"), ("target", "transitiveTail"), ("remnant", "oblique")] }
 
@@ -277,7 +277,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "transitiveTo"), ("target", "transitiveTo"), ("remnant", "oblique")] }
 
@@ -291,7 +291,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "transitive"), ("target", "transitiveTail"), ("remnant", "oblique")] }
 
@@ -305,7 +305,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "transitive"), ("target", "transitiveTo"), ("remnant", "oblique")] }
 
@@ -319,7 +319,7 @@ def ex69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "passive"), ("target", "active"), ("remnant", "subject")] }
 
@@ -333,7 +333,7 @@ def ex69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "active"), ("target", "passive"), ("remnant", "oblique")] }
 
@@ -347,7 +347,7 @@ def ex70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "vp"), ("antecedent", "inchoative"), ("target", "causative"), ("remnant", "none")] }
 
@@ -361,7 +361,7 @@ def ex71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "vp"), ("antecedent", "passive"), ("target", "active"), ("remnant", "none")] }
 
@@ -377,7 +377,7 @@ def ex75a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "active"), ("target", "active"), ("remnant", "object")] }
 
@@ -393,7 +393,7 @@ def ex75b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "reflexive"), ("target", "active"), ("remnant", "object")] }
 
@@ -409,7 +409,7 @@ def ex76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "active"), ("target", "active"), ("remnant", "object")] }
 
@@ -425,7 +425,7 @@ def ex76b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("ellipsis", "tp"), ("antecedent", "reflexive"), ("target", "active"), ("remnant", "object")] }
 
@@ -441,7 +441,7 @@ def ex58b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "intransitive"), ("order", "caus")] }
 
@@ -457,7 +457,7 @@ def ex59b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "intransitive"), ("order", "caus")] }
 
@@ -473,7 +473,7 @@ def ex60b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "intransitive"), ("order", "caus")] }
 
@@ -489,7 +489,7 @@ def ex61b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "intransitive"), ("order", "caus")] }
 
@@ -505,7 +505,7 @@ def ex62a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "transitive"), ("order", "caus")] }
 
@@ -521,7 +521,7 @@ def ex62b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "passive"), ("order", "caus")] }
 
@@ -537,7 +537,7 @@ def ex63a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "antipassive"), ("order", "caus")] }
 
@@ -553,7 +553,7 @@ def ex63b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "antipassive"), ("order", "caus")] }
 
@@ -569,7 +569,7 @@ def ex64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Talking about duties of family members in child-rearing..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "antipassive"), ("order", "causThenBase")] }
 
@@ -585,7 +585,7 @@ def ex65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "antipassive"), ("order", "caus")] }
 
@@ -601,7 +601,7 @@ def ex66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("base", "antipassive"), ("order", "causThenBase")] }
 

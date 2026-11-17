@@ -25,7 +25,7 @@ def ex_1_46a : Datum :=
     glossedTokens := []
     context := "Uttered when the speaker is driving down the freeway."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no past time at which I turn off the stove", .unacceptable), ("some past time at which I do not turn off the stove", .unacceptable), ("no subinterval of the contextually salient past interval at which I turn off the stove", .acceptable)]
     paperFeatures := [("use", "deictic")] }
 
@@ -39,7 +39,7 @@ def ex_1_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sam got drunk at the time of Sheila's party", .acceptable)]
     paperFeatures := [("use", "anaphoric")] }
 
@@ -53,7 +53,7 @@ def ex_1_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John saw Mary at some time within the contextually relevant interval", .acceptable), ("John saw Mary at some past time", .unacceptable)]
     paperFeatures := [("restriction", "contextual")] }
 
@@ -67,7 +67,7 @@ def ex_2_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -82,7 +82,7 @@ def ex_2_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -97,7 +97,7 @@ def ex_2_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [] }
 
@@ -111,7 +111,7 @@ def ex_2_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -125,7 +125,7 @@ def ex_2_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -139,7 +139,7 @@ def ex_2_25c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -153,7 +153,7 @@ def ex_2_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable), ("subsequent", .acceptable)]
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_2_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable), ("subsequent", .unacceptable)]
     paperFeatures := [] }
 
@@ -181,7 +181,7 @@ def ex_2_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -195,7 +195,7 @@ def ex_2_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before the speech time", .unacceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -209,7 +209,7 @@ def ex_2_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -223,7 +223,7 @@ def ex_2_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -238,7 +238,7 @@ def ex_2_47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("subsequent", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [] }
 
@@ -253,7 +253,7 @@ def ex_2_47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("subsequent", .acceptable)]
     paperFeatures := [] }
 
@@ -267,7 +267,7 @@ def ex_2_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -281,7 +281,7 @@ def ex_2_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -295,7 +295,7 @@ def ex_2_61 : Datum :=
     glossedTokens := []
     context := "On the intended reading, the winning follows the speech time."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -309,7 +309,7 @@ def ex_2_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -323,7 +323,7 @@ def ex_2_97 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -337,7 +337,7 @@ def ex_2_103 : Datum :=
     glossedTokens := []
     context := "On the reading on which your having is simultaneous with your saying."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -351,7 +351,7 @@ def ex_2_104 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -365,7 +365,7 @@ def ex_2_105 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -379,7 +379,7 @@ def ex_2_125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -393,7 +393,7 @@ def ex_2_139a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [] }
 
@@ -407,7 +407,7 @@ def ex_2_139b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -421,7 +421,7 @@ def ex_2_139c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -436,7 +436,7 @@ def ex_4_17d : Datum :=
     context := "At 10 A.M. John and Bill are peeping into a room where Sue is. John, near-sighted, says Mary is in the room. Bill denies it. One minute later Sue is still in the room and Bill reports this to Kent, adding: But that's not true. The one that is in the room is Sue."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -450,7 +450,7 @@ def ex_4_24_Case_1 : Datum :=
     glossedTokens := []
     context := "On June 20th John says Mary is pregnant, and she is. On December 20th Bill verifies that she is still pregnant."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -464,7 +464,7 @@ def ex_4_24_Case_2 : Datum :=
     glossedTokens := []
     context := "On June 20th John says Mary is pregnant, and she is. On December 20th Bill learns that she has had a miscarriage."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -478,7 +478,7 @@ def ex_4_27d : Datum :=
     glossedTokens := []
     context := "As in (17), except that Sue leaves the room before Kent joins them."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -492,7 +492,7 @@ def ex_4_28 : Datum :=
     glossedTokens := []
     context := "As in (27), except that Mary comes in just before Sue leaves."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -506,7 +506,7 @@ def ex_4_34d : Datum :=
     glossedTokens := []
     context := "As in (17), except that Bill convinces John that it is Sue. One minute later Sue is still in the room."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -520,7 +520,7 @@ def ex_4_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -534,7 +534,7 @@ def ex_4_43c : Datum :=
     glossedTokens := []
     context := "As in (27) on the first day. On the following day Sue, who went home for the night, is inside the room again."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

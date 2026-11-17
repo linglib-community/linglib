@@ -26,7 +26,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A V-de resultative modified by 'repeatedly'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the whole resultative is modified: repeated wakings", .acceptable), ("V1 alone is modified: the baby cried repeatedly until Mother woke once", .questionable)]
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A V-V resultative modified by 'repeatedly'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the whole resultative is modified: repeated wakings", .acceptable), ("V1 alone is modified: the baby cried repeatedly until Mother woke once", .ungrammatical)]
     paperFeatures := [] }
 
@@ -56,7 +56,7 @@ def ex_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The baby cried at home until the neighbours woke up next door."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -71,7 +71,7 @@ def ex_46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The baby cried at home until the neighbours woke up next door."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -86,7 +86,7 @@ def ex_107 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Zhangsan shoots Lisi, who is fatally wounded but does not die at once: the shooting and the dying overlap only at the moment the bullet makes contact."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -101,7 +101,7 @@ def ex_131 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -116,7 +116,7 @@ def ex_132 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -131,7 +131,7 @@ def ex_133 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "theme")] }
 
@@ -146,7 +146,7 @@ def ex_134 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "theme")] }
 
@@ -161,7 +161,7 @@ def ex_137 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -176,7 +176,7 @@ def ex_139 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
@@ -191,7 +191,7 @@ def ex_146 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
@@ -206,7 +206,7 @@ def ex_148 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
@@ -221,7 +221,7 @@ def ex_149 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
@@ -236,7 +236,7 @@ def ex_150 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "subjectMatter")] }
 
@@ -251,7 +251,7 @@ def ex_151 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "subjectMatter")] }
 
@@ -266,7 +266,7 @@ def ex_202 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -281,7 +281,7 @@ def ex_205 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("I ate the meal", .acceptable), ("someone else ate the meal I paid for", .acceptable)]
     paperFeatures := [("externalArgument", "theme")] }
 
@@ -296,7 +296,7 @@ def ex_206 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the audience sang", .acceptable), ("the performer sang", .acceptable)]
     paperFeatures := [("externalArgument", "theme")] }
 
@@ -311,7 +311,7 @@ def ex_216 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -326,7 +326,7 @@ def ex_217 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -341,7 +341,7 @@ def ex_219 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -356,7 +356,7 @@ def ex_221 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Out of the blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -371,7 +371,7 @@ def ex_224 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mother cries herself awake", .acceptable), ("Mother wakes from someone else crying", .unacceptable)]
     paperFeatures := [] }
 
@@ -386,7 +386,7 @@ def ex_330 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A hybrid resultative, commonly described as a subject-oriented transitive resultative."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the horse became tired", .acceptable), ("Zhangsan became tired", .variable)]
     paperFeatures := [("externalArgument", "agent")] }
 
@@ -401,7 +401,7 @@ def ex_668 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A transitive V-V resultative whose result verb is an intransitive change-of-state verb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 

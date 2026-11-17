@@ -25,7 +25,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -81,7 +81,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -95,7 +95,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -109,7 +109,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -123,7 +123,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -137,7 +137,7 @@ def ex_12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -151,7 +151,7 @@ def multidim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := [("Kim believes in most respects that it is raining outside.", .marginal), ("Kim believes in all respects that it is raining outside.", .marginal)]
+    contrasts := [("Kim believes in most respects that it is raining outside.", .marginal), ("Kim believes in all respects that it is raining outside.", .marginal)]
     readings := []
     paperFeatures := [] }
 
@@ -165,7 +165,7 @@ def fn4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := [("John believes a bit that the Patriots will win.", .questionable)]
+    contrasts := [("John believes a bit that the Patriots will win.", .questionable)]
     readings := []
     paperFeatures := [] }
 
@@ -179,7 +179,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparisonClass", "overt")] }
 
@@ -193,7 +193,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparisonClass", "overt")] }
 
@@ -207,7 +207,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparisonClass", "overt")] }
 
@@ -221,7 +221,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparisonClass", "overt")] }
 
@@ -235,7 +235,7 @@ def fn6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparisonClass", "overt")] }
 
@@ -249,7 +249,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "entails")] }
 
@@ -263,7 +263,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -277,7 +277,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "does_not_entail")] }
 
@@ -291,7 +291,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -305,7 +305,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := "Jack is epistemically engaged with whether Jill is at the party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "entails")] }
 
@@ -319,7 +319,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := "Jack is epistemically engaged with whether Jill is at the party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -334,7 +334,7 @@ def ex_18a : Datum :=
     context := "The chance that Jill is at the party is exactly 50 percent."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -349,7 +349,7 @@ def ex_18b : Datum :=
     context := "The chance that Jill is at the party is exactly 50 percent."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -363,7 +363,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("It's 5 percent certain that Biden will win.", .questionable), ("It's 50 percent certain that Biden will win.", .marginal)]
+    contrasts := [("It's 5 percent certain that Biden will win.", .questionable), ("It's 50 percent certain that Biden will win.", .marginal)]
     readings := []
     paperFeatures := [] }
 
@@ -377,7 +377,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("It's 5 percent likely that Biden will win.", .marginal), ("It's 50 percent likely that Biden will win.", .acceptable)]
+    contrasts := [("It's 5 percent likely that Biden will win.", .marginal), ("It's 50 percent likely that Biden will win.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -391,7 +391,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := [("I believe 5 percent that Biden will win.", .unacceptable), ("I believe 50 percent that Biden will win.", .unacceptable)]
+    contrasts := [("I believe 5 percent that Biden will win.", .unacceptable), ("I believe 50 percent that Biden will win.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -405,7 +405,7 @@ def fn10i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "subjective")] }
 
@@ -419,7 +419,7 @@ def fn10ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "subjective")] }
 

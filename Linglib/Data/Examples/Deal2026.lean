@@ -26,7 +26,7 @@ def ex_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("’Aayat hi-llooy-ca-∅ ma-may’ac hi-pa-paay-n-∅.", .ungrammatical)]
+    contrasts := [("’Aayat hi-llooy-ca-∅ ma-may’ac hi-pa-paay-n-∅.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "lilooy"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -41,7 +41,7 @@ def ex_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("pro cicwaay-ca-∅ pro kuleewit-nix hi-paay-no’.", .ungrammatical)]
+    contrasts := [("pro cicwaay-ca-∅ pro kuleewit-nix hi-paay-no’.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "cicwaay"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -56,7 +56,7 @@ def ex_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "’etqew"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -71,7 +71,7 @@ def ex_27d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "timiipni"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -86,7 +86,7 @@ def ex_27e_eeys : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -101,7 +101,7 @@ def ex_27e_qeese : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "q’eese’"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -116,7 +116,7 @@ def ex_27e_timneeneki : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tim’neeneki"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -131,7 +131,7 @@ def ex_41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("diagnostic", "nominalComplement")] }
 
@@ -146,7 +146,7 @@ def ex_41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("diagnostic", "nominalComplement")] }
 
@@ -161,7 +161,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "qe’ciyeew’yew’"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -176,7 +176,7 @@ def ex_42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Qe’ciyeew’yew’ tamtaayn.", .ungrammatical)]
+    contrasts := [("Qe’ciyeew’yew’ tamtaayn.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "qe’ciyeew’yew’"), ("diagnostic", "nominalComplement")] }
 
@@ -191,7 +191,7 @@ def ex_47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("pro ’a-w-caa-qa ’in-lawtiwaa-na yox̂ ke hi-weeqi-yu’.", .ungrammatical)]
+    contrasts := [("pro ’a-w-caa-qa ’in-lawtiwaa-na yox̂ ke hi-weeqi-yu’.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "hi"), ("edge", "bare"), ("diagnostic", "edge")] }
 
@@ -206,7 +206,7 @@ def ex_47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hi"), ("diagnostic", "aboutPP")] }
 
@@ -221,7 +221,7 @@ def ex_48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("pro hi-neki-se-∅ yox̂ ke hi-waaqi-sa-qa watiisx.", .ungrammatical)]
+    contrasts := [("pro hi-neki-se-∅ yox̂ ke hi-waaqi-sa-qa watiisx.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "neki"), ("edge", "bare"), ("diagnostic", "edge")] }
 
@@ -236,7 +236,7 @@ def ex_48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "aboutPP")] }
 
@@ -251,7 +251,7 @@ def ex_65b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("pro hi-i-caa-qa yox̂ ke watiisx hi-weeqi-∅-ye.", .ungrammatical)]
+    contrasts := [("pro hi-i-caa-qa yox̂ ke watiisx hi-weeqi-∅-ye.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "hi"), ("edge", "bare"), ("diagnostic", "edge")] }
 
@@ -266,7 +266,7 @@ def ex_66a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("edge", "bare"), ("diagnostic", "edge")] }
 
@@ -282,7 +282,7 @@ def ex_66b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
@@ -297,7 +297,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Asked whether the dog went back, the consultant answers yes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lilooy"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -312,7 +312,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Asked whether the dog is a howler, the consultant answers that it is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tim’neeneki"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -327,7 +327,7 @@ def ex_35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Asked whether it was going to rain the next day, the consultant answers no."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "no"), ("person", "3")] }
 
@@ -342,7 +342,7 @@ def ex_36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Asked about the students, the consultant does not know whether they went."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "no"), ("person", "3")] }
 
@@ -357,7 +357,7 @@ def ex_68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Asked whether that person was ill, the consultant answers that they would think so."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "yes"), ("person", "3")] }
 

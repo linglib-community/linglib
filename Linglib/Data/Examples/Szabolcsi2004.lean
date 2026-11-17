@@ -24,7 +24,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not > some", .ungrammatical)]
     paperFeatures := [("item", "someone"), ("operator", "not")] }
 
@@ -37,7 +37,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no one > some", .ungrammatical)]
     paperFeatures := [("item", "someone"), ("operator", "no one")] }
 
@@ -50,7 +50,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("without > some", .ungrammatical)]
     paperFeatures := [("item", "someone"), ("operator", "without")] }
 
@@ -63,7 +63,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("at most 5 > some", .acceptable)]
     paperFeatures := [("item", "someone"), ("operator", "at most five")] }
 

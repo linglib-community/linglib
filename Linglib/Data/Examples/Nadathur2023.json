@@ -12,7 +12,7 @@
     "translation": "Eman managed to flee.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "onnistua"],
@@ -35,7 +35,7 @@
     "translation": "Eman did not manage to flee.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "onnistua"],
@@ -58,7 +58,7 @@
     "translation": "Juno dared to open the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "uskaltaa"],
@@ -81,7 +81,7 @@
     "translation": "Juno did not dare to open the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "uskaltaa"],
@@ -103,7 +103,7 @@
     "translation": "Sampo had strength to rise.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "jaksaa"],
@@ -126,7 +126,7 @@
     "translation": "Sampo did not have strength to rise.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "jaksaa"],
@@ -148,7 +148,7 @@
     "translation": "He bothered to answer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "viitsiä"],
@@ -171,7 +171,7 @@
     "translation": "He didn't bother to answer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "viitsiä"],
@@ -193,7 +193,7 @@
     "translation": "Marja had the patience to wait.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "malttaa"],
@@ -216,7 +216,7 @@
     "translation": "Marja did not have the patience to wait.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "malttaa"],
@@ -239,7 +239,7 @@
     "translation": "He had the heart to kill the cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hennoa"],
@@ -262,7 +262,7 @@
     "translation": "He didn't have the heart to kill the cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hennoa"],
@@ -284,7 +284,7 @@
     "translation": "Maarit was able to fight.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "pystyä"],
@@ -307,7 +307,7 @@
     "translation": "Maarit was not able to fight.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "pystyä"],
@@ -330,7 +330,7 @@
     "translation": "Freija fit through the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "mahtua"],
@@ -353,7 +353,7 @@
     "translation": "Freija did not fit through the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "mahtua"],
@@ -376,7 +376,7 @@
     "translation": "He neglected to correct the error.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "laiminlyödä"],
@@ -399,7 +399,7 @@
     "translation": "He did not neglect to repair the error.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "laiminlyödä"],
@@ -422,7 +422,7 @@
     "translation": "Juno hesitated to take part in the race.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "epäröidä"],
@@ -445,7 +445,7 @@
     "translation": "Juno did not hesitate to take part in the race.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "epäröidä"],

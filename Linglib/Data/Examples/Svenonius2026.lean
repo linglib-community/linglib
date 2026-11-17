@@ -26,7 +26,7 @@ def ex13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3.2"), ("phenomenon", "outwardSensitivePCSA"), ("allomorph", "ay"), ("environment", "elsewhere")] }
 
@@ -41,7 +41,7 @@ def ex13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3.2"), ("phenomenon", "outwardSensitivePCSA"), ("allomorph", "ot"), ("environment", "prevocalic")] }
 
@@ -54,7 +54,7 @@ def fn7return : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3.2"), ("phenomenon", "outwardSensitivePCSA"), ("elsewhereForm", "nuːŋ"), ("prevocalicForm", "nuːks")] }
 
@@ -67,7 +67,7 @@ def fn7live : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3.2"), ("phenomenon", "outwardSensitivePCSA"), ("elsewhereForm", "hiŋ"), ("prevocalicForm", "hiŋ")] }
 

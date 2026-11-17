@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Who are leaving?", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "two-group answer", "judgment": "acceptable"}
     ],
@@ -145,7 +145,7 @@
     "translation": "With whom do you have to talk?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjunction of an atom and a plurality", "judgment": "acceptable"}
     ],
@@ -168,7 +168,7 @@
     "translation": "With whom do you have to talk?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjunction of pluralities", "judgment": "acceptable"}
     ],
@@ -190,7 +190,7 @@
     "translation": "Who lifted that piano?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "collective answer", "judgment": "acceptable"}
     ],
@@ -212,7 +212,7 @@
     "translation": "Who is tall/big?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive answer", "judgment": "acceptable"},
       {"name": "group answer", "judgment": "unacceptable"}
@@ -236,7 +236,7 @@
     "translation": "Who talked to those ten professors?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "cumulative answer", "judgment": "acceptable"}
     ],
@@ -259,7 +259,7 @@
     "translation": "With whom does John have to talk?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjunction of pluralities", "judgment": "acceptable"},
       {"name": "disjunction of atoms", "judgment": "unacceptable"},
@@ -284,7 +284,7 @@
     "translation": "Who gathered last night?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "PBI"]

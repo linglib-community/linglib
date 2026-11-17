@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "1"), ("antecedent", "plural pronoun")] }
 
@@ -39,7 +39,7 @@ def ex_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "bound singular null pronoun")] }
 
@@ -54,7 +54,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "plural reflexive")] }
 
@@ -67,7 +67,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "3"), ("antecedent", "collective conjunct")] }
 
@@ -80,7 +80,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial-control verb")] }
 
@@ -93,7 +93,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, collective controller")] }
 
@@ -106,7 +106,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
@@ -119,7 +119,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
@@ -132,7 +132,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
@@ -145,7 +145,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
@@ -158,7 +158,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive control, distributive controller")] }
 
@@ -171,7 +171,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor")] }
 
@@ -184,7 +184,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence")] }
 
@@ -197,7 +197,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
@@ -210,7 +210,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
@@ -223,7 +223,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
@@ -236,7 +236,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
@@ -249,7 +249,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -262,7 +262,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .unacceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -275,7 +275,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -288,7 +288,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
@@ -301,7 +301,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
@@ -314,7 +314,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -327,7 +327,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -340,7 +340,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -353,7 +353,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor"), ("attested", "web")] }
 
@@ -366,7 +366,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor 'neither of them'"), ("attested", "web")] }
 
@@ -381,7 +381,7 @@ def ex_28 : Datum :=
     lgrConformance := some .wordAligned
     context := "A hare visits the animals of a forest one by one; worried about infighting, each says to the hare 'We will eat each other'. Back home the hare reports what they said."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor")] }
 
@@ -396,7 +396,7 @@ def ex_31 : Datum :=
     lgrConformance := some .wordAligned
     context := "Each animal says 'I will eat the others'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound logophor", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor, no reciprocal")] }
 
@@ -411,7 +411,7 @@ def ex_32 : Datum :=
     lgrConformance := some .wordAligned
     context := "Each animal says 'I will eat the others'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "ordinary plural pronoun")] }
 

@@ -10,7 +10,7 @@
     "translation": "The man and the woman are intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "O andras ke i gineka ine eksipna.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -32,7 +32,7 @@
     "translation": "The blackboard and the chair are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "O pinakas ke i karekla ine vromiki.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -54,7 +54,7 @@
     "translation": "Maria and Giota are intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human F + human F"],
@@ -74,7 +74,7 @@
     "translation": "Petros and Kostas are intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human M + human M"],
@@ -94,7 +94,7 @@
     "translation": "The woman and the girl are intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I gineka ke to koritsi ine eksipni.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -116,7 +116,7 @@
     "translation": "The genius and his sister are happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I megalofiia ke i adherfi tu ine charumenes.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -138,7 +138,7 @@
     "translation": "The victim and her mother are happy that they won.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "To thima ke i mitera tis ine charumeni pu kerdhisan.", "judgment": "ungrammatical"},
       {"form": "To thima ke i mitera tis ine charumena pu kerdhisan.", "judgment": "ungrammatical"}
     ],
@@ -161,7 +161,7 @@
     "translation": "The skirt and the T-shirt are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate F + inanimate F"],
@@ -181,7 +181,7 @@
     "translation": "The lighter and the torch are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate M + inanimate M"],
@@ -201,7 +201,7 @@
     "translation": "The fork and the spoon are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate N + inanimate N"],
@@ -221,7 +221,7 @@
     "translation": "The school and the church are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "To scholio ke i ekklisia ine vromiki.", "judgment": "ungrammatical"},
       {"form": "To scholio ke i ekklisia ine vromikes.", "judgment": "ungrammatical"}
     ],
@@ -244,7 +244,7 @@
     "translation": "The balcony and the corridor are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "To balkoni ke o dhiadhromos ine vromiki.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -266,7 +266,7 @@
     "translation": "The skirt and the T-shirt are dirty.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate F + inanimate F"],
@@ -286,7 +286,7 @@
     "translation": "The genius and his friend became invisible.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ksafnika egine aoratos i megalofiia ke o filos tu.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -308,7 +308,7 @@
     "translation": "The blackboard and the chair are dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ine vromiko o pinakas ke i karekla.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -330,7 +330,7 @@
     "translation": "The thief and the ring are gone.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "O kleftis ke to daxtilidi ine afanta.",
         "judgment": "questionable"
@@ -356,7 +356,7 @@
     "translation": "The thief and the ring disappeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human M + inanimate N"],
@@ -376,7 +376,7 @@
     "translation": "Giorgos and his shirt are sexy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "O Giorgos ke to pukamiso tu ine elkistiki.", "judgment": "ungrammatical"},
       {"form": "O Giorgos ke to pukamiso tu ine elkistikes.", "judgment": "ungrammatical"},
       {"form": "O Giorgos ke to pukamiso tu ine elkistika.", "judgment": "ungrammatical"}
@@ -400,7 +400,7 @@
     "translation": "The thief and the painting are gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human M + inanimate M"],
@@ -420,7 +420,7 @@
     "translation": "The woman and the umbrella are gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human F + inanimate F"],
@@ -440,7 +440,7 @@
     "translation": "The genius and his painting are gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I megalofiia ke o pinakas tu ine afantes.", "judgment": "ungrammatical"},
       {"form": "I megalofiia ke o pinakas tu ine afanta.", "judgment": "ungrammatical"}
     ],
@@ -463,7 +463,7 @@
     "translation": "The victim and his painting are gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "To thima ke o pinakas tu ine afantes.", "judgment": "ungrammatical"},
       {"form": "To thima ke o pinakas tu ine afanta.", "judgment": "ungrammatical"}
     ],
@@ -486,7 +486,7 @@
     "translation": "The victim and her picture are gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "To thima ke i fotografia tis ine afanti.", "judgment": "ungrammatical"},
       {"form": "To thima ke i fotografia tis ine afanta.", "judgment": "ungrammatical"}
     ],
@@ -509,7 +509,7 @@
     "translation": "That it will rain and that it will snow are equally possible.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "clause + clause"],
@@ -529,7 +529,7 @@
     "translation": "Fame and success are double-edged.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate F + inanimate M"],
@@ -549,7 +549,7 @@
     "translation": "The man and the woman are tired.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maðurinn og konan eru þreyttir.", "judgment": "ungrammatical"},
       {"form": "Maðurinn og konan eru þreyttar.", "judgment": "ungrammatical"}
     ],
@@ -572,7 +572,7 @@
     "translation": "The poet (a man) and Jon are famous.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Skáldið og Jón eru fræg.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -594,7 +594,7 @@
     "translation": "The man and the woman are happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human M + human F"],
@@ -614,7 +614,7 @@
     "translation": "Knowledge and intuition have worked together in him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate N + inanimate F"],
@@ -634,7 +634,7 @@
     "translation": "Our village and one whole hill were burned in the fire.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Naše selo i celo jedno brdo su izgorela.", "judgment": "ungrammatical"}
     ],
     "readings": [],

@@ -26,7 +26,7 @@ def s1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "perfect of evidentiality only")] }
 
@@ -41,7 +41,7 @@ def s1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "ambiguous: present perfect or perfect of evidentiality")] }
 
@@ -56,7 +56,7 @@ def s1c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "ambiguous: present perfect or perfect of evidentiality")] }
 
@@ -69,7 +69,7 @@ def s2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "lexical evidentials keep their meaning in every configuration")] }
 
@@ -82,7 +82,7 @@ def s2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -95,7 +95,7 @@ def s2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -108,7 +108,7 @@ def s2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -123,7 +123,7 @@ def s3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "no evidential reading of the adjectival participle")] }
 
@@ -138,7 +138,7 @@ def s4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "no evidential reading of the past perfect")] }
 
@@ -153,7 +153,7 @@ def s5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "no evidential reading of the future perfect")] }
 
@@ -168,7 +168,7 @@ def s6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "no evidential reading in non-finite clauses")] }
 
@@ -181,7 +181,7 @@ def s7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("evidence", "direct: visual/auditory")] }
 
@@ -194,7 +194,7 @@ def s7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("evidence", "indirect: inference/report")] }
 
@@ -207,7 +207,7 @@ def s7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("evidence", "indirect: inference or report")] }
 
@@ -220,7 +220,7 @@ def s9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Kratzer 1991")] }
 
@@ -233,7 +233,7 @@ def s9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Kratzer 1991"), ("claim", "weaker than (9a): no entailment of p")] }
 
@@ -246,7 +246,7 @@ def s10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "general knowledge justifies must")] }
 
@@ -259,7 +259,7 @@ def s10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "general knowledge is no indirect evidence")] }
 
@@ -274,7 +274,7 @@ def s11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -289,7 +289,7 @@ def s11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -302,7 +302,7 @@ def s12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "must does not presuppose evidence")] }
 
@@ -317,7 +317,7 @@ def s13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the evidential presupposes evidence")] }
 
@@ -332,7 +332,7 @@ def s14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the evidence must be indirect and cannot be cancelled")] }
 
@@ -345,7 +345,7 @@ def s15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "negation targets the proposition, not the evidence")] }
 
@@ -360,7 +360,7 @@ def s15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "negation targets the proposition, not the evidence")] }
 
@@ -375,7 +375,7 @@ def s16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "denial targets the proposition")] }
 
@@ -390,7 +390,7 @@ def s20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "the present perfect rejects past-time adverbials")] }
 
@@ -405,7 +405,7 @@ def s20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "the evidential aorist accepts past-time adverbials")] }
 
@@ -420,7 +420,7 @@ def s21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "the present perfect rejects speech-time adverbials")] }
 
@@ -435,7 +435,7 @@ def s21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "the evidential present accepts speech-time adverbials")] }
 
@@ -450,7 +450,7 @@ def s22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "individual-level predicates take the evidential, not the perfect")] }
 
@@ -463,7 +463,7 @@ def s23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "current relevance fails with a dead topic")] }
 
@@ -476,7 +476,7 @@ def s23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4")] }
 
@@ -491,7 +491,7 @@ def s24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "the evidential lacks the temporal interpretation of the present perfect")] }
 
@@ -504,7 +504,7 @@ def s25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("source", "Klein 1994"), ("claim", "past tense locates the topic time, not the situation")] }
 
@@ -517,7 +517,7 @@ def s27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "the present perfect requires the eventuality not to hold at speech time")] }
 

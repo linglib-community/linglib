@@ -24,7 +24,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "quoi que ce soit"), ("clause", "none"), ("superordinate", "not impossible")] }
 
@@ -37,7 +37,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "quoi que ce soit"), ("clause", "negation"), ("superordinate", "impossible")] }
 
@@ -50,7 +50,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "quoi que ce soit"), ("clause", "none"), ("superordinate", "if impossible")] }
 
@@ -63,7 +63,7 @@ def ex32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "quoi que ce soit"), ("clause", "negation"), ("superordinate", "not impossible")] }
 
@@ -76,7 +76,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .ungrammatical)]
     paperFeatures := [("item", "some"), ("clause", "negation")] }
 
@@ -89,7 +89,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "none"), ("superordinate", "not claim")] }
 
@@ -102,7 +102,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "none"), ("superordinate", "impossible")] }
 
@@ -115,7 +115,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("superordinate", "not sure")] }
 
@@ -128,7 +128,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("superordinate", "if")] }
 
@@ -141,7 +141,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("superordinate", "impossible")] }
 
@@ -154,7 +154,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .ungrammatical)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("superordinate", "not impossible")] }
 
@@ -167,7 +167,7 @@ def ex48c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("superordinate", "not that impossible")] }
 
@@ -180,7 +180,7 @@ def ex50e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("clause", "negation"), ("connective", "and")] }
 
@@ -193,7 +193,7 @@ def ex51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("clause", "negation"), ("connective", "or")] }
 
@@ -206,7 +206,7 @@ def ex56d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .acceptable)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("connective", "and")] }
 
@@ -219,7 +219,7 @@ def ex56e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrowest scope of some", .ungrammatical)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("connective", "or")] }
 
@@ -232,7 +232,7 @@ def ex92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("IMPOS.≫SOME", .ungrammatical)]
     paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "impossible"), ("clause", "none")] }
 
@@ -245,7 +245,7 @@ def ex98 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("IMPOS.≫NEG≫SOME≫ANY", .ungrammatical), ("IMPOS.≫SOME≫NEG≫ANY", .acceptable)]
     paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "impossible"), ("clause", "negation")] }
 
@@ -258,7 +258,7 @@ def ex103b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("IMPOS.≫SOME", .acceptable)]
     paperFeatures := [("subject", "anyone"), ("object", "something"), ("superordinate", "impossible"), ("clause", "none")] }
 
@@ -271,7 +271,7 @@ def ex122b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("NEG≫SOME", .ungrammatical)]
     paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "not sure"), ("clause", "none")] }
 

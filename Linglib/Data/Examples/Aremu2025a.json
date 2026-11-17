@@ -11,7 +11,7 @@
     "translation": "Adé bought A SHOE.",
     "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"]
@@ -31,7 +31,7 @@
     "translation": "Adé bought A SHOE.",
     "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"]
@@ -51,7 +51,7 @@
     "translation": "Adé bought A SHOE.",
     "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -79,7 +79,7 @@
     "translation": "Adé bought A SHOE. He also bought a cloth.",
     "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -104,7 +104,7 @@
     "translation": "Adé bought A SHOE. He also bought a cloth.",
     "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -126,7 +126,7 @@
     "translation": "Adé bought a shoe YESTERDAY.",
     "context": "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"]
@@ -146,7 +146,7 @@
     "translation": "Adé bought a shoe YESTERDAY.",
     "context": "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"],
@@ -167,7 +167,7 @@
     "translation": "He BROKE it.",
     "context": "Answer to: Ki ni Adé ṣe sí fèrèsé? 'What did Adé do to the window?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "verb"]
@@ -188,7 +188,7 @@
     "translation": "Adé BROKE the window.",
     "context": "Verb focus, the fronted verb nominalized and a copy left in place.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "verb"],
@@ -209,7 +209,7 @@
     "translation": "Adé BROKE A WINDOW.",
     "context": "Answer to: Ki ni Adé ṣe? 'What did Adé do?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"]
@@ -230,7 +230,7 @@
     "translation": "Adé BROKE THE WINDOW.",
     "context": "Answer to: Ki ni Adé ṣe? 'What did Adé do?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"],
@@ -251,7 +251,7 @@
     "translation": "ADÉ bought a shoe.",
     "context": "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -275,7 +275,7 @@
     "translation": "ADÉ bought a shoe.",
     "context": "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"]
@@ -295,7 +295,7 @@
     "translation": "TOLÚ ATE YAM.",
     "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "clause"],
@@ -316,7 +316,7 @@
     "translation": "TOLÚ ATE YAM.",
     "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "clause"]
@@ -336,7 +336,7 @@
     "translation": "Tolú KILLED A RAT.",
     "context": "Answer to: Kí ni Tolú se? 'What did Tolú do?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"]
@@ -356,7 +356,7 @@
     "translation": "Tolú killed a rat.",
     "context": "Answer to: Kí ni Tolú se? 'What did Tolú do?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"],
@@ -377,7 +377,7 @@
     "translation": "TOLÚ FELL.",
     "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "clause"],
@@ -398,7 +398,7 @@
     "translation": "TOLÚ SLEPT.",
     "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "clause"],
@@ -419,7 +419,7 @@
     "translation": "SOMEONE STOLE A CAR.",
     "context": "Clause focus with an indefinite subject.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "clause"],
@@ -441,7 +441,7 @@
     "translation": "Tolú SLAUGHTERED A RAT.",
     "context": "Verb phrase focus, the verb phrase fronted with its verb nominalized.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"],
@@ -463,7 +463,7 @@
     "translation": "THE CHILDREN bought a shoe.",
     "context": "Subject focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -485,7 +485,7 @@
     "translation": "ADÉ bought a shoe.",
     "context": "Subject focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -510,7 +510,7 @@
     "translation": "Tolú saw the woman who bought A SHOE.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "relative"],
@@ -533,7 +533,7 @@
     "translation": "Adé knows that TOLÚ bought a SHOE.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "focusClause"],
@@ -556,7 +556,7 @@
     "translation": "ADÉ and Bọ́lá ate yam.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "coordinate"],
@@ -579,7 +579,7 @@
     "translation": "ADÉ and Bọ́lá ate yam.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "coordinate"],
@@ -602,7 +602,7 @@
     "translation": "It was Adé that Tolú finished (eating) yam before he bought water.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "adjunct"],
@@ -625,7 +625,7 @@
     "translation": "It was Adé that Tolú finished (eating) yam before he bought water.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "adjunct"],
@@ -648,7 +648,7 @@
     "translation": "It was Adé that Tolú ate the food that he bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "relative"],
@@ -671,7 +671,7 @@
     "translation": "It was Adé that Tolú ate the food that he bought.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "relative"],
@@ -694,7 +694,7 @@
     "translation": "It was yam that Tolú saw the child who ate.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "relative"],
@@ -717,7 +717,7 @@
     "translation": "It was Water that Tolú ate yam before Adé bought.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "adjunct"],
@@ -740,7 +740,7 @@
     "translation": "Tolú saw the child who ate yam yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "relative"],
@@ -763,7 +763,7 @@
     "translation": "Tolú ate yam before Adé bought water yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "adjunct"],
@@ -785,7 +785,7 @@
     "translation": "Tolú bought yam and beans.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "coordinate"],
@@ -808,7 +808,7 @@
     "translation": "Bọ́lá thinks that ADÉ bought a shoe.",
     "context": "QUD: Who does Bọ́lá think bought a shoe?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "complement"],
@@ -831,7 +831,7 @@
     "translation": "Bọ́lá thinks that ADÉ bought a shoe.",
     "context": "QUD: Who does Bọ́lá think bought a shoe?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["domain", "complement"],
@@ -854,7 +854,7 @@
     "translation": "Adam is required to slaughter only TWO fowls.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The printed meaning: 'Adam only has to slaughter (any) TWO fowls (but could slaughter more if he wishes).'",
@@ -873,7 +873,7 @@
     "translation": "The pair <Adam, rice> is the only alternative that satisfies the eating relation.",
     "context": "Who ate what?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -898,7 +898,7 @@
     "translation": "The pair <Adam, rice> is the only alternative that satisfies the eating relation.",
     "context": "Who ate what?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -923,7 +923,7 @@
     "translation": "Tolú is only A STUDENT. He is also a cleaner.",
     "context": "Several people in the meeting are discussing what they do.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -947,7 +947,7 @@
     "translation": "Tolú is only A STUDENT. He is also a professor.",
     "context": "Several people in the meeting are discussing what they do.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -971,7 +971,7 @@
     "translation": "Tolú only won a SILVER medal. He also won a bronze medal.",
     "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -995,7 +995,7 @@
     "translation": "Tolú only won a SILVER medal. He also won a gold medal.",
     "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -1018,7 +1018,7 @@
     "translation": "Tolú is just A STUDENT. He is also a cleaner.",
     "context": "Several people in the meeting are discussing what they do.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1042,7 +1042,7 @@
     "translation": "Tolú is just A STUDENT. He is also a professor.",
     "context": "Several people in the meeting are discussing what they do.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1066,7 +1066,7 @@
     "translation": "Tolú only won a SILVER medal. He also won a bronze medal.",
     "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1090,7 +1090,7 @@
     "translation": "Tolú only won a SILVER medal. He also won a gold medal.",
     "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1113,7 +1113,7 @@
     "translation": "Tolú just won a SILVER medal. (He did not win anything more than a silver medal)",
     "context": "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1137,7 +1137,7 @@
     "translation": "Tolú only won a SILVER medal. (He did not win anything other than a silver medal)",
     "context": "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -1161,7 +1161,7 @@
     "translation": "Tolú bought only TWO fish.",
     "context": "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "péré"],
@@ -1184,7 +1184,7 @@
     "translation": "Tolú bought only TWO fish.",
     "context": "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1206,7 +1206,7 @@
     "translation": "Tolú bought only TWO fish.",
     "context": "Tolú promised his wife to buy two fish on his way home.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "péré"],
@@ -1228,7 +1228,7 @@
     "translation": "Tolú bought only TWO fish.",
     "context": "Tolú promised his wife to buy two fish on his way home.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1250,7 +1250,7 @@
     "translation": "Tolú bought only TWO fish.",
     "context": "Tolú promised his wife to buy two fish on his way home.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -1273,7 +1273,7 @@
     "translation": "But he bought only SIX fish.",
     "context": "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "péré"],
@@ -1296,7 +1296,7 @@
     "translation": "But he bought only SIX fish.",
     "context": "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1318,7 +1318,7 @@
     "translation": "Tolú bought only THREE fish.",
     "context": "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "péré"],
@@ -1341,7 +1341,7 @@
     "translation": "Tolú bought only THREE fish.",
     "context": "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],
@@ -1363,7 +1363,7 @@
     "translation": "Tolú only read THREE books (#but this is not little).",
     "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "nìkan"],
@@ -1385,7 +1385,7 @@
     "translation": "Tolú only read THREE books (and this is little).",
     "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "péré"],
@@ -1407,7 +1407,7 @@
     "translation": "Tolú only read THREE books (and this is little/bad).",
     "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "lásán"],

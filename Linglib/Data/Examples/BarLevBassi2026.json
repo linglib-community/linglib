@@ -9,7 +9,7 @@
     "translation": "",
     "context": "I knew that Ann read at least some of the books. But today I learned that...",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "she read ALL the books.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -26,7 +26,7 @@
     "translation": "",
     "context": "I knew that Ann didn't read all of the books. But today I learned that...",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "she didn't read ANY of the books.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -43,7 +43,7 @@
     "translation": "",
     "context": "Did Ann read some of the books, or all of them?",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ann read ALL the books.", "judgment": "acceptable"},
       {"form": "Ann read all the books.", "judgment": "unacceptable"}
     ],
@@ -61,7 +61,7 @@
     "translation": "",
     "context": "Did Ann read none of the books, some of the books, or all of the books?",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ann read ALL the books.", "judgment": "acceptable"},
       {"form": "Ann read all the books.", "judgment": "unacceptable"}
     ],
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "Did Ann read none of the books, or all of them?",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ann read ALL the books.", "judgment": "acceptable"},
       {"form": "Ann read all the books.", "judgment": "unacceptable"}
     ],
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "Yesterday she read some of the newspapers.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Today she read ALL the newspapers.", "judgment": "acceptable"},
       {"form": "Today she read all the newspapers.", "judgment": "unacceptable"}
     ],
@@ -115,7 +115,7 @@
     "translation": "",
     "context": "A: I know that Mary read some of the books, but I suspect that she didn't read all of them.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "B': No, don't worry, she DID read all the books.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -132,7 +132,7 @@
     "translation": "",
     "context": "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment).",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "B': No, don't worry, she DID smoke in the past.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "I knew that Ann read at least one of the books. But today I learned that...",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "she read ALL the books.", "judgment": "acceptable"},
       {"form": "she read all the books.", "judgment": "unacceptable"}
     ],
@@ -167,7 +167,7 @@
     "translation": "",
     "context": "I knew that Ann didn't read at least one of the books. But today I learned that...",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "she didn't read ANY of the books.", "judgment": "acceptable"},
       {"form": "she didn't read any of the books.", "judgment": "unacceptable"}
     ],
@@ -185,7 +185,7 @@
     "translation": "",
     "context": "Q: Did she not read all the books?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "A: No, she DID read all the books.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -202,7 +202,7 @@
     "translation": "",
     "context": "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently...",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "he worked on ALL of his phonology papers today.", "judgment": "acceptable"},
       {"form": "he worked on all of his phonology papers today.", "judgment": "unacceptable"}
     ],
@@ -220,7 +220,7 @@
     "translation": "",
     "context": "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently...",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "he worked on all of his PHONOLOGY papers today.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -237,7 +237,7 @@
     "translation": "",
     "context": "A monogamous society.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John is not married to any of his teammates.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -254,7 +254,7 @@
     "translation": "",
     "context": "In a game of Knuckle, at the end of each round, the person who has more cards than anybody else cashes in and leaves the game. If at the end of a round no player has more cards than anybody else, then all the players stay in the game. Last Saturday night, 5 of my uncles sat down for a long game of Knuckle.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I checked in during round three and all my uncles were still in the game.", "judgment": "acceptable"}
     ],
     "readings": [],

@@ -26,7 +26,7 @@ def s89 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "external argument introduced by a preposition")] }
 
@@ -41,7 +41,7 @@ def s91 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "only the internal argument inside; the agent in a relative clause")] }
 
@@ -56,7 +56,7 @@ def s92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "a sole argument is the internal argument")] }
 
@@ -71,7 +71,7 @@ def s93a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S/A=ABS on ajin, O=ERG on the nominalized verb")] }
 
@@ -86,7 +86,7 @@ def s93b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S=ABS on ajin")] }
 
@@ -101,7 +101,7 @@ def s94a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("construction", "embedding verb chäp 'begin'")] }
 
@@ -116,7 +116,7 @@ def s99b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
@@ -131,7 +131,7 @@ def s100b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
@@ -146,7 +146,7 @@ def s102b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "the passive suffix -x on the derived transitive under nominalization")] }
 
@@ -161,7 +161,7 @@ def s137a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "A=ERG, O=ABS inside the nominalized clause")] }
 
@@ -176,7 +176,7 @@ def s137b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "S=ERG")] }
 
@@ -191,7 +191,7 @@ def s138a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "A=ERG, O=ABS, the suffix -on supplying object Case")] }
 
@@ -206,7 +206,7 @@ def s138b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "S=ERG")] }
 
@@ -221,7 +221,7 @@ def s181 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:265"), ("alignment", "S=ERG in an aspectless temporal clause")] }
 
@@ -236,7 +236,7 @@ def s182 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:260"), ("alignment", "double ergative: A and O both ERG")] }
 
@@ -249,7 +249,7 @@ def t178_kaqchikel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
@@ -262,7 +262,7 @@ def t178_tojolabal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
@@ -275,7 +275,7 @@ def t178_chol : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -288,7 +288,7 @@ def t178_qanjobal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -301,7 +301,7 @@ def t178_chuj : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -314,7 +314,7 @@ def t178_ixil : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -327,7 +327,7 @@ def t178_yucatec : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 

@@ -24,7 +24,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := "Dario: Dimmi cosa pensi di Maria e Carlo. 'Tell me what you think of M and C.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "none")] }
 
@@ -37,7 +37,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := "Dario: Dimmi cosa pensi di Maria e Carlo. 'Tell me what you think of M and C.'"
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("evidence", "none")] }
 
@@ -50,7 +50,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := "Dario: Carlo è così intelligente che dubito che Maria possa vincerlo a scacchi. 'C is so intelligent that I doubt that M can beat him at chess.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "inferred")] }
 
@@ -63,7 +63,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := "Dario: Carlo è così intelligente che dubito che Maria possa vincerlo a scacchi. 'C is so intelligent that I doubt that M can beat him at chess.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("evidence", "inferred")] }
 
@@ -76,7 +76,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := "Dario: Maria ha continuato a dire sciocchezze. È proprio cretina, sai? 'M continued to say stupid things. She's really an idiot, you know?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "explicit")] }
 
@@ -89,7 +89,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := "Dario: Maria ha continuato a dire sciocchezze. È proprio cretina, sai? 'M continued to say stupid things. She's really an idiot, you know?'"
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("evidence", "explicit")] }
 
@@ -102,7 +102,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "inferred"), ("alsoJudged", "marginal")] }
 
@@ -115,7 +115,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("evidence", "inferred")] }
 
@@ -128,7 +128,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -141,7 +141,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -154,7 +154,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -167,7 +167,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -180,7 +180,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -193,7 +193,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -206,7 +206,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -219,7 +219,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -232,7 +232,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -245,7 +245,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "interrogative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -258,7 +258,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -271,7 +271,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -284,7 +284,7 @@ def ex15c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -297,7 +297,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non1"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -310,7 +310,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -323,7 +323,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -336,7 +336,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -349,7 +349,7 @@ def ex18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -362,7 +362,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non1"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -375,7 +375,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -388,7 +388,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -401,7 +401,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -414,7 +414,7 @@ def ex21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -427,7 +427,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -440,7 +440,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -453,7 +453,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -466,7 +466,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -479,7 +479,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -492,7 +492,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -505,7 +505,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -518,7 +518,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -531,7 +531,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -544,7 +544,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -557,7 +557,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -570,7 +570,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -583,7 +583,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := "Dario: Maria è bravissima! È forse la più intelligente ragazza che conosco. 'M is really smart! She's possibly the smartest girl I know.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "explicit")] }
 
@@ -596,7 +596,7 @@ def ex31 : Datum :=
     glossedTokens := []
     context := "Dario: Maria ha fatto bene oggi a scuola per la quarta volta. 'M did well at school today for the fourth time.'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "tanto"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "inferred")] }
 
@@ -609,7 +609,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "degreeModifier")] }
 
@@ -622,7 +622,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "degreeModifier")] }
 
@@ -635,7 +635,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "degreeModifier")] }
 
@@ -648,7 +648,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "degreeModifier")] }
 
@@ -661,7 +661,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "certainty")] }
 
@@ -674,7 +674,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "speakerGerund")] }
 
@@ -687,7 +687,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("element", "speakerGerund")] }
 
@@ -700,7 +700,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "speakerGerund")] }
 
@@ -713,7 +713,7 @@ def ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "meno"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("element", "speakerGerund")] }
 
@@ -726,7 +726,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("specific", .acceptable), ("nonspecific", .acceptable)]
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -739,7 +739,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("specific", .ungrammatical), ("nonspecific", .acceptable)]
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -752,7 +752,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("element", "pur")] }
 
@@ -765,7 +765,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "pur")] }
 
@@ -778,7 +778,7 @@ def ex52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("element", "neanche")] }
 
@@ -791,7 +791,7 @@ def ex52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "neanche")] }
 
@@ -804,7 +804,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -817,7 +817,7 @@ def ex60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -830,7 +830,7 @@ def ex60c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -843,7 +843,7 @@ def ex60d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("alsoJudged", "marginal")] }
 
@@ -856,7 +856,7 @@ def ex61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -869,7 +869,7 @@ def ex61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -882,7 +882,7 @@ def ex61c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -895,7 +895,7 @@ def ex61d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("alsoJudged", "marginal")] }
 
@@ -908,7 +908,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("specific", .ungrammatical), ("nonspecific", .acceptable)]
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -921,7 +921,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "pur"), ("alsoJudged", "questionable")] }
 
@@ -934,7 +934,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "neanche"), ("alsoJudged", "questionable")] }
 
@@ -947,7 +947,7 @@ def ex65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che"), ("alsoJudged", "marginal")] }
 
@@ -960,7 +960,7 @@ def ex65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che"), ("alsoJudged", "marginal")] }
 
@@ -973,7 +973,7 @@ def ex66a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "che")] }
 
@@ -986,7 +986,7 @@ def ex66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "che")] }
 
@@ -999,7 +999,7 @@ def ex67a_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -1012,7 +1012,7 @@ def ex67a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -1025,7 +1025,7 @@ def ex67b_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -1038,7 +1038,7 @@ def ex67b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
@@ -1051,7 +1051,7 @@ def ex68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -1064,7 +1064,7 @@ def ex68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto"), ("alsoJudged", "questionable")] }
 
@@ -1077,7 +1077,7 @@ def ex69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
@@ -1090,7 +1090,7 @@ def ex69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto"), ("alsoJudged", "questionable")] }
 
@@ -1103,7 +1103,7 @@ def ex72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "che")] }
 
@@ -1116,7 +1116,7 @@ def ex72b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "che")] }
 
@@ -1129,7 +1129,7 @@ def ex73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "che")] }
 
@@ -1142,7 +1142,7 @@ def ex73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "che")] }
 
@@ -1155,7 +1155,7 @@ def ex75a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("predicate", "adjective")] }
 
@@ -1168,7 +1168,7 @@ def ex75b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("predicate", "adjective")] }
 
@@ -1181,7 +1181,7 @@ def ex79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("predicate", "lo")] }
 
@@ -1194,7 +1194,7 @@ def ex79b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("predicate", "lo")] }
 
@@ -1207,7 +1207,7 @@ def ex80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "che"), ("predicate", "lo")] }
 
@@ -1220,7 +1220,7 @@ def ex81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "che"), ("predicate", "adjective")] }
 
@@ -1233,7 +1233,7 @@ def ex82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("predicate", "adjective")] }
 
@@ -1246,7 +1246,7 @@ def ex82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("predicate", "adjective")] }
 
@@ -1259,7 +1259,7 @@ def ex82c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "che"), ("predicate", "adjective")] }
 
@@ -1272,7 +1272,7 @@ def ex89a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "indirectQuestion"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "se"), ("plainMood", "subjunctive")] }
 
@@ -1285,7 +1285,7 @@ def ex89b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "negative"), ("construction", "indirectQuestion"), ("holder", "thirdParty"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "se"), ("plainMood", "subjunctive")] }
 
@@ -1298,7 +1298,7 @@ def ex91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "indirectQuestion"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "se")] }
 
@@ -1311,7 +1311,7 @@ def ex91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "indirectQuestion"), ("holder", "thirdParty"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "se")] }
 
@@ -1324,7 +1324,7 @@ def ex92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "indirectQuestion"), ("holder", "thirdParty"), ("negation", "non1"), ("mood", "indicative"), ("complementizer", "se")] }
 
@@ -1337,7 +1337,7 @@ def exfn13i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "affatto")] }
 

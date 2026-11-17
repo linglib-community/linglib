@@ -27,7 +27,7 @@ def ex15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
@@ -43,7 +43,7 @@ def ex15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
@@ -59,7 +59,7 @@ def ex15c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
@@ -75,7 +75,7 @@ def ex16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
@@ -91,7 +91,7 @@ def ex17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
@@ -107,7 +107,7 @@ def ex18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 

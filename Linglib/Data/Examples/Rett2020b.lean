@@ -24,7 +24,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
@@ -37,7 +37,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -50,7 +50,7 @@ def ex_50c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "conjoined")] }
 
@@ -63,7 +63,7 @@ def ex_50d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateMain")] }
 
@@ -76,7 +76,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
@@ -89,7 +89,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "weak")] }
 
@@ -102,7 +102,7 @@ def ex_51c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "weak")] }
 
@@ -115,7 +115,7 @@ def ex_51d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "weak")] }
 
@@ -128,7 +128,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
@@ -141,7 +141,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "evaluativity")] }
 
@@ -154,7 +154,7 @@ def ex_53c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "evaluativity")] }
 
@@ -167,7 +167,7 @@ def ex_53d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "evaluativity")] }
 
@@ -180,7 +180,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
@@ -193,7 +193,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
@@ -206,7 +206,7 @@ def ex_54c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "factor")] }
 
@@ -219,7 +219,7 @@ def ex_54d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "factor")] }
 
@@ -233,7 +233,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial"), ("diagnostic", "weak")] }
 
@@ -246,7 +246,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial"), ("diagnostic", "weak")] }
 
@@ -259,7 +259,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -272,7 +272,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
@@ -285,7 +285,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -298,7 +298,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
@@ -311,7 +311,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
@@ -324,7 +324,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
@@ -337,7 +337,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
@@ -350,7 +350,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
@@ -363,7 +363,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
@@ -376,7 +376,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
@@ -389,7 +389,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
@@ -402,7 +402,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "evaluativity")] }
 
@@ -415,7 +415,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "weak")] }
 
@@ -428,7 +428,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "factor")] }
 
@@ -441,7 +441,7 @@ def ex_73 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "evaluativity")] }
 
@@ -454,7 +454,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "weak")] }
 
@@ -468,7 +468,7 @@ def ex_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "factor")] }
 
@@ -481,7 +481,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -494,7 +494,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -507,7 +507,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -520,7 +520,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
@@ -533,7 +533,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
@@ -546,7 +546,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
@@ -559,7 +559,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateMain")] }
 
@@ -572,7 +572,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial")] }
 
@@ -585,7 +585,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial")] }
 
@@ -598,7 +598,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "dedicated")] }
 
@@ -611,7 +611,7 @@ def ex_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
@@ -624,7 +624,7 @@ def ex_93 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
@@ -637,7 +637,7 @@ def ex_95 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
@@ -650,7 +650,7 @@ def ex_97 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
@@ -663,7 +663,7 @@ def ex_100 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 

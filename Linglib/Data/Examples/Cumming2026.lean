@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "Alma is about to eat a meal the speaker has good grounds for thinking she will enjoy: she enjoyed it when the speaker prepared it before, the speaker has sampled it, and it tastes good."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "future (will)"), ("acquisitionTime", "0"), ("speechTime", "1"), ("eventTime", "2")] }
 
@@ -37,7 +37,7 @@ def ex_2_prior : Datum :=
     glossedTokens := []
     context := "The next day, with only the prior inferential grounds of (1)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("acquisitionTime", "0"), ("eventTime", "2"), ("speechTime", "3"), ("felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def ex_2_downstream : Datum :=
     glossedTokens := []
     context := "Alma told the speaker after the meal that she enjoyed it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("eventTime", "2"), ("acquisitionTime", "3"), ("speechTime", "4")] }
 
@@ -63,7 +63,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := "The next day, with only the prior inferential grounds of (1)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "will have V-ed"), ("acquisitionTime", "0"), ("eventTime", "2"), ("speechTime", "3")] }
 
@@ -76,7 +76,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "will now be V-ing"), ("acquisitionTime", "0"), ("eventTime", "2"), ("speechTime", "2")] }
 
@@ -89,7 +89,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "present progressive"), ("acquisitionTime", "0"), ("eventTime", "2"), ("speechTime", "2"), ("felicity", "infelicitous")] }
 
@@ -102,7 +102,7 @@ def ex_21a_inferential : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "will have V-ed"), ("acquisitionTime", "0"), ("eventTime", "1"), ("speechTime", "2")] }
 
@@ -115,7 +115,7 @@ def ex_21a_abductive : Datum :=
     glossedTokens := []
     context := "After the meeting, having just read in the evening paper that the rates were raised."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "will have V-ed"), ("eventTime", "1"), ("acquisitionTime", "2"), ("speechTime", "3"), ("felicity", "infelicitous")] }
 
@@ -130,7 +130,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yenghi saw it raining yesterday; now she says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-te PRES"), ("eventTime", "1"), ("acquisitionTime", "1"), ("speechTime", "2")] }
 
@@ -145,7 +145,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yenghi saw yesterday that the ground was wet; now she says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-te PAST"), ("eventTime", "0"), ("acquisitionTime", "1"), ("speechTime", "2")] }
 
@@ -160,7 +160,7 @@ def ex_13c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yenghi saw the overcast sky yesterday; now she says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-te FUT"), ("acquisitionTime", "1"), ("eventTime", "2"), ("speechTime", "3")] }
 
@@ -175,7 +175,7 @@ def ex_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Chelswu sees it raining now and says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-ney PRES"), ("eventTime", "2"), ("acquisitionTime", "2"), ("speechTime", "2")] }
 
@@ -190,7 +190,7 @@ def ex_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Chelswu sees the wet ground now and says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-ney PAST"), ("eventTime", "1"), ("acquisitionTime", "2"), ("speechTime", "2")] }
 
@@ -205,7 +205,7 @@ def ex_14c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Chelswu sees the cloudy sky now and says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-ney FUT"), ("acquisitionTime", "2"), ("speechTime", "2"), ("eventTime", "3")] }
 
@@ -220,7 +220,7 @@ def ex_15_nfut : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You learned earlier today that it had rained yesterday in Paris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NFUT + -l"), ("eventTime", "1"), ("acquisitionTime", "2"), ("speechTime", "3")] }
 
@@ -235,7 +235,7 @@ def ex_15_fut : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You learned earlier today that it had rained yesterday in Paris."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "FUT + -l"), ("eventTime", "1"), ("acquisitionTime", "2"), ("speechTime", "3")] }
 
@@ -250,7 +250,7 @@ def ex_16_fut : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "FUT + -l"), ("acquisitionTime", "0"), ("eventTime", "1"), ("speechTime", "2")] }
 
@@ -265,7 +265,7 @@ def ex_16_nfut : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NFUT + -l"), ("acquisitionTime", "0"), ("eventTime", "1"), ("speechTime", "2")] }
 
@@ -280,7 +280,7 @@ def ex_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NFUT + -l"), ("acquisitionTime", "2"), ("speechTime", "2"), ("eventTime", "3")] }
 
@@ -295,7 +295,7 @@ def ex_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker knows only of the plan."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NFUT + -l"), ("acquisitionTime", "2"), ("speechTime", "2"), ("eventTime", "3"), ("scheduled", "true")] }
 
@@ -310,7 +310,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yenghi read the newspaper yesterday, which mentioned Obama's visit to Korea next week; now she says."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "-te PRES"), ("acquisitionTime", "1"), ("speechTime", "2"), ("eventTime", "5"), ("scheduled", "true")] }
 
@@ -323,7 +323,7 @@ def ex_28b : Datum :=
     glossedTokens := []
     context := "Jack told the speaker on Thursday that he was leaving the next day for a weekend in New York; on Monday, without having heard from him, the speaker is asked how Jack is doing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("acquisitionTime", "0"), ("eventTime", "1"), ("speechTime", "2"), ("scheduled", "true")] }
 
@@ -336,7 +336,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := "At 1 p.m. Simona told Akari she would be at the library at 2 p.m. to return some books; at 2:30 p.m. Jess asks Akari whether the books were returned."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("acquisitionTime", "0"), ("eventTime", "1"), ("speechTime", "2"), ("scheduled", "true")] }
 
@@ -349,7 +349,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "present progressive"), ("acquisitionTime", "2"), ("speechTime", "2"), ("eventTime", "3")] }
 
@@ -362,7 +362,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := "The scenario of (28)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "present progressive"), ("acquisitionTime", "0"), ("speechTime", "1"), ("eventTime", "2"), ("scheduled", "true")] }
 
@@ -375,7 +375,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := "The scenario of (29)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "present progressive"), ("acquisitionTime", "0"), ("speechTime", "1"), ("eventTime", "2"), ("scheduled", "true")] }
 

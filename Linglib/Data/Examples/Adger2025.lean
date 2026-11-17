@@ -24,7 +24,7 @@ def ch433 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "lowering"), ("mover", "who"), ("target", "embedded C")] }
 
@@ -37,7 +37,7 @@ def ch436a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "subextraction from PP")] }
 
@@ -50,7 +50,7 @@ def ch436b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "subextraction from PP")] }
 
@@ -63,7 +63,7 @@ def ch437a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "extraction from clausal complement")] }
 
@@ -76,7 +76,7 @@ def ch437b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "extraction from clausal complement")] }
 
@@ -89,7 +89,7 @@ def ch443 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "successive-cyclic extraction"), ("mover", "who"), ("intermediate", "embedded C[uWh]")] }
 
@@ -102,7 +102,7 @@ def ch448a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "gum")] }
 
@@ -115,7 +115,7 @@ def ch448b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "a (relative) at both clauses")] }
 
@@ -128,7 +128,7 @@ def ch448c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "gum in the extraction path")] }
 
@@ -141,7 +141,7 @@ def ch454 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "clausal pied-piping")] }
 
@@ -154,7 +154,7 @@ def ch51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "wh-island"), ("mover", "what"), ("C 2-part", "who")] }
 
@@ -167,7 +167,7 @@ def ch630 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "locative PP as matching relative")] }
 
@@ -180,7 +180,7 @@ def ch631 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("D 2-part", "free")] }
 
@@ -193,7 +193,7 @@ def ch634 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "definite"), ("D 2-part", "Det")] }
 
@@ -206,7 +206,7 @@ def ch635a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("D 2-part", "Dem")] }
 
@@ -219,7 +219,7 @@ def ch635b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "prenominal possessor"), ("D 2-part", "possessor")] }
 
@@ -232,7 +232,7 @@ def ch635c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "postnominal possessive"), ("D 2-part", "free")] }
 
@@ -245,7 +245,7 @@ def ch636a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("pied-piping", "of")] }
 
@@ -258,7 +258,7 @@ def ch636b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "definite"), ("pied-piping", "of")] }
 
@@ -271,7 +271,7 @@ def ch636c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("pied-piping", "of")] }
 
@@ -284,7 +284,7 @@ def ch636d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "prenominal possessor"), ("pied-piping", "of")] }
 
@@ -297,7 +297,7 @@ def ch640a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite")] }
 
@@ -310,7 +310,7 @@ def ch640b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "definite")] }
 
@@ -323,7 +323,7 @@ def ch640c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "prenominal possessor")] }
 
@@ -336,7 +336,7 @@ def ch641a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("wh", "in situ, matrix scope")] }
 
@@ -349,7 +349,7 @@ def ch641b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("wh", "in situ, matrix scope")] }
 
@@ -362,7 +362,7 @@ def ch642a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("wh", "in situ, matrix scope")] }
 
@@ -375,7 +375,7 @@ def ch642b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("wh", "in situ, echo question only")] }
 
@@ -388,7 +388,7 @@ def ch643a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite relative"), ("wh", "in situ, matrix scope")] }
 
@@ -401,7 +401,7 @@ def ch643b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative relative"), ("wh", "in situ, matrix scope")] }
 
@@ -414,7 +414,7 @@ def ch644a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "indefinite relative"), ("wh", "in situ, matrix scope")] }
 
@@ -427,7 +427,7 @@ def ch644b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "demonstrative relative"), ("wh", "in situ, matrix scope")] }
 
@@ -440,7 +440,7 @@ def ch759a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -453,7 +453,7 @@ def ch759b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -466,7 +466,7 @@ def ch759c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -479,7 +479,7 @@ def ch759d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -492,7 +492,7 @@ def ch759e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -505,7 +505,7 @@ def ch759f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
@@ -518,7 +518,7 @@ def ch759g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 

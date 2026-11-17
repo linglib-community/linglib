@@ -24,7 +24,7 @@ def cwl2025_ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "false")] }
 
@@ -38,7 +38,7 @@ def cwl2025_ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "true")] }
 
@@ -51,7 +51,7 @@ def cwl2025_ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "false")] }
 
@@ -65,7 +65,7 @@ def cwl2025_ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "interchangeability"), ("pair", "cancer"), ("attested", "true")] }
 
@@ -78,7 +78,7 @@ def cwl2025_ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "interchangeability"), ("pair", "cancer")] }
 
@@ -91,7 +91,7 @@ def cwl2025_ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "interchangeability"), ("pair", "cancer")] }
 
@@ -104,7 +104,7 @@ def cwl2025_ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
@@ -117,7 +117,7 @@ def cwl2025_ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
@@ -130,7 +130,7 @@ def cwl2025_ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
@@ -143,7 +143,7 @@ def cwl2025_ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
@@ -156,7 +156,7 @@ def cwl2025_ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
@@ -169,7 +169,7 @@ def cwl2025_ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
@@ -182,7 +182,7 @@ def cwl2025_ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
@@ -195,7 +195,7 @@ def cwl2025_ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
@@ -208,7 +208,7 @@ def cwl2025_ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
@@ -221,7 +221,7 @@ def cwl2025_ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "alternatives"), ("pair", "car")] }
 
@@ -234,7 +234,7 @@ def cwl2025_ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "alternatives"), ("pair", "car")] }
 
@@ -247,7 +247,7 @@ def cwl2025_ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
@@ -260,7 +260,7 @@ def cwl2025_ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
@@ -273,7 +273,7 @@ def cwl2025_ex9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
@@ -286,7 +286,7 @@ def cwl2025_ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
@@ -299,7 +299,7 @@ def cwl2025_ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
@@ -312,7 +312,7 @@ def cwl2025_ex10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
@@ -325,7 +325,7 @@ def cwl2025_ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "sufficiency"), ("pair", "plank")] }
 
@@ -338,7 +338,7 @@ def cwl2025_ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "let"), ("dimension", "sufficiency"), ("pair", "plank")] }
 

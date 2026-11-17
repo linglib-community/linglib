@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := "A bare plural with a defining property."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "definitional")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := "An indefinite singular with a defining property."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -50,7 +50,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := "A bare plural with an accidental property."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "descriptive")] }
 
@@ -63,7 +63,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := "An indefinite singular with an accidental property: being popular cannot be a definitional criterion for madrigals."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -76,7 +76,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := "Burton-Roberts's analytic indefinite-singular generic, equivalent to *To be a kangaroo is to be a marsupial*."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -89,7 +89,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := "Bolinger's intuition, reported by Burton-Roberts: true, though *To be a tiger is to climb trees* is false."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -102,7 +102,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := "A physical rule."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "physical")] }
 
@@ -115,7 +115,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := "A moral rule; *gentleman* names a social kind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "moral")] }
 
@@ -128,7 +128,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := "A legal rule of chess."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "legal")] }
 
@@ -141,7 +141,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := "A legal rule, the price set by the shop manager."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "legal")] }
 
@@ -154,7 +154,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "Read descriptively, a generalization about boys under a shared interpretation; read definitionally, a proposal to restrict the interpretation of *boys*."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("descriptive", .acceptable), ("definitional", .acceptable)]
     paperFeatures := [("subject", "barePlural")] }
 
@@ -167,7 +167,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := "An empirical finding that reads as definitional: the chromosome number runs in the species."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -180,7 +180,7 @@ def ex37 : Datum :=
     glossedTokens := []
     context := "The subject does not pick out a natural kind on which a species-based generalization could rest."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -193,7 +193,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := "Universal in the definitional reconstruction, the property being suppressed in immature and male ducks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -206,7 +206,7 @@ def ex39 : Datum :=
     glossedTokens := []
     context := "A minority but striking property."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular")] }
 
@@ -219,7 +219,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := "An unmodified indefinite singular with an accidental property."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -232,7 +232,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := "A partial definition of what makes a king good."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
@@ -245,7 +245,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := "A descriptive generalization with an indefinite-singular subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -258,7 +258,7 @@ def ex44a : Datum :=
     glossedTokens := []
     context := "A descriptive generalization with an indefinite-singular subject; the methods do not run in the species."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -271,7 +271,7 @@ def ex44b : Datum :=
     glossedTokens := []
     context := "A generalization in which single animals matter."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
@@ -284,7 +284,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := "An animal typically held in larger quantities."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "descriptive")] }
 
@@ -297,7 +297,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := "An animal typically held in larger quantities."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 

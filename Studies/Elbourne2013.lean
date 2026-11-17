@@ -526,7 +526,7 @@ theorem sloppy_read : Datum.ReadCount descriptionType? Examples.all 2 := by deci
 
 -- (22), (31), (33)
 theorem contrast_rows : ∀ e ∈ Examples.all, (e.feature? "contrast").isSome →
-    ¬ e.JudgedFelicitous ∧ ∀ a ∈ e.alternatives, a.2 = .acceptable := by
+    ¬ e.JudgedFelicitous ∧ ∀ a ∈ e.contrasts, a.2 = .acceptable := by
   decide
 
 theorem contrast_read :

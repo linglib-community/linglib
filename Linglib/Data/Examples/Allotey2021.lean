@@ -26,7 +26,7 @@ def ex_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -41,7 +41,7 @@ def ex_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "null"), ("control", "subject"), ("diagnostic", "nullSubject")] }
 
@@ -56,7 +56,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -71,7 +71,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "null"), ("control", "subject"), ("diagnostic", "nullSubject")] }
 
@@ -86,7 +86,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kã-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -101,7 +101,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi-i tao (ni) na bo", .ungrammatical)]
+    contrasts := [("Mi-i tao (ni) na bo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present")] }
 
@@ -116,7 +116,7 @@ def ex_35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kã-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -131,7 +131,7 @@ def ex_36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mia-mi-hiɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -146,7 +146,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "2"), ("number", "singular")] }
 
@@ -161,7 +161,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "2"), ("number", "plural")] }
 
@@ -176,7 +176,7 @@ def ex_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nyɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "3"), ("number", "plural")] }
 
@@ -191,7 +191,7 @@ def ex_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "null"), ("diagnostic", "nullSubject")] }
 
@@ -206,7 +206,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "null"), ("diagnostic", "nullSubject")] }
 
@@ -221,7 +221,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("E kai ni e-he wolo", .acceptable)]
+    contrasts := [("E kai ni e-he wolo", .acceptable)]
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "lexicalSubject")] }
 
@@ -236,7 +236,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
@@ -251,7 +251,7 @@ def ex_42c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
@@ -266,7 +266,7 @@ def ex_43 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
@@ -281,7 +281,7 @@ def ex_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wa"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -296,7 +296,7 @@ def ex_45a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "plural"), ("antecedent", "cCommanding")] }
 
@@ -311,7 +311,7 @@ def ex_45b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "singular"), ("antecedent", "nonCCommanding")] }
 
@@ -326,7 +326,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "singular"), ("antecedent", "cCommanding")] }
 
@@ -341,7 +341,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "plural"), ("antecedent", "nonCCommanding")] }
 
@@ -356,7 +356,7 @@ def ex_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
@@ -371,7 +371,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
@@ -386,7 +386,7 @@ def ex_49 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
@@ -401,7 +401,7 @@ def ex_49b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "longDistance"), ("antecedent", "longDistance")] }
 
@@ -416,7 +416,7 @@ def ex_52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "ellipsis")] }
 
@@ -431,7 +431,7 @@ def ex_53 : Datum :=
     lgrConformance := some .wordAligned
     context := "Imagine a scenario where Ajele Thompson has been nominated to win a prize but has no knowledge of this. Ajele comes to a notice that reads “Ayele Tomson is nominated for the Anisha prize”. Ajele anticipates that Ayele will win the prize, not knowing that she is the one nominated for the prize, but her name was misspelled. Ajele comes to believe that Ayele will win the prize."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kpã-gbɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "deSe")] }
 
@@ -446,7 +446,7 @@ def ex_54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wa"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -461,7 +461,7 @@ def ex_55 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kenya"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -476,7 +476,7 @@ def ex_56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -491,7 +491,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "laka"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -506,7 +506,7 @@ def ex_58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "laka"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -521,7 +521,7 @@ def ex_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bi"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
@@ -536,7 +536,7 @@ def ex_64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
@@ -551,7 +551,7 @@ def ex_74 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("form", "clipped")] }
 
@@ -566,7 +566,7 @@ def ex_78 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("irrealisMarker", "present"), ("clauseContext", "future")] }
 
@@ -581,7 +581,7 @@ def ex_79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Wɔ tee skul mra", .acceptable)]
+    contrasts := [("Wɔ tee skul mra", .acceptable)]
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("diagnostic", "agreement")] }
 
@@ -596,7 +596,7 @@ def ex_80 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Nyɛ tee skul mra", .acceptable)]
+    contrasts := [("Nyɛ tee skul mra", .acceptable)]
     readings := []
     paperFeatures := [("person", "2"), ("number", "singular"), ("diagnostic", "agreement")] }
 
@@ -611,7 +611,7 @@ def ex_81 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Amɛ tee skul mra", .acceptable)]
+    contrasts := [("Amɛ tee skul mra", .acceptable)]
     readings := []
     paperFeatures := [("person", "3"), ("number", "singular"), ("diagnostic", "agreement")] }
 
@@ -626,7 +626,7 @@ def ex_85 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "none"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
@@ -641,7 +641,7 @@ def ex_86 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "high"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
@@ -656,7 +656,7 @@ def ex_87 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "high"), ("verbTone", "low")] }
 
@@ -671,7 +671,7 @@ def ex_88 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("verbTone", "low"), ("diagnostic", "tone"), ("clauseContext", "control")] }
 
@@ -686,7 +686,7 @@ def ex_88b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("verbTone", "high"), ("diagnostic", "tone"), ("clauseContext", "control")] }
 
@@ -701,7 +701,7 @@ def ex_89a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi kai ake má he wolo lɛ", .ungrammatical)]
+    contrasts := [("Mi kai ake má he wolo lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("irrealisMarker", "absent"), ("diagnostic", "implicative")] }
 
@@ -716,7 +716,7 @@ def ex_89b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi nyɛ má sha tsensii lɛ", .ungrammatical)]
+    contrasts := [("Mi nyɛ má sha tsensii lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "nyɛ"), ("complementizer", "none"), ("irrealisMarker", "absent"), ("diagnostic", "implicative")] }
 
@@ -731,7 +731,7 @@ def ex_89c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi kpleno ni mi ya skul wɔ", .ungrammatical)]
+    contrasts := [("Mi kpleno ni mi ya skul wɔ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("irrealisMarker", "present"), ("diagnostic", "implicative"), ("control", "subject")] }
 
@@ -746,7 +746,7 @@ def ex_89d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi kpaŋ ni mi shi mra", .ungrammatical)]
+    contrasts := [("Mi kpaŋ ni mi shi mra", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ni"), ("irrealisMarker", "present"), ("diagnostic", "implicative"), ("control", "subject")] }
 
@@ -761,7 +761,7 @@ def ex_92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "obviation")] }
 
@@ -776,7 +776,7 @@ def ex_93 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "imperative"), ("subjectTone", "none"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
@@ -791,7 +791,7 @@ def ex_94 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "imperative"), ("subjectTone", "high"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
@@ -806,7 +806,7 @@ def ex_95 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "future"), ("person", "1"), ("number", "singular")] }
 
@@ -821,7 +821,7 @@ def ex_96 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "future"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
@@ -836,7 +836,7 @@ def ex_96b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "future"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
@@ -851,7 +851,7 @@ def ex_97a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseContext", "conditional"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
@@ -866,7 +866,7 @@ def ex_97b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kɛ mi ye lɛ mi-bàá jo", .acceptable)]
+    contrasts := [("Kɛ mi ye lɛ mi-bàá jo", .acceptable)]
     readings := []
     paperFeatures := [("clauseContext", "conditional"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
@@ -881,7 +881,7 @@ def ex_100 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
@@ -896,7 +896,7 @@ def ex_101 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("embeddedTAM", "future"), ("diagnostic", "tense")] }
 
@@ -911,7 +911,7 @@ def ex_102 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("O hiɛ-kpa-nɔ ni ó baa-kɔ aspaatere lɛ", .ungrammatical)]
+    contrasts := [("O hiɛ-kpa-nɔ ni ó baa-kɔ aspaatere lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
@@ -926,7 +926,7 @@ def ex_103 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("È hiɛ-kpa-nɔ ni é baa-ŋa shinaa lɛ", .ungrammatical)]
+    contrasts := [("È hiɛ-kpa-nɔ ni é baa-ŋa shinaa lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
@@ -941,7 +941,7 @@ def ex_104 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "keji"), ("diagnostic", "cSelection")] }
 
@@ -956,7 +956,7 @@ def ex_104b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "ake"), ("diagnostic", "cSelection")] }
 
@@ -971,7 +971,7 @@ def ex_104c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "ni"), ("diagnostic", "cSelection")] }
 
@@ -986,7 +986,7 @@ def ex_105 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
@@ -1001,7 +1001,7 @@ def ex_105b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ake"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
@@ -1016,7 +1016,7 @@ def ex_105c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "keji"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
@@ -1031,7 +1031,7 @@ def ex_106 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "cSelection")] }
 
@@ -1046,7 +1046,7 @@ def ex_106b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("diagnostic", "cSelection")] }
 
@@ -1061,7 +1061,7 @@ def ex_106c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "keji"), ("embeddedSubject", "pronoun"), ("diagnostic", "cSelection")] }
 
@@ -1076,7 +1076,7 @@ def ex_107 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku kai ni wolo ni e he", .ungrammatical)]
+    contrasts := [("Aku kai ni wolo ni e he", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "focus")] }
 
@@ -1091,7 +1091,7 @@ def ex_108 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku lé ni bo aloo lɛ ni he wolo lɛ", .ungrammatical)]
+    contrasts := [("Aku lé ni bo aloo lɛ ni he wolo lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "keji"), ("diagnostic", "focus")] }
 
@@ -1106,7 +1106,7 @@ def ex_109 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku kplɛnɔ nyɛ ni e-baa-he wolo", .ungrammatical), ("Aku kplɛnɔ nyɛ ni e-he wolo", .ungrammatical)]
+    contrasts := [("Aku kplɛnɔ nyɛ ni e-baa-he wolo", .ungrammatical), ("Aku kplɛnɔ nyɛ ni e-he wolo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
@@ -1121,7 +1121,7 @@ def ex_110 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku dwɛŋ ni è hè wolo", .acceptable)]
+    contrasts := [("Aku dwɛŋ ni è hè wolo", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("subjectTone", "low"), ("verbTone", "low"), ("diagnostic", "tone")] }
 
@@ -1136,7 +1136,7 @@ def ex_111 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku dwɛŋ ni amɛ̀ baa-hè wolo", .acceptable)]
+    contrasts := [("Aku dwɛŋ ni amɛ̀ baa-hè wolo", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("subjectTone", "low"), ("embeddedTAM", "future"), ("diagnostic", "tone")] }
 
@@ -1151,7 +1151,7 @@ def ex_112 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku dwɛŋ akɛ é hè wolo", .ungrammatical), ("Aku dwɛŋ ni amɛ̀ hè wolo", .ungrammatical)]
+    contrasts := [("Aku dwɛŋ akɛ é hè wolo", .ungrammatical), ("Aku dwɛŋ ni amɛ̀ hè wolo", .ungrammatical)]
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("diagnostic", "tone")] }
 
@@ -1166,7 +1166,7 @@ def ex_114b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "npi"), ("negation", "local")] }
 
@@ -1181,7 +1181,7 @@ def ex_115a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "embedded")] }
 
@@ -1196,7 +1196,7 @@ def ex_115b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "embedded")] }
 
@@ -1211,7 +1211,7 @@ def ex_116a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
@@ -1226,7 +1226,7 @@ def ex_116b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
@@ -1241,7 +1241,7 @@ def ex_117a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
@@ -1256,7 +1256,7 @@ def ex_117b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object"), ("irrealisMarker", "present"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
@@ -1271,7 +1271,7 @@ def ex_118 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku tao ni è na bo", .ungrammatical)]
+    contrasts := [("Aku tao ni è na bo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("diagnostic", "tense")] }
 
@@ -1286,7 +1286,7 @@ def ex_119a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku mii-tao ni é mii-na bo", .ungrammatical)]
+    contrasts := [("Aku mii-tao ni é mii-na bo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
@@ -1301,7 +1301,7 @@ def ex_119b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku baa-tao ni é baa-na bo", .ungrammatical)]
+    contrasts := [("Aku baa-tao ni é baa-na bo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
@@ -1316,7 +1316,7 @@ def ex_121a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
@@ -1331,7 +1331,7 @@ def ex_121b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
@@ -1346,7 +1346,7 @@ def ex_121c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
@@ -1361,7 +1361,7 @@ def ex_122a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jojo kplɛnɔ ni é ka he-ka wolo lɛ", .ungrammatical)]
+    contrasts := [("Jojo kplɛnɔ ni é ka he-ka wolo lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "negation"), ("clauseType", "control"), ("negationPosition", "preverbal")] }
 
@@ -1376,7 +1376,7 @@ def ex_122b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aku tao ni é ka na-ka bo", .ungrammatical)]
+    contrasts := [("Aku tao ni é ka na-ka bo", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "negation"), ("clauseType", "control"), ("negationPosition", "preverbal")] }
 
@@ -1391,7 +1391,7 @@ def ex_123a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Asibi e he wolo lɛ", .ungrammatical)]
+    contrasts := [("Asibi e he wolo lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "agreement")] }
 
@@ -1406,7 +1406,7 @@ def ex_123b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("E e he wolo lɛ", .ungrammatical)]
+    contrasts := [("E e he wolo lɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "agreement")] }
 
@@ -1421,7 +1421,7 @@ def ex_124 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 

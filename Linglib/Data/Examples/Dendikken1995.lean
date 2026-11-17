@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional")] }
 
@@ -76,7 +76,7 @@ def ex_1e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional")] }
 
@@ -89,7 +89,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "subextraction")] }
 
@@ -102,7 +102,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "subextraction")] }
 
@@ -115,7 +115,7 @@ def ex_13c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "subextraction")] }
 
@@ -128,7 +128,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "nominalization")] }
 
@@ -141,7 +141,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "nominalization")] }
 
@@ -154,7 +154,7 @@ def ex_14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "nominalization")] }
 
@@ -167,7 +167,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("diagnostic", "ergativity")] }
 
@@ -180,7 +180,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "ergativity")] }
 
@@ -193,7 +193,7 @@ def ex_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "outer")] }
 
@@ -206,7 +206,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "inner")] }
 
@@ -219,7 +219,7 @@ def ex_49c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "final")] }
 
@@ -232,7 +232,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "outer")] }
 
@@ -245,7 +245,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "inner")] }
 
@@ -258,7 +258,7 @@ def ex_50c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "final")] }
 
@@ -271,7 +271,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer")] }
 
@@ -284,7 +284,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner")] }
 
@@ -297,7 +297,7 @@ def ex_51c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "final")] }
 
@@ -310,7 +310,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
@@ -323,7 +323,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
@@ -336,7 +336,7 @@ def ex_52c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
@@ -349,7 +349,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
@@ -362,7 +362,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
@@ -375,7 +375,7 @@ def ex_53c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
@@ -388,7 +388,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
@@ -401,7 +401,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
@@ -414,7 +414,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
@@ -427,7 +427,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
@@ -440,7 +440,7 @@ def ex_62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
@@ -453,7 +453,7 @@ def ex_62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
@@ -466,7 +466,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
@@ -479,7 +479,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
@@ -492,7 +492,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
@@ -505,7 +505,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
@@ -518,7 +518,7 @@ def ex_65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
@@ -531,7 +531,7 @@ def ex_65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
@@ -544,7 +544,7 @@ def ex_68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "extraposition")] }
 
@@ -557,7 +557,7 @@ def ex_68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "extraposition")] }
 
@@ -570,7 +570,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "extraposition")] }
 
@@ -583,7 +583,7 @@ def ex_69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "extraposition")] }
 
@@ -596,7 +596,7 @@ def ex_143a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
@@ -609,7 +609,7 @@ def ex_143b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
@@ -622,7 +622,7 @@ def ex_143c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
@@ -635,7 +635,7 @@ def ex_144a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "idiom")] }
 
@@ -648,7 +648,7 @@ def ex_144b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "idiom")] }
 
@@ -661,7 +661,7 @@ def ex_155a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("object", "pronoun")] }
 
@@ -674,7 +674,7 @@ def ex_155b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("John looked up the information.", .acceptable)]
+    contrasts := [("John looked up the information.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "pronoun")] }
 
@@ -687,7 +687,7 @@ def ex_156a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "stressedPronoun")] }
 
@@ -700,7 +700,7 @@ def ex_156b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "conjoinedPronouns")] }
 
@@ -713,7 +713,7 @@ def ex_156c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "deicticPronoun")] }
 
@@ -726,7 +726,7 @@ def ex_161a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("object", "pronoun")] }
 
@@ -739,7 +739,7 @@ def ex_161b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("They put down the books on the shelf.", .acceptable)]
+    contrasts := [("They put down the books on the shelf.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("object", "pronoun")] }
 
@@ -752,7 +752,7 @@ def ex_162a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer"), ("object", "pronoun")] }
 
@@ -765,7 +765,7 @@ def ex_162b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("They made out John to be a liar.", .acceptable)]
+    contrasts := [("They made out John to be a liar.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner"), ("object", "pronoun")] }
 
@@ -778,7 +778,7 @@ def ex_167a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("modifier", "right")] }
 
@@ -791,7 +791,7 @@ def ex_167b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("They looked up the information.", .acceptable)]
+    contrasts := [("They looked up the information.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("modifier", "right")] }
 
@@ -806,7 +806,7 @@ def ex_70a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
@@ -819,7 +819,7 @@ def ex_70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
@@ -832,7 +832,7 @@ def ex_70c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
@@ -847,7 +847,7 @@ def ex_71a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
@@ -860,7 +860,7 @@ def ex_71b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
@@ -875,7 +875,7 @@ def ex_72a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
@@ -888,7 +888,7 @@ def ex_72b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
@@ -903,7 +903,7 @@ def ex_73a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
@@ -916,7 +916,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
@@ -929,7 +929,7 @@ def ex_73c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
@@ -944,7 +944,7 @@ def ex_74a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
@@ -957,7 +957,7 @@ def ex_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
@@ -972,7 +972,7 @@ def ex_75a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
@@ -985,7 +985,7 @@ def ex_75b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
@@ -1000,7 +1000,7 @@ def ex_76a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("diagnostic", "constituency")] }
 
@@ -1015,7 +1015,7 @@ def ex_76b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("diagnostic", "constituency")] }
 
@@ -1030,7 +1030,7 @@ def ex_134a_prefixed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1045,7 +1045,7 @@ def ex_134a_inner : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
@@ -1060,7 +1060,7 @@ def ex_134a_outer : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
@@ -1075,7 +1075,7 @@ def ex_134b_prefixed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1090,7 +1090,7 @@ def ex_134b_inner : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
@@ -1105,7 +1105,7 @@ def ex_134b_outer : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
@@ -1120,7 +1120,7 @@ def ex_134c_prefixed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1135,7 +1135,7 @@ def ex_134c_inner : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
@@ -1150,7 +1150,7 @@ def ex_134c_outer : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
@@ -1165,7 +1165,7 @@ def ex_135a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hunden vart sparka ut.", .acceptable)]
+    contrasts := [("Hunden vart sparka ut.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
@@ -1180,7 +1180,7 @@ def ex_135b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Tråden vart klipt av.", .acceptable)]
+    contrasts := [("Tråden vart klipt av.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
@@ -1195,7 +1195,7 @@ def ex_135c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Avfallet vart kjørt bort.", .acceptable)]
+    contrasts := [("Avfallet vart kjørt bort.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
@@ -1210,7 +1210,7 @@ def ex_136a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
@@ -1225,7 +1225,7 @@ def ex_136b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
@@ -1240,7 +1240,7 @@ def ex_137a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
@@ -1255,7 +1255,7 @@ def ex_137b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
@@ -1270,7 +1270,7 @@ def ex_138a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1285,7 +1285,7 @@ def ex_138b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1300,7 +1300,7 @@ def ex_138c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
@@ -1315,7 +1315,7 @@ def ex_149_inner : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "ergativity")] }
 
@@ -1330,7 +1330,7 @@ def ex_149_outer : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "ergativity")] }
 
@@ -1345,7 +1345,7 @@ def ex_150_inner : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "ergativity")] }
 
@@ -1360,7 +1360,7 @@ def ex_150_outer : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "ergativity")] }
 
@@ -1375,7 +1375,7 @@ def ex_153a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Av hvilket hus sparket han (ut) hunden (ut)?", .questionable)]
+    contrasts := [("Av hvilket hus sparket han (ut) hunden (ut)?", .questionable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
 
@@ -1390,7 +1390,7 @@ def ex_153b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Hvilken dør sparket han hunden ut?", .unacceptable)]
+    contrasts := [("Hvilken dør sparket han hunden ut?", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
 

@@ -24,7 +24,7 @@ def ex_7_5_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "pa"), ("output", "pa"), ("in_rvoice", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_7_5_aaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "aaa"), ("output", "aaa"), ("in_rvoice", "yes")] }
 
@@ -50,7 +50,7 @@ def ex_7_5_apa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "apa"), ("output", "aba"), ("in_rvoice", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_7_5_aba : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "aba"), ("output", "aba"), ("in_rvoice", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_7_5_appa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "appa"), ("output", "appa"), ("in_rvoice", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_7_5_aapaaapa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("input", "aapaaapa"), ("output", "aabaaaba"), ("in_rvoice", "yes")] }
 
@@ -102,7 +102,7 @@ def ex_7_17_pa_ba : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "pa"), ("output", "ba"), ("in_rvoice", "no")] }
 
@@ -115,7 +115,7 @@ def ex_7_17_apa_apa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "apa"), ("output", "apa"), ("in_rvoice", "no")] }
 
@@ -128,7 +128,7 @@ def ex_7_17_appa_abpa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "appa"), ("output", "abpa"), ("in_rvoice", "no")] }
 

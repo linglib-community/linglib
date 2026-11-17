@@ -25,7 +25,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "nominalAppositive")] }
 
@@ -38,7 +38,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative")] }
 
@@ -51,7 +51,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet")] }
 
@@ -64,7 +64,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative")] }
 
@@ -77,7 +77,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "speaker")] }
 
@@ -90,7 +90,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "conjunction"), ("embedded", "yes"), ("orientation", "subject")] }
 
@@ -103,7 +103,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet"), ("embedded", "yes"), ("orientation", "speaker")] }
 
@@ -116,7 +116,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("orientation", "subject")] }
 
@@ -129,7 +129,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := "Joan is crazy. She's hallucinating that some geniuses in Silicon Valley have invented a new brain chip that's been installed in her left temporal lobe and permits her to speak any of a number of languages she's never studied."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "subject")] }
 
@@ -142,7 +142,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := "We know that Bob loves to do yard work and is very proud of his lawn, but also that he has a son Monty who hates to do yard chores. So Bob could say (perhaps in response to his partner's suggestion that Monty be asked to mow the lawn while he is away on business):"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "expressiveAdjective"), ("embedded", "yes"), ("orientation", "subject")] }
 
@@ -155,7 +155,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := "I was struck by the willingness of almost everybody in the room — the senators as eagerly as the witnesses — to exchange their civil liberties for an illusory state of perfect security. They seemed to think that democracy was just a fancy word for corporate capitalism, and that the society would be a lot better off if it stopped its futile and unremunerative dithering about constitutional rights."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "expressiveAdjective"), ("embedded", "no"), ("orientation", "subject")] }
 
@@ -168,7 +168,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := "While shopping at one of my local Apple stores the other day, I overheard an earnest conversation about safeguarding Mac computers against things like viruses and trojans. The customer and companion were new to Mac life and were convinced that they should be very worried about viruses. The Apple salesperson on the floor repeatedly assured them that they would not need extra antivirus protection for their Mac. The customer then argued that Symantec makes an antivirus program for Macs, therefore, it must truly be a credible threat, otherwise there would be no such products. Some antivirus products are even sold in Apple stores. I've heard similar arguments before: if companies like Symantec or McAfee make antivirus applications for the Mac, then Macs must truly be vulnerable somehow, somewhere."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet"), ("embedded", "no"), ("orientation", "subject")] }
 
@@ -182,7 +182,7 @@ def exA1_embedded : Datum :=
     glossedTokens := []
     context := "I am increasingly worried about my roommate. She seems to be growing paranoid."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "1")] }
 
@@ -196,7 +196,7 @@ def exA1_unembedded : Datum :=
     glossedTokens := []
     context := "I am increasingly worried about my roommate. She seems to be growing paranoid."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "1")] }
 
@@ -210,7 +210,7 @@ def exA2_embedded : Datum :=
     glossedTokens := []
     context := "My friend Sal is absurdly optimistic."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "2")] }
 
@@ -224,7 +224,7 @@ def exA2_unembedded : Datum :=
     glossedTokens := []
     context := "My friend Sal is absurdly optimistic."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "2")] }
 
@@ -238,7 +238,7 @@ def exA3_embedded : Datum :=
     glossedTokens := []
     context := "My aunt is extremely skeptical of doctors in general."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "3")] }
 
@@ -252,7 +252,7 @@ def exA3_unembedded : Datum :=
     glossedTokens := []
     context := "My aunt is extremely skeptical of doctors in general."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "3")] }
 
@@ -266,7 +266,7 @@ def exA4_embedded : Datum :=
     glossedTokens := []
     context := "My friend Ellen is a huge snob about music."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "4")] }
 
@@ -280,7 +280,7 @@ def exA4_unembedded : Datum :=
     glossedTokens := []
     context := "My friend Ellen is a huge snob about music."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "4")] }
 
@@ -294,7 +294,7 @@ def exA5_embedded : Datum :=
     glossedTokens := []
     context := "Poor Joan seems to have grown crazier than ever."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "5")] }
 
@@ -308,7 +308,7 @@ def exA5_unembedded : Datum :=
     glossedTokens := []
     context := "Poor Joan seems to have grown crazier than ever."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "5")] }
 
@@ -322,7 +322,7 @@ def exA6_embedded : Datum :=
     glossedTokens := []
     context := "My brother Sid hates school."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "6")] }
 
@@ -336,7 +336,7 @@ def exA6_unembedded : Datum :=
     glossedTokens := []
     context := "My brother Sid hates school."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "6")] }
 
@@ -350,7 +350,7 @@ def exA7_embedded : Datum :=
     glossedTokens := []
     context := "I talked to an outlandish theater critic at a party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "7")] }
 
@@ -364,7 +364,7 @@ def exA7_unembedded : Datum :=
     glossedTokens := []
     context := "I talked to an outlandish theater critic at a party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "7")] }
 
@@ -378,7 +378,7 @@ def exA8_embedded : Datum :=
     glossedTokens := []
     context := "My kid sister Loni is obsessed with comic books."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "8")] }
 
@@ -392,7 +392,7 @@ def exA8_unembedded : Datum :=
     glossedTokens := []
     context := "My kid sister Loni is obsessed with comic books."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "8")] }
 
@@ -406,7 +406,7 @@ def exB1_positive : Datum :=
     glossedTokens := []
     context := "My classmate Sheila said that her history professor gave her a (really) high grade."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "1"), ("contextPolarity", "positive"), ("epithet", "the jerk")] }
 
@@ -420,7 +420,7 @@ def exB1_negative : Datum :=
     glossedTokens := []
     context := "My classmate Sheila said that her history professor gave her a (really) low grade."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "1"), ("contextPolarity", "negative"), ("epithet", "the jerk")] }
 
@@ -434,7 +434,7 @@ def exB2_positive : Datum :=
     glossedTokens := []
     context := "My neighbor Maria said that her roommate has the (absolute) best sense of humor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "2"), ("contextPolarity", "positive"), ("epithet", "the idiot")] }
 
@@ -448,7 +448,7 @@ def exB2_negative : Datum :=
     glossedTokens := []
     context := "My neighbor Maria said that her roommate has the (absolute) worst sense of humor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "2"), ("contextPolarity", "negative"), ("epithet", "the idiot")] }
 
@@ -462,7 +462,7 @@ def exB3_positive : Datum :=
     glossedTokens := []
     context := "My roommate Glen said that his uncle tells the (absolute) funniest jokes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "3"), ("contextPolarity", "positive"), ("epithet", "the stooge")] }
 
@@ -476,7 +476,7 @@ def exB3_negative : Datum :=
     glossedTokens := []
     context := "My roommate Glen said that his uncle tells the (absolute) lamest jokes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "3"), ("contextPolarity", "negative"), ("epithet", "the stooge")] }
 
@@ -490,7 +490,7 @@ def exB4_positive : Datum :=
     glossedTokens := []
     context := "My sister Trudy said that her blind date showed up wearing an (incredibly) expensive suit."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "4"), ("contextPolarity", "positive"), ("epithet", "the idiot")] }
 
@@ -504,7 +504,7 @@ def exB4_negative : Datum :=
     glossedTokens := []
     context := "My sister Trudy said that her blind date showed up wearing an (incredibly) tasteless suit."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "4"), ("contextPolarity", "negative"), ("epithet", "the idiot")] }
 
@@ -518,7 +518,7 @@ def exB5_positive : Datum :=
     glossedTokens := []
     context := "My buddy Steve said that his landlord plays the trumpet (very) well."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "5"), ("contextPolarity", "positive"), ("epithet", "the twerp")] }
 
@@ -532,7 +532,7 @@ def exB5_negative : Datum :=
     glossedTokens := []
     context := "My buddy Steve said that his landlord plays the trumpet (very) badly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "5"), ("contextPolarity", "negative"), ("epithet", "the twerp")] }
 
@@ -546,7 +546,7 @@ def exB6_positive : Datum :=
     glossedTokens := []
     context := "My co-worker Miranda said that our boss gave her a (super) generous Christmas bonus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "6"), ("contextPolarity", "positive"), ("epithet", "the skinflint")] }
 
@@ -560,7 +560,7 @@ def exB6_negative : Datum :=
     glossedTokens := []
     context := "My co-worker Miranda said that our boss gave her a (super) stingy Christmas bonus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "6"), ("contextPolarity", "negative"), ("epithet", "the skinflint")] }
 
@@ -574,7 +574,7 @@ def exB7_positive : Datum :=
     glossedTokens := []
     context := "My brother Ken said that his math tutor has been in (such) a great mood lately."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "7"), ("contextPolarity", "positive"), ("epithet", "the jerk")] }
 
@@ -588,7 +588,7 @@ def exB7_negative : Datum :=
     glossedTokens := []
     context := "My brother Ken said that his math tutor has been in (such) a terrible mood lately."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "7"), ("contextPolarity", "negative"), ("epithet", "the jerk")] }
 
@@ -602,7 +602,7 @@ def exB8_positive : Datum :=
     glossedTokens := []
     context := "My friend Mike said that his housemate threw a (totally) fantastic party last weekend."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "8"), ("contextPolarity", "positive"), ("epithet", "the cretin")] }
 
@@ -616,7 +616,7 @@ def exB8_negative : Datum :=
     glossedTokens := []
     context := "My friend Mike said that his housemate threw a (totally) horrible party last weekend."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "8"), ("contextPolarity", "negative"), ("epithet", "the cretin")] }
 
@@ -630,7 +630,7 @@ def exB9_positive : Datum :=
     glossedTokens := []
     context := "My aide Sandy said that the good-looking bike messenger is always (so) sweet to her."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "9"), ("contextPolarity", "positive"), ("epithet", "the creep")] }
 
@@ -644,7 +644,7 @@ def exB9_negative : Datum :=
     glossedTokens := []
     context := "My aide Sandy said that the good-looking bike messenger is always (so) rude to her."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "9"), ("contextPolarity", "negative"), ("epithet", "the creep")] }
 
@@ -657,7 +657,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 
@@ -670,7 +670,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "speaker")] }
 
@@ -683,7 +683,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "subject")] }
 
@@ -696,7 +696,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 
@@ -709,7 +709,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 

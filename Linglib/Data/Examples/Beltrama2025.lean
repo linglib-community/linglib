@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("middling: positive but only moderately so", .acceptable)]
     paperFeatures := [("class", "MPA"), ("inference", "middling")] }
 
@@ -37,7 +37,7 @@ def ex_3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cancelability"), ("verdict", "middling inference is an implicature")] }
 
@@ -50,7 +50,7 @@ def ex_4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "reinforceability")] }
 
@@ -63,7 +63,7 @@ def ex_5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "DE suspension"), ("verdict", "no upper-bounded reading in the restrictor")] }
 
@@ -76,7 +76,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "for-phrase"), ("property", "context-sensitivity")] }
 
@@ -89,7 +89,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "strong intensifiers"), ("property", "restricted gradability"), ("alsoJudged", "questionable")] }
 
@@ -102,7 +102,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := "Pizza A is exceptionally good."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "comparative"), ("property", "mildness retained in comparatives")] }
 
@@ -115,7 +115,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "zone of indifference"), ("verdict", "near-contradiction")] }
 
@@ -128,7 +128,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "barely"), ("property", "crisp boundary")] }
 
@@ -141,7 +141,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "crisp judgment")] }
 
@@ -154,7 +154,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "emphasis in DE"), ("parallel", "minimizers")] }
 
@@ -167,7 +167,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "minimal sufficiency exclusive")] }
 
@@ -180,7 +180,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "slightly"), ("verdict", "against the MinSAA analysis")] }
 
@@ -193,7 +193,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "comparative entailment"), ("verdict", "positive form not entailed")] }
 
@@ -206,7 +206,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "strong intensifier rescued"), ("condition", "significance excluded from the QUD")] }
 

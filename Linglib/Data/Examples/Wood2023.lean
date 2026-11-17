@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þvo")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complex event", .acceptable)]
     paperFeatures := [("reading", "CEN")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simple event", .acceptable)]
     paperFeatures := [("reading", "SEN")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simple entity", .acceptable)]
     paperFeatures := [("reading", "RN")] }
 
@@ -86,7 +86,7 @@ def ex_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prefix", "marg-")] }
 
@@ -101,7 +101,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "marg-"), ("reading", "CEN")] }
 
@@ -116,7 +116,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "marg-"), ("reading", "CEN")] }
 
@@ -131,7 +131,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("simple event", .ungrammatical)]
     paperFeatures := [("prefix", "marg-"), ("reading", "SEN")] }
 
@@ -146,7 +146,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("prefix", "marg-"), ("reading", "RN")] }
 
@@ -161,7 +161,7 @@ def ex_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prefix", "endur-")] }
 
@@ -176,7 +176,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "CEN")] }
 
@@ -191,7 +191,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simple event", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "SEN")] }
 
@@ -206,7 +206,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("prefix", "endur-"), ("reading", "RN")] }
 
@@ -221,7 +221,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I printed the rules for her yesterday, but now she can't find the print out. I need to reprint the rules today."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("result", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "result RN")] }
 
@@ -236,7 +236,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("að um-ræða þetta", .ungrammatical)]
+    contrasts := [("að um-ræða þetta", .ungrammatical)]
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "1")] }
 
@@ -251,7 +251,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "1")] }
 
@@ -266,7 +266,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "3")] }
 
@@ -281,7 +281,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "3")] }
 
@@ -296,7 +296,7 @@ def ex_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complex event", .acceptable)]
     paperFeatures := [("preposition", "við"), ("pattern", "2"), ("reading", "CEN")] }
 
@@ -311,7 +311,7 @@ def ex_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-væða")] }
 
@@ -326,7 +326,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-væðing")] }
 
@@ -341,7 +341,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("nominal", "að-dá-un"), ("reading", "RN")] }
 
@@ -356,7 +356,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simple entity", .acceptable)]
     paperFeatures := [("nominal", "við-vör-un"), ("reading", "RN")] }
 

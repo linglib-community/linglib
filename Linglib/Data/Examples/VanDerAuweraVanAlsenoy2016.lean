@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "Non-standard English."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "strict"), ("exponents", "clausal negator + negative adverb")] }
 
@@ -39,7 +39,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "negative spread")] }
 
@@ -54,7 +54,7 @@ def ex_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "negative"), ("negator", "ne")] }
 
@@ -69,7 +69,7 @@ def ex_3e : Datum :=
     lgrConformance := some .wordAligned
     context := "Intended with a positive reading of rien."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "negative")] }
 
@@ -84,7 +84,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "strict"), ("position", "preverbal")] }
 
@@ -99,7 +99,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "strict"), ("position", "postverbal")] }
 
@@ -114,7 +114,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "absent")] }
 
@@ -129,7 +129,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "obligatory")] }
 
@@ -144,7 +144,7 @@ def ex_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "strict"), ("negator", "postverbal")] }
 
@@ -159,7 +159,7 @@ def ex_20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("contact", "Spanish")] }
 
@@ -174,7 +174,7 @@ def ex_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("indefinite", "wala")] }
 
@@ -189,7 +189,7 @@ def ex_21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "obligatory")] }
 
@@ -204,7 +204,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("paradigm", "neinn")] }
 
@@ -219,7 +219,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("paradigm", "neinn")] }
 
@@ -234,7 +234,7 @@ def ex_27c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
@@ -249,7 +249,7 @@ def ex_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
@@ -262,7 +262,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := "African American Vernacular English."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
@@ -277,7 +277,7 @@ def ex_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
@@ -292,7 +292,7 @@ def ex_34a : Datum :=
     lgrConformance := some .wordAligned
     context := "Brabantic Belgian Dutch."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "absent")] }
 
@@ -307,7 +307,7 @@ def ex_34b : Datum :=
     lgrConformance := some .wordAligned
     context := "Brabantic Belgian Dutch."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
@@ -322,7 +322,7 @@ def ex_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("parameter", "immediate precedence")] }
 
@@ -337,7 +337,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
@@ -352,7 +352,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := "Informal Welsh."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
@@ -365,7 +365,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "non-strict"), ("parameter", "emphasis")] }
 

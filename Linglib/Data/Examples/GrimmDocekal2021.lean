@@ -26,7 +26,7 @@ def ex_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "pluralization")] }
 
@@ -41,7 +41,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "simple"), ("operation", "simpleCardinal")] }
 
@@ -56,7 +56,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "simple"), ("operation", "simpleCardinal")] }
 
@@ -71,7 +71,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "vagueQuantifier")] }
 
@@ -86,7 +86,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "packaging")] }
 
@@ -101,7 +101,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
@@ -116,7 +116,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
@@ -131,7 +131,7 @@ def ex_13c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
@@ -146,7 +146,7 @@ def ex_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "none")] }
 
@@ -161,7 +161,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "outerCardinal")] }
 
@@ -176,7 +176,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "vagueQuantifier")] }
 
@@ -191,7 +191,7 @@ def ex_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "universal")] }
 
@@ -206,7 +206,7 @@ def ex_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -221,7 +221,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -236,7 +236,7 @@ def ex_20c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -251,7 +251,7 @@ def ex_20d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -266,7 +266,7 @@ def ex_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -281,7 +281,7 @@ def ex_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "fast-food order"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none"), ("context", "portion")] }
 
@@ -296,7 +296,7 @@ def ex_24b_simple : Datum :=
     lgrConformance := some .wordAligned
     context := "fast-food order"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "portion")] }
 
@@ -311,7 +311,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -326,7 +326,7 @@ def ex_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -341,7 +341,7 @@ def ex_25c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -356,7 +356,7 @@ def ex_26a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pluraleTantum"), ("numeral", "aggregate"), ("operation", "universal")] }
 
@@ -371,7 +371,7 @@ def ex_26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "universal")] }
 
@@ -386,7 +386,7 @@ def ex_26c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "universal")] }
 
@@ -401,7 +401,7 @@ def ex_27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
@@ -416,7 +416,7 @@ def ex_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pluraleTantum"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
@@ -431,7 +431,7 @@ def ex_27c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
@@ -446,7 +446,7 @@ def ex_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -461,7 +461,7 @@ def ex_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -476,7 +476,7 @@ def ex_28c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -491,7 +491,7 @@ def ex_28d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -506,7 +506,7 @@ def ex_32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
@@ -521,7 +521,7 @@ def ex_32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
@@ -536,7 +536,7 @@ def ex_32c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
@@ -551,7 +551,7 @@ def ex_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
@@ -566,7 +566,7 @@ def ex_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
@@ -581,7 +581,7 @@ def ex_33c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
@@ -596,7 +596,7 @@ def ex_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "grinding")] }
 
@@ -611,7 +611,7 @@ def ex_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "grinding")] }
 
@@ -626,7 +626,7 @@ def ex_36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "episodic"), ("reading", "taxonomic")] }
 
@@ -641,7 +641,7 @@ def ex_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -656,7 +656,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -671,7 +671,7 @@ def ex_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -686,7 +686,7 @@ def ex_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -701,7 +701,7 @@ def ex_40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -716,7 +716,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "episodic"), ("reading", "taxonomic")] }
 
@@ -731,7 +731,7 @@ def ex_40c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none"), ("context", "generic"), ("reading", "taxonomic")] }
 
@@ -746,7 +746,7 @@ def ex_40d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none"), ("context", "episodic"), ("reading", "taxonomic")] }
 
@@ -761,7 +761,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "unique"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -776,7 +776,7 @@ def ex_52b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "proper"), ("numeral", "taxonomic"), ("operation", "none")] }
 
@@ -791,7 +791,7 @@ def ex_68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
@@ -806,7 +806,7 @@ def ex_69 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "aggregate"), ("operation", "packaging")] }
 

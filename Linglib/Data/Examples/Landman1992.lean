@@ -25,7 +25,7 @@ def ex3 : Datum :=
     context := "Mary started drawing a circle and was interrupted before she came even close to having drawn one."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex4 : Datum :=
     context := "Mary started drawing a circle and was interrupted before she came even close to having drawn one."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex13 : Datum :=
     context := "Mary was halfway across the street when a truck hit her; evaluated at the interval at which the truck is seconds away."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex17_sink : Datum :=
     context := "Mary gets into the water in France; she is not a very good swimmer; she swims for an hour, and sinks."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -81,7 +81,7 @@ def ex17_miracle : Datum :=
     context := "Mary gets into the water in France; she is not a very good swimmer, but through divine intervention she actually manages to make it across the ocean. Asked after half an hour of swimming."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -95,7 +95,7 @@ def ex18 : Datum :=
     context := "A big and busy street with two trucks in two lanes: the first truck hits Mary, and the second drives one truck-length behind the first, so that if the first truck hadn't hit her, the second would have (19)."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -109,7 +109,7 @@ def ex20 : Datum :=
     context := "Mary, a person of moderate physical capacities, is battling the Roman army. She manages to kill a couple of soldiers before she gets killed."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

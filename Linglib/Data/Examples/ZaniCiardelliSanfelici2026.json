@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "indicative"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "indicative"],
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "free choice"]
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "plural definite homogeneity"]
@@ -154,7 +154,7 @@
     "translation": "If the squirrel or the tortoise wins the race, it will get a hazelnut.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "indicative"],
@@ -180,7 +180,7 @@
     "translation": "If the squirrel or the tortoise had won the race, it would have got a hazelnut.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -205,7 +205,7 @@
     "translation": "If the squirrel wins the race, it will get the hazelnut.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "indicative"],
@@ -231,7 +231,7 @@
     "translation": "If the squirrel had won the race, it would have got a hazelnut.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -255,7 +255,7 @@
     "translation": "If the hare doesn't win, the squirrel will win.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "indicative"],
@@ -279,7 +279,7 @@
     "translation": "If the hare hadn't won, the squirrel would have won.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
@@ -305,7 +305,7 @@
     "translation": "If the red key or the blue key is pressed, the computer explodes. I don't remember which one.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agreement", "singular"],
@@ -331,7 +331,7 @@
     "translation": "If the red key or the blue key are pressed, the computer explodes. I don't remember which one.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agreement", "plural"],

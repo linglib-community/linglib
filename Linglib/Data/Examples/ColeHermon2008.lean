@@ -26,7 +26,7 @@ def ex3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in SVO order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dakdanak-an"), ("patient", "biang-i")] }
 
@@ -41,7 +41,7 @@ def ex3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in VOS order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dakdanak-an"), ("patient", "biang-i")] }
 
@@ -56,7 +56,7 @@ def ex4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive clause in SVO order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "biang-i")] }
 
@@ -71,7 +71,7 @@ def ex4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive clause in VOS order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "biang-i")] }
 
@@ -86,7 +86,7 @@ def ex7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-object of an active ditransitive fronted; the subject precedes the verb."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "aha"), ("goal", "tu si-Mary")] }
 
@@ -101,7 +101,7 @@ def ex7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-object of an active clause in situ, immediately after the verb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dakdanak-i"), ("patient", "aha")] }
 
@@ -116,7 +116,7 @@ def ex8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-agent of a passive ditransitive fronted."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "ise"), ("patient", "buku"), ("goal", "tu si-Mary")] }
 
@@ -131,7 +131,7 @@ def ex8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-agent of a passive ditransitive in situ, immediately after the verb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "ise"), ("patient", "sada bunga"), ("goal", "tu si-Mary")] }
 
@@ -146,7 +146,7 @@ def ex9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-goal PP of an active ditransitive fronted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "buku"), ("goal", "tu ise")] }
 
@@ -161,7 +161,7 @@ def ex10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-goal PP of a passive ditransitive fronted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "buku"), ("goal", "tu ise")] }
 
@@ -176,7 +176,7 @@ def ex13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive ditransitive with the indirect object after the subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "sada buku"), ("goal", "tu si-Mary")] }
 
@@ -191,7 +191,7 @@ def ex14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive ditransitive with the indirect object before the subject."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "buku"), ("goal", "tu si-Mary")] }
 
@@ -206,7 +206,7 @@ def ex17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in SVO order; the subject antecedes a reflexive direct object."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-Bunga"), ("patient", "dirina sandiri"), ("antecedent", "agent"), ("tableOne", "A")] }
 
@@ -221,7 +221,7 @@ def ex21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in SVO order; the direct object would antecede a reflexive subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dirina sandiri"), ("patient", "dakdanak-i"), ("antecedent", "patient"), ("tableOne", "C")] }
 
@@ -236,7 +236,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive clause in SVO order; the passive subject antecedes a reflexive passive agent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dirina sandiri"), ("patient", "si-Bunga"), ("antecedent", "patient"), ("tableOne", "B")] }
 
@@ -251,7 +251,7 @@ def ex43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-object of an active monotransitive fronted."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "aha")] }
 
@@ -266,7 +266,7 @@ def ex44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-object of an active monotransitive in situ."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "aha")] }
 
@@ -281,7 +281,7 @@ def ex49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active monotransitive clause in VOS order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "si-Mary")] }
 
@@ -296,7 +296,7 @@ def ex56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active ditransitive clause in VOS order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "buku"), ("goal", "tu si-Mary")] }
 
@@ -311,7 +311,7 @@ def ex62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in VOS order; the subject antecedes a reflexive direct object."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-Bunga"), ("patient", "dirina sandiri"), ("antecedent", "agent"), ("tableOne", "A")] }
 
@@ -326,7 +326,7 @@ def ex66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in SVO order; the direct object would antecede a reflexive subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dirina sandiri"), ("patient", "si-Bunga"), ("antecedent", "patient"), ("tableOne", "C")] }
 
@@ -341,7 +341,7 @@ def ex67 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive clause in VOS order; the passive agent antecedes a reflexive passive subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-Torus"), ("patient", "dirina sandiri"), ("antecedent", "agent"), ("tableOne", "A")] }
 
@@ -356,7 +356,7 @@ def ex68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Passive clause in VOS order; the passive subject antecedes a reflexive passive agent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dirina sandiri"), ("patient", "si-John"), ("antecedent", "patient"), ("tableOne", "B")] }
 
@@ -371,7 +371,7 @@ def ex81 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Active clause in SVO order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "dakdanak-on"), ("patient", "biang-i")] }
 
@@ -386,7 +386,7 @@ def ex85 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-object of an active ditransitive in SVO order in situ."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "si-John"), ("patient", "aha"), ("goal", "tu si-Mary")] }
 
@@ -401,7 +401,7 @@ def ex87 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-agent of a passive clause in SVO order in situ."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "ise"), ("patient", "biang-i")] }
 
@@ -416,7 +416,7 @@ def ex88 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The wh-agent of a passive clause in SVO order fronted."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agent", "ise"), ("patient", "biang-i")] }
 
@@ -429,7 +429,7 @@ def ex95 : Datum :=
     glossedTokens := []
     context := "English passive; the passive subject antecedes a reflexive in the by-phrase."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "patient")] }
 
@@ -442,7 +442,7 @@ def ex96 : Datum :=
     glossedTokens := []
     context := "English passive; the by-phrase agent would antecede a reflexive passive subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "agent")] }
 

@@ -25,7 +25,7 @@ def ze : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("directIndex", "coarse intensity"), ("indirectIndex", "male voice")] }
 
@@ -39,7 +39,7 @@ def wa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("directIndex", "delicate intensity"), ("indirectIndex", "female voice")] }
 
@@ -53,7 +53,7 @@ def tummy : Datum :=
     glossedTokens := []
     context := "Baby Talk register, phonological simplification, against 'stomach'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Extensive simplification"), ("community", "Mainstream American")] }
 
@@ -67,7 +67,7 @@ def what : Datum :=
     glossedTokens := []
     context := "Response to a child's unintelligible utterance, indicating unintelligibility."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Display minimal grasp")] }
 
@@ -81,7 +81,7 @@ def dontUnderstand : Datum :=
     glossedTokens := []
     context := "Response to a child's unintelligible utterance, indicating unintelligibility."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Display minimal grasp")] }
 
@@ -95,7 +95,7 @@ def huh : Datum :=
     glossedTokens := []
     context := "Response to a child's unintelligible utterance, indicating unintelligibility."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Display minimal grasp")] }
 
@@ -109,7 +109,7 @@ def good : Datum :=
     glossedTokens := []
     context := "A praise directed at a child for a jointly accomplished activity, with no mention of the mother's role."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Unidirectional"), ("community", "Mainstream American")] }
 
@@ -123,7 +123,7 @@ def castle : Datum :=
     glossedTokens := []
     context := "A praise directed at a child for a jointly accomplished activity, with no mention of the mother's role."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Unidirectional"), ("community", "Mainstream American")] }
 
@@ -137,7 +137,7 @@ def maaloo : Datum :=
     glossedTokens := []
     context := "A praise, to be answered by a second maaloo directed at its producer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "Bidirectional"), ("community", "Samoan")] }
 

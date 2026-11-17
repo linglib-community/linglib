@@ -26,7 +26,7 @@ def house_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
 
@@ -41,7 +41,7 @@ def house_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -56,7 +56,7 @@ def house_gen : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ṭi")] }
 
@@ -71,7 +71,7 @@ def house_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -86,7 +86,7 @@ def house_p : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ṭi")] }
 
@@ -101,7 +101,7 @@ def town_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
 
@@ -116,7 +116,7 @@ def town_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
 
@@ -131,7 +131,7 @@ def husband_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
 
@@ -146,7 +146,7 @@ def husband_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
 
@@ -161,7 +161,7 @@ def bow_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
 
@@ -176,7 +176,7 @@ def bow_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -191,7 +191,7 @@ def eye_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
 
@@ -206,7 +206,7 @@ def eye_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -221,7 +221,7 @@ def tooth_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
 
@@ -236,7 +236,7 @@ def tooth_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -251,7 +251,7 @@ def nest_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ḍu")] }
 
@@ -266,7 +266,7 @@ def nest_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -281,7 +281,7 @@ def stream_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
 
@@ -296,7 +296,7 @@ def stream_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -311,7 +311,7 @@ def mouth_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
 
@@ -326,7 +326,7 @@ def mouth_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -341,7 +341,7 @@ def plough_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "li")] }
 
@@ -356,7 +356,7 @@ def plough_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
@@ -371,7 +371,7 @@ def ghee_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
 
@@ -386,7 +386,7 @@ def ghee_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
 
@@ -401,7 +401,7 @@ def well_nom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
 
@@ -416,7 +416,7 @@ def well_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
 
@@ -431,7 +431,7 @@ def ocean_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
@@ -446,7 +446,7 @@ def ocean_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -461,7 +461,7 @@ def ocean_gen : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
@@ -476,7 +476,7 @@ def ocean_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -491,7 +491,7 @@ def ocean_p : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
 
@@ -506,7 +506,7 @@ def ocean_1sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -521,7 +521,7 @@ def ocean_2sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "vi"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -536,7 +536,7 @@ def ocean_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "agreement"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
@@ -551,7 +551,7 @@ def picture_1sg_apc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "citram"), ("root", "picture"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -566,7 +566,7 @@ def ocean_whole_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
 
@@ -581,7 +581,7 @@ def ocean_about : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "gurinci"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
 
@@ -596,7 +596,7 @@ def ocean_infront : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "eduru"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
 
@@ -611,7 +611,7 @@ def house_1sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "lu")] }
 
@@ -626,7 +626,7 @@ def ocean_pl_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "nom"), ("suffix", "lu"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
@@ -641,7 +641,7 @@ def ocean_pl_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "acc"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
@@ -656,7 +656,7 @@ def ocean_pl_gen : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "gen"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
@@ -671,7 +671,7 @@ def ocean_pl_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "dat"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
@@ -686,7 +686,7 @@ def ocean_pl_p : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "p"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
@@ -701,7 +701,7 @@ def bet_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
 
@@ -716,7 +716,7 @@ def bet_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
 
@@ -731,7 +731,7 @@ def bet_gen : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
 
@@ -746,7 +746,7 @@ def bet_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
 
@@ -761,7 +761,7 @@ def bet_p : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "em"), ("form", "short")] }
 
@@ -776,7 +776,7 @@ def wife_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
 
@@ -791,7 +791,7 @@ def wife_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -806,7 +806,7 @@ def wife_gen : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
 
@@ -821,7 +821,7 @@ def wife_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
@@ -836,7 +836,7 @@ def wife_p : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ām"), ("form", "short")] }
 
@@ -852,7 +852,7 @@ def those_all_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "acc"), ("stem", "obl"), ("intervener", "quantifier")] }
 
@@ -868,7 +868,7 @@ def ocean_whole_acc_sentence : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short"), ("intervener", "quantifier")] }
 
@@ -884,7 +884,7 @@ def those_all_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "nom"), ("intervener", "quantifier")] }
 
@@ -900,7 +900,7 @@ def those_all_nom_obl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "obl"), ("intervener", "quantifier")] }
 

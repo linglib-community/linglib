@@ -14,7 +14,7 @@
     "translation": "Exactly two criminals, who, by the way, Petja caught, were running away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -43,7 +43,7 @@
     "translation": "The third criminal was also running away, but Petja did not catch him.",
     "context": "Uttered as a continuation of (13): Rovnaj kaftə prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Exactly two criminals, who, by the way, Petja caught, were running away.'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -69,7 +69,7 @@
     "translation": "Peter also caught the third criminal, but he was hiding in a barn.",
     "context": "Uttered as a continuation of (13): Rovnaj kaftə prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Exactly two criminals, who, by the way, Petja caught, were running away.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -95,7 +95,7 @@
     "translation": "Some criminals who Petja caught were running away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -125,7 +125,7 @@
     "translation": "Petja did not catch three criminals and two (other) criminals surrendered.",
     "context": "Uttered as a continuation of (15): Koj kona prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Some criminals who Petja caught were running away.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -151,7 +151,7 @@
     "translation": "Any criminal who the police caught wants to escape.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -180,7 +180,7 @@
     "translation": "The two criminals, who, by the way, Petja caught, were running away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -208,7 +208,7 @@
     "translation": "The third criminal was also running away, but Petja did not catch him.",
     "context": "Uttered as a continuation of (18): Rovnaj kaftə prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals, who, by the way, Petja caught, were running away.'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -234,7 +234,7 @@
     "translation": "Petja also caught the third criminal, but he was hiding in a barn.",
     "context": "Uttered as a continuation of (18): Rovnaj kaftə prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals, who, by the way, Petja caught, were running away.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -260,7 +260,7 @@
     "translation": "Some criminals who Petja caught were running away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -289,7 +289,7 @@
     "translation": "Petja did not catch three criminals and two criminals surrendered themselves.",
     "context": "Uttered as a continuation of (20): Koj kona prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Some criminals who Petja caught were running away.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -315,7 +315,7 @@
     "translation": "Any criminal who police caught wants to escape.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -342,7 +342,7 @@
     "translation": "The two criminals that Petja caught were running away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -368,7 +368,7 @@
     "translation": "The third criminal was running away, but Petja did not catch him.",
     "context": "Uttered as a continuation of (23): [Kona kaftə prˈistupnˈik-nˈə-nˈ Petˈɛ kunda-zˈənˈ] sˈinˈ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals that Petja caught were running away.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -394,7 +394,7 @@
     "translation": "Peter also caught the third criminal, but he was hiding in a barn.",
     "context": "Uttered as a continuation of (23): [Kona kaftə prˈistupnˈik-nˈə-nˈ Petˈɛ kunda-zˈənˈ] sˈinˈ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals that Petja caught were running away.'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -421,7 +421,7 @@
     "translation": "Intended: The pie that my neighbor cooked that we immediately ate was a cabbage pie.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona pɛrˈɛkɛ-tˈ pidˈ-əzˈə sasˈəda-zˈə] [kona pɛrˈɛkɛ-tˈ minˈ srazu seva-sˈk] son ulˈ-sˈ kapsta-nˈ.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -450,7 +450,7 @@
     "translation": "The pie that my neighbor cooked that we immediately ate was a cabbage pie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -478,7 +478,7 @@
     "translation": "The pie that my neighbor cooked that we immediately ate was a cabbage pie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -504,7 +504,7 @@
     "translation": "Intended: Any criminal who the police caught wants to escape.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -532,7 +532,7 @@
     "translation": "Intended: Pushkin, whom his friends were calling to Senate Square, could not come.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -558,7 +558,7 @@
     "translation": "Pushkin, whom his friends were calling to Senate Square, could not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -586,7 +586,7 @@
     "translation": "Pushkin, whom his friends were calling to Senate Square, could not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.1"],
@@ -613,7 +613,7 @@
     "translation": "We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -642,7 +642,7 @@
     "translation": "Intended: We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -671,7 +671,7 @@
     "translation": "We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -699,7 +699,7 @@
     "translation": "We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -727,7 +727,7 @@
     "translation": "We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -757,7 +757,7 @@
     "translation": "We threw away the cabinet where I had put the photos.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Minˈ jorda-sˈk sˈɛ-nˈ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -787,7 +787,7 @@
     "translation": "Katja said that the car that she bought is in the yard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -817,7 +817,7 @@
     "translation": "Katja said that Masha met a friend whom I have not called for a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -846,7 +846,7 @@
     "translation": "Next year the boy Katja taught to read will start school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -876,7 +876,7 @@
     "translation": "Next year the boy Katja taught to read will start school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -903,7 +903,7 @@
     "translation": "What did the boy who I saw yesterday say?",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -932,7 +932,7 @@
     "translation": "Katja threw away the cabinet where I have put the photos.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.1"],
@@ -961,7 +961,7 @@
     "translation": "Intended: Katja threw away the cabinet where I have put the photos.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Katˈɛ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] jorda-zˈə sˈɛ-nˈ.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -991,7 +991,7 @@
     "translation": "The person whom hooligans have beaten is in the hospital.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona lomanˈ-tˈ šav-əzˈ hulˈiga-tˈnˈə] sˈɛ ašˈčˈ-i balˈnˈica-sə.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1021,7 +1021,7 @@
     "translation": "We threw away the cabinet where I have put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1050,7 +1050,7 @@
     "translation": "I called my neighbor who has not come for a while.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona sasˈəda-zˈə af suv-sˈ-i] mon zvonˈ-ənˈ sˈɛ-nˈdˈi.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1080,7 +1080,7 @@
     "translation": "I am afraid of the dog that I encountered.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kona pinˈə-tˈ mon vasˈft-inˈə] sˈɛ-nˈ ezdə pelˈ-an.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1110,7 +1110,7 @@
     "translation": "I called my neighbor who has not come for a while.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.2"],
@@ -1139,7 +1139,7 @@
     "translation": "I am afraid of the dog that I encountered.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.2"],
@@ -1169,7 +1169,7 @@
     "translation": "I will be happy if the cat starts catching mice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.3"],
@@ -1194,7 +1194,7 @@
     "translation": "Intended: I will be happy if the cat starts catching mice.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.3"],
@@ -1221,7 +1221,7 @@
     "translation": "Intended: I will be happy if the cat that they gave me starts catching mice.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.3"],
@@ -1251,7 +1251,7 @@
     "translation": "Intended: I will be happy if the cat that they gave me starts catching mice.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.3"],
@@ -1280,7 +1280,7 @@
     "translation": "I will be happy if the cat that was given to me starts catching mice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.3"],
@@ -1308,7 +1308,7 @@
     "translation": "I know that person who kicked the dog out.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.4"],
@@ -1333,7 +1333,7 @@
     "translation": "Intended: I know that person who kicked the dog out.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.4"],
@@ -1360,7 +1360,7 @@
     "translation": "Intended: I know that person who kicked out the dog that I gave food to.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.4"],
@@ -1390,7 +1390,7 @@
     "translation": "Intended: I know that person who kicked out the dog that I gave food to.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.4"],
@@ -1419,7 +1419,7 @@
     "translation": "I know that person who kicked out the dog that I gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.4"],
@@ -1448,7 +1448,7 @@
     "translation": "Every student saw the grade that the teacher gave him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1479,7 +1479,7 @@
     "translation": "Every boy knows that his mother will arrive soon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjoint", "judgment": "acceptable"},
       {"name": "bound", "judgment": "acceptable"}
@@ -1507,7 +1507,7 @@
     "translation": "His book is in every boy's room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjoint", "judgment": "acceptable"},
       {"name": "bound", "judgment": "ungrammatical"}
@@ -1536,7 +1536,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1568,7 +1568,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjoint", "judgment": "acceptable"},
       {"name": "bound", "judgment": "ungrammatical"}
@@ -1600,7 +1600,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1631,7 +1631,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1661,7 +1661,7 @@
     "translation": "Vasja again repaired his car that a lot of money was invested in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1692,7 +1692,7 @@
     "translation": "Vasja again repaired his car that a lot of money was invested in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -1723,7 +1723,7 @@
     "translation": "I know the skinny dog that you give food to and the fat cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.7"],
@@ -1754,7 +1754,7 @@
     "translation": "I know the skinny dog that you give food to and the fat cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.7"],
@@ -1785,7 +1785,7 @@
     "translation": "I know the skinny dog that you give food to and the fat cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3.2.7"],
@@ -1814,7 +1814,7 @@
     "translation": "The sheep that my father butchered is lying in front of the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1842,7 +1842,7 @@
     "translation": "My friend who I have been writing to all year is coming soon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1870,7 +1870,7 @@
     "translation": "I will soon see my friend to whom I have been writing all year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1898,7 +1898,7 @@
     "translation": "My uncle shot the sheep that is lying in front of the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1928,7 +1928,7 @@
     "translation": "I promised to give a book to a boy who wanted to come after lunch.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1956,7 +1956,7 @@
     "translation": "I am giving food to the dog that Petja bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -1984,7 +1984,7 @@
     "translation": "I am afraid of the dog that Petja gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2011,7 +2011,7 @@
     "translation": "I am afraid of the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2032,7 +2032,7 @@
     "translation": "I am afraid of the dog.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2054,7 +2054,7 @@
     "translation": "Katja lives in the city that I love.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2080,7 +2080,7 @@
     "translation": "Katja lives in the city.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2103,7 +2103,7 @@
     "translation": "My brother is digging potatoes wearing the jacket that I bought.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2131,7 +2131,7 @@
     "translation": "My brother is digging potatoes wearing a green jacket.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2155,7 +2155,7 @@
     "translation": "We noticed this dog, except for which no one would steal the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2182,7 +2182,7 @@
     "translation": "We encountered the dog that we are afraid of.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2208,7 +2208,7 @@
     "translation": "The pen with which I am writing is black.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2234,7 +2234,7 @@
     "translation": "I love the city which we moved from.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2261,7 +2261,7 @@
     "translation": "We encountered the dog that we are afraid of.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2288,7 +2288,7 @@
     "translation": "The pen with which I am writing is black.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2316,7 +2316,7 @@
     "translation": "The shelf that the bag fell from broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2343,7 +2343,7 @@
     "translation": "The shelf that the bag fell from broke.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2370,7 +2370,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2398,7 +2398,7 @@
     "translation": "The pen with which I am writing is black.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2427,7 +2427,7 @@
     "translation": "The shelf that the bag fell from broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2456,7 +2456,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2484,7 +2484,7 @@
     "translation": "The pen with which I am writing is black.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2513,7 +2513,7 @@
     "translation": "The store where my brother went has opened recently.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2541,7 +2541,7 @@
     "translation": "The store where my brother went has opened recently.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2569,7 +2569,7 @@
     "translation": "The horse with which we plow the field needs grass.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2599,7 +2599,7 @@
     "translation": "We need to go to the city on the horse that I am afraid of.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"],
@@ -2627,7 +2627,7 @@
     "translation": "Vasja told everything to his wife.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2649,7 +2649,7 @@
     "translation": "You are worried.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2673,7 +2673,7 @@
     "translation": "Everything that Vasja told his wife had been worrying him for a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2701,7 +2701,7 @@
     "translation": "Everything that Vasja told his wife had been worrying him for a long time.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2727,7 +2727,7 @@
     "translation": "Take care of your heart, which cannot calm down.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2754,7 +2754,7 @@
     "translation": "Take care of your heart, which cannot calm down.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2781,7 +2781,7 @@
     "translation": "Vasja revealed to his wife the secret that had been worrying him for a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2808,7 +2808,7 @@
     "translation": "Vasja revealed to his wife the secret that has been worrying him for a long time.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2836,7 +2836,7 @@
     "translation": "His heart, which Pasha takes care of, is not calm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2863,7 +2863,7 @@
     "translation": "His heart, which Pasha takes care of, is not calm.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.1"],
@@ -2893,7 +2893,7 @@
     "translation": "Vasja protects himself from these people.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "ungrammatical"}
@@ -2921,7 +2921,7 @@
     "translation": "Vanja found his mitten.",
     "context": "Petja lost his mitten.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "ungrammatical"}
@@ -2949,7 +2949,7 @@
     "translation": "Vanja found his mitten.",
     "context": "Petja lost his mitten.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -2977,7 +2977,7 @@
     "translation": "I am going to my village.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3003,7 +3003,7 @@
     "translation": "The house of his that Vasja sold is now empty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3033,7 +3033,7 @@
     "translation": "The house of his that Vasja sold is now empty.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"}
     ],
@@ -3064,7 +3064,7 @@
     "translation": "... and boys from our village go to see girls from another village.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.2"],
@@ -3088,7 +3088,7 @@
     "translation": "This book gives its readers hope.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3113,7 +3113,7 @@
     "translation": "Its readers love this book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"}
     ],
@@ -3140,7 +3140,7 @@
     "translation": "Its readers whom this book gave hope to are waiting for the sequel.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3170,7 +3170,7 @@
     "translation": "Its foundation, thanks to which this house is standing, is not rotting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3201,7 +3201,7 @@
     "translation": "Its readers whom this book gave hope to are waiting for the continuation sequel.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"}
     ],
@@ -3230,7 +3230,7 @@
     "translation": "Its foundation, thanks to which this house is standing, is not rotting.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"}
     ],
@@ -3259,7 +3259,7 @@
     "translation": "Vasja again repaired his car into which a lot of money had been invested.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3289,7 +3289,7 @@
     "translation": "Vasja again repaired his car into which a lot of money has been invested.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -3317,7 +3317,7 @@
     "translation": "Every boy fed his dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3342,7 +3342,7 @@
     "translation": "His dog bit every boy.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "ungrammatical"}
     ],
@@ -3368,7 +3368,7 @@
     "translation": "His dog that every owner calls was guarding the animals.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3398,7 +3398,7 @@
     "translation": "His dog that every owner calls was guarding the animals.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "ungrammatical"}
     ],
@@ -3427,7 +3427,7 @@
     "translation": "Every boy's sister took his cup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3454,7 +3454,7 @@
     "translation": "Every boy knows that his mother will come soon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3481,7 +3481,7 @@
     "translation": "His book is in every boy's room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3510,7 +3510,7 @@
     "translation": "His favorite toy that every boy's mother brought to the hospital helps him not to be afraid of doctors.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3543,7 +3543,7 @@
     "translation": "His favorite toy that every boy's mother brought to the hospital helps him not to be afraid of doctors.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3574,7 +3574,7 @@
     "translation": "Doctors took away his favorite toy that is in every boy's room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3606,7 +3606,7 @@
     "translation": "Doctors took away his favorite toy that is in every boy's room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3636,7 +3636,7 @@
     "translation": "His book is in every boy's room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3664,7 +3664,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3695,7 +3695,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3725,7 +3725,7 @@
     "translation": "Every boy remembered the dog that he gave food to.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -3754,7 +3754,7 @@
     "translation": "Our school helps every mother who loves her child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3783,7 +3783,7 @@
     "translation": "Every mother whom her son loves is not worried.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3812,7 +3812,7 @@
     "translation": "Our school helps every mother who loves her child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3842,7 +3842,7 @@
     "translation": "Every mother whom her son loves is not worried.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3872,7 +3872,7 @@
     "translation": "Every boy's sister took his cup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Ɛrˈ sˈora-nˈɛ-tˈ sˈestra-c] sɛv-əzˈə esˈ kruška-nc.", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -3902,7 +3902,7 @@
     "translation": "The teacher scolded every boy's sister who took his toy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3932,7 +3932,7 @@
     "translation": "Every boy's sister whom his teacher praised helped with the homework.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3963,7 +3963,7 @@
     "translation": "The teacher scolded every boy's sister who took his toy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -3994,7 +3994,7 @@
     "translation": "Every boy's sister whom his teacher praised helped with the homework.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -4025,7 +4025,7 @@
     "translation": "Every writer's story that his friend does not like ends badly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -4055,7 +4055,7 @@
     "translation": "Every writer's story that his friend does not like ends badly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -4084,7 +4084,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.4"],
@@ -4108,7 +4108,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.4"],
@@ -4132,7 +4132,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.4"],
@@ -4156,7 +4156,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3.4"],
@@ -4180,7 +4180,7 @@
     "translation": "Which boy did his dog bite?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -4206,7 +4206,7 @@
     "translation": "Which story by every writer his friend does not like?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound", "judgment": "acceptable"}
     ],
@@ -4232,7 +4232,7 @@
     "translation": "Katja said that she saw Anna's photo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4258,7 +4258,7 @@
     "translation": "He wrote Pushkin's story.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4285,7 +4285,7 @@
     "translation": "Katja said which photo of Anna she saw.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4311,7 +4311,7 @@
     "translation": "Which story of Pushkin did he write?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4338,7 +4338,7 @@
     "translation": "Which book of Pushkin you know that he wrote at the country house?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "disjoint", "judgment": "acceptable"},
       {"name": "coreferent", "judgment": "variable"}
@@ -4366,7 +4366,7 @@
     "translation": "Katja said which photo of Anna Misha thinks she saw.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4394,7 +4394,7 @@
     "translation": "Pushkin's book that he wrote in the country house in Pavlovsk is in our library.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4425,7 +4425,7 @@
     "translation": "Pushkin's book that he wrote in the country house in Pavlovsk is in our library.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4456,7 +4456,7 @@
     "translation": "I met Anna's friend who she had not called for a while.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4486,7 +4486,7 @@
     "translation": "I met Anna's friend who she had not called for a while.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "ungrammatical"},
       {"name": "disjoint", "judgment": "acceptable"}
@@ -4517,7 +4517,7 @@
     "translation": "We threw away the cupboard where I put the photos.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.1"],
@@ -4548,7 +4548,7 @@
     "translation": "We threw away the cupboard where I put the photos.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.1"],
@@ -4580,7 +4580,7 @@
     "translation": "Next year the boy whom Katja teaches to read will go to school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.1"],
@@ -4611,7 +4611,7 @@
     "translation": "Katja threw away the cupboard where I put the photos.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.1"],
@@ -4642,7 +4642,7 @@
     "translation": "My uncle shot the sheep that are in front of the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.2"],
@@ -4673,7 +4673,7 @@
     "translation": "The dogs that I gave food to are in the yard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.2"],
@@ -4704,7 +4704,7 @@
     "translation": "Probably my friend whom I called to has taken the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.2"],
@@ -4735,7 +4735,7 @@
     "translation": "Probably my friend whom I called to has taken the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.2"],
@@ -4766,7 +4766,7 @@
     "translation": "Probably my friend whom I called to has taken the book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.3.2"],
@@ -4797,7 +4797,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4826,7 +4826,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4854,7 +4854,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4883,7 +4883,7 @@
     "translation": "The dog that I am afraid of is standing in the middle of the street.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4911,7 +4911,7 @@
     "translation": "I fear the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4934,7 +4934,7 @@
     "translation": "A store where my brother was going has opened recently.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4962,7 +4962,7 @@
     "translation": "A store where my brother was going has opened recently.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.4.4"],
@@ -4990,7 +4990,7 @@
     "translation": "To the dog that Petja bought he is giving food.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],
@@ -5021,7 +5021,7 @@
     "translation": "To the dog that Petja bought he is giving food.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "coreferent", "judgment": "acceptable"}
     ],

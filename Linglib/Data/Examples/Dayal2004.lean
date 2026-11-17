@@ -24,7 +24,7 @@ def ex_6a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("number", "plural"), ("form", "bare")] }
 
@@ -37,7 +37,7 @@ def ex_6a_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("number", "plural"), ("form", "definite")] }
 
@@ -52,7 +52,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("number", "singular"), ("form", "bare")] }
 
@@ -67,7 +67,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("number", "plural"), ("form", "bare")] }
 
@@ -82,7 +82,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("number", "singular"), ("form", "bare")] }
 
@@ -97,7 +97,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("number", "plural"), ("form", "bare")] }
 
@@ -112,7 +112,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("number", "general"), ("form", "bare")] }
 
@@ -125,7 +125,7 @@ def ex_46a_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "singular"), ("form", "definite")] }
 
@@ -138,7 +138,7 @@ def ex_46a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "singular"), ("form", "bare")] }
 
@@ -151,7 +151,7 @@ def ex_46b_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "singular"), ("form", "definite")] }
 
@@ -164,7 +164,7 @@ def ex_46b_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "singular"), ("form", "bare")] }
 
@@ -177,7 +177,7 @@ def ex_46c_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "mass"), ("form", "bare")] }
 
@@ -190,7 +190,7 @@ def ex_46c_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "mass"), ("form", "definite")] }
 
@@ -203,7 +203,7 @@ def ex_46d_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "mass"), ("form", "bare")] }
 
@@ -216,7 +216,7 @@ def ex_46d_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("number", "mass"), ("form", "definite")] }
 
@@ -231,7 +231,7 @@ def ex_78a_def : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("number", "singular"), ("form", "definite")] }
 
@@ -246,7 +246,7 @@ def ex_78a_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("number", "singular"), ("form", "bare")] }
 
@@ -261,7 +261,7 @@ def ex_78b_def : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("number", "plural"), ("form", "definite")] }
 
@@ -276,7 +276,7 @@ def ex_78b_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("number", "plural"), ("form", "bare")] }
 
@@ -289,7 +289,7 @@ def ex_86a_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "plural"), ("form", "definite")] }
 
@@ -302,7 +302,7 @@ def ex_86a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "plural"), ("form", "bare")] }
 
@@ -315,7 +315,7 @@ def ex_86b_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "mass"), ("form", "definite")] }
 
@@ -328,7 +328,7 @@ def ex_86b_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "mass"), ("form", "bare")] }
 
@@ -341,7 +341,7 @@ def ex_87a_def : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "singular"), ("form", "definite")] }
 
@@ -354,7 +354,7 @@ def ex_87a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("number", "singular"), ("form", "bare")] }
 

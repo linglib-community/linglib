@@ -26,7 +26,7 @@ def ex1c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "mu-second")] }
 
@@ -41,7 +41,7 @@ def ex1c_omitted : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-second")] }
 
@@ -56,7 +56,7 @@ def ex23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "j")] }
 
@@ -71,7 +71,7 @@ def ex24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "mu-second")] }
 
@@ -86,7 +86,7 @@ def ex25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "j"), ("head", "mu-second")] }
 
@@ -101,7 +101,7 @@ def ex26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "j"), ("head", "mu-second")] }
 
@@ -116,7 +116,7 @@ def ex27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "j"), ("head", "mu-second"), ("junctor", "adversative")] }
 
@@ -131,7 +131,7 @@ def ex28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "j"), ("head", "mu-second")] }
 
@@ -146,7 +146,7 @@ def ex28_omitted : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "mu-second")] }
 
@@ -161,7 +161,7 @@ def fn9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "j"), ("head", "mu-second")] }
 
@@ -176,7 +176,7 @@ def ex29 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-first"), ("head", "j"), ("head", "mu-second")] }
 
@@ -191,7 +191,7 @@ def ex33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "j"), ("head", "mu-second")] }
 
@@ -206,7 +206,7 @@ def ex33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "mu-second")] }
 

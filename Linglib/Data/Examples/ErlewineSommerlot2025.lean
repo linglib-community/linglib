@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -41,7 +41,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -56,7 +56,7 @@ def ex_1c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -71,7 +71,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -86,7 +86,7 @@ def ex_2_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -101,7 +101,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -116,7 +116,7 @@ def ex_8_low : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
@@ -131,7 +131,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -146,7 +146,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -161,7 +161,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -176,7 +176,7 @@ def ex_22_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -191,7 +191,7 @@ def ex_41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -206,7 +206,7 @@ def ex_41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -221,7 +221,7 @@ def ex_41c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -236,7 +236,7 @@ def ex_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -251,7 +251,7 @@ def ex_54_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -266,7 +266,7 @@ def ex_60 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "agent"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -281,7 +281,7 @@ def ex_5_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -296,7 +296,7 @@ def ex_5_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -311,7 +311,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -326,7 +326,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -341,7 +341,7 @@ def ex_12_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "N")] }
 
@@ -356,7 +356,7 @@ def ex_12_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -371,7 +371,7 @@ def ex_12_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
@@ -386,7 +386,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "di")] }
 
@@ -401,7 +401,7 @@ def ex_13_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -416,7 +416,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -431,7 +431,7 @@ def ex_14b_di : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -446,7 +446,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -461,7 +461,7 @@ def ex_16_low : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -476,7 +476,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -491,7 +491,7 @@ def ex_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -506,7 +506,7 @@ def ex_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -521,7 +521,7 @@ def ex_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "N")] }
 
@@ -536,7 +536,7 @@ def ex_25_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
@@ -551,7 +551,7 @@ def ex_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "N")] }
 
@@ -566,7 +566,7 @@ def ex_26_high : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -581,7 +581,7 @@ def ex_40a_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -596,7 +596,7 @@ def ex_40a_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -611,7 +611,7 @@ def ex_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -626,7 +626,7 @@ def ex_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "di")] }
 
@@ -641,7 +641,7 @@ def ex_47_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -656,7 +656,7 @@ def ex_47_meN : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "meN")] }
 
@@ -671,7 +671,7 @@ def ex_71a_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -686,7 +686,7 @@ def ex_71a_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -701,7 +701,7 @@ def ex_71b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -716,7 +716,7 @@ def ex_71b_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -731,7 +731,7 @@ def ex_71c_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -746,7 +746,7 @@ def ex_71c_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -761,7 +761,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -776,7 +776,7 @@ def ex_73_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "kuching"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -791,7 +791,7 @@ def ex_73_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "kuching"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -806,7 +806,7 @@ def ex_76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -821,7 +821,7 @@ def ex_76b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "e")] }
 
@@ -836,7 +836,7 @@ def ex_76c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -851,7 +851,7 @@ def ex_77a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -866,7 +866,7 @@ def ex_77b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "e")] }
 
@@ -881,7 +881,7 @@ def ex_77c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
@@ -896,7 +896,7 @@ def ex_79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -911,7 +911,7 @@ def ex_79_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
@@ -926,7 +926,7 @@ def ex_80 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
@@ -941,7 +941,7 @@ def ex_80_N : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 

@@ -331,7 +331,7 @@ def elementOf : String → Option PreverbalElement
 being the row's alternative where it gives one ((87) and (88) pair a resultative baseline with the
 blocked prefixed or particle form) and the row itself otherwise. -/
 def CellAcceptable (e : Datum) : Prop :=
-  match e.alternatives with
+  match e.contrasts with
   | [] => e.judgment = .acceptable
   | a :: _ => a.2 = .acceptable
 

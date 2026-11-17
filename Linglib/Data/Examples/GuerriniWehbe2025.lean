@@ -24,7 +24,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := "I knew that all of John's kids are adopted but today I discovered something amazing."
     judgment := .unacceptable
-    alternatives := [("John has 10 adopted kids!", .acceptable)]
+    contrasts := [("John has 10 adopted kids!", .acceptable)]
     readings := []
     paperFeatures := [("presupposition", "John has 10 kids")] }
 
@@ -37,7 +37,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := "I knew that Mary read at least some of the books, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "I knew that Mary didn't read all of the books, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("John isn't married to any of his teammates.", .acceptable)]
+    contrasts := [("John isn't married to any of his teammates.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_13c : Datum :=
     glossedTokens := []
     context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
     judgment := .unacceptable
-    alternatives := [("None of the candidates won.", .acceptable)]
+    contrasts := [("None of the candidates won.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_13d : Datum :=
     glossedTokens := []
     context := "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year.."
     judgment := .unacceptable
-    alternatives := [("All of the candidates lost.", .acceptable)]
+    contrasts := [("All of the candidates lost.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "I knew that not all of the students smiled, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def fn3_ia : Datum :=
     glossedTokens := []
     context := "It's crazy, I didn't realize this was possible. Somehow.."
     judgment := .unacceptable
-    alternatives := [("John married all of his teammates.", .acceptable)]
+    contrasts := [("John married all of his teammates.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := "I knew that Mary can eat cake, but today I learned something interesting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "free choice")] }
 
@@ -141,7 +141,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "free choice")] }
 
@@ -154,7 +154,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := "I already knew that Mary sometimes goes to the gym on Tuesdays, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "habitual")] }
 
@@ -180,7 +180,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := "I knew that lions sometimes hunt, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "generic")] }
 
@@ -193,7 +193,7 @@ def ex_44c : Datum :=
     glossedTokens := []
     context := "I already knew that some birds are migrating right now, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "episodic universal bare plural")] }
 
@@ -206,7 +206,7 @@ def ex_44d : Datum :=
     glossedTokens := []
     context := "I already knew that the wall was partly red, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicate homogeneity")] }
 
@@ -219,7 +219,7 @@ def ex_44e : Datum :=
     glossedTokens := []
     context := "I already knew that sometimes, if you hit the brakes, the car stops, but today I learned something interesting."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "conditional")] }
 
@@ -232,7 +232,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := "I knew that Mary is allowed to read this book, but today I learned something interesting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "neg-raising")] }
 
@@ -245,7 +245,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := "I knew that Mary is allowed not to read this book, but today I learned something interesting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "neg-raising")] }
 
@@ -258,7 +258,7 @@ def fn20_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "neg-raising")] }
 

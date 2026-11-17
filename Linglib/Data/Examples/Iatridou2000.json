@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Present counterfactual wish. Conveys: I don't have a car now. Past morphology (`had`) but present-time reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "present-CF (car absent now)",
@@ -45,7 +45,7 @@
     "translation": "",
     "context": "Past counterfactual wish. Conveys: I didn't have a car then (student days). Says nothing about whether I have a car now. Past-on-past morphology (`had had`) — the doubling encodes BOTH counterfactuality AND past temporal reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "past-CF (no car as student)",
@@ -78,7 +78,7 @@
     "translation": "",
     "context": "Present counterfactual conditional. Conveys: he is not smart AND he is not rich. Past morphology (`were`, `would`) with present reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "present-CF (he is not smart and not rich)",
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "Past counterfactual conditional. Conveys: he was not smart (in general or on one specific occasion) AND he was not rich. Past-perfect morphology (`had been`, `would have been`) encodes BOTH counterfactuality AND past reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "past-CF (he was not smart and not rich)",
@@ -144,7 +144,7 @@
     "translation": "",
     "context": "Future Less Vivid conditional with a telic predicate (take the syrup). One (modal) ExclF; the past morphology is fake.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -184,7 +184,7 @@
     "translation": "",
     "context": "Present counterfactual with an individual-level stative predicate (believe in ghosts). Same morphology as the FLV; the PresCF reading arises from the predicate's Aktionsart.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -224,7 +224,7 @@
     "translation": "",
     "context": "Past counterfactual conditional. The pluperfect antecedent has two past layers: one fake (modal ExclF), one real (temporal). Conveys Napoleon was not tall.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -297,7 +297,7 @@
     "translation": "If he took this syrup, he would get better.",
     "context": "Modern Greek FLV with a telic predicate. The verbs carry past + imperfective morphology, both fake (future-oriented reading). Contrasts with the FNV (7), which has nonpast + perfective.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -374,7 +374,7 @@
     "translation": "If he had taken the syrup, he would have gotten better.",
     "context": "Modern Greek PastCF. Like English, MG uses the pluperfect in the antecedent of a PastCF; the future is an undeclinable particle (θa), so the highest verb (the perfect auxiliary) carries past morphology.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -455,7 +455,7 @@
     "translation": "If Pierre left tomorrow, he would arrive there next week.",
     "context": "French FLV: imparfait in the antecedent, conditionnel in the consequent. Iatridou argues the conditionnel is imparfait morphology on a future stem (ExclF + Imp over a future), not a separate `conditional mood`.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -536,7 +536,7 @@
     "translation": "If I knew that this were chocolate, I would eat it.",
     "context": "French PresCF: morphologically identical to the FLV (imparfait/conditionnel); the PresCF reading arises from the individual-level stative predicate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -605,7 +605,7 @@
     "translation": "If Pierre had come, I would have seen him.",
     "context": "French PastCF: plus-que-parfait in the antecedent, conditionnel passé in the consequent. Two past layers.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -678,7 +678,7 @@
     "translation": "If he takes this syrup, he will get better.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -718,7 +718,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -746,7 +746,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -778,7 +778,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -847,7 +847,7 @@
     "translation": "If you left tomorrow, you would get there next week.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -916,7 +916,7 @@
     "translation": "If he drank the syrup, he must be better.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -985,7 +985,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1042,7 +1042,7 @@
     "translation": "If he/she left the day before yesterday, he/she must have arrived yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1074,7 +1074,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1106,7 +1106,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1138,7 +1138,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1170,7 +1170,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1198,7 +1198,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1226,7 +1226,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1258,7 +1258,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1290,7 +1290,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1322,7 +1322,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1354,7 +1354,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1386,7 +1386,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1418,7 +1418,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1450,7 +1450,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1482,7 +1482,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1514,7 +1514,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1546,7 +1546,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1582,7 +1582,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1618,7 +1618,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1654,7 +1654,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1690,7 +1690,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1722,7 +1722,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1787,7 +1787,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1848,7 +1848,7 @@
     "translation": "If she loved him, she would be very happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1933,7 +1933,7 @@
     "translation": "If you were reading the newspaper during the ceremony tomorrow, you would get fired.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1990,7 +1990,7 @@
     "translation": "I doubt that Maria is sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Dudo que Maria estuviera enferma.",
         "judgment": "acceptable"
@@ -2068,7 +2068,7 @@
     "translation": "I doubt that Marie has a red umbrella.",
     "context": "A: Marie avait un parapluie rouge.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Je doute que Marie a un parapluie rouge.",
         "judgment": "ungrammatical"
@@ -2134,7 +2134,7 @@
     "translation": "If Marie had a red umbrella, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Si Marie ait un parapluie rouge, ...",
         "judgment": "ungrammatical"

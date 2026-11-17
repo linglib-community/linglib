@@ -24,7 +24,7 @@ def jk2021_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("concept", "fear"), ("negator", "ne"), ("negator_kind", "dedicated")] }
 
@@ -37,7 +37,7 @@ def jk2021_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -51,7 +51,7 @@ def jk2021_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("concept", "forget"), ("negator", "méi"), ("negator_kind", "standard")] }
 
@@ -65,7 +65,7 @@ def jk2021_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.1"), ("concept", "fear"), ("negator", "bié"), ("negator_kind", "imperative")] }
 
@@ -79,7 +79,7 @@ def jk2021_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.1"), ("concept", "avoid"), ("negator", "bù"), ("negator_kind", "standard")] }
 
@@ -93,7 +93,7 @@ def jk2021_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.2"), ("concept", "regret"), ("negator", "ne"), ("negator_kind", "dedicated"), ("entrenched", "low")] }
 
@@ -107,7 +107,7 @@ def jk2021_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.2"), ("concept", "regret"), ("negator", "bùgāi"), ("negator_kind", "deontic")] }
 
@@ -121,7 +121,7 @@ def jk2021_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.2"), ("concept", "complain"), ("negator", "bùgāi"), ("negator_kind", "deontic")] }
 
@@ -134,7 +134,7 @@ def jk2021_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.3"), ("concept", "deny"), ("negator", "ne"), ("negator_kind", "dedicated")] }
 
@@ -148,7 +148,7 @@ def jk2021_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.3"), ("concept", "hide"), ("negator", "sinda"), ("negator_kind", "copular")] }
 
@@ -162,7 +162,7 @@ def jk2021_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.4"), ("concept", "forget"), ("negator", "ne pas"), ("negator_kind", "standard"), ("entrenched", "low")] }
 
@@ -176,7 +176,7 @@ def jk2021_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.4"), ("concept", "delay"), ("negator", "mana"), ("negator_kind", "standard")] }
 
@@ -190,7 +190,7 @@ def jk2021_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.4"), ("concept", "barely"), ("negator", "maa"), ("negator_kind", "standard")] }
 
@@ -204,7 +204,7 @@ def jk2021_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("concept", "before"), ("negator", "maa"), ("negator_kind", "standard")] }
 
@@ -218,7 +218,7 @@ def jk2021_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("concept", "cannotWait"), ("negator", "si"), ("negator_kind", "standard")] }
 
@@ -232,7 +232,7 @@ def jk2021_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("concept", "rarely"), ("negator", "ne pas"), ("negator_kind", "standard")] }
 
@@ -245,7 +245,7 @@ def jk2021_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3.3"), ("concept", "onlyDependsOn"), ("negator", "ne"), ("negator_kind", "dedicated")] }
 
@@ -259,7 +259,7 @@ def jk2021_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.4"), ("concept", "differentThan"), ("negator", "ne"), ("negator_kind", "dedicated")] }
 
@@ -273,7 +273,7 @@ def jk2021_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.4"), ("concept", "tooTo"), ("negator", "not"), ("negator_kind", "standard")] }
 

@@ -26,7 +26,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "acc"), ("adverbial", "timeFrame")] }
 
@@ -41,7 +41,7 @@ def ex_17_for : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "acc"), ("adverbial", "measure")] }
 
@@ -56,7 +56,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "part"), ("adverbial", "measure")] }
 
@@ -71,7 +71,7 @@ def ex_18_in : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "part"), ("adverbial", "timeFrame")] }
 
@@ -86,7 +86,7 @@ def ex_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "part"), ("adverbial", "measure")] }
 
@@ -101,7 +101,7 @@ def ex_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "mass"), ("case", "part"), ("adverbial", "timeFrame")] }
 
@@ -116,7 +116,7 @@ def ex_27_for : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "mass"), ("case", "part"), ("adverbial", "measure")] }
 
@@ -131,7 +131,7 @@ def ex_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "part"), ("adverbial", "measure")] }
 
@@ -146,7 +146,7 @@ def ex_28_in : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "none"), ("case", "part"), ("adverbial", "timeFrame")] }
 
@@ -161,7 +161,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "number"), ("case", "part"), ("adverbial", "timeFrame")] }
 
@@ -176,7 +176,7 @@ def ex_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "number"), ("case", "part"), ("adverbial", "measure")] }
 
@@ -191,7 +191,7 @@ def ex_36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "number"), ("case", "acc"), ("adverbial", "measure")] }
 
@@ -206,7 +206,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "number"), ("case", "acc"), ("adverbial", "timeFrame")] }
 
@@ -222,7 +222,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "number"), ("case", "part"), ("adverbial", "timeFrame")] }
 

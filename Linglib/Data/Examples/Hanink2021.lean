@@ -26,7 +26,7 @@ def ex1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "pronoun"), ("idxForm", "gi"), ("case", "nominative")] }
 
@@ -41,7 +41,7 @@ def ex2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "demonstrative"), ("idxForm", "gi")] }
 
@@ -56,7 +56,7 @@ def ex3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "gi"), ("case", "nominative")] }
 
@@ -71,7 +71,7 @@ def ex19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "First line of the story, setting the scene."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "indefinite")] }
 
@@ -86,7 +86,7 @@ def ex20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "unique")] }
 
@@ -101,7 +101,7 @@ def ex21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "anaphoric"), ("idxForm", "null")] }
 
@@ -116,7 +116,7 @@ def ex22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "anaphoric"), ("idxForm", "null"), ("case", "accusative")] }
 
@@ -131,7 +131,7 @@ def ex23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Pointing at the mountain."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative")] }
 
@@ -146,7 +146,7 @@ def ex25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative"), ("deixis", "distal")] }
 
@@ -161,7 +161,7 @@ def ex25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative"), ("deixis", "proximal")] }
 
@@ -176,7 +176,7 @@ def ex27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "pronoun"), ("idxForm", "ge"), ("case", "accusative")] }
 
@@ -191,7 +191,7 @@ def ex41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "ge"), ("case", "accusative")] }
 
@@ -206,7 +206,7 @@ def ex45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "ge"), ("case", "accusative")] }
 
@@ -221,7 +221,7 @@ def ex46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "postposition")] }
 
@@ -236,7 +236,7 @@ def ex47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "postposition"), ("idxForm", "ge")] }
 
@@ -251,7 +251,7 @@ def ex50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "islandInsensitivity")] }
 
@@ -266,7 +266,7 @@ def ex51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "islandInsensitivity")] }
 
@@ -281,7 +281,7 @@ def ex53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A bear is looking for her cubs, and comes to a river."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "restrictiveness"), ("reading", "existential")] }
 
@@ -296,7 +296,7 @@ def ex54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "restrictiveness")] }
 
@@ -311,7 +311,7 @@ def ex56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You ask what is going on. Someone responds."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "internallyHeadedRelative")] }
 
@@ -326,7 +326,7 @@ def ex91 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge-w di-sú:dɨm-i", .ungrammatical)]
+    contrasts := [("daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge-w di-sú:dɨm-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4.5"), ("phenomenon", "noFeatureTransmission")] }
 
@@ -341,7 +341,7 @@ def ex96 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "indefinitenessRestriction")] }
 
@@ -356,7 +356,7 @@ def ex98 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
@@ -371,7 +371,7 @@ def ex102 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered after (98)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
@@ -386,7 +386,7 @@ def ex103 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
@@ -401,7 +401,7 @@ def ex104 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "perceptionReading")] }
 
@@ -416,7 +416,7 @@ def ex105 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "perceptionReading")] }
 
@@ -431,7 +431,7 @@ def ex120a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "pronounConcord"), ("number", "dual")] }
 
@@ -446,7 +446,7 @@ def ex120b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "pronounConcord"), ("number", "plural")] }
 
@@ -461,7 +461,7 @@ def ex121a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "dual")] }
 
@@ -476,7 +476,7 @@ def ex121b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "dual")] }
 
@@ -491,7 +491,7 @@ def ex122a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "plural")] }
 
@@ -506,7 +506,7 @@ def ex122b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "plural")] }
 

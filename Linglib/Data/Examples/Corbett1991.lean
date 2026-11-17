@@ -27,7 +27,7 @@ def ex_3_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -43,7 +43,7 @@ def ex_3_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kikapu"), ("concord", "7/8")] }
 
@@ -59,7 +59,7 @@ def ex_3_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kikapu"), ("concord", "7/8")] }
 
@@ -75,7 +75,7 @@ def ex_3_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mtu"), ("concord", "1/2")] }
 
@@ -91,7 +91,7 @@ def ex_3_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kifaru"), ("concord", "1/2")] }
 
@@ -107,7 +107,7 @@ def ex_3_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kiboko"), ("concord", "1/2")] }
 
@@ -123,7 +123,7 @@ def ex_3_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kiboko"), ("concord", "7/8")] }
 
@@ -139,7 +139,7 @@ def ex_6_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("une grande garçon", .ungrammatical)]
+    contrasts := [("une grande garçon", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -155,7 +155,7 @@ def ex_6_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("une grande jardin", .ungrammatical)]
+    contrasts := [("une grande jardin", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -171,7 +171,7 @@ def ex_6_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("un grand femme", .ungrammatical)]
+    contrasts := [("un grand femme", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -187,7 +187,7 @@ def ex_6_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("un grand fleur", .ungrammatical)]
+    contrasts := [("un grand fleur", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -203,7 +203,7 @@ def ex_6_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bărbat")] }
 
@@ -219,7 +219,7 @@ def ex_6_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "scaun")] }
 
@@ -235,7 +235,7 @@ def ex_6_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "fată")] }
 
@@ -251,7 +251,7 @@ def ex_6_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bărbat")] }
 
@@ -267,7 +267,7 @@ def ex_6_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "scaun")] }
 
@@ -283,7 +283,7 @@ def ex_6_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "fată")] }
 
@@ -299,7 +299,7 @@ def ex_6_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -315,7 +315,7 @@ def ex_6_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -331,7 +331,7 @@ def ex_6_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -347,7 +347,7 @@ def ex_6_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -361,7 +361,7 @@ def ex_6_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("moj djadja", .acceptable), ("mojego djadi", .acceptable)]
+    contrasts := [("moj djadja", .acceptable), ("mojego djadi", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -377,7 +377,7 @@ def ex_6_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -393,7 +393,7 @@ def ex_6_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -409,7 +409,7 @@ def ex_6_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -425,7 +425,7 @@ def ex_6_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The doctor is a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -441,7 +441,7 @@ def ex_6_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The doctor is a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -457,7 +457,7 @@ def ex_6_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The doctor is a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "predicate"), ("agreement", "syntactic")] }
 
@@ -473,7 +473,7 @@ def ex_6_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The doctor is a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -489,7 +489,7 @@ def ex_6_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The doctor is a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -503,7 +503,7 @@ def ex_6_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "boat"), ("target", "relativePronoun"), ("agreement", "syntactic")] }
 
@@ -517,7 +517,7 @@ def ex_6_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "boat"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -531,7 +531,7 @@ def ex_6_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "boat"), ("target", "relativePronoun"), ("agreement", "semantic")] }
 
@@ -547,7 +547,7 @@ def ex_6_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -563,7 +563,7 @@ def ex_6_28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -579,7 +579,7 @@ def ex_6_29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -595,7 +595,7 @@ def ex_6_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -611,7 +611,7 @@ def ex_8_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "frenchTitles"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -627,7 +627,7 @@ def ex_8_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "frenchTitles"), ("target", "relativePronoun"), ("agreement", "syntactic")] }
 
@@ -643,7 +643,7 @@ def ex_8_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "frenchTitles"), ("target", "personalPronoun"), ("agreement", "syntactic")] }
 
@@ -659,7 +659,7 @@ def ex_8_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "frenchTitles"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -675,7 +675,7 @@ def ex_8_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "mädchen"), ("target", "relativePronoun"), ("agreement", "syntactic")] }
 
@@ -691,7 +691,7 @@ def ex_8_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Schau dir dieses Mädchen an, wie gut es Tennis spielt", .acceptable)]
+    contrasts := [("Schau dir dieses Mädchen an, wie gut es Tennis spielt", .acceptable)]
     readings := []
     paperFeatures := [("hybrid", "mädchen"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -707,7 +707,7 @@ def ex_8_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "spanishTitles"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -723,7 +723,7 @@ def ex_8_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "spanishTitles"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -739,7 +739,7 @@ def ex_8_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "spanishTitles"), ("target", "relativePronoun"), ("agreement", "semantic")] }
 
@@ -755,7 +755,7 @@ def ex_8_12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "spanishTitles"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -771,7 +771,7 @@ def ex_8_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "konkani"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -787,7 +787,7 @@ def ex_8_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -803,7 +803,7 @@ def ex_8_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -819,7 +819,7 @@ def ex_8_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A woman doctor is intended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "predicate"), ("agreement", "syntactic")] }
 
@@ -835,7 +835,7 @@ def ex_8_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A woman doctor is intended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -851,7 +851,7 @@ def ex_8_18 : Datum :=
     lgrConformance := some .wordAligned
     context := "Red Square, May 1988: the guide and the speaker were both women."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "personalPronoun"), ("agreement", "syntactic")] }
 
@@ -867,7 +867,7 @@ def ex_8_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "gazde"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -883,7 +883,7 @@ def ex_8_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "gazde"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -899,7 +899,7 @@ def ex_8_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "łajdaki"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -915,7 +915,7 @@ def ex_8_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "łajdaki"), ("target", "relativePronoun"), ("agreement", "syntactic")] }
 
@@ -931,7 +931,7 @@ def ex_8_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "łajdaki"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -947,7 +947,7 @@ def ex_8_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ona xoroš-ij vrač", .acceptable)]
+    contrasts := [("ona xoroš-ij vrač", .acceptable)]
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -963,7 +963,7 @@ def ex_8_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "vrač"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -979,7 +979,7 @@ def ex_8_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -995,7 +995,7 @@ def ex_8_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1011,7 +1011,7 @@ def ex_8_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1027,7 +1027,7 @@ def ex_8_29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1043,7 +1043,7 @@ def ex_8_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1059,7 +1059,7 @@ def ex_8_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "parallel")] }
 
@@ -1075,7 +1075,7 @@ def ex_8_35 : Datum :=
     lgrConformance := some .wordAligned
     context := "John is trying to get a large table into the boot of his car; Mary speaks."
     judgment := .acceptable
-    alternatives := [("tu n'arriveras jamais à le faire entrer dans la voiture", .unacceptable)]
+    contrasts := [("tu n'arriveras jamais à le faire entrer dans la voiture", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -1091,7 +1091,7 @@ def ex_8_36 : Datum :=
     lgrConformance := some .wordAligned
     context := "John is trying to get a desk into the boot of his car; Mary speaks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1107,7 +1107,7 @@ def ex_8_38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1123,7 +1123,7 @@ def ex_8_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1139,7 +1139,7 @@ def ex_8_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kamwana"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -1155,7 +1155,7 @@ def ex_8_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kamwana"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -1171,7 +1171,7 @@ def ex_8_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kamwana"), ("target", "relativePronoun"), ("agreement", "syntactic")] }
 
@@ -1187,7 +1187,7 @@ def ex_8_43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kamwana"), ("target", "relativePronoun"), ("agreement", "semantic")] }
 
@@ -1203,7 +1203,7 @@ def ex_8_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kamwana ka-mene ka-ma-gona mu-nyumba umu ka-mene ka-ma-pita ku sukulu ku London, mai ake a-ma-ka-konda iko(ko)", .acceptable)]
+    contrasts := [("kamwana ka-mene ka-ma-gona mu-nyumba umu ka-mene ka-ma-pita ku sukulu ku London, mai ake a-ma-ka-konda iko(ko)", .acceptable)]
     readings := []
     paperFeatures := [("hybrid", "kamwana"), ("target", "personalPronoun"), ("agreement", "semantic")] }
 
@@ -1219,7 +1219,7 @@ def ex_8_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-mu-konda iye(yo)", .ungrammatical)]
+    contrasts := [("chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-mu-konda iye(yo)", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -1235,7 +1235,7 @@ def ex_8_46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-chi-konda ndipo mai a-ke a-ma-bvomera-di kuti a-na-mu-ona iye(yo) a-ku-yenda ndi galu yo", .acceptable)]
+    contrasts := [("chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-chi-konda ndipo mai a-ke a-ma-bvomera-di kuti a-na-mu-ona iye(yo) a-ku-yenda ndi galu yo", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -1251,7 +1251,7 @@ def ex_8_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "rafiki"), ("target", "attributivePossessive"), ("agreement", "syntactic")] }
 
@@ -1267,7 +1267,7 @@ def ex_8_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "rafiki"), ("target", "attributivePossessive"), ("agreement", "syntactic")] }
 
@@ -1283,7 +1283,7 @@ def ex_8_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1299,7 +1299,7 @@ def ex_8_50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("targets", "stacked")] }
 
@@ -1315,7 +1315,7 @@ def ex_8_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1331,7 +1331,7 @@ def ex_8_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kilumba"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -1347,7 +1347,7 @@ def ex_8_52b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kilumba"), ("target", "attributive"), ("agreement", "semantic")] }
 
@@ -1363,7 +1363,7 @@ def ex_8_53a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kilumba"), ("target", "predicate"), ("agreement", "syntactic")] }
 
@@ -1379,7 +1379,7 @@ def ex_8_53b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "kilumba"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -1395,7 +1395,7 @@ def ex_8_54a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "mbudzi"), ("target", "predicate"), ("agreement", "semantic")] }
 
@@ -1409,7 +1409,7 @@ def ex_8_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hybrid", "mbudzi"), ("target", "predicate"), ("agreement", "syntactic")] }
 
@@ -1425,7 +1425,7 @@ def ex_8_55 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ng'ombe dz-angu wa-kulu", .acceptable)]
+    contrasts := [("ng'ombe dz-angu wa-kulu", .acceptable)]
     readings := []
     paperFeatures := [("hybrid", "ng'ombe"), ("target", "attributive"), ("agreement", "syntactic")] }
 
@@ -1441,7 +1441,7 @@ def ex_8_56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1457,7 +1457,7 @@ def ex_9_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "1"), ("conjunct", "2")] }
 
@@ -1473,7 +1473,7 @@ def ex_9_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "3"), ("conjunct", "1")] }
 
@@ -1489,7 +1489,7 @@ def ex_9_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "3"), ("conjunct", "2")] }
 
@@ -1505,7 +1505,7 @@ def ex_9_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1521,7 +1521,7 @@ def ex_9_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1537,7 +1537,7 @@ def ex_9_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1553,7 +1553,7 @@ def ex_9_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1569,7 +1569,7 @@ def ex_9_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1585,7 +1585,7 @@ def ex_9_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1601,7 +1601,7 @@ def ex_9_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1617,7 +1617,7 @@ def ex_9_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1633,7 +1633,7 @@ def ex_9_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1649,7 +1649,7 @@ def ex_9_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1665,7 +1665,7 @@ def ex_9_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1681,7 +1681,7 @@ def ex_9_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1697,7 +1697,7 @@ def ex_9_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1713,7 +1713,7 @@ def ex_9_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1729,7 +1729,7 @@ def ex_9_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1745,7 +1745,7 @@ def ex_9_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "rational"), ("conjunct", "rational")] }
 
@@ -1761,7 +1761,7 @@ def ex_9_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
@@ -1777,7 +1777,7 @@ def ex_9_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
@@ -1793,7 +1793,7 @@ def ex_9_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
@@ -1809,7 +1809,7 @@ def ex_9_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "nonrational"), ("conjunct", "nonrational")] }
 
@@ -1825,7 +1825,7 @@ def ex_9_29 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "nonrational"), ("conjunct", "nonrational")] }
 
@@ -1841,7 +1841,7 @@ def ex_9_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
@@ -1857,7 +1857,7 @@ def ex_9_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "human"), ("conjunct", "human"), ("conjunct", "human")] }
 
@@ -1873,7 +1873,7 @@ def ex_9_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "human"), ("conjunct", "human"), ("conjunct", "human")] }
 
@@ -1889,7 +1889,7 @@ def ex_9_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "nonhuman"), ("conjunct", "nonhuman"), ("conjunct", "nonhuman"), ("conjunct", "nonhuman")] }
 
@@ -1905,7 +1905,7 @@ def ex_9_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1921,7 +1921,7 @@ def ex_9_35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "human"), ("conjunct", "nonhuman")] }
 
@@ -1937,7 +1937,7 @@ def ex_9_36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1953,7 +1953,7 @@ def ex_9_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1969,7 +1969,7 @@ def ex_9_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1985,7 +1985,7 @@ def ex_9_39 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2001,7 +2001,7 @@ def ex_9_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2017,7 +2017,7 @@ def ex_9_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2033,7 +2033,7 @@ def ex_9_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2049,7 +2049,7 @@ def ex_9_43 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2065,7 +2065,7 @@ def ex_9_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2081,7 +2081,7 @@ def ex_9_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2097,7 +2097,7 @@ def ex_9_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2113,7 +2113,7 @@ def ex_9_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2129,7 +2129,7 @@ def ex_9_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2145,7 +2145,7 @@ def ex_9_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2161,7 +2161,7 @@ def ex_9_50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2177,7 +2177,7 @@ def ex_9_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2193,7 +2193,7 @@ def ex_9_52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2209,7 +2209,7 @@ def ex_9_53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2225,7 +2225,7 @@ def ex_9_54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2241,7 +2241,7 @@ def ex_9_55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2257,7 +2257,7 @@ def ex_9_56 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2273,7 +2273,7 @@ def ex_9_57 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2289,7 +2289,7 @@ def ex_9_58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "fem"), ("conjunct", "fem")] }
 
@@ -2305,7 +2305,7 @@ def ex_9_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct", "mascPers"), ("conjunct", "fem"), ("conjunct", "fem")] }
 
@@ -2321,7 +2321,7 @@ def ex_9_60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2337,7 +2337,7 @@ def ex_9_61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2353,7 +2353,7 @@ def ex_9_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mama, córeczka i wózek ukazały się nagle", .acceptable)]
+    contrasts := [("mama, córeczka i wózek ukazały się nagle", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -2369,7 +2369,7 @@ def ex_9_63 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2385,7 +2385,7 @@ def ex_9_64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2401,7 +2401,7 @@ def ex_9_65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2417,7 +2417,7 @@ def ex_9_66 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2433,7 +2433,7 @@ def ex_9_67 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2449,7 +2449,7 @@ def ex_9_68 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2465,7 +2465,7 @@ def ex_9_69 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2481,7 +2481,7 @@ def ex_9_70 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2497,7 +2497,7 @@ def ex_9_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2513,7 +2513,7 @@ def ex_9_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2529,7 +2529,7 @@ def ex_9_73 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2545,7 +2545,7 @@ def ex_9_74 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2561,7 +2561,7 @@ def ex_9_75 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2577,7 +2577,7 @@ def ex_9_76 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2593,7 +2593,7 @@ def ex_9_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2609,7 +2609,7 @@ def ex_9_78 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2625,7 +2625,7 @@ def ex_9_79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2641,7 +2641,7 @@ def ex_9_80 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2657,7 +2657,7 @@ def ex_9_81 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2673,7 +2673,7 @@ def ex_9_82 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -2689,7 +2689,7 @@ def ex_9_83 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("speaker", "younger")] }
 
@@ -2705,7 +2705,7 @@ def ex_9_84 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("speaker", "younger")] }
 

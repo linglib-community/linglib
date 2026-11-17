@@ -26,7 +26,7 @@ def ex_96 : Datum :=
     lgrConformance := some .wordAligned
     context := "German verb-final subordinate clause; the quantified PP precedes the predicate-tense cluster."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
@@ -41,7 +41,7 @@ def ex_97 : Datum :=
     lgrConformance := some .wordAligned
     context := "German verb-final subordinate clause; the quantified object follows the matrix verb cluster."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
@@ -56,7 +56,7 @@ def ex_98a : Datum :=
     lgrConformance := some .wordAligned
     context := "West Flemish subordinate clause in the verb-raising word order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
@@ -71,7 +71,7 @@ def ex_98b : Datum :=
     lgrConformance := some .wordAligned
     context := "West Flemish subordinate clause in the verb-projection-raising word order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
@@ -86,7 +86,7 @@ def ex_99a : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch subordinate clause with an equi verb, verb-raising word order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
@@ -101,7 +101,7 @@ def ex_99b : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch subordinate clause with an equi verb, verb-projection-raising word order."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
@@ -116,7 +116,7 @@ def ex_100a : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch subordinate clause, verb-raising word order, two quantified arguments."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
@@ -131,7 +131,7 @@ def ex_100b : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch subordinate clause, verb-projection-raising word order, two quantified arguments."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
@@ -146,7 +146,7 @@ def ch7_4 : Datum :=
     lgrConformance := some .wordAligned
     context := "Japanese (pure SOV): backward gapping — the nonstandard subject-object argument clusters conjoin and the verb surfaces only in the final conjunct."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")] }
 
@@ -161,7 +161,7 @@ def ch7_5 : Datum :=
     lgrConformance := some .wordAligned
     context := "Japanese (pure SOV): forward gapping — the verb in the first conjunct with a verbless second conjunct — is excluded."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "forward")] }
 
@@ -176,7 +176,7 @@ def ch7_11 : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch subordinate clause (SOV): backward gapping — conjoined subject-object clusters precede the shared verb cluster."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")] }
 
@@ -191,7 +191,7 @@ def ch7_19 : Datum :=
     lgrConformance := some .wordAligned
     context := "Irish (pure VSO): forward gapping — the initial verb is shared by conjoined subject-object argument clusters."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")] }
 
@@ -206,7 +206,7 @@ def ch7_20 : Datum :=
     lgrConformance := some .wordAligned
     context := "Irish (pure VSO): backward gapping — verbless first conjunct with the verb in the second conjunct — is excluded."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "backward")] }
 
@@ -221,7 +221,7 @@ def ch7_21 : Datum :=
     lgrConformance := some .wordAligned
     context := "Dutch main clause (verb-initial yes/no question, conforming to the VSO pattern per Steedman): forward gapping, the mirror image of the backward-gapping subordinate clauses."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")] }
 
@@ -234,7 +234,7 @@ def ch7_62 : Datum :=
     glossedTokens := []
     context := "English (SVO): forward gapping — the verb in the first conjunct is shared by the verbless right conjunct."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "forward")] }
 
@@ -247,7 +247,7 @@ def ch7_63 : Datum :=
     glossedTokens := []
     context := "English (SVO): backward gapping — verbless left conjunct with the verb in the right conjunct — is excluded by universal principles."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "backward")] }
 

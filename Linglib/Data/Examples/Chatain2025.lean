@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "negated antecedent, conjunction")] }
 
@@ -37,7 +37,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "cross-sentential")] }
 
@@ -50,7 +50,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "conjunction")] }
 
@@ -63,7 +63,7 @@ def ex_3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "bathroom disjunction")] }
 
@@ -76,7 +76,7 @@ def ex_3d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "conditional")] }
 
@@ -89,7 +89,7 @@ def ex_3e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "conjunction, pronoun first")] }
 
@@ -102,7 +102,7 @@ def ex_3f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "disjunction")] }
 
@@ -115,7 +115,7 @@ def ex_3g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "conditional, pronoun first")] }
 
@@ -128,7 +128,7 @@ def ex_55c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "modal subordination")] }
 
@@ -141,7 +141,7 @@ def ex_55d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "but-conjunction, pronoun first")] }
 
@@ -154,7 +154,7 @@ def ex_78a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "no antecedent")] }
 
@@ -167,7 +167,7 @@ def ex_79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "quantificational subordination")] }
 
@@ -180,7 +180,7 @@ def ex_79b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("universal", .acceptable)]
     paperFeatures := [("configuration", "donkey")] }
 
@@ -193,7 +193,7 @@ def ex_113b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "quantificational subordination")] }
 
@@ -206,7 +206,7 @@ def ex_113c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("configuration", "quantificational subordination")] }
 

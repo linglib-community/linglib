@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Spatial-resultative za-: the goal is the endpoint of the ball's path."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Idiomatic use of the same lexical za- as in the spatial (1a): idiosyncratic meaning is available to lexical prefixes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -56,7 +56,7 @@ def ex_1c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Inceptive (superlexical) za- on the imperfective stem brosat', versus the lexical za- of (1a)/(1b) on perfective brosit'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

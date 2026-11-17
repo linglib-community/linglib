@@ -24,7 +24,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "weak"), ("npi", "anyone")] }
 
@@ -37,7 +37,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "strong"), ("npi", "in weeks")] }
 
@@ -50,7 +50,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "weak"), ("npi", "anyone")] }
 
@@ -63,7 +63,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "strong"), ("npi", "in weeks")] }
 
@@ -76,7 +76,7 @@ def ex1f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "weak"), ("npi", "ever")] }
 
@@ -89,7 +89,7 @@ def ex7f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "strong"), ("npi", "until")] }
 
@@ -102,7 +102,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
@@ -115,7 +115,7 @@ def ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "in weeks")] }
 
@@ -128,7 +128,7 @@ def ex39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "either")] }
 
@@ -141,7 +141,7 @@ def ex39d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "until")] }
 
@@ -154,7 +154,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
@@ -167,7 +167,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "in weeks")] }
 
@@ -180,7 +180,7 @@ def ex40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "either")] }
 
@@ -193,7 +193,7 @@ def ex40d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "until")] }
 
@@ -206,7 +206,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
@@ -219,7 +219,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "in weeks")] }
 
@@ -232,7 +232,7 @@ def ex41c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "either")] }
 
@@ -245,7 +245,7 @@ def ex41d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "until")] }
 

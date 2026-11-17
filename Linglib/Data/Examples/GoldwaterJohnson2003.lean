@@ -24,7 +24,7 @@ def gj2003_kala : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ká.loi.den", .ungrammatical)]
+    contrasts := [("ká.loi.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "kala"), ("loser", "ká.loi.den"), ("winnerViolations", "11000001011"), ("loserViolations", "12000001101")] }
 
@@ -37,7 +37,7 @@ def gj2003_naapuri : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("náa.pu.rèi.den", .acceptable)]
+    contrasts := [("náa.pu.rèi.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "naapuri"), ("loser", "náa.pu.rèi.den"), ("winnerViolations", "01000100012"), ("loserViolations", "01100000100")] }
 
@@ -50,7 +50,7 @@ def gj2003_ministeri : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "ministeri"), ("loser", "mí.nis.te.rèi.den"), ("winnerViolations", "12000100013"), ("loserViolations", "12100000101")] }
 
@@ -63,7 +63,7 @@ def gj2003_maailma : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "maailma"), ("loser", "máa.il.mòi.den"), ("winnerViolations", "02000001102"), ("loserViolations", "02001000300")] }
 

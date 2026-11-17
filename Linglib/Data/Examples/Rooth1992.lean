@@ -25,7 +25,7 @@ def ex_3a : Datum :=
     context := "Mary introduced Bill and Tom to Sue, and there were no other introductions."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Bill")] }
 
@@ -39,7 +39,7 @@ def ex_3b : Datum :=
     context := "Mary introduced Bill and Tom to Sue, and there were no other introductions."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Sue")] }
 
@@ -52,7 +52,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "read")] }
 
@@ -65,7 +65,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "contrast")] }
 
@@ -78,7 +78,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "The speaker and roommates Steve and Paul took a quiz; George asks how it went."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the speaker did not ace the quiz", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "passed")] }
 
@@ -91,7 +91,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "The speaker and roommates Steve and Paul took a quiz; George asks how it went."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the roommates did not pass", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "I")] }
 
@@ -104,7 +104,7 @@ def ex_23Aa_Qa : Datum :=
     glossedTokens := []
     context := "Who cut Bill down to size?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Mary")] }
 
@@ -117,7 +117,7 @@ def ex_23Ab_Qa : Datum :=
     glossedTokens := []
     context := "Who cut Bill down to size?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Bill")] }
 
@@ -130,7 +130,7 @@ def ex_23Ab_Qb : Datum :=
     glossedTokens := []
     context := "Who did Mary cut down to size?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Bill")] }
 
@@ -143,7 +143,7 @@ def ex_23Aa_Qb : Datum :=
     glossedTokens := []
     context := "Who did Mary cut down to size?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Mary")] }
 
@@ -156,7 +156,7 @@ def ex_59a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("than she beats Sue", .acceptable), ("than Sue beats me", .unacceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "me")] }
 
@@ -169,7 +169,7 @@ def ex_59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("than she beats Sue", .unacceptable), ("than Sue beats me", .acceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "she")] }
 
@@ -182,7 +182,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "eat")] }
 
@@ -195,7 +195,7 @@ def ex_72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "contrast")] }
 

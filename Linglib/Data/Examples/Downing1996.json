@@ -14,7 +14,7 @@
     "translation": "Since one shop was open, (I) decided to go in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["criterion", "cooccursWithNoun"]
@@ -35,7 +35,7 @@
     "translation": "three days later",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "hi-ga mik-ka tatte", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -59,7 +59,7 @@
     "translation": "Please put two rolls in that drawer.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trait", "withoutNoun"]
@@ -83,7 +83,7 @@
     "translation": "If even one little piece gets between the sole of your foot and your shoe, it's painful to walk.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trait", "withoutNoun"]
@@ -105,7 +105,7 @@
     "translation": "You can see three snakes in this cage.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kono ori-no naka-ni hebi-ga san-bon mieru.", "judgment": "ungrammatical"},
       {"form": "Kono ori-no naka-ni hebi-ga mi-suji mieru.", "judgment": "ungrammatical"}
     ],
@@ -133,7 +133,7 @@
     "translation": "Well, if we ask 'How about three apples and two bananas?' the first grader will be confused. All together, it's five...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trait", "alternation"]
@@ -155,7 +155,7 @@
     "translation": "While I was taking a walk with my dog, ...",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trait", "alternation"]
@@ -176,7 +176,7 @@
     "translation": "one telephone",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "kind"],
@@ -198,7 +198,7 @@
     "translation": "one telephone call",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "kind"],
@@ -220,7 +220,7 @@
     "translation": "one train or one train car",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "kind"],
@@ -242,7 +242,7 @@
     "translation": "one train car",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "kind"],
@@ -264,7 +264,7 @@
     "translation": "one grape",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "quality"],
@@ -286,7 +286,7 @@
     "translation": "one bunch of grapes or one grape",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "quality"],
@@ -308,7 +308,7 @@
     "translation": "one bunch of grapes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "quality"],
@@ -330,7 +330,7 @@
     "translation": "one plum branch",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "quality"],
@@ -352,7 +352,7 @@
     "translation": "one plum",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "quality"],
@@ -374,7 +374,7 @@
     "translation": "one plum blossom",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cohesion", "kind"],
@@ -399,7 +399,7 @@
     "translation": "When he squeezed the end of the hose with his fingers, the water became two streams of mist, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["function", "addingInformation"]
@@ -423,7 +423,7 @@
     "translation": "the first collection of genuine silver reproductions of fifty of the most valuable and significant postage stamps of Japan",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["function", "addingInformation"]
@@ -444,7 +444,7 @@
     "translation": "four feet",
     "context": "On a doll pattern.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["function", "addingInformation"]
@@ -465,7 +465,7 @@
     "translation": "It's the birds.",
     "context": "Speaker A, offering a choice between two birds and two turtles: Hoshii-no-wa dochira desu ka? 'Which is it that you want?'",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tori-no hoo desu.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -488,7 +488,7 @@
     "translation": "one sheet of (postage) stamps",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kitte ichi-mai", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -512,7 +512,7 @@
     "translation": "One.",
     "context": "A, continuing a conversation about goldfish: Nan-biki-gurai katte-iru no? 'How many are you raising?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "predicate"]
@@ -536,7 +536,7 @@
     "translation": "That morning, seven bull trout had appeared in Komori Lake. In Jotaro Lake there were three, in Ushiro Lake four, and in Koiwake Lake three.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "additionalMembers"]
@@ -560,7 +560,7 @@
     "translation": "... there were two people sitting in the front seat. One was an Indian wearing a turban, and he was driving. The other one was an Arab, and neither of them looked back or anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "subsets"]
@@ -583,7 +583,7 @@
     "translation": "Even though Shuichi was his son, Shingo couldn't help wondering whether they were such an ideal couple that Kikuko should be linked to Shuichi to this extent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anaphoric"]
@@ -606,7 +606,7 @@
     "translation": "Long, long ago, there was a certain fisherman who lived there.",
     "context": "The beginning of a folk tale, after the island Kikaigashima has been introduced.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "preNominal"],
@@ -631,7 +631,7 @@
     "translation": "The image of Yasuko's younger sister remained in the heart of each of them.",
     "context": "Of the couple Yasuko and Shingo.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anaphoric"]
@@ -655,7 +655,7 @@
     "translation": "(Our) uncle, his two sons, and Kaeko were warming themselves at the heated table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A classifier phrase and a plural suffix on one noun phrase without redundancy, against the hypothesis that classifiers and plural morphemes are in complementary distribution.",
@@ -677,7 +677,7 @@
     "translation": "The mannequin, with its long nose and its blue eyes, smiled enigmatically all day long.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Bare nouns are transnumeral: me 'eye' refers to two eyes and hana 'nose' to one.",
@@ -698,7 +698,7 @@
     "translation": "On that foot, there are six toes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qFloat"]
@@ -722,7 +722,7 @@
     "translation": "What I find really sad when I see the children of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A common noun with human referents takes a plural marker or not: Table 7.2, possible.",
@@ -739,7 +739,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The bare common noun kodomo in the frame of (6a).",
@@ -758,7 +758,7 @@
     "translation": "What I find really sad when I see the cats of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A plural marker on a common noun with animal referents is marginal, acceptable only for personified animals: Table 7.2, rare. The page prints mite iru , in (7a); the frame is printed mite-iru to, in (6), (7b) and (8).",
@@ -775,7 +775,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The bare common noun neko in the frame of (7a).",
@@ -794,7 +794,7 @@
     "translation": "What I find really sad when I see the buildings of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Common nouns with inanimate referents reject plural markers: Table 7.2, impossible.",
@@ -811,7 +811,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The bare common noun tatemono in the frame of (8a).",
@@ -831,7 +831,7 @@
     "translation": "Among these faces, ...",
     "context": "Fathers with children and youths with their lovers have gone in and out of the shop.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "With inanimate referents the plural suffix is required on a demonstrative pronoun.",
@@ -850,7 +850,7 @@
     "translation": "",
     "context": "Fathers with children and youths with their lovers have gone in and out of the shop.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The same referents, but the plural suffix on a common noun, even one modified by a demonstrative, is unacceptable.",
@@ -872,7 +872,7 @@
     "translation": "The patients were primarily farmers' wives and children. They would wait, sitting in the entranceway, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The attested original: the common noun kanja is bare, the pronoun kare-ra suffixed.",
@@ -891,7 +891,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "kanja may take the plural suffix.",
@@ -910,7 +910,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "kare-ra cannot drop its plural suffix.",
@@ -931,7 +931,7 @@
     "translation": "When I talk with Mr. Endo et al., my vulgar side comes out.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "On a proper noun the suffix is an associative plural, a group centred on Mr. Endo.",
@@ -952,7 +952,7 @@
     "translation": "The plan is for the mothers to wait in this room while the children take the test.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "class plural: the mothers", "judgment": "acceptable"},
       {"name": "associative: Mother and the others", "judgment": "acceptable"}
@@ -981,7 +981,7 @@
     "translation": "Any number of men with fox-like faces like the (gas station) owner's were sitting (there). ... their beady little eyes seemed to be laughing. Those men too are probably gas station owners somewhere now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The referents are introduced by category with a classifier phrase and tracked as individuals with plural markers; the reverse order is unattested.",
@@ -1002,7 +1002,7 @@
     "translation": "When cats are cute kittens, (I) feel like having five or six (of them), but ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A classifier phrase merely unitizes random members of a category, where a plural marker would flag particular tracking-worthy individuals.",
@@ -1027,7 +1027,7 @@
     "translation": "The faces of a number of women lined up before (my) eyes. Among those women was the face (of one) who had aborted a child of mine.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Introduction with noun plus classifier construction, then a noun plus plural marker: the typical pattern for groups of human referents.",
@@ -1047,7 +1047,7 @@
     "translation": "The two cars ahead (of us) were caught.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mae-o hashitte-ita jooyoosha-ga ni-dai tsukamatta.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1071,7 +1071,7 @@
     "translation": "Let's have a cigarette.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tabako-o ip-pon sutte-mimashoo.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1095,7 +1095,7 @@
     "translation": "(I) am waiting for three friends.",
     "context": "The speaker has particular individuals in mind.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tomodachi-o san-nin matte-imasu.", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1116,7 +1116,7 @@
     "translation": "I am looking for three secretaries.",
     "context": "Any three secretaries will do; their identities are not known to the speaker.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "San-nin-no hisho-o sagashite-imasu.", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1137,7 +1137,7 @@
     "translation": "The two of them came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Futari-no kare-ra-ga kita.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1162,7 +1162,7 @@
     "translation": "That is one of our responsibilities as adults.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "preNominal"],
@@ -1184,7 +1184,7 @@
     "translation": "Taro et al., the five of them, came in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"]
@@ -1208,7 +1208,7 @@
     "translation": "The night that Mother died, everyone's sympathy fell on Kaeko alone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"],
@@ -1233,7 +1233,7 @@
     "translation": "When the Old Man in (his) white examining gown, Assistant Asai, the head nurse, Toda, and Suguro, the five of them, entered the sickroom, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "summativeAppositive"]
@@ -1256,7 +1256,7 @@
     "translation": "The disks flew one by one, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qFloat"],
@@ -1279,7 +1279,7 @@
     "translation": "Three children came into the room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "San-nin-no kodomo-ga heya-ni haitte-kita.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1305,7 +1305,7 @@
     "translation": "The director returned with a conductress.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kantoku-ga onna-shashoo-to hitori modotte-kita.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1330,7 +1330,7 @@
     "translation": "These three students understand French.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kore-ra-no gakusei-ni, san-nin furansu-go-ga wakarimasu.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1352,7 +1352,7 @@
     "translation": "These three students understand French.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kore-ra-no san-nin-no gakusei-ga furansu-go-ga wakarimasu.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1377,7 +1377,7 @@
     "translation": "The/a man kidnapped three children.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "quantifies the object: three children", "judgment": "acceptable"},
       {"name": "quantifies the transitive subject: three men", "judgment": "marginal"}
@@ -1404,7 +1404,7 @@
     "translation": "Hanako thinks that six ships sank in the storm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hanako-ga kodomo-ga roku-nin tylenol-ni seisankari-o ireta to omotte-iru.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1430,7 +1430,7 @@
     "translation": "In addition, a number of my students were there, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qFloat"],
@@ -1458,7 +1458,7 @@
     "translation": "Two soldiers with pistols at their hips opened the door and energetically jumped down. ... They were exceedingly tall next to the two small soldiers.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qFloat"],
@@ -1481,7 +1481,7 @@
     "translation": "Day after day (she) did the cleaning wearing the same blouse.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mai-nichi, mai-nichi, burausu hito-tsu-o kite, sooji-o shite-ita.", "judgment": "acceptable"},
       {"form": "Mai-nichi, mai-nichi burausu-o hito-tsu kite, sooji-o shite-ita.", "judgment": "acceptable"}
     ],

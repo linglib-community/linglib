@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "ignorance of identity")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("continuation", "namely")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("continuation", "namely")] }
 
@@ -69,7 +69,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide scope: a particular student Pedro thinks María married, the speaker does not know who", .acceptable), ("narrow scope: Pedro is uncertain about the identity of the student", .acceptable)]
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb")] }
 
@@ -84,7 +84,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "ignorance of number")] }
 
@@ -99,7 +99,7 @@ def ex_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("inference", "free choice")] }
 
@@ -114,7 +114,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := "Hide and seek. María, Juan, and Pedro are playing hide-and-seek in their country house. Juan is hiding. Pedro is sure that Juan is inside the house, and sure that Juan is not in the bathroom or in the kitchen; as far as he knows, Juan could be in any of the other rooms."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("scenario", "hideAndSeek15")] }
 
@@ -127,7 +127,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("continuation", "which-question")] }
 
@@ -142,7 +142,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("continuation", "namely")] }
 
@@ -155,7 +155,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "must"), ("continuation", "which-question")] }
 
@@ -168,7 +168,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "must"), ("continuation", "namely")] }
 
@@ -181,7 +181,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "Board game: find in which stop of the Boston subway system (blue, red, green, orange lines) Mr. X is hiding. Player B knows that Mr. X is not in the blue, red, or orange lines, but player A thinks he is in a station of the blue line."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("scenario", "subway16")] }
 
@@ -194,7 +194,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal base", "common ground")] }
 
@@ -209,7 +209,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := "The hide-and-seek situation, but now, according to what Pedro knows, if Juan is in the house he could only be in the bathroom."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "oneRoom23")] }
 
@@ -224,7 +224,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := "The hide-and-seek situation, but now, according to what Pedro knows, if Juan is in the house he could only be in the bathroom."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "may"), ("scenario", "oneRoom23")] }
 
@@ -239,7 +239,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("inference", "free choice")] }
 
@@ -255,7 +255,7 @@ def ex_28a : Datum :=
     context := "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn)."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "barn27")] }
 
@@ -271,7 +271,7 @@ def ex_28b : Datum :=
     context := "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn)."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "barn27")] }
 
@@ -285,7 +285,7 @@ def ex_30a : Datum :=
     context := "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "hiring29")] }
 
@@ -299,7 +299,7 @@ def ex_30b : Datum :=
     context := "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "hiring29")] }
 
@@ -314,7 +314,7 @@ def ex_31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "-bhii correlative"), ("inference", "ignorance of identity")] }
 
@@ -327,7 +327,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "-ever free relative"), ("inference", "ignorance of identity")] }
 
@@ -340,7 +340,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Unless I don't know what Arlo is cooking and there is a lot of garlic in what he is cooking, I will eat out tonight", .unacceptable)]
     paperFeatures := [("construction", "-ever free relative"), ("environment", "unless"), ("projection", "global")] }
 
@@ -353,7 +353,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the speaker doesn't know what Arlo is cooking, but the thing Arlo is cooking has a lot of garlic in it", .acceptable)]
     paperFeatures := [("construction", "-ever free relative"), ("environment", "negation"), ("projection", "global")] }
 
@@ -368,7 +368,7 @@ def ex_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Juan is not dating any girl in the department", .acceptable), ("the speaker knows which girl Juan is dating", .unacceptable)]
     paperFeatures := [("determiner", "algún"), ("environment", "negation"), ("projection", "none")] }
 
@@ -381,7 +381,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("projection", "local accommodation")] }
 
@@ -394,7 +394,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature")] }
 
@@ -407,7 +407,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature"), ("property", "speaker-oriented")] }
 
@@ -420,7 +420,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb"), ("property", "not speaker-oriented")] }
 
@@ -433,7 +433,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb"), ("property", "not speaker-oriented")] }
 
@@ -446,7 +446,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature")] }
 
@@ -459,7 +459,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive"), ("property", "not cancellable")] }
 
@@ -474,7 +474,7 @@ def ex_42 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "cancellable")] }
 
@@ -489,7 +489,7 @@ def ex_44 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("environment", "downward entailing"), ("projection", "none")] }
 
@@ -502,7 +502,7 @@ def ex_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "conventional implicature"), ("property", "reinforcement redundant")] }
 
@@ -515,7 +515,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "presupposition"), ("property", "reinforcement redundant")] }
 
@@ -528,7 +528,7 @@ def ex_45c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "entailment"), ("property", "reinforcement redundant")] }
 
@@ -543,7 +543,7 @@ def ex_45d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "reinforceable")] }
 
@@ -558,7 +558,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton")] }
 
@@ -573,7 +573,7 @@ def ex_47 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("restrictor", "singleton")] }
 
@@ -586,7 +586,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton")] }
 
@@ -599,7 +599,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("restrictor", "singleton")] }
 
@@ -612,7 +612,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := "Hide and seek. María, Juan, and Pedro are playing hide-and-seek in their country house. Juan is hiding. Pedro is sure that Juan is inside the house, and sure that Juan is not in the bathroom or in the kitchen; as far as he knows, Juan could be in any of the other rooms."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Juan might be in the bathroom", .acceptable), ("Juan might be in the living room", .acceptable), ("there is no other room of the house where Juan might be", .acceptable)]
     paperFeatures := [("inference", "exhaustivity")] }
 
@@ -625,7 +625,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "exhaustivity")] }
 
@@ -640,7 +640,7 @@ def ex_73 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("uniqueness", "not assumed"), ("inference", "ignorance of number")] }
 
@@ -655,7 +655,7 @@ def ex_74b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("uniqueness", "not assumed"), ("inference", "ignorance of number")] }
 
@@ -670,7 +670,7 @@ def ex_75a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("environment", "negation"), ("inference", "none")] }
 
@@ -685,7 +685,7 @@ def ex_75b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "cancellable")] }
 
@@ -700,7 +700,7 @@ def ex_75c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "reinforceable")] }
 
@@ -715,7 +715,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("competitor", "plural")] }
 
@@ -730,7 +730,7 @@ def ex_78 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("competitor", "numeral")] }
 
@@ -745,7 +745,7 @@ def ex_79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the speaker does not know who the student was (uniqueness assumed)", .acceptable), ("the speaker does not know how many students came (uniqueness not assumed)", .acceptable)]
     paperFeatures := [("determiner", "algún")] }
 
@@ -760,7 +760,7 @@ def ex_80a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("uniqueness", "required")] }
 
@@ -773,7 +773,7 @@ def ex_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("uniqueness", "required")] }
 
@@ -788,7 +788,7 @@ def ex_81a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "irgendwelche"), ("number", "plural"), ("inference", "anti-uniqueness")] }
 
@@ -803,7 +803,7 @@ def ex_81b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algunos"), ("number", "plural"), ("inference", "anti-uniqueness")] }
 
@@ -816,7 +816,7 @@ def ex_82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "irgendwelche"), ("number", "plural"), ("continuation", "namely")] }
 
@@ -829,7 +829,7 @@ def ex_82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "algunos"), ("number", "plural"), ("continuation", "namely")] }
 
@@ -842,7 +842,7 @@ def fn17ia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton by superlative")] }
 
@@ -855,7 +855,7 @@ def fn17ib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton by relative clause")] }
 
@@ -868,7 +868,7 @@ def fn20ii : Datum :=
     glossedTokens := []
     context := "Question asked by reader in on-line interview: In which areas of the world is the AIDS problem the worst? Answer by doctor: In sub-Saharan Africa, undoubtlessly ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "contextual")] }
 
@@ -881,7 +881,7 @@ def fn27i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "exhaustivity optional")] }
 
@@ -896,7 +896,7 @@ def fn27ii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "may"), ("inference", "exhaustivity optional")] }
 
@@ -909,7 +909,7 @@ def fn32i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("uniqueness", "not required")] }
 
@@ -922,7 +922,7 @@ def fn32ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "un"), ("uniqueness", "not required")] }
 

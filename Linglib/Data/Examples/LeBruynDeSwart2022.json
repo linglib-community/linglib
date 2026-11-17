@@ -113,7 +113,7 @@
     "translation": "It's true that there are books that I didn't finish. I started reading them but then found out that I didn't like them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "wide_scope",
@@ -171,7 +171,7 @@
     "translation": "that I've always hated books",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "kind_reference",

@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := "Present counterfactual wish. Conveys: I don't have a car now. Past morphology (`had`) but present-time reference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("present-CF (car absent now)", .acceptable)]
     paperFeatures := [("construction", "wish"), ("cf_type", "presCF")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := "Past counterfactual wish. Conveys: I didn't have a car then (student days). Says nothing about whether I have a car now. Past-on-past morphology (`had had`) — the doubling encodes BOTH counterfactuality AND past temporal reference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("past-CF (no car as student)", .acceptable)]
     paperFeatures := [("construction", "wish"), ("cf_type", "pastCF")] }
 
@@ -50,7 +50,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := "Present counterfactual conditional. Conveys: he is not smart AND he is not rich. Past morphology (`were`, `would`) with present reference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("present-CF (he is not smart and not rich)", .acceptable)]
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF")] }
 
@@ -63,7 +63,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := "Past counterfactual conditional. Conveys: he was not smart (in general or on one specific occasion) AND he was not rich. Past-perfect morphology (`had been`, `would have been`) encodes BOTH counterfactuality AND past reference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("past-CF (he was not smart and not rich)", .acceptable)]
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF")] }
 
@@ -76,7 +76,7 @@ def en_flv : Datum :=
     glossedTokens := []
     context := "Future Less Vivid conditional with a telic predicate (take the syrup). One (modal) ExclF; the past morphology is fake."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "no"), ("subj", "no")] }
 
@@ -89,7 +89,7 @@ def en_presCF : Datum :=
     glossedTokens := []
     context := "Present counterfactual with an individual-level stative predicate (believe in ghosts). Same morphology as the FLV; the PresCF reading arises from the predicate's Aktionsart."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF"), ("past_layers", "1"), ("impf", "no"), ("subj", "no")] }
 
@@ -102,7 +102,7 @@ def en_pastCF : Datum :=
     glossedTokens := []
     context := "Past counterfactual conditional. The pluperfect antecedent has two past layers: one fake (modal ExclF), one real (temporal). Conveys Napoleon was not tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "no"), ("subj", "no")] }
 
@@ -117,7 +117,7 @@ def gr_flv : Datum :=
     lgrConformance := some .wordAligned
     context := "Modern Greek FLV with a telic predicate. The verbs carry past + imperfective morphology, both fake (future-oriented reading). Contrasts with the FNV (7), which has nonpast + perfective."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
@@ -132,7 +132,7 @@ def gr_pastCF : Datum :=
     lgrConformance := some .wordAligned
     context := "Modern Greek PastCF. Like English, MG uses the pluperfect in the antecedent of a PastCF; the future is an undeclinable particle (θa), so the highest verb (the perfect auxiliary) carries past morphology."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "yes"), ("subj", "no")] }
 
@@ -147,7 +147,7 @@ def fr_flv : Datum :=
     lgrConformance := some .wordAligned
     context := "French FLV: imparfait in the antecedent, conditionnel in the consequent. Iatridou argues the conditionnel is imparfait morphology on a future stem (ExclF + Imp over a future), not a separate `conditional mood`."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
@@ -162,7 +162,7 @@ def fr_presCF : Datum :=
     lgrConformance := some .wordAligned
     context := "French PresCF: morphologically identical to the FLV (imparfait/conditionnel); the PresCF reading arises from the individual-level stative predicate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
@@ -177,7 +177,7 @@ def fr_pastCF : Datum :=
     lgrConformance := some .wordAligned
     context := "French PastCF: plus-que-parfait in the antecedent, conditionnel passé in the consequent. Two past layers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "yes"), ("subj", "no")] }
 
@@ -192,7 +192,7 @@ def ex7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("construction", "conditional"), ("cf_type", "fnv"), ("past_layers", "0"), ("impf", "no")] }
 
@@ -205,7 +205,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "fnv")] }
 
@@ -218,7 +218,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("implicature", "the actual world is more likely to become a not-p world")] }
 
@@ -231,7 +231,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("implicature", "survives negation")] }
 
@@ -246,7 +246,7 @@ def ex13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("adverbial", "future-oriented"), ("impf", "yes")] }
 
@@ -261,7 +261,7 @@ def ex20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("construction", "epistemic conditional"), ("past_layers", "1 real"), ("impf", "no")] }
 
@@ -276,7 +276,7 @@ def ex21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("adverbial", "future-oriented"), ("impf", "no")] }
 
@@ -291,7 +291,7 @@ def ex21c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("adverbial", "past-oriented"), ("impf", "no")] }
 
@@ -304,7 +304,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "stage-level stative")] }
 
@@ -317,7 +317,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
@@ -330,7 +330,7 @@ def ex47d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
@@ -343,7 +343,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("pluperfect", "temporal")] }
 
@@ -356,7 +356,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("past", "temporal")] }
 
@@ -369,7 +369,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time precedes utterance time"), ("situation", "may include utterance time")] }
 
@@ -382,7 +382,7 @@ def ex54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time precedes utterance time"), ("situation", "stage-level, not extended")] }
 
@@ -395,7 +395,7 @@ def ex59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time excludes utterance time"), ("situation", "includes both")] }
 
@@ -408,7 +408,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "flv"), ("reading", "feature over worlds")] }
 
@@ -421,7 +421,7 @@ def ex60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("construction", "epistemic conditional"), ("reading", "feature over times")] }
 
@@ -434,7 +434,7 @@ def ex62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("aktionsart", "telic")] }
 
@@ -447,7 +447,7 @@ def ex63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
@@ -460,7 +460,7 @@ def ex63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
@@ -473,7 +473,7 @@ def ex64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("aktionsart", "stage-level stative")] }
 
@@ -486,7 +486,7 @@ def ex64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "stage-level stative")] }
 
@@ -499,7 +499,7 @@ def ex65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "telic"), ("evaluation", "future")] }
 
@@ -512,7 +512,7 @@ def ex66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "individual-level stative"), ("evaluation", "now")] }
 
@@ -525,7 +525,7 @@ def ex67a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "stage-level stative"), ("evaluation", "future")] }
 
@@ -538,7 +538,7 @@ def ex67b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "stage-level stative"), ("evaluation", "now")] }
 
@@ -551,7 +551,7 @@ def ex68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("speaker", "agnostic about the antecedent")] }
 
@@ -564,7 +564,7 @@ def ex69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("speaker", "believes the antecedent false")] }
 
@@ -579,7 +579,7 @@ def ex74 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("impf", "yes"), ("reading", "stage-level stative, not inchoative")] }
 
@@ -594,7 +594,7 @@ def ex75 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("cf_type", "presCF"), ("impf", "yes")] }
 
@@ -609,7 +609,7 @@ def ex79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("cf_type", "flv"), ("impf", "yes"), ("reading", "ongoing")] }
 
@@ -624,7 +624,7 @@ def ex97a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dudo que Maria estuviera enferma.", .acceptable), ("Dudo que Maria está enferma.", .ungrammatical), ("Dudo que Maria estaba enferma.", .ungrammatical)]
+    contrasts := [("Dudo que Maria estuviera enferma.", .acceptable), ("Dudo que Maria está enferma.", .ungrammatical), ("Dudo que Maria estaba enferma.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "dubitative subjunctive"), ("paradigm", "past and present subjunctive")] }
 
@@ -639,7 +639,7 @@ def ex98 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Marie avait un parapluie rouge."
     judgment := .acceptable
-    alternatives := [("Je doute que Marie a un parapluie rouge.", .ungrammatical), ("Je doute que Marie avait un parapluie rouge.", .ungrammatical)]
+    contrasts := [("Je doute que Marie a un parapluie rouge.", .ungrammatical), ("Je doute que Marie avait un parapluie rouge.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "dubitative subjunctive"), ("paradigm", "nonpast subjunctive only")] }
 
@@ -654,7 +654,7 @@ def ex99 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Si Marie ait un parapluie rouge, ...", .ungrammatical)]
+    contrasts := [("Si Marie ait un parapluie rouge, ...", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "past indicative"), ("paradigm", "nonpast subjunctive only")] }
 

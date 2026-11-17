@@ -26,7 +26,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "SS"), ("binder", "IO"), ("mover", "DP")] }
 
@@ -41,7 +41,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "IS"), ("binder", "IO"), ("mover", "DP")] }
 
@@ -56,7 +56,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "IS"), ("binder", "subject"), ("mover", "DP")] }
 
@@ -71,7 +71,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "IS"), ("binder", "subject"), ("mover", "DP")] }
 
@@ -86,7 +86,7 @@ def ex_32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "ACC-SUBJ"), ("binder", "matrix DAT"), ("mover", "DP")] }
 
@@ -101,7 +101,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "ACC-SUBJ"), ("binder", "matrix subject"), ("mover", "DP")] }
 
@@ -116,7 +116,7 @@ def ex_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "matrix subject"), ("mover", "DP")] }
 
@@ -131,7 +131,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "matrix DAT"), ("mover", "DP")] }
 
@@ -146,7 +146,7 @@ def ex_58a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "ACC-SUBJ intermediate"), ("binder", "matrix DAT"), ("mover", "DP")] }
 
@@ -161,7 +161,7 @@ def ex_58b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "LDS intermediate"), ("binder", "matrix DAT"), ("mover", "DP")] }
 
@@ -176,7 +176,7 @@ def ex_61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "embedded subject"), ("mover", "DP")] }
 
@@ -191,7 +191,7 @@ def ex_79 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "IO"), ("binder", "subject"), ("mover", "DP-lexical")] }
 
@@ -206,7 +206,7 @@ def ex_85b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "passive"), ("binder", "IO"), ("mover", "DP")] }
 
@@ -221,7 +221,7 @@ def ex_86 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "embedded subject"), ("mover", "DP-lexical"), ("alsoJudged", "ungrammatical")] }
 
@@ -236,7 +236,7 @@ def ex_93b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "PP-LDS"), ("binder", "embedded subject"), ("mover", "PP")] }
 
@@ -251,7 +251,7 @@ def ex_94b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "scrambling"), ("construction", "PP-LDS"), ("binder", "matrix DAT"), ("mover", "PP")] }
 
@@ -266,7 +266,7 @@ def ex_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "accusative subject"), ("competitor", "NOM")] }
 
@@ -281,7 +281,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "accusative subject"), ("competitor", "NOM")] }
 
@@ -296,7 +296,7 @@ def ex_63 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "accusative subject"), ("competitor", "none")] }
 
@@ -311,7 +311,7 @@ def ex_64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "accusative subject"), ("competitor", "NOM")] }
 
@@ -326,7 +326,7 @@ def ex_65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "accusative subject"), ("competitor", "DAT")] }
 

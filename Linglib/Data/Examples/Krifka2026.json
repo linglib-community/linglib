@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Kind anaphora to an object-referring antecedent, with a number mismatch between the singular antecedent and the plural anaphor.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "count"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "Kind anaphora to a mass antecedent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "mass"],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "Kind anaphora and one-anaphora reach a concept introduced under negation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "count"],
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "Kind anaphora and some-anaphora reach a mass concept introduced under negation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "mass"],
@@ -103,7 +103,7 @@
     "translation": "",
     "context": "An entity pronoun cannot reach a referent introduced under negation.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "count"],
@@ -127,7 +127,7 @@
     "translation": "",
     "context": "A count antecedent, singular or plural, requires the plural kind anaphor.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He has a phobia against it.",
         "judgment": "ungrammatical"
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "A mass antecedent requires the singular kind anaphor.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He is allergic against them.",
         "judgment": "ungrammatical"
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "The same individuals under a mass noun take the singular kind anaphor.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "I am allergic against them.",
         "judgment": "ungrammatical"
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "The same individuals under a count noun take the plural kind anaphor.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I am allergic against it.", "judgment": "questionable"}
     ],
     "readings": [],
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "Kind anaphora: John is afraid of dogs, since dogs from the shelter downtown do not form a kind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "afraid of dogs", "judgment": "acceptable"}
     ],
@@ -262,7 +262,7 @@
     "translation": "",
     "context": "Concept anaphora: Mary got a dog from the shelter downtown, the full property of the antecedent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a dog from the shelter downtown", "judgment": "acceptable"}
     ],

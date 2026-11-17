@@ -27,7 +27,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("objectSyntax", "absent")] }
 
@@ -43,7 +43,7 @@ def ex_4a_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("objectSyntax", "absent"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -59,7 +59,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("objectSyntax", "absent")] }
 
@@ -75,7 +75,7 @@ def ex_4b_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("objectSyntax", "absent"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -91,7 +91,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("I'wara ka-ri-nke pera-ra-nke.", .acceptable)]
+    contrasts := [("I'wara ka-ri-nke pera-ra-nke.", .acceptable)]
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("object", "2"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-(n)ken")] }
 
@@ -107,7 +107,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-((n)ke)ma'")] }
 
@@ -123,7 +123,7 @@ def ex_6b_nke : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-(n)ken")] }
 
@@ -139,7 +139,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "1"), ("objectNumber", "min"), ("objectSyntax", "dropped")] }
 
@@ -155,7 +155,7 @@ def ex_7a_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "1"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -171,7 +171,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ya'wan-usa kete-r-in-kui.", .acceptable)]
+    contrasts := [("Ya'wan-usa kete-r-in-kui.", .acceptable)]
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "aug"), ("object", "1excl"), ("objectNumber", "aug"), ("objectSyntax", "dropped")] }
 
@@ -187,7 +187,7 @@ def ex_7b_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "aug"), ("object", "1excl"), ("objectNumber", "aug"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -203,7 +203,7 @@ def ex_7c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Pitru nate-r-in-nke.", .acceptable)]
+    contrasts := [("Pitru nate-r-in-nke.", .acceptable)]
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "2"), ("objectNumber", "min"), ("objectSyntax", "dropped")] }
 
@@ -219,7 +219,7 @@ def ex_7c_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "2"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -235,7 +235,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kiya na'wan-a-i Pitru.", .acceptable)]
+    contrasts := [("Kiya na'wan-a-i Pitru.", .acceptable)]
     readings := []
     paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -251,7 +251,7 @@ def ex_8a_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kiya-ri na'wan-a-i Pitru.", .acceptable)]
+    contrasts := [("Kiya-ri na'wan-a-i Pitru.", .acceptable)]
     readings := []
     paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -267,7 +267,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -283,7 +283,7 @@ def ex_8b_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -299,7 +299,7 @@ def ex_8c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -315,7 +315,7 @@ def ex_8c_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -331,7 +331,7 @@ def ex_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -347,7 +347,7 @@ def ex_9a_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -363,7 +363,7 @@ def ex_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "fronted")] }
 
@@ -379,7 +379,7 @@ def ex_9b_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "fronted"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -395,7 +395,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "1"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("oagrOnS", "-ku")] }
 
@@ -411,7 +411,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "dropped")] }
 
@@ -427,7 +427,7 @@ def ex_21a_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -443,7 +443,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -459,7 +459,7 @@ def ex_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu")] }
 
@@ -475,7 +475,7 @@ def ex_27_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "min"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -491,7 +491,7 @@ def ex_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "aug"), ("objectSyntax", "inSitu")] }
 
@@ -507,7 +507,7 @@ def ex_28_ri : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("object", "3"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject")] }
 
@@ -523,7 +523,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "fronted")] }
 
@@ -539,7 +539,7 @@ def ex_42a_y : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "fronted"), ("case", "-y"), ("caseOn", "object")] }
 
@@ -555,7 +555,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "belowAdverb")] }
 
@@ -571,7 +571,7 @@ def ex_42b_y : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "belowAdverb"), ("case", "-y"), ("caseOn", "object")] }
 
@@ -587,7 +587,7 @@ def ex_45a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "sg"), ("object", "2"), ("objectNumber", "sg"), ("objectSyntax", "dropped")] }
 
@@ -603,7 +603,7 @@ def ex_45b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("subjectNumber", "pl"), ("object", "1"), ("objectNumber", "sg"), ("objectSyntax", "dropped")] }
 
@@ -619,7 +619,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1excl"), ("subjectNumber", "pl"), ("object", "3"), ("objectNumber", "pl"), ("objectSyntax", "dropped"), ("case", "=ler"), ("caseOn", "subject")] }
 
@@ -635,7 +635,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "inSitu")] }
 
@@ -651,7 +651,7 @@ def ex_46b_ler : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "inSitu"), ("case", "=ler"), ("caseOn", "subject")] }
 
@@ -667,7 +667,7 @@ def ex_49a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("subjectNumber", "sg"), ("object", "1"), ("objectNumber", "sg"), ("objectSyntax", "inSitu"), ("case", "-gele"), ("caseOn", "object")] }
 
@@ -683,7 +683,7 @@ def ex_49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "sg"), ("object", "2"), ("objectNumber", "sg"), ("objectSyntax", "inSitu"), ("case", "-ul"), ("caseOn", "object")] }
 
@@ -699,7 +699,7 @@ def ex_49c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("subjectNumber", "sg"), ("object", "3"), ("objectNumber", "sg"), ("objectSyntax", "inSitu")] }
 

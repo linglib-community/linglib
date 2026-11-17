@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
@@ -50,7 +50,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
@@ -63,7 +63,7 @@ def ex2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
@@ -78,7 +78,7 @@ def si1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -93,7 +93,7 @@ def si2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -108,7 +108,7 @@ def si3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -123,7 +123,7 @@ def si4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -138,7 +138,7 @@ def si5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -153,7 +153,7 @@ def si6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -168,7 +168,7 @@ def si7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -183,7 +183,7 @@ def si8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -198,7 +198,7 @@ def si9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
@@ -213,7 +213,7 @@ def so1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "morphemeOrder")] }
 
@@ -228,7 +228,7 @@ def so2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "morphemeOrder")] }
 
@@ -243,7 +243,7 @@ def so3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -258,7 +258,7 @@ def so4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -273,7 +273,7 @@ def so5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -288,7 +288,7 @@ def so6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -303,7 +303,7 @@ def so7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -318,7 +318,7 @@ def so8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -334,7 +334,7 @@ def so9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
@@ -350,7 +350,7 @@ def so10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 

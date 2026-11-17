@@ -26,7 +26,7 @@ def ex_1_24a_plek : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "plek"), ("adposition", "onder")] }
 
@@ -41,7 +41,7 @@ def ex_1_24a_reis : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "reis"), ("adposition", "onder")] }
 
@@ -56,7 +56,7 @@ def ex_1_24b_reis : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "reis"), ("adposition", "naar")] }
 
@@ -71,7 +71,7 @@ def ex_1_24b_plek : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "plek"), ("adposition", "naar")] }
 
@@ -86,7 +86,7 @@ def ex_1_25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "plek"), ("adposition", "langs")] }
 
@@ -101,7 +101,7 @@ def ex_1_25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "reis"), ("adposition", "langs")] }
 
@@ -116,7 +116,7 @@ def ex_1_26a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "bevinden"), ("adposition", "achter")] }
 
@@ -131,7 +131,7 @@ def ex_1_26b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "bevinden"), ("adposition", "beneden")] }
 
@@ -146,7 +146,7 @@ def ex_1_26c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "bevinden"), ("adposition", "langs")] }
 
@@ -161,7 +161,7 @@ def ex_1_27_naar : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "bevinden"), ("adposition", "naar")] }
 
@@ -176,7 +176,7 @@ def ex_1_27_tot : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "bevinden"), ("adposition", "tot")] }
 
@@ -191,7 +191,7 @@ def ex_1_28a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "zetten"), ("adposition", "in")] }
 
@@ -206,7 +206,7 @@ def ex_1_28b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "zetten"), ("adposition", "op")] }
 
@@ -221,7 +221,7 @@ def ex_1_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "zetten"), ("adposition", "over")] }
 
@@ -236,7 +236,7 @@ def ex_1_29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "zetten"), ("adposition", "uit")] }
 
@@ -251,7 +251,7 @@ def ex_1_30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "wandelen"), ("adposition", "op")] }
 
@@ -266,7 +266,7 @@ def ex_1_30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "wandelen"), ("adposition", "in")] }
 
@@ -281,7 +281,7 @@ def ex_1_30c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "wandelen"), ("adposition", "langs")] }
 
@@ -296,7 +296,7 @@ def ex_1_30d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "wandelen"), ("adposition", "door")] }
 
@@ -311,7 +311,7 @@ def ex_1_31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "in")] }
 
@@ -326,7 +326,7 @@ def ex_1_31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "op")] }
 
@@ -341,7 +341,7 @@ def ex_1_31c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "over")] }
 
@@ -356,7 +356,7 @@ def ex_1_31d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "door")] }
 
@@ -371,7 +371,7 @@ def ex_4_27c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "binnen")] }
 
@@ -386,7 +386,7 @@ def ex_4_28c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "rond")] }
 
@@ -401,7 +401,7 @@ def ex_4_28d_om : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "om")] }
 
@@ -416,7 +416,7 @@ def ex_4_28d_langs : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "langs")] }
 
@@ -431,7 +431,7 @@ def ex_4_28d_voorbij : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "voorbij")] }
 
@@ -446,7 +446,7 @@ def ex_4_28e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "pathLength"), ("adposition", "uit")] }
 
@@ -461,7 +461,7 @@ def ex_2_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "prePP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -476,7 +476,7 @@ def ex_2_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "prePPDir"), ("adposition", "tot"), ("object", "definite")] }
 
@@ -491,7 +491,7 @@ def ex_2_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "prePP"), ("adposition", "naar"), ("object", "definite")] }
 
@@ -506,7 +506,7 @@ def ex_2_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "prePPDir"), ("adposition", "naar"), ("object", "definite")] }
 
@@ -521,7 +521,7 @@ def ex_2_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "postPP"), ("adposition", "langs"), ("object", "definite")] }
 
@@ -536,7 +536,7 @@ def ex_2_29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "postPP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -551,7 +551,7 @@ def ex_2_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "postPP"), ("adposition", "in"), ("object", "definite")] }
 
@@ -566,7 +566,7 @@ def ex_3_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePP"), ("adposition", "door"), ("object", "bareMass")] }
 
@@ -581,7 +581,7 @@ def ex_3_38b_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "door"), ("object", "bareMass")] }
 
@@ -596,7 +596,7 @@ def ex_3_38b_de : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "door"), ("object", "definite")] }
 
@@ -611,7 +611,7 @@ def ex_3_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePP"), ("adposition", "in"), ("object", "bareMass")] }
 
@@ -626,7 +626,7 @@ def ex_3_39b_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "in"), ("object", "bareMass")] }
 
@@ -641,7 +641,7 @@ def ex_3_39b_het : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "in"), ("object", "definite")] }
 
@@ -656,7 +656,7 @@ def ex_3_40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -671,7 +671,7 @@ def ex_3_40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -686,7 +686,7 @@ def ex_3_41a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePP"), ("adposition", "op"), ("object", "pointlike")] }
 
@@ -701,7 +701,7 @@ def ex_3_41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "op"), ("object", "pointlike")] }
 
@@ -716,7 +716,7 @@ def ex_3_42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "postPP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -731,7 +731,7 @@ def ex_3_42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "rWordPP"), ("adposition", "in"), ("object", "rWord")] }
 
@@ -746,7 +746,7 @@ def ex_3_42c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("structure", "prePP"), ("adposition", "tussen"), ("object", "definite")] }
 
@@ -761,7 +761,7 @@ def ex_4_9a_voor : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "voor")] }
 
@@ -776,7 +776,7 @@ def ex_4_9a_achter : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "achter")] }
 
@@ -791,7 +791,7 @@ def ex_4_9b_boven : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "boven")] }
 
@@ -806,7 +806,7 @@ def ex_4_9b_onder : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "onder")] }
 
@@ -821,7 +821,7 @@ def ex_4_9c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "naast")] }
 
@@ -836,7 +836,7 @@ def ex_4_9d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "buiten")] }
 
@@ -851,7 +851,7 @@ def ex_4_10a_in : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "in")] }
 
@@ -866,7 +866,7 @@ def ex_4_10a_op : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "op")] }
 
@@ -881,7 +881,7 @@ def ex_4_10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "binnen")] }
 
@@ -896,7 +896,7 @@ def ex_4_10c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "bij")] }
 
@@ -911,7 +911,7 @@ def ex_4_10d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "tussen")] }
 
@@ -926,7 +926,7 @@ def ex_4_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "aan")] }
 
@@ -941,7 +941,7 @@ def ex_4_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "bij")] }
 
@@ -956,7 +956,7 @@ def ex_4_15c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "tussen")] }
 
@@ -971,7 +971,7 @@ def ex_4_15d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "in")] }
 
@@ -986,7 +986,7 @@ def ex_4_15e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "length"), ("adposition", "binnen")] }
 
@@ -1001,7 +1001,7 @@ def ex_4_19a_achter : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "achter")] }
 
@@ -1016,7 +1016,7 @@ def ex_4_19a_boven : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "boven")] }
 
@@ -1031,7 +1031,7 @@ def ex_4_19a_onder : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "onder")] }
 
@@ -1046,7 +1046,7 @@ def ex_4_19a_bij : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "bij")] }
 
@@ -1061,7 +1061,7 @@ def ex_4_19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "buiten")] }
 
@@ -1076,7 +1076,7 @@ def ex_4_19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "aan")] }
 
@@ -1091,7 +1091,7 @@ def ex_4_20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "op")] }
 
@@ -1106,7 +1106,7 @@ def ex_4_20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "tussen")] }
 
@@ -1121,7 +1121,7 @@ def ex_4_20c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "vlak"), ("adposition", "in")] }
 
@@ -1136,7 +1136,7 @@ def ex_5_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "rWordPP"), ("adposition", "in"), ("object", "rWord")] }
 
@@ -1151,7 +1151,7 @@ def ex_5_12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "prePP"), ("adposition", "in"), ("object", "definite")] }
 
@@ -1166,7 +1166,7 @@ def ex_5_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "circumPP"), ("adposition", "onder"), ("object", "definite")] }
 
@@ -1181,7 +1181,7 @@ def ex_5_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "circumPP"), ("adposition", "tegen"), ("object", "definite")] }
 
@@ -1196,7 +1196,7 @@ def ex_5_17a_pre : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "prePP"), ("adposition", "onder"), ("object", "definite")] }
 
@@ -1211,7 +1211,7 @@ def ex_5_17b_pre : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraposition"), ("structure", "prePP"), ("adposition", "tegen"), ("object", "definite")] }
 
@@ -1226,7 +1226,7 @@ def ex_6_31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "op"), ("object", "definite")] }
 
@@ -1241,7 +1241,7 @@ def ex_6_31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "op"), ("object", "rWord")] }
 
@@ -1256,7 +1256,7 @@ def ex_6_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "proPP"), ("adposition", "bij"), ("object", "rWord")] }
 
@@ -1271,7 +1271,7 @@ def ex_6_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "circumPP"), ("adposition", "van"), ("object", "definite")] }
 
@@ -1286,7 +1286,7 @@ def ex_6_36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "proPP"), ("adposition", "van"), ("object", "rWord")] }
 
@@ -1301,7 +1301,7 @@ def ex_6_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePPDir"), ("adposition", "naar"), ("object", "definite")] }
 
@@ -1316,7 +1316,7 @@ def ex_6_37b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "postPP"), ("adposition", "naar"), ("object", "rWord")] }
 
@@ -1331,7 +1331,7 @@ def ex_6_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "prePP"), ("adposition", "naar"), ("object", "definite")] }
 
@@ -1346,7 +1346,7 @@ def ex_6_38b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "rWordPP"), ("adposition", "naar"), ("object", "rWord")] }
 
@@ -1361,7 +1361,7 @@ def ex_6_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "licensing"), ("structure", "circumRPP"), ("adposition", "naar"), ("object", "rWord")] }
 

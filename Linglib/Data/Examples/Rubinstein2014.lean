@@ -24,7 +24,7 @@ def nr_should : Datum :=
     glossedTokens := []
     context := "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "should"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
@@ -37,7 +37,7 @@ def nr_ought : Datum :=
     glossedTokens := []
     context := "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
@@ -50,7 +50,7 @@ def nr_better : Datum :=
     glossedTokens := []
     context := "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
@@ -63,7 +63,7 @@ def nr_good : Datum :=
     glossedTokens := []
     context := "Negated evaluative; tests the excluded-middle (neg-raising) inference under higher negation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "good"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
@@ -76,7 +76,7 @@ def nr_must : Datum :=
     glossedTokens := []
     context := "Embedded under 'I don't think', testing whether the lower-negation reading is available for a strong necessity modal."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "must"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
@@ -89,7 +89,7 @@ def nr_haveTo : Datum :=
     glossedTokens := []
     context := "Embedded under 'I don't think', testing whether the lower-negation reading is available for a strong necessity modal."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "have to"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
@@ -104,7 +104,7 @@ def nr_adif : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Blog discussion of attitudes; tests neg-raising (cyclicity) of 'adif 'preferable' in Hebrew."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
@@ -117,7 +117,7 @@ def ought_lexical : Datum :=
     glossedTokens := []
     context := "Test 1 (x E q, but doesn't have to q) with lexical weak-necessity 'ought'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("strategy", "lexical"), ("diagnostic", "test1")] }
 
@@ -132,7 +132,7 @@ def compositional_deberia : Datum :=
     lgrConformance := some .wordAligned
     context := "Spanish derives weak necessity compositionally: strong modal deber + conditional morphology."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "deberia"), ("category", "compositional"), ("strategy", "compositional"), ("diagnostic", "test1")] }
 
@@ -147,7 +147,7 @@ def test1_carix : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Given the rules of the house. Test 1 (x ought to q, but doesn't have to) with carix 'need' substituted for ought."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test1")] }
 
@@ -162,7 +162,7 @@ def test2_carix : Datum :=
     lgrConformance := some .wordAligned
     context := "Test 2 with the exclusive 'only' (raq): y has to q, x only need-to q."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test2")] }
 
@@ -177,7 +177,7 @@ def heb_yoter_tov : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bribe scenario: a convicted politician ought to resign though no law requires it. Hebrew renders weak-necessity 'ought' via morphological comparison (yoter tov 'more good')."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "tov"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
@@ -192,7 +192,7 @@ def heb_adif : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bribe scenario; lexical comparison with a predicate of preference, 'adif 'preferable'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
@@ -207,7 +207,7 @@ def heb_kday : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bribe scenario; implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "kday"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
@@ -220,7 +220,7 @@ def comp_better : Datum :=
     glossedTokens := []
     context := "Three salient alternatives (get fired / keep working / resign). The morphological comparative pairwise-compares two of them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("pairwise", "true")] }
 
@@ -235,7 +235,7 @@ def nr_carix : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker tries to prevent someone from entering a meeting they are not invited to."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "negRaising"), ("hybrid", "true")] }
 

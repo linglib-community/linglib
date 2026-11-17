@@ -26,7 +26,7 @@ def ex19a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "verbToC"), ("intervener", "none")] }
 
@@ -41,7 +41,7 @@ def ex19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "embedded"), ("intervener", "none")] }
 
@@ -56,7 +56,7 @@ def ex19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "auxiliary"), ("intervener", "none")] }
 
@@ -71,7 +71,7 @@ def ex23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "firstObject")] }
 
@@ -86,7 +86,7 @@ def ex23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "particle")] }
 
@@ -101,7 +101,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "firstObject")] }
 
@@ -116,7 +116,7 @@ def ex25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "particle")] }
 

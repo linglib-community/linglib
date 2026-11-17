@@ -10,7 +10,7 @@
     "context": "The door is known to be unlocked, and Nur has just flipped the switch in the electrical cabinet, allowing electricity to flow, but has not yet pressed the button that opens the door.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "open the door"],
@@ -30,7 +30,7 @@
     "context": "The door is known to be unlocked and the electricity is flowing, and Nur has neither turned the door handle nor pressed the button, so the door is closed.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "open the door"],
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "The status of the lock is unknown, and Nur has turned the door handle.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "open the door"],
@@ -68,7 +68,7 @@
     "translation": "",
     "context": "The status of the lock is unknown, and Nur has pressed the door-open button.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "open the door"],
@@ -88,7 +88,7 @@
     "context": "The status of the lock is unknown, and Nur has either turned the door handle or pressed the door-open button.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "try to open the door"],

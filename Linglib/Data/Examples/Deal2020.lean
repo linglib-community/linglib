@@ -26,7 +26,7 @@ def ex_70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("both utterance", .marginal), ("second reported only", .unacceptable), ("first reported only", .unacceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "I"), ("indexical", "I"), ("test", "shift_together")] }
 
@@ -41,7 +41,7 @@ def ex_73 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("both utterance", .marginal), ("second reported only", .unacceptable), ("first reported only", .unacceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "you"), ("indexical", "I"), ("test", "shift_together")] }
 
@@ -56,7 +56,7 @@ def ex_83 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("first reported only", .unacceptable), ("second reported only", .unacceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "I"), ("indexical", "I"), ("test", "local_determination")] }
 
@@ -71,7 +71,7 @@ def ex_87 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("intermediate reported context", .unacceptable), ("lowest reported context", .acceptable)]
     paperFeatures := [("verb", "nezperce_think"), ("lower_verb", "nezperce_say"), ("indexical", "I"), ("test", "local_determination"), ("lowest_shift", "yes")] }
 
@@ -86,7 +86,7 @@ def ex_111 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("first reported only", .acceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "I"), ("indexical", "here")] }
 
@@ -101,7 +101,7 @@ def ex_113 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taamsas is speaking."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("first reported only", .unacceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "here"), ("indexical", "I")] }
 
@@ -117,7 +117,7 @@ def ex_115 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Harold is in Clarkston. I and my consultant are in Lapwai."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("second reported only", .unacceptable)]
     paperFeatures := [("verb", "nezperce_think"), ("indexical", "I"), ("indexical", "here")] }
 
@@ -132,7 +132,7 @@ def ex_118 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A woman was on a group tour and she wandered off from the group and went back to the bus to take a nap. People noticed she was missing and started searching for her. She woke up, got back off the bus, and noticed everyone searching around. Of course, she didn’t know why they were searching. Someone said to her, “A woman is lost.” So she joined the search party to look for that woman, without knowing it was herself!"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-de se", .unacceptable)]
     paperFeatures := [("verb", "nezperce_think"), ("indexical", "I"), ("test", "de_se")] }
 
@@ -148,7 +148,7 @@ def ex_121 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Mary is organizing a big dinner at a restaurant with waiters to help serve food. She hears that a certain waiter named John is being a nuisance. She tells the nearest waiter, “John should go home.\" Unbeknowst to her, she’s talking to John."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-de se", .unacceptable)]
     paperFeatures := [("verb", "nezperce_say"), ("indexical", "you"), ("test", "de_se")] }
 
@@ -163,7 +163,7 @@ def ex_124 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Elicited in Lapwai: Costco is a prominent store in Clarkston. Everyone knows where it is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-de se", .acceptable)]
     paperFeatures := [("verb", "nezperce_think"), ("indexical", "here"), ("test", "de_se")] }
 
@@ -178,7 +178,7 @@ def ex_117 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se", .acceptable), ("non-de se", .unacceptable)]
     paperFeatures := [("verb", "zazaki_say"), ("indexical", "I"), ("test", "de_se")] }
 
@@ -193,7 +193,7 @@ def ex_120 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se", .acceptable), ("non-de se", .unacceptable)]
     paperFeatures := [("verb", "zazaki_say"), ("indexical", "you"), ("test", "de_se")] }
 
@@ -208,7 +208,7 @@ def ex_123 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se", .acceptable), ("non-de se", .unacceptable)]
     paperFeatures := [("verb", "zazaki_say"), ("indexical", "here"), ("test", "de_se")] }
 
@@ -223,7 +223,7 @@ def ex_103b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "This summer, I went to UCLA and met Muhemmet there. He told me, “I’m going to study here from this September.” Now I’m back in Cambridge, MA, talking to Ahmet."
     judgment := .unacceptable
-    alternatives := [("Muhemmet manga toqquzinji ay-din bašla-p (men) u jer-de uqu-imen di-di.", .acceptable)]
+    contrasts := [("Muhemmet manga toqquzinji ay-din bašla-p (men) u jer-de uqu-imen di-di.", .acceptable)]
     readings := [("both reported", .unacceptable)]
     paperFeatures := [("verb", "uyghur_say"), ("indexical", "I"), ("indexical", "here")] }
 
@@ -238,7 +238,7 @@ def ex_122 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Muhemmet is hosting a party. He hears that a certain waiter named John is being a nuisance. Muhemmet tells the nearest waiter, “John should go home.” Unbeknownst to him, he’s talking to John."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-de se", .acceptable)]
     paperFeatures := [("verb", "uyghur_say"), ("indexical", "you"), ("test", "de_se")] }
 
@@ -253,7 +253,7 @@ def ex_106 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("second reported only", .acceptable)]
     paperFeatures := [("verb", "slave_say"), ("indexical", "you"), ("indexical", "I")] }
 
@@ -268,7 +268,7 @@ def ex_119 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se", .acceptable), ("non-de se", .acceptable)]
     paperFeatures := [("verb", "dhaasanac_say"), ("indexical", "I"), ("test", "de_se")] }
 
@@ -283,7 +283,7 @@ def ex_159 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se", .acceptable), ("non-de se", .unacceptable)]
     paperFeatures := [("verb", "korean_say"), ("indexical", "today"), ("test", "de_se")] }
 
@@ -298,7 +298,7 @@ def ex_161 : Datum :=
     lgrConformance := some .wordAligned
     context := "It is January 8th."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("verb", "korean_think"), ("indexical", "tomorrow")] }
 
@@ -313,7 +313,7 @@ def ex_162 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("verb", "korean_think"), ("indexical", "I")] }
 
@@ -328,7 +328,7 @@ def ex_175 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "John and Mary are having a conversation in Boston on July 3rd. John says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both utterance", .acceptable), ("both reported", .acceptable), ("second reported only", .unacceptable), ("first reported only", .unacceptable)]
     paperFeatures := [("verb", "korean_say"), ("indexical", "yesterday"), ("indexical", "here")] }
 
@@ -343,7 +343,7 @@ def ex_176 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "John and Mary are having a conversation in Seoul. John says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both utterance", .acceptable), ("second reported only", .acceptable), ("first reported only", .acceptable), ("both reported", .acceptable)]
     paperFeatures := [("verb", "korean_say"), ("indexical", "I"), ("indexical", "here")] }
 
@@ -356,7 +356,7 @@ def ex_165 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable)]
     paperFeatures := [("verb", "anderson_say"), ("indexical", "yesterday"), ("variety", "Anderson English")] }
 
@@ -369,7 +369,7 @@ def ex_166 : Datum :=
     glossedTokens := []
     context := "John is confused on Thursday and thinks the date is the 23rd, when it is really the 24th. On Thursday, John tells Sarah, “I’m coming on the 25th.” But he doesn’t show up until Saturday. A week later, Sarah is telling Bill what happened. She says:"
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := [("non-de se", .acceptable)]
     paperFeatures := [("verb", "anderson_say"), ("indexical", "tomorrow"), ("variety", "Anderson English"), ("test", "de_se")] }
 

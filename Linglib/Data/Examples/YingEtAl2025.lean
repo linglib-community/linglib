@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Possibility")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Possibility")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Probability")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Probability")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Compositionality")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Compositionality")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Knowledge")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("factor", "Knowledge")] }
 

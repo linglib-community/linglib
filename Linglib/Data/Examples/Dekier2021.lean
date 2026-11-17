@@ -24,7 +24,7 @@ def english : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "English"), ("nonSpecific", "some-"), ("specificUnknown", "some-"), ("specificKnown", "some-")] }
 
@@ -37,7 +37,7 @@ def polish : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Polish"), ("nonSpecific", "-ś"), ("specificUnknown", "-ś"), ("specificKnown", "-ś")] }
 
@@ -50,7 +50,7 @@ def japanese : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Japanese"), ("nonSpecific", "-ka"), ("specificUnknown", "-ka"), ("specificKnown", "-ka")] }
 
@@ -63,7 +63,7 @@ def korean : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Korean"), ("nonSpecific", "-nka"), ("specificUnknown", "-nka"), ("specificKnown", "-nka")] }
 
@@ -76,7 +76,7 @@ def lezgian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Lezgian"), ("nonSpecific", "-jat'ani"), ("specificUnknown", "-jat'ani"), ("specificKnown", "-jat'ani")] }
 
@@ -89,7 +89,7 @@ def romanian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Romanian"), ("nonSpecific", "-va"), ("specificUnknown", "-va"), ("specificKnown", "-va")] }
 
@@ -102,7 +102,7 @@ def bulgarian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Bulgarian"), ("nonSpecific", "nja-"), ("specificUnknown", "nja-"), ("specificKnown", "nja-")] }
 
@@ -115,7 +115,7 @@ def serbocroatian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Serbo-Croatian"), ("nonSpecific", "ne-"), ("specificUnknown", "ne-"), ("specificKnown", "ne-")] }
 
@@ -128,7 +128,7 @@ def czech : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Czech"), ("nonSpecific", "ně-"), ("specificUnknown", "ně-"), ("specificKnown", "ně-")] }
 
@@ -141,7 +141,7 @@ def slovak : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Slovak"), ("nonSpecific", "nie-"), ("specificUnknown", "nie-"), ("specificKnown", "nie-")] }
 
@@ -154,7 +154,7 @@ def maltese : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Maltese"), ("nonSpecific", "xi-"), ("specificUnknown", "xi-"), ("specificKnown", "xi-")] }
 
@@ -167,7 +167,7 @@ def hungarian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Hungarian"), ("nonSpecific", "vala-"), ("specificUnknown", "vala-"), ("specificKnown", "vala-")] }
 
@@ -180,7 +180,7 @@ def hebrew : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Hebrew"), ("nonSpecific", "-šehu"), ("specificUnknown", "-šehu"), ("specificKnown", "-šehu")] }
 
@@ -193,7 +193,7 @@ def turkish : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Turkish"), ("nonSpecific", "bir-"), ("specificUnknown", "bir-"), ("specificKnown", "bir-")] }
 
@@ -206,7 +206,7 @@ def latvian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Latvian"), ("nonSpecific", "kaut-"), ("specificUnknown", "kaut-"), ("specificKnown", "kaut-")] }
 
@@ -219,7 +219,7 @@ def yakut : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Yakut"), ("nonSpecific", "-eme"), ("specificUnknown", "-ere"), ("specificKnown", "-ere")] }
 
@@ -232,7 +232,7 @@ def georgian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Georgian"), ("nonSpecific", "-me"), ("specificUnknown", "-ɣac"), ("specificKnown", "-ɣac")] }
 
@@ -245,7 +245,7 @@ def ossetic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Ossetic"), ("nonSpecific", "is-"), ("specificUnknown", "-dær"), ("specificKnown", "-dær")] }
 
@@ -258,7 +258,7 @@ def latin : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Latin"), ("nonSpecific", "ali-"), ("specificUnknown", "ali-"), ("specificKnown", "-dam")] }
 
@@ -271,7 +271,7 @@ def russian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Russian"), ("nonSpecific", "-nibud"), ("specificUnknown", "-to"), ("specificKnown", "koe-")] }
 
@@ -284,7 +284,7 @@ def lithuanian : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Lithuanian"), ("nonSpecific", "-nors"), ("specificUnknown", "kaž-"), ("specificKnown", "kai-")] }
 
@@ -297,7 +297,7 @@ def kannada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Kannada"), ("nonSpecific", "-aadaruu"), ("specificUnknown", "-oo")] }
 
@@ -310,7 +310,7 @@ def quechua : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Quechua"), ("nonSpecific", "-pis/-pas"), ("specificUnknown", "-chi/-cha")] }
 
@@ -323,7 +323,7 @@ def mandarinchinese : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Mandarin Chinese"), ("nonSpecific", "wh-pronoun")] }
 
@@ -336,7 +336,7 @@ def irish : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Irish")] }
 
@@ -349,7 +349,7 @@ def swahili : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Swahili")] }
 
@@ -362,7 +362,7 @@ def filipino : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "Filipino")] }
 

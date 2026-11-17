@@ -26,7 +26,7 @@ def ex_56a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Naistina săžaljavam, če ne otdelix poveče vnimanie na postrojkata.", .acceptable)]
+    contrasts := [("Naistina săžaljavam, če ne otdelix poveče vnimanie na postrojkata.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
@@ -41,7 +41,7 @@ def ex_56b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Samo me e jad, če grivnata izčezna sled zatămnenieto.", .acceptable)]
+    contrasts := [("Samo me e jad, če grivnata izčezna sled zatămnenieto.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "jad me e"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
@@ -56,7 +56,7 @@ def ex_57a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Nikak ne săžaljavam, če sreštata im se e provalila.", .acceptable)]
+    contrasts := [("Nikak ne săžaljavam, če sreštata im se e provalila.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "1")] }
 
@@ -71,7 +71,7 @@ def ex_57b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Vinoven li săm če gostite pristignaxa kăsno?", .acceptable)]
+    contrasts := [("Vinoven li săm če gostite pristignaxa kăsno?", .acceptable)]
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "1")] }
 
@@ -86,7 +86,7 @@ def ex_57c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Săžaljavam, če ne moža da ostaneš poveče.", .acceptable), ("Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.", .ungrammatical)]
+    contrasts := [("Săžaljavam, če ne moža da ostaneš poveče.", .acceptable), ("Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "contradiction"), ("person", "1")] }
 
@@ -101,7 +101,7 @@ def ex_58a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata.", .acceptable)]
+    contrasts := [("Văzmutix se če ne sa mogli da provedat sreštata.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
@@ -116,7 +116,7 @@ def ex_58b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Otkrix če sreštata im se e provalila.", .acceptable)]
+    contrasts := [("Otkrix če sreštata im se e provalila.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "otkrivam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
@@ -131,7 +131,7 @@ def ex_59a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Săžaljavam na provala na sreštata.", .ungrammatical), ("Săžaljavam provala na sreštata.", .ungrammatical)]
+    contrasts := [("Săžaljavam na provala na sreštata.", .ungrammatical), ("Săžaljavam provala na sreštata.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("diagnostic", "zaPhrase")] }
 
@@ -146,7 +146,7 @@ def ex_59b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Vinoven li săm na zakăsnenieto na gostite?", .ungrammatical), ("Vinoven li săm zakăsnenieto na gostite?", .ungrammatical)]
+    contrasts := [("Vinoven li săm na zakăsnenieto na gostite?", .ungrammatical), ("Vinoven li săm zakăsnenieto na gostite?", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("diagnostic", "zaPhrase")] }
 
@@ -161,7 +161,7 @@ def fn46i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.", .ungrammatical)]
+    contrasts := [("Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "če"), ("diagnostic", "contradiction"), ("person", "1")] }
 

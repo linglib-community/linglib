@@ -100,7 +100,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "team"],
@@ -120,7 +120,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "brother"],
@@ -140,7 +140,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "favorite movie"],
@@ -160,7 +160,7 @@
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "father"],
@@ -180,7 +180,7 @@
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "favorite movie"],
@@ -201,7 +201,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "teacher"],
@@ -222,7 +222,7 @@
       "translation": "",
       "context": "pointing",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "father"],
@@ -243,7 +243,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "favorite movie"],
@@ -263,7 +263,7 @@
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["noun", "father"],
@@ -285,7 +285,7 @@
       "translation": "Petja's chair.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["construction", "possessive"]
@@ -306,7 +306,7 @@
       "translation": "Mama's portrait.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["construction", "possessive"]
@@ -327,7 +327,7 @@
       "translation": "Petja's chair.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["construction", "genitive"]
@@ -348,7 +348,7 @@
       "translation": "Mama's portrait.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["construction", "genitive"]
@@ -369,7 +369,7 @@
       "translation": "Petja's murderer (murderer of Petja)",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "murderer of Petja", "judgment": "acceptable"}
       ],
@@ -392,7 +392,7 @@
       "translation": "# 'Petja's murderer' [ok only as e.g. 'a murderer Petja has hired']",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "murderer of Petja", "judgment": "unacceptable"},
         {"name": "a murderer Petja has hired", "judgment": "acceptable"}
@@ -417,7 +417,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Diese Bücher sind alte.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -441,7 +441,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Diese Bücher sind mein.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -465,7 +465,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -490,7 +490,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "unacceptable"}
@@ -516,7 +516,7 @@
       "translation": "",
       "context": "A newly naturalized citizen speaks.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -542,7 +542,7 @@
       "translation": "",
       "context": "A conqueror speaks.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "unacceptable"}
@@ -567,7 +567,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -592,7 +592,7 @@
       "translation": "",
       "context": "A custody fight.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "unacceptable"}
@@ -617,7 +617,7 @@
       "translation": "That country was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -642,7 +642,7 @@
       "translation": "That country was once my country",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -667,7 +667,7 @@
       "translation": "That country was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "unacceptable"}
@@ -692,7 +692,7 @@
       "translation": "That country was once my country",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["case", "nominative"]
@@ -715,7 +715,7 @@
       "translation": "That country was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -741,7 +741,7 @@
       "translation": "That country was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -767,7 +767,7 @@
       "translation": "That country was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "unacceptable"}
@@ -793,7 +793,7 @@
       "translation": "That country was once my country",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["case", "nominative"]
@@ -816,7 +816,7 @@
       "translation": "That country was once my country",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"},
         {"name": "argument", "judgment": "acceptable"}
@@ -839,7 +839,7 @@
       "translation": "That portrait was once mine",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "acceptable"}
       ],
@@ -861,7 +861,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possession", "judgment": "unacceptable"},
         {"name": "argument", "judgment": "acceptable"}

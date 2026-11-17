@@ -27,7 +27,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La tachuela pequeña azul", .ungrammatical)]
+    contrasts := [("La tachuela pequeña azul", .ungrammatical)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal"), ("order", "noun color size")] }
 
@@ -42,7 +42,7 @@ def ex_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La tachuela pequeña y azul", .acceptable)]
+    contrasts := [("La tachuela pequeña y azul", .acceptable)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal-conjunctive"), ("order", "suspended under conjunction")] }
 
@@ -58,7 +58,7 @@ def ex_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La azul tachuela pequeña", .ungrammatical)]
+    contrasts := [("La azul tachuela pequeña", .ungrammatical)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-split"), ("order", "size noun color")] }
 

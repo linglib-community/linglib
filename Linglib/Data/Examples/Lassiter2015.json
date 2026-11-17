@@ -10,7 +10,7 @@
     "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -30,7 +30,7 @@
     "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -50,7 +50,7 @@
     "context": "The same lottery.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -70,7 +70,7 @@
     "context": "The same lottery.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -90,7 +90,7 @@
     "context": "The same lottery.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -110,7 +110,7 @@
     "context": "The lottery, with five more people holding two tickets each.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -130,7 +130,7 @@
     "context": "The lottery with three siblings.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.4"],
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.5"],
@@ -169,7 +169,7 @@
     "context": "Sam might go to school, but he is somewhat more likely to cut class and go to the movies.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "You are about to throw a fair die.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -207,7 +207,7 @@
     "translation": "",
     "context": "You are about to draw a card at random from a well-shuffled pack.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -226,7 +226,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -266,7 +266,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -285,7 +285,7 @@
     "translation": "",
     "context": "An online genealogy discussion; David is the father.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -304,7 +304,7 @@
     "translation": "",
     "context": "A year in which Yale is a much better team than Harvard, and the odds against either winning are astronomical.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -323,7 +323,7 @@
     "translation": "",
     "context": "The same year.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],

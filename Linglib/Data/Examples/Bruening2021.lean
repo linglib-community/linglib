@@ -24,7 +24,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "serve"), ("sluiced", "secondObject")] }
 
@@ -37,7 +37,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "feed"), ("sluiced", "secondObject")] }
 
@@ -50,7 +50,7 @@ def ex_10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pay"), ("sluiced", "secondObject")] }
 
@@ -63,7 +63,7 @@ def ex_10d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "charge"), ("sluiced", "secondObject")] }
 
@@ -76,7 +76,7 @@ def ex_10e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "fine"), ("sluiced", "secondObject")] }
 
@@ -89,7 +89,7 @@ def ex_10f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tip"), ("sluiced", "secondObject")] }
 
@@ -102,7 +102,7 @@ def ex_10g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cost"), ("sluiced", "secondObject")] }
 
@@ -115,7 +115,7 @@ def ex_10h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "teach"), ("sluiced", "secondObject")] }
 
@@ -128,7 +128,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("They accidentally charged someone way too much, but we can't figure out who.", .acceptable)]
+    contrasts := [("They accidentally charged someone way too much, but we can't figure out who.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "charge"), ("sluiced", "firstObject")] }
 
@@ -141,7 +141,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("That guy once tipped a waitress almost 300%, but I can't remember which waitress.", .acceptable)]
+    contrasts := [("That guy once tipped a waitress almost 300%, but I can't remember which waitress.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "tip"), ("sluiced", "firstObject")] }
 
@@ -154,7 +154,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("That guy envies one of his neighbors the big house and the expensive car, but I can't remember which of his neighbors.", .acceptable)]
+    contrasts := [("That guy envies one of his neighbors the big house and the expensive car, but I can't remember which of his neighbors.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "envy"), ("sluiced", "firstObject")] }
 
@@ -167,7 +167,7 @@ def ex_11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The pope once forgave someone blasphemy, but I don't know who.", .acceptable)]
+    contrasts := [("The pope once forgave someone blasphemy, but I don't know who.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "forgive"), ("sluiced", "firstObject")] }
 
@@ -180,7 +180,7 @@ def ex_11e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The court denied one of the prisoners due process, but they won't tell us who.", .acceptable)]
+    contrasts := [("The court denied one of the prisoners due process, but they won't tell us who.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "deny"), ("sluiced", "firstObject")] }
 
@@ -193,7 +193,7 @@ def ex_11f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The warden will permit someone one last conjugal visit, but he didn't say who.", .acceptable)]
+    contrasts := [("The warden will permit someone one last conjugal visit, but he didn't say who.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "permit"), ("sluiced", "firstObject")] }
 
@@ -206,7 +206,7 @@ def ex_11g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The black knight struck one of his opponents a killing blow, but we couldn't see which opponent.", .acceptable)]
+    contrasts := [("The black knight struck one of his opponents a killing blow, but we couldn't see which opponent.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "strike"), ("sluiced", "firstObject")] }
 
@@ -219,7 +219,7 @@ def ex_63a_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "show"), ("implicit", "secondObject")] }
 
@@ -232,7 +232,7 @@ def ex_63a_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "show"), ("implicit", "directObject")] }
 
@@ -245,7 +245,7 @@ def ex_63b_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ask"), ("implicit", "secondObject")] }
 
@@ -258,7 +258,7 @@ def ex_63b_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ask"), ("implicit", "directObject")] }
 
@@ -271,7 +271,7 @@ def ex_63c_email_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "email"), ("implicit", "secondObject")] }
 
@@ -284,7 +284,7 @@ def ex_63c_email_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "email"), ("implicit", "directObject")] }
 
@@ -297,7 +297,7 @@ def ex_63c_text_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "text"), ("implicit", "secondObject")] }
 
@@ -310,7 +310,7 @@ def ex_63c_text_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "text"), ("implicit", "directObject")] }
 
@@ -323,7 +323,7 @@ def ex_63c_telegraph_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "telegraph"), ("implicit", "secondObject")] }
 
@@ -336,7 +336,7 @@ def ex_63c_telegraph_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "telegraph"), ("implicit", "directObject")] }
 
@@ -349,7 +349,7 @@ def ex_63d_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pay"), ("implicit", "secondObject")] }
 
@@ -362,7 +362,7 @@ def ex_63d_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pay"), ("implicit", "directObject")] }
 
@@ -375,7 +375,7 @@ def ex_63e_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "serve"), ("implicit", "secondObject")] }
 
@@ -388,7 +388,7 @@ def ex_63e_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "serve"), ("implicit", "directObject")] }
 
@@ -401,7 +401,7 @@ def ex_63f_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "promise"), ("implicit", "secondObject")] }
 
@@ -414,7 +414,7 @@ def ex_63f_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "promise"), ("implicit", "directObject")] }
 
@@ -427,7 +427,7 @@ def ex_63g_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "teach"), ("implicit", "secondObject")] }
 
@@ -440,7 +440,7 @@ def ex_63g_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "teach"), ("implicit", "directObject")] }
 
@@ -453,7 +453,7 @@ def ex_63h_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "feed"), ("implicit", "secondObject")] }
 
@@ -466,7 +466,7 @@ def ex_63h_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "feed"), ("implicit", "directObject")] }
 
@@ -479,7 +479,7 @@ def ex_64a_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pass"), ("implicit", "secondObject")] }
 
@@ -492,7 +492,7 @@ def ex_64a_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pass"), ("implicit", "directObject")] }
 
@@ -505,7 +505,7 @@ def ex_64b_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "throw"), ("implicit", "secondObject")] }
 
@@ -518,7 +518,7 @@ def ex_64b_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "throw"), ("implicit", "directObject")] }
 
@@ -531,7 +531,7 @@ def ex_64c_doc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "give"), ("implicit", "secondObject")] }
 
@@ -544,7 +544,7 @@ def ex_64c_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "give"), ("implicit", "directObject")] }
 
@@ -557,7 +557,7 @@ def ex_65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "write"), ("implicit", "directObject")] }
 
@@ -570,7 +570,7 @@ def ex_65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "write"), ("implicit", "secondObject")] }
 

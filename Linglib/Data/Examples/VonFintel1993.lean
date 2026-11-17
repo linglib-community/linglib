@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John is the only student who did not attend", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("determiner", "every")] }
 
@@ -50,7 +50,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John is the only student who attended", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("test", "cancellability")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("test", "cancellability")] }
 
@@ -89,7 +89,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the speaker noticed that every other student attended and that John did not", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("test", "embedding")] }
 
@@ -102,7 +102,7 @@ def ex_10_everyone : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
@@ -115,7 +115,7 @@ def ex_10_nobody : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
@@ -128,7 +128,7 @@ def ex_10_anyone : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "any")] }
 
@@ -141,7 +141,7 @@ def ex_10_somebody : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
 
@@ -154,7 +154,7 @@ def ex_10_somewhere : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("anywhere but here", .acceptable)]
+    contrasts := [("anywhere but here", .acceptable)]
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
 
@@ -167,7 +167,7 @@ def ex_10_all_of : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("none of my friends but Chris", .acceptable)]
+    contrasts := [("none of my friends but Chris", .acceptable)]
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "all")] }
 
@@ -180,7 +180,7 @@ def ex_10_most_of : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("many of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
+    contrasts := [("many of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 
@@ -193,7 +193,7 @@ def ex_10_everything : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
@@ -206,7 +206,7 @@ def ex_10_none : Datum :=
     glossedTokens := []
     context := "Dryden."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
@@ -219,7 +219,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("No human being is mortal. Therefore no male human being is mortal.", .acceptable)]
+    contrasts := [("No human being is mortal. Therefore no male human being is mortal.", .acceptable)]
     readings := []
     paperFeatures := [("inference", "valid"), ("property", "left downward monotonicity")] }
 
@@ -232,7 +232,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("No student but John attended the meeting. Therefore no student but John and Jill attended the meeting.", .unacceptable)]
+    contrasts := [("No student but John attended the meeting. Therefore no student but John and Jill attended the meeting.", .unacceptable)]
     readings := []
     paperFeatures := [("inference", "invalid"), ("property", "left downward monotonicity")] }
 
@@ -245,7 +245,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("complement", "quantifier")] }
 
@@ -258,7 +258,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "valid"), ("property", "left upward monotonicity")] }
 
@@ -271,7 +271,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John and Mary are the students who did not attend", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
@@ -285,7 +285,7 @@ def ex_25a : Datum :=
     context := "Tom, John and Harry did not attend; Bill and Mary did."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most")] }
 
@@ -298,7 +298,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := "Tom, John and Harry did not attend; Bill and Mary did."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 
@@ -311,7 +311,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical: nobody but a total idiot would have", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("construction", "wh-question")] }
 
@@ -324,7 +324,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "wh-question")] }
 
@@ -337,7 +337,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Everybody but John and Mary attended the meeting.", .acceptable)]
+    contrasts := [("Everybody but John and Mary attended the meeting.", .acceptable)]
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "conjunction")] }
 
@@ -350,7 +350,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("No one, except for the famous detective, suspected the cook.", .acceptable), ("No one suspected the cook, except for the famous detective.", .acceptable)]
+    contrasts := [("No one, except for the famous detective, suspected the cook.", .acceptable), ("No one suspected the cook, except for the famous detective.", .acceptable)]
     readings := []
     paperFeatures := [("exceptive", "except for"), ("position", "peripheral")] }
 
@@ -363,7 +363,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "afterthought")] }
 
@@ -376,7 +376,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Except for John, few employees accepted the pay cut.", .acceptable)]
+    contrasts := [("Except for John, few employees accepted the pay cut.", .acceptable)]
     readings := [("appositive: Joan is a notable exception", .acceptable)]
     paperFeatures := [("exceptive", "except for"), ("use", "appositive"), ("determiner", "most")] }
 
@@ -389,7 +389,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "no")] }
 
@@ -402,7 +402,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "definite")] }
 
@@ -415,7 +415,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "most")] }
 
@@ -428,7 +428,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Who but John would say a thing like that?", .acceptable)]
+    contrasts := [("Who but John would say a thing like that?", .acceptable)]
     readings := [("ordinary informative question", .acceptable)]
     paperFeatures := [("exceptive", "except for"), ("construction", "wh-question")] }
 
@@ -441,7 +441,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("construction", "conjunction")] }
 
@@ -454,7 +454,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "conjunction")] }
 
@@ -467,7 +467,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except for"), ("test", "sentence-level subtraction")] }
 
@@ -480,7 +480,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "numeral")] }
 

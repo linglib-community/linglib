@@ -26,7 +26,7 @@ def ex_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("number", "SG"), ("definite", "no"), ("reading", "general")] }
 
@@ -41,7 +41,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "atom"), ("number", "SG")] }
 
@@ -56,7 +56,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "group"), ("number", "SG")] }
 
@@ -71,7 +71,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "group"), ("number", "PL"), ("numeral", "two")] }
 
@@ -86,7 +86,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "group"), ("number", "SG"), ("numeral", "one")] }
 
@@ -101,7 +101,7 @@ def ex_5c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicativeIndefinite"), ("subject", "group"), ("number", "SG")] }
 
@@ -116,7 +116,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "group"), ("number", "PL")] }
 
@@ -131,7 +131,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative"), ("subject", "atom"), ("number", "PL")] }
 
@@ -146,7 +146,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("number", "PL"), ("definite", "no"), ("reading", "strictPlural")] }
 
@@ -161,7 +161,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "restrictor"), ("number", "PL"), ("reading", "strictPlural")] }
 
@@ -176,7 +176,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "restrictor"), ("number", "SG"), ("reading", "general")] }
 
@@ -191,7 +191,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("number", "SG"), ("numeral", "two"), ("definite", "no")] }
 
@@ -206,7 +206,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("number", "PL"), ("numeral", "two"), ("definite", "no")] }
 
@@ -221,7 +221,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "definite"), ("number", "SG"), ("definite", "yes"), ("reading", "strictSingular")] }
 
@@ -236,7 +236,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "boundPossessive"), ("number", "PL"), ("definite", "yes"), ("reading", "strictPlural")] }
 
@@ -251,7 +251,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "boundPossessive"), ("number", "SG"), ("definite", "yes"), ("reading", "strictSingular")] }
 
@@ -266,7 +266,7 @@ def ex_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "definite"), ("number", "SG"), ("numeral", "two"), ("definite", "yes")] }
 
@@ -281,7 +281,7 @@ def ex_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "definite"), ("number", "PL"), ("numeral", "two"), ("definite", "yes")] }
 
@@ -296,7 +296,7 @@ def ex_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negated"), ("number", "SG"), ("definite", "no"), ("scopeAmbiguous", "no")] }
 
@@ -311,7 +311,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negated"), ("number", "PL"), ("definite", "no"), ("scopeAmbiguous", "yes")] }
 
@@ -326,7 +326,7 @@ def ex_26a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negated"), ("number", "SG"), ("numeral", "two"), ("definite", "no"), ("scopeAmbiguous", "yes")] }
 
@@ -341,7 +341,7 @@ def ex_27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negated"), ("number", "PL"), ("numeral", "two"), ("definite", "no"), ("scopeAmbiguous", "yes")] }
 

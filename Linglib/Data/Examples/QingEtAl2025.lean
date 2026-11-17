@@ -24,7 +24,7 @@ def en_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -37,7 +37,7 @@ def en_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("hope that p", .acceptable), ("hope that not p", .unacceptable)]
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -50,7 +50,7 @@ def en_13c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -63,7 +63,7 @@ def en_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -76,7 +76,7 @@ def en_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -89,7 +89,7 @@ def en_14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -102,7 +102,7 @@ def en_14d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -115,7 +115,7 @@ def en_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -129,7 +129,7 @@ def en_24 : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -143,7 +143,7 @@ def en_25 : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -156,7 +156,7 @@ def en_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -169,7 +169,7 @@ def en_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -182,7 +182,7 @@ def en_26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -195,7 +195,7 @@ def en_26d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -209,7 +209,7 @@ def en_32a : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -223,7 +223,7 @@ def en_32b : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -236,7 +236,7 @@ def en_38a : Datum :=
     glossedTokens := []
     context := "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "like"), ("valence", "positive"), ("polarity", "negated")] }
 
@@ -249,7 +249,7 @@ def en_38b : Datum :=
     glossedTokens := []
     context := "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "happy"), ("valence", "positive"), ("polarity", "negated")] }
 
@@ -262,7 +262,7 @@ def en_40a : Datum :=
     glossedTokens := []
     context := "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hate"), ("valence", "negative"), ("polarity", "negated")] }
 
@@ -275,7 +275,7 @@ def en_40b : Datum :=
     glossedTokens := []
     context := "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "upset"), ("valence", "negative"), ("polarity", "negated")] }
 
@@ -288,7 +288,7 @@ def en_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -301,7 +301,7 @@ def en_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -314,7 +314,7 @@ def en_44 : Datum :=
     glossedTokens := []
     context := "No one in particular is such that the women fear that they might be riding the bus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
@@ -328,7 +328,7 @@ def en_62a_goodfriend : Datum :=
     context := "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .marginal
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical")] }
 
@@ -342,7 +342,7 @@ def en_62a_noisehater : Datum :=
     context := "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .marginal
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation")] }
 
@@ -355,7 +355,7 @@ def en_63a : Datum :=
     glossedTokens := []
     context := "Alex and Sam are at a party together. Alex says to Sam."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical")] }
 
@@ -368,7 +368,7 @@ def en_63b : Datum :=
     glossedTokens := []
     context := "Alex and Sam are at a party together. Alex says to Sam."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation")] }
 
@@ -382,7 +382,7 @@ def en_78a : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .unacceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation")] }
 
@@ -396,7 +396,7 @@ def en_78b : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical")] }
 
@@ -410,7 +410,7 @@ def en_78c : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical")] }
 
@@ -424,7 +424,7 @@ def en_78d : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .unacceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation")] }
 
@@ -438,7 +438,7 @@ def en_79a : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical")] }
 
@@ -453,7 +453,7 @@ def en_79b : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .marginal
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation")] }
 
@@ -468,7 +468,7 @@ def en_79c : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .marginal
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation")] }
 
@@ -482,7 +482,7 @@ def en_79d : Datum :=
     context := "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical")] }
 
@@ -497,7 +497,7 @@ def zh_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "qidai"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -512,7 +512,7 @@ def zh_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "qidai"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -528,7 +528,7 @@ def zh_27a : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -544,7 +544,7 @@ def zh_27b : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -560,7 +560,7 @@ def zh_33 : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -575,7 +575,7 @@ def zh_55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "haipa"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -590,7 +590,7 @@ def zh_56 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("constituent question", .unacceptable), ("wh-indefinite: John fears that some player will win the match", .acceptable)]
     paperFeatures := [("predicate", "haipa"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -605,7 +605,7 @@ def zh_fn8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "haipa"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -620,7 +620,7 @@ def zh_64a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "xiwang"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -635,7 +635,7 @@ def zh_64b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("hope that p", .acceptable), ("hope that not p", .unacceptable)]
     paperFeatures := [("predicate", "xiwang"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -650,7 +650,7 @@ def ja_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "tanosimi"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -665,7 +665,7 @@ def ja_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "tanosimi"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -681,7 +681,7 @@ def ja_28a : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -697,7 +697,7 @@ def ja_28b : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -713,7 +713,7 @@ def ja_34 : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -729,7 +729,7 @@ def ja_50_goodfriend : Datum :=
     context := "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation")] }
 
@@ -745,7 +745,7 @@ def ja_50_noisehater : Datum :=
     context := "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical")] }
 
@@ -760,7 +760,7 @@ def ja_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -775,7 +775,7 @@ def ja_52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "No player in particular is such that John fears that they will win the match."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
@@ -790,7 +790,7 @@ def ja_67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "nozomu"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -805,7 +805,7 @@ def ja_67b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "nozomu"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -821,7 +821,7 @@ def es_29a : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -837,7 +837,7 @@ def es_29b : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -853,7 +853,7 @@ def es_35 : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -868,7 +868,7 @@ def es_53 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "temer"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -883,7 +883,7 @@ def es_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "temer"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -898,7 +898,7 @@ def es_66a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "esperar"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -913,7 +913,7 @@ def es_66b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "esperar"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -929,7 +929,7 @@ def tr_30a : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -945,7 +945,7 @@ def tr_30b : Datum :=
     context := "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "declarative"), ("embedding", "argument")] }
 
@@ -961,7 +961,7 @@ def tr_36 : Datum :=
     context := "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -977,7 +977,7 @@ def tr_45_goodfriend : Datum :=
     context := "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation")] }
 
@@ -993,7 +993,7 @@ def tr_45_noisehater : Datum :=
     context := "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical")] }
 
@@ -1008,7 +1008,7 @@ def tr_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "constituent"), ("embedding", "argument")] }
 
@@ -1023,7 +1023,7 @@ def tr_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "No player in particular is such that John fears that they will win the match."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
@@ -1038,7 +1038,7 @@ def tr_68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -1053,7 +1053,7 @@ def tr_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -1068,7 +1068,7 @@ def tr_71a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
@@ -1083,7 +1083,7 @@ def tr_71b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
@@ -1098,7 +1098,7 @@ def tr_71c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
@@ -1113,7 +1113,7 @@ def tr_72a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -1128,7 +1128,7 @@ def tr_72b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -1143,7 +1143,7 @@ def tr_73a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "dolan"), ("clause", "polar"), ("embedding", "diye")] }
 
@@ -1158,7 +1158,7 @@ def tr_73b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "dolan"), ("clause", "polar"), ("embedding", "argument")] }
 
@@ -1174,7 +1174,7 @@ def tr_75_goodfriend : Datum :=
     context := "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye"), ("target", "radical")] }
 
@@ -1190,7 +1190,7 @@ def tr_75_noisehater : Datum :=
     context := "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye"), ("target", "negation")] }
 
@@ -1206,7 +1206,7 @@ def tr_76_goodfriend : Datum :=
     context := "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "diye"), ("target", "negation")] }
 
@@ -1222,7 +1222,7 @@ def tr_76_noisehater : Datum :=
     context := "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "diye"), ("target", "radical")] }
 

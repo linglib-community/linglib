@@ -26,7 +26,7 @@ def makura : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "mákùrà gà"), ("accent", "initial mora")] }
 
@@ -41,7 +41,7 @@ def kokoro : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "kókórò gà"), ("accent", "second mora")] }
 
@@ -56,7 +56,7 @@ def atama : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "átámá gà"), ("accent", "final mora")] }
 
@@ -71,7 +71,7 @@ def sakana : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "sákáná gá"), ("accent", "none"), ("note", "unaccented: no pitch drop")] }
 

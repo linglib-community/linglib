@@ -26,7 +26,7 @@ def ex15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")] }
 
@@ -41,7 +41,7 @@ def ex15_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "yes")] }
 
@@ -56,7 +56,7 @@ def ex18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "no"), ("licensor", "yes")] }
 
@@ -71,7 +71,7 @@ def ex18_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "no"), ("licensor", "yes")] }
 
@@ -86,7 +86,7 @@ def ex20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")] }
 
@@ -101,7 +101,7 @@ def ex20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "no")] }
 
@@ -116,7 +116,7 @@ def ex20b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "no")] }
 

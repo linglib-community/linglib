@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("all the kids laughed", .acceptable), ("some of the kids laughed", .unacceptable)]
     paperFeatures := [("polarity", "positive")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all the kids laughed", .unacceptable), ("none of the kids laughed", .acceptable)]
     paperFeatures := [("polarity", "negative")] }
 
@@ -50,7 +50,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no boy found all of his presents", .unacceptable), ("no boy found any of his presents", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound below negation")] }
 
@@ -63,7 +63,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := "There was a clown at my kid's birthday party. Someone asks me if they gave a funny performance."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if most of the kids laughed", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("reading", "non-maximal")] }
 
@@ -76,7 +76,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := "Someone asks me who among the five adults and the ten kids at the birthday party laughed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if most of the kids laughed", .unacceptable)]
     paperFeatures := [("polarity", "positive"), ("reading", "maximal")] }
 
@@ -89,7 +89,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := "There was a clown at my kid's birthday party. Someone asks me if they gave a funny performance."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if most of the kids didn't laugh", .questionable)]
     paperFeatures := [("polarity", "negative")] }
 
@@ -102,7 +102,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := "The kids are required to take at least 2 of the 4 vitamins I gave each of them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every kid took at least 2 vitamins", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
@@ -115,7 +115,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "The kids are required to take at least 2 of the 4 vitamins I gave each of them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no kid took any vitamin", .acceptable), ("no kid took at least 2 vitamins", .questionable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
@@ -128,7 +128,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := "Context B: the kids were told to come with at least one parent to the meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every kid came with at least one parent", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
@@ -141,7 +141,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := "Context B: the kids were told to come with at least one parent to the meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no kid came with any parent", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
@@ -154,7 +154,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
@@ -167,7 +167,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
@@ -180,7 +180,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("allowed to read W&P and allowed to read AK", .acceptable), ("allowed to read W&P or allowed to read AK", .unacceptable)]
     paperFeatures := [("phenomenon", "free choice")] }
 
@@ -193,7 +193,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not both allowed", .unacceptable), ("allowed to read neither", .acceptable)]
     paperFeatures := [("phenomenon", "free choice"), ("polarity", "negative")] }
 
@@ -206,7 +206,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one student read all of the books and no more than one read any", .acceptable)]
     paperFeatures := [("environment", "non-monotonic")] }
 
@@ -219,7 +219,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary read all and John read none", .acceptable)]
     paperFeatures := [("environment", "ellipsis")] }
 
@@ -232,7 +232,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Kelly or Jane laughed but not both", .acceptable)]
     paperFeatures := [("alternatives", "with conjunction")] }
 
@@ -245,7 +245,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := "The kids are Kelly and Jane."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Kelly and Jane laughed", .acceptable)]
     paperFeatures := [("alternatives", "subdomain only")] }
 
@@ -258,7 +258,7 @@ def ex_71b : Datum :=
     glossedTokens := []
     context := "Each of the guests in the party was served a plate containing 10 poisoned peas. Eating 3 of those peas is entirely harmless, but eating 4 or more leads to certain death."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no guest ate more than 3 poisoned peas", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
@@ -271,7 +271,7 @@ def ex_72b : Datum :=
     glossedTokens := []
     context := "Each contestant in a pie eating contest is provided with 25 pies. In order to move on to the next round a contestant must eat at least 20 pies (they get more points for eating more)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no contestant ate at least 20 pies", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
@@ -284,7 +284,7 @@ def ex_73 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if Mary read all of the books", .acceptable), ("false if Mary read none", .acceptable), ("neither true nor false if some but not all", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "yes")] }
 
@@ -297,7 +297,7 @@ def ex_74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary read all of the 4 books", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "no"), ("non_maximality", "no")] }
 
@@ -310,7 +310,7 @@ def ex_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary didn't read any of the 4 books", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("gappiness", "no")] }
 
@@ -323,7 +323,7 @@ def ex_76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if Mary read all of the 4 books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no")] }
 
@@ -336,7 +336,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if both", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no")] }
 
@@ -349,7 +349,7 @@ def ex_80 : Datum :=
     glossedTokens := []
     context := "If Mary reads any five of the ten books she is guaranteed to pass the test; if she reads less than five she is guaranteed to fail."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if Mary read at least five of the ten books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no"), ("reading", "at least five")] }
 
@@ -362,7 +362,7 @@ def ex_81 : Datum :=
     glossedTokens := []
     context := "To pass the test, Mary has to read all of the ten books on the reading list; if she reads less than ten she is guaranteed to fail."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if Mary read all of the ten books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no"), ("reading", "maximal")] }
 
@@ -375,7 +375,7 @@ def ex_82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neither true nor false if some but not all of the squares are red", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "yes")] }
 
@@ -388,7 +388,7 @@ def ex_82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neither true nor false if some but not all of the squares are red", .questionable)]
     paperFeatures := [("polarity", "negative"), ("gappiness", "reduced")] }
 
@@ -401,7 +401,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
@@ -414,7 +414,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
@@ -427,7 +427,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
@@ -440,7 +440,7 @@ def ex_85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
@@ -453,7 +453,7 @@ def ex_88a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if half of the kids lifted it together and no one else did", .unacceptable)]
     paperFeatures := [("predicate", "non-distributive")] }
 
@@ -466,7 +466,7 @@ def ex_88b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if half of the kids lifted it together and no one else did", .unacceptable)]
     paperFeatures := [("predicate", "non-distributive"), ("polarity", "negative")] }
 
@@ -479,7 +479,7 @@ def ex_94a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every girl danced with some boy and every boy with some girl", .acceptable)]
     paperFeatures := [("predicate", "two-place")] }
 
@@ -492,7 +492,7 @@ def ex_94b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no girl danced with any boy", .acceptable)]
     paperFeatures := [("predicate", "two-place"), ("polarity", "negative")] }
 

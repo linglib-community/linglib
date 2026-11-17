@@ -25,7 +25,7 @@ def ex2b : Datum :=
     context := "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ¬φ")] }
 
@@ -39,7 +39,7 @@ def ex4 : Datum :=
     context := "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ_i for each i")] }
 
@@ -53,7 +53,7 @@ def ex5 : Datum :=
     context := "The same lottery."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ ∧ φ ⪰ χ")] }
 
@@ -67,7 +67,7 @@ def ex8 : Datum :=
     context := "The same lottery."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
 
@@ -81,7 +81,7 @@ def ex9 : Datum :=
     context := "The same lottery."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
 
@@ -95,7 +95,7 @@ def ex12 : Datum :=
     context := "The lottery, with five more people holding two tickets each."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)")] }
 
@@ -109,7 +109,7 @@ def ex33c : Datum :=
     context := "The lottery with three siblings."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.4"), ("form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))")] }
 
@@ -122,7 +122,7 @@ def ex35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.5"), ("pattern", "must to more likely than not")] }
 
@@ -136,7 +136,7 @@ def ex48 : Datum :=
     context := "Sam might go to school, but he is somewhat more likely to cut class and go to the movies."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("measure", "symmetric fuzzy")] }
 
@@ -149,7 +149,7 @@ def ex50 : Datum :=
     glossedTokens := []
     context := "You are about to throw a fair die."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")] }
 
@@ -162,7 +162,7 @@ def ex51 : Datum :=
     glossedTokens := []
     context := "You are about to draw a card at random from a well-shuffled pack."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")] }
 
@@ -175,7 +175,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "additive")] }
 
@@ -188,7 +188,7 @@ def ex54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "non-additive")] }
 
@@ -201,7 +201,7 @@ def ex56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "must to much more likely than not")] }
 
@@ -214,7 +214,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := "An online genealogy discussion; David is the father."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("issue", "weakness of must")] }
 
@@ -227,7 +227,7 @@ def ex65a : Datum :=
     glossedTokens := []
     context := "A year in which Yale is a much better team than Harvard, and the odds against either winning are astronomical."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")] }
 
@@ -240,7 +240,7 @@ def ex65b : Datum :=
     glossedTokens := []
     context := "The same year."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")] }
 

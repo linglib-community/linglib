@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "predicative")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "attributive")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "quantificational")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "specificational")] }
 
@@ -76,7 +76,7 @@ def ex_1e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "numeral")] }
 
@@ -89,7 +89,7 @@ def ex_1f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
@@ -102,7 +102,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := "On the board four number systems, the natural numbers, the integers, the rationals and the reals, are illustrated with examples of numbers belonging to them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "taxonomic")] }
 
@@ -115,7 +115,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := "On the board four number systems, the natural numbers, the integers, the rationals and the reals, are illustrated with examples of numbers belonging to them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "kindRef")] }
 
@@ -128,7 +128,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
@@ -141,7 +141,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
@@ -154,7 +154,7 @@ def ex_76g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "tokenRef")] }
 
@@ -167,7 +167,7 @@ def ex_76h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "tokenPredicate")] }
 
@@ -180,7 +180,7 @@ def ex_83 : Datum :=
     glossedTokens := []
     context := "Mary is taking a set theory class where the natural numbers are modeled as finite von Neumann ordinals; John asks which of the sets on the board is the number two, and Mary points at {∅, {∅}}. In a second context the natural numbers are modeled as Zermelo ordinals and Mary points at {{∅}}."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "numeral")] }
 
@@ -193,7 +193,7 @@ def ex_94a : Datum :=
     glossedTokens := []
     context := "Mary is looking at three paint swatches, each displaying a different shade of red, and points at the first."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "taxonomic")] }
 
@@ -206,7 +206,7 @@ def ex_94b : Datum :=
     glossedTokens := []
     context := "Mary is looking at three paint swatches, each displaying a different shade of red."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "kindRef")] }
 
@@ -219,7 +219,7 @@ def ex_98 : Datum :=
     glossedTokens := []
     context := "Mary is looking at a paint swatch exhibiting three colors of paint: a shade of red, a shade of green, and a shade of blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "tokenRef")] }
 

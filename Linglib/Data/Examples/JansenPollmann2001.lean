@@ -24,7 +24,7 @@ def pair_5_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "5"), ("second", "6")] }
 
@@ -37,7 +37,7 @@ def pair_10_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "10"), ("second", "12")] }
 
@@ -50,7 +50,7 @@ def pair_20_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "20"), ("second", "25")] }
 
@@ -63,7 +63,7 @@ def pair_10_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "10"), ("second", "13")] }
 
@@ -76,7 +76,7 @@ def pair_80_91 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "80"), ("second", "91")] }
 
@@ -89,7 +89,7 @@ def pair_350_300 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pair"), ("first", "350"), ("second", "300")] }
 

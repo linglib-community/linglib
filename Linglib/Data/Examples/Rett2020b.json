@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "conjoined"]
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateMain"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -106,7 +106,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"],
@@ -126,7 +126,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "conjoined"],
@@ -146,7 +146,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateMain"],
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -186,7 +186,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"],
@@ -206,7 +206,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "conjoined"],
@@ -226,7 +226,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateMain"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -266,7 +266,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"],
@@ -286,7 +286,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "conjoined"],
@@ -306,7 +306,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateMain"],
@@ -327,7 +327,7 @@
     "translation": "Thomas is as tall as Christoffer; he is in fact taller.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateAdverbial"],
@@ -347,7 +347,7 @@
     "translation": "John is as tall as Pete. He is in fact taller.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateAdverbial"],
@@ -367,7 +367,7 @@
     "translation": "John is as tall as Peter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -386,7 +386,7 @@
     "translation": "John is twice as tall as Peter.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"],
@@ -406,7 +406,7 @@
     "translation": "Gianni is as tall as Marco.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -425,7 +425,7 @@
     "translation": "Gianni is twice as tall as Marco.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"],
@@ -445,7 +445,7 @@
     "translation": "John is as tall as Pete.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"]
@@ -464,7 +464,7 @@
     "translation": "John is twice as tall as Pete.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -484,7 +484,7 @@
     "translation": "John is as tall as Pete, and he is short.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -504,7 +504,7 @@
     "translation": "John is as tall as Pete, in fact he is taller.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -524,7 +524,7 @@
     "translation": "Thomas is twice as tall as Christoffer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -544,7 +544,7 @@
     "translation": "Thomas is as tall as Christoffer, but both are short.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -564,7 +564,7 @@
     "translation": "Thomas is as tall as Christoffer, in fact he is even taller.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"],
@@ -584,7 +584,7 @@
     "translation": "John is as tall as Peter, but he is short.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -604,7 +604,7 @@
     "translation": "John is as tall as Peter. In fact, he is taller.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -624,7 +624,7 @@
     "translation": "John is twice as tall as Peter.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -644,7 +644,7 @@
     "translation": "John is as tall as Peter, but Peter is short.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -664,7 +664,7 @@
     "translation": "John is as tall as Peter. In fact, he is taller.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -685,7 +685,7 @@
     "translation": "John is twice as tall as Peter.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
@@ -705,7 +705,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -724,7 +724,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -743,7 +743,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -762,7 +762,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "smOnly"]
@@ -781,7 +781,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"]
@@ -800,7 +800,7 @@
     "translation": "He is as good as his brother.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"]
@@ -819,7 +819,7 @@
     "translation": "My child is as clever as yours.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateMain"]
@@ -838,7 +838,7 @@
     "translation": "She is as tall as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateAdverbial"]
@@ -857,7 +857,7 @@
     "translation": "My sister is as tall as I.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "predicateAdverbial"]
@@ -876,7 +876,7 @@
     "translation": "He is as black as the crow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "dedicated"]
@@ -895,7 +895,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"]
@@ -914,7 +914,7 @@
     "translation": "Finns don't shake hands as much as Central Europeans.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "sufficientive"]
@@ -933,7 +933,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"]
@@ -952,7 +952,7 @@
     "translation": "Today is as cold as yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"]
@@ -971,7 +971,7 @@
     "translation": "My sister is as pretty as you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"]

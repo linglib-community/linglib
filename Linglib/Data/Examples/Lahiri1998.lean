@@ -26,7 +26,7 @@ def ex6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "positive (UE)")] }
 
@@ -41,7 +41,7 @@ def ex6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "negation")] }
 
@@ -56,7 +56,7 @@ def ex6c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "positive (UE)")] }
 
@@ -71,7 +71,7 @@ def ex6d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "negation")] }
 
@@ -86,7 +86,7 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "positive (UE)")] }
 
@@ -101,7 +101,7 @@ def ex7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "negation")] }
 
@@ -116,7 +116,7 @@ def ex7c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "positive (UE)")] }
 
@@ -131,7 +131,7 @@ def ex7d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "negation")] }
 
@@ -146,7 +146,7 @@ def ex8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "positive (UE)")] }
 
@@ -161,7 +161,7 @@ def ex8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "negation")] }
 
@@ -176,7 +176,7 @@ def ex9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "positive (UE)")] }
 
@@ -191,7 +191,7 @@ def ex9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "negation")] }
 
@@ -206,7 +206,7 @@ def ex10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "conditional protasis")] }
 
@@ -221,7 +221,7 @@ def ex10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "conditional protasis")] }
 
@@ -236,7 +236,7 @@ def ex10c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "conditional apodosis")] }
 
@@ -251,7 +251,7 @@ def ex10d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "conditional protasis")] }
 
@@ -266,7 +266,7 @@ def ex10e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "conditional protasis")] }
 
@@ -281,7 +281,7 @@ def ex10f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "conditional protasis")] }
 
@@ -296,7 +296,7 @@ def ex10g : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "conditional apodosis")] }
 
@@ -311,7 +311,7 @@ def ex10h : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "conditional apodosis")] }
 
@@ -326,7 +326,7 @@ def ex10i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "conditional apodosis")] }
 
@@ -341,7 +341,7 @@ def ex11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "universal restrictor")] }
 
@@ -356,7 +356,7 @@ def ex11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "universal restrictor")] }
 
@@ -371,7 +371,7 @@ def ex12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "existential restrictor")] }
 
@@ -386,7 +386,7 @@ def ex29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "adversative")] }
 
@@ -401,7 +401,7 @@ def ex29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "adversative")] }
 
@@ -416,7 +416,7 @@ def ex29c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", .marginal)]
+    contrasts := [("maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", .marginal)]
     readings := []
     paperFeatures := [("npi", "kisii-se bhii"), ("environment", "prohibition verb")] }
 
@@ -431,7 +431,7 @@ def ex29d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se rokaa", .ungrammatical)]
+    contrasts := [("maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se rokaa", .ungrammatical)]
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "outside prohibition scope")] }
 
@@ -446,7 +446,7 @@ def ex29e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("maiN-ne ek bhii aadmii-ko rameS-se baat-ciit karne-se rokaa", .ungrammatical)]
+    contrasts := [("maiN-ne ek bhii aadmii-ko rameS-se baat-ciit karne-se rokaa", .ungrammatical)]
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "outside prohibition scope")] }
 
@@ -461,7 +461,7 @@ def ex29f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("maiN-ne rameS-ko ek bhii aadmii-se baat-ciit karne-se rokaa", .acceptable)]
+    contrasts := [("maiN-ne rameS-ko ek bhii aadmii-se baat-ciit karne-se rokaa", .acceptable)]
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "prohibition verb")] }
 
@@ -476,7 +476,7 @@ def ex31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "non-adversative factive")] }
 
@@ -491,7 +491,7 @@ def ex31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "settle-for-less glad")] }
 
@@ -506,7 +506,7 @@ def ex32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisiike bhii"), ("environment", "before-clause")] }
 
@@ -521,7 +521,7 @@ def ex32b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koi bhii"), ("environment", "before-clause")] }
 
@@ -536,7 +536,7 @@ def ex33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisiike bhii"), ("environment", "after-clause")] }
 
@@ -551,7 +551,7 @@ def ex34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "question")] }
 
@@ -566,7 +566,7 @@ def ex34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "question")] }
 
@@ -581,7 +581,7 @@ def ex34c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "question")] }
 
@@ -596,7 +596,7 @@ def ex34d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "question")] }
 
@@ -611,7 +611,7 @@ def ex34e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "question")] }
 
@@ -626,7 +626,7 @@ def ex34f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "question")] }
 
@@ -641,7 +641,7 @@ def ex41a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koi bhii"), ("environment", "negation (subject NPI)")] }
 
@@ -656,7 +656,7 @@ def ex35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic")] }
 
@@ -671,7 +671,7 @@ def ex35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic")] }
 
@@ -686,7 +686,7 @@ def ex35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "generic")] }
 
@@ -701,7 +701,7 @@ def ex35d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic")] }
 
@@ -716,7 +716,7 @@ def ex35e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "generic")] }
 
@@ -731,7 +731,7 @@ def ex36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "possibility modal")] }
 
@@ -746,7 +746,7 @@ def ex36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "possibility modal")] }
 
@@ -761,7 +761,7 @@ def ex36c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kabhii bhii"), ("environment", "possibility modal")] }
 
@@ -776,7 +776,7 @@ def ex36d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "necessity modal")] }
 
@@ -791,7 +791,7 @@ def ex36e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "necessity modal")] }
 
@@ -806,7 +806,7 @@ def ex37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "episodic possibility modal")] }
 
@@ -821,7 +821,7 @@ def ex38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic future")] }
 
@@ -836,7 +836,7 @@ def ex38e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "episodic future")] }
 
@@ -851,7 +851,7 @@ def ex39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "kuchh bhii"), ("environment", "imperative")] }
 
@@ -866,7 +866,7 @@ def ex39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "imperative")] }
 
@@ -881,7 +881,7 @@ def ex40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "imperative")] }
 
@@ -896,7 +896,7 @@ def ex40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "imperative")] }
 
@@ -911,7 +911,7 @@ def ex100a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic, with numeral")] }
 
@@ -926,7 +926,7 @@ def ex100b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic, with numeral")] }
 

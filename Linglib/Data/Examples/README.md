@@ -56,7 +56,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
-| `alternatives` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
+| `contrasts` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
@@ -139,7 +139,7 @@ A row records how the example and its judgment were obtained, as `Datum.method`,
 source names one of four ways: elicitation from native-speaker consultants, a corpus (a text, a
 corpus or the web), an experiment that measured the judgment, or citation from a grammar or
 dictionary that does not say (`description`). It is evidence of different kinds: an attested
-example is no evidence that its alternatives are impossible, and an experiment measures what a
+example is no evidence that other forms are impossible, and an experiment measures what a
 consultant reports. `contributions.csv` gives each data file's method, or `unclassified` where
 none of the four is recorded, and a row's `method` key overrides it, `unclassified` included; the
 generator rejects a data file with no row there. A paper is classified when it is audited, from
@@ -172,7 +172,7 @@ Lean module does not carry the key; the CLDF export does, as `Verified`.
 prints with slashes, parentheses or stars (`kto-nibud'/kto-libo`, `some (*any)`) packs several
 sentences: write each variant as its own row with its own `judgment` and `paperFeatures`,
 sharing the `paperLabel`, when the variants differ in what the paper classifies; keep a
-contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
+contrast the paper does not classify in `contrasts`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
 The mark `%` says that speakers differ without saying how, and is the judgment `variable`; a row
 records who accepts the example, a variety or a stage, as a paper feature where the source says.
@@ -234,7 +234,7 @@ where `pyigt` keeps those before the mismatch.
 Pretty-printed JSON, but **compact `glossedTokens`**: pack 3–4
 `[surface, gloss]` pairs per line so the IGT alignment can be read at a
 glance instead of scrolling through one-pair-per-line. Other arrays
-(`discourseSegments`, `alternatives`, `readings`) get one element per line
+(`discourseSegments`, `contrasts`, `readings`) get one element per line
 for diff-friendliness — those entries are usually long strings or
 structured objects.
 

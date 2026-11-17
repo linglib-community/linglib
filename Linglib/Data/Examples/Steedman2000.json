@@ -12,7 +12,7 @@
     "translation": "Since someone is curious about everybody.",
     "context": "German verb-final subordinate clause; the quantified PP precedes the predicate-tense cluster.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "acceptable"}
@@ -36,7 +36,7 @@
     "translation": "Since someone has tried to cheat everyone.",
     "context": "German verb-final subordinate clause; the quantified object follows the matrix verb cluster.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "unacceptable"}
@@ -60,7 +60,7 @@
     "translation": "that Jan wanted to read many books",
     "context": "West Flemish subordinate clause in the verb-raising word order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "acceptable"}
@@ -84,7 +84,7 @@
     "translation": "that Jan wanted to read many books",
     "context": "West Flemish subordinate clause in the verb-projection-raising word order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "unacceptable"}
@@ -108,7 +108,7 @@
     "translation": "because Jan tries to sing many songs",
     "context": "Dutch subordinate clause with an equi verb, verb-raising word order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "acceptable"}
@@ -132,7 +132,7 @@
     "translation": "because Jan tries to sing many songs",
     "context": "Dutch subordinate clause with an equi verb, verb-projection-raising word order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "unacceptable"}
@@ -156,7 +156,7 @@
     "translation": "because someone tries to sing every song",
     "context": "Dutch subordinate clause, verb-raising word order, two quantified arguments.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "acceptable"}
@@ -180,7 +180,7 @@
     "translation": "because someone tries to sing every song",
     "context": "Dutch subordinate clause, verb-projection-raising word order, two quantified arguments.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "unacceptable"}
@@ -204,7 +204,7 @@
     "translation": "Ken visited Naomi, and Erika, Sara",
     "context": "Japanese (pure SOV): backward gapping — the nonstandard subject-object argument clusters conjoin and the verb surfaces only in the final conjunct.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -227,7 +227,7 @@
     "translation": "Ken visited Naomi, and Erika, Sara",
     "context": "Japanese (pure SOV): forward gapping — the verb in the first conjunct with a verbless second conjunct — is excluded.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -251,7 +251,7 @@
     "translation": "I believe that Jan has read Syntactic Structures and Piet Aspects.",
     "context": "Dutch subordinate clause (SOV): backward gapping — conjoined subject-object clusters precede the shared verb cluster.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -274,7 +274,7 @@
     "translation": "Eoghan saw Siobhán, and Eoghnaí, Ciarán",
     "context": "Irish (pure VSO): forward gapping — the initial verb is shared by conjoined subject-object argument clusters.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -297,7 +297,7 @@
     "translation": "Eoghan saw Siobhán, and Eoghnaí, Ciarán",
     "context": "Irish (pure VSO): backward gapping — verbless first conjunct with the verb in the second conjunct — is excluded.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -320,7 +320,7 @@
     "translation": "Do you want an ice-cream, and Marietje lemonade?",
     "context": "Dutch main clause (verb-initial yes/no question, conforming to the VSO pattern per Steedman): forward gapping, the mirror image of the backward-gapping subordinate clauses.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -340,7 +340,7 @@
     "translation": "Dexter eats bread, and Warren eats potatoes",
     "context": "English (SVO): forward gapping — the verb in the first conjunct is shared by the verbless right conjunct.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],
@@ -360,7 +360,7 @@
     "translation": "Warren bought potatoes, and Dexter bought bread",
     "context": "English (SVO): backward gapping — verbless left conjunct with the verb in the right conjunct — is excluded by universal principles.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "gapping"],

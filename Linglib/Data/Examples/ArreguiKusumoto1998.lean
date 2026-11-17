@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -39,7 +39,7 @@ def ex_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -54,7 +54,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -69,7 +69,7 @@ def ex_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -84,7 +84,7 @@ def ex_5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -99,7 +99,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "ato-ni"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -114,7 +114,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "ato-ni"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -127,7 +127,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -140,7 +140,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -155,7 +155,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -170,7 +170,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -185,7 +185,7 @@ def ex_10a : Datum :=
     lgrConformance := some .wordAligned
     context := "Ania said: \"Marcin is sick\"."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -200,7 +200,7 @@ def ex_10b : Datum :=
     lgrConformance := some .wordAligned
     context := "Ania said: \"Marcin was sick\"."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -215,7 +215,7 @@ def ex_10c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("posterior", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "future")] }
 
@@ -230,7 +230,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -245,7 +245,7 @@ def ex_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -260,7 +260,7 @@ def ex_11c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "future")] }
 
@@ -273,7 +273,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "root"), ("tense", "present")] }
 
@@ -286,7 +286,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "root"), ("tense", "past")] }
 
@@ -299,7 +299,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := "I met you in Amherst at 3:00 p.m., and you said \"Satoshi left here at 10:00 a.m. this morning\"."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "when"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -312,7 +312,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("veridical", .acceptable), ("nonveridical", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -325,7 +325,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("veridical", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -338,7 +338,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -351,7 +351,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -366,7 +366,7 @@ def ex_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -381,7 +381,7 @@ def ex_22b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -394,7 +394,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -407,7 +407,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -422,7 +422,7 @@ def ex_26a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .unacceptable)]
     paperFeatures := [("clause", "after"), ("connective", "ato-de"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -437,7 +437,7 @@ def ex_26b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .unacceptable)]
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "present"), ("embeddedClauses", "2")] }
 
@@ -452,7 +452,7 @@ def ex_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki-ni"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
@@ -467,7 +467,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -482,7 +482,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -497,7 +497,7 @@ def ex_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -512,7 +512,7 @@ def ex_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -527,7 +527,7 @@ def fn1_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future", .acceptable)]
     paperFeatures := [("clause", "root"), ("tense", "present")] }
 
@@ -542,7 +542,7 @@ def fn3_ia : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
@@ -557,7 +557,7 @@ def fn3_ib : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 

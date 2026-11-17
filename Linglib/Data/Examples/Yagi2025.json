@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["presuppositions", "conflicting"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "Bessarabia has a head of state, who is either a king or a president.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["presuppositions", "conflicting"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "The state has either a king or a president.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "presupposes a king or a president", "judgment": "acceptable"},
       {"name": "false if the head of state is not opening parliament", "judgment": "acceptable"}
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true if the liquid is fermenting", "judgment": "acceptable"}
     ],
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true if the head of the nation is not opening parliament", "judgment": "acceptable"}
     ],
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "presupposes that Bill has children", "judgment": "acceptable"}
     ],
@@ -133,7 +133,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodation", "non-tautological"]
@@ -152,7 +152,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the factive presupposition need not project", "judgment": "acceptable"}
     ],
@@ -173,7 +173,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "one of the following obtains: it must be here; it must be there", "judgment": "acceptable"}
     ],
@@ -194,7 +194,7 @@
     "translation": "",
     "context": "The phone will be answered by either a doctor or a secretary.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reading", "modal split"]
@@ -213,7 +213,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "presupposes that if John is a scuba diver he has a wetsuit", "judgment": "acceptable"}
     ],

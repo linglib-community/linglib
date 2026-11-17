@@ -11,7 +11,7 @@
     "translation": "I drank-EGO a lot",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -33,7 +33,7 @@
     "translation": "You drank-EGO a lot.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -55,7 +55,7 @@
     "translation": "Did I drink-EGO a lot?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -77,7 +77,7 @@
     "translation": "Did I drink a lot?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -99,7 +99,7 @@
     "translation": "Did you drink-EGO a lot?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -121,7 +121,7 @@
     "translation": "Did you drink a lot?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],

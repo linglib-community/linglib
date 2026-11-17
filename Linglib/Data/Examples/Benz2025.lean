@@ -26,7 +26,7 @@ def ex32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "Event"), ("duration_predicate", "yes"), ("plural", "no"), ("cp_complement", "no")] }
 
@@ -41,7 +41,7 @@ def ex32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("concrete object", .acceptable), ("result", .acceptable), ("content", .acceptable)]
     paperFeatures := [("reading", "RN"), ("duration_predicate", "no"), ("plural", "yes"), ("cp_complement", "no")] }
 
@@ -56,7 +56,7 @@ def ex32c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "Content"), ("duration_predicate", "no"), ("plural", "no"), ("cp_complement", "yes")] }
 
@@ -71,7 +71,7 @@ def ex89a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "transitive"), ("m_predicate", "hämmern"), ("r_predicate", "platt")] }
 
@@ -86,7 +86,7 @@ def ex89b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "transitive"), ("m_predicate", "schießen"), ("r_predicate", "tot")] }
 
@@ -101,7 +101,7 @@ def ex115a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "obligatorily transitive"), ("m_predicate", "brechen"), ("r_predicate", "kaputt")] }
 
@@ -116,7 +116,7 @@ def ex115e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "unaccusative"), ("m_predicate", "frieren"), ("r_predicate", "fest")] }
 
@@ -131,7 +131,7 @@ def ex115f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "inherently reflexive"), ("m_predicate", "schämen"), ("r_predicate", "krank/tot")] }
 
@@ -146,7 +146,7 @@ def ex87ab : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Sie haben uns arm be-raubt", .ungrammatical)]
+    contrasts := [("Sie haben uns arm be-raubt", .ungrammatical)]
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "be-"), ("r_predicate", "arm"), ("outer", "rsp"), ("inner", "pfx")] }
 
@@ -161,7 +161,7 @@ def ex87cd : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Sie haben ihn tot er-schossen", .ungrammatical)]
+    contrasts := [("Sie haben ihn tot er-schossen", .ungrammatical)]
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "er-"), ("r_predicate", "tot"), ("outer", "rsp"), ("inner", "pfx")] }
 
@@ -176,7 +176,7 @@ def ex87ef : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hans hat den Stock kaputt zer-brochen", .ungrammatical)]
+    contrasts := [("Hans hat den Stock kaputt zer-brochen", .ungrammatical)]
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "zer-"), ("r_predicate", "kaputt"), ("outer", "rsp"), ("inner", "pfx")] }
 
@@ -191,7 +191,7 @@ def ex88ab : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Sie hat den Tisch trocken ab-gewischt", .ungrammatical)]
+    contrasts := [("Sie hat den Tisch trocken ab-gewischt", .ungrammatical)]
     readings := []
     paperFeatures := [("blocker_type", "particle"), ("blocker", "ab-"), ("r_predicate", "trocken"), ("outer", "rsp"), ("inner", "prt")] }
 
@@ -206,7 +206,7 @@ def ex88cd : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Das Baby hat mich nass an-gespuckt", .ungrammatical)]
+    contrasts := [("Das Baby hat mich nass an-gespuckt", .ungrammatical)]
     readings := []
     paperFeatures := [("blocker_type", "particle"), ("blocker", "an-"), ("r_predicate", "nass"), ("outer", "rsp"), ("inner", "prt")] }
 
@@ -219,7 +219,7 @@ def ex81a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outer", "pfx"), ("inner", "pfx")] }
 
@@ -232,7 +232,7 @@ def ex82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outer", "prt"), ("inner", "prt")] }
 
@@ -245,7 +245,7 @@ def ex83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outer", "pfx"), ("inner", "prt")] }
 
@@ -258,7 +258,7 @@ def ex84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outer", "prt"), ("inner", "pfx")] }
 
@@ -273,7 +273,7 @@ def ex86b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outer", "rsp"), ("inner", "rsp")] }
 
@@ -286,7 +286,7 @@ def ex193a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "pfx"), ("verb", "verkaufen")] }
 
@@ -299,7 +299,7 @@ def ex193b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "prt"), ("verb", "einführen")] }
 
@@ -312,7 +312,7 @@ def ex193c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "rsp"), ("verb", "küssen")] }
 
@@ -325,7 +325,7 @@ def ex197a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "prt"), ("verb", "einführen")] }
 
@@ -338,7 +338,7 @@ def ex198c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "pfx"), ("verb", "bemalen")] }
 
@@ -351,7 +351,7 @@ def ex198c_base : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "none"), ("verb", "malen")] }
 
@@ -364,7 +364,7 @@ def ex204a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "rsp"), ("verb", "hämmern")] }
 
@@ -377,7 +377,7 @@ def ex204c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "rsp"), ("verb", "küssen")] }
 
@@ -390,7 +390,7 @@ def ex212a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "prt"), ("verb", "rennen")] }
 
@@ -403,7 +403,7 @@ def ex216a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "rsp"), ("verb", "küssen")] }
 
@@ -416,7 +416,7 @@ def ex216b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "rsp"), ("verb", "hämmern")] }
 
@@ -429,7 +429,7 @@ def ex218c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "pfx"), ("verb", "bemalen")] }
 

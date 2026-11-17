@@ -24,7 +24,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -38,7 +38,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -51,7 +51,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -64,7 +64,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "PUSH")] }
 
@@ -77,7 +77,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "PUSH")] }
 
@@ -90,7 +90,7 @@ def ex11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "PUSH")] }
 
@@ -103,7 +103,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("BOY ENTER CLUB. MUSIC ON. ∅ DANCE.", .acceptable)]
+    contrasts := [("BOY ENTER CLUB. MUSIC ON. ∅ DANCE.", .acceptable)]
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -116,7 +116,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -129,7 +129,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. ∅ DANCE.", .marginal)]
+    contrasts := [("BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. ∅ DANCE.", .marginal)]
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -142,7 +142,7 @@ def ex20null : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -155,7 +155,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
@@ -168,7 +168,7 @@ def a1_1_one_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "DANCE")] }
 
@@ -181,7 +181,7 @@ def a1_1_one_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "DANCE")] }
 
@@ -194,7 +194,7 @@ def a1_1_two_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "DANCE")] }
 
@@ -207,7 +207,7 @@ def a1_1_two_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "DANCE")] }
 
@@ -220,7 +220,7 @@ def a1_2_one_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "FALL")] }
 
@@ -233,7 +233,7 @@ def a1_2_one_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "FALL")] }
 
@@ -246,7 +246,7 @@ def a1_2_two_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "FALL")] }
 
@@ -259,7 +259,7 @@ def a1_2_two_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "FALL")] }
 
@@ -272,7 +272,7 @@ def a1_3_one_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "JUMP")] }
 
@@ -285,7 +285,7 @@ def a1_3_one_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "JUMP")] }
 
@@ -298,7 +298,7 @@ def a1_3_two_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "JUMP")] }
 
@@ -311,7 +311,7 @@ def a1_3_two_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "JUMP")] }
 
@@ -324,7 +324,7 @@ def a1_4_one_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "RUN")] }
 
@@ -337,7 +337,7 @@ def a1_4_one_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "RUN")] }
 
@@ -350,7 +350,7 @@ def a1_4_two_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "RUN")] }
 
@@ -363,7 +363,7 @@ def a1_4_two_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "RUN")] }
 
@@ -376,7 +376,7 @@ def a1_5_narr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "VISIT")] }
 
@@ -389,7 +389,7 @@ def a1_5_noNarr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "VISIT")] }
 
@@ -402,7 +402,7 @@ def a1_5_narr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "VISIT")] }
 
@@ -415,7 +415,7 @@ def a1_5_noNarr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "VISIT")] }
 
@@ -428,7 +428,7 @@ def a1_6_narr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "YELL")] }
 
@@ -441,7 +441,7 @@ def a1_6_narr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "YELL")] }
 
@@ -454,7 +454,7 @@ def a1_6_noNarr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "YELL")] }
 
@@ -467,7 +467,7 @@ def a1_6_noNarr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "YELL")] }
 
@@ -480,7 +480,7 @@ def a1_7_narr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "HELP")] }
 
@@ -493,7 +493,7 @@ def a1_7_narr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "HELP")] }
 
@@ -506,7 +506,7 @@ def a1_7_noNarr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "HELP")] }
 
@@ -519,7 +519,7 @@ def a1_7_noNarr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "HELP")] }
 
@@ -532,7 +532,7 @@ def a1_8_narr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "ASK")] }
 
@@ -545,7 +545,7 @@ def a1_8_narr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "ASK")] }
 
@@ -558,7 +558,7 @@ def a1_8_noNarr_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "ASK")] }
 
@@ -571,7 +571,7 @@ def a1_8_noNarr_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "ASK")] }
 
@@ -584,7 +584,7 @@ def a1_9_inanimate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
@@ -597,7 +597,7 @@ def a1_9_inanimate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
@@ -610,7 +610,7 @@ def a1_9_animate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
@@ -623,7 +623,7 @@ def a1_9_animate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
@@ -636,7 +636,7 @@ def a1_10_inanimate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "KICK")] }
 
@@ -649,7 +649,7 @@ def a1_10_inanimate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "KICK")] }
 
@@ -662,7 +662,7 @@ def a1_10_animate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "KICK")] }
 
@@ -675,7 +675,7 @@ def a1_10_animate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "KICK")] }
 
@@ -688,7 +688,7 @@ def a1_11_inanimate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUSH")] }
 
@@ -701,7 +701,7 @@ def a1_11_inanimate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUSH")] }
 
@@ -714,7 +714,7 @@ def a1_11_animate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUSH")] }
 
@@ -727,7 +727,7 @@ def a1_11_animate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUSH")] }
 
@@ -740,7 +740,7 @@ def a1_12_inanimate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
@@ -753,7 +753,7 @@ def a1_12_inanimate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
@@ -766,7 +766,7 @@ def a1_12_animate_noLocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
@@ -779,7 +779,7 @@ def a1_12_animate_locus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 

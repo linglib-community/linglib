@@ -25,7 +25,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -38,7 +38,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -51,7 +51,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -64,7 +64,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -77,7 +77,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -90,7 +90,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -103,7 +103,7 @@ def ex_8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -116,7 +116,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "strong"), ("second", "strong")] }
 
@@ -129,7 +129,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "strong"), ("second", "strong")] }
 
@@ -142,7 +142,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -155,7 +155,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -170,7 +170,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "prepi"), ("force", "strong"), ("test", "contradiction")] }
 
@@ -185,7 +185,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "prepi+CF"), ("force", "weak"), ("derivation", "CF"), ("test", "contradiction")] }
 
@@ -200,7 +200,7 @@ def ex_16a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir"), ("force", "strong"), ("test", "contradiction")] }
 
@@ -215,7 +215,7 @@ def ex_16b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("force", "weak"), ("derivation", "CF"), ("test", "contradiction")] }
 
@@ -230,7 +230,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "yoter tov"), ("force", "weak"), ("derivation", "comparative"), ("test", "contradiction")] }
 
@@ -245,7 +245,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "kudu+NE"), ("force", "weak"), ("derivation", "NE"), ("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -258,7 +258,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate")] }
 
@@ -271,7 +271,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "clausemate")] }
 
@@ -284,7 +284,7 @@ def ex_18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "clausemate")] }
 
@@ -297,7 +297,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "higher")] }
 
@@ -310,7 +310,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "higher")] }
 
@@ -323,7 +323,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "higher")] }
 
@@ -336,7 +336,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "higher")] }
 
@@ -349,7 +349,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "higher")] }
 
@@ -362,7 +362,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "higher")] }
 
@@ -377,7 +377,7 @@ def ex_26a : Datum :=
     lgrConformance := some .wordAligned
     context := "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "moet"), ("force", "weak"), ("test", "contradiction")] }
 
@@ -392,7 +392,7 @@ def ex_28a : Datum :=
     lgrConformance := some .wordAligned
     context := "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "tatau"), ("force", "weak"), ("test", "contradiction")] }
 
@@ -407,7 +407,7 @@ def ex_43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded")] }
 
@@ -422,7 +422,7 @@ def ex_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "clausemate negation")] }
 
@@ -437,7 +437,7 @@ def ex_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Prompt: If I have to call the doctor, I will."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "other DE")] }
 
@@ -452,7 +452,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "unembedded")] }
 
@@ -467,7 +467,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "clausemate negation")] }
 
@@ -482,7 +482,7 @@ def ex_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "other DE")] }
 
@@ -497,7 +497,7 @@ def ex_51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded")] }
 
@@ -512,7 +512,7 @@ def ex_52 : Datum :=
     lgrConformance := some .wordAligned
     context := "I'm telling a story in which Isac illegally parked the car, and the police caught him."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("necessity", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded")] }
 
@@ -527,7 +527,7 @@ def ex_53 : Datum :=
     lgrConformance := some .wordAligned
     context := "Peter is a prisoner."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "clausemate negation")] }
 
@@ -542,7 +542,7 @@ def ex_55 : Datum :=
     lgrConformance := some .wordAligned
     context := "Lucas loves ice cream, but only eats it when his mom gives him permission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE")] }
 
@@ -557,7 +557,7 @@ def ex_56 : Datum :=
     lgrConformance := some .wordAligned
     context := "Maria took the train without paying and is worried about getting caught."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("necessity", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE")] }
 
@@ -570,7 +570,7 @@ def ex_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("weak necessity", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "unembedded")] }
 
@@ -585,7 +585,7 @@ def ex_58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A player has been hurt in a football match, and the ref is speaking to them, and saying:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("weak necessity", .unacceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "clausemate negation")] }
 
@@ -598,7 +598,7 @@ def table_oqa_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -611,7 +611,7 @@ def table_oqa_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -624,7 +624,7 @@ def table_oqa_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "other DE"), ("table", "true")] }
 
@@ -637,7 +637,7 @@ def table_baiji_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -650,7 +650,7 @@ def table_baiji_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -663,7 +663,7 @@ def table_baiji_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "other DE"), ("table", "true")] }
 
@@ -676,7 +676,7 @@ def table_far_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -689,7 +689,7 @@ def table_far_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -702,7 +702,7 @@ def table_far_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE"), ("table", "true")] }
 
@@ -715,7 +715,7 @@ def table_anga_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .acceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -728,7 +728,7 @@ def table_anga_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -741,7 +741,7 @@ def table_anga_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .acceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "other DE"), ("table", "true")] }
 
@@ -754,7 +754,7 @@ def ex_79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .marginal)]
     paperFeatures := [("construction", "bare conditional"), ("negation", "clausemate")] }
 
@@ -767,7 +767,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("construction", "generic"), ("negation", "clausemate")] }
 
@@ -780,7 +780,7 @@ def ex_91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .acceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "weak")] }
 
@@ -793,7 +793,7 @@ def ex_91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .acceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "weak")] }
 
@@ -806,7 +806,7 @@ def ex_92a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .unacceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "strong")] }
 
@@ -819,7 +819,7 @@ def ex_92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .unacceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "strong")] }
 

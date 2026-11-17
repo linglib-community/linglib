@@ -27,7 +27,7 @@ def ex13_v1_nci : Datum :=
     lgrConformance := some .wordAligned
     context := "Dana má na zahradě záhon, který vybudovala před rokem. ('Dana has a garden bed, which she built a year ago.' — neutral, implying neither p nor ¬p)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")] }
 
@@ -43,7 +43,7 @@ def ex13_v1_ppi : Datum :=
     lgrConformance := some .wordAligned
     context := "Dana má na zahradě záhon, který vybudovala před rokem. ('Dana has a garden bed, which she built a year ago.' — neutral, implying neither p nor ¬p)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")] }
 
@@ -59,7 +59,7 @@ def ex13_nonv1_nci : Datum :=
     lgrConformance := some .wordAligned
     context := "Dana má na zahradě záhon, kam zasadila zeleninu. ('Dana has a garden bed, where she planted vegetables.' — negative, implying ¬p)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "nci"), ("context", "negative")] }
 
@@ -75,7 +75,7 @@ def ex13_nonv1_ppi : Datum :=
     lgrConformance := some .wordAligned
     context := "Dana má na zahradě záhon, kam zasadila zeleninu. ('Dana has a garden bed, where she planted vegetables.' — negative, implying ¬p)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "ppi"), ("context", "negative")] }
 
@@ -90,7 +90,7 @@ def ex14 : Datum :=
     lgrConformance := some .wordAligned
     context := "Eva se zúčastnila lingvistické olympiády, kde skončila jako první. ('Eva participated in a linguistic olympiad, where she won the first place.' — positive evidence for p)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "positive")] }
 
@@ -106,7 +106,7 @@ def ex17_ppi : Datum :=
     lgrConformance := some .wordAligned
     context := "Mikuláš cestoval vlakem, který jel do Košic. ('Mikuláš was on the train which went to Košice.' — neutral)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")] }
 
@@ -122,7 +122,7 @@ def ex17_nci : Datum :=
     lgrConformance := some .wordAligned
     context := "Mikuláš cestoval vlakem, který jel do Košic. ('Mikuláš was on the train which went to Košice.' — neutral)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")] }
 
@@ -137,7 +137,7 @@ def ex18 : Datum :=
     lgrConformance := some .wordAligned
     context := "Hanka si koupila knihu. ('Hanka bought a book.')"
     judgment := .acceptable
-    alternatives := [("A Petr si náhodou nekoupil žádnou knihu?", .ungrammatical)]
+    contrasts := [("A Petr si náhodou nekoupil žádnou knihu?", .ungrammatical)]
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "nonv1"), ("indefinite", "ppi")] }
 

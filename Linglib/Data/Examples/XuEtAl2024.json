@@ -10,7 +10,7 @@
     "translation": "A trunk for storing personal possessions; usually kept at the foot of a bed",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "deedbox", "judgment": "acceptable"},
       {"form": "strongbox", "judgment": "acceptable"},
       {"form": "storeroom", "judgment": "acceptable"}
@@ -34,7 +34,7 @@
     "translation": "An output device that prints the results of data processing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -54,7 +54,7 @@
     "translation": "Directional antenna consisting of a parabolic reflector for microwave or radio",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -74,7 +74,7 @@
     "translation": "A card expressing a birthday greeting",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],
@@ -94,7 +94,7 @@
     "translation": "The clearing and rebuilding and redevelopment of urban slums",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "renewal", "judgment": "acceptable"},
       {"form": "renovation", "judgment": "acceptable"},
       {"form": "urban-renovation", "judgment": "acceptable"}
@@ -118,7 +118,7 @@
     "translation": "A screen-oriented interactive program enabling a user to lay out financial data",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],
@@ -138,7 +138,7 @@
     "translation": "An electrical device that sends or receives radio or television signals",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -158,7 +158,7 @@
     "translation": "A commercially sponsored ad on radio or television",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "réclame", "judgment": "acceptable"},
       {"form": "annonce", "judgment": "acceptable"},
       {"form": "pub", "judgment": "acceptable"},
@@ -183,7 +183,7 @@
     "translation": "Imitate the function of (another system), as by modifying the hardware or the software",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -203,7 +203,7 @@
     "translation": "Turbine that converts the chemical energy of a liquid fuel into mechanical energy",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "turbine", "judgment": "acceptable"},
       {"form": "générateur", "judgment": "acceptable"},
       {"form": "moteur-gaz", "judgment": "acceptable"}
@@ -227,7 +227,7 @@
     "translation": "A galaxy having a spiral structure; arms containing younger stars spiral out from old stars",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],
@@ -247,7 +247,7 @@
     "translation": "Equipment that records information about the performance of an aircraft during flight",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],
@@ -267,7 +267,7 @@
     "translation": "Message that is transmitted by radio or television",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "lasti", "judgment": "acceptable"},
       {"form": "rahti", "judgment": "acceptable"},
       {"form": "toimitus", "judgment": "acceptable"},
@@ -292,7 +292,7 @@
     "translation": "An air filter on the end of a cigarette; contains material that filters the smoke",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -312,7 +312,7 @@
     "translation": "Carry out a process or program, as on a computer or a machine",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "reuse"],
@@ -332,7 +332,7 @@
     "translation": "A crime committed in wartime; violation of rules of war",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "rikos", "judgment": "acceptable"},
       {"form": "laittomuus", "judgment": "acceptable"},
       {"form": "sota-laittomuus", "judgment": "acceptable"}
@@ -356,7 +356,7 @@
     "translation": "A mental disorder caused by stress of active warfare",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],
@@ -376,7 +376,7 @@
     "translation": "A salesperson in a store",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "compound"],

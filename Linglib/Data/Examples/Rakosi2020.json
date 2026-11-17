@@ -105,7 +105,7 @@
       "translation": "The children saw each other in the mirror.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -158,7 +158,7 @@
       "translation": "The children saw themselves in the mirror.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -211,7 +211,7 @@
       "translation": "*The child saw each other in the mirror.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -264,7 +264,7 @@
       "translation": "The child saw himself in the mirror.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -314,7 +314,7 @@
       "translation": "I see us sitting in the car.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -356,7 +356,7 @@
       "translation": "I often feel sorry for us.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -401,7 +401,7 @@
       "translation": "Only I feel sorry for us.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "referential",
@@ -455,7 +455,7 @@
       "translation": "Only we feel sorry for ourselves.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "bound variable",
@@ -505,7 +505,7 @@
       "translation": "Only we feel sorry for each other.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "bound variable",
@@ -559,7 +559,7 @@
       "translation": "The children behaved themselves.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -608,7 +608,7 @@
       "translation": "*The child behaved themselves.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -649,7 +649,7 @@
       "translation": "*I often feel sorry for each other.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -698,7 +698,7 @@
       "translation": "The children saw the picture.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -743,7 +743,7 @@
       "translation": "The children saw the picture.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -788,7 +788,7 @@
       "translation": "Two children saw the picture.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {
           "form": "Minden gyerek látta a kép-et.",
           "judgment": "acceptable"
@@ -846,7 +846,7 @@
       "translation": "Two children saw the picture.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -895,7 +895,7 @@
       "translation": "The two children felt well.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -948,7 +948,7 @@
       "translation": "The two children felt well.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -997,7 +997,7 @@
       "translation": "Some children felt well.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1046,7 +1046,7 @@
       "translation": "Some children felt well.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1100,7 +1100,7 @@
       "translation": "Three little children are chasing each other in the room.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1153,7 +1153,7 @@
       "translation": "Some children from the neighbourhood love each other very much.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1199,7 +1199,7 @@
       "translation": "At home, everyone loved each other.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1253,7 +1253,7 @@
       "translation": "Nobody is searching for each other in the crowd.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1306,7 +1306,7 @@
       "translation": "Kati and Éva saw the picture.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1355,7 +1355,7 @@
       "translation": "Kati and Éva saw the picture.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1400,7 +1400,7 @@
       "translation": "Kati and Éva drew themselves up.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1449,7 +1449,7 @@
       "translation": "Kati and Éva drew themselves up.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1498,7 +1498,7 @@
       "translation": "Kati and Éva drew themselves up.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1547,7 +1547,7 @@
       "translation": "Kati and Éva drew themselves up.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1604,7 +1604,7 @@
       "translation": "Kati and Éva saw each other in the mirror.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1661,7 +1661,7 @@
       "translation": "Kati and Éva saw each other in the mirror.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1726,7 +1726,7 @@
       "translation": "The staff thought that they had worked enough.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [],
       "comment": "The operative test for a collective noun that denotes a distributable plurality: it licenses plural cross-clausal anaphora, with the main verb singular.",
@@ -1762,7 +1762,7 @@
       "translation": "The staff was tired.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1803,7 +1803,7 @@
       "translation": "The staff was tired.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1849,7 +1849,7 @@
       "translation": "The staff were watching each other frightened.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1903,7 +1903,7 @@
       "translation": "The family were cursing each other on Facebook.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1961,7 +1961,7 @@
       "translation": "The couple found each other on the internet.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -2014,7 +2014,7 @@
       "translation": "The whole family enjoyed themselves.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -2067,7 +2067,7 @@
       "translation": "The whole family enjoyed themselves.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -2128,7 +2128,7 @@
       "translation": "Péter and Éva think that they love each other.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {
           "form": "Péter és Éva az-t gondolja, hogy ő szereti egymás-t.",
           "judgment": "ungrammatical"
@@ -2196,7 +2196,7 @@
       "translation": "I was two cats in my dreams and I was playing with each other.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {
           "form": "Álmomban két macska voltam, és én játszottam egymás-sal.",
           "judgment": "ungrammatical"

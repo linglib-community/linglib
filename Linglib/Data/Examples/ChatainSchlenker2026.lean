@@ -24,7 +24,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "We’re supposed to take the lab rat out of its cage once a day. Otherwise, it feels stressed. Bill has been unreliable in performing this task."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex_34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "alive"), ("projected", "unpopular")] }
 
@@ -54,7 +54,7 @@ def ex_34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "unpopular"), ("projected", "alive")] }
 
@@ -67,7 +67,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -80,7 +80,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "possession"), ("projected", "ownership")] }
 
@@ -93,7 +93,7 @@ def ex_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "ownership"), ("projected", "possession")] }
 
@@ -108,7 +108,7 @@ def ex_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "alive"), ("projected", "unpopular")] }
 
@@ -123,7 +123,7 @@ def ex_39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodated", "unpopular"), ("projected", "alive")] }
 

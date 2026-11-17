@@ -26,7 +26,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
@@ -41,7 +41,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
@@ -56,7 +56,7 @@ def ex_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
@@ -71,7 +71,7 @@ def ex_63a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wani"), ("function", "discourse-introducing")] }
 
@@ -86,7 +86,7 @@ def ex_64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wasu"), ("reading", "partitive")] }
 
@@ -101,7 +101,7 @@ def ex_65a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wani"), ("clause", "polar question")] }
 
@@ -116,7 +116,7 @@ def ex_69a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wani"), ("position", "object"), ("scope", "ambiguous")] }
 
@@ -131,7 +131,7 @@ def ex_69b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wani"), ("position", "object"), ("scope", "ambiguous")] }
 
@@ -146,7 +146,7 @@ def ex_70 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("indefinite", "wasu"), ("position", "subject"), ("scope", "∃ > NEG only")] }
 
@@ -161,7 +161,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negative existential relative")] }
 
@@ -176,7 +176,7 @@ def ex_73 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("negation", "VP"), ("scope", "negative existential only")] }
 
@@ -191,7 +191,7 @@ def ex_74a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("negation", "sentential"), ("scope", "negative universal only")] }
 
@@ -206,7 +206,7 @@ def ex_75 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("position", "subject")] }
 
@@ -221,7 +221,7 @@ def ex_78 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("position", "subject"), ("focus", "yes")] }
 
@@ -236,7 +236,7 @@ def ex_85a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "duk"), ("order", "prenominal")] }
 
@@ -251,7 +251,7 @@ def ex_86 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "duk"), ("restrictor", "singular")] }
 
@@ -266,7 +266,7 @@ def ex_89a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("predicate", "collective")] }
 
@@ -281,7 +281,7 @@ def ex_90a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "duk"), ("predicate", "collective")] }
 
@@ -296,7 +296,7 @@ def ex_91a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "duk"), ("negation", "VP"), ("scope", "negative universal")] }
 
@@ -311,7 +311,7 @@ def ex_91b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "duk"), ("negation", "sentential"), ("scope", "negative universal")] }
 

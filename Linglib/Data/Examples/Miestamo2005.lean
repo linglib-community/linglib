@@ -26,7 +26,7 @@ def p3_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def p3_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p3_2a")] }
 
@@ -56,7 +56,7 @@ def p43_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -71,7 +71,7 @@ def p43_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p43_1a")] }
 
@@ -86,7 +86,7 @@ def p43_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -101,7 +101,7 @@ def p43_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p43_2a")] }
 
@@ -114,7 +114,7 @@ def p53_3a_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -127,7 +127,7 @@ def p53_3a_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p53_3a_1sg_aff")] }
 
@@ -140,7 +140,7 @@ def p53_3b_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -153,7 +153,7 @@ def p53_3b_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p53_3b_1sg_aff")] }
 
@@ -168,7 +168,7 @@ def p54_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -183,7 +183,7 @@ def p54_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p54_5a")] }
 
@@ -198,7 +198,7 @@ def p55_5c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -213,7 +213,7 @@ def p55_5d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p55_5c")] }
 
@@ -228,7 +228,7 @@ def p58_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -243,7 +243,7 @@ def p58_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p58_6a")] }
 
@@ -258,7 +258,7 @@ def p58_6c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -273,7 +273,7 @@ def p58_6d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p58_6c")] }
 
@@ -288,7 +288,7 @@ def p62_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -303,7 +303,7 @@ def p62_13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p62_13a")] }
 
@@ -318,7 +318,7 @@ def p62_13c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -333,7 +333,7 @@ def p62_13d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p62_13c")] }
 
@@ -346,7 +346,7 @@ def p64_15a_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -359,7 +359,7 @@ def p64_15a_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p64_15a_1sg_aff")] }
 
@@ -372,7 +372,7 @@ def p64_15b_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -385,7 +385,7 @@ def p64_15b_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p64_15b_1sg_aff")] }
 
@@ -398,7 +398,7 @@ def p64_15c_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -411,7 +411,7 @@ def p64_15c_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p64_15c_1sg_aff")] }
 
@@ -424,7 +424,7 @@ def p64_15d_1sg_aff : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -437,7 +437,7 @@ def p64_15d_1sg_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p64_15d_1sg_aff")] }
 
@@ -452,7 +452,7 @@ def p76_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -467,7 +467,7 @@ def p76_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p76_28a")] }
 
@@ -482,7 +482,7 @@ def p76_28c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -497,7 +497,7 @@ def p76_28d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p76_28c")] }
 
@@ -510,7 +510,7 @@ def p110_77a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -523,7 +523,7 @@ def p110_77b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77a")] }
 
@@ -536,7 +536,7 @@ def p110_77c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -549,7 +549,7 @@ def p110_77d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77c")] }
 
@@ -562,7 +562,7 @@ def p110_77e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -575,7 +575,7 @@ def p110_77f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77e")] }
 
@@ -588,7 +588,7 @@ def p110_77g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -601,7 +601,7 @@ def p110_77h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77g")] }
 
@@ -614,7 +614,7 @@ def p110_77i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -627,7 +627,7 @@ def p110_77j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -640,7 +640,7 @@ def p110_77k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77i"), ("affirmative", "miestamo2005_p110_77j")] }
 
@@ -653,7 +653,7 @@ def p110_77l : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -666,7 +666,7 @@ def p110_77m : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -679,7 +679,7 @@ def p110_77n : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p110_77l"), ("affirmative", "miestamo2005_p110_77m")] }
 
@@ -694,7 +694,7 @@ def p123_89a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -709,7 +709,7 @@ def p123_89b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -724,7 +724,7 @@ def p123_89c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -739,7 +739,7 @@ def p123_89d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p123_89a"), ("affirmative", "miestamo2005_p123_89b"), ("affirmative", "miestamo2005_p123_89c")] }
 
@@ -754,7 +754,7 @@ def p294_112a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -769,7 +769,7 @@ def p294_112b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p294_112a")] }
 
@@ -784,7 +784,7 @@ def p294_112c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -799,7 +799,7 @@ def p294_112d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p294_112c")] }
 
@@ -814,7 +814,7 @@ def p294_112e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -829,7 +829,7 @@ def p294_112f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p294_112e")] }
 
@@ -844,7 +844,7 @@ def p294_112g : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -859,7 +859,7 @@ def p294_112h : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p294_112g")] }
 
@@ -874,7 +874,7 @@ def p318_170a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -889,7 +889,7 @@ def p318_170b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p318_170a")] }
 
@@ -904,7 +904,7 @@ def p318_170c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -919,7 +919,7 @@ def p318_170d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p318_170c")] }
 
@@ -934,7 +934,7 @@ def p318_170e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -949,7 +949,7 @@ def p318_170f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p318_170e")] }
 
@@ -964,7 +964,7 @@ def p341_224a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -979,7 +979,7 @@ def p341_224b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p341_224a")] }
 
@@ -994,7 +994,7 @@ def p353_260a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1009,7 +1009,7 @@ def p353_260b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1024,7 +1024,7 @@ def p353_260c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -1039,7 +1039,7 @@ def p353_260d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p353_260a")] }
 
@@ -1054,7 +1054,7 @@ def p353_260e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p353_260b")] }
 
@@ -1069,7 +1069,7 @@ def p353_260f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("affirmative", "miestamo2005_p353_260c")] }
 

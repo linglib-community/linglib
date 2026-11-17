@@ -10,7 +10,7 @@
     "translation": "",
     "context": "1604, Shakespeare, Measure for Measure III.iii.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "be going to"],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "1663, Cowley, Cutter of Coleman Street V.ii.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "be going to"],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "1725, Odingsells, The Bath Unmask'd V.iii.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "be going to"],
@@ -76,7 +76,7 @@
     "translation": "wait (for an occasion or order) in a specific location",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Old Japanese: wait in a specific location (non-honorific)", "judgment": "acceptable"},
       {"name": "Late Old Japanese: humble subject be in the vicinity of respected referent (referent honorific, subjectified)", "judgment": "acceptable"},
@@ -101,7 +101,7 @@
     "translation": "In the assault some … broke a piece of the wall",
     "context": "c1325, Gloucester Chronicle A 11590.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a piece of"],
@@ -122,7 +122,7 @@
     "translation": "Dorus, once king of Greece … had of misfortunate a piece",
     "context": "a1393, Gower, Confessio Amantis V. 1338; note the preposed *of infortune*.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a piece of"],
@@ -143,7 +143,7 @@
     "translation": "",
     "context": "1586, Sidney, Apologie for Poetrie.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "partitive: a small part or exemplar of a logician",
@@ -173,7 +173,7 @@
     "translation": "Into the suffering of Hell … for the biting of an apple",
     "context": "c1400, Ancrene Riwle 22/25.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -194,7 +194,7 @@
     "translation": "He commanded that she should him also a bite/bit of bread bring",
     "context": "c1200, Ormulum 8640; still with the genitive.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -215,7 +215,7 @@
     "translation": "",
     "context": "1606, Shakespeare, Troilus and Cressida V.ii.159; a metaphorical context.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "1771, Foote, Maid of Bath.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -258,7 +258,7 @@
     "translation": "",
     "context": "1723, Steele, The Conscious Lovers III.i.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -279,7 +279,7 @@
     "translation": "",
     "context": "1739, Baker, The Cit Turn'd Gentleman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -301,7 +301,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
@@ -322,7 +322,7 @@
     "translation": "With the strength of his blast, the white dragon burned the red, so that of him (the red) not a shred was found, only dust",
     "context": "c1300, Arthour and Merlin 1540; note the preposing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a shred of"],
@@ -343,7 +343,7 @@
     "translation": "",
     "context": "1645, G. Daniel, Poems.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a shred of"],
@@ -364,7 +364,7 @@
     "translation": "",
     "context": "1867, Ouida, Under Two Flags.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a shred of"],

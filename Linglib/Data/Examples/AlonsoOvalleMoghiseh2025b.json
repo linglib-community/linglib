@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -77,7 +77,7 @@
     "translation": "What did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -100,7 +100,7 @@
     "translation": "What did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -124,7 +124,7 @@
     "translation": "Who did you see?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -148,7 +148,7 @@
     "translation": "Who did you see?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -172,7 +172,7 @@
     "translation": "What student did you see?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -196,7 +196,7 @@
     "translation": "What book did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -220,7 +220,7 @@
     "translation": "What students did you see?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -244,7 +244,7 @@
     "translation": "What books did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -268,7 +268,7 @@
     "translation": "What did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -292,7 +292,7 @@
     "translation": "What book did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -316,7 +316,7 @@
     "translation": "What books did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -339,7 +339,7 @@
     "translation": "What must Roya buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "free choice answer", "judgment": "acceptable"}
     ],
@@ -362,7 +362,7 @@
     "translation": "What book must Roya buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "free choice answer", "judgment": "acceptable"}
     ],
@@ -386,7 +386,7 @@
     "translation": "It is often the case that Kimea reads a particular poem by Hafez for us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "specificity"]
@@ -407,7 +407,7 @@
     "translation": "What did Roya mix together?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "collective answer", "judgment": "acceptable"}
     ],
@@ -430,7 +430,7 @@
     "translation": "What color did Roya mix together?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SCI"]
@@ -452,7 +452,7 @@
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"]
@@ -474,7 +474,7 @@
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SCI"]
@@ -496,7 +496,7 @@
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"]
@@ -518,7 +518,7 @@
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SCI"]
@@ -539,7 +539,7 @@
     "translation": "What must Forood buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "free choice answer", "judgment": "acceptable"}
     ],
@@ -562,7 +562,7 @@
     "translation": "What book must Forood buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "free choice answer", "judgment": "acceptable"}
     ],
@@ -585,7 +585,7 @@
     "translation": "Roya bought something yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Maybe this thing", "judgment": "acceptable"},
       {"name": "Maybe this thing and that thing", "judgment": "acceptable"}
@@ -610,7 +610,7 @@
     "translation": "Roya bought some book yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Maybe this book", "judgment": "acceptable"},
       {"name": "Maybe this book and that book", "judgment": "unacceptable"}
@@ -636,7 +636,7 @@
     "context": "Forood looks confused. Ava sees him and asks Roya what is going on. Roya replies:",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
@@ -658,7 +658,7 @@
     "translation": "Which book did Roya buy yesterday?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"]
@@ -679,7 +679,7 @@
     "translation": "Which book did Roya buy yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -704,7 +704,7 @@
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
@@ -725,7 +725,7 @@
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"]
@@ -747,7 +747,7 @@
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"]
@@ -767,7 +767,7 @@
     "translation": "What fell off the table?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"],

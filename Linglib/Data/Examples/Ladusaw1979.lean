@@ -24,7 +24,7 @@ def i_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any")] }
 
@@ -37,7 +37,7 @@ def i_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not")] }
 
@@ -50,7 +50,7 @@ def i_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already")] }
 
@@ -63,7 +63,7 @@ def i_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "not"), ("denial", "true")] }
 
@@ -76,7 +76,7 @@ def iv_4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("wide", "true")] }
 
@@ -89,7 +89,7 @@ def iv_4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not"), ("wide", "true")] }
 
@@ -102,7 +102,7 @@ def iv_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not"), ("order", "follows")] }
 
@@ -115,7 +115,7 @@ def iv_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yet"), ("functor", "no")] }
 
@@ -128,7 +128,7 @@ def iv_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "few")] }
 
@@ -141,7 +141,7 @@ def iv_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "few"), ("order", "follows")] }
 
@@ -154,7 +154,7 @@ def iv_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "no")] }
 
@@ -167,7 +167,7 @@ def iv_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "no"), ("order", "follows")] }
 
@@ -180,7 +180,7 @@ def iv_40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "few")] }
 
@@ -193,7 +193,7 @@ def iv_40d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "few"), ("order", "follows")] }
 
@@ -206,7 +206,7 @@ def iv_40e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "no"), ("order", "follows")] }
 
@@ -219,7 +219,7 @@ def iv_40f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "no")] }
 
@@ -232,7 +232,7 @@ def iv_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not"), ("clause", "true"), ("order", "follows")] }
 
@@ -245,7 +245,7 @@ def iv_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not"), ("clause", "true"), ("order", "follows")] }
 
@@ -258,7 +258,7 @@ def iv_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("clause", "true"), ("order", "follows")] }
 
@@ -271,7 +271,7 @@ def iv_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("clause", "true"), ("order", "follows")] }
 
@@ -284,7 +284,7 @@ def iv_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("clause", "true"), ("order", "follows")] }
 
@@ -297,7 +297,7 @@ def vi_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "upward"), ("clause", "true")] }
 
@@ -310,7 +310,7 @@ def vi_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "upward"), ("over", "not"), ("over2", "not"), ("clause", "true")] }
 
@@ -323,7 +323,7 @@ def vi_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "no-det")] }
 
@@ -336,7 +336,7 @@ def vi_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "every-det")] }
 
@@ -349,7 +349,7 @@ def vi_48c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "some-det")] }
 
@@ -362,7 +362,7 @@ def vi_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "no")] }
 
@@ -375,7 +375,7 @@ def vi_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "every")] }
 
@@ -388,7 +388,7 @@ def vi_49c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "some")] }
 
@@ -401,7 +401,7 @@ def vi_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "atMost-det"), ("item2", "any"), ("functor2", "atMost")] }
 
@@ -414,7 +414,7 @@ def vi_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "atLeast-det"), ("item2", "any"), ("functor2", "atLeast")] }
 
@@ -427,7 +427,7 @@ def vi_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "few-det")] }
 
@@ -440,7 +440,7 @@ def vi_53c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "most-det")] }
 
@@ -453,7 +453,7 @@ def vi_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "few")] }
 
@@ -466,7 +466,7 @@ def vi_61c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "most")] }
 
@@ -479,7 +479,7 @@ def vi_97a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "tooTo")] }
 
@@ -492,7 +492,7 @@ def vi_97b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward")] }
 
@@ -505,7 +505,7 @@ def vi_105a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "without")] }
 
@@ -518,7 +518,7 @@ def vi_105b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward")] }
 
@@ -531,7 +531,7 @@ def vi_108 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "without"), ("item2", "any")] }
 
@@ -544,7 +544,7 @@ def vi_112b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "without")] }
 
@@ -557,7 +557,7 @@ def vi_112c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward")] }
 
@@ -570,7 +570,7 @@ def vi_117 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "only-np")] }
 
@@ -583,7 +583,7 @@ def vi_120 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "only")] }
 
@@ -596,7 +596,7 @@ def vi_125a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward"), ("clause", "true")] }
 
@@ -609,7 +609,7 @@ def vi_125b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "before"), ("clause", "true")] }
 
@@ -622,7 +622,7 @@ def vi_126a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "if"), ("clause", "true")] }
 
@@ -635,7 +635,7 @@ def vi_126b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward"), ("clause", "true")] }
 
@@ -648,7 +648,7 @@ def vi_132a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "upward"), ("over", "not"), ("clause", "true")] }
 
@@ -661,7 +661,7 @@ def vi_132b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward"), ("over", "not"), ("clause", "true")] }
 
@@ -674,7 +674,7 @@ def vi_133a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "doubt"), ("clause", "true")] }
 
@@ -687,7 +687,7 @@ def vi_133b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "doubt"), ("clause", "true")] }
 
@@ -700,7 +700,7 @@ def vi_134 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("wide", "true")] }
 
@@ -713,7 +713,7 @@ def vi_135a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("clause", "true")] }
 
@@ -726,7 +726,7 @@ def vi_135b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "upward"), ("over", "not"), ("clause", "true")] }
 
@@ -739,7 +739,7 @@ def vi_136a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "not"), ("clause", "true")] }
 
@@ -752,7 +752,7 @@ def vi_136b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("functor", "upward"), ("over", "not"), ("clause", "true")] }
 
@@ -765,7 +765,7 @@ def vi_138a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "no")] }
 
@@ -778,7 +778,7 @@ def vi_138b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "few")] }
 
@@ -791,7 +791,7 @@ def vi_138c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "few")] }
 
@@ -804,7 +804,7 @@ def vi_139a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "no")] }
 
@@ -817,7 +817,7 @@ def vi_139b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "few")] }
 
@@ -830,7 +830,7 @@ def vi_139c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "few")] }
 
@@ -843,7 +843,7 @@ def vi_139d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "atMost")] }
 
@@ -856,7 +856,7 @@ def vi_140a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "no")] }
 
@@ -869,7 +869,7 @@ def vi_140b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "few")] }
 
@@ -882,7 +882,7 @@ def vi_140c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "few")] }
 
@@ -895,7 +895,7 @@ def vi_140d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "atMost")] }
 
@@ -908,7 +908,7 @@ def vi_141a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "rather"), ("functor", "no")] }
 
@@ -921,7 +921,7 @@ def vi_141b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "rather"), ("functor", "few")] }
 
@@ -934,7 +934,7 @@ def vi_141c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "rather"), ("functor", "few")] }
 
@@ -947,7 +947,7 @@ def vi_141d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "rather"), ("functor", "atMost")] }
 
@@ -960,7 +960,7 @@ def vi_142a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "someone"), ("functor", "not"), ("denial", "true")] }
 
@@ -973,7 +973,7 @@ def vi_142b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "already"), ("functor", "not"), ("denial", "true")] }
 
@@ -986,7 +986,7 @@ def vi_142c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "rather"), ("functor", "not"), ("denial", "true")] }
 
@@ -999,7 +999,7 @@ def ix_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "no-det")] }
 
@@ -1012,7 +1012,7 @@ def ix_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "every-det")] }
 
@@ -1025,7 +1025,7 @@ def ix_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "no")] }
 
@@ -1038,7 +1038,7 @@ def ix_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("functor", "every")] }
 

@@ -24,7 +24,7 @@ def az2025_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("dependent", "of")] }
 
@@ -37,7 +37,7 @@ def az2025_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "mother"), ("dependent", "of")] }
 
@@ -52,7 +52,7 @@ def az2025_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "perifanos"), ("dependent", "ɣia")] }
 
@@ -67,7 +67,7 @@ def az2025_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "perifanos"), ("noun", "pateras"), ("dependent", "ɣia")] }
 
@@ -82,7 +82,7 @@ def az2025_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("dependent", "Bere")] }
 
@@ -97,7 +97,7 @@ def az2025_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume"), ("dependent", "bere")] }
 
@@ -112,7 +112,7 @@ def az2025_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "moftaxar-∅-and"), ("dependent", "be")] }
 
@@ -127,7 +127,7 @@ def az2025_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "moftaxar"), ("attributivizer", "clitic"), ("noun", "madar-an=e"), ("dependent", "be")] }
 
@@ -140,7 +140,7 @@ def az2025_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")] }
 
@@ -153,7 +153,7 @@ def az2025_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")] }
 
@@ -166,7 +166,7 @@ def az2025_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "man"), ("dependent", "of")] }
 
@@ -179,7 +179,7 @@ def az2025_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "woman"), ("dependent", "that")] }
 
@@ -192,7 +192,7 @@ def az2025_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "wearing"), ("noun", "person"), ("dependent", "a")] }
 
@@ -205,7 +205,7 @@ def az2025_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "to"), ("noun", "letter"), ("dependent", "Bill")] }
 
@@ -218,7 +218,7 @@ def az2025_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "which"), ("noun", "book"), ("dependent", "I")] }
 
@@ -231,7 +231,7 @@ def az2025_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "tall"), ("attributivizer", "null"), ("noun", "guy"), ("degree", "enough")] }
 
@@ -244,7 +244,7 @@ def az2025_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "tall"), ("noun", "guy"), ("dependent", "to"), ("degree", "enough")] }
 
@@ -259,7 +259,7 @@ def az2025_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "damok'ideb-ul-i"), ("dependent", "tavis")] }
 
@@ -274,7 +274,7 @@ def az2025_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "damok'ideb-ul-i"), ("noun", "bič'-i"), ("dependent", "tavis")] }
 
@@ -289,7 +289,7 @@ def az2025_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "független"), ("dependent", "a")] }
 
@@ -304,7 +304,7 @@ def az2025_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "független"), ("noun", "fiú"), ("dependent", "a")] }
 
@@ -319,7 +319,7 @@ def az2025_19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("dependent", "af")] }
 
@@ -334,7 +334,7 @@ def az2025_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")] }
 
@@ -349,7 +349,7 @@ def az2025_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "hpart"), ("dependent", "ir")] }
 
@@ -364,7 +364,7 @@ def az2025_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "hpart"), ("noun", "hayr"), ("dependent", "ir")] }
 
@@ -379,7 +379,7 @@ def az2025_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "ponosan"), ("dependent", "na")] }
 
@@ -394,7 +394,7 @@ def az2025_21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "ponosan"), ("noun", "otac"), ("dependent", "na")] }
 
@@ -409,7 +409,7 @@ def az2025_23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "filikes"), ("noun", "χores"), ("dependent", "pros")] }
 
@@ -424,7 +424,7 @@ def az2025_24c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "ustavšyje"), ("noun", "glaza"), ("dependent", "ot")] }
 
@@ -439,7 +439,7 @@ def az2025_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "dúlì"), ("attributivizer", "clitic"), ("noun", "qīngshàonián"), ("dependent", "yú")] }
 
@@ -454,7 +454,7 @@ def az2025_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "bagay"), ("attributivizer", "clitic"), ("noun", "damit"), ("dependent", "(para)")] }
 
@@ -469,7 +469,7 @@ def az2025_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume")] }
 
@@ -484,7 +484,7 @@ def az2025_28d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume-a"), ("dependent", "bere"), ("construction", "relative")] }
 
@@ -499,7 +499,7 @@ def az2025_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("naa motó tsi ʂo karetera ka=tí yói.", .acceptable)]
+    contrasts := [("naa motó tsi ʂo karetera ka=tí yói.", .acceptable)]
     readings := []
     paperFeatures := [("head", "yói"), ("dependent", "karetera")] }
 
@@ -514,7 +514,7 @@ def az2025_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("motó karetera ka=tí yói kopi=ki paɨ.", .ungrammatical)]
+    contrasts := [("motó karetera ka=tí yói kopi=ki paɨ.", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "yói"), ("noun", "motó"), ("dependent", "karetera")] }
 
@@ -529,7 +529,7 @@ def az2025_29c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "yói=ka"), ("noun", "motó"), ("dependent", "karetera"), ("construction", "relative")] }
 
@@ -544,7 +544,7 @@ def az2025_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("dependent", "dureys-umma=tti")] }
 
@@ -559,7 +559,7 @@ def az2025_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama")] }
 
@@ -574,7 +574,7 @@ def az2025_30c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama"), ("dependent", "dureys-umma=tti")] }
 
@@ -589,7 +589,7 @@ def az2025_30d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "boon-∅-u"), ("noun", "nama"), ("dependent", "dureys-umma=tti"), ("construction", "relative")] }
 
@@ -604,7 +604,7 @@ def az2025_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "kii-sit-tu-p"), ("noun", "nukappiaqqa-p"), ("dependent", "qimmi-mut")] }
 
@@ -619,7 +619,7 @@ def az2025_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "rak-khal"), ("attributivizer", "clitic"), ("noun", "gore"), ("dependent", "jal=na")] }
 
@@ -634,7 +634,7 @@ def az2025_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "praestantibus"), ("noun", "viris"), ("dependent", "re")] }
 
@@ -649,7 +649,7 @@ def az2025_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")] }
 
@@ -664,7 +664,7 @@ def az2025_36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")] }
 
@@ -677,7 +677,7 @@ def az2025_36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti")] }
 
@@ -690,7 +690,7 @@ def az2025_36d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti")] }
 
@@ -705,7 +705,7 @@ def az2025_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("(Aftos) ine perifan.", .ungrammatical)]
+    contrasts := [("(Aftos) ine perifan.", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "perifan-os"), ("marker", "agreement")] }
 
@@ -720,7 +720,7 @@ def az2025_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("o perifan pateras", .ungrammatical)]
+    contrasts := [("o perifan pateras", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "perifan-os"), ("marker", "agreement"), ("noun", "pateras")] }
 
@@ -735,7 +735,7 @@ def az2025_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Er ist stolz-er.", .ungrammatical)]
+    contrasts := [("Er ist stolz-er.", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "stolz"), ("marker", "bare")] }
 
@@ -750,7 +750,7 @@ def az2025_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("stolz Vater", .ungrammatical)]
+    contrasts := [("stolz Vater", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "stolz-er"), ("marker", "agreement"), ("noun", "Vater")] }
 
@@ -765,7 +765,7 @@ def az2025_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ona umn-a.", .acceptable)]
+    contrasts := [("Ona umn-a.", .acceptable)]
     readings := []
     paperFeatures := [("head", "umn-aja"), ("form", "long")] }
 
@@ -780,7 +780,7 @@ def az2025_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("umn-a d'evočka", .ungrammatical)]
+    contrasts := [("umn-a d'evočka", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "umn-aja"), ("form", "long"), ("noun", "d'evočka")] }
 
@@ -795,7 +795,7 @@ def az2025_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("dependent", "af")] }
 
@@ -810,7 +810,7 @@ def az2025_41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")] }
 
@@ -825,7 +825,7 @@ def az2025_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jón er stolt-i.", .ungrammatical)]
+    contrasts := [("Jón er stolt-i.", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong")] }
 
@@ -840,7 +840,7 @@ def az2025_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("stolt-i faðir", .ungrammatical)]
+    contrasts := [("stolt-i faðir", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "indefinite"), ("noun", "faðir")] }
 
@@ -855,7 +855,7 @@ def az2025_42c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-i"), ("form", "weak"), ("definiteness", "definite"), ("noun", "faðir-inn")] }
 
@@ -870,7 +870,7 @@ def az2025_42d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "definite"), ("reading", "nonrestrictive"), ("noun", "faðir-inn")] }
 
@@ -885,7 +885,7 @@ def az2025_43a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Goran je lijepi.", .ungrammatical)]
+    contrasts := [("Goran je lijepi.", .ungrammatical)]
     readings := []
     paperFeatures := [("head", "lijep"), ("form", "short")] }
 
@@ -900,7 +900,7 @@ def az2025_43b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "lijep"), ("form", "short"), ("definiteness", "indefinite"), ("noun", "momak")] }
 
@@ -915,7 +915,7 @@ def az2025_43c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "lijepi"), ("form", "long"), ("definiteness", "definite"), ("noun", "momak")] }
 
@@ -930,7 +930,7 @@ def az2025_62 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maria ist auf ihre Tochter stolz.", .acceptable)]
+    contrasts := [("Maria ist auf ihre Tochter stolz.", .acceptable)]
     readings := []
     paperFeatures := [("head", "stolz"), ("dependent", "auf")] }
 
@@ -945,7 +945,7 @@ def az2025_63a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolz"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")] }
 
@@ -960,7 +960,7 @@ def az2025_63b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "stolz-e"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")] }
 
@@ -975,7 +975,7 @@ def az2025_66a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
 
@@ -990,7 +990,7 @@ def az2025_66b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
 
@@ -1005,7 +1005,7 @@ def az2025_66c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
 
@@ -1020,7 +1020,7 @@ def az2025_67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
 
@@ -1035,7 +1035,7 @@ def az2025_67b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
 
@@ -1050,7 +1050,7 @@ def az2025_67c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
 
@@ -1065,7 +1065,7 @@ def az2025_68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "groot"), ("attributivizer", "null"), ("noun", "kind"), ("degree", "genoeg-∅")] }
 
@@ -1080,7 +1080,7 @@ def az2025_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "groot"), ("attributivizer", "affix"), ("noun", "vrouw"), ("degree", "genoeg-e")] }
 
@@ -1095,7 +1095,7 @@ def az2025_68c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "groot-e"), ("noun", "vrouw"), ("degree", "genoeg")] }
 
@@ -1110,7 +1110,7 @@ def az2025_68d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "groot"), ("noun", "vrouw"), ("degree", "genoeg")] }
 
@@ -1123,7 +1123,7 @@ def az2025_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud-∅"), ("attributivizer", "null"), ("noun", "child")] }
 
@@ -1136,7 +1136,7 @@ def az2025_71b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("dependent", "of")] }
 
@@ -1149,7 +1149,7 @@ def az2025_71c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("degree", "enough-∅")] }
 

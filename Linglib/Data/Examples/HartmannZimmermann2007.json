@@ -12,7 +12,7 @@
     "translation": "KANDE is cooking the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -37,7 +37,7 @@
     "translation": "Kande is cooking the FISH.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -61,7 +61,7 @@
     "translation": "Audu will go to Germany.",
     "context": "Answer to: Wàaneenèe zâi tàfi Jamùs? 'Who will go to Germany?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -84,7 +84,7 @@
     "translation": "Dauda is calling her.",
     "context": "Answer to: Wàa ya-kèe kirà-ntà? 'Who is calling her?'",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Daudàa ya-kèe kirà-ntà.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -110,7 +110,7 @@
     "translation": "Dauda is calling her.",
     "context": "Answer to: Wàa ya-kèe kirà-ntà? 'Who is calling her?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "inSitu"],
@@ -135,7 +135,7 @@
     "translation": "Kande is cooking the FISH.",
     "context": "Answer to: Mèenee nèe Kandè ta-kèe dafàawaa? 'What is Kande cooking?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -160,7 +160,7 @@
     "translation": "I came from BIRNIN KONNI.",
     "context": "Answer to: Dàgà wànè gàrii ka zoo? 'From which city do you come?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "inSitu"],
@@ -184,7 +184,7 @@
     "translation": "No, it was HIS WIFE who died.",
     "context": "Corrective reply to: Tsoohowar̃-sà cee ta mutù? 'Was it his mother who died?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -209,7 +209,7 @@
     "translation": "No, I will pay FIFTEEN.",
     "context": "Corrective reply to: Nair̃àa àshìr̃in zaa kà biyaa in yaa yi makà. 'It is twenty Naira that you will pay if he makes it for you.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "inSitu"],
@@ -234,7 +234,7 @@
     "translation": "Alright, but can I pass BEHIND him?",
     "context": "Contrastive reply to: In mùtûm yanàa yîn sallàa, baa àa bî ta gàbansà. 'If a man is praying, you shouldn't pass in front of him.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "inSitu"],
@@ -260,7 +260,7 @@
     "translation": "And no one is chatting, it is only EATING that is going on.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -284,7 +284,7 @@
     "translation": "I want a WHOLE.",
     "context": "Answer to: Gùdaa koo ɓaarìi? '(Do you want) a whole or a half?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "exSitu"],
@@ -308,7 +308,7 @@
     "translation": "I will drink TEA.",
     "context": "Answer to: Kòofii zaa-kà shaa koo kùwa shaayìi? 'Will you drink coffee or tea?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "inSitu"],

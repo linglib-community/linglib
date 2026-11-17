@@ -27,7 +27,7 @@ def ch313 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "appositive"), ("test", "parenthetical"), ("test", "continuation")] }
 
@@ -43,7 +43,7 @@ def ch314a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (13): Rovnaj kaftə prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Exactly two criminals, who, by the way, Petja caught, were running away.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("reading", "appositive"), ("test", "continuation"), ("antecedent", "ch. 3 (13)")] }
 
@@ -59,7 +59,7 @@ def ch314b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (13): Rovnaj kaftə prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Exactly two criminals, who, by the way, Petja caught, were running away.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("reading", "appositive"), ("test", "continuation"), ("antecedent", "ch. 3 (13)")] }
 
@@ -75,7 +75,7 @@ def ch315 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "restrictive"), ("test", "indefiniteHead"), ("test", "continuation")] }
 
@@ -91,7 +91,7 @@ def ch316 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (15): Koj kona prˈistupnˈik-nˈə-nˈ kona-tˈnˈə-nˈ kunda-zˈənˈ Petˈɛ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Some criminals who Petja caught were running away.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("reading", "restrictive"), ("test", "continuation"), ("antecedent", "ch. 3 (15)")] }
 
@@ -107,7 +107,7 @@ def ch317 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "restrictive"), ("test", "freeChoice")] }
 
@@ -123,7 +123,7 @@ def ch318 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "appositive"), ("test", "parenthetical"), ("test", "continuation")] }
 
@@ -139,7 +139,7 @@ def ch319a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (18): Rovnaj kaftə prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals, who, by the way, Petja caught, were running away.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("reading", "appositive"), ("test", "continuation"), ("antecedent", "ch. 3 (18)")] }
 
@@ -155,7 +155,7 @@ def ch319b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (18): Rovnaj kaftə prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ meždu pročim kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals, who, by the way, Petja caught, were running away.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("reading", "appositive"), ("test", "continuation"), ("antecedent", "ch. 3 (18)")] }
 
@@ -171,7 +171,7 @@ def ch320 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "restrictive"), ("test", "indefiniteHead"), ("test", "continuation")] }
 
@@ -187,7 +187,7 @@ def ch321 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (20): Koj kona prˈistupnˈik-nˈə [kona-tˈnˈə-nˈ kunda-zˈənˈ Petˈɛ] vorˈgədˈ-kšnˈə-sˈ-tˈ. 'Some criminals who Petja caught were running away.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("reading", "restrictive"), ("test", "continuation"), ("antecedent", "ch. 3 (20)")] }
 
@@ -203,7 +203,7 @@ def ch322 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "restrictive"), ("test", "freeChoice")] }
 
@@ -219,7 +219,7 @@ def ch323 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "maximalizing"), ("test", "continuation"), ("correlate", "present")] }
 
@@ -235,7 +235,7 @@ def ch324a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (23): [Kona kaftə prˈistupnˈik-nˈə-nˈ Petˈɛ kunda-zˈənˈ] sˈinˈ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals that Petja caught were running away.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "maximalizing"), ("test", "continuation"), ("antecedent", "ch. 3 (23)")] }
 
@@ -251,7 +251,7 @@ def ch324b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered as a continuation of (23): [Kona kaftə prˈistupnˈik-nˈə-nˈ Petˈɛ kunda-zˈənˈ] sˈinˈ vorˈgədˈ-kšnˈə-sˈ-tˈ. 'The two criminals that Petja caught were running away.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "maximalizing"), ("test", "continuation"), ("antecedent", "ch. 3 (23)")] }
 
@@ -267,7 +267,7 @@ def ch325 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("[Kona pɛrˈɛkɛ-tˈ pidˈ-əzˈə sasˈəda-zˈə] [kona pɛrˈɛkɛ-tˈ minˈ srazu seva-sˈk] son ulˈ-sˈ kapsta-nˈ.", .ungrammatical)]
+    contrasts := [("[Kona pɛrˈɛkɛ-tˈ pidˈ-əzˈə sasˈəda-zˈə] [kona pɛrˈɛkɛ-tˈ minˈ srazu seva-sˈk] son ulˈ-sˈ kapsta-nˈ.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "maximalizing"), ("test", "stacking"), ("correlate", "present")] }
 
@@ -283,7 +283,7 @@ def ch326 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "stacking")] }
 
@@ -299,7 +299,7 @@ def ch327 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "stacking")] }
 
@@ -315,7 +315,7 @@ def ch328 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "restrictive"), ("test", "freeChoice"), ("correlate", "present")] }
 
@@ -331,7 +331,7 @@ def ch329 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "correlative"), ("reading", "maximalizing"), ("test", "properName"), ("correlate", "present")] }
 
@@ -347,7 +347,7 @@ def ch330 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "appositive"), ("test", "properName")] }
 
@@ -363,7 +363,7 @@ def ch331 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("reading", "appositive"), ("test", "properName")] }
 
@@ -379,7 +379,7 @@ def ch332 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -395,7 +395,7 @@ def ch333 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "position"), ("position", "inSitu"), ("function", "object")] }
 
@@ -411,7 +411,7 @@ def ch334 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "position"), ("position", "inSitu"), ("function", "object")] }
 
@@ -427,7 +427,7 @@ def ch335 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -443,7 +443,7 @@ def ch336a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", .acceptable)]
+    contrasts := [("[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "object"), ("correlate", "absent")] }
 
@@ -459,7 +459,7 @@ def ch336b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Minˈ jorda-sˈk sˈɛ-nˈ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ].", .ungrammatical)]
+    contrasts := [("Minˈ jorda-sˈk sˈɛ-nˈ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ].", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "position"), ("position", "rightEdge"), ("function", "object"), ("correlate", "absent")] }
 
@@ -475,7 +475,7 @@ def ch337 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "position"), ("position", "embeddedLeftEdge"), ("function", "subject")] }
 
@@ -491,7 +491,7 @@ def ch338 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "position"), ("position", "embeddedLeftEdge"), ("function", "object"), ("correlate", "present")] }
 
@@ -507,7 +507,7 @@ def ch339 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "position"), ("position", "afterAdjunct"), ("function", "subject")] }
 
@@ -523,7 +523,7 @@ def ch340 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "correlative"), ("internalCase", "GEN"), ("test", "position"), ("position", "afterAdjunct"), ("function", "subject"), ("correlate", "absent")] }
 
@@ -539,7 +539,7 @@ def ch341 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "position"), ("position", "afterArgument"), ("function", "subject")] }
 
@@ -555,7 +555,7 @@ def ch342 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "position"), ("position", "afterArgument"), ("function", "object")] }
 
@@ -571,7 +571,7 @@ def ch343 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Katˈɛ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] jorda-zˈə sˈɛ-nˈ.", .ungrammatical)]
+    contrasts := [("Katˈɛ [kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] jorda-zˈə sˈɛ-nˈ.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.3.2.1"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "position"), ("position", "afterArgument"), ("function", "object"), ("correlate", "absent")] }
 
@@ -587,7 +587,7 @@ def ch344 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[Kona lomanˈ-tˈ šav-əzˈ hulˈiga-tˈnˈə] sˈɛ ašˈčˈ-i balˈnˈica-sə.", .acceptable)]
+    contrasts := [("[Kona lomanˈ-tˈ šav-əzˈ hulˈiga-tˈnˈə] sˈɛ ašˈčˈ-i balˈnˈica-sə.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "correlative"), ("internalCase", "GEN"), ("test", "correlate"), ("position", "leftEdge"), ("function", "subject"), ("correlate", "absent")] }
 
@@ -603,7 +603,7 @@ def ch345 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", .acceptable)]
+    contrasts := [("[Kona škaf-tˈi mon put-inˈə fətəgrafijə-tˈnˈə-nˈ] minˈ jorda-sˈk sˈɛ-nˈ.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "correlate"), ("position", "leftEdge"), ("function", "object"), ("correlate", "absent")] }
 
@@ -619,7 +619,7 @@ def ch346 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := [("[Kona sasˈəda-zˈə af suv-sˈ-i] mon zvonˈ-ənˈ sˈɛ-nˈdˈi.", .acceptable)]
+    contrasts := [("[Kona sasˈəda-zˈə af suv-sˈ-i] mon zvonˈ-ənˈ sˈɛ-nˈdˈi.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "correlative"), ("internalCase", "NOM"), ("test", "correlate"), ("position", "leftEdge"), ("function", "indirectObject"), ("correlate", "absent"), ("mark", "??(sˈɛ-nˈdˈi)")] }
 
@@ -635,7 +635,7 @@ def ch347 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("[Kona pinˈə-tˈ mon vasˈft-inˈə] sˈɛ-nˈ ezdə pelˈ-an.", .acceptable)]
+    contrasts := [("[Kona pinˈə-tˈ mon vasˈft-inˈə] sˈɛ-nˈ ezdə pelˈ-an.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "correlative"), ("internalCase", "GEN"), ("test", "correlate"), ("position", "leftEdge"), ("function", "oblique"), ("correlate", "absent"), ("mark", "*(sˈɛ-nˈ ezdə)")] }
 
@@ -651,7 +651,7 @@ def ch348 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "ICA"), ("caseLabel", "DAT ← NOM"), ("externalCase", "DAT"), ("internalCase", "NOM"), ("test", "correlate"), ("position", "leftEdge"), ("function", "indirectObject"), ("correlate", "absent")] }
 
@@ -667,7 +667,7 @@ def ch349 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.2"), ("rcType", "ICA"), ("caseLabel", "ABL ← GEN"), ("externalCase", "ABL"), ("internalCase", "GEN"), ("test", "correlate"), ("position", "leftEdge"), ("function", "oblique"), ("correlate", "absent")] }
 
@@ -683,7 +683,7 @@ def ch350 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.3"), ("rcType", "none"), ("test", "adjunctIsland"), ("diagnostic", "baseline")] }
 
@@ -699,7 +699,7 @@ def ch351 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.3"), ("rcType", "none"), ("test", "adjunctIsland"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -715,7 +715,7 @@ def ch352 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.3"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "adjunctIsland"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -731,7 +731,7 @@ def ch353 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.3"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("test", "adjunctIsland"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -747,7 +747,7 @@ def ch354 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.3"), ("rcType", "correlative"), ("internalCase", "GEN"), ("test", "adjunctIsland"), ("position", "leftEdge"), ("function", "subject"), ("correlate", "absent")] }
 
@@ -763,7 +763,7 @@ def ch355 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "none"), ("test", "complexNPIsland"), ("diagnostic", "baseline")] }
 
@@ -779,7 +779,7 @@ def ch356 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "none"), ("test", "complexNPIsland"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -795,7 +795,7 @@ def ch357 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "complexNPIsland"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -811,7 +811,7 @@ def ch358 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "complexNPIsland"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -827,7 +827,7 @@ def ch359 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "complexNPIsland"), ("position", "leftEdge"), ("function", "object"), ("correlate", "absent")] }
 
@@ -843,7 +843,7 @@ def ch360 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.4"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "GEN"), ("test", "variableBinding"), ("test", "complexNPIsland"), ("position", "inSitu"), ("function", "object")] }
 
@@ -859,7 +859,7 @@ def ch361 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjoint", .acceptable), ("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "none"), ("test", "variableBinding"), ("diagnostic", "baseline")] }
 
@@ -875,7 +875,7 @@ def ch362 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjoint", .acceptable), ("bound", .ungrammatical)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "none"), ("test", "variableBinding"), ("diagnostic", "baseline")] }
 
@@ -891,7 +891,7 @@ def ch363 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "variableBinding"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -907,7 +907,7 @@ def ch364 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjoint", .acceptable), ("bound", .ungrammatical)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "correlative"), ("internalCase", "DAT"), ("test", "variableBinding"), ("position", "leftEdge"), ("function", "object"), ("correlate", "absent")] }
 
@@ -923,7 +923,7 @@ def ch365 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "variableBinding"), ("position", "inSitu"), ("function", "object")] }
 
@@ -939,7 +939,7 @@ def ch366 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "variableBinding"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -955,7 +955,7 @@ def ch367 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.6"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "anaphorBinding"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -971,7 +971,7 @@ def ch368 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "3.3.2.6"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "anaphorBinding"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -987,7 +987,7 @@ def ch369 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.7"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "coordination"), ("position", "leftEdge"), ("function", "object"), ("rcConjunct", "first")] }
 
@@ -1003,7 +1003,7 @@ def ch370 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.7"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "coordination"), ("position", "leftEdge"), ("function", "object"), ("rcConjunct", "second")] }
 
@@ -1019,7 +1019,7 @@ def ch371 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2.7"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("test", "coordination"), ("position", "leftEdge"), ("function", "object"), ("rcConjunct", "second")] }
 
@@ -1035,7 +1035,7 @@ def ch3119 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN")] }
 
@@ -1051,7 +1051,7 @@ def ch3120 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT")] }
 
@@ -1067,7 +1067,7 @@ def ch3121 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT")] }
 
@@ -1083,7 +1083,7 @@ def ch3122 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("headCase", "NOM"), ("relPronounCase", "NOM"), ("headFunction", "argument")] }
 
@@ -1099,7 +1099,7 @@ def ch3123 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "DAT ← NOM"), ("externalCase", "DAT"), ("internalCase", "NOM"), ("headCase", "NOM"), ("relPronounCase", "NOM")] }
 
@@ -1115,7 +1115,7 @@ def ch3124 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "DAT ← GEN"), ("externalCase", "DAT"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN")] }
 
@@ -1131,7 +1131,7 @@ def ch3125 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "ABL ← DAT"), ("externalCase", "ABL"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("headFunction", "argument")] }
 
@@ -1147,7 +1147,7 @@ def ch3126 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "none")] }
 
@@ -1163,7 +1163,7 @@ def ch3126_alt : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "none")] }
 
@@ -1179,7 +1179,7 @@ def ch3127 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "IN ← GEN"), ("externalCase", "IN"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN")] }
 
@@ -1195,7 +1195,7 @@ def ch3128 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "none")] }
 
@@ -1211,7 +1211,7 @@ def ch3129 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "IN ← GEN"), ("externalCase", "IN"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("mark", "??*")] }
 
@@ -1227,7 +1227,7 @@ def ch3130 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "none")] }
 
@@ -1243,7 +1243,7 @@ def ch3131 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "ABL"), ("headCase", "GEN"), ("relPronounCase", "ABL"), ("postposition", "baška")] }
 
@@ -1259,7 +1259,7 @@ def ch3132 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "ABL"), ("headCase", "GEN"), ("relPronounCase", "ABL")] }
 
@@ -1275,7 +1275,7 @@ def ch3133 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "IN"), ("headCase", "NOM"), ("relPronounCase", "IN")] }
 
@@ -1291,7 +1291,7 @@ def ch3134 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "EL"), ("headCase", "GEN"), ("relPronounCase", "EL")] }
 
@@ -1307,7 +1307,7 @@ def ch3135 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "ABL"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -1323,7 +1323,7 @@ def ch3136 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "IN"), ("headCase", "NOM"), ("relPronounCase", "GEN"), ("postposition", "mar̥tə")] }
 
@@ -1339,7 +1339,7 @@ def ch3137 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "EL"), ("headCase", "NOM"), ("relPronounCase", "GEN"), ("postposition", "lank-stə")] }
 
@@ -1355,7 +1355,7 @@ def ch3137_alt : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "EL"), ("headCase", "NOM"), ("relPronounCase", "EL")] }
 
@@ -1371,7 +1371,7 @@ def ch3138 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← ABL"), ("externalCase", "NOM"), ("internalCase", "ABL"), ("headCase", "ABL"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -1387,7 +1387,7 @@ def ch3139 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← IN"), ("externalCase", "NOM"), ("internalCase", "IN"), ("headCase", "IN"), ("relPronounCase", "GEN"), ("postposition", "mar̥tə")] }
 
@@ -1403,7 +1403,7 @@ def ch3140 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← EL"), ("externalCase", "NOM"), ("internalCase", "EL"), ("headCase", "EL"), ("relPronounCase", "GEN"), ("postposition", "lank-stə")] }
 
@@ -1419,7 +1419,7 @@ def ch3141 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -1435,7 +1435,7 @@ def ch3142 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("postposition", "mar̥tə")] }
 
@@ -1451,7 +1451,7 @@ def ch3143 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← ILL"), ("externalCase", "NOM"), ("internalCase", "ILL"), ("headCase", "ILL"), ("relPronounCase", "DAT")] }
 
@@ -1467,7 +1467,7 @@ def ch3143_alt : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← ILL"), ("externalCase", "NOM"), ("internalCase", "ILL"), ("headCase", "ILL"), ("relPronounCase", "ILL")] }
 
@@ -1483,7 +1483,7 @@ def ch3144 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "DAT ← IN"), ("externalCase", "DAT"), ("internalCase", "IN"), ("headCase", "IN"), ("relPronounCase", "GEN"), ("postposition", "esə"), ("headFunction", "adjunct")] }
 
@@ -1499,7 +1499,7 @@ def ch3145 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("rcType", "ICA"), ("caseLabel", "IN ← ABL"), ("externalCase", "IN"), ("internalCase", "ABL"), ("headCase", "ABL"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -1515,7 +1515,7 @@ def ch412 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1531,7 +1531,7 @@ def ch413 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1547,7 +1547,7 @@ def ch414 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "idiom"), ("site", "rc")] }
 
@@ -1563,7 +1563,7 @@ def ch415 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "idiom"), ("site", "rc")] }
 
@@ -1579,7 +1579,7 @@ def ch416 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "idiom"), ("site", "rc")] }
 
@@ -1595,7 +1595,7 @@ def ch417 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "idiom"), ("site", "rc")] }
 
@@ -1611,7 +1611,7 @@ def ch418 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "idiom"), ("site", "matrix")] }
 
@@ -1627,7 +1627,7 @@ def ch419 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "idiom"), ("site", "matrix")] }
 
@@ -1643,7 +1643,7 @@ def ch420 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "idiom"), ("site", "matrix")] }
 
@@ -1659,7 +1659,7 @@ def ch421 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "idiom"), ("site", "matrix")] }
 
@@ -1674,7 +1674,7 @@ def ch432 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable), ("disjoint", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1689,7 +1689,7 @@ def ch433 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Petja lost his mitten."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable), ("disjoint", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1704,7 +1704,7 @@ def ch434 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Petja lost his mitten."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1719,7 +1719,7 @@ def ch435 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1735,7 +1735,7 @@ def ch436 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1751,7 +1751,7 @@ def ch437 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1766,7 +1766,7 @@ def ch438 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1782,7 +1782,7 @@ def ch439 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1798,7 +1798,7 @@ def ch440 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1814,7 +1814,7 @@ def ch441 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1830,7 +1830,7 @@ def ch442 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1846,7 +1846,7 @@ def ch443 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1862,7 +1862,7 @@ def ch444 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "anaphor"), ("site", "rc")] }
 
@@ -1878,7 +1878,7 @@ def ch445 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "anaphor"), ("site", "matrix")] }
 
@@ -1894,7 +1894,7 @@ def ch446 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "anaphor"), ("site", "matrix")] }
 
@@ -1910,7 +1910,7 @@ def ch455 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1926,7 +1926,7 @@ def ch456 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("bound", .ungrammatical)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1942,7 +1942,7 @@ def ch457 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "reflexiveVariable"), ("site", "rc")] }
 
@@ -1958,7 +1958,7 @@ def ch458 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("bound", .ungrammatical)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "reflexiveVariable"), ("site", "rc")] }
 
@@ -1974,7 +1974,7 @@ def ch459 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -1990,7 +1990,7 @@ def ch460 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2006,7 +2006,7 @@ def ch461 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2022,7 +2022,7 @@ def ch462 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "pronounVariable"), ("site", "rc")] }
 
@@ -2038,7 +2038,7 @@ def ch463 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "pronounVariable"), ("site", "rc")] }
 
@@ -2054,7 +2054,7 @@ def ch464 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "pronounVariable"), ("site", "rc")] }
 
@@ -2070,7 +2070,7 @@ def ch465 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "pronounVariable"), ("site", "rc")] }
 
@@ -2086,7 +2086,7 @@ def ch466 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2102,7 +2102,7 @@ def ch467a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "pronounVariable"), ("site", "matrix")] }
 
@@ -2118,7 +2118,7 @@ def ch467b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "pronounVariable"), ("site", "matrix")] }
 
@@ -2134,7 +2134,7 @@ def ch467c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.3"), ("rcType", "correlative"), ("internalCase", "DAT"), ("diagnostic", "pronounVariable"), ("site", "matrix")] }
 
@@ -2150,7 +2150,7 @@ def ch472 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "external"), ("externalCase", "DAT"), ("internalCase", "NOM"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2166,7 +2166,7 @@ def ch473 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2182,7 +2182,7 @@ def ch474 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "ICA"), ("caseLabel", "DAT ← NOM"), ("externalCase", "DAT"), ("internalCase", "NOM"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2198,7 +2198,7 @@ def ch475 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2214,7 +2214,7 @@ def ch476 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[Ɛrˈ sˈora-nˈɛ-tˈ sˈestra-c] sɛv-əzˈə esˈ kruška-nc.", .ungrammatical)]
+    contrasts := [("[Ɛrˈ sˈora-nˈɛ-tˈ sˈestra-c] sɛv-əzˈə esˈ kruška-nc.", .ungrammatical)]
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2230,7 +2230,7 @@ def ch477 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2246,7 +2246,7 @@ def ch478 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2262,7 +2262,7 @@ def ch479 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2278,7 +2278,7 @@ def ch480 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2294,7 +2294,7 @@ def ch481 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2310,7 +2310,7 @@ def ch482 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "crossover"), ("site", "rc")] }
 
@@ -2326,7 +2326,7 @@ def ch483a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline"), ("wordOrder", "SVO")] }
 
@@ -2342,7 +2342,7 @@ def ch483b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline"), ("wordOrder", "SOV")] }
 
@@ -2358,7 +2358,7 @@ def ch483c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline"), ("wordOrder", "OSV")] }
 
@@ -2374,7 +2374,7 @@ def ch483d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline"), ("wordOrder", "OVS")] }
 
@@ -2390,7 +2390,7 @@ def ch485 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2406,7 +2406,7 @@ def ch486 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound", .acceptable)]
     paperFeatures := [("section", "4.3.4"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2422,7 +2422,7 @@ def ch497 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2438,7 +2438,7 @@ def ch498 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2454,7 +2454,7 @@ def ch499 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2470,7 +2470,7 @@ def ch4100 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2486,7 +2486,7 @@ def ch4101 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjoint", .acceptable), ("coreferent", .variable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2502,7 +2502,7 @@ def ch4102 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "none"), ("diagnostic", "baseline")] }
 
@@ -2518,7 +2518,7 @@ def ch4103 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "external"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "conditionC"), ("site", "rc")] }
 
@@ -2534,7 +2534,7 @@ def ch4104 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("diagnostic", "conditionC"), ("site", "rc")] }
 
@@ -2550,7 +2550,7 @@ def ch4105 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "external"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "conditionC"), ("site", "rc")] }
 
@@ -2566,7 +2566,7 @@ def ch4106 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .ungrammatical), ("disjoint", .acceptable)]
     paperFeatures := [("section", "4.3.5"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("diagnostic", "conditionC"), ("site", "rc")] }
 
@@ -2582,7 +2582,7 @@ def ch537 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "inSitu"), ("function", "object")] }
 
@@ -2598,7 +2598,7 @@ def ch538 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -2614,7 +2614,7 @@ def ch549 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("test", "position"), ("position", "afterAdjunct"), ("function", "subject")] }
 
@@ -2630,7 +2630,7 @@ def ch550 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("rcType", "ICA"), ("caseLabel", "GEN ← DAT"), ("externalCase", "GEN"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "afterArgument"), ("function", "object")] }
 
@@ -2646,7 +2646,7 @@ def ch554 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("rcType", "ICA"), ("caseLabel", "GEN ← NOM"), ("externalCase", "GEN"), ("internalCase", "NOM"), ("headCase", "NOM"), ("relPronounCase", "NOM"), ("test", "position"), ("position", "leftEdge"), ("function", "object")] }
 
@@ -2662,7 +2662,7 @@ def ch555 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -2678,7 +2678,7 @@ def ch556 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -2694,7 +2694,7 @@ def ch557a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "leftEdge"), ("function", "subject")] }
 
@@ -2710,7 +2710,7 @@ def ch557b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("rcType", "ICA"), ("caseLabel", "NOM ← DAT"), ("externalCase", "NOM"), ("internalCase", "DAT"), ("headCase", "DAT"), ("relPronounCase", "DAT"), ("test", "position"), ("position", "afterAdverb"), ("function", "subject")] }
 
@@ -2726,7 +2726,7 @@ def ch585 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← ABL"), ("externalCase", "NOM"), ("internalCase", "ABL"), ("headCase", "ABL"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -2742,7 +2742,7 @@ def ch585_alt : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← ABL"), ("externalCase", "NOM"), ("internalCase", "ABL"), ("headCase", "ABL"), ("relPronounCase", "ABL")] }
 
@@ -2758,7 +2758,7 @@ def ch586 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -2774,7 +2774,7 @@ def ch587 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← GEN + PP"), ("externalCase", "NOM"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("postposition", "ezdə")] }
 
@@ -2790,7 +2790,7 @@ def ch588 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "none")] }
 
@@ -2806,7 +2806,7 @@ def ch591 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← ILL"), ("externalCase", "NOM"), ("internalCase", "ILL"), ("headCase", "ILL"), ("relPronounCase", "DAT")] }
 
@@ -2822,7 +2822,7 @@ def ch591_alt : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("rcType", "ICA"), ("caseLabel", "NOM ← ILL"), ("externalCase", "NOM"), ("internalCase", "ILL"), ("headCase", "ILL"), ("relPronounCase", "ILL")] }
 
@@ -2838,7 +2838,7 @@ def ch611 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "6.2"), ("rcType", "external"), ("externalCase", "DAT"), ("internalCase", "GEN"), ("headCase", "DAT"), ("relPronounCase", "GEN"), ("diagnostic", "conditionC"), ("site", "matrix")] }
 
@@ -2854,7 +2854,7 @@ def ch612 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreferent", .acceptable)]
     paperFeatures := [("section", "6.2"), ("rcType", "ICA"), ("caseLabel", "DAT ← GEN"), ("externalCase", "DAT"), ("internalCase", "GEN"), ("headCase", "GEN"), ("relPronounCase", "GEN"), ("diagnostic", "conditionC"), ("site", "matrix")] }
 

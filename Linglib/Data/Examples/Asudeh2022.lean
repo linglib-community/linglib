@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("premises", "likes, alex, blake")] }
 
@@ -37,7 +37,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("premises", "love, every, some")] }
 
@@ -50,7 +50,7 @@ def fig2_finnish : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")] }
 
@@ -63,7 +63,7 @@ def fig2_english : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")] }
 

@@ -26,7 +26,7 @@ def ex_1a_puiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "puu"), ("gloss", "tree"), ("syllables", "1"), ("variant", "strong")] }
 
@@ -41,7 +41,7 @@ def ex_1a_potilaiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "potilas"), ("gloss", "patient"), ("syllables", "3"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
@@ -56,7 +56,7 @@ def ex_1b_kalojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "kala"), ("gloss", "fish"), ("syllables", "2"), ("variant", "weak")] }
 
@@ -71,7 +71,7 @@ def ex_1b_margariinien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak")] }
 
@@ -86,7 +86,7 @@ def ex_1c_naapureiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("naa.pu.ri.en", .acceptable)]
+    contrasts := [("naa.pu.ri.en", .acceptable)]
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -101,7 +101,7 @@ def ex_1c_reaganeiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Rea.ga.ni.en", .acceptable)]
+    contrasts := [("Rea.ga.ni.en", .acceptable)]
     readings := []
     paperFeatures := [("stem", "Reagani"), ("gloss", "Reagan"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -116,7 +116,7 @@ def ex_1c_moskeijoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mos.kei.jo.jen", .acceptable)]
+    contrasts := [("mos.kei.jo.jen", .acceptable)]
     readings := []
     paperFeatures := [("stem", "moskeija"), ("gloss", "mosque"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -131,7 +131,7 @@ def ex_1c_ministereiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mi.nis.te.ri.en", .acceptable)]
+    contrasts := [("mi.nis.te.ri.en", .acceptable)]
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "strong")] }
 
@@ -146,7 +146,7 @@ def ex_3a_maiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "maa"), ("gloss", "land"), ("syllables", "1"), ("variant", "strong")] }
 
@@ -161,7 +161,7 @@ def ex_3a_teiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "tie"), ("gloss", "road"), ("syllables", "1"), ("variant", "strong")] }
 
@@ -176,7 +176,7 @@ def ex_3b_lasien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "lasi"), ("gloss", "glass"), ("syllables", "2"), ("variant", "weak")] }
 
@@ -191,7 +191,7 @@ def ex_3c_palttoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "palttoo"), ("gloss", "coat"), ("syllables", "2"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
@@ -206,7 +206,7 @@ def ex_3c_varkaiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "varas"), ("gloss", "thief"), ("syllables", "2"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
@@ -221,7 +221,7 @@ def ex_6a_lemmikkien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("lem.mi.kei.den", .acceptable)]
+    contrasts := [("lem.mi.kei.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "lemmikki"), ("gloss", "pet"), ("syllables", "3"), ("variant", "weak")] }
 
@@ -236,7 +236,7 @@ def ex_6a_sihteerien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("sih.tee.rei.den", .acceptable)]
+    contrasts := [("sih.tee.rei.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "sihteeri"), ("gloss", "secretary"), ("syllables", "3"), ("variant", "weak")] }
 
@@ -251,7 +251,7 @@ def ex_6a_naapurien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("naa.pu.rei.den", .acceptable)]
+    contrasts := [("naa.pu.rei.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak")] }
 
@@ -266,7 +266,7 @@ def ex_6b_korjaamojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kor.jaa.moi.den", .acceptable)]
+    contrasts := [("kor.jaa.moi.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak")] }
 
@@ -281,7 +281,7 @@ def ex_6b_fyysikkojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("fyy.si.koi.den", .acceptable)]
+    contrasts := [("fyy.si.koi.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "fyysikko"), ("gloss", "physicist"), ("syllables", "3"), ("variant", "weak")] }
 
@@ -296,7 +296,7 @@ def ex_6b_lokeroiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("lo.ke.ro.jen", .marginal)]
+    contrasts := [("lo.ke.ro.jen", .marginal)]
     readings := []
     paperFeatures := [("stem", "lokero"), ("gloss", "compartment"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -311,7 +311,7 @@ def ex_6c_sairaaloiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("sai.raa.lo.jen", .acceptable)]
+    contrasts := [("sai.raa.lo.jen", .acceptable)]
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -326,7 +326,7 @@ def ex_6c_kameroiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ka.me.ro.jen", .marginal)]
+    contrasts := [("ka.me.ro.jen", .marginal)]
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -341,7 +341,7 @@ def ex_6c_mansikoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("man.sik.ko.jen", .marginal)]
+    contrasts := [("man.sik.ko.jen", .marginal)]
     readings := []
     paperFeatures := [("stem", "mansikka"), ("gloss", "strawberry"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -356,7 +356,7 @@ def ex_33_maiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ma.jen", .ungrammatical)]
+    contrasts := [("ma.jen", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "maa"), ("gloss", "land"), ("syllables", "1"), ("variant", "strong")] }
 
@@ -371,7 +371,7 @@ def ex_35_kalojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ka.loi.den", .ungrammatical)]
+    contrasts := [("ka.loi.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "kala"), ("gloss", "fish"), ("syllables", "2"), ("variant", "weak")] }
 
@@ -386,7 +386,7 @@ def ex_37_maailmoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("maa.il.mo.jen", .acceptable)]
+    contrasts := [("maa.il.mo.jen", .acceptable)]
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "strong")] }
 
@@ -401,7 +401,7 @@ def ex_39_ministerien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mi.nis.te.rei.den", .acceptable)]
+    contrasts := [("mi.nis.te.rei.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "weak")] }
 
@@ -416,7 +416,7 @@ def ex_40_margariinien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mar.ga.rii.nei.den", .ungrammatical)]
+    contrasts := [("mar.ga.rii.nei.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak")] }
 
@@ -431,7 +431,7 @@ def ex_42_aleksantereiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("A.lek.san.te.ri.en", .acceptable)]
+    contrasts := [("A.lek.san.te.ri.en", .acceptable)]
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "strong")] }
 
@@ -446,7 +446,7 @@ def ex_43_koordinaatistoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("koor.di.naa.tis.to.jen", .acceptable)]
+    contrasts := [("koor.di.naa.tis.to.jen", .acceptable)]
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "strong")] }
 
@@ -461,7 +461,7 @@ def ex_44_italiaanojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("i.ta.li.aa.noi.den", .ungrammatical)]
+    contrasts := [("i.ta.li.aa.noi.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "italiaano"), ("gloss", "Italian"), ("syllables", "5"), ("variant", "weak")] }
 
@@ -476,7 +476,7 @@ def ex_46_intellektuellien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("in.tel.lek.tu.el.lei.den", .ungrammatical)]
+    contrasts := [("in.tel.lek.tu.el.lei.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "intellektuelli"), ("gloss", "intellectual"), ("syllables", "6"), ("variant", "weak")] }
 
@@ -491,7 +491,7 @@ def ex_47_eksistentialistien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ek.sis.ten.ti.a.lis.tei.den", .ungrammatical)]
+    contrasts := [("ek.sis.ten.ti.a.lis.tei.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "eksistentialisti"), ("gloss", "existentialist"), ("syllables", "7"), ("variant", "weak")] }
 
@@ -507,7 +507,7 @@ def ex_48a_kamerojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ta"), ("obs_pct", "0.6")] }
 
@@ -523,7 +523,7 @@ def ex_48a_kameroiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.taa"), ("obs_pct", "99.4")] }
 
@@ -539,7 +539,7 @@ def ex_48b_sairaalojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ta"), ("obs_pct", "49.5")] }
 
@@ -555,7 +555,7 @@ def ex_48b_sairaaloiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.taa"), ("obs_pct", "50.5")] }
 
@@ -571,7 +571,7 @@ def ex_48c_naapurien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ti"), ("obs_pct", "63.1")] }
 
@@ -587,7 +587,7 @@ def ex_48c_naapureiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.tii"), ("obs_pct", "36.9")] }
 
@@ -603,7 +603,7 @@ def ex_48d_korjaamojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.to"), ("obs_pct", "82.2")] }
 
@@ -619,7 +619,7 @@ def ex_48d_korjaamoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.too"), ("obs_pct", "17.8")] }
 
@@ -634,7 +634,7 @@ def ex_531a_kameroiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "99.4"), ("count", "720")] }
 
@@ -649,7 +649,7 @@ def ex_531b_kamerojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ta"), ("pred_pct", "0"), ("obs_pct", "0.6"), ("count", "4")] }
 
@@ -664,7 +664,7 @@ def ex_532a_heteroiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "hetero"), ("gloss", "hetero"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "99.5"), ("count", "389")] }
 
@@ -679,7 +679,7 @@ def ex_532b_heterojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "hetero"), ("gloss", "hetero"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.to"), ("pred_pct", "0"), ("obs_pct", "0.5"), ("count", "2")] }
 
@@ -694,7 +694,7 @@ def ex_533a_naapureiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "36.9"), ("count", "215")] }
 
@@ -709,7 +709,7 @@ def ex_533b_naapurien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "63.1"), ("count", "368")] }
 
@@ -724,7 +724,7 @@ def ex_534a_maailmoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.taa"), ("pred_pct", "50"), ("obs_pct", "50.5"), ("count", "46")] }
 
@@ -739,7 +739,7 @@ def ex_534b_maailmojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ta"), ("pred_pct", "50"), ("obs_pct", "49.5"), ("count", "45")] }
 
@@ -754,7 +754,7 @@ def ex_535a_korjaamoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.too"), ("pred_pct", "20"), ("obs_pct", "17.8"), ("count", "76")] }
 
@@ -769,7 +769,7 @@ def ex_535b_korjaamojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.to"), ("pred_pct", "80"), ("obs_pct", "82.2"), ("count", "350")] }
 
@@ -784,7 +784,7 @@ def ex_536a_poliiseiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "poliisi"), ("gloss", "police"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.tii"), ("pred_pct", "0"), ("obs_pct", "1.6"), ("count", "13")] }
 
@@ -799,7 +799,7 @@ def ex_536b_poliisien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "poliisi"), ("gloss", "police"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ti"), ("pred_pct", "100"), ("obs_pct", "98.4"), ("count", "806")] }
 
@@ -814,7 +814,7 @@ def ex_541a_taiteilijoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "taiteilija"), ("gloss", "artist"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "276")] }
 
@@ -829,7 +829,7 @@ def ex_542a_luetteloiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "luettelo"), ("gloss", "catalogue"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "25")] }
 
@@ -844,7 +844,7 @@ def ex_543a_ministereiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "14.3"), ("count", "39")] }
 
@@ -859,7 +859,7 @@ def ex_543b_ministerien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "85.7"), ("count", "234")] }
 
@@ -874,7 +874,7 @@ def ex_544b_luonnehdintojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "luonnehdinto"), ("gloss", "characterization"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.ta"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "1")] }
 
@@ -889,7 +889,7 @@ def ex_545b_edustustojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "edustusto"), ("gloss", "delegation"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.to"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "84")] }
 
@@ -904,7 +904,7 @@ def ex_546b_margariinien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "736")] }
 
@@ -919,7 +919,7 @@ def ex_551a_ajattelijoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "ajattelija"), ("gloss", "thinker"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "101")] }
 
@@ -934,7 +934,7 @@ def ex_552a_televisioiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "televisio"), ("gloss", "television"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "41")] }
 
@@ -949,7 +949,7 @@ def ex_553a_aleksantereiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "11.8"), ("count", "2")] }
 
@@ -964,7 +964,7 @@ def ex_553b_aleksanterien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "88.2"), ("count", "15")] }
 
@@ -979,7 +979,7 @@ def ex_554b_evankelistojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "evankelisto"), ("gloss", "evangelist"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.ta"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "2")] }
 
@@ -994,7 +994,7 @@ def ex_555b_italiaanojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "italiaano"), ("gloss", "Italian"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.to"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "1")] }
 
@@ -1009,7 +1009,7 @@ def ex_555c_koordinaatistoiden : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "strong"), ("motif", "h.h.too"), ("pred_pct", "20"), ("obs_pct", "20"), ("count", "2")] }
 
@@ -1024,7 +1024,7 @@ def ex_555d_koordinaatistojen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "weak"), ("motif", "h.h.to"), ("pred_pct", "80"), ("obs_pct", "80"), ("count", "8")] }
 
@@ -1039,7 +1039,7 @@ def ex_556b_sosialistien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "sosialisti"), ("gloss", "socialist"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "99")] }
 
@@ -1054,7 +1054,7 @@ def ex_556d_avantgardistien : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stem", "avantgardisti"), ("gloss", "avant-gardist"), ("syllables", "5"), ("variant", "weak"), ("motif", "h.h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "2")] }
 

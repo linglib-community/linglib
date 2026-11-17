@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Long"), ("strategy", "full")] }
 
@@ -64,7 +64,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full")] }
 
@@ -77,7 +77,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Situ"), ("strategy", "inSitu")] }
 
@@ -90,7 +90,7 @@ def ex4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu")] }
 
@@ -103,7 +103,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Partial"), ("strategy", "partial")] }
 
@@ -116,7 +116,7 @@ def ex6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial")] }
 
@@ -129,7 +129,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "full"), ("island", "complexNP")] }
 
@@ -142,7 +142,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
@@ -155,7 +155,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
@@ -170,7 +170,7 @@ def ex17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
@@ -185,7 +185,7 @@ def ex17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
@@ -200,7 +200,7 @@ def ex19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu")] }
 
@@ -213,7 +213,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("role", "subject")] }
 
@@ -226,7 +226,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject")] }
 
@@ -239,7 +239,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
@@ -252,7 +252,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 

@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Saruman")] }
 
@@ -39,7 +39,7 @@ def ex4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("class", "1"), ("subjectMarker", "ga"), ("tense", "past")] }
 
@@ -52,7 +52,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote")] }
 
@@ -65,7 +65,7 @@ def ex10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the man"), ("dependent", "drunk"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -78,7 +78,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the man"), ("dependent", "drunk"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -91,7 +91,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "shouted"), ("agent", "the man I’ve never met before"), ("dependent", "drunk"), ("category", "adjunct"), ("heavyNPShift", "yes")] }
 
@@ -104,7 +104,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "cried"), ("agent", "Cecil"), ("dependent", "to get the crowd’s attention"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -117,7 +117,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "cried"), ("agent", "Cecil"), ("dependent", "to get the crowd’s attention"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -130,7 +130,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "softly"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -143,7 +143,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "softly"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -156,7 +156,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "muttering all about"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -169,7 +169,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "muttering all about"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -182,7 +182,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "tried"), ("agent", "Alex"), ("dependent", "to yell"), ("category", "control"), ("position", "beforeAgent")] }
 
@@ -195,7 +195,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "tried"), ("agent", "Alex"), ("dependent", "to yell"), ("category", "control"), ("position", "afterAgent")] }
 
@@ -208,7 +208,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "called"), ("agent", "John"), ("dependent", "out"), ("category", "particle"), ("position", "beforeAgent")] }
 
@@ -221,7 +221,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "called"), ("agent", "John"), ("dependent", "out"), ("category", "particle"), ("position", "afterAgent")] }
 
@@ -236,7 +236,7 @@ def ex11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("dependent", "a tagilwe"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -251,7 +251,7 @@ def ex13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("dependent", "a tagilwe"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -266,7 +266,7 @@ def ex17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "go-ile"), ("agent", "Seabelo"), ("dependent", "go kopa thuso"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -281,7 +281,7 @@ def ex18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "go-ile"), ("agent", "Seabelo"), ("dependent", "go kopa thuso"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -296,7 +296,7 @@ def ex21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "kgosi"), ("dependent", "kapela"), ("category", "adjunct"), ("position", "afterAgent")] }
 
@@ -311,7 +311,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "kgosi"), ("dependent", "kapela"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
@@ -326,7 +326,7 @@ def ex27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "batla"), ("agent", "Seabelo"), ("dependent", "go bua"), ("category", "control"), ("position", "beforeAgent")] }
 
@@ -341,7 +341,7 @@ def ex28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "batla"), ("agent", "Seabelo"), ("dependent", "go bua"), ("category", "control"), ("position", "afterAgent")] }
 
@@ -356,7 +356,7 @@ def ex36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "dikgomo"), ("person", "3"), ("number", "pl"), ("class", "10"), ("subjectMarker", "go")] }
 
@@ -371,7 +371,7 @@ def ex36_sm10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "dikgomo"), ("person", "3"), ("number", "pl"), ("class", "10"), ("subjectMarker", "di")] }
 
@@ -386,7 +386,7 @@ def ex38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("subjectMarker", "go")] }
 
@@ -401,7 +401,7 @@ def ex38_ke : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("subjectMarker", "ke")] }
 
@@ -414,7 +414,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "advise"), ("agent", "all the New Age dieticians"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
@@ -427,7 +427,7 @@ def ex40_sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "advises"), ("agent", "all the New Age dieticians"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
@@ -440,7 +440,7 @@ def ex62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "parasiticGap")] }
 
@@ -453,7 +453,7 @@ def ex62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "parasiticGap")] }
 
@@ -466,7 +466,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("verb", "answer"), ("agent", "the Hobbits"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
@@ -479,7 +479,7 @@ def ex64_sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("verb", "answers"), ("agent", "the Hobbits"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
@@ -494,7 +494,7 @@ def ex65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("class", "1"), ("subjectMarker", "a"), ("tense", "past")] }
 
@@ -509,7 +509,7 @@ def ex65_ga : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("class", "1"), ("subjectMarker", "ga"), ("tense", "past")] }
 
@@ -523,7 +523,7 @@ def ex67a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "raising")] }
 
@@ -536,7 +536,7 @@ def ex69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "raising")] }
 
@@ -551,7 +551,7 @@ def ex77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("subjectMarker", "go")] }
 
@@ -566,7 +566,7 @@ def ex87 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("verbForm", "conjoint")] }
 
@@ -581,7 +581,7 @@ def ex87_disj : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("verbForm", "disjoint")] }
 
@@ -594,7 +594,7 @@ def ex88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the night wind"), ("dependent", "to the little lamb"), ("category", "pp"), ("position", "afterAgent")] }
 
@@ -609,7 +609,7 @@ def ex89 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("class", "1"), ("subjectMarker", "ga"), ("tense", "past")] }
 
@@ -622,7 +622,7 @@ def ex90 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Frodo")] }
 
@@ -635,7 +635,7 @@ def ex92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Mary")] }
 
@@ -648,7 +648,7 @@ def ex93a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("diagnostic", "quoteCategory")] }
 
@@ -661,7 +661,7 @@ def ex96a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "goes"), ("agent", "the weasel")] }
 
@@ -674,7 +674,7 @@ def ex97a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the professor of linguistics")] }
 
@@ -687,7 +687,7 @@ def ex123 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canonical")] }
 
@@ -700,7 +700,7 @@ def ex125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "Mary"), ("category", "dp"), ("position", "beforeAgent")] }
 
@@ -713,7 +713,7 @@ def ex127 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "Mary"), ("category", "dp"), ("position", "afterAgent")] }
 
@@ -726,7 +726,7 @@ def ex129 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "to Mary"), ("category", "pp"), ("position", "afterAgent")] }
 
@@ -741,7 +741,7 @@ def ex126 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "Neo"), ("category", "dp"), ("position", "beforeAgent")] }
 
@@ -756,7 +756,7 @@ def ex130 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "a tlhagisa Neo"), ("category", "clause"), ("position", "afterAgent")] }
 
@@ -769,7 +769,7 @@ def ex134a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "walked"), ("agent", "Mary"), ("theme", "into the room"), ("dependent", "her dog"), ("category", "dp"), ("position", "afterAgent")] }
 
@@ -784,7 +784,7 @@ def ex135 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "et-ela"), ("agent", "basimane"), ("dependent", "koko"), ("category", "dp"), ("position", "afterAgent")] }
 
@@ -799,7 +799,7 @@ def ex55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "goroga"), ("agent", "terena"), ("theme", "kwa maemelong a diterena"), ("person", "3"), ("number", "sg"), ("subjectMarker", "ga"), ("tense", "past")] }
 
@@ -812,7 +812,7 @@ def ex136a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "leapt"), ("agent", "Gimli"), ("theme", "down from the wall")] }
 
@@ -827,7 +827,7 @@ def ex138 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "tsene"), ("agent", "Seabelo"), ("theme", "mo kamore-ng"), ("person", "3"), ("number", "sg"), ("class", "1"), ("subjectMarker", "go")] }
 
@@ -842,7 +842,7 @@ def ex35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canonical"), ("verb", "bua"), ("agent", "Dikgomo"), ("person", "3"), ("number", "pl"), ("class", "10"), ("subjectMarker", "di")] }
 
@@ -857,7 +857,7 @@ def ex35_go : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canonical"), ("verb", "bua"), ("agent", "Dikgomo"), ("person", "3"), ("number", "pl"), ("class", "10"), ("subjectMarker", "go")] }
 
@@ -872,7 +872,7 @@ def ex37 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canonical"), ("verb", "re"), ("agent", "Nna"), ("person", "1"), ("number", "sg"), ("subjectMarker", "ke")] }
 
@@ -887,7 +887,7 @@ def ex37_go : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canonical"), ("verb", "re"), ("agent", "Nna"), ("person", "1"), ("number", "sg"), ("subjectMarker", "go")] }
 
@@ -901,7 +901,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "says"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
@@ -915,7 +915,7 @@ def ex45j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "says"), ("agent", "us"), ("person", "1"), ("number", "pl"), ("agreement", "default")] }
 
@@ -928,7 +928,7 @@ def ex46a_we : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "we"), ("person", "1"), ("number", "pl"), ("agreement", "agent")] }
 
@@ -941,7 +941,7 @@ def ex46a_us : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "us"), ("person", "1"), ("number", "pl"), ("agreement", "agent")] }
 
@@ -954,7 +954,7 @@ def ex59_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "asks"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
@@ -967,7 +967,7 @@ def ex59_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
@@ -982,7 +982,7 @@ def ex128 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "Neo"), ("category", "dp"), ("position", "afterAgent")] }
 
@@ -995,7 +995,7 @@ def ex134b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "walked"), ("agent", "Mary"), ("theme", "into the room"), ("dependent", "her dog"), ("category", "dp"), ("position", "beforeAgent")] }
 
@@ -1010,7 +1010,7 @@ def ex136b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "li"), ("verb", "fula"), ("agent", "dikgomo"), ("theme", "mo lefatshe-ng"), ("person", "3"), ("number", "pl"), ("class", "10"), ("subjectMarker", "go")] }
 

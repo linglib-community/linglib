@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Coordination with the S of the second conjunct omitted: the omitted S can only be the A of the first conjunct, (8) + (9).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -34,7 +34,7 @@
     "translation": "The man hit the woman, and the woman came here.",
     "context": "Coordination of (12) with (14): the omitted S of the second conjunct is the P of the first.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -57,7 +57,7 @@
     "translation": "I hit you, and you/*I came here.",
     "context": "Coordination with first and second person pronouns, which carry nominative-accusative case: the omitted S is still the P, not the A.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -81,7 +81,7 @@
     "translation": "The father beat the son, and the father/the son left.",
     "context": "Coordination: the omitted S of an intransitive verb can be coreferential with either the A or the P of the preceding verb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -106,7 +106,7 @@
     "translation": "Let me help you to grow strong.",
     "context": "The infinitive construction, with omission of the S of the infinitive 'grow strong'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -130,7 +130,7 @@
     "translation": "We will help you move all the gathered items.",
     "context": "The infinitive construction, with omission of the A of the infinitive 'move'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -152,7 +152,7 @@
     "translation": "",
     "context": "Imperative addressee deletion: the omitted addressee is the S ('come here!') or the A, never the P ('let/may the man hit you!').",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -175,7 +175,7 @@
     "translation": "Come here!",
     "context": "Imperative with the addressee S omissible.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -198,7 +198,7 @@
     "translation": "Hit the man!",
     "context": "Imperative with the addressee A omissible: S is identified with A, as in English, despite the language's ergative-absolutive syntax elsewhere.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -222,7 +222,7 @@
     "translation": "We told mother to watch father.",
     "context": "An indirect command: the A of the command cannot be deleted; the antipassive presents it as an S, which the general rule then deletes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -246,7 +246,7 @@
     "translation": "I told the man to be examined by the doctor.",
     "context": "An indirect command with the unmarked voice in the infinitive: only a coreferential P may be omitted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -269,7 +269,7 @@
     "translation": "The iron has rusted.",
     "context": "The resultative of an intransitive verb, (36) 'the iron rusted': the single argument is the S.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -292,7 +292,7 @@
     "translation": "The meat has been roasted.",
     "context": "The resultative of the transitive (38) 'the woman roasted the meat': the A must be omitted and the sole argument corresponds to the P, which no longer conditions the consonant alternation of the verb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -314,7 +314,7 @@
     "translation": "",
     "context": "The English resultative of 'the woman roasted the meat' keeps the A: English does not identify S with P in resultatives.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "grouping"],
@@ -338,7 +338,7 @@
     "translation": "The man hit the woman.",
     "context": "Two nouns: ergative A, absolutive P.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -362,7 +362,7 @@
     "translation": "I hit you.",
     "context": "Two pronouns: nominative A, accusative P.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -386,7 +386,7 @@
     "translation": "The man hit me.",
     "context": "Noun A and pronoun P: ergative A and accusative P in one clause.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -410,7 +410,7 @@
     "translation": "I hit the man.",
     "context": "Pronoun A and noun P: nominative A and absolutive P in one clause.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -432,7 +432,7 @@
     "translation": "I saw the boy.",
     "context": "Masculine singular nouns of declension Ia take a separate accusative in -a if animate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -452,7 +452,7 @@
     "translation": "I saw the hippopotamus.",
     "context": "An animate non-human noun takes the accusative in -a.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -472,7 +472,7 @@
     "translation": "I saw the oak.",
     "context": "An inanimate noun has no separate accusative.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -492,7 +492,7 @@
     "translation": "I saw the table.",
     "context": "An inanimate noun has no separate accusative.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -512,7 +512,7 @@
     "translation": "I saw the boys.",
     "context": "In the plural only male human nouns have a special accusative; the nominative plural is chłopcy.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -532,7 +532,7 @@
     "translation": "I saw the girls.",
     "context": "A human but not male plural noun is identical with the nominative plural: the Polish cut is male human, a gender parameter beside the animacy hierarchy.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -553,7 +553,7 @@
     "translation": "I saw the dogs.",
     "context": "Animate non-human plurals are identical with the nominative plural.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -573,7 +573,7 @@
     "translation": "I saw the tables.",
     "context": "Inanimate plurals are identical with the nominative plural.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -595,7 +595,7 @@
     "translation": "Hasan bought the ox.",
     "context": "Only definite direct objects take the accusative suffix -ı.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -617,7 +617,7 @@
     "translation": "Hasan bought an ox.",
     "context": "An indefinite direct object in the suffixless form used for subjects.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -639,7 +639,7 @@
     "translation": "Hasan saw the book.",
     "context": "The suffix -rā marks definite direct objects.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -661,7 +661,7 @@
     "translation": "Hasan saw a book.",
     "context": "An indefinite direct object without -rā.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -684,7 +684,7 @@
     "translation": "The woman is calling the/a child.",
     "context": "A human direct object normally takes the postposition ko whether or not it is definite.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -704,7 +704,7 @@
     "translation": "",
     "context": "A human direct object without ko: found only occasionally, with affective value, and only when indefinite.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -727,7 +727,7 @@
     "translation": "Please read those letters.",
     "context": "An inanimate definite direct object may, and usually does, take ko.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -750,7 +750,7 @@
     "translation": "Please read these letters.",
     "context": "An inanimate definite direct object without ko.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -773,7 +773,7 @@
     "translation": "Write letters please.",
     "context": "An inanimate indefinite direct object never takes ko.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -794,7 +794,7 @@
     "translation": "The manager is looking for the car.",
     "context": "A non-human direct object takes no preposition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -815,7 +815,7 @@
     "translation": "The manager is looking for the clerk.",
     "context": "A human definite direct object takes the preposition a.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -836,7 +836,7 @@
     "translation": "The manager is looking for a (certain) clerk.",
     "context": "A human indefinite direct object with a: there is a specific individual the manager is seeking.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -857,7 +857,7 @@
     "translation": "The manager is looking for a clerk.",
     "context": "A human non-specific direct object without a: the manager needs any clerk.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -881,7 +881,7 @@
     "translation": "Give one of them to me.",
     "context": "An indefinite direct object whose referent is delimited to an identifiable set requires -rā.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -903,7 +903,7 @@
     "translation": "Hasan bought an ox.",
     "context": "An indefinite direct object with the accusative suffix: the ox is relevant to the discourse as a whole and expected to recur.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -925,7 +925,7 @@
     "translation": "Hasan saw a book.",
     "context": "An indefinite direct object with -rā: the book is relevant to the discourse as a whole.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
@@ -947,7 +947,7 @@
     "translation": "He dried the bread.",
     "context": "The lexical causative of če- 'dry', by a non-productive initial consonant alternation: he deliberately set about drying the bread.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "compactness"],
@@ -969,7 +969,7 @@
     "translation": "He caused the bread to get dry.",
     "context": "The morphological causative in -gu: he let the bread get dry, for instance by forgetting to cover it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "compactness"],
@@ -990,7 +990,7 @@
     "translation": "",
     "context": "The lexical causative, for a situation where Anton's action is the actual breaking.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "compactness"],
@@ -1011,7 +1011,7 @@
     "translation": "",
     "context": "The analytic causative, for a situation where Anton's action is removed by several stages from the breaking.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "compactness"],
@@ -1033,7 +1033,7 @@
     "translation": "I made the child cough.",
     "context": "The causee of an intransitive base in the accusative: low retention of control, as when I slapped the child on the back.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],
@@ -1057,7 +1057,7 @@
     "translation": "I made the child cough.",
     "context": "The causee of an intransitive base in the instrumental: greater control left to the causee, as when I asked the child to cough.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],
@@ -1081,7 +1081,7 @@
     "translation": "Ali caused Hasan to die, killed Hasan.",
     "context": "The causative of the intransitive (11) 'Hasan died': the causee is the direct object.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1104,7 +1104,7 @@
     "translation": "The dentist got the director to sign the letter.",
     "context": "The causative of the transitive (13) 'the director signed the letter': the direct object slot is taken, so the causee is an indirect object in the dative.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1127,7 +1127,7 @@
     "translation": "The dentist got the director to show the letter to Hasan.",
     "context": "The causative of the ditransitive (15) 'the director showed the letter to Hasan': direct and indirect object slots are taken, so the causee is an oblique with the postposition tarafından.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1150,7 +1150,7 @@
     "translation": "Rama makes the servant prepare the mat.",
     "context": "The causee of a transitive base cannot be dative; it is instrumental or, as here, a second accusative.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1173,7 +1173,7 @@
     "translation": "The dentist got the director to show the letter to Hasan.",
     "context": "An alternative to (16) with two datives: the causee doubles the indirect object position; the first dative is interpreted as the causee.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1193,7 +1193,7 @@
     "translation": "I have made Paul write a letter to the director.",
     "context": "The causee of a ditransitive base must take the preposition par, the preposition of the passive agent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1213,7 +1213,7 @@
     "translation": "Jean made Paul eat the apples.",
     "context": "The causee of a transitive base with par, lower on the hierarchy than the indirect object the paradigm predicts, which is also possible in French.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1236,7 +1236,7 @@
     "translation": "The dentist got the director to sign the letter.",
     "context": "The dative causee of (14) replaced by a tarafından phrase: the oblique causee is restricted to ditransitive bases although passive applies to every transitive verb.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -1256,7 +1256,7 @@
     "translation": "Taroo made Ziroo go.",
     "context": "The causee of an intransitive base marked with the accusative o: less control.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],
@@ -1278,7 +1278,7 @@
     "translation": "Taroo got Ziroo to go.",
     "context": "The causee of an intransitive base marked with ni, which serves indirect objects and passive agents alike: more control.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],
@@ -1303,7 +1303,7 @@
     "translation": "He fed me a biscuit.",
     "context": "The causee of a transitive base in the dative: less control.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],
@@ -1325,7 +1325,7 @@
     "translation": "He got me to eat the biscuit.",
     "context": "The causee of a transitive base in the instrumental: greater control.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "control"],

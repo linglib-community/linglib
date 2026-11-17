@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "distributive"), ("number", "singular")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "distributive"), ("number", "mass")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "or"), ("predicate", "distributive"), ("number", "singular")] }
 
@@ -63,7 +63,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "or"), ("predicate", "distributive"), ("number", "mass")] }
 
@@ -76,7 +76,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "distributive"), ("number", "singular")] }
 
@@ -89,7 +89,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "singular")] }
 
@@ -102,7 +102,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "distributive"), ("number", "mass")] }
 
@@ -115,7 +115,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "mass")] }
 
@@ -128,7 +128,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "singular")] }
 
@@ -141,7 +141,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "singular")] }
 
@@ -154,7 +154,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "singular")] }
 
@@ -167,7 +167,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "distributive"), ("number", "plural")] }
 
@@ -180,7 +180,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "and"), ("predicate", "collective"), ("number", "plural")] }
 
@@ -193,7 +193,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("numeral", "one"), ("predicate", "distributive")] }
 
@@ -206,7 +206,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("numeral", "four"), ("predicate", "distributive")] }
 
@@ -219,7 +219,7 @@ def ex32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("numeral", "four"), ("predicate", "collective")] }
 
@@ -232,7 +232,7 @@ def ex37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "all")] }
 
@@ -245,7 +245,7 @@ def ex37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "always")] }
 

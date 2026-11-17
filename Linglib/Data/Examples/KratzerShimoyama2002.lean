@@ -26,7 +26,7 @@ def ex23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "nicht"), ("feature", "Neg"), ("order", "intervener-first")] }
 
@@ -41,7 +41,7 @@ def ex23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "nie"), ("feature", "exists"), ("order", "intervener-first")] }
 
@@ -56,7 +56,7 @@ def ex23c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "niemand"), ("feature", "exists"), ("order", "intervener-first")] }
 
@@ -71,7 +71,7 @@ def ex23d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "fast jeder"), ("feature", "exists"), ("order", "intervener-first")] }
 
@@ -86,7 +86,7 @@ def ex23e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "(irgend)jemand"), ("feature", "exists"), ("order", "intervener-first")] }
 
@@ -101,7 +101,7 @@ def ex23f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "der Hans"), ("feature", "none"), ("order", "intervener-first")] }
 
@@ -116,7 +116,7 @@ def ex23g : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "damals"), ("feature", "none"), ("order", "intervener-first")] }
 
@@ -131,7 +131,7 @@ def ex24a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "nicht"), ("feature", "Neg"), ("order", "wh-first")] }
 
@@ -146,7 +146,7 @@ def ex24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "nie"), ("feature", "exists"), ("order", "wh-first")] }
 
@@ -161,7 +161,7 @@ def ex24c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "niemand"), ("feature", "exists"), ("order", "wh-first")] }
 
@@ -176,7 +176,7 @@ def ex24d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "fast jeder"), ("feature", "exists"), ("order", "wh-first")] }
 
@@ -191,7 +191,7 @@ def ex24e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("intervener", "(irgend)jemand"), ("feature", "exists"), ("order", "wh-first")] }
 
@@ -206,7 +206,7 @@ def ex12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "nobody"), ("intervener", "niemand"), ("feature", "exists")] }
 
@@ -221,7 +221,7 @@ def ex13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "doubtVerb")] }
 
@@ -236,7 +236,7 @@ def ex16 : Datum :=
     lgrConformance := some .wordAligned
     context := "Two books are under discussion, an algebra book and a biology book."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "modalPossibility")] }
 
@@ -251,7 +251,7 @@ def ex17 : Datum :=
     lgrConformance := some .wordAligned
     context := "Two books are under discussion, an algebra book and a biology book."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "modalNecessity")] }
 
@@ -266,7 +266,7 @@ def ex18 : Datum :=
     lgrConformance := some .wordAligned
     context := "Two books are under discussion, an algebra book and a biology book."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "nobody"), ("intervener", "auf keinen Fall"), ("feature", "exists")] }
 
@@ -281,7 +281,7 @@ def ex21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "negation"), ("intervener", "nicht"), ("feature", "Neg")] }
 
@@ -296,7 +296,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "question")] }
 

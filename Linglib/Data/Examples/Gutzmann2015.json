@@ -33,7 +33,7 @@
     "translation": "When does Peter get home?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -90,7 +90,7 @@
     "translation": "I wonder when Peter gets home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -126,7 +126,7 @@
     "translation": "Does he still like Cuban cigars?",
     "context": "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -162,7 +162,7 @@
     "translation": "I wonder whether he still likes Cuban cigars.",
     "context": "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -227,7 +227,7 @@
     "translation": "Don't forget the keys again!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -263,7 +263,7 @@
     "translation": "Jim lives in Berlin.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -324,7 +324,7 @@
     "translation": "Don't arrive late!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -385,7 +385,7 @@
     "translation": "Anna drives ja home tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -442,7 +442,7 @@
     "translation": "Has Peter ja come?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -503,7 +503,7 @@
     "translation": "Who is ja coming to Tübingen?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -564,7 +564,7 @@
     "translation": "Do not ja go to the museum ball!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -637,7 +637,7 @@
     "translation": "Do not spend all your money!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -702,7 +702,7 @@
     "translation": "You are ja coming tomorrow at ten?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -771,7 +771,7 @@
     "translation": "Who does not want ja to win the game?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -832,7 +832,7 @@
     "translation": "Do you denn have a car?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -889,7 +889,7 @@
     "translation": "Why are you laughing denn?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -950,7 +950,7 @@
     "translation": "Peter is denn a philosopher.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1011,7 +1011,7 @@
     "translation": "Do not denn leave me alone!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1080,7 +1080,7 @@
     "translation": "You must denn get home on time!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1145,7 +1145,7 @@
     "translation": "You are denn coming tomorrow at ten?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1214,7 +1214,7 @@
     "translation": "Who does not want to win the game?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1275,7 +1275,7 @@
     "translation": "Hein is wohl at sea.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1336,7 +1336,7 @@
     "translation": "Is Hein wohl at sea?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1397,7 +1397,7 @@
     "translation": "Come wohl home on time!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1466,7 +1466,7 @@
     "translation": "You must wohl get home on time!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1523,7 +1523,7 @@
     "translation": "Will you wohl be quiet!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1592,7 +1592,7 @@
     "translation": "Could you wohl pass me the salt?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1632,7 +1632,7 @@
     "translation": "Show me the journalist who'll take a salary cut in order to pave the way for one of the many hundred applicants to an editorial department.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1672,7 +1672,7 @@
     "translation": "Go wohl away!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1712,7 +1712,7 @@
     "translation": "Peter is wohl a philosopher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1752,7 +1752,7 @@
     "translation": "Georg is ja a philosopher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1813,7 +1813,7 @@
     "translation": "Is Peter ja a philosopher?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1853,7 +1853,7 @@
     "translation": "Do you denn have a driver's license?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1938,7 +1938,7 @@
     "translation": "Excuse me, could you denn tell me the way to Klein-Heubach?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1999,7 +1999,7 @@
     "translation": "What are you denn writing (there)?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2039,7 +2039,7 @@
     "translation": "Go denn away!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

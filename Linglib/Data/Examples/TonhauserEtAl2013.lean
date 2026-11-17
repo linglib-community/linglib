@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "definite"), ("content", "existence of a unique queen of France"), ("environment", "atomic")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "definite"), ("content", "existence of a unique queen of France"), ("environment", "negation")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "definite"), ("content", "existence of a unique queen of France"), ("environment", "question")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "definite"), ("content", "existence of a unique queen of France"), ("environment", "conditional antecedent")] }
 
@@ -78,7 +78,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Julia and Maria work in a bakery; their boss, who is generally strict but fair, is called Marko. One day, he calls Julia into his office; when she emerges, she says to Maria:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "expressive"), ("content", "negative evaluation"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -93,7 +93,7 @@ def ex_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Raul is new in town. His neighbor Simon invites him to his house for a party and introduces him to Maria. When Simon has walked away, Maria tells Raul:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "appositive"), ("content", "descriptive content"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -108,7 +108,7 @@ def ex_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The children in a history class have to give presentations about famous people. Malena has to talk about the pope. She starts with:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -123,7 +123,7 @@ def ex_15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A mother calls for her daughter to come down for dinner. Her daughter doesn’t appear so she goes upstairs to check on her. When she comes back down, she says to her husband:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "aimete ‘almost’"), ("content", "polar implication"), ("class", "C"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -138,7 +138,7 @@ def ex_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Carla, a mother of three teenage daughters, falls on the way to the supermarket and breaks her leg. She’s been in the hospital for a week when her daughters come to visit her for the first time. When she asks them how they are doing, her youngest daughter blurts out:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "-nte ‘only’"), ("content", "prejacent implication"), ("class", "C"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -153,7 +153,7 @@ def ex_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "property attribution"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -168,7 +168,7 @@ def ex_16b : Datum :=
     lgrConformance := some .wordAligned
     context := "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ha’e ‘3rd’"), ("content", "human referent"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -183,7 +183,7 @@ def ex_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -198,7 +198,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as in (17a), except that Malena is eating empanadas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-positive")] }
 
@@ -213,7 +213,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -228,7 +228,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "As in (18a), but now Marko also brings to the presentation a picture of a person that he shows to the class."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-positive")] }
 
@@ -243,7 +243,7 @@ def ex_19a : Datum :=
     lgrConformance := some .wordAligned
     context := "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ha’e ‘3rd’"), ("content", "existence of referent"), ("class", "A"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -258,7 +258,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ha’e ‘3rd’"), ("content", "existence of referent"), ("class", "A"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-positive")] }
 
@@ -273,7 +273,7 @@ def ex_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A woman who is being interviewed by a school director for a job as a teacher suddenly interrupts and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "possessive NP"), ("content", "possessive relation"), ("class", "B"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -288,7 +288,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Laura, who doesn’t live with her parents, visits them and asks them to sit down with her because she has to tell them something:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "n(d)(a)-…-vé-i-ma ‘not anymore’"), ("content", "prestate holds"), ("class", "C"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -303,7 +303,7 @@ def ex_20c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A girl backs out of a driveway and hits Susi’s car. A woman comes running out of the house, apologizes that her daughter hit Susi’s car, and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "(oi)kuaa ‘know’"), ("content", "content of complement"), ("class", "C"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -318,7 +318,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "projection"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -333,7 +333,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "projection"), ("environment", "negation"), ("context", "m-neutral")] }
 
@@ -348,7 +348,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -363,7 +363,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("context", "m-neutral")] }
 
@@ -378,7 +378,7 @@ def ex_30c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("context", "m-neutral")] }
 
@@ -393,7 +393,7 @@ def ex_30d : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "question"), ("context", "m-neutral")] }
 
@@ -408,7 +408,7 @@ def ex_31_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as in (30), except that Malena is eating empanadas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "atomic"), ("context", "m-positive")] }
 
@@ -423,7 +423,7 @@ def ex_31_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as in (30), except that Malena is eating empanadas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("context", "m-positive")] }
 
@@ -438,7 +438,7 @@ def ex_31_30c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as in (30), except that Malena is eating empanadas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("context", "m-positive")] }
 
@@ -453,7 +453,7 @@ def ex_31_30d : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as in (30), except that Malena is eating empanadas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "projection"), ("environment", "question"), ("context", "m-positive")] }
 
@@ -466,7 +466,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "stop"), ("content", "prestate holds"), ("class", "C"), ("diagnostic", "obligatory local effect"), ("holder", "m-positive")] }
 
@@ -479,7 +479,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-positive")] }
 
@@ -492,7 +492,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "stop"), ("content", "prestate holds"), ("class", "C"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -505,7 +505,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -520,7 +520,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "avei ‘too’"), ("content", "existence of alternative"), ("class", "A"), ("diagnostic", "obligatory local effect"), ("context", "m-positive"), ("holder", "m-neutral")] }
 
@@ -536,7 +536,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker, Ricardo, and Malena are lost in a city they’ve never visited before. The speaker, who, together with Ricardo, is a bit ahead of Malena, says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ha’e ‘3rd’"), ("content", "existence of referent"), ("class", "A"), ("diagnostic", "obligatory local effect"), ("context", "m-positive"), ("holder", "m-neutral")] }
 
@@ -551,7 +551,7 @@ def ex_47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Juan is a doctor at the scene of an accident. His friend says about him:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "aimete ‘almost’"), ("content", "polar implication"), ("class", "C"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -566,7 +566,7 @@ def ex_47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Juan is a doctor at the scene of an accident. His friend says about him:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "-nte ‘only’"), ("content", "prejacent implication"), ("class", "C"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -581,7 +581,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "(oi)kuaa ‘know’"), ("content", "content of complement"), ("class", "C"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -596,7 +596,7 @@ def ex_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Sabine is from Germany and knows the politicians there very well. Angela Merkel, the chancellor of Germany, is currently visiting farmers in Paraguay, among them Juan. Sabine says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "appositive"), ("content", "descriptive content"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -611,7 +611,7 @@ def ex_50a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker, Ricardo, and Malena are lost and looking for somebody to ask for directions. The speaker, who is walking ahead with Ricardo, says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ha’e ‘3rd’"), ("content", "human referent"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-negative")] }
 
@@ -627,7 +627,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Brian and Pedro are strolling down the street. They see a dog chasing a cat. Brian comments to Pedro that the dog looks fierce. Pedro knows that the dog is Carmen’s, but Brian doesn’t know that. Pedro later says to his wife:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "possessive NP"), ("content", "possessive relation"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-neutral")] }
 
@@ -643,7 +643,7 @@ def ex_52_property : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "property attribution"), ("class", "B"), ("diagnostic", "obligatory local effect"), ("holder", "m-neutral")] }
 
@@ -658,7 +658,7 @@ def ex_52_indication : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "obligatory local effect"), ("context", "m-positive"), ("holder", "m-neutral")] }
 
@@ -673,7 +673,7 @@ def ex_53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Marko and Maria are walking down the street together when Marko points at a house; their school friend Sabina is not with them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "obligatory local effect"), ("context", "m-positive"), ("holder", "m-neutral")] }
 
@@ -686,7 +686,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "that N"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "strong contextual felicity"), ("environment", "atomic"), ("context", "m-neutral")] }
 
@@ -699,7 +699,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "that N"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("context", "m-neutral")] }
 
@@ -712,7 +712,7 @@ def ex_54c : Datum :=
     glossedTokens := []
     context := "Barney points at a car and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "that N"), ("content", "speaker indicates suitable entity"), ("class", "D"), ("diagnostic", "obligatory local effect"), ("context", "m-positive"), ("holder", "m-neutral")] }
 

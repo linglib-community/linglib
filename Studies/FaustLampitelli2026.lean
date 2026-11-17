@@ -594,7 +594,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.parse? "root" (match lang with | .tigrinya => tigrinyaRoots | .tigre => tigreRoots)
   let template ← ex.parse? "template" templateTable
   pure ⟨lang, root, template, ex.parse? "suffix" suffixTable,
-    (ex.primaryText :: ex.alternatives.map Prod.fst).map transcribe,
+    (ex.primaryText :: ex.contrasts.map Prod.fst).map transcribe,
     ex.feature? "predicted" != some "no"⟩
 
 theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide

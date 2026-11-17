@@ -9,7 +9,7 @@
     "translation": "",
     "context": "I knew that all of John's kids are adopted but today I discovered something amazing.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John has 10 adopted kids!", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -55,7 +55,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John isn't married to any of his teammates.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "None of the candidates won.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -87,7 +87,7 @@
     "translation": "",
     "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "All of the candidates lost.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "It's crazy, I didn't realize this was possible. Somehow..",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John married all of his teammates.", "judgment": "acceptable"}
     ],
     "readings": [],

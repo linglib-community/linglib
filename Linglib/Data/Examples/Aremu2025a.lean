@@ -26,7 +26,7 @@ def ch3_157b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé rà? 'What did Adé buy?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object")] }
 
@@ -41,7 +41,7 @@ def ch3_157b_ni : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé rà? 'What did Adé buy?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object")] }
 
@@ -56,7 +56,7 @@ def ch3_157c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé rà? 'What did Adé buy?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object"), ("domain", "matrix"), ("associate", "object"), ("site", "gap")] }
 
@@ -71,7 +71,7 @@ def ch3_158b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé rà? 'What did Adé buy?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("continuation", "additive")] }
 
@@ -86,7 +86,7 @@ def ch3_158c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé rà? 'What did Adé buy?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object"), ("continuation", "additive")] }
 
@@ -101,7 +101,7 @@ def ch3_159b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct")] }
 
@@ -116,7 +116,7 @@ def ch3_159c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct"), ("fronted", "adjunct")] }
 
@@ -131,7 +131,7 @@ def ch3_160b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ki ni Adé ṣe sí fèrèsé? 'What did Adé do to the window?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "verb")] }
 
@@ -146,7 +146,7 @@ def ch3_161 : Datum :=
     lgrConformance := some .wordAligned
     context := "Verb focus, the fronted verb nominalized and a copy left in place."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "verb"), ("fronted", "verb")] }
 
@@ -161,7 +161,7 @@ def ch3_162b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ki ni Adé ṣe? 'What did Adé do?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp")] }
 
@@ -176,7 +176,7 @@ def ch3_162c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ki ni Adé ṣe? 'What did Adé do?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp"), ("fronted", "vp")] }
 
@@ -191,7 +191,7 @@ def ch3_163b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("domain", "matrix"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -206,7 +206,7 @@ def ch3_163c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject")] }
 
@@ -221,7 +221,7 @@ def ch3_165b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "clause"), ("fronted", "subject")] }
 
@@ -236,7 +236,7 @@ def ch3_165c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "clause")] }
 
@@ -251,7 +251,7 @@ def ch3_166b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Tolú se? 'What did Tolú do?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp")] }
 
@@ -266,7 +266,7 @@ def ch3_166c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Tolú se? 'What did Tolú do?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp"), ("fronted", "object")] }
 
@@ -281,7 +281,7 @@ def ch3_167b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "clause"), ("fronted", "subject")] }
 
@@ -296,7 +296,7 @@ def ch3_167c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "clause"), ("fronted", "subject")] }
 
@@ -311,7 +311,7 @@ def ch3_168 : Datum :=
     lgrConformance := some .wordAligned
     context := "Clause focus with an indefinite subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "clause"), ("fronted", "subject")] }
 
@@ -326,7 +326,7 @@ def ch3_169 : Datum :=
     lgrConformance := some .wordAligned
     context := "Verb phrase focus, the verb phrase fronted with its verb nominalized."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp"), ("fronted", "vp")] }
 
@@ -341,7 +341,7 @@ def ch3_188a : Datum :=
     lgrConformance := some .wordAligned
     context := "Subject focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("number", "plural")] }
 
@@ -356,7 +356,7 @@ def ch3_188b : Datum :=
     lgrConformance := some .wordAligned
     context := "Subject focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("domain", "matrix"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -371,7 +371,7 @@ def ch3_175b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "relative"), ("associate", "object"), ("site", "gap")] }
 
@@ -386,7 +386,7 @@ def ch3_176b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "focusClause"), ("associate", "object"), ("site", "gap")] }
 
@@ -401,7 +401,7 @@ def ch3_184b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "coordinate"), ("associate", "subject"), ("site", "gap")] }
 
@@ -416,7 +416,7 @@ def ch3_184c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "coordinate"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -431,7 +431,7 @@ def ch3_185b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "adjunct"), ("associate", "subject"), ("site", "gap")] }
 
@@ -446,7 +446,7 @@ def ch3_185c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "adjunct"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -461,7 +461,7 @@ def ch3_186b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "relative"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -476,7 +476,7 @@ def ch3_186b_gap : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "relative"), ("associate", "subject"), ("site", "gap")] }
 
@@ -491,7 +491,7 @@ def ch3_191b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "relative"), ("associate", "object"), ("site", "pronoun")] }
 
@@ -506,7 +506,7 @@ def ch3_192b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "adjunct"), ("associate", "object"), ("site", "pronoun")] }
 
@@ -521,7 +521,7 @@ def ch3_194b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "relative"), ("associate", "object"), ("site", "inSitu")] }
 
@@ -536,7 +536,7 @@ def ch3_195b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "adjunct"), ("associate", "object"), ("site", "inSitu")] }
 
@@ -551,7 +551,7 @@ def ch3_196c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "coordinate"), ("associate", "object"), ("site", "inSitu")] }
 
@@ -566,7 +566,7 @@ def ch3_203a : Datum :=
     lgrConformance := some .wordAligned
     context := "QUD: Who does Bọ́lá think bought a shoe?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "complement"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -581,7 +581,7 @@ def ch3_203a_gap : Datum :=
     lgrConformance := some .wordAligned
     context := "QUD: Who does Bọ́lá think bought a shoe?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "complement"), ("associate", "subject"), ("site", "gap")] }
 
@@ -596,7 +596,7 @@ def ch5_30c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -611,7 +611,7 @@ def ch5_46c : Datum :=
     lgrConformance := some .wordAligned
     context := "Who ate what?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("domain", "matrix"), ("associate", "subject"), ("site", "pronoun")] }
 
@@ -626,7 +626,7 @@ def ch5_46c_gap : Datum :=
     lgrConformance := some .wordAligned
     context := "Who ate what?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("domain", "matrix"), ("associate", "subject"), ("site", "gap")] }
 
@@ -641,7 +641,7 @@ def ch5_52bi : Datum :=
     lgrConformance := some .wordAligned
     context := "Several people in the meeting are discussing what they do."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("prejacent", "student"), ("also", "cleaner")] }
 
@@ -656,7 +656,7 @@ def ch5_52bii : Datum :=
     lgrConformance := some .wordAligned
     context := "Several people in the meeting are discussing what they do."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("prejacent", "student"), ("also", "professor")] }
 
@@ -671,7 +671,7 @@ def ch5_53bi : Datum :=
     lgrConformance := some .wordAligned
     context := "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("prejacent", "silver"), ("also", "bronze")] }
 
@@ -686,7 +686,7 @@ def ch5_53bii : Datum :=
     lgrConformance := some .wordAligned
     context := "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("prejacent", "silver"), ("also", "gold")] }
 
@@ -701,7 +701,7 @@ def ch5_52ci : Datum :=
     lgrConformance := some .wordAligned
     context := "Several people in the meeting are discussing what they do."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("prejacent", "student"), ("also", "cleaner")] }
 
@@ -716,7 +716,7 @@ def ch5_52cii : Datum :=
     lgrConformance := some .wordAligned
     context := "Several people in the meeting are discussing what they do."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("prejacent", "student"), ("also", "professor")] }
 
@@ -731,7 +731,7 @@ def ch5_53ci : Datum :=
     lgrConformance := some .wordAligned
     context := "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("prejacent", "silver"), ("also", "bronze")] }
 
@@ -746,7 +746,7 @@ def ch5_53cii : Datum :=
     lgrConformance := some .wordAligned
     context := "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("prejacent", "silver"), ("also", "gold")] }
 
@@ -761,7 +761,7 @@ def ch5_57a : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("prejacent", "silver"), ("won", "bronze"), ("won", "silver")] }
 
@@ -776,7 +776,7 @@ def ch5_57b : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("prejacent", "silver"), ("won", "bronze"), ("won", "silver")] }
 
@@ -791,7 +791,7 @@ def ch4_60a : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "péré"), ("value", "2"), ("standard", "5")] }
 
@@ -806,7 +806,7 @@ def ch4_60b : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("value", "2"), ("standard", "5")] }
 
@@ -821,7 +821,7 @@ def ch4_61a : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú promised his wife to buy two fish on his way home."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "péré"), ("value", "2"), ("standard", "2")] }
 
@@ -836,7 +836,7 @@ def ch4_61b : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú promised his wife to buy two fish on his way home."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("value", "2"), ("standard", "2")] }
 
@@ -851,7 +851,7 @@ def ch4_61c : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú promised his wife to buy two fish on his way home."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("value", "2"), ("standard", "2")] }
 
@@ -866,7 +866,7 @@ def ch4_62b : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "péré"), ("value", "6"), ("standard", "2")] }
 
@@ -881,7 +881,7 @@ def ch4_62c : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("value", "6"), ("standard", "2")] }
 
@@ -896,7 +896,7 @@ def ch4_63a : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "péré"), ("value", "3"), ("standard", "2")] }
 
@@ -911,7 +911,7 @@ def ch4_63b : Datum :=
     lgrConformance := some .wordAligned
     context := "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("value", "3"), ("standard", "2")] }
 
@@ -926,7 +926,7 @@ def ch4_64a : Datum :=
     lgrConformance := some .wordAligned
     context := "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "nìkan"), ("value", "3"), ("standard", "2")] }
 
@@ -941,7 +941,7 @@ def ch4_64b : Datum :=
     lgrConformance := some .wordAligned
     context := "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "péré"), ("value", "3"), ("standard", "2")] }
 
@@ -956,7 +956,7 @@ def ch4_64c : Datum :=
     lgrConformance := some .wordAligned
     context := "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "lásán"), ("value", "3"), ("standard", "2")] }
 

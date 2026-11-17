@@ -26,7 +26,7 @@ def ex_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
@@ -41,7 +41,7 @@ def ex_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
@@ -56,7 +56,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
@@ -71,7 +71,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
@@ -86,7 +86,7 @@ def ex_38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
@@ -101,7 +101,7 @@ def ex_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
@@ -117,7 +117,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The teacher had to repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
@@ -133,7 +133,7 @@ def ex_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The teacher had to repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
@@ -149,7 +149,7 @@ def ex_40a : Datum :=
     lgrConformance := some .wordAligned
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
@@ -165,7 +165,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
@@ -181,7 +181,7 @@ def ex_41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
@@ -197,7 +197,7 @@ def ex_41b : Datum :=
     lgrConformance := some .wordAligned
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
@@ -212,7 +212,7 @@ def ex_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What did Burba buy in the village?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -227,7 +227,7 @@ def ex_43a1 : Datum :=
     lgrConformance := some .wordAligned
     context := "What did Kofi eat yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -242,7 +242,7 @@ def ex_43a2 : Datum :=
     lgrConformance := some .wordAligned
     context := "What did Kofi eat yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "cancellation")] }
 
@@ -257,7 +257,7 @@ def ex_44a1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What did you buy?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -272,7 +272,7 @@ def ex_44a2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What did you buy?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "cancellation")] }
 
@@ -287,7 +287,7 @@ def ex_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who built a house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -302,7 +302,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := "Who read a book?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -317,7 +317,7 @@ def ex_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who went to school yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
@@ -332,7 +332,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The person asking the question wants to know the closest place to buy a newspaper. Who sells newspapers?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
@@ -348,7 +348,7 @@ def ex_49 : Datum :=
     lgrConformance := some .wordAligned
     context := "We're at Makola market. There are many people who sell newspapers here but I want to find the closest one. Who sells newspapers?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
@@ -363,7 +363,7 @@ def ex_50a : Datum :=
     lgrConformance := some .wordAligned
     context := "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "mentionSome")] }
 
@@ -379,7 +379,7 @@ def ex_50a1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
@@ -394,7 +394,7 @@ def ex_54a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if she invited Fred, then she didn't invite anybody else")] }
 
@@ -409,7 +409,7 @@ def ex_54b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if she invited Fred, then she didn't invite anybody else")] }
 
@@ -424,7 +424,7 @@ def ex_55a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if he invited Amo, then he didn't invite anybody else")] }
 
@@ -439,7 +439,7 @@ def ex_55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if he invited Amo, then he didn't invite anybody else")] }
 
@@ -454,7 +454,7 @@ def ex_59a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Njelu call yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -469,7 +469,7 @@ def ex_59b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Njelu call yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -484,7 +484,7 @@ def ex_59c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Njelu call yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudocleft"), ("diagnostic", "negativeQuantifier")] }
 
@@ -499,7 +499,7 @@ def ex_60a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Kofi invite to the party?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -514,7 +514,7 @@ def ex_60b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Kofi invite to the party?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -529,7 +529,7 @@ def ex_61a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Kofi call yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -544,7 +544,7 @@ def ex_61b : Datum :=
     lgrConformance := some .wordAligned
     context := "Who did Kofi call yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
@@ -559,7 +559,7 @@ def ex_64a : Datum :=
     lgrConformance := some .wordAligned
     context := "Njelu hates calling, but his father forces him to call one family member per day. Sometimes, his father is not around, so Njelu doesn't call anybody. Did Njelu call somebody yesterday? I don't think so..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "uncommittedContext")] }
 
@@ -574,7 +574,7 @@ def ex_64b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Njelu hates calling, but his father forces him to call one family member per day. Sometimes, his father is not around, so Njelu doesn't call anybody. Did Njelu call somebody yesterday? I don't think so..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "uncommittedContext")] }
 
@@ -589,7 +589,7 @@ def ex_75 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Kofi swam"), ("inference", "if Kofi swam, then nobody else swam"), ("inference", "somebody swam")] }
 
@@ -604,7 +604,7 @@ def ex_76 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Ama slept"), ("inference", "if Ama slept, then nobody else slept"), ("inference", "somebody slept")] }
 
@@ -619,7 +619,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := "It was banku and plantain that Kofi ate yesterday."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis")] }
 
@@ -634,7 +634,7 @@ def ex_78 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Mammadi gave a watch to Dimza"), ("inference", "that Mammadi gave or might have given something to Dimza is salient")] }
 

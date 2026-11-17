@@ -26,7 +26,7 @@ def ex3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ya: nahĩ:"), ("embedding", "subordination")] }
 
@@ -41,7 +41,7 @@ def ex5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ka"), ("embedding", "matrix")] }
 
@@ -56,7 +56,7 @@ def ex5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ka"), ("embedding", "subordination")] }
 
@@ -69,7 +69,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "wonder"), ("embedding", "quasi")] }
 
@@ -82,7 +82,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quasi")] }
 
@@ -95,7 +95,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "know"), ("embedding", "quasi")] }
 
@@ -108,7 +108,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "subordination")] }
 
@@ -121,7 +121,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "quasi")] }
 
@@ -134,7 +134,7 @@ def ex11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "depend on"), ("embedding", "subordination")] }
 
@@ -147,7 +147,7 @@ def ex11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "depend on"), ("embedding", "quasi")] }
 
@@ -160,7 +160,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The question is, [it's raining↑].", .ungrammatical)]
+    contrasts := [("The question is, [it's raining↑].", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "quasi"), ("syntax", "interrogative")] }
 
@@ -173,7 +173,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quotation")] }
 
@@ -186,7 +186,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("She said, \"It's raining↓\"", .acceptable)]
+    contrasts := [("She said, \"It's raining↓\"", .acceptable)]
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("complement", "declarativeAssertion")] }
 
@@ -199,7 +199,7 @@ def ex14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quotation"), ("syntax", "declarative")] }
 
@@ -214,7 +214,7 @@ def ex15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "ka"), ("embedding", "subordination")] }
 
@@ -229,7 +229,7 @@ def ex16b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("ravi ja:nta: hai ki anu ja:egi:.", .acceptable)]
+    contrasts := [("ravi ja:nta: hai ki anu ja:egi:.", .acceptable)]
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "subordination")] }
 
@@ -244,7 +244,7 @@ def ex17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "quasi")] }
 
@@ -259,7 +259,7 @@ def ex17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "quasi")] }
 
@@ -274,7 +274,7 @@ def ex17c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "subordination")] }
 
@@ -287,7 +287,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "quick"), ("embedding", "matrix")] }
 
@@ -300,7 +300,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "quick"), ("embedding", "subordination")] }
 
@@ -315,7 +315,7 @@ def ex18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kke"), ("embedding", "matrix")] }
 
@@ -330,7 +330,7 @@ def ex19c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kke"), ("embedding", "subordination")] }
 
@@ -343,7 +343,7 @@ def ex24a_wonder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "wonder"), ("embedding", "subordination")] }
 
@@ -356,7 +356,7 @@ def ex24a_know : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "know"), ("embedding", "subordination")] }
 
@@ -369,7 +369,7 @@ def ex24a_believe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "believe"), ("embedding", "subordination")] }
 
@@ -382,7 +382,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Everybody wants to know [did I succeed in buying chocolate for Winifred↑].", .acceptable)]
+    contrasts := [("Everybody wants to know [did I succeed in buying chocolate for Winifred↑].", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "know"), ("embedding", "quasi")] }
 
@@ -397,7 +397,7 @@ def ex39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "rogativePerspP")] }
 
@@ -412,7 +412,7 @@ def ex39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive")] }
 
@@ -425,7 +425,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi")] }
 
@@ -438,7 +438,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi"), ("negated", "true")] }
 
@@ -451,7 +451,7 @@ def ex40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi"), ("questioned", "true")] }
 
@@ -467,7 +467,7 @@ def ex41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive"), ("negated", "true")] }
 
@@ -482,7 +482,7 @@ def ex41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive"), ("questioned", "true")] }
 
@@ -495,7 +495,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := "Speaker A is writing evaluation letters and asks a colleague (44a)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "forget"), ("embedding", "quasi")] }
 
@@ -508,7 +508,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Mary wants to know [did Sue leave early↑].", .acceptable)]
+    contrasts := [("Mary wants to know [did Sue leave early↑].", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "know"), ("embedding", "quasi")] }
 
@@ -521,7 +521,7 @@ def ex45b_forget : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi")] }
 
@@ -534,7 +534,7 @@ def ex45b_remember : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "remember"), ("embedding", "quasi")] }
 
@@ -547,7 +547,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "remember"), ("embedding", "quasi"), ("questioned", "true")] }
 
@@ -560,7 +560,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi"), ("questioned", "true"), ("invested", "speaker")] }
 
@@ -573,7 +573,7 @@ def ex49a_you : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I have forgotten [was Henry a communist↑].", .acceptable)]
+    contrasts := [("I have forgotten [was Henry a communist↑].", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi"), ("invested", "speaker")] }
 
@@ -586,7 +586,7 @@ def ex62a : Datum :=
     glossedTokens := []
     context := "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "interrogative"), ("embedding", "matrix")] }
 
@@ -599,7 +599,7 @@ def ex62b : Datum :=
     glossedTokens := []
     context := "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neutral", .unacceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
@@ -614,7 +614,7 @@ def ex63a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
@@ -629,7 +629,7 @@ def ex63b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
@@ -642,7 +642,7 @@ def ex69a_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
@@ -655,7 +655,7 @@ def ex69b_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
@@ -668,7 +668,7 @@ def ex69c_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
@@ -681,7 +681,7 @@ def ex69a_it : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
@@ -694,7 +694,7 @@ def ex69b_it : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
@@ -707,7 +707,7 @@ def ex69c_it : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
@@ -722,7 +722,7 @@ def ex70a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
@@ -737,7 +737,7 @@ def ex70b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
@@ -752,7 +752,7 @@ def ex71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("ravi ja:nta: hai [ki anu ja:egi: ya: nahĩ:]", .acceptable)]
+    contrasts := [("ravi ja:nta: hai [ki anu ja:egi: ya: nahĩ:]", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
@@ -765,7 +765,7 @@ def ex84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("verb", "investigate"), ("embedding", "subordination")] }
 
@@ -778,7 +778,7 @@ def ex84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Mueller wanted to know [did Russia interfere in the 2016 election↑].", .acceptable)]
+    contrasts := [("Mueller wanted to know [did Russia interfere in the 2016 election↑].", .acceptable)]
     readings := []
     paperFeatures := [("section", "6.1"), ("verb", "investigate"), ("embedding", "quasi")] }
 

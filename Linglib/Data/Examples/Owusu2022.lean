@@ -26,7 +26,7 @@ def ex_3_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("operator", "negation"), ("position", "subject")] }
 
@@ -41,7 +41,7 @@ def ex_3_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("operator", "negation"), ("position", "object")] }
 
@@ -56,7 +56,7 @@ def ex_3_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("operator", "every"), ("position", "subject")] }
 
@@ -71,7 +71,7 @@ def ex_3_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("operator", "every"), ("position", "object")] }
 
@@ -86,7 +86,7 @@ def ex_3_29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("operator", "negation"), ("position", "subject")] }
 
@@ -101,7 +101,7 @@ def ex_3_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("operator", "negation"), ("position", "object")] }
 
@@ -116,7 +116,7 @@ def ex_3_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("operator", "every"), ("position", "object")] }
 
@@ -131,7 +131,7 @@ def ex_3_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("operator", "every"), ("position", "subject")] }
 
@@ -146,7 +146,7 @@ def ex_3_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There are three students, Alan, Bob and Carl. They all have three published papers. For their job application, they all submitted only two of their papers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable)]
     paperFeatures := [("operator", "negation"), ("position", "object")] }
 

@@ -25,7 +25,7 @@ def noDiceNada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3")] }
 
@@ -39,7 +39,7 @@ def nadieDijoNada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3")] }
 
@@ -53,7 +53,7 @@ def noLaHeVisto : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.3")] }
 
@@ -67,7 +67,7 @@ def masQueNada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -81,7 +81,7 @@ def meIrrite : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -95,7 +95,7 @@ def esfera : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -109,7 +109,7 @@ def temprano : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -123,7 +123,7 @@ def tempranoJamas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -137,7 +137,7 @@ def capataz : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -151,7 +151,7 @@ def complicado : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -165,7 +165,7 @@ def lista : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -179,7 +179,7 @@ def tonteria : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (a)")] }
 
@@ -193,7 +193,7 @@ def dudoso : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -207,7 +207,7 @@ def haceMucho : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -221,7 +221,7 @@ def sinNadaNiNadie : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -235,7 +235,7 @@ def seNego : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -249,7 +249,7 @@ def demasiado : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -263,7 +263,7 @@ def imposible : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -277,7 +277,7 @@ def pocos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -291,7 +291,7 @@ def noTolera : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -305,7 +305,7 @@ def horrible : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -319,7 +319,7 @@ def noSe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (b)")] }
 
@@ -333,7 +333,7 @@ def preguntado : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -347,7 +347,7 @@ def quienHaVisto : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -361,7 +361,7 @@ def despedirme : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -375,7 +375,7 @@ def pensar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -389,7 +389,7 @@ def julia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -403,7 +403,7 @@ def juliaJamas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (c)")] }
 
@@ -417,7 +417,7 @@ def sinNada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (d)")] }
 
@@ -431,7 +431,7 @@ def sinNadie : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (d)")] }
 
@@ -445,7 +445,7 @@ def antesQueNadie : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (d)")] }
 
@@ -459,7 +459,7 @@ def antesDe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.4 (d)")] }
 
@@ -473,7 +473,7 @@ def insincero : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.5.5 (a)")] }
 
@@ -487,7 +487,7 @@ def noSaleNunca : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.5.6")] }
 
@@ -501,7 +501,7 @@ def noSaleJamas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.5.6")] }
 
@@ -515,7 +515,7 @@ def seVio : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "27.5.6 (2)")] }
 

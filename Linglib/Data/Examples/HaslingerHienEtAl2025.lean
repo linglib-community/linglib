@@ -24,7 +24,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
@@ -39,7 +39,7 @@ def ex_71b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
@@ -52,7 +52,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
@@ -65,7 +65,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "atomic"), ("form", "each")] }
 
@@ -78,7 +78,7 @@ def ex_74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
@@ -91,7 +91,7 @@ def ex_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "atomicOnly"), ("form", "jeder")] }
 

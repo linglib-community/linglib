@@ -24,7 +24,7 @@ def dfes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "rarely")] }
 
@@ -37,7 +37,7 @@ def dqer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
@@ -50,7 +50,7 @@ def ghder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -63,7 +63,7 @@ def ghfer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "rarely")] }
 
@@ -76,7 +76,7 @@ def ghreb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -89,7 +89,7 @@ def hmed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -102,7 +102,7 @@ def nqer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -115,7 +115,7 @@ def qber : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -128,7 +128,7 @@ def qdef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -141,7 +141,7 @@ def qfer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
@@ -154,7 +154,7 @@ def qreb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -167,7 +167,7 @@ def qres : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -180,7 +180,7 @@ def qtes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -193,7 +193,7 @@ def rmed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -206,7 +206,7 @@ def srem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -219,7 +219,7 @@ def ster : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
@@ -232,7 +232,7 @@ def xref : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -245,7 +245,7 @@ def zhbed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -258,7 +258,7 @@ def zhmed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -271,7 +271,7 @@ def aybed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
@@ -284,7 +284,7 @@ def ayrem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
@@ -297,7 +297,7 @@ def hseb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "rarely")] }
 
@@ -310,7 +310,7 @@ def hzen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -323,7 +323,7 @@ def shmeth : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -336,7 +336,7 @@ def xzen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -349,7 +349,7 @@ def bkem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
@@ -362,7 +362,7 @@ def hlem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -375,7 +375,7 @@ def hsen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
@@ -388,7 +388,7 @@ def nqeb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -401,7 +401,7 @@ def qmes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -414,7 +414,7 @@ def sshen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
@@ -427,7 +427,7 @@ def xnes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -440,7 +440,7 @@ def zhmes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
@@ -453,7 +453,7 @@ def sxef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
@@ -466,7 +466,7 @@ def hkem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
@@ -479,7 +479,7 @@ def ntef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
@@ -492,7 +492,7 @@ def skef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
@@ -505,7 +505,7 @@ def rseq : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "rarely")] }
 

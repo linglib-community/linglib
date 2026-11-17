@@ -25,7 +25,7 @@ def en_102a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.4"), ("function", "specificUnknown"), ("item", "some (determiner)"), ("method", "description")] }
 
@@ -39,7 +39,7 @@ def en_102a_known : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.4"), ("function", "specificKnown"), ("item", "some (determiner)"), ("method", "description")] }
 
@@ -53,7 +53,7 @@ def en_151a : Datum :=
     glossedTokens := []
     context := "Because my road needs to be repaired."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "question"), ("series", "some-"), ("method", "description")] }
 
@@ -67,7 +67,7 @@ def en_151b : Datum :=
     glossedTokens := []
     context := "Because they have been standing around all morning telling dirty jokes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "question"), ("series", "any-"), ("method", "description")] }
 
@@ -81,7 +81,7 @@ def en_154a : Datum :=
     glossedTokens := []
     context := "A promise: the speaker hopes the hearer will fulfil the condition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "some-"), ("method", "description")] }
 
@@ -95,7 +95,7 @@ def en_154a_any : Datum :=
     glossedTokens := []
     context := "A promise: the speaker hopes the hearer will fulfil the condition."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "any-"), ("method", "description")] }
 
@@ -109,7 +109,7 @@ def en_154b : Datum :=
     glossedTokens := []
     context := "A warning: the speaker hopes the hearer will not fulfil the condition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "any-"), ("method", "description")] }
 
@@ -123,7 +123,7 @@ def en_154b_some : Datum :=
     glossedTokens := []
     context := "A warning: the speaker hopes the hearer will not fulfil the condition."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "some-"), ("method", "description")] }
 
@@ -137,7 +137,7 @@ def en_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "question"), ("series", "any-")] }
 
@@ -151,7 +151,7 @@ def en_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "conditional"), ("series", "any-")] }
 
@@ -165,7 +165,7 @@ def en_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "indirectNeg"), ("series", "any-")] }
 
@@ -179,7 +179,7 @@ def en_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "indirectNeg"), ("series", "any-")] }
 
@@ -193,7 +193,7 @@ def en_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "comparative"), ("series", "any-")] }
 
@@ -207,7 +207,7 @@ def en_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "comparative"), ("series", "any-")] }
 
@@ -221,7 +221,7 @@ def en_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "directNeg"), ("series", "any-")] }
 
@@ -235,7 +235,7 @@ def en_103a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.5"), ("function", "freeChoice"), ("series", "any-")] }
 
@@ -249,7 +249,7 @@ def en_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("function", "directNeg"), ("series", "no-")] }
 
@@ -262,7 +262,7 @@ def de_A1a_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificKnown"), ("series", "etwas-")] }
 
@@ -275,7 +275,7 @@ def de_A1a_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificKnown"), ("series", "irgend-")] }
 
@@ -288,7 +288,7 @@ def de_A1b_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificUnknown"), ("series", "etwas-")] }
 
@@ -301,7 +301,7 @@ def de_A1b_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificUnknown"), ("series", "irgend-")] }
 
@@ -314,7 +314,7 @@ def de_A2_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "irrealis"), ("series", "etwas-")] }
 
@@ -327,7 +327,7 @@ def de_A2_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "irrealis"), ("series", "irgend-")] }
 
@@ -340,7 +340,7 @@ def de_A3a_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "etwas-")] }
 
@@ -353,7 +353,7 @@ def de_A3a_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "irgend-")] }
 
@@ -366,7 +366,7 @@ def de_A3b_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "irgend-")] }
 
@@ -379,7 +379,7 @@ def de_A3b_je : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "je")] }
 
@@ -392,7 +392,7 @@ def de_A3c_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "conditional"), ("series", "etwas-")] }
 
@@ -405,7 +405,7 @@ def de_A3c_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "conditional"), ("series", "irgend-")] }
 
@@ -418,7 +418,7 @@ def de_A4_je_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "je"), ("series", "etwas-")] }
 
@@ -431,7 +431,7 @@ def de_A4_je_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "je"), ("series", "irgend-")] }
 
@@ -444,7 +444,7 @@ def de_A4_irgend_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-"), ("series", "etwas-")] }
 
@@ -457,7 +457,7 @@ def de_A4_irgend_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
@@ -470,7 +470,7 @@ def de_A5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "comparative"), ("series", "irgend-"), ("series", "je")] }
 
@@ -483,7 +483,7 @@ def de_A6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "freeChoice"), ("series", "irgend-")] }
 
@@ -496,7 +496,7 @@ def de_A7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "freeChoice"), ("series", "jeder")] }
 
@@ -509,7 +509,7 @@ def de_A8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "comparative"), ("series", "jeder")] }
 
@@ -522,7 +522,7 @@ def de_A9a_jeder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "jeder")] }
 
@@ -535,7 +535,7 @@ def de_A9a_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
@@ -548,7 +548,7 @@ def de_A9b_jeder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "jeder")] }
 
@@ -561,7 +561,7 @@ def de_A9b_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
@@ -574,7 +574,7 @@ def de_A10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
@@ -587,7 +587,7 @@ def de_A10b_etwas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
@@ -600,7 +600,7 @@ def de_A10b_irgend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
@@ -614,7 +614,7 @@ def fr_A64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "specificKnown"), ("series", "quelque-")] }
 
@@ -628,7 +628,7 @@ def fr_A64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "specificUnknown"), ("series", "quelque-")] }
 
@@ -642,7 +642,7 @@ def fr_A65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "irrealis"), ("series", "quelque-")] }
 
@@ -656,7 +656,7 @@ def fr_A66a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "question"), ("series", "quelque-")] }
 
@@ -670,7 +670,7 @@ def fr_A66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "question"), ("series", "personne"), ("method", "description")] }
 
@@ -684,7 +684,7 @@ def fr_A66c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "question"), ("series", "que ce soit")] }
 
@@ -698,7 +698,7 @@ def fr_A67a_rien : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "conditional"), ("series", "personne")] }
 
@@ -712,7 +712,7 @@ def fr_A67a_quelque : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "conditional"), ("series", "quelque-")] }
 
@@ -726,7 +726,7 @@ def fr_A67b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "conditional"), ("series", "que ce soit")] }
 
@@ -740,7 +740,7 @@ def fr_A68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "directNeg"), ("series", "personne")] }
 
@@ -754,7 +754,7 @@ def fr_A68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "directNeg"), ("series", "personne")] }
 
@@ -768,7 +768,7 @@ def fr_A68c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "directNeg"), ("series", "que ce soit"), ("method", "description")] }
 
@@ -782,7 +782,7 @@ def fr_A69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "indirectNeg"), ("series", "personne")] }
 
@@ -796,7 +796,7 @@ def fr_A69b_rien : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "indirectNeg"), ("series", "personne")] }
 
@@ -810,7 +810,7 @@ def fr_A69b_que : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "indirectNeg"), ("series", "que ce soit")] }
 
@@ -824,7 +824,7 @@ def fr_A70a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "comparative"), ("series", "personne")] }
 
@@ -838,7 +838,7 @@ def fr_A70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "comparative"), ("series", "que ce soit")] }
 
@@ -852,7 +852,7 @@ def fr_A71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "freeChoice"), ("series", "que ce soit")] }
 
@@ -866,7 +866,7 @@ def fr_A73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "freeChoice"), ("series", "n'importe")] }
 
@@ -880,7 +880,7 @@ def fr_A73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.9"), ("function", "comparative"), ("series", "n'importe")] }
 
@@ -894,7 +894,7 @@ def it_A74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "specificKnown"), ("series", "qualche-")] }
 
@@ -908,7 +908,7 @@ def it_A75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "specificUnknown"), ("series", "qualche-")] }
 
@@ -922,7 +922,7 @@ def it_A76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "irrealis"), ("series", "qualche-")] }
 
@@ -936,7 +936,7 @@ def it_A77_qualche : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "question"), ("series", "qualche-")] }
 
@@ -950,7 +950,7 @@ def it_A77_nessuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "question"), ("series", "nessuno")] }
 
@@ -964,7 +964,7 @@ def it_A78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "conditional"), ("series", "qualche-")] }
 
@@ -978,7 +978,7 @@ def it_A78_nessuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "conditional"), ("series", "nessuno")] }
 
@@ -992,7 +992,7 @@ def it_A79_nessuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "indirectNeg"), ("series", "nessuno")] }
 
@@ -1006,7 +1006,7 @@ def it_A79_qualche : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "indirectNeg"), ("series", "qualche-")] }
 
@@ -1020,7 +1020,7 @@ def it_A80 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "freeChoice"), ("series", "-unque")] }
 
@@ -1034,7 +1034,7 @@ def it_A81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "comparative"), ("series", "-unque")] }
 
@@ -1048,7 +1048,7 @@ def it_A82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
@@ -1062,7 +1062,7 @@ def it_A82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Nessuno non è venuto.", .ungrammatical)]
+    contrasts := [("Nessuno non è venuto.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
@@ -1076,7 +1076,7 @@ def it_A82c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
@@ -1090,7 +1090,7 @@ def ru_A121 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificUnknown"), ("series", "-to")] }
 
@@ -1104,7 +1104,7 @@ def ru_A122a_nibud : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
@@ -1118,7 +1118,7 @@ def ru_A122a_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-libo")] }
 
@@ -1132,7 +1132,7 @@ def ru_A122b_nibud : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
@@ -1146,7 +1146,7 @@ def ru_A122b_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-libo")] }
 
@@ -1160,7 +1160,7 @@ def ru_A123a_nibud : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "-nibud'")] }
 
@@ -1174,7 +1174,7 @@ def ru_A123a_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "-libo")] }
 
@@ -1188,7 +1188,7 @@ def ru_A123b_nibud : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "-nibud'")] }
 
@@ -1202,7 +1202,7 @@ def ru_A123b_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "-libo")] }
 
@@ -1216,7 +1216,7 @@ def ru_A124a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificUnknown"), ("series", "-to")] }
 
@@ -1230,7 +1230,7 @@ def ru_A124b_nibud : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
@@ -1244,7 +1244,7 @@ def ru_A124b_to : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-to")] }
 
@@ -1258,7 +1258,7 @@ def ru_A125_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "comparative"), ("series", "-libo")] }
 
@@ -1272,7 +1272,7 @@ def ru_A125_byToNiBylo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "comparative"), ("series", "by to ni bylo")] }
 
@@ -1286,7 +1286,7 @@ def ru_A126a_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "-libo")] }
 
@@ -1300,7 +1300,7 @@ def ru_A126a_byToNiBylo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "by to ni bylo")] }
 
@@ -1314,7 +1314,7 @@ def ru_A126b_libo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "-libo")] }
 
@@ -1328,7 +1328,7 @@ def ru_A126b_byToNiBylo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "by to ni bylo")] }
 
@@ -1342,7 +1342,7 @@ def ru_A127a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "by to ni bylo")] }
 
@@ -1356,7 +1356,7 @@ def ru_A127b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "by to ni bylo")] }
 
@@ -1370,7 +1370,7 @@ def ru_A128_ljuboj : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "ljuboj")] }
 
@@ -1384,7 +1384,7 @@ def ru_A128_ugodno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "ugodno")] }
 
@@ -1398,7 +1398,7 @@ def ru_A128_byToNiBylo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "by to ni bylo")] }
 
@@ -1412,7 +1412,7 @@ def ru_A129 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "directNeg"), ("series", "ni-")] }
 
@@ -1426,7 +1426,7 @@ def ru_A130 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificKnown"), ("series", "koe-")] }
 
@@ -1442,7 +1442,7 @@ def lv_A138 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "specificUnknown"), ("series", "kaut")] }
 
@@ -1458,7 +1458,7 @@ def lv_A139 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "irrealis"), ("series", "kaut")] }
 
@@ -1474,7 +1474,7 @@ def lv_A140a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "question"), ("series", "kaut")] }
 
@@ -1490,7 +1490,7 @@ def lv_A140b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("item", "kāds (bare interrogative)")] }
 
@@ -1506,7 +1506,7 @@ def lv_A140c_kaut : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("series", "kaut")] }
 
@@ -1522,7 +1522,7 @@ def lv_A140c_jeb : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("series", "jeb-")] }
 
@@ -1538,7 +1538,7 @@ def lv_A141 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "freeChoice"), ("series", "jeb-")] }
 
@@ -1554,7 +1554,7 @@ def lv_A142 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "comparative"), ("series", "jeb-")] }
 
@@ -1570,7 +1570,7 @@ def lv_A143a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "indirectNeg"), ("series", "jeb-")] }
 
@@ -1586,7 +1586,7 @@ def lv_A143b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "indirectNeg"), ("item", "kāds (bare interrogative)")] }
 
@@ -1602,7 +1602,7 @@ def lv_A144 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "directNeg"), ("series", "ne-")] }
 
@@ -1618,7 +1618,7 @@ def hi_A167_known : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificKnown"), ("series", "koii")] }
 
@@ -1634,7 +1634,7 @@ def hi_A167_unknown : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificUnknown"), ("series", "koii")] }
 
@@ -1650,7 +1650,7 @@ def hi_A167_bhii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificKnown"), ("series", "bhii")] }
 
@@ -1666,7 +1666,7 @@ def hi_A167_bhii_unknown : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificUnknown"), ("series", "bhii")] }
 
@@ -1682,7 +1682,7 @@ def hi_A168_koii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "indirectNeg"), ("series", "koii"), ("method", "description")] }
 
@@ -1698,7 +1698,7 @@ def hi_A168_bhii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "indirectNeg"), ("series", "bhii"), ("method", "description")] }
 
@@ -1714,7 +1714,7 @@ def hi_A169a_koii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "koii"), ("method", "description")] }
 
@@ -1730,7 +1730,7 @@ def hi_A169a_bhii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "bhii"), ("method", "description")] }
 
@@ -1746,7 +1746,7 @@ def hi_A169b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "koii"), ("method", "description")] }
 
@@ -1762,7 +1762,7 @@ def hi_A170a_koii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "koii")] }
 
@@ -1778,7 +1778,7 @@ def hi_A170a_bhii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "bhii")] }
 
@@ -1794,7 +1794,7 @@ def hi_A170b_koii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "koii")] }
 
@@ -1810,7 +1810,7 @@ def hi_A170b_bhii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "bhii")] }
 
@@ -1826,7 +1826,7 @@ def hi_A171a_koii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "question"), ("series", "koii"), ("method", "description")] }
 
@@ -1842,7 +1842,7 @@ def hi_A171a_bhii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "question"), ("series", "bhii"), ("method", "description")] }
 
@@ -1858,7 +1858,7 @@ def hi_A171b_koii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "conditional"), ("series", "koii")] }
 
@@ -1874,7 +1874,7 @@ def hi_A171b_bhii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "conditional"), ("series", "bhii")] }
 
@@ -1890,7 +1890,7 @@ def hi_A172 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "comparative"), ("series", "bhii")] }
 
@@ -1906,7 +1906,7 @@ def hi_A173 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "freeChoice"), ("series", "bhii"), ("method", "description")] }
 
@@ -1922,7 +1922,7 @@ def tr_A174 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificKnown"), ("series", "bir-")] }
 
@@ -1938,7 +1938,7 @@ def tr_A175_bir : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificUnknown"), ("series", "bir-")] }
 
@@ -1954,7 +1954,7 @@ def tr_A175_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificUnknown"), ("series", "herhangi")] }
 
@@ -1970,7 +1970,7 @@ def tr_A176_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "irrealis"), ("series", "herhangi")] }
 
@@ -1986,7 +1986,7 @@ def tr_A176_bir : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "irrealis"), ("series", "bir-")] }
 
@@ -2002,7 +2002,7 @@ def tr_A177a_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "herhangi")] }
 
@@ -2018,7 +2018,7 @@ def tr_A177a_bir : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "bir-")] }
 
@@ -2034,7 +2034,7 @@ def tr_A177a_hic : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "hiç")] }
 
@@ -2050,7 +2050,7 @@ def tr_A177b_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "conditional"), ("series", "herhangi")] }
 
@@ -2066,7 +2066,7 @@ def tr_A177b_bir : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "conditional"), ("series", "bir-")] }
 
@@ -2082,7 +2082,7 @@ def tr_A178_kimse : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("item", "kimse")] }
 
@@ -2098,7 +2098,7 @@ def tr_A178_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("series", "herhangi")] }
 
@@ -2114,7 +2114,7 @@ def tr_A178_hic : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("series", "hiç")] }
 
@@ -2130,7 +2130,7 @@ def tr_A179_hic : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "hiç")] }
 
@@ -2146,7 +2146,7 @@ def tr_A179_herhangi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "herhangi")] }
 
@@ -2162,7 +2162,7 @@ def tr_A179_bir : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "bir-")] }
 
@@ -2178,7 +2178,7 @@ def tr_A180 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "freeChoice"), ("series", "herhangi")] }
 
@@ -2194,7 +2194,7 @@ def tr_A181 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "comparative"), ("series", "herhangi")] }
 
@@ -2210,7 +2210,7 @@ def hu_A196 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "specificUnknown"), ("series", "vala-")] }
 
@@ -2226,7 +2226,7 @@ def hu_A197 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "specificKnown"), ("series", "vala-")] }
 
@@ -2242,7 +2242,7 @@ def hu_A198 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "irrealis"), ("series", "vala-")] }
 
@@ -2258,7 +2258,7 @@ def hu_A199a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "sem-")] }
 
@@ -2274,7 +2274,7 @@ def hu_A199a_akar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "akár-")] }
 
@@ -2290,7 +2290,7 @@ def hu_A199a_bar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "bár-")] }
 
@@ -2306,7 +2306,7 @@ def hu_A199b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "sem-")] }
 
@@ -2322,7 +2322,7 @@ def hu_A200 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "freeChoice"), ("series", "akár-")] }
 
@@ -2338,7 +2338,7 @@ def hu_A201_akar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "comparative"), ("series", "akár-")] }
 
@@ -2354,7 +2354,7 @@ def hu_A201_bar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "comparative"), ("series", "bár-")] }
 
@@ -2370,7 +2370,7 @@ def hu_A202_vala : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "vala-")] }
 
@@ -2386,7 +2386,7 @@ def hu_A202_bar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "bár-")] }
 
@@ -2402,7 +2402,7 @@ def hu_A202_akar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "akár-")] }
 
@@ -2418,7 +2418,7 @@ def hu_A203_bar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "bár-")] }
 
@@ -2434,7 +2434,7 @@ def hu_A203_akar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "akár-")] }
 
@@ -2450,7 +2450,7 @@ def hu_A203_vala : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "vala-")] }
 
@@ -2466,7 +2466,7 @@ def hu_A204 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "vala-")] }
 
@@ -2482,7 +2482,7 @@ def hu_A204_akar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "akár-")] }
 
@@ -2498,7 +2498,7 @@ def hu_A204_bar : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "bár-")] }
 
@@ -2514,7 +2514,7 @@ def fi_A205a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificKnown"), ("series", "-kin")] }
 
@@ -2530,7 +2530,7 @@ def fi_A205b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificKnown"), ("series", "eräs")] }
 
@@ -2546,7 +2546,7 @@ def fi_A206 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificUnknown"), ("series", "-kin")] }
 
@@ -2562,7 +2562,7 @@ def fi_A207 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "irrealis"), ("series", "-kin")] }
 
@@ -2578,7 +2578,7 @@ def fi_A208_kin : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "-kin")] }
 
@@ -2594,7 +2594,7 @@ def fi_A208_kaan : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "-kaan")] }
 
@@ -2610,7 +2610,7 @@ def fi_A208_hyvansa : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "hyvänsä")] }
 
@@ -2626,7 +2626,7 @@ def fi_A209_kin : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "-kin")] }
 
@@ -2642,7 +2642,7 @@ def fi_A209_hyvansa : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "hyvänsä")] }
 
@@ -2658,7 +2658,7 @@ def fi_A209_kaan : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "-kaan")] }
 
@@ -2674,7 +2674,7 @@ def fi_A210 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "directNeg"), ("series", "-kaan")] }
 
@@ -2690,7 +2690,7 @@ def fi_A211 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "indirectNeg"), ("series", "-kaan")] }
 
@@ -2706,7 +2706,7 @@ def fi_A212 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "comparative"), ("series", "-kaan")] }
 
@@ -2722,7 +2722,7 @@ def fi_A213 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "freeChoice"), ("series", "hyvänsä")] }
 
@@ -2738,7 +2738,7 @@ def fi_A214 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "comparative"), ("series", "hyvänsä")] }
 
@@ -2754,7 +2754,7 @@ def sw_A243a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "specificUnknown"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2770,7 +2770,7 @@ def sw_A243b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "specificUnknown"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2786,7 +2786,7 @@ def sw_A244 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "irrealis"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2802,7 +2802,7 @@ def sw_A245a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "question"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2818,7 +2818,7 @@ def sw_A245b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "conditional"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2834,7 +2834,7 @@ def sw_A246 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "indirectNeg"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2850,7 +2850,7 @@ def sw_A247 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "directNeg"), ("series", "generic noun"), ("method", "description")] }
 
@@ -2866,7 +2866,7 @@ def sw_A248 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "freeChoice"), ("series", "CL-o CL-ote"), ("method", "description")] }
 
@@ -2882,7 +2882,7 @@ def sw_A249 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "directNeg"), ("series", "CL-o CL-ote"), ("method", "description")] }
 
@@ -2898,7 +2898,7 @@ def sw_A250a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "question"), ("series", "CL-o CL-ote"), ("method", "description")] }
 
@@ -2914,7 +2914,7 @@ def sw_A250b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "conditional"), ("series", "CL-o CL-ote"), ("method", "description")] }
 
@@ -2930,7 +2930,7 @@ def ka_A251a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificKnown"), ("series", "-γac"), ("method", "description")] }
 
@@ -2946,7 +2946,7 @@ def ka_A251b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificUnknown"), ("series", "-γac"), ("method", "description")] }
 
@@ -2962,7 +2962,7 @@ def ka_A251b_me : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificUnknown"), ("series", "-me")] }
 
@@ -2978,7 +2978,7 @@ def ka_A252a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "irrealis"), ("series", "-me")] }
 
@@ -2994,7 +2994,7 @@ def ka_A252b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "irrealis"), ("series", "-me"), ("method", "description")] }
 
@@ -3010,7 +3010,7 @@ def ka_A253a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "question"), ("series", "-me"), ("method", "description")] }
 
@@ -3026,7 +3026,7 @@ def ka_A253a_yac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "question"), ("series", "-γac")] }
 
@@ -3042,7 +3042,7 @@ def ka_A253b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "conditional"), ("series", "-me")] }
 
@@ -3058,7 +3058,7 @@ def ka_A254 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "indirectNeg"), ("series", "-me"), ("item", "vera-")] }
 
@@ -3074,7 +3074,7 @@ def ka_A255 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "comparative"), ("series", "-me")] }
 
@@ -3090,7 +3090,7 @@ def ka_A256a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("series", "ara-"), ("method", "description")] }
 
@@ -3106,7 +3106,7 @@ def ka_A256b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("series", "ara-")] }
 
@@ -3122,7 +3122,7 @@ def ka_A256c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("item", "nura-"), ("method", "description")] }
 
@@ -3138,7 +3138,7 @@ def zh_A264 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3154,7 +3154,7 @@ def zh_A265a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3170,7 +3170,7 @@ def zh_A265b_le : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3186,7 +3186,7 @@ def zh_A265b_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3202,7 +3202,7 @@ def zh_A266a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "question"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3216,7 +3216,7 @@ def zh_A266b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "conditional"), ("series", "bare interrogative")] }
 
@@ -3232,7 +3232,7 @@ def zh_A267a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -3248,7 +3248,7 @@ def zh_A267b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative")] }
 
@@ -3264,7 +3264,7 @@ def zh_A267c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative")] }
 
@@ -3280,7 +3280,7 @@ def zh_A267d_ren : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("item", "nǎge")] }
 
@@ -3296,7 +3296,7 @@ def zh_A267d_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("item", "nǎge")] }
 
@@ -3312,7 +3312,7 @@ def zh_A268_unknown : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "specificUnknown"), ("series", "generic noun")] }
 
@@ -3328,7 +3328,7 @@ def zh_A268_known : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "specificKnown"), ("series", "generic noun")] }
 
@@ -3344,7 +3344,7 @@ def zh_A269a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "yě"), ("method", "description")] }
 
@@ -3360,7 +3360,7 @@ def zh_A269b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu"), ("method", "description")] }
 
@@ -3376,7 +3376,7 @@ def zh_A269c_dou : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu")] }
 
@@ -3392,7 +3392,7 @@ def zh_A269c_ye : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "yě")] }
 
@@ -3408,7 +3408,7 @@ def zh_A269d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu")] }
 
@@ -3424,7 +3424,7 @@ def zh_A270 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "freeChoice"), ("series", "rènhé")] }
 
@@ -3440,7 +3440,7 @@ def zh_A271 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "comparative"), ("series", "rènhé")] }
 
@@ -3456,7 +3456,7 @@ def zh_A272 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "rènhé")] }
 
@@ -3472,7 +3472,7 @@ def zh_A273 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "indirectNeg"), ("series", "rènhé")] }
 
@@ -3488,7 +3488,7 @@ def qu_A274a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
@@ -3504,7 +3504,7 @@ def qu_A274b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
@@ -3520,7 +3520,7 @@ def qu_A275a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "irrealis"), ("series", "-pis")] }
 
@@ -3536,7 +3536,7 @@ def qu_A275b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "irrealis"), ("series", "-pis")] }
 
@@ -3552,7 +3552,7 @@ def qu_A276a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "question"), ("series", "-pis")] }
 
@@ -3568,7 +3568,7 @@ def qu_A276b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "conditional"), ("series", "-pis")] }
 
@@ -3584,7 +3584,7 @@ def qu_A277 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "comparative"), ("series", "-pis")] }
 
@@ -3600,7 +3600,7 @@ def qu_A278 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "freeChoice"), ("series", "-pis")] }
 
@@ -3616,7 +3616,7 @@ def qu_A279a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "directNeg"), ("series", "-pis"), ("method", "description")] }
 
@@ -3632,7 +3632,7 @@ def qu_A279b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "directNeg"), ("series", "-pis")] }
 
@@ -3648,7 +3648,7 @@ def qu_A280 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "indirectNeg"), ("series", "-pis"), ("method", "description")] }
 
@@ -3664,7 +3664,7 @@ def ja_A281_unknown : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "specificUnknown"), ("series", "-ka")] }
 
@@ -3680,7 +3680,7 @@ def ja_A281_known : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "specificKnown"), ("series", "-ka")] }
 
@@ -3696,7 +3696,7 @@ def ja_A282a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "irrealis"), ("series", "-ka")] }
 
@@ -3712,7 +3712,7 @@ def ja_A282b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "irrealis"), ("series", "-ka"), ("method", "description")] }
 
@@ -3728,7 +3728,7 @@ def ja_A283a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "question"), ("series", "-ka"), ("method", "description")] }
 
@@ -3744,7 +3744,7 @@ def ja_A283a_mo : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "question"), ("series", "-mo")] }
 
@@ -3760,7 +3760,7 @@ def ja_A283b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "conditional"), ("series", "-ka"), ("method", "description")] }
 
@@ -3776,7 +3776,7 @@ def ja_A283b_mo : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "conditional"), ("series", "-mo")] }
 
@@ -3792,7 +3792,7 @@ def ja_A284 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "comparative"), ("series", "-mo")] }
 
@@ -3808,7 +3808,7 @@ def ja_A285 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "directNeg"), ("series", "-mo")] }
 
@@ -3824,7 +3824,7 @@ def ja_A286 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "indirectNeg"), ("series", "-mo"), ("method", "description")] }
 
@@ -3840,7 +3840,7 @@ def ja_A287 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "freeChoice"), ("series", "-demo")] }
 
@@ -3856,7 +3856,7 @@ def ko_A288a_bare_unknown : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker did not catch the caller's name."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
@@ -3872,7 +3872,7 @@ def ko_A288a_nka_unknown : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker did not catch the caller's name."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "-nka")] }
 
@@ -3888,7 +3888,7 @@ def ko_A288a_bare_known : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker goes on: guess who."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificKnown"), ("series", "bare interrogative")] }
 
@@ -3904,7 +3904,7 @@ def ko_A288a_nka_known : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker goes on: guess who."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificKnown"), ("series", "-nka")] }
 
@@ -3920,7 +3920,7 @@ def ko_A288b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
@@ -3936,7 +3936,7 @@ def ko_A288b_nka : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "-nka")] }
 
@@ -3952,7 +3952,7 @@ def ko_A289a_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
@@ -3968,7 +3968,7 @@ def ko_A289a_nka : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "-nka")] }
 
@@ -3984,7 +3984,7 @@ def ko_A289b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "bare interrogative"), ("method", "description")] }
 
@@ -4000,7 +4000,7 @@ def ko_A290a_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "bare interrogative")] }
 
@@ -4016,7 +4016,7 @@ def ko_A290a_nka : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-nka")] }
 
@@ -4032,7 +4032,7 @@ def ko_A290a_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-na")] }
 
@@ -4048,7 +4048,7 @@ def ko_A290a_tunci : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-tunci")] }
 
@@ -4064,7 +4064,7 @@ def ko_A290b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "bare interrogative")] }
 
@@ -4080,7 +4080,7 @@ def ko_A290b_nka : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-nka")] }
 
@@ -4096,7 +4096,7 @@ def ko_A290b_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-na")] }
 
@@ -4112,7 +4112,7 @@ def ko_A290b_tunci : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-tunci")] }
 
@@ -4128,7 +4128,7 @@ def ko_A291_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-na")] }
 
@@ -4144,7 +4144,7 @@ def ko_A291_tunci : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-tunci")] }
 
@@ -4160,7 +4160,7 @@ def ko_A291_amu_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-na")] }
 
@@ -4176,7 +4176,7 @@ def ko_A291_amu_tunci : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-tunci")] }
 
@@ -4192,7 +4192,7 @@ def ko_A292_to : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "-to")] }
 
@@ -4208,7 +4208,7 @@ def ko_A292_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "bare interrogative")] }
 
@@ -4224,7 +4224,7 @@ def ko_A292_nka : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "-nka")] }
 
@@ -4240,7 +4240,7 @@ def ko_A293a_amu : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
@@ -4256,7 +4256,7 @@ def ko_A293a_nwukwu : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
@@ -4272,7 +4272,7 @@ def ko_A293b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
@@ -4288,7 +4288,7 @@ def ko_A294 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "comparative"), ("series", "-to")] }
 

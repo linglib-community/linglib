@@ -24,7 +24,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "realization"), ("section", "2.4.2")] }
 
@@ -37,7 +37,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "cfFilter"), ("parameter", "previousUtterance"), ("section", "2.4.2")] }
 
@@ -50,7 +50,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "utterance"), ("parameter", "realization"), ("section", "4.1.1")] }
 
@@ -63,7 +63,7 @@ def ex10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "rank"), ("section", "4.1.1")] }
 
@@ -76,7 +76,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")] }
 
@@ -89,7 +89,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")] }
 
@@ -102,7 +102,7 @@ def ex23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2")] }
 

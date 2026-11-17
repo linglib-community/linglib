@@ -24,7 +24,7 @@ def table1_episodic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "Fx"), ("sum", "true")] }
 
@@ -37,7 +37,7 @@ def table1_negation : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "¬Fx"), ("sum", "false")] }
 
@@ -50,7 +50,7 @@ def table1_everyScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Every A)F"), ("sum", "true")] }
 
@@ -63,7 +63,7 @@ def table1_everyRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Every F)A"), ("sum", "false")] }
 
@@ -76,7 +76,7 @@ def table1_someScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Some A)F"), ("sum", "true")] }
 
@@ -89,7 +89,7 @@ def table1_someRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Some F)A"), ("sum", "true")] }
 
@@ -102,7 +102,7 @@ def table1_mostScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Most As)F"), ("sum", "true")] }
 
@@ -115,7 +115,7 @@ def table1_mostRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Most Fs)A"), ("sum", "false")] }
 
@@ -128,7 +128,7 @@ def table1_antecedent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "If F, A"), ("sum", "false")] }
 
@@ -141,7 +141,7 @@ def table1_consequent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "If A, F"), ("sum", "true")] }
 
@@ -154,7 +154,7 @@ def table1_question : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "Fx?"), ("sum", "false")] }
 
@@ -167,7 +167,7 @@ def table1_imperative : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "F!"), ("sum", "false")] }
 
@@ -180,7 +180,7 @@ def table1_possibility : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "◇Fx"), ("sum", "false")] }
 
@@ -193,7 +193,7 @@ def table1_necessity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "□Fx"), ("sum", "true")] }
 
@@ -206,7 +206,7 @@ def table1_genericScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "GEN[(A)F]"), ("sum", "false")] }
 
@@ -219,7 +219,7 @@ def table1_genericRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "GEN[(F)A]"), ("sum", "false")] }
 
@@ -232,7 +232,7 @@ def table1_tautology : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "|A∩F| ≤ 0"), ("sum", "true")] }
 
@@ -245,7 +245,7 @@ def table1_contradiction : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "3 ≤ |A∩F| ≥ 1"), ("sum", "true")] }
 
@@ -258,7 +258,7 @@ def table1_theRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(The F)A"), ("sum", "true")] }
 
@@ -271,7 +271,7 @@ def table1_theScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(The A)F"), ("sum", "true")] }
 
@@ -284,7 +284,7 @@ def table1_thePlRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(The Fs)A"), ("sum", "false")] }
 
@@ -297,7 +297,7 @@ def table1_thePlScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(The As)F"), ("sum", "true")] }
 
@@ -310,7 +310,7 @@ def table1_bothRestrictor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Both Fs)A"), ("sum", "true")] }
 
@@ -323,7 +323,7 @@ def table1_bothScope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "(Both As)F"), ("sum", "true")] }
 
@@ -336,7 +336,7 @@ def table1_only : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "Only x F"), ("sum", "false")] }
 
@@ -349,7 +349,7 @@ def table1_cleft : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "It is x who F"), ("sum", "true")] }
 
@@ -362,7 +362,7 @@ def table1_sorry : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "x is sorry that F"), ("sum", "false")] }
 

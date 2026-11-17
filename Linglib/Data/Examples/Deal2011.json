@@ -54,7 +54,7 @@
       "translation": "You can take these two blankets. / You should take these two blankets.",
       "context": "A friend is preparing for a camping trip. I am taking this person around my camping supplies and suggesting appropriate things. I hand them two blankets and say:",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "acceptable"}
@@ -80,7 +80,7 @@
       "translation": "We have to get home before it gets dark.",
       "context": "Prompt: We have to get home before it gets dark.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -106,7 +106,7 @@
       "translation": "In order to know the language well, you need to know a lot of words.",
       "context": "Prompt: To speak well, you have to know a lot of words.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -130,7 +130,7 @@
       "translation": "They should speak slowly.",
       "context": "A discussion of how young people speak quickly, making them hard to understand.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -155,7 +155,7 @@
       "translation": "According to the rules, you can't play, because your arm is injured.",
       "context": "The referee is talking to an injured player.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -179,7 +179,7 @@
       "translation": "We can't stay here, we are going home.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -203,7 +203,7 @@
       "translation": "The police would never find me.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -228,7 +228,7 @@
       "translation": "You can't go.",
       "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -251,7 +251,7 @@
       "translation": "You wouldn't remember.",
       "context": "I tell someone my number and I see that they are trying to remember it. I say, 'You don't have to remember it; here's my card.'",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -275,7 +275,7 @@
       "translation": "They are throwing away a lot of food that they could eat. / ... that they should eat.",
       "context": "I am watching people clean out a cooler and throw away various things.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "acceptable"}
@@ -301,7 +301,7 @@
       "translation": "They are throwing away all the food that they could eat. They are throwing away all their food.",
       "context": "I am watching people clean out a cooler and throw away various things.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -327,7 +327,7 @@
       "translation": "Read everything you can read!",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -353,7 +353,7 @@
       "translation": "Whatever you can do, I already did.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -380,7 +380,7 @@
       "translation": "If he has an injured leg, the doctor needs to see him right away.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],
@@ -405,7 +405,7 @@
       "translation": "If the doctor can see him in a hurry, then he should head over to Lewiston.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -430,7 +430,7 @@
       "translation": "If I can go in, I will go in.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "possibility", "judgment": "acceptable"},
         {"name": "necessity", "judgment": "unacceptable"}
@@ -456,7 +456,7 @@
       "translation": "If I have to call the doctor, I will.",
       "context": "Prompt: If I have to call the doctor, I will.",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["modal", "o'qa"],

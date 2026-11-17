@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection: no five dollars without mowing", .questionable), ("strengthening: the five dollars are not free for the taking", .acceptable)]
     paperFeatures := [("inference", "conditional perfection"), ("flavor", "bouletic")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
@@ -76,7 +76,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection", .unacceptable), ("strengthening: the object is not necessarily not Polyglas", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
@@ -89,7 +89,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "An information-seeking dialogue on whether the cactus is an Astrophytum."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection", .unacceptable), ("strengthening: it is not settled that the cactus is not an Astrophytum", .acceptable)]
     paperFeatures := [("inference", "no perfection"), ("question", "information-seeking")] }
 
@@ -102,7 +102,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
@@ -115,7 +115,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
@@ -128,7 +128,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection", .unacceptable), ("strengthening: it is not settled that John will be replaced", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
@@ -141,7 +141,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "Uttered by the wealthy aunt of an uninspired C-average high school student."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection: the student must avoid an A", .unacceptable), ("strengthening: no $5 for another C", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
@@ -154,7 +154,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("not only some but all", .acceptable), ("not only John but John and Mary", .acceptable)]
+    contrasts := [("not only some but all", .acceptable), ("not only John but John and Mary", .acceptable)]
     readings := []
     paperFeatures := [("test", "not only α but β"), ("scale", "same monotonicity")] }
 
@@ -167,7 +167,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("not only John but only John", .unacceptable), ("not only John but John and not Mary", .unacceptable)]
+    contrasts := [("not only John but only John", .unacceptable), ("not only John but John and not Mary", .unacceptable)]
     readings := []
     paperFeatures := [("test", "not only α but β"), ("scale", "mixed monotonicity")] }
 
@@ -180,7 +180,7 @@ def seat : Datum :=
     glossedTokens := []
     context := "A sign on public transportation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection: only the disabled or the over-70 may sit here", .acceptable)]
     paperFeatures := [("inference", "conditional perfection"), ("presumption", "exhaustivity")] }
 
@@ -193,7 +193,7 @@ def p14_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exhaustive: Robin and Hilary and nobody else", .acceptable)]
     paperFeatures := [("answer", "exhaustive")] }
 
@@ -206,7 +206,7 @@ def p15_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exhaustive: Robin comes only if there is vegetarian food", .acceptable)]
     paperFeatures := [("answer", "exhaustive"), ("inference", "conditional perfection")] }
 
@@ -219,7 +219,7 @@ def p17_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Q: Will the TV work if it is humid? A: Yes, the TV will work if it is humid.", .acceptable)]
+    contrasts := [("Q: Will the TV work if it is humid? A: Yes, the TV will work if it is humid.", .acceptable)]
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("question", "yes/no conditional"), ("inference", "no perfection")] }
 
@@ -232,7 +232,7 @@ def p17_5 : Datum :=
     glossedTokens := []
     context := "Implicit question: what of current interest follows from John's being in Amherst today?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("perfection: he is home late only if in Amherst", .unacceptable)]
     paperFeatures := [("question", "consequences of an antecedent"), ("inference", "no perfection")] }
 
@@ -245,7 +245,7 @@ def p17_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exhaustive", .unacceptable)]
     paperFeatures := [("question", "mention-some")] }
 
@@ -258,7 +258,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("relativized perfection: a call before midnight will not upset her about its time", .acceptable), ("full perfection: nothing but a call after midnight upsets her", .unacceptable)]
     paperFeatures := [("inference", "relativized perfection"), ("question", "antecedents from a narrow set")] }
 

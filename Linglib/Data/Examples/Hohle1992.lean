@@ -24,7 +24,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "content"), ("accent", "object")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := "Karl hat BESTIMMT nicht gelogen"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "temporal auxiliary")] }
 
@@ -63,7 +63,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := "hörst du denn NIE auf?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "particle verb")] }
 
@@ -76,7 +76,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := "ich kann mir nicht vorstellen, daß sie ihn wirklich umbringen will"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "idiom")] }
 
@@ -89,7 +89,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := "ich habe Hanna gebeten, damit AUFzuhören"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
@@ -102,7 +102,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := "es heißt, daß Karl den HUND getreten hat"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
@@ -115,7 +115,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := "ich habe Karl gedroht, daß ich ihm die LEVITEN lesen werde"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
@@ -128,7 +128,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := "ich habe Hanna gebeten, damit AUFzuhören"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative")] }
 
@@ -141,7 +141,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := "ich habe den Hund nicht getreten, und Karl hat es auch nicht getan"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative")] }
 
@@ -154,7 +154,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := "daß Karl nicht teilnimmt, hat nichts mit seiner Kurzsichtigkeit zu tun"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative"), ("negation", "in background")] }
 
@@ -167,7 +167,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "content"), ("embedded", "verb-second")] }
 
@@ -180,7 +180,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
@@ -193,7 +193,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
@@ -206,7 +206,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
@@ -219,7 +219,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := "weißt du, ob Hanna kürzlich in ROM war?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
@@ -232,7 +232,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := "weißt du, ob Hanna kürzlich in ROM war?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
@@ -245,7 +245,7 @@ def ex50a : Datum :=
     glossedTokens := []
     context := "vielleicht hört Karl damit AUF"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
@@ -258,7 +258,7 @@ def ex50b : Datum :=
     glossedTokens := []
     context := "vielleicht hört Karl damit AUF"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
@@ -271,7 +271,7 @@ def ex51a : Datum :=
     glossedTokens := []
     context := "Karl hat BESTIMMT nicht gelogen"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
@@ -284,7 +284,7 @@ def ex51b : Datum :=
     glossedTokens := []
     context := "Karl hat BESTIMMT nicht gelogen"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
@@ -297,7 +297,7 @@ def ex52a : Datum :=
     glossedTokens := []
     context := "weißt du, ob Hanna kürzlich in ROM war?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
@@ -310,7 +310,7 @@ def ex55a : Datum :=
     glossedTokens := []
     context := "ich hoffe, daß Karl ihr ZUhört"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
@@ -323,7 +323,7 @@ def ex55b : Datum :=
     glossedTokens := []
     context := "ich hoffe, daß Karl ihr ZUhört"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("negation", "in background"), ("scoping", "VERUM over negation")] }
 
@@ -336,7 +336,7 @@ def ex57a : Datum :=
     glossedTokens := []
     context := "es heißt, daß Karl ein DREHBUCH geschrieben hat"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
@@ -349,7 +349,7 @@ def ex58a : Datum :=
     glossedTokens := []
     context := "Hanna macht dir bestimmt den GARAUS"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
@@ -362,7 +362,7 @@ def ex59a : Datum :=
     glossedTokens := []
     context := "Karl hat die lächerliche Behauptung aufgestellt, daß sie damit AUFhört"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM"), ("clauseType", "polar interrogative")] }
 
@@ -375,7 +375,7 @@ def ex62a : Datum :=
     glossedTokens := []
     context := "ich hoffe, daß Karl ihr ZUhört"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("focus", "negation"), ("accent", "negation particle")] }
 
@@ -388,7 +388,7 @@ def ex64a : Datum :=
     glossedTokens := []
     context := "ich hoffe, er hört ihr ZU"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "verum"), ("accent", "finite verb")] }
 
@@ -401,7 +401,7 @@ def ex64b : Datum :=
     glossedTokens := []
     context := "ich hoffe, er hört ihr ZU"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "negation"), ("accent", "negation particle")] }
 
@@ -414,7 +414,7 @@ def ex64c : Datum :=
     glossedTokens := []
     context := "ich hoffe, er hört ihr ZU"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "verum"), ("accent", "finite verb"), ("negation", "in focus")] }
 
@@ -427,7 +427,7 @@ def ex68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
@@ -440,7 +440,7 @@ def ex68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "none"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
@@ -453,7 +453,7 @@ def ex68c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "content"), ("accent", "verb particle"), ("verbPosition", "final")] }
 
@@ -466,7 +466,7 @@ def ex70a : Datum :=
     glossedTokens := []
     context := "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
@@ -479,7 +479,7 @@ def ex70b : Datum :=
     glossedTokens := []
     context := "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "none"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
@@ -492,7 +492,7 @@ def ex71a : Datum :=
     glossedTokens := []
     context := "ich möchte wissen, ob sie in ROM ist"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "copula"), ("verbPosition", "second")] }
 
@@ -505,7 +505,7 @@ def ex71b : Datum :=
     glossedTokens := []
     context := "ich möchte wissen, ob sie in ROM ist"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "copula"), ("verbPosition", "final")] }
 
@@ -518,7 +518,7 @@ def ex72a : Datum :=
     glossedTokens := []
     context := "ich möchte wissen, ob Karl ein DREHBUCH schreibt"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
@@ -531,7 +531,7 @@ def ex72b : Datum :=
     glossedTokens := []
     context := "ich möchte wissen, ob Karl ein DREHBUCH schreibt"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
@@ -544,7 +544,7 @@ def ex77a : Datum :=
     glossedTokens := []
     context := "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "relative particle"), ("verumType", "C"), ("variety", "dialect with relative particle")] }
 
@@ -557,7 +557,7 @@ def ex78a : Datum :=
     glossedTokens := []
     context := "du hast mir erzählt, mit wem (daß) du NICHT getanzt hast"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("variety", "dialect with interrogative particle")] }
 
@@ -570,7 +570,7 @@ def ex79a : Datum :=
     glossedTokens := []
     context := "du hast mir erzählt, wen (daß) du NICHT reingelegt hast"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("variety", "dialect with interrogative particle")] }
 
@@ -583,7 +583,7 @@ def ex80a : Datum :=
     glossedTokens := []
     context := "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "none"), ("accent", "relative pronoun"), ("variety", "dialect with relative particle")] }
 
@@ -596,7 +596,7 @@ def ex81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "none"), ("accent", "interrogative pronoun"), ("verbPosition", "second")] }
 
@@ -609,7 +609,7 @@ def ex82a : Datum :=
     glossedTokens := []
     context := "ich kenne nur wenige Leute, die dieses Buch gelesen haben"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative pronoun"), ("verumType", "RW")] }
 
@@ -622,7 +622,7 @@ def ex83a : Datum :=
     glossedTokens := []
     context := "du hast mir erzählt, wen du NICHT reingelegt hast"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative pronoun"), ("verumType", "RW")] }
 
@@ -635,7 +635,7 @@ def ex84a : Datum :=
     glossedTokens := []
     context := "Hanna tanzt nur ganz selten"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative phrase"), ("verumType", "RW")] }
 
@@ -648,7 +648,7 @@ def ex85a : Datum :=
     glossedTokens := []
     context := "du hast mir erzählt, mit wem du NICHT getanzt hast"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative phrase"), ("verumType", "RW")] }
 
@@ -661,7 +661,7 @@ def ex86a : Datum :=
     glossedTokens := []
     context := "ich habe von den meisten Schriftstellern so gut wie nichts gelesen"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative phrase"), ("verumType", "RW")] }
 
@@ -674,7 +674,7 @@ def ex87a : Datum :=
     glossedTokens := []
     context := "du hast also weder Karls noch Hannas Aufsatz gelesen"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative phrase"), ("verumType", "RW")] }
 

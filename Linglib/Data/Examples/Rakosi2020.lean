@@ -28,7 +28,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
 
@@ -43,7 +43,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
 
@@ -58,7 +58,7 @@ def ex_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "atomic"), ("anaphor", "egymás")] }
 
@@ -73,7 +73,7 @@ def ex_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "atomic"), ("anaphor", "maga")] }
 
@@ -89,7 +89,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
@@ -105,7 +105,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
@@ -120,7 +120,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referential", .acceptable), ("bound variable", .ungrammatical)]
     paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
 
@@ -135,7 +135,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound variable", .acceptable)]
     paperFeatures := [("antecedent", "plural"), ("anaphor", "magunk")] }
 
@@ -150,7 +150,7 @@ def ex_4c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound variable", .acceptable)]
     paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
 
@@ -165,7 +165,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
 
@@ -180,7 +180,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "atomic"), ("anaphor", "maguk")] }
 
@@ -195,7 +195,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "inclusive"), ("anaphor", "egymás")] }
 
@@ -210,7 +210,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "plural")] }
 
@@ -225,7 +225,7 @@ def ex_7a_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "plural")] }
 
@@ -240,7 +240,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Minden gyerek látta a kép-et.", .acceptable), ("Néhány gyerek látta a kép-et.", .acceptable), ("Két gyerek-ek látta a kép-et.", .ungrammatical)]
+    contrasts := [("Minden gyerek látta a kép-et.", .acceptable), ("Néhány gyerek látta a kép-et.", .acceptable), ("Két gyerek-ek látta a kép-et.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "quantified")] }
 
@@ -255,7 +255,7 @@ def ex_7b_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified")] }
 
@@ -270,7 +270,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
 
@@ -285,7 +285,7 @@ def ex_8a_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
 
@@ -300,7 +300,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
 
@@ -315,7 +315,7 @@ def ex_8b_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
 
@@ -331,7 +331,7 @@ def ex_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
@@ -346,7 +346,7 @@ def ex_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
@@ -362,7 +362,7 @@ def ex_9c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
@@ -378,7 +378,7 @@ def ex_9d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
 
@@ -393,7 +393,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate")] }
 
@@ -408,7 +408,7 @@ def ex_10_ : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate")] }
 
@@ -423,7 +423,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
 
@@ -438,7 +438,7 @@ def ex_11a_ : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
 
@@ -453,7 +453,7 @@ def ex_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
 
@@ -468,7 +468,7 @@ def ex_11b_ : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
 
@@ -483,7 +483,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
 
@@ -498,7 +498,7 @@ def ex_12_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
 
@@ -513,7 +513,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -528,7 +528,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective")] }
 
@@ -543,7 +543,7 @@ def ex_14_ : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective")] }
 
@@ -559,7 +559,7 @@ def ex_15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
@@ -575,7 +575,7 @@ def ex_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
@@ -591,7 +591,7 @@ def ex_15c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
 
@@ -606,7 +606,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective"), ("anaphor", "maga")] }
 
@@ -621,7 +621,7 @@ def ex_16_ : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "collective"), ("anaphor", "maguk")] }
 
@@ -636,7 +636,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Péter és Éva az-t gondolja, hogy ő szereti egymás-t.", .ungrammatical)]
+    contrasts := [("Péter és Éva az-t gondolja, hogy ő szereti egymás-t.", .ungrammatical)]
     readings := [("broad scope", .acceptable)]
     paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
 
@@ -652,7 +652,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Álmomban két macska voltam, és én játszottam egymás-sal.", .ungrammatical)]
+    contrasts := [("Álmomban két macska voltam, és én játszottam egymás-sal.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
 

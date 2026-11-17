@@ -24,7 +24,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "I knew that Ann read at least some of the books. But today I learned that..."
     judgment := .unacceptable
-    alternatives := [("she read ALL the books.", .acceptable)]
+    contrasts := [("she read ALL the books.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "I knew that Ann didn't read all of the books. But today I learned that..."
     judgment := .unacceptable
-    alternatives := [("she didn't read ANY of the books.", .acceptable)]
+    contrasts := [("she didn't read ANY of the books.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "Did Ann read some of the books, or all of them?"
     judgment := .unacceptable
-    alternatives := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
+    contrasts := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_13_i : Datum :=
     glossedTokens := []
     context := "Did Ann read none of the books, some of the books, or all of the books?"
     judgment := .unacceptable
-    alternatives := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
+    contrasts := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_13_ii : Datum :=
     glossedTokens := []
     context := "Did Ann read none of the books, or all of them?"
     judgment := .unacceptable
-    alternatives := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
+    contrasts := [("Ann read ALL the books.", .acceptable), ("Ann read all the books.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := "Yesterday she read some of the newspapers."
     judgment := .unacceptable
-    alternatives := [("Today she read ALL the newspapers.", .acceptable), ("Today she read all the newspapers.", .unacceptable)]
+    contrasts := [("Today she read ALL the newspapers.", .acceptable), ("Today she read all the newspapers.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "A: I know that Mary read some of the books, but I suspect that she didn't read all of them."
     judgment := .acceptable
-    alternatives := [("B': No, don't worry, she DID read all the books.", .acceptable)]
+    contrasts := [("B': No, don't worry, she DID read all the books.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "A: I know that Mary doesn't smoke now, but I'm worried that she also didn't smoke in the past (in which case she is not a good fit for our experiment)."
     judgment := .unacceptable
-    alternatives := [("B': No, don't worry, she DID smoke in the past.", .acceptable)]
+    contrasts := [("B': No, don't worry, she DID smoke in the past.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "I knew that Ann read at least one of the books. But today I learned that..."
     judgment := .unacceptable
-    alternatives := [("she read ALL the books.", .acceptable), ("she read all the books.", .unacceptable)]
+    contrasts := [("she read ALL the books.", .acceptable), ("she read all the books.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := "I knew that Ann didn't read at least one of the books. But today I learned that..."
     judgment := .unacceptable
-    alternatives := [("she didn't read ANY of the books.", .acceptable), ("she didn't read any of the books.", .unacceptable)]
+    contrasts := [("she didn't read ANY of the books.", .acceptable), ("she didn't read any of the books.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := "Q: Did she not read all the books?"
     judgment := .acceptable
-    alternatives := [("A: No, she DID read all the books.", .acceptable)]
+    contrasts := [("A: No, she DID read all the books.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := "John really likes to write phonology papers. Every day, he either works on some of them or all of them. He is in a cheerful mood now, so apparently..."
     judgment := .unacceptable
-    alternatives := [("he worked on ALL of his phonology papers today.", .acceptable), ("he worked on all of his phonology papers today.", .unacceptable)]
+    contrasts := [("he worked on ALL of his phonology papers today.", .acceptable), ("he worked on all of his phonology papers today.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := "John really likes to write phonology papers. He also writes semantics papers, but he hates that. Every day, he either works on all of his phonology papers and none of his semantics papers, or all of his semantics papers and some of his phonology papers. He is in a cheerful mood, so apparently..."
     judgment := .acceptable
-    alternatives := [("he worked on all of his PHONOLOGY papers today.", .acceptable)]
+    contrasts := [("he worked on all of his PHONOLOGY papers today.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := "A monogamous society."
     judgment := .unacceptable
-    alternatives := [("John is not married to any of his teammates.", .acceptable)]
+    contrasts := [("John is not married to any of his teammates.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := "In a game of Knuckle, at the end of each round, the person who has more cards than anybody else cashes in and leaves the game. If at the end of a round no player has more cards than anybody else, then all the players stay in the game. Last Saturday night, 5 of my uncles sat down for a long game of Knuckle."
     judgment := .unacceptable
-    alternatives := [("I checked in during round three and all my uncles were still in the game.", .acceptable)]
+    contrasts := [("I checked in during round three and all my uncles were still in the game.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := "Did she read any of the books?"
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := "The mayor is friends with some of the people building the highway, but..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def fn18_i : Datum :=
     glossedTokens := []
     context := "Q: Is she married to any of her teammates?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

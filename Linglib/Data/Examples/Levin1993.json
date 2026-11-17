@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The window broke.",
         "judgment": "acceptable"
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -81,7 +81,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Janet broke Bill's finger.",
         "judgment": "acceptable"
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Margaret cut the string.",
         "judgment": "acceptable"
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -251,7 +251,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Margaret cut Bill's arm.",
         "judgment": "acceptable"
@@ -288,7 +288,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Carla hit the door.",
         "judgment": "acceptable"
@@ -325,7 +325,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -357,7 +357,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -389,7 +389,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Carla hit Bill's back.",
         "judgment": "acceptable"
@@ -426,7 +426,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Terry touched the cat.",
         "judgment": "acceptable"
@@ -463,7 +463,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -495,7 +495,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -527,7 +527,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Terry touched Bill's shoulder.",
         "judgment": "acceptable"
@@ -564,7 +564,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "I pushed the table.",
         "judgment": "acceptable"
@@ -601,7 +601,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Jack sprayed the wall with paint.",
         "judgment": "acceptable"
@@ -638,7 +638,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Jessica loaded the wagon with boxes.",
         "judgment": "acceptable"
@@ -675,7 +675,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nora sent Peter the book.",
         "judgment": "acceptable"
@@ -712,7 +712,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Martha carved the baby a toy.",
         "judgment": "acceptable"
@@ -749,7 +749,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The sun radiates heat.",
         "judgment": "acceptable"
@@ -786,7 +786,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Martha carved the piece of wood into a toy.",
         "judgment": "acceptable"
@@ -823,7 +823,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Mike ate.",
         "judgment": "acceptable"
@@ -860,7 +860,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Cynthia devoured the pizza.",
         "judgment": "acceptable"
@@ -897,7 +897,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Anne and Cathy met.",
         "judgment": "acceptable"
@@ -934,7 +934,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "There developed a problem.",
         "judgment": "acceptable"
@@ -971,7 +971,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "There appeared a ship on the horizon.",
         "judgment": "acceptable"
@@ -1008,7 +1008,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "In the woods lives an old woman.",
         "judgment": "acceptable"
@@ -1045,7 +1045,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The hammer broke the window.",
         "judgment": "acceptable"
@@ -1082,7 +1082,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Doug ate the ice cream with a spoon.",
         "judgment": "acceptable"
@@ -1119,7 +1119,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Brutus murdered Julius Caesar with a dagger.",
         "judgment": "acceptable"
@@ -1156,7 +1156,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The exterminators killed the insects with DDT.",
         "judgment": "acceptable"
@@ -1193,7 +1193,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The rats ran through the maze.",
         "judgment": "acceptable"
@@ -1230,7 +1230,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "A rabbit appeared out of the magician's hat.",
         "judgment": "acceptable"
@@ -1267,7 +1267,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The departing passenger waved at the crowd.",
         "judgment": "acceptable"
@@ -1304,7 +1304,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The witch turned him from a prince into a frog.",
         "judgment": "acceptable"
@@ -1341,7 +1341,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Paul laughed.",
         "judgment": "acceptable"
@@ -1378,7 +1378,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Heather grunted.",
         "judgment": "acceptable"
@@ -1415,7 +1415,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1447,7 +1447,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The package weighed ten pounds.",
         "judgment": "acceptable"
@@ -1484,7 +1484,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "George Washington slept in this bed.",
         "judgment": "acceptable"
@@ -1521,7 +1521,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The garden is swarming with bees.",
         "judgment": "acceptable"

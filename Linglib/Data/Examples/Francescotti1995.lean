@@ -24,7 +24,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := "Albert, one of the best chemistry students in the school's history, passed; Marie, the very best, was even more likely to pass."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "1"), ("neighbors", "3"), ("felicitous", "no")] }
 
@@ -37,7 +37,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "Everyone in the class failed, Albert's failure being very surprising, and Marie's would be more so."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")] }
 
@@ -50,7 +50,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")] }
 
@@ -63,7 +63,7 @@ def ex21far : Datum :=
     glossedTokens := []
     context := "Andre is by far the tallest person in the reference class."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")] }
 
@@ -76,7 +76,7 @@ def ex21near : Datum :=
     glossedTokens := []
     context := "Andre is the tallest person in the reference class, but only by a small margin."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")] }
 
@@ -89,7 +89,7 @@ def ex21half : Datum :=
     glossedTokens := []
     context := "Half of the group is over six foot five, the other half under five foot, and Andre is barely in the taller half."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "4"), ("felicitous", "no")] }
 

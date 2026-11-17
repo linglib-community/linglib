@@ -406,12 +406,12 @@ namespace Row
 /-- The sentences a row judges, each with its judgment and its link. -/
 def judged (r : Row) : List (String × Judgment × Link) :=
   (r.datum.primaryText, r.datum.judgment, r.link) ::
-    (r.datum.alternatives.zip r.alternatives).map fun p ↦ (p.1.1, p.1.2, p.2)
+    (r.datum.contrasts.zip r.alternatives).map fun p ↦ (p.1.1, p.1.2, p.2)
 
 /-- Each sentence of the row shows its linked forms, every counterpart is linked, and the
 quantifier with which a context sentence states what it establishes is among its words. -/
 def Attested (r : Row) : Prop :=
-  (∀ s ∈ r.judged, s.2.2.Attested s.1) ∧ r.alternatives.length = r.datum.alternatives.length ∧
+  (∀ s ∈ r.judged, s.2.2.Attested s.1) ∧ r.alternatives.length = r.datum.contrasts.length ∧
     ∀ q ∈ r.known.determiner, r.datum.context = "" ∨ q.form.toList ∈ Gloss.tokens r.datum.context
 
 instance (r : Row) : Decidable r.Attested := inferInstanceAs (Decidable (_ ∧ _ ∧ _))

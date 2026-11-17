@@ -24,7 +24,7 @@ def gg2017_1 : Datum :=
     glossedTokens := []
     context := "A enters S's windowless office in a manifestly dripping wet raincoat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -37,7 +37,7 @@ def gg2017_2a : Datum :=
     glossedTokens := []
     context := "S has just learned that A hosted a party last night but has no idea who did or should have attended."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
@@ -50,7 +50,7 @@ def gg2017_2b : Datum :=
     glossedTokens := []
     context := "S has just learned that A hosted a party last night but has no idea who did or should have attended."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
@@ -65,7 +65,7 @@ def gg2017_8_neg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A enters S's windowless office in a manifestly dripping wet raincoat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -80,7 +80,7 @@ def gg2017_8_pos : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A comes in with dark sunglasses, T-shirt, shorts, a straw hat and suntan lotion, humming a song about sunshine."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "+")] }
 
@@ -95,7 +95,7 @@ def gg2017_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "S and A stand in front of a billboard in a small village saying that the last restaurant there has just closed for good."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -108,7 +108,7 @@ def gg2017_9b : Datum :=
     glossedTokens := []
     context := "The billboard announces the opening of several new restaurants in the village."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "+")] }
 

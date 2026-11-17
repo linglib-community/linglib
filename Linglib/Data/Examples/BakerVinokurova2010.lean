@@ -26,7 +26,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM")] }
 
@@ -41,7 +41,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -56,7 +56,7 @@ def ex_3c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC")] }
 
@@ -71,7 +71,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -86,7 +86,7 @@ def ex_7c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC")] }
 
@@ -101,7 +101,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -116,7 +116,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectAdjacent", "no")] }
 
@@ -131,7 +131,7 @@ def ex_10a_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectAdjacent", "no")] }
 
@@ -146,7 +146,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
@@ -161,7 +161,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -176,7 +176,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -191,7 +191,7 @@ def ex_11b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "no")] }
 
@@ -206,7 +206,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -221,7 +221,7 @@ def ex_13_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -236,7 +236,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -251,7 +251,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM")] }
 
@@ -266,7 +266,7 @@ def ex_16_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "DAT")] }
 
@@ -281,7 +281,7 @@ def ex_16_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "ACC")] }
 
@@ -296,7 +296,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
@@ -311,7 +311,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "ACC"), ("causeeSpecific", "yes")] }
 
@@ -326,7 +326,7 @@ def ex_21a_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("causeeSpecific", "yes")] }
 
@@ -341,7 +341,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("objectCase", "ACC")] }
 
@@ -356,7 +356,7 @@ def ex_21b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
@@ -371,7 +371,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -386,7 +386,7 @@ def ex_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "NOM"), ("subjectAdjacent", "yes")] }
 
@@ -401,7 +401,7 @@ def ex_23b_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "ACC")] }
 
@@ -416,7 +416,7 @@ def ex_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -431,7 +431,7 @@ def ex_24a_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "NOM"), ("objectSpecific", "yes")] }
 
@@ -446,7 +446,7 @@ def ex_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -461,7 +461,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("agentOrientedAdverb", "yes"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
@@ -476,7 +476,7 @@ def ex_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("agentOrientedAdverb", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
@@ -491,7 +491,7 @@ def ex_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -506,7 +506,7 @@ def ex_27_nom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes")] }
 
@@ -521,7 +521,7 @@ def ex_27_goalnom : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -536,7 +536,7 @@ def ex_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -551,7 +551,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -566,7 +566,7 @@ def ex_33a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "ACC")] }
 
@@ -581,7 +581,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -596,7 +596,7 @@ def ex_35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -611,7 +611,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
@@ -626,7 +626,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
@@ -641,7 +641,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
@@ -656,7 +656,7 @@ def ex_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
@@ -671,7 +671,7 @@ def ex_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
@@ -686,7 +686,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "NOM")] }
 
@@ -701,7 +701,7 @@ def ex_42a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "ACC")] }
 
@@ -716,7 +716,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "NOM")] }
 
@@ -731,7 +731,7 @@ def ex_42b_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "ACC")] }
 
@@ -746,7 +746,7 @@ def ex_43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC")] }
 
@@ -761,7 +761,7 @@ def ex_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("raisedCase", "ACC")] }
 
@@ -776,7 +776,7 @@ def ex_44_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC"), ("raisedCase", "ACC")] }
 
@@ -791,7 +791,7 @@ def ex_51a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pp"), ("verbAgreement", "no"), ("pObjectCase", "ACC")] }
 
@@ -806,7 +806,7 @@ def ex_54b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
@@ -821,7 +821,7 @@ def ex_56a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "no")] }
 
@@ -836,7 +836,7 @@ def ex_56b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "no")] }
 
@@ -851,7 +851,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -866,7 +866,7 @@ def ex_61a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "bare"), ("subjectSpecific", "no"), ("subjectAdjacent", "yes")] }
 
@@ -881,7 +881,7 @@ def ex_62a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -896,7 +896,7 @@ def ex_62d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "bare"), ("subjectSpecific", "yes"), ("subjectAdjacent", "no")] }
 
@@ -911,7 +911,7 @@ def ex_63a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
@@ -926,7 +926,7 @@ def ex_63d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "GEN"), ("subjectSpecific", "yes"), ("subjectAdjacent", "no")] }
 
@@ -941,7 +941,7 @@ def ex_64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes")] }
 
@@ -956,7 +956,7 @@ def ex_65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("agreesWith", "none")] }
 
@@ -971,7 +971,7 @@ def ex_65_pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("agreesWith", "object")] }
 
@@ -986,7 +986,7 @@ def ex_66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("agreesWith", "object")] }
 
@@ -1001,7 +1001,7 @@ def ex_66_sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("agreesWith", "none")] }
 
@@ -1016,7 +1016,7 @@ def ex_68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "yes"), ("headNounAgreement", "no"), ("subjectCase", "NOM")] }
 
@@ -1031,7 +1031,7 @@ def ex_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "yes"), ("headNounAgreement", "no"), ("subjectCase", "NOM")] }
 
@@ -1046,7 +1046,7 @@ def ex_68c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN")] }
 
@@ -1061,7 +1061,7 @@ def ex_70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare")] }
 
@@ -1076,7 +1076,7 @@ def ex_71b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive"), ("possessorCase", "GEN"), ("possesseeAgreement", "no")] }
 
@@ -1091,7 +1091,7 @@ def ex_71c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes")] }
 
@@ -1106,7 +1106,7 @@ def ex_72a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -1121,7 +1121,7 @@ def ex_72b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -1136,7 +1136,7 @@ def ex_72c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
@@ -1151,7 +1151,7 @@ def ex_75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "NOM"), ("objectAdjacent", "yes"), ("agreesWith", "object")] }
 
@@ -1166,7 +1166,7 @@ def ex_75a_pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "NOM"), ("objectAdjacent", "yes"), ("agreesWith", "subject")] }
 
@@ -1181,7 +1181,7 @@ def ex_75b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("agreesWith", "none")] }
 
@@ -1196,7 +1196,7 @@ def ex_75b_pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("agreesWith", "object")] }
 

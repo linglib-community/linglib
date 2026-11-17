@@ -24,7 +24,7 @@ def jeretic2025_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "false")] }
 
@@ -37,7 +37,7 @@ def jeretic2025_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "true")] }
 
@@ -50,7 +50,7 @@ def jeretic2025_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "false")] }
 
@@ -63,7 +63,7 @@ def jeretic2025_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "true")] }
 
@@ -76,7 +76,7 @@ def jeretic2025_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "false")] }
 
@@ -89,7 +89,7 @@ def jeretic2025_6a_neither : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "true")] }
 
@@ -102,7 +102,7 @@ def jeretic2025_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "negative"), ("dual", "false")] }
 
@@ -115,7 +115,7 @@ def jeretic2025_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "german"), ("slot", "negative"), ("dual", "false")] }
 
@@ -128,7 +128,7 @@ def jeretic2025_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "true")] }
 
@@ -141,7 +141,7 @@ def jeretic2025_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "false")] }
 
@@ -154,7 +154,7 @@ def jeretic2025_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "true")] }
 
@@ -167,7 +167,7 @@ def jeretic2025_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "false")] }
 
@@ -180,7 +180,7 @@ def jeretic2025_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "true")] }
 
@@ -193,7 +193,7 @@ def jeretic2025_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "false")] }
 
@@ -206,7 +206,7 @@ def jeretic2025_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "true")] }
 
@@ -219,7 +219,7 @@ def jeretic2025_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "false")] }
 
@@ -232,7 +232,7 @@ def jeretic2025_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "which"), ("dual", "false")] }
 
@@ -245,7 +245,7 @@ def jeretic2025_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "each"), ("dual", "false")] }
 
@@ -258,7 +258,7 @@ def jeretic2025_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "one"), ("dual", "false")] }
 
@@ -271,7 +271,7 @@ def jeretic2025_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "which"), ("dual", "false")] }
 
@@ -284,7 +284,7 @@ def jeretic2025_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "each"), ("dual", "false")] }
 
@@ -297,7 +297,7 @@ def jeretic2025_12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "one"), ("dual", "false")] }
 
@@ -310,7 +310,7 @@ def jeretic2025_80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "false")] }
 
@@ -323,7 +323,7 @@ def jeretic2025_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "true")] }
 
@@ -336,7 +336,7 @@ def jeretic2025_81a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "french"), ("slot", "always"), ("dual", "false")] }
 
@@ -349,7 +349,7 @@ def jeretic2025_83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "german"), ("slot", "always"), ("dual", "false")] }
 
@@ -362,7 +362,7 @@ def jeretic2025_83b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "false")] }
 
@@ -375,7 +375,7 @@ def jeretic2025_85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "true")] }
 
@@ -388,7 +388,7 @@ def jeretic2025_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("slot", "definite"), ("dual", "true")] }
 
@@ -401,7 +401,7 @@ def jeretic2025_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "25")] }
 
@@ -414,7 +414,7 @@ def jeretic2025_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "25")] }
 

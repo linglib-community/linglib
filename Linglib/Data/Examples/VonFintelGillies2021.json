@@ -25,7 +25,7 @@
     "translation": "",
     "context": "Phil has cooked the dinner, checking all the food himself, and knows it is ready.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -44,7 +44,7 @@
     "translation": "",
     "context": "Phil had to step out and instructed Meryl to turn the peas off when they are done and take the chicken out when the temperature is right; she does both and has seen that the table is set, but wonders whether Phil was planning to make anything else, e.g. a salad.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],

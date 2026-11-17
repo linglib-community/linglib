@@ -24,7 +24,7 @@ def ex_1B1 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_1B2 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -50,7 +50,7 @@ def ex_2B1 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_2B2 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -76,7 +76,7 @@ def ex_3B1 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_3B2 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -102,7 +102,7 @@ def ex_4B1 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_4B2 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -128,7 +128,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party? B: Mary's parents gave me conflicting reports."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party? B: Jeff Bezos hates Bill Gates."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -167,7 +167,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -180,7 +180,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -193,7 +193,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "A: Is Mary driving to the party?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -206,7 +206,7 @@ def ex_22B1 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -219,7 +219,7 @@ def ex_22B2 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "yes")] }
 
@@ -232,7 +232,7 @@ def ex_22B3 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 
@@ -245,7 +245,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "A: Is Mary coming to the party tonight?"
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relevant", "no")] }
 

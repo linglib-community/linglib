@@ -317,7 +317,7 @@ that question asks to be F-marked is pronounced: it is odd in (3), (9), (11), (1
 (20) and (38), where *ALL* or *ANY* bears the stress, and fine in (16) and (37), where *DID*
 does. -/
 theorem judgments :
-    ∀ e ∈ Examples.all, HasDefinite e → ∀ a ∈ e.alternatives, a.2 = .acceptable →
+    ∀ e ∈ Examples.all, HasDefinite e → ∀ a ∈ e.contrasts, a.2 = .acceptable →
       ∀ s ∈ stressed? a.1, ∀ q ∈ background? s, (e.judgment = .acceptable ↔ q.head.Overt) := by
   decide +kernel
 

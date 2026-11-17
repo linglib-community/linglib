@@ -25,7 +25,7 @@ def ex26a_allon : Datum :=
     context := "My brother's name is Allon. Mary thinks Allon is not my brother but she also thinks that Allon is Canadian."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex26a_pierreCanadian : Datum :=
     context := "Mary mistakenly thinks that Pierre is my brother but she correctly takes him to be Canadian."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex26a_pierreAmerican : Datum :=
     context := "Mary thinks that Pierre (the Canadian) is my brother and, since she knows that I am American, concludes that Pierre too is American."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex35a_unaware : Datum :=
     context := "I am talking about a game that lasted several rounds. Mary wrongly takes Pierre to be my brother, she is unaware that Pierre and I played the series of games, and Pierre won all of those games."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -81,7 +81,7 @@ def ex35a_deluded : Datum :=
     context := "I am talking about a game that lasted several rounds. Mary is aware that Pierre and I played a series of games but is under the delusion that Pierre won every one, when in fact Pierre's performance was hopeless."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

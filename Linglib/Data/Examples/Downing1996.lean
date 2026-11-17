@@ -27,7 +27,7 @@ def ex_1_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("criterion", "cooccursWithNoun")] }
 
@@ -43,7 +43,7 @@ def ex_1_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("hi-ga mik-ka tatte", .acceptable)]
+    contrasts := [("hi-ga mik-ka tatte", .acceptable)]
     readings := []
     paperFeatures := [("criterion", "cooccursWithNoun")] }
 
@@ -59,7 +59,7 @@ def ex_3_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trait", "withoutNoun")] }
 
@@ -75,7 +75,7 @@ def ex_3_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trait", "withoutNoun")] }
 
@@ -91,7 +91,7 @@ def ex_3_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kono ori-no naka-ni hebi-ga san-bon mieru.", .ungrammatical), ("Kono ori-no naka-ni hebi-ga mi-suji mieru.", .ungrammatical)]
+    contrasts := [("Kono ori-no naka-ni hebi-ga san-bon mieru.", .ungrammatical), ("Kono ori-no naka-ni hebi-ga mi-suji mieru.", .ungrammatical)]
     readings := []
     paperFeatures := [("trait", "alternation")] }
 
@@ -107,7 +107,7 @@ def ex_3_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trait", "alternation")] }
 
@@ -123,7 +123,7 @@ def ex_3_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trait", "alternation")] }
 
@@ -139,7 +139,7 @@ def ex_3_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "kind"), ("function", "disambiguation")] }
 
@@ -155,7 +155,7 @@ def ex_3_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "kind"), ("function", "disambiguation")] }
 
@@ -171,7 +171,7 @@ def ex_3_34a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "kind"), ("function", "disambiguation")] }
 
@@ -187,7 +187,7 @@ def ex_3_34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "kind"), ("function", "disambiguation")] }
 
@@ -203,7 +203,7 @@ def ex_3_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "quality"), ("function", "disambiguation")] }
 
@@ -219,7 +219,7 @@ def ex_3_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "quality"), ("function", "disambiguation")] }
 
@@ -235,7 +235,7 @@ def ex_3_35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "quality"), ("function", "disambiguation")] }
 
@@ -251,7 +251,7 @@ def ex_3_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "quality"), ("function", "disambiguation")] }
 
@@ -267,7 +267,7 @@ def ex_3_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "quality"), ("function", "disambiguation")] }
 
@@ -283,7 +283,7 @@ def ex_3_36c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cohesion", "kind"), ("function", "disambiguation")] }
 
@@ -299,7 +299,7 @@ def ex_3_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "addingInformation")] }
 
@@ -315,7 +315,7 @@ def ex_3_38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "addingInformation")] }
 
@@ -331,7 +331,7 @@ def ex_3_39 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "On a doll pattern."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("function", "addingInformation")] }
 
@@ -347,7 +347,7 @@ def ex_5_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Speaker A, offering a choice between two birds and two turtles: Hoshii-no-wa dochira desu ka? 'Which is it that you want?'"
     judgment := .ungrammatical
-    alternatives := [("Tori-no hoo desu.", .acceptable)]
+    contrasts := [("Tori-no hoo desu.", .acceptable)]
     readings := []
     paperFeatures := [("function", "predication")] }
 
@@ -363,7 +363,7 @@ def ex_5_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kitte ichi-mai", .acceptable)]
+    contrasts := [("kitte ichi-mai", .acceptable)]
     readings := []
     paperFeatures := [("function", "disambiguation")] }
 
@@ -379,7 +379,7 @@ def ex_6_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A, continuing a conversation about goldfish: Nan-biki-gurai katte-iru no? 'How many are you raising?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "predicate")] }
 
@@ -395,7 +395,7 @@ def ex_6_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "additionalMembers")] }
 
@@ -411,7 +411,7 @@ def ex_6_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "subsets")] }
 
@@ -427,7 +427,7 @@ def ex_6_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "anaphoric")] }
 
@@ -443,7 +443,7 @@ def ex_6_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The beginning of a folk tale, after the island Kikaigashima has been introduced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preNominal"), ("use", "introduction")] }
 
@@ -459,7 +459,7 @@ def ex_6_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Of the couple Yasuko and Shingo."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "anaphoric")] }
 
@@ -475,7 +475,7 @@ def ex_7_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -491,7 +491,7 @@ def ex_7_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -507,7 +507,7 @@ def ex_7_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qFloat")] }
 
@@ -523,7 +523,7 @@ def ex_7_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -537,7 +537,7 @@ def ex_7_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -553,7 +553,7 @@ def ex_7_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -567,7 +567,7 @@ def ex_7_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -583,7 +583,7 @@ def ex_7_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -597,7 +597,7 @@ def ex_7_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -613,7 +613,7 @@ def ex_7_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Fathers with children and youths with their lovers have gone in and out of the shop."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -629,7 +629,7 @@ def ex_7_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Fathers with children and youths with their lovers have gone in and out of the shop."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -645,7 +645,7 @@ def ex_7_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -661,7 +661,7 @@ def ex_7_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -677,7 +677,7 @@ def ex_7_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -693,7 +693,7 @@ def ex_7_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -709,7 +709,7 @@ def ex_7_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("class plural: the mothers", .acceptable), ("associative: Mother and the others", .acceptable)]
     paperFeatures := [] }
 
@@ -725,7 +725,7 @@ def ex_7_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -741,7 +741,7 @@ def ex_7_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -757,7 +757,7 @@ def ex_7_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -773,7 +773,7 @@ def ex_8_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mae-o hashitte-ita jooyoosha-ga ni-dai tsukamatta.", .acceptable)]
+    contrasts := [("Mae-o hashitte-ita jooyoosha-ga ni-dai tsukamatta.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "preNominal")] }
 
@@ -789,7 +789,7 @@ def ex_8_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := [("Tabako-o ip-pon sutte-mimashoo.", .acceptable)]
+    contrasts := [("Tabako-o ip-pon sutte-mimashoo.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "preNominal")] }
 
@@ -805,7 +805,7 @@ def ex_8_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker has particular individuals in mind."
     judgment := .acceptable
-    alternatives := [("Tomodachi-o san-nin matte-imasu.", .marginal)]
+    contrasts := [("Tomodachi-o san-nin matte-imasu.", .marginal)]
     readings := []
     paperFeatures := [("construction", "preNominal")] }
 
@@ -819,7 +819,7 @@ def ex_8_4 : Datum :=
     glossedTokens := []
     context := "Any three secretaries will do; their identities are not known to the speaker."
     judgment := .acceptable
-    alternatives := [("San-nin-no hisho-o sagashite-imasu.", .marginal)]
+    contrasts := [("San-nin-no hisho-o sagashite-imasu.", .marginal)]
     readings := []
     paperFeatures := [("construction", "qFloat")] }
 
@@ -833,7 +833,7 @@ def ex_8_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Futari-no kare-ra-ga kita.", .ungrammatical)]
+    contrasts := [("Futari-no kare-ra-ga kita.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "appositive")] }
 
@@ -849,7 +849,7 @@ def ex_8_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "preNominal"), ("use", "definitenessBlocking")] }
 
@@ -865,7 +865,7 @@ def ex_8_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive")] }
 
@@ -881,7 +881,7 @@ def ex_8_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appositive"), ("use", "exhaustive")] }
 
@@ -897,7 +897,7 @@ def ex_8_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "summativeAppositive")] }
 
@@ -913,7 +913,7 @@ def ex_8_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qFloat"), ("use", "distributive")] }
 
@@ -929,7 +929,7 @@ def ex_8_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("San-nin-no kodomo-ga heya-ni haitte-kita.", .acceptable)]
+    contrasts := [("San-nin-no kodomo-ga heya-ni haitte-kita.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "qFloat"), ("use", "introduction")] }
 
@@ -945,7 +945,7 @@ def ex_8_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kantoku-ga onna-shashoo-to hitori modotte-kita.", .ungrammatical)]
+    contrasts := [("Kantoku-ga onna-shashoo-to hitori modotte-kita.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "preNominal"), ("role", "oblique")] }
 
@@ -961,7 +961,7 @@ def ex_8_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kore-ra-no gakusei-ni, san-nin furansu-go-ga wakarimasu.", .ungrammatical)]
+    contrasts := [("Kore-ra-no gakusei-ni, san-nin furansu-go-ga wakarimasu.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "preNominal"), ("role", "dativeSubject")] }
 
@@ -975,7 +975,7 @@ def ex_8_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Kore-ra-no san-nin-no gakusei-ga furansu-go-ga wakarimasu.", .acceptable)]
+    contrasts := [("Kore-ra-no san-nin-no gakusei-ga furansu-go-ga wakarimasu.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "qFloat"), ("role", "nominativeSubject")] }
 
@@ -991,7 +991,7 @@ def ex_8_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("quantifies the object: three children", .acceptable), ("quantifies the transitive subject: three men", .marginal)]
     paperFeatures := [("construction", "qFloat"), ("role", "object")] }
 
@@ -1007,7 +1007,7 @@ def ex_8_39 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hanako-ga kodomo-ga roku-nin tylenol-ni seisankari-o ireta to omotte-iru.", .ungrammatical)]
+    contrasts := [("Hanako-ga kodomo-ga roku-nin tylenol-ni seisankari-o ireta to omotte-iru.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "qFloat"), ("role", "unaccusativeSubject")] }
 
@@ -1023,7 +1023,7 @@ def ex_8_42 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qFloat"), ("use", "partitive")] }
 
@@ -1039,7 +1039,7 @@ def ex_8_43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "qFloat"), ("use", "introduction")] }
 
@@ -1055,7 +1055,7 @@ def ex_8_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mai-nichi, mai-nichi, burausu hito-tsu-o kite, sooji-o shite-ita.", .acceptable), ("Mai-nichi, mai-nichi burausu-o hito-tsu kite, sooji-o shite-ita.", .acceptable)]
+    contrasts := [("Mai-nichi, mai-nichi, burausu hito-tsu-o kite, sooji-o shite-ita.", .acceptable), ("Mai-nichi, mai-nichi burausu-o hito-tsu kite, sooji-o shite-ita.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "preNominal")] }
 

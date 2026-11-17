@@ -20,7 +20,7 @@
     "translation": "In the New York public library, there is a book about topinambur. Recently, I was there and searched in the book for an answer to the question of whether one can grill topinambur.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -52,7 +52,7 @@
     "translation": "In the New York public library, there is a book about topinambur. Recently, I was there and searched in the book for an answer to the question of whether one can grill topinambur.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -83,7 +83,7 @@
     "translation": "One of the rooms especially impressed me during the mansion tour. Supposedly Goethe spent a night in the room in 1810.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -114,7 +114,7 @@
     "translation": "One of the rooms especially impressed me during the mansion tour. Supposedly Goethe spent a night in the room in 1810.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -143,7 +143,7 @@
     "translation": "Maria has invited an ornithologist to the seminar. I don't think very highly of the man.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -172,7 +172,7 @@
     "translation": "Maria has invited an ornithologist to the seminar. I don't think very highly of the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -200,7 +200,7 @@
     "translation": "Hans has called again. I don't want to hear anything anymore from that idiot.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -229,7 +229,7 @@
     "translation": "Hans has called again. I don't want to hear anything anymore from that idiot.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -257,7 +257,7 @@
     "translation": "Every time an ornithologist gives a lecture in the seminar, the students want to know from the man whether bird songs follow grammatical rules.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -286,7 +286,7 @@
     "translation": "Every time an ornithologist gives a lecture in the seminar, the students want to know from the man whether bird songs follow grammatical rules.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -311,7 +311,7 @@
     "translation": "The book that you are looking for is in the glass-cabinet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -335,7 +335,7 @@
     "translation": "The book that you are looking for is in the glass-cabinet.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -359,7 +359,7 @@
     "translation": "Luckily, the burglar was chased away by the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -384,7 +384,7 @@
     "translation": "Luckily, the burglar was chased away by the dog.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -408,7 +408,7 @@
     "translation": "The reception was opened by the mayor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -432,7 +432,7 @@
     "translation": "The reception was opened by the mayor.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -457,7 +457,7 @@
     "translation": "In today's cabinet meeting, a new proposal by the chancellor is expected.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -482,7 +482,7 @@
     "translation": "In today's cabinet meeting, a new proposal by the minister is expected.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -508,7 +508,7 @@
     "translation": "Every time when a round is over, the cards are shuffled and dealt anew by the winner.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -534,7 +534,7 @@
     "translation": "The fridge was so big that the pumpkin could easily be stowed in the crisper.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -560,7 +560,7 @@
     "translation": "The fridge was so big that the pumpkin could easily be stowed in the crisper.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -587,7 +587,7 @@
     "translation": "The play displeased the critic so much that he tore the author to pieces in his review.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -614,7 +614,7 @@
     "translation": "The play displeased the critic so much that he tore the author to pieces in his review.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -640,7 +640,7 @@
     "translation": "Everyone that bought a novel had already once read a short story by the author.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -667,7 +667,7 @@
     "translation": "Everyone that bought a novel had already once read a short story by the author.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -694,7 +694,7 @@
     "translation": "Every student that parked a car attached a parking pass to the rearview mirror.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -721,7 +721,7 @@
     "translation": "At every train station that our train entered a letter from the mayor was handed to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -748,7 +748,7 @@
     "translation": "At every train station that our train entered a letter from the mayor was handed to me.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
@@ -781,7 +781,7 @@
     "translation": "Hans discovered a novel about the Hudson in the library. In the process, he remembered that he had attended a lecture by the author a long time ago.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
@@ -813,7 +813,7 @@
     "translation": "Hans discovered a novel about the Hudson in the library. In the process, he remembered that he had attended a lecture by the author a long time ago.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],

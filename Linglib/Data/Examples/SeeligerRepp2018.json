@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -61,7 +61,7 @@
     "translation": "Peter is coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -110,7 +110,7 @@
     "translation": "Peter is coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -203,7 +203,7 @@
     "translation": "Peter isn't coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -256,7 +256,7 @@
     "translation": "Peter isn't coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -296,7 +296,7 @@
     "translation": "",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -357,7 +357,7 @@
     "translation": "Surely Peter isn't coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -410,7 +410,7 @@
     "translation": "Surely Peter isn't coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -470,7 +470,7 @@
     "translation": "",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -527,7 +527,7 @@
     "translation": "Surely Peter is coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -584,7 +584,7 @@
     "translation": "Surely Peter is coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -657,7 +657,7 @@
     "translation": "Surely Peter is coming?",
     "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nog kommer Peter?",
         "judgment": "acceptable"
@@ -742,7 +742,7 @@
     "translation": "Surely Noah is at sea?",
     "context": "Ann: Noah is coming to the party tomorrow.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -818,7 +818,7 @@
     "translation": "Surely Noah is at sea?",
     "context": "Ann: Noah is coming to the party tomorrow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -890,7 +890,7 @@
     "translation": "Surely Noah is at sea?",
     "context": "Ann: Noah is coming to the party tomorrow.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nog är Noah till sjöss?",
         "judgment": "unacceptable"
@@ -971,7 +971,7 @@
     "translation": "Surely Noah is at sea?",
     "context": "Ann: Noah is coming to the party tomorrow.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nog är väl Noah till sjöss?",
         "judgment": "unacceptable"
@@ -1048,7 +1048,7 @@
     "translation": "Surely Noah is not at sea?",
     "context": "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1124,7 +1124,7 @@
     "translation": "Surely Noah is not at sea?",
     "context": "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1196,7 +1196,7 @@
     "translation": "Surely Noah is not at sea?",
     "context": "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1272,7 +1272,7 @@
     "translation": "Surely Noah is not at sea?",
     "context": "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

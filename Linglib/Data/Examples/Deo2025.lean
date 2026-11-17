@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu is going to Mumbai and says to Bilal: I think it will be faster to drive. Bilal: Are you sure? There have been heavy rains..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same as (1). Bilal: I absolutely don't want you to be driving in this weather..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu is annoyed because Bilal has hidden her bike key and she needs to get to work urgently. Anu: This is ridiculous..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "constituent"), ("act", "question")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu needs Bilal to stay at home because the plumber will be coming and someone needs to be in the house to meet him. Anu:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "informing")] }
 
@@ -86,7 +86,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu is planning to go to Mumbai today by car. It is raining heavily along the route, impacting road conditions, but the weather will significantly improve tomorrow, making the drive much safer. Bilal says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
@@ -101,7 +101,7 @@ def ex_5b : Datum :=
     lgrConformance := some .wordAligned
     context := "Anu is planning to go to Mumbai today by car. It is raining heavily along the route, impacting road conditions, but the weather will significantly improve tomorrow, making the drive much safer. Bilal says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning"), ("infelicity", "precondition")] }
 
@@ -116,7 +116,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu has been sick and goes to the doctor, who diagnoses a viral infection. Doctor: Don't worry, the infection will run its course. Meanwhile..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "advice")] }
 
@@ -131,7 +131,7 @@ def ex_7ctx1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. Bilal is setting the table. Bilal: Let's see, how many place settings do we need?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder"), ("infelicity", "alignment")] }
 
@@ -146,7 +146,7 @@ def ex_7ctx2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. It's almost time for the guests and Bilal has laid the table with settings for only five people. Anu: We need six place settings..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder")] }
 
@@ -161,7 +161,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu has been offered a new job assignment, which requires her to move to a hilly, high-altitude location with steep roads for a year. She is excited about it and is considering it seriously. Bilal prefers that she not make the move for health reasons. Bilal: This could be really difficult for you health-wise..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
@@ -176,7 +176,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu and Bilal take turns picking up their daughter Deepa from after-school. It is Bilal's turn today. Bilal tells Anu that he is really busy that day and asks if Anu can pick Deepa up instead. Anu: I understand..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "commissive"), ("infelicity", "source")] }
 
@@ -191,7 +191,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "request"), ("infelicity", "benefit")] }
 
@@ -206,7 +206,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "plea"), ("infelicity", "benefit")] }
 
@@ -221,7 +221,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := "Anu has made a dessert and is offering it to Bilal to taste. She says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "offer"), ("infelicity", "deference")] }
 
@@ -236,7 +236,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Deepa and her friends are planning to go to the park and Deepa comes and asks her mother: Mom, can I go play in the park with my friends?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "permission"), ("infelicity", "source")] }
 
@@ -251,7 +251,7 @@ def ex_11c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu has asked Deepa to finish her homework before going out to play. Deepa is badgering Anu because she wants to go play without finishing her homework. Anu gets exasperated and says:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "concession"), ("infelicity", "source")] }
 
@@ -266,7 +266,7 @@ def ex_11d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("ʣa məsəɳa=t bərə", .unacceptable)]
+    contrasts := [("ʣa məsəɳa=t bərə", .unacceptable)]
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "curse"), ("infelicity", "benefit")] }
 
@@ -281,7 +281,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Deepa has stayed up way past her bedtime playing a video game. Anu gets annoyed because Deepa has school tomorrow and needs to be up early. She has already told Deepa several times to go to bed. Anu: You are stretching my patience now..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")] }
 
@@ -296,7 +296,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Deepa is making dal for the first time with Anu's help and has let the pan get too hot on the stove. She is about to put in some oil to start sautéing the onions. Anu:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "warning")] }
 
@@ -311,7 +311,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Deepa got a lovely doll in the mail from Anu's mother and has been playing with it. Anu wants Deepa to thank her grandma before she forgets. Anu: Alright, you have played enough now..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")] }
 
@@ -326,7 +326,7 @@ def ex_15ctx1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bilal needs to be at a work meeting soon and he has missed the bus that he takes to work. Anu is the one who usually takes the car to work but Bilal would love to be able to drive to work today. Bilal tells Anu he missed the bus. Anu: Ok, so we need to figure out a solution..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")] }
 
@@ -341,7 +341,7 @@ def ex_15ctx2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bilal needs to be at a work meeting soon and he has missed the bus that he takes to work. Anu is the one who usually takes the car to work but Bilal would love to be able to drive to work today. Bilal tells Anu he missed the bus and adds: I would really like to drive to work today so I don't miss my meeting. Anu:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation"), ("infelicity", "source")] }
 
@@ -356,7 +356,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anu and Bilal take turns picking up their daughter Deepa from after-school. It is Bilal's turn today. Bilal tells Anu that he is really busy that day and doesn't know whether he will make it to the school in time. Anu: No worries, I am working from home today. I will pick her up! Bilal:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "agreement"), ("infelicity", "source")] }
 
@@ -369,7 +369,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := "Anu and her secretary Nina, after a sensitive meeting with a small subset of Anu's team."
     judgment := .acceptable
-    alternatives := [("Ok", .acceptable), ("Yes", .acceptable)]
+    contrasts := [("Ok", .acceptable), ("Yes", .acceptable)]
     readings := []
     paperFeatures := [("construction", "responseParticle")] }
 
@@ -382,7 +382,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := "Anu and her secretary Nina, after a sensitive meeting with a small subset of Anu's team."
     judgment := .acceptable
-    alternatives := [("Ok", .acceptable), ("Yes", .unacceptable)]
+    contrasts := [("Ok", .acceptable), ("Yes", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "responseParticle")] }
 

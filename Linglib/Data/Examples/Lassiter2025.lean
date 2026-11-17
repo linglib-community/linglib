@@ -24,7 +24,7 @@ def lass2025_gibbard : Datum :=
     glossedTokens := []
     context := "Said of a conference the addressee doesn't know much about."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "false"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring"), ("felicity", "infelicitous")] }
 
@@ -37,7 +37,7 @@ def lass2025_ex6 : Datum :=
     glossedTokens := []
     context := "Alf: Bill is unhappy here."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring"), ("polarity_item", "ppi")] }
 
@@ -50,7 +50,7 @@ def lass2025_ex11 : Datum :=
     glossedTokens := []
     context := "Alf: Kripke was there if Strawson was."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
@@ -63,7 +63,7 @@ def lass2025_ex12 : Datum :=
     glossedTokens := []
     context := "Neither Alf nor Barbara was at the party. Alf: Mary came to the party if John did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
@@ -76,7 +76,7 @@ def lass2025_ex13 : Datum :=
     glossedTokens := []
     context := "Carl: We'll cancel the camping trip if it rains."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
@@ -89,7 +89,7 @@ def lass2025_ex14 : Datum :=
     glossedTokens := []
     context := "Carl: We'll cancel the camping trip if it rains."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "given_that_paraphrase")] }
 
@@ -104,7 +104,7 @@ def lass2025_ex18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "marker"), ("marker", "nara")] }
 
@@ -119,7 +119,7 @@ def lass2025_ex19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "marker"), ("marker", "ra")] }
 
@@ -134,7 +134,7 @@ def lass2025_ex23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "marker"), ("marker", "wenn")] }
 
@@ -149,7 +149,7 @@ def lass2025_ex24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "marker"), ("marker", "falls")] }
 
@@ -162,7 +162,7 @@ def lass2025_ex29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "polarity"), ("polarity_item", "ppi"), ("item", "rather"), ("item_position", "embedded_consequent")] }
 
@@ -175,7 +175,7 @@ def lass2025_ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "embedded_consequent")] }
 
@@ -188,7 +188,7 @@ def lass2025_ex31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "consequent")] }
 
@@ -201,7 +201,7 @@ def lass2025_ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "embedded_antecedent")] }
 
@@ -214,7 +214,7 @@ def lass2025_ex33 : Datum :=
     glossedTokens := []
     context := "Ed and Fran have no idea whether Mary's job is at risk. Ed: Bill is very unhappy here."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "false")] }
 
@@ -227,7 +227,7 @@ def lass2025_ex34 : Datum :=
     glossedTokens := []
     context := "Alf: John came to the party if Mary did. Barbara: The food wasn't very good."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "true")] }
 
@@ -240,7 +240,7 @@ def lass2025_ex35 : Datum :=
     glossedTokens := []
     context := "Alf: John came to the party if Mary did. Barbara: I have no idea about the food — sometimes it's great, sometimes it's terrible."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "false")] }
 
@@ -253,7 +253,7 @@ def lass2025_ex36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("interpretation", "HC"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
@@ -266,7 +266,7 @@ def lass2025_ex37b : Datum :=
     glossedTokens := []
     context := "The chocolate manufacturers looked with pleasure at the statistics. If the chocolate manufacturers are pleased, they are not satisfied."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true"), ("felicity", "infelicitous")] }
 
@@ -279,7 +279,7 @@ def lass2025_ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "only_inversion"), ("only_inversion", "false")] }
 
@@ -292,7 +292,7 @@ def lass2025_ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
@@ -305,7 +305,7 @@ def lass2025_ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
@@ -318,7 +318,7 @@ def lass2025_ex40 : Datum :=
     glossedTokens := []
     context := "I don't know how things work in my new workplace, but I hope people are kinder than in my previous one."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "quantAdv"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
@@ -331,7 +331,7 @@ def lass2025_ex41 : Datum :=
     glossedTokens := []
     context := "I don't know what the rules of this test are, but it seems like something's not right here."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "modal"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
@@ -344,7 +344,7 @@ def lass2025_ex42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "generic"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
@@ -357,7 +357,7 @@ def lass2025_ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "modal"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
@@ -370,7 +370,7 @@ def lass2025_ex43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "generic"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 

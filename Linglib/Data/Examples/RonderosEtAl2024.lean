@@ -24,7 +24,7 @@ def ronderos2024_1a : Datum :=
     glossedTokens := []
     context := "Display: the target (short pencil), a long pencil, short scissors, and a distractor; three-second preview, then the description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "contrast")] }
 
@@ -37,7 +37,7 @@ def ronderos2024_1b : Datum :=
     glossedTokens := []
     context := "Display: the target (short candle) and three objects of other kinds (a pot, a glass, a chair)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "noContrast")] }
 
@@ -50,7 +50,7 @@ def ronderos2024_2a : Datum :=
     glossedTokens := []
     context := "Display: the target (black lamp), a blue lamp, a black object of another kind, and a distractor; three-second preview, then the description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "contrast")] }
 
@@ -63,7 +63,7 @@ def ronderos2024_2b : Datum :=
     glossedTokens := []
     context := "Display: the target (black drum), a black object of another kind (a suitcase), and two distractors of other kinds."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "noContrast")] }
 
@@ -76,7 +76,7 @@ def ronderos2024_3a : Datum :=
     glossedTokens := []
     context := "Display: the target (leather shoes), canvas shoes, a leather object of another kind, and a distractor; three-second preview, then the description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "contrast")] }
 
@@ -89,7 +89,7 @@ def ronderos2024_3b : Datum :=
     glossedTokens := []
     context := "Display: the target (leather bag), a leather object of another kind (boots), and two distractors of other kinds."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "noContrast")] }
 

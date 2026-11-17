@@ -26,7 +26,7 @@ def ex6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "nciLicensed")] }
 
@@ -41,7 +41,7 @@ def ex6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nciLicensed")] }
 
@@ -56,7 +56,7 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := "Eva and her colleagues from the office ordered take-out food for lunch. The delivery guy brings only pizzas. One of the colleagues asks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "medial"), ("diagnostic", "ppiOutscoping")] }
 
@@ -71,7 +71,7 @@ def ex7b : Datum :=
     lgrConformance := some .wordAligned
     context := "Eva and her colleagues from the office ordered take-out food for lunch. The delivery guy brings only pizzas. One of the colleagues asks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "ppiOutscoping")] }
 
@@ -86,7 +86,7 @@ def ex11 : Datum :=
     lgrConformance := some .wordAligned
     context := "Eva is doing research for a school presentation. Yesterday she went to the school library. The speaker knows all this from before and asks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nahodou")] }
 
@@ -101,7 +101,7 @@ def ex15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "fakt")] }
 
@@ -116,7 +116,7 @@ def ex15d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "fakt")] }
 

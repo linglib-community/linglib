@@ -26,7 +26,7 @@ def ex_1_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.13"), ("variant", "a"), ("participants", "man,bicycle"), ("p1", "A"), ("p2", "P")] }
 
@@ -41,7 +41,7 @@ def ex_1_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.13"), ("variant", "b"), ("participants", "man,name"), ("p1", "S"), ("p2", "X")] }
 
@@ -56,7 +56,7 @@ def ex_1_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "a"), ("S", "zero")] }
 
@@ -71,7 +71,7 @@ def ex_1_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "b"), ("S", "ergative")] }
 
@@ -86,7 +86,7 @@ def ex_1_22c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "c"), ("A", "ergative"), ("P", "zero")] }
 
@@ -101,7 +101,7 @@ def ex_1_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "a"), ("S", "zero")] }
 
@@ -116,7 +116,7 @@ def ex_1_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "b"), ("S", "zero")] }
 
@@ -131,7 +131,7 @@ def ex_1_23c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "c"), ("A", "zero"), ("P", "accusative")] }
 
@@ -146,7 +146,7 @@ def ex_1_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "a"), ("S", "zero")] }
 
@@ -161,7 +161,7 @@ def ex_1_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "b"), ("S", "zero")] }
 
@@ -176,7 +176,7 @@ def ex_1_24c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "c"), ("A", "ergative"), ("P", "zero")] }
 
@@ -191,7 +191,7 @@ def ex_8_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.1"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
@@ -206,7 +206,7 @@ def ex_8_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.1"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -221,7 +221,7 @@ def ex_8_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.2"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
@@ -236,7 +236,7 @@ def ex_8_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.2"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a")] }
 
@@ -251,7 +251,7 @@ def ex_8_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.3"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
@@ -266,7 +266,7 @@ def ex_8_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.3"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a")] }
 
@@ -281,7 +281,7 @@ def ex_8_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.4"), ("variant", "a"), ("participants", "child,mirror"), ("p1", "A"), ("p2", "P")] }
 
@@ -296,7 +296,7 @@ def ex_8_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.4"), ("variant", "b"), ("participants", "child,mirror"), ("p1", "absent"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a"), ("ambitransitivity", "P-ambitransitivity")] }
 
@@ -311,7 +311,7 @@ def ex_8_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.5"), ("variant", "a"), ("participants", "we,work,friend"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
@@ -326,7 +326,7 @@ def ex_8_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.5"), ("variant", "b"), ("participants", "we,work,friend"), ("p1", "A"), ("p2", "P"), ("p3", "dative"), ("marker", "grade"), ("alternation", "dApplicativization"), ("initial", "a"), ("marking", "equipollent"), ("new", "p3")] }
 
@@ -341,7 +341,7 @@ def ex_8_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "a"), ("participants", "writer,letter,Kitso,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent")] }
 
@@ -356,7 +356,7 @@ def ex_8_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "b"), ("participants", "writer,letter,Kitso,causer"), ("p1", "A"), ("p2", "P"), ("p3", "P"), ("p4", "absent"), ("marker", "-ɛl"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -371,7 +371,7 @@ def ex_8_6c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "c"), ("participants", "writer,letter,Kitso,causer"), ("p1", "X"), ("p2", "S"), ("p3", "absent"), ("p4", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -386,7 +386,7 @@ def ex_8_6d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "d"), ("participants", "writer,letter,Kitso,causer"), ("p1", "P"), ("p2", "P"), ("p3", "absent"), ("p4", "A"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p4")] }
 
@@ -401,7 +401,7 @@ def ex_8_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.13"), ("variant", "a"), ("participants", "cook,porridge,meat"), ("p1", "A"), ("p2", "P"), ("p3", "X")] }
 
@@ -416,7 +416,7 @@ def ex_8_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.13"), ("variant", "b"), ("participants", "cook,porridge,meat"), ("p1", "implicit"), ("p2", "P"), ("p3", "A"), ("marker", "-ɛl"), ("alternation", "aNucleativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -431,7 +431,7 @@ def ex_8_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "a"), ("participants", "Kitso,letter,women"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
@@ -446,7 +446,7 @@ def ex_8_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "b"), ("participants", "Kitso,letter,women"), ("p1", "X"), ("p2", "S"), ("p3", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -461,7 +461,7 @@ def ex_8_14c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "c"), ("participants", "Kitso,letter,women"), ("p1", "implicit"), ("p2", "P"), ("p3", "absent"), ("marker", "-w"), ("alternation", "impersonalPassivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -476,7 +476,7 @@ def ex_8_14d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "d"), ("participants", "Kitso,letter,women"), ("p1", "absent"), ("p2", "absent"), ("p3", "S")] }
 
@@ -491,7 +491,7 @@ def ex_8_14e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "e"), ("participants", "Kitso,letter,women"), ("p1", "absent"), ("p2", "absent"), ("p3", "implicit"), ("marker", "-w"), ("alternation", "sDenucleativization"), ("initial", "d"), ("marking", "synthetic")] }
 
@@ -506,7 +506,7 @@ def ex_8_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "a"), ("participants", "Moussa,rice,Ali"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
@@ -521,7 +521,7 @@ def ex_8_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "b"), ("participants", "Moussa,rice,Ali"), ("p1", "dative"), ("p2", "P"), ("p3", "A"), ("marker", "-ndi"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -536,7 +536,7 @@ def ex_8_15c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "c"), ("participants", "Moussa,rice,Ali"), ("p1", "implicit"), ("p2", "S"), ("p3", "absent"), ("marker", "-ndi"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -551,7 +551,7 @@ def ex_8_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.16"), ("variant", "a"), ("participants", "Péter,János"), ("p1", "S"), ("p2", "X")] }
 
@@ -566,7 +566,7 @@ def ex_8_16b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.16"), ("variant", "b"), ("participants", "Péter,János"), ("p1", "A"), ("p2", "P"), ("marker", "ki-"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -581,7 +581,7 @@ def ex_8_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.18"), ("variant", "a"), ("participants", "cloth,causer"), ("p1", "S"), ("p2", "absent")] }
 
@@ -596,7 +596,7 @@ def ex_8_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.18"), ("variant", "b"), ("participants", "cloth,causer"), ("p1", "P"), ("p2", "A"), ("marker", "-ndi"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -611,7 +611,7 @@ def ex_8_19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.19"), ("variant", "a"), ("participants", "child,eggs"), ("p1", "A"), ("p2", "P")] }
 
@@ -626,7 +626,7 @@ def ex_8_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.19"), ("variant", "b"), ("participants", "child,eggs"), ("p1", "absent"), ("p2", "S"), ("marker", "-ɛχ"), ("alternation", "decausativization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -641,7 +641,7 @@ def ex_8_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.21"), ("variant", "a"), ("participants", "woman,shirt"), ("p1", "A"), ("p2", "P")] }
 
@@ -656,7 +656,7 @@ def ex_8_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.21"), ("variant", "b"), ("participants", "woman,shirt"), ("p1", "S"), ("p2", "X"), ("marker", "-i"), ("alternation", "antipassivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -671,7 +671,7 @@ def ex_8_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.23"), ("variant", "a"), ("participants", "looker,looked-at"), ("p1", "A"), ("p2", "P")] }
 
@@ -686,7 +686,7 @@ def ex_8_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.23"), ("variant", "b"), ("participants", "looker,looked-at"), ("p1", "S"), ("p2", "S"), ("marker", "-oro"), ("alternation", "reflexivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -701,7 +701,7 @@ def ex_8_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.24"), ("variant", "a"), ("participants", "greeter,greeted"), ("p1", "A"), ("p2", "P")] }
 
@@ -716,7 +716,7 @@ def ex_8_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.24"), ("variant", "b"), ("participants", "greeter,greeted"), ("p1", "S"), ("p2", "S"), ("marker", "-or"), ("alternation", "reciprocalization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -731,7 +731,7 @@ def ex_8_27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.27"), ("variant", "a"), ("participants", "anchor,concernee"), ("p1", "S"), ("p2", "absent")] }
 
@@ -746,7 +746,7 @@ def ex_8_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.27"), ("variant", "b"), ("participants", "anchor,concernee"), ("p1", "P"), ("p2", "A"), ("marker", "-i-"), ("alternation", "concernativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -761,7 +761,7 @@ def ex_8_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.28"), ("variant", "a"), ("participants", "child,well"), ("p1", "S"), ("p2", "absent")] }
 
@@ -776,7 +776,7 @@ def ex_8_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.28"), ("variant", "b"), ("participants", "child,well"), ("p1", "S"), ("p2", "X"), ("marker", "-ɛl"), ("alternation", "xApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -791,7 +791,7 @@ def ex_8_33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.33"), ("variant", "a"), ("participants", "goer,carried"), ("p1", "S"), ("p2", "absent")] }
 
@@ -806,7 +806,7 @@ def ex_8_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.33"), ("variant", "b"), ("participants", "goer,carried"), ("p1", "A"), ("p2", "P"), ("marker", "ni-"), ("alternation", "portative"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -821,7 +821,7 @@ def ex_8_38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "a"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent")] }
 
@@ -836,7 +836,7 @@ def ex_8_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "b"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "S"), ("p3", "absent"), ("p4", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
@@ -851,7 +851,7 @@ def ex_8_38c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "c"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "P"), ("marker", "-ɛl"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p4")] }
 
@@ -866,7 +866,7 @@ def ex_8_38d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "d"), ("participants", "writer,letter,causer,recipient"), ("p1", "P"), ("p2", "P"), ("p3", "A"), ("p4", "absent"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -881,7 +881,7 @@ def ex_8_38e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "e"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "A"), ("p4", "P"), ("marker", "-is-ets"), ("alternation", "pApplicativization"), ("initial", "d"), ("marking", "synthetic"), ("new", "p4")] }
 
@@ -896,7 +896,7 @@ def ex_8_38f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "f"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "absent"), ("p4", "A"), ("marker", "-ɛl-w"), ("alternation", "passivization"), ("initial", "c"), ("marking", "synthetic")] }
 
@@ -911,7 +911,7 @@ def ex_8_38g : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "g"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "implicit"), ("p4", "absent"), ("marker", "-is-iw"), ("alternation", "passivization"), ("initial", "d"), ("marking", "synthetic")] }
 
@@ -926,7 +926,7 @@ def ex_8_38h : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "h"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "implicit"), ("p4", "A"), ("marker", "-is-ed-iw"), ("alternation", "passivization"), ("initial", "e"), ("marking", "synthetic")] }
 
@@ -941,7 +941,7 @@ def ex_8_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "a"), ("participants", "eater,meat,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
@@ -956,7 +956,7 @@ def ex_8_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "b"), ("participants", "eater,meat,causer"), ("p1", "P"), ("p2", "P"), ("p3", "A"), ("marker", "-ltia"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -971,7 +971,7 @@ def ex_8_39c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "c"), ("participants", "eater,meat,causer"), ("p1", "P"), ("p2", "implicit"), ("p3", "A"), ("marker", "tla-"), ("alternation", "antipassivization"), ("initial", "b"), ("marking", "synthetic")] }
 
@@ -986,7 +986,7 @@ def ex_8_39d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "d"), ("participants", "eater,meat,causer"), ("p1", "A"), ("p2", "P"), ("p3", "implicit"), ("marker", "-lo"), ("alternation", "passivization"), ("initial", "b"), ("marking", "synthetic")] }
 
@@ -1001,7 +1001,7 @@ def ex_8_39e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "e"), ("participants", "eater,meat,causer"), ("p1", "S"), ("p2", "implicit"), ("p3", "implicit"), ("marker", "-lo"), ("alternation", "passivization"), ("initial", "c"), ("marking", "synthetic")] }
 
@@ -1016,7 +1016,7 @@ def ex_8_47a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.47"), ("variant", "a"), ("participants", "taker,shirt"), ("p1", "A"), ("p2", "P"), ("marker", "N-"), ("alternation", "symmetrical"), ("initial", "b"), ("marking", "synthetic"), ("pivot", "p1")] }
 
@@ -1031,7 +1031,7 @@ def ex_8_47b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.47"), ("variant", "b"), ("participants", "taker,shirt"), ("p1", "A"), ("p2", "P"), ("pivot", "p2")] }
 
@@ -1046,7 +1046,7 @@ def ex_8_48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "a"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("pivot", "p1")] }
 
@@ -1061,7 +1061,7 @@ def ex_8_48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "b"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("marker", "-Ø"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p2")] }
 
@@ -1076,7 +1076,7 @@ def ex_8_48c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "c"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("marker", "-an"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p3")] }
 
@@ -1091,7 +1091,7 @@ def ex_8_48d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "d"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "X"), ("p5", "absent"), ("marker", "i-"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p4")] }
 
@@ -1106,7 +1106,7 @@ def ex_8_48e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "e"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent"), ("p5", "X"), ("marker", "ipaN-"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p5")] }
 
@@ -1121,7 +1121,7 @@ def ex_8_50a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.50"), ("variant", "a"), ("participants", "mother,rice,person"), ("p1", "A"), ("p2", "P"), ("p3", "X")] }
 
@@ -1136,7 +1136,7 @@ def ex_8_50b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.50"), ("variant", "b"), ("participants", "mother,rice,person"), ("p1", "A"), ("p2", "P"), ("p3", "P"), ("marker", "-in"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -1151,7 +1151,7 @@ def ex_8_51a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.51"), ("variant", "a"), ("participants", "kisser,sibling,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
@@ -1166,7 +1166,7 @@ def ex_8_51b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.51"), ("variant", "b"), ("participants", "kisser,sibling,causer"), ("p1", "P"), ("p2", "X"), ("p3", "A"), ("marker", "-ang"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
@@ -1181,7 +1181,7 @@ def ex_8_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.52"), ("variant", "a"), ("participants", "meeter,met"), ("p1", "A"), ("p2", "P"), ("pivot", "p1")] }
 
@@ -1196,7 +1196,7 @@ def ex_8_52b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.52"), ("variant", "b"), ("participants", "meeter,met"), ("p1", "A"), ("p2", "P"), ("pivot", "p2")] }
 
@@ -1211,7 +1211,7 @@ def ex_8_52c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "8.52"), ("variant", "c"), ("participants", "meeter,met"), ("p1", "X"), ("p2", "S"), ("pivot", "p2")] }
 
@@ -1226,7 +1226,7 @@ def ex_12_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12.2"), ("variant", "a"), ("participants", "child,woman"), ("p1", "P"), ("p2", "A"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "b"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -1241,7 +1241,7 @@ def ex_12_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12.2"), ("variant", "b"), ("participants", "child,woman"), ("p1", "S"), ("p2", "absent")] }
 
@@ -1256,7 +1256,7 @@ def ex_12_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "a"), ("participants", "woman,food"), ("p1", "A"), ("p2", "P"), ("marker", "-is"), ("alternation", "portative"), ("initial", "b"), ("marking", "synthetic"), ("new", "p2")] }
 
@@ -1271,7 +1271,7 @@ def ex_12_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "b"), ("participants", "woman,food"), ("p1", "S"), ("p2", "absent")] }
 
@@ -1286,7 +1286,7 @@ def ex_12_3c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "c"), ("participants", "woman,food"), ("p1", "absent"), ("p2", "S")] }
 

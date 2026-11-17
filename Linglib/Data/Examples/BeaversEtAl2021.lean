@@ -24,7 +24,7 @@ def beavers_etal2021_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root class", "result"), ("form", "monomorphemic verb")] }
 
@@ -37,7 +37,7 @@ def beavers_etal2021_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root class", "property concept"), ("form", "basic stative")] }
 
@@ -50,7 +50,7 @@ def beavers_etal2021_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
@@ -63,7 +63,7 @@ def beavers_etal2021_11c : Datum :=
     glossedTokens := []
     context := "An artist makes ceramic pieces that, properly assembled, would form a vase."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
@@ -76,7 +76,7 @@ def beavers_etal2021_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result"), ("judgedBy", "some speakers")] }
 
@@ -89,7 +89,7 @@ def beavers_etal2021_15a : Datum :=
     glossedTokens := []
     context := "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")] }
 
@@ -102,7 +102,7 @@ def beavers_etal2021_16a : Datum :=
     glossedTokens := []
     context := "Chris kills a rabbit, butchers it, freezes the fresh meat for a week, then puts it out to thaw."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
@@ -117,7 +117,7 @@ def beavers_etal2021_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The desert starts off dry. Then it is made nondry. Then it turns dry again."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")] }
 
@@ -132,7 +132,7 @@ def beavers_etal2021_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The stone was always dead. Then it was brought to life. Then I kill it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
@@ -147,7 +147,7 @@ def beavers_etal2021_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Habimana buys a knife that is manufactured very sharp."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
@@ -162,7 +162,7 @@ def beavers_etal2021_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A hypothetical fruit that is always soft and ripe since it first grows and can be eaten any time."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
@@ -177,7 +177,7 @@ def beavers_etal2021_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Karemera then breaks."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
@@ -192,7 +192,7 @@ def beavers_etal2021_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
@@ -207,7 +207,7 @@ def beavers_etal2021_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
@@ -222,7 +222,7 @@ def beavers_etal2021_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
@@ -237,7 +237,7 @@ def beavers_etal2021_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
@@ -252,7 +252,7 @@ def beavers_etal2021_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
@@ -267,7 +267,7 @@ def beavers_etal2021_38b : Datum :=
     lgrConformance := some .wordAligned
     context := "Mary bought a new TV and a new laptop. The laptop was working fine, but the TV was not. Mary brought her tools."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "additive restitutive"), ("root class", "result")] }
 

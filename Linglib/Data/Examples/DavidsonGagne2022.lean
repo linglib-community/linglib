@@ -25,7 +25,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := "The signer has just said: Last night I watched a movie with my friends about vampires. Afterwards I went to bed and I dreamt that…"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("contextual", .acceptable), ("widened", .unacceptable)]
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "FS(ALL)"), ("realization", "simultaneous")] }
 
@@ -39,7 +39,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := "The signer has just said: Last night I watched a movie with my friends about vampires. Afterwards I went to bed and I dreamt that…"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("contextual", .unacceptable), ("widened", .acceptable)]
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "FS(ALL)"), ("realization", "simultaneous")] }
 
@@ -53,7 +53,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("locus", "implicit")] }
 
@@ -67,7 +67,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("locus", "implicit")] }
 
@@ -81,7 +81,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("levels", "3")] }
 
@@ -95,7 +95,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "mid"), ("levels", "3")] }
 
@@ -109,7 +109,7 @@ def ex_15c : Datum :=
     glossedTokens := []
     context := "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("levels", "3")] }
 
@@ -123,7 +123,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("levels", "2")] }
 
@@ -137,7 +137,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("levels", "2")] }
 
@@ -151,7 +151,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "pronoun"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -165,7 +165,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -179,7 +179,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
@@ -193,7 +193,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
@@ -207,7 +207,7 @@ def ex_18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
@@ -221,7 +221,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -235,7 +235,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "pronoun"), ("height", "neutral"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -249,7 +249,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -263,7 +263,7 @@ def ex_21d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "pronoun"), ("height", "high"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
@@ -277,7 +277,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
@@ -291,7 +291,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
@@ -305,7 +305,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "PICK-FROM"), ("verbClass", "directional")] }
 
@@ -319,7 +319,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "PICK-FROM"), ("verbClass", "directional")] }
 
@@ -333,7 +333,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
@@ -347,7 +347,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "mid"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
@@ -361,7 +361,7 @@ def ex_24c : Datum :=
     glossedTokens := []
     context := "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
@@ -375,7 +375,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "A story about an apocalyptic event."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "PICK"), ("verbClass", "directional"), ("anaphora", "locus")] }
 
@@ -389,7 +389,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "A story about an apocalyptic event."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "PICK"), ("verbClass", "directional"), ("anaphora", "locus")] }
 
@@ -403,7 +403,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := "Talking about adopting a pet."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("widened", .unacceptable), ("physical", .marginal)]
     paperFeatures := [("section", "3.3"), ("heightOn", "noun"), ("height", "high")] }
 
@@ -417,7 +417,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "Talking about adopting a pet."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "SOMETHING"), ("realization", "simultaneous")] }
 
@@ -431,7 +431,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := "Discussion of whether anyone in the signer's family is Deaf."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
@@ -445,7 +445,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := "Discussion of whether anyone in the signer's family is Deaf."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
@@ -459,7 +459,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := "Lack of bananas first at store, then in town, then in whole country."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
@@ -473,7 +473,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := "Lack of bananas first at store, then in town, then in whole country."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "mid"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
@@ -487,7 +487,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := "Lack of bananas first at store, then in town, then in whole country."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
@@ -501,7 +501,7 @@ def ex_35neutral : Datum :=
     glossedTokens := []
     context := "The signer is discussing the numerous tests that he gives out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("bound", "typically")] }
 
@@ -515,7 +515,7 @@ def ex_35high : Datum :=
     glossedTokens := []
     context := "The signer is discussing the numerous tests that he gives out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("bound", "typically")] }
 
@@ -529,7 +529,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := "Deciding condiments to put out at a party. The host says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "SOMEONE"), ("realization", "simultaneous"), ("bound", "typically")] }
 
@@ -543,7 +543,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := "Deciding condiments to put out at a party. The host says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "SOMEONE"), ("realization", "simultaneous"), ("bound", "typically")] }
 
@@ -557,7 +557,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := "My family goes to the beach every year."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "neutral"), ("quantifier", "FEW"), ("realization", "sequential")] }
 
@@ -571,7 +571,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := "My family goes to the beach every year."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "FEW"), ("realization", "sequential")] }
 
@@ -585,7 +585,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := "My family goes to the beach every year."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "FS(ALL)"), ("realization", "both")] }
 
@@ -599,7 +599,7 @@ def ex_39a_none : Datum :=
     glossedTokens := []
     context := "Discussing an exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
@@ -613,7 +613,7 @@ def ex_39a_each : Datum :=
     glossedTokens := []
     context := "Discussing an exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "EACH"), ("realization", "sequential")] }
 
@@ -627,7 +627,7 @@ def ex_39b_one : Datum :=
     glossedTokens := []
     context := "Discussing an exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "ONE"), ("realization", "simultaneous")] }
 
@@ -641,7 +641,7 @@ def ex_39b_two : Datum :=
     glossedTokens := []
     context := "Discussing an exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "TWO"), ("realization", "simultaneous")] }
 
@@ -655,7 +655,7 @@ def ex_39b_many : Datum :=
     glossedTokens := []
     context := "Discussing an exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "MANY"), ("realization", "sequential")] }
 
@@ -668,7 +668,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := "A native signer of Japanese Sign Language contrasting his class, his school and his prefecture; a spontaneous example shared by Kazumi Matsuoka."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "neutral"), ("levels", "3")] }
 
@@ -681,7 +681,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := "A native signer of Japanese Sign Language contrasting his class, his school and his prefecture; a spontaneous example shared by Kazumi Matsuoka."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "mid"), ("levels", "3")] }
 
@@ -694,7 +694,7 @@ def ex_54c : Datum :=
     glossedTokens := []
     context := "A native signer of Japanese Sign Language contrasting his class, his school and his prefecture; a spontaneous example shared by Kazumi Matsuoka."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "high"), ("levels", "3")] }
 

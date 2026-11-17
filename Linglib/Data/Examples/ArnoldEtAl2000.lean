@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The waiter brought to the table the wine we had ordered", .acceptable)]
+    contrasts := [("The waiter brought to the table the wine we had ordered", .acceptable)]
     readings := []
     paperFeatures := [("construction", "HNPS")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Chris gave Terry a bowl of Mom's traditional cranberry sauce", .acceptable)]
+    contrasts := [("Chris gave Terry a bowl of Mom's traditional cranberry sauce", .acceptable)]
     readings := []
     paperFeatures := [("construction", "DA")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sandy picked up the freshly baked apple pie.", .acceptable)]
+    contrasts := [("Sandy picked up the freshly baked apple pie.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "verb-particle")] }
 
@@ -63,7 +63,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I gave the valuable book that was extremely difficult to find to Mary", .acceptable)]
+    contrasts := [("I gave the valuable book that was extremely difficult to find to Mary", .acceptable)]
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "to Mary"), ("second", "the valuable book that was extremely difficult to find"), ("eicWords", "4")] }
 
@@ -77,7 +77,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The Informativeness account shares the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance with the processing account", .acceptable)]
+    contrasts := [("The Informativeness account shares the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance with the processing account", .acceptable)]
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "with the processing account"), ("second", "the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance")] }
 
@@ -91,7 +91,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "to the plate"), ("second", "Barry Bonds"), ("exception", "planning")] }
 
@@ -105,7 +105,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("shifted", "a grammar; an optimal structure"), ("newness", "new")] }
 
@@ -119,7 +119,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "in the inner city"), ("second", "the fifth graders who could really take off"), ("function", "ambiguity avoidance")] }
 
@@ -133,7 +133,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "last July"), ("second", "his plans to quit"), ("function", "ambiguity avoidance")] }
 
@@ -147,7 +147,7 @@ def t1_bring : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("verb", "bring to"), ("order", "nonshifted"), ("first", "tears"), ("second", "to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada")] }
 
@@ -161,7 +161,7 @@ def t1_take : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "HNPS"), ("verb", "take into account"), ("order", "shifted"), ("first", "into account"), ("second", "the need not to be overtaken by the constant evolution of the labour market")] }
 
@@ -175,7 +175,7 @@ def t1_give : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA"), ("verb", "give"), ("order", "prepositional"), ("first", "its business"), ("second", "to a friend of the Government")] }
 
@@ -188,7 +188,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA")] }
 
@@ -202,7 +202,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA"), ("order", "prepositional"), ("given", "theme"), ("first", "that"), ("second", "to the red dog")] }
 
@@ -216,7 +216,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA"), ("order", "double object"), ("given", "both")] }
 
@@ -230,7 +230,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA"), ("elliptical", "true")] }
 
@@ -244,7 +244,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "DA"), ("first", "much consideration and attention"), ("second", "to it"), ("newness", "first new, second given"), ("exception", "other factors")] }
 
@@ -257,7 +257,7 @@ def t4_do : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "double object"), ("orderClass", "goal first")] }
 
@@ -270,7 +270,7 @@ def t4_hnps : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "heavy-NP-shifted"), ("orderClass", "goal first")] }
 
@@ -283,7 +283,7 @@ def t4_passg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passivized goal"), ("orderClass", "goal first")] }
 
@@ -296,7 +296,7 @@ def t4_dotop : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "double object, goal topicalized"), ("orderClass", "goal first")] }
 
@@ -309,7 +309,7 @@ def t4_preptop : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prepositional, goal topicalized"), ("orderClass", "goal first")] }
 
@@ -322,7 +322,7 @@ def t4_prep : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prepositional"), ("orderClass", "theme first")] }
 
@@ -335,7 +335,7 @@ def t4_passt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passivized theme"), ("orderClass", "theme first")] }
 
@@ -348,7 +348,7 @@ def t4_prepttop : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prepositional, theme topicalized"), ("orderClass", "theme first")] }
 

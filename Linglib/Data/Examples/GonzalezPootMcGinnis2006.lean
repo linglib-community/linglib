@@ -26,7 +26,7 @@ def gpm2006_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔon"), ("suffix2", "éːš")] }
 
@@ -41,7 +41,7 @@ def gpm2006_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "éːš"), ("suffix2", "oʔob")] }
 
@@ -56,7 +56,7 @@ def gpm2006_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔob"), ("suffix2", "éːš")] }
 
@@ -71,7 +71,7 @@ def gpm2006_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːš"), ("suffix2", "oʔob")] }
 
@@ -86,7 +86,7 @@ def gpm2006_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "oʔob")] }
 
@@ -101,7 +101,7 @@ def gpm2006_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")] }
 
@@ -116,7 +116,7 @@ def gpm2006_16ex : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", "en"), ("suffix2", "")] }
 
@@ -131,7 +131,7 @@ def gpm2006_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "sg"), ("aux", "in"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")] }
 
@@ -146,7 +146,7 @@ def gpm2006_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "pl"), ("aux", "k"), ("prefix", ""), ("suffix1", ""), ("suffix2", "")] }
 
@@ -161,7 +161,7 @@ def gpm2006_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "sg"), ("aux", "a"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")] }
 
@@ -176,7 +176,7 @@ def gpm2006_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːš"), ("suffix2", "")] }
 
@@ -191,7 +191,7 @@ def gpm2006_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", ""), ("suffix2", "")] }
 
@@ -206,7 +206,7 @@ def gpm2006_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")] }
 

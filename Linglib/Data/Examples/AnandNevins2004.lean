@@ -26,7 +26,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I")] }
 
@@ -41,7 +41,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "you")] }
 
@@ -56,7 +56,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "here")] }
 
@@ -71,7 +71,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "yesterday"), ("pragmatic_clash", "a report made a week ago cannot concern the utterance's yesterday")] }
 
@@ -86,7 +86,7 @@ def fn3_i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "zazaki_attitude"), ("indexical", "I")] }
 
@@ -101,7 +101,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mɨ kes paci kɛrd.", .ungrammatical)]
+    contrasts := [("Mɨ kes paci kɛrd.", .ungrammatical)]
     readings := []
     paperFeatures := [("test", "npi"), ("npi", "kes")] }
 
@@ -116,7 +116,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "npi_licensing")] }
 
@@ -129,7 +129,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "extraction"), ("construction", "direct quotation")] }
 
@@ -144,7 +144,7 @@ def ex_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "extraction")] }
 
@@ -159,7 +159,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "extraction")] }
 
@@ -174,7 +174,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed I-utterance you-reported", .unacceptable), ("mixed I-reported you-utterance", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("indexical", "you"), ("test", "shift_together")] }
 
@@ -189,7 +189,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.", .ungrammatical)]
+    contrasts := [("Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.", .ungrammatical)]
     readings := []
     paperFeatures := [("entry", "vano"), ("indexical", "now"), ("indexical", "here"), ("test", "shift_together")] }
 
@@ -204,7 +204,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("mixed persons-reported time-utterance", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("indexical", "you"), ("indexical", "in two weeks"), ("test", "shift_together")] }
 
@@ -219,7 +219,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable)]
     paperFeatures := [("entry", "slave_say"), ("indexical", "you")] }
 
@@ -234,7 +234,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("mixed friend-reported slippers-utterance", .unacceptable), ("mixed friend-utterance slippers-reported", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "I"), ("indexical", "I"), ("test", "shift_together")] }
 
@@ -249,7 +249,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed first-reported second-utterance", .unacceptable), ("mixed first-utterance second-reported", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "me"), ("indexical", "me"), ("test", "shift_together"), ("c_command", "no")] }
 
@@ -264,7 +264,7 @@ def ex_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Andrew, secretly the brother of the traitor Rojda, is confronted by Hesen; Ali overhears, then tells Andrew what Hesen said; Andrew reports Ali's words to his neighbor (31)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowest reported context", .acceptable), ("intermediate reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "yes")] }
 
@@ -279,7 +279,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "As for (32), but Ali overheard Hesen telling Fatima."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowest reported context", .acceptable), ("intermediate reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "no")] }
 
@@ -292,7 +292,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language_type", "non-shifting")] }
 
@@ -305,7 +305,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("language_type", "non-shifting")] }
 
@@ -320,7 +320,7 @@ def ex_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("both reported", .acceptable)]
     paperFeatures := [("entry", "slave_tell"), ("indexical", "I"), ("indexical", "you")] }
 
@@ -335,7 +335,7 @@ def ex_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "you")] }
 
@@ -350,7 +350,7 @@ def ex_37b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "you")] }
 
@@ -365,7 +365,7 @@ def ex_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "I")] }
 
@@ -380,7 +380,7 @@ def ex_38b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "slave_say"), ("indexical", "I")] }
 
@@ -393,7 +393,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "de_te")] }
 
@@ -406,7 +406,7 @@ def ex_42b : Datum :=
     glossedTokens := []
     context := "John, thinking she was Mary's mother, begged of Mary that Mary should sing."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "de_te")] }
 
@@ -421,7 +421,7 @@ def ex_45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "context_blocking"), ("logophor", "ADDR-LOG")] }
 
@@ -436,7 +436,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mixed I-reported me-utterance", .unacceptable)]
     paperFeatures := [("test", "shift_together"), ("indexical", "I"), ("indexical", "me")] }
 
@@ -449,7 +449,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("two days after each telling", .acceptable)]
     paperFeatures := [("expression", "in precisely two days")] }
 
@@ -462,7 +462,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("May 16th", .acceptable), ("May 23rd", .unacceptable)]
     paperFeatures := [("expression", "in precisely eight days"), ("embedded_tense", "would")] }
 
@@ -475,7 +475,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("May 16th", .unacceptable), ("May 23rd", .acceptable)]
     paperFeatures := [("expression", "in precisely eight days"), ("embedded_tense", "will")] }
 
@@ -489,7 +489,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I met John a week ago. Two days later he was sick.", .acceptable)]
+    contrasts := [("I met John a week ago. Two days later he was sick.", .acceptable)]
     readings := []
     paperFeatures := [("expression", "in precisely two days"), ("test", "discourse_anaphora")] }
 

@@ -12,7 +12,7 @@
     "translation": "I wood-chopped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -36,7 +36,7 @@
     "translation": "I danced.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -60,7 +60,7 @@
     "translation": "I hopped along crouched down.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -84,7 +84,7 @@
     "translation": "We slept.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -108,7 +108,7 @@
     "translation": "I will walk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -132,7 +132,7 @@
     "translation": "We hugged you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -158,7 +158,7 @@
     "translation": "I grind the corn.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -184,7 +184,7 @@
     "translation": "We will write the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "derivedTransitive"],
@@ -208,7 +208,7 @@
     "translation": "The frog is crouched down/squat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stative"],
@@ -231,7 +231,7 @@
     "translation": "The girl sneezed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -255,7 +255,7 @@
     "translation": "You will clear land.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -281,7 +281,7 @@
     "translation": "The baby crawls.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -307,7 +307,7 @@
     "translation": "The frog hopped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -333,7 +333,7 @@
     "translation": "We chopped the wood.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -358,7 +358,7 @@
     "translation": "We wood-chopped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -384,7 +384,7 @@
     "translation": "We will buy one chicken.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -410,7 +410,7 @@
     "translation": "We sold this cow.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -436,7 +436,7 @@
     "translation": "We grind the corn.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -461,7 +461,7 @@
     "translation": "I stirred my coffee.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -486,7 +486,7 @@
     "translation": "I saw you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -512,7 +512,7 @@
     "translation": "I fat chicken-bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -539,7 +539,7 @@
     "translation": "I avocado-bought. It was ripe. / They were ripe.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "opacity"],
@@ -561,7 +561,7 @@
     "translation": "You accompanied babies to sleep.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "derivedTransitive"],
@@ -583,7 +583,7 @@
     "translation": "We tore and tore up papers.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "derivedTransitive"],
@@ -607,7 +607,7 @@
     "translation": "The woman avocado-sells.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "adjacency"],
@@ -630,7 +630,7 @@
     "translation": "I avocado-sell.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -654,7 +654,7 @@
     "translation": "I sell.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -679,7 +679,7 @@
     "translation": "I salsa-dance.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -705,7 +705,7 @@
     "translation": "I dance salsa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -731,7 +731,7 @@
     "translation": "We sold the avocado.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -756,7 +756,7 @@
     "translation": "We sold avocados.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -782,7 +782,7 @@
     "translation": "The boy left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -808,7 +808,7 @@
     "translation": "The boy left.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -834,7 +834,7 @@
     "translation": "The salt dissolved.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -859,7 +859,7 @@
     "translation": "I salt-dissolved.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -884,7 +884,7 @@
     "translation": "I corn-ground.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -910,7 +910,7 @@
     "translation": "I ground corn. / I did some grinding.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ix-in-jax-w-i.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -942,7 +942,7 @@
     "translation": "Maria did some hitting to John.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -966,7 +966,7 @@
     "translation": "I did some buying.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -991,7 +991,7 @@
     "translation": "What was stolen?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "derivedIntransitive"],
@@ -1014,7 +1014,7 @@
     "translation": "It's his cloth that is bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1043,7 +1043,7 @@
     "translation": "That boy was caught.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1074,7 +1074,7 @@
     "translation": "The brother's food is made by them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1102,7 +1102,7 @@
     "translation": "The tree was felled on purpose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "diagnostic"],
@@ -1131,7 +1131,7 @@
     "translation": "The tree was felled in order to build a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "diagnostic"],
@@ -1159,7 +1159,7 @@
     "translation": "Juan was cured by the medicine.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1189,7 +1189,7 @@
     "translation": "The house was made by the man.",
     "context": "The man built the house with his own two hands.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1219,7 +1219,7 @@
     "translation": "The house was made thanks to the man.",
     "context": "The man purchased the materials and paid a carpenter to build the house, but did not himself do any building.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1247,7 +1247,7 @@
     "translation": "The tree was felled on purpose.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "diagnostic"],
@@ -1276,7 +1276,7 @@
     "translation": "The tree was felled in order to build a house.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "diagnostic"],
@@ -1303,7 +1303,7 @@
     "translation": "The wind closed the door.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causer"],
@@ -1329,7 +1329,7 @@
     "translation": "The door closed because of the wind.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1355,7 +1355,7 @@
     "translation": "The moon grew larger (waxed).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "isolated"],
@@ -1378,7 +1378,7 @@
     "translation": "I ball-kicked.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1405,7 +1405,7 @@
     "translation": "I did kicking to the ball.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1430,7 +1430,7 @@
     "translation": "I was cured thanks to you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1456,7 +1456,7 @@
     "translation": "I was cured by you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1483,7 +1483,7 @@
     "translation": "The tortillas were bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1507,7 +1507,7 @@
     "translation": "I do buying.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1533,7 +1533,7 @@
     "translation": "You ground the corn.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1559,7 +1559,7 @@
     "translation": "The corn was ground.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1585,7 +1585,7 @@
     "translation": "The corn was ground.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1609,7 +1609,7 @@
     "translation": "You did some grinding.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1634,7 +1634,7 @@
     "translation": "You corn-ground.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "stem"],
@@ -1659,7 +1659,7 @@
     "translation": "I went.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "chol"],
@@ -1681,7 +1681,7 @@
     "translation": "I danced.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "chol"],
@@ -1704,7 +1704,7 @@
     "translation": "I danced.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "chol"],
@@ -1727,7 +1727,7 @@
     "translation": "I clothes-washed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "chol"],

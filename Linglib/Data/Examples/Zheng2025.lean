@@ -26,7 +26,7 @@ def ex1 : Datum :=
     lgrConformance := some .wordAligned
     context := "A and B are talking about a colleague, Lee, who is going to work on Sunday. B does not think people usually go to work on Sunday."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
@@ -41,7 +41,7 @@ def ex2 : Datum :=
     lgrConformance := some .wordAligned
     context := "A sits in a windowless room working. A believes it is not raining. At 10, B enters the room with a dripping raincoat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
@@ -56,7 +56,7 @@ def ex3 : Datum :=
     lgrConformance := some .wordAligned
     context := "A sits in a windowless room working. A has no expectation about the weather. At 10, B enters the room with a dripping raincoat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
@@ -71,7 +71,7 @@ def ex4b : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker believes that there is no one in a room."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
@@ -86,7 +86,7 @@ def ex5_ctx1 : Datum :=
     lgrConformance := some .wordAligned
     context := "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room with a dripping raincoat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
@@ -101,7 +101,7 @@ def ex5_ctx2 : Datum :=
     lgrConformance := some .wordAligned
     context := "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
@@ -116,7 +116,7 @@ def ex5_ctx3 : Datum :=
     lgrConformance := some .wordAligned
     context := "A thinks it will not rain today. At 10, B enters the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
@@ -131,7 +131,7 @@ def ex6_ctx1 : Datum :=
     lgrConformance := some .wordAligned
     context := "A says Lee is planning to work on weekends too. B does not think that people, including Lee, usually go to work on Sunday."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
@@ -146,7 +146,7 @@ def ex6_ctx2 : Datum :=
     lgrConformance := some .wordAligned
     context := "A says Lee is planning to work on weekends too. B knows Lee usually goes to work on Sunday."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
@@ -161,7 +161,7 @@ def ex4a : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker believes that there is no one in a room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
@@ -176,7 +176,7 @@ def ex12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "declarative")] }
 
@@ -191,7 +191,7 @@ def ex12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause_type", "wh-question")] }
 

@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -35,7 +35,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -58,7 +58,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -78,7 +78,7 @@
     "translation": "Today the pond was swimming with fish!",
     "context": "There are normally a few fish swimming in the pond.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Der Teich schwamm heute nur so vor Fischen!", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -99,7 +99,7 @@
     "translation": "Today the tracks were crawling with cockroaches!",
     "context": "There are normally a few cockroaches crawling on the underground tracks.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Das Gleisbett krabbelte heute nur so vor Kakerlaken!", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -120,7 +120,7 @@
     "translation": "The workshop was humming with (the sound of) machines today!",
     "context": "There's usually a subdued sound of industriousness in the factory.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Die Werkshalle hat heute vor Maschinen nur so gesummt!", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -141,7 +141,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "base"],
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The pool isn't swimming with turtles, let alone infested by them.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -181,7 +181,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "base"],
@@ -200,7 +200,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The metro isn't crawling with rats, let alone infested by them.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -221,7 +221,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "base"],
@@ -240,7 +240,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The pan isn't simmering with steaks, let alone sizzling.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -287,7 +287,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -310,7 +310,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -333,7 +333,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -356,7 +356,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -402,7 +402,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -425,7 +425,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -448,7 +448,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -471,7 +471,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -494,7 +494,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -517,7 +517,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -537,7 +537,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "base"],
@@ -561,7 +561,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "base"],
@@ -582,7 +582,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -606,7 +606,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["alternant", "nonBase"],
@@ -627,7 +627,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -648,7 +648,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -669,7 +669,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -690,7 +690,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -711,7 +711,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -732,7 +732,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -753,7 +753,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -774,7 +774,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -795,7 +795,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -816,7 +816,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -837,7 +837,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -858,7 +858,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -879,7 +879,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -900,7 +900,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -921,7 +921,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -942,7 +942,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -963,7 +963,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -984,7 +984,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1005,7 +1005,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1026,7 +1026,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
     ],
     "readings": [],

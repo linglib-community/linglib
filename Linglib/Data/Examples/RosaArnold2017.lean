@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("murdered someone", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("figured out the case", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("turned it in to the police", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("chucked it into the river", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")] }
 
@@ -76,7 +76,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "subject")] }
 
@@ -89,7 +89,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "nonsubject")] }
 
@@ -102,7 +102,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "source"), ("gram", "subject")] }
 
@@ -115,7 +115,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "source"), ("gram", "nonsubject")] }
 

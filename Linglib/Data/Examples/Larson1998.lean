@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "beautiful")] }
 
@@ -37,7 +37,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "intelligent")] }
 
@@ -50,7 +50,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "skillful")] }
 
@@ -63,7 +63,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "good")] }
 
@@ -76,7 +76,7 @@ def ex_2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "diligent")] }
 
@@ -89,7 +89,7 @@ def ex_2e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "old")] }
 
@@ -102,7 +102,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .unacceptable)]
     paperFeatures := [("adjective", "aged")] }
 
@@ -115,7 +115,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .unacceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "former")] }
 
@@ -128,7 +128,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "blonde"), ("adjective", "fast")] }
 
@@ -141,7 +141,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .acceptable), ("event", .unacceptable)]
     paperFeatures := [("adjective", "blonde"), ("adjective", "beautiful")] }
 
@@ -154,7 +154,7 @@ def ex_17c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("individual", .unacceptable), ("event", .acceptable)]
     paperFeatures := [("adjective", "fast"), ("adjective", "beautiful")] }
 

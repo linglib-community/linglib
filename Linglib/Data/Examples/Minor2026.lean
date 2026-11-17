@@ -24,7 +24,7 @@ def ex_93a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("want > ∃", .acceptable), ("∃ > want", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_93b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("want > ∃", .acceptable), ("∃ > want", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_93c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("want > ∃", .acceptable), ("∃ > want", .acceptable)]
     paperFeatures := [] }
 

@@ -24,7 +24,7 @@ def en1a : Datum :=
     glossedTokens := []
     context := "Jones is in the ER with poisoning symptoms; the investigation team is figuring out which chemical was used. One shrewd member suggests that, given the symptoms, he must have taken arsenic. The boss then says (1a) and the follow-up (1b) 'So, it looks like he did take arsenic' in a row: an Anderson conditional arguing FOR the truth of its antecedent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "x-marking")] }
 
@@ -37,7 +37,7 @@ def en2 : Datum :=
     glossedTokens := []
     context := "Same scenario as (1). The O-marked (simple-past indicative / present) counterpart of (1a)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
@@ -52,7 +52,7 @@ def ja3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "John, an ace player, has recently left the team for better pay. The team weakens considerably after losing their mainstay, and their defeat in today's game is already certain during the first half. A fan who is currently watching the game says the following."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "fake-past"), ("x_exponent", "-ta")] }
 
@@ -67,7 +67,7 @@ def ja4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Uttered in the context in (1) — the Anderson scenario."
     judgment := .acceptable
-    alternatives := [("Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", .unacceptable)]
+    contrasts := [("Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
@@ -82,7 +82,7 @@ def ja7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Jones is a fugitive who reportedly entered Korea via Incheon yesterday; the team infers the country he flew from. The consequent event lies overtly in the past (adverbial kinoo 'yesterday'), yet Non-Past is still required."
     judgment := .acceptable
-    alternatives := [("Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).", .unacceptable)]
+    contrasts := [("Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking"), ("hp_type", "radical")] }
 
@@ -97,7 +97,7 @@ def ma13a : Datum :=
     lgrConformance := some .wordAligned
     context := "Uttered in the context in (1) — the Anderson scenario."
     judgment := .acceptable
-    alternatives := [("Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", .unacceptable)]
+    contrasts := [("Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
@@ -110,7 +110,7 @@ def en8 : Datum :=
     glossedTokens := []
     context := "Future Less Vivid conditional with an unlikeliness follow-up."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "x-marking"), ("flv_xmarking", "available")] }
 
@@ -125,7 +125,7 @@ def ja9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Future Less Vivid conditional with an unlikeliness follow-up."
     judgment := .acceptable
-    alternatives := [("John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.", .unacceptable)]
+    contrasts := [("John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
 
@@ -140,7 +140,7 @@ def ma11 : Datum :=
     lgrConformance := some .wordAligned
     context := "Future Less Vivid conditional with an unlikeliness follow-up."
     judgment := .acceptable
-    alternatives := [("Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.", .unacceptable)]
+    contrasts := [("Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
 

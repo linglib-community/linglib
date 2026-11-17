@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Contrasted with 'All of Kiki's friends are metalheads' (5).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "general epistemic: speaker does not believe all (6a)", "judgment": "acceptable"},
       {"name": "strong epistemic: speaker believes not all (6b)", "judgment": "acceptable"},
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "Alternatives (9): Alf; Bert; Alf and Bert.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "ignorance: speaker uncertain about each disjunct (10)", "judgment": "acceptable"},
       {"name": "exclusivity: not both (11)", "judgment": "acceptable"}
@@ -47,7 +47,7 @@
     "translation": "",
     "context": "Alternatives (17): may take an apple; may take a pear; may take both.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "free choice: may take an apple and may take a pear (12b)", "judgment": "acceptable"},
       {"name": "exclusivity: may not take both (15d)", "judgment": "acceptable"}
@@ -65,7 +65,7 @@
     "translation": "",
     "context": "The speaker's authority over the permission is suspended.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "ignorance: speaker uncertain whether the hearer may take an apple (14a)", "judgment": "acceptable"}
     ],
@@ -82,7 +82,7 @@
     "translation": "",
     "context": "Alternatives (19): if you eat an apple ...; if you eat a pear ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simplification of disjunctive antecedents (19a) and (19b)", "judgment": "acceptable"}
     ],
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simplification to (30b): if John had taken a pear, he would have taken an apple", "judgment": "unacceptable"}
     ],
@@ -116,7 +116,7 @@
     "translation": "",
     "context": "Answer to 'Who (of John and Mary) came to the party?' (93).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "speaker knows John came and considers it possible that Mary came (95b)", "judgment": "acceptable"}
     ],
@@ -133,7 +133,7 @@
     "translation": "",
     "context": "Alternatives (100): everybody is allowed to take an apple; ... a pear.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "universal free choice: everybody may take an apple and everybody may take a pear", "judgment": "acceptable"}
     ],

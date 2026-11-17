@@ -24,7 +24,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("quantified conditional assertion: consider the crows — each one is black", .acceptable)]
     paperFeatures := [("form", "A"), ("assertive iff", "there are crows")] }
 
@@ -37,7 +37,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("consider the crows: some of them are black", .acceptable)]
     paperFeatures := [("form", "I"), ("assertive iff", "there are crows")] }
 
@@ -50,7 +50,7 @@ def unicorns_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "nonassertive"), ("diagnostic", "I-conversion")] }
 
@@ -63,7 +63,7 @@ def unicorns_b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "false"), ("diagnostic", "I-conversion")] }
 
@@ -76,7 +76,7 @@ def johns_children : Datum :=
     glossedTokens := []
     context := "John has no children."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "nonassertive"), ("diagnostic", "I-conversion")] }
 
@@ -89,7 +89,7 @@ def barbara : Datum :=
     glossedTokens := []
     context := "Major: all crows are black. Minor: all of Alan's birds are crows."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Barbara conclusion"), ("asymmetry", "the major alone implies the conclusion")] }
 
@@ -102,7 +102,7 @@ def biscuits : Datum :=
     glossedTokens := []
     context := "There are no biscuits, and you don't want any."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("status", "plain false, not nonassertive")] }
 
@@ -115,7 +115,7 @@ def frank_james : Datum :=
     glossedTokens := []
     context := "A reply to: If your name is Frank James, have you stopped beating your wife?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "conditional denial of a conditional question's presupposition")] }
 
@@ -128,7 +128,7 @@ def wages : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "summarizing an empirical regularity without explanatory force")] }
 

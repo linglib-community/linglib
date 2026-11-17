@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Coordinate subject; pronoun in PP complement. CRDC predicts marginality of co-valuing `him` with `Max` (conjunct valent of the subject coordinate structure).",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = Max (co-valued)",
@@ -61,7 +61,7 @@
     "translation": "",
     "context": "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "himself = John",
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "Co-valuing `him` with `John` (conjunct valent of subject coordinate structure). Same CRDC structure as (2a) with masculine antecedent.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = John (co-valued)",
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "`both ... and ...` coordinator; pronoun as object of `love`. `both` forces the distributive reading, which blocks co-valuing `him` with `John` under Safir's Coargument Dependency Constraint (CDC).",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = John",
@@ -204,7 +204,7 @@
     "translation": "",
     "context": "Coordinate subject; pronoun in raising-to-object position. CRDC applies: `him` is a full valent of `consider` (raising-to-object); `Bill` is a conjunct valent of the coordinate subject. Co-valuation is marginal.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = Bill",
@@ -253,7 +253,7 @@
     "translation": "",
     "context": "Non-coordinate baseline; reflexive licensed by Condition A. CRDC is silent (no coordination); the example is fully acceptable.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "himself = Max",
@@ -298,7 +298,7 @@
     "translation": "",
     "context": "Non-coordinate baseline; co-valuing `him` with local subject `Max` violates Condition B (not CRDC, which is silent here).",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = Max",
@@ -347,7 +347,7 @@
     "translation": "",
     "context": "Coordinate subject; possessive pronoun inside object PP. Possessives embed the conjunct-valent referent inside a further DP, weakening CRDC's marginality prediction.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "his = Max",
@@ -396,7 +396,7 @@
     "translation": "",
     "context": "Coordinate subject; name repeated as object. Condition C is in play, not CRDC; the co-valued reading is available.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "object Max = subject Max (co-valued)",
@@ -445,7 +445,7 @@
     "translation": "",
     "context": "Subject-to-subject raising over an experiencer PP. `her` is a full valent of `appear`; `Hillary` is a conjunct valent of the raised subject coordinate structure. CRDC predicts marginality of co-valuation.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "her = Hillary",
@@ -494,7 +494,7 @@
     "translation": "",
     "context": "Coordinate *object*, not coordinate subject. `himself` is a conjunct valent of a full valent of `talked`; co-valuation with the full-valent subject `John` is the reverse direction of CRDC (conjunct anaphor of full antecedent), which CRDC explicitly permits.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "himself = John",
@@ -539,7 +539,7 @@
     "translation": "",
     "context": "Non-coordinate Condition B violation. Co-valuing `her` with local subject `Jane` is straightforwardly ungrammatical. CRDC is silent (no coordination).",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "her = Jane",
@@ -584,7 +584,7 @@
     "translation": "",
     "context": "Raising-to-object with coordinate object; `him` is a conjunct valent of the embedded subject. Co-valuing `him` with matrix-subject `John` (a full valent of `expected`) is acceptable — the reverse CRDC direction (conjunct anaphor of full antecedent).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "him = John",
@@ -633,7 +633,7 @@
     "translation": "",
     "context": "Coordinate-subject CRDC configuration, but a structural counterexample: speakers accept co-valuation of `her` with `Sophy` despite CRDC's marginality prediction. Paper discusses this as a candidate exception (Section 6).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "her = Sophy",

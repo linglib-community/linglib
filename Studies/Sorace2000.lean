@@ -140,7 +140,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
       subject := ex.parse? "subject" [("agentive", SubjectShift.agentive),
         ("nonagentive", .nonagentive)]
       judgment := fun a ↦
-        if a = aux then some ex.judgment else ex.alternatives.head?.map (·.2) }
+        if a = aux then some ex.judgment else ex.contrasts.head?.map (·.2) }
 
 /-- The paper's examples. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum

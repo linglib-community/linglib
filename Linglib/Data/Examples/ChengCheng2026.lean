@@ -26,7 +26,7 @@ def ex_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "aspect"), ("combination", "N"), ("separated", "yes")] }
 
@@ -41,7 +41,7 @@ def ex_44b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "aspect"), ("combination", "R"), ("separated", "yes")] }
 
@@ -56,7 +56,7 @@ def ex_44c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "aspect"), ("combination", "R"), ("separated", "no")] }
 
@@ -71,7 +71,7 @@ def ex_46a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "cleft"), ("combination", "N"), ("separated", "yes")] }
 
@@ -86,7 +86,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "cleft"), ("combination", "R"), ("separated", "yes")] }
 
@@ -101,7 +101,7 @@ def ex_46c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "cleft"), ("combination", "R"), ("separated", "no")] }
 
@@ -116,7 +116,7 @@ def ex_48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "fragment"), ("combination", "N"), ("separated", "yes")] }
 
@@ -131,7 +131,7 @@ def ex_48b_da : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "fragment"), ("combination", "R"), ("separated", "yes")] }
 
@@ -146,7 +146,7 @@ def ex_48b_dasao : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "fragment"), ("combination", "R"), ("separated", "no")] }
 
@@ -161,7 +161,7 @@ def ex_49a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "ellipsis"), ("combination", "N"), ("separated", "yes")] }
 
@@ -176,7 +176,7 @@ def ex_49b_da : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "ellipsis"), ("combination", "R"), ("separated", "yes")] }
 
@@ -191,7 +191,7 @@ def ex_49b_dasao : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("test", "ellipsis"), ("combination", "R"), ("separated", "no")] }
 
@@ -206,7 +206,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("exponent", "bǎ"), ("exponent", "gěi"), ("exponent", "dǎ")] }
 
@@ -221,7 +221,7 @@ def ex_30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("exponent", "bǎ"), ("exponent", "gěi"), ("exponent", "dǎ")] }
 

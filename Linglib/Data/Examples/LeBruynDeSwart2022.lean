@@ -26,7 +26,7 @@ def boeken_niet_uitgelezen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide_scope", .acceptable), ("narrow_scope", .unacceptable)]
     paperFeatures := [("position", "scrambled")] }
 
@@ -41,7 +41,7 @@ def boeken_gehaat : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("kind_reference", .acceptable)]
     paperFeatures := [("position", "scrambled")] }
 

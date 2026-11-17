@@ -24,7 +24,7 @@ def item1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "sunglasses"), ("hiddenDistractor", "glasses case"), ("condition", "scripted")] }
 
@@ -37,7 +37,7 @@ def item2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "block (3rd row)"), ("hiddenDistractor", "block (4th row)"), ("condition", "scripted")] }
 
@@ -50,7 +50,7 @@ def item3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "cassette"), ("hiddenDistractor", "Scotch tape"), ("condition", "scripted")] }
 
@@ -63,7 +63,7 @@ def item4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium cup"), ("hiddenDistractor", "large cup"), ("condition", "scripted")] }
 
@@ -76,7 +76,7 @@ def item5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "round hairbrush"), ("hiddenDistractor", "flat hairbrush"), ("condition", "scripted")] }
 
@@ -89,7 +89,7 @@ def item6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "board eraser"), ("hiddenDistractor", "pencil eraser"), ("condition", "scripted")] }
 
@@ -102,7 +102,7 @@ def item7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium candle"), ("hiddenDistractor", "small candle"), ("condition", "scripted")] }
 
@@ -115,7 +115,7 @@ def item8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "computer mouse"), ("hiddenDistractor", "toy mouse"), ("condition", "scripted")] }
 
@@ -128,7 +128,7 @@ def shape : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape"), ("speaker", "egocentric")] }
 
@@ -141,7 +141,7 @@ def shapeColor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color")] }
 
@@ -154,7 +154,7 @@ def full : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color, texture")] }
 

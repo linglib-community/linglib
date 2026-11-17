@@ -14,7 +14,7 @@
     "translation": "The boy doesn't (generally) write every day, just poetry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -41,7 +41,7 @@
     "translation": "The boy doesn't (generally) write every day, just poetry.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -68,7 +68,7 @@
     "translation": "The boy writes every day, but poetry, he doesn't.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -94,7 +94,7 @@
     "translation": "The boy writes every day, but poetry, he doesn't.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -121,7 +121,7 @@
     "translation": "The boy writes every day, but I don't know what.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -147,7 +147,7 @@
     "translation": "The boy writes every day, but I don't know what.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -173,7 +173,7 @@
     "translation": "No one scrubbed the clothes, only Ixkeem (scrubbed (them)).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -198,7 +198,7 @@
     "translation": "S/he doesn't (ever) weave, just traditional sashes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -223,7 +223,7 @@
     "translation": "S/he didn't buy at the market, just some flour.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -248,7 +248,7 @@
     "translation": "The woman is cleaning around the house, just not the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -278,7 +278,7 @@
     "translation": "Doña Juana sells at the market. Guess what kind of thing <she sells>!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -307,7 +307,7 @@
     "translation": "A: Only Juan bought flowers. B: Really? Tell me which flowers!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -336,7 +336,7 @@
     "translation": "A: The pig was killed by a woman. B: Really? Which woman (killed the pig)?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -365,7 +365,7 @@
     "translation": "Juana is selling (something) at the market now. Guess what!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -388,7 +388,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -409,7 +409,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -431,7 +431,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -453,7 +453,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -475,7 +475,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -498,7 +498,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -520,7 +520,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -545,7 +545,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -568,7 +568,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -592,7 +592,7 @@
     "translation": "She combs herself and I don't know who else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -617,7 +617,7 @@
     "translation": "She combs herself and I don't know who else.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -643,7 +643,7 @@
     "translation": "Mary combs herself, but I don't know who else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -667,7 +667,7 @@
     "translation": "Mary combs herself, but I don't know who else.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ellipsis"],
@@ -691,7 +691,7 @@
     "translation": "kill",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -712,7 +712,7 @@
     "translation": "wash (sb.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -733,7 +733,7 @@
     "translation": "walk (sb.), handle",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -754,7 +754,7 @@
     "translation": "shame",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -775,7 +775,7 @@
     "translation": "make buy (sth.)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -796,7 +796,7 @@
     "translation": "make be written (by sb.)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -818,7 +818,7 @@
     "translation": "We made them sell at the market every day.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -841,7 +841,7 @@
     "translation": "We made them write in our language.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -863,7 +863,7 @@
     "translation": "Mothers bathe, grandmothers put to sleep.",
     "context": "Talking about duties of family members in child-rearing...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -887,7 +887,7 @@
     "translation": "The patient urinated over some blood.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -911,7 +911,7 @@
     "translation": "The Mayan priests woke up in Iximche'.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],

@@ -27,7 +27,7 @@ def ka2026_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("episkevasame to pomolo tis portas", .acceptable)]
+    contrasts := [("episkevasame to pomolo tis portas", .acceptable)]
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -43,7 +43,7 @@ def ka2026_5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("vrasame to nero tis pijis", .acceptable)]
+    contrasts := [("vrasame to nero tis pijis", .acceptable)]
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "source"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -59,7 +59,7 @@ def ka2026_5c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := [("blextike i ura tu aloɣu", .acceptable)]
+    contrasts := [("blextike i ura tu aloɣu", .acceptable)]
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "animate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -75,7 +75,7 @@ def ka2026_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
@@ -91,7 +91,7 @@ def ka2026_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -107,7 +107,7 @@ def ka2026_9a_book : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "pronoun"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -123,7 +123,7 @@ def ka2026_9a_eyes : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "pronoun"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -139,7 +139,7 @@ def ka2026_10a_shoulder : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "properName"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -155,7 +155,7 @@ def ka2026_10a_mom : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "properName"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -171,7 +171,7 @@ def ka2026_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
@@ -187,7 +187,7 @@ def ka2026_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
@@ -203,7 +203,7 @@ def ka2026_fn5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "yes"), ("gap", "no")] }
 
@@ -219,7 +219,7 @@ def ka2026_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("i epikalipsi ton sokolat-akion", .ungrammatical)]
+    contrasts := [("i epikalipsi ton sokolat-akion", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "pl"), ("modified", "no"), ("gap", "yes")] }
 
@@ -235,7 +235,7 @@ def ka2026_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("to trixoma tu katsik-akiu", .ungrammatical)]
+    contrasts := [("to trixoma tu katsik-akiu", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "animate"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
@@ -251,7 +251,7 @@ def ka2026_15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("petai psila to baloni tu aɣor-akiu", .ungrammatical)]
+    contrasts := [("petai psila to baloni tu aɣor-akiu", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
@@ -267,7 +267,7 @@ def ka2026_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("efije o babas tu peð-akiu", .ungrammatical)]
+    contrasts := [("efije o babas tu peð-akiu", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
@@ -283,7 +283,7 @@ def ka2026_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "yes"), ("gap", "yes")] }
 
@@ -299,7 +299,7 @@ def ka2026_25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "genitive"), ("outer", "genitive")] }
 
@@ -315,7 +315,7 @@ def ka2026_25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "apo"), ("outer", "apo")] }
 
@@ -331,7 +331,7 @@ def ka2026_27a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "apo"), ("outer", "genitive")] }
 
@@ -347,7 +347,7 @@ def ka2026_27b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "genitive"), ("outer", "apo")] }
 
@@ -363,7 +363,7 @@ def ka2026_7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("xriazode tria lepta ja to vrasimo ton zimarikon", .acceptable)]
+    contrasts := [("xriazode tria lepta ja to vrasimo ton zimarikon", .acceptable)]
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -379,7 +379,7 @@ def ka2026_7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("iparxi ðinatotita aperioristis katanalosis krasju", .acceptable)]
+    contrasts := [("iparxi ðinatotita aperioristis katanalosis krasju", .acceptable)]
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -395,7 +395,7 @@ def ka2026_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "properName"), ("head", "sg")] }
 
@@ -411,7 +411,7 @@ def ka2026_8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -427,7 +427,7 @@ def ka2026_8c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "genitive"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "properName"), ("head", "sg")] }
 
@@ -443,7 +443,7 @@ def ka2026_8d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "properName"), ("head", "sg")] }
 
@@ -459,7 +459,7 @@ def ka2026_9b_movement : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "pronoun"), ("head", "sg")] }
 
@@ -475,7 +475,7 @@ def ka2026_9b_dance : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "pronoun"), ("head", "sg")] }
 
@@ -491,7 +491,7 @@ def ka2026_10b_existence : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "properName"), ("head", "sg")] }
 
@@ -507,7 +507,7 @@ def ka2026_10b_falling : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "properName"), ("head", "sg")] }
 
@@ -522,7 +522,7 @@ def ka2026_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "grevena"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
 
@@ -538,7 +538,7 @@ def ka2026_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "genitive"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
 
@@ -554,7 +554,7 @@ def ka2026_17c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
 
@@ -569,7 +569,7 @@ def ka2026_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "grevena"), ("marking", "apo"), ("operation", "fronted")] }
 
@@ -584,7 +584,7 @@ def ka2026_22b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "grevena"), ("marking", "apo"), ("operation", "subextracted")] }
 
@@ -600,7 +600,7 @@ def ka2026_23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "apo"), ("operation", "fronted")] }
 
@@ -616,7 +616,7 @@ def ka2026_23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "apo"), ("operation", "subextracted")] }
 
@@ -632,7 +632,7 @@ def ka2026_24a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "genitive"), ("operation", "fronted")] }
 
@@ -648,7 +648,7 @@ def ka2026_24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "genitive"), ("operation", "subextracted")] }
 
@@ -664,7 +664,7 @@ def ka2026_30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
 
@@ -680,7 +680,7 @@ def ka2026_32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("i esθisi tis sokolatas", .acceptable)]
+    contrasts := [("i esθisi tis sokolatas", .acceptable)]
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -696,7 +696,7 @@ def ka2026_32b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("to kopsimo tu kreatos", .acceptable)]
+    contrasts := [("to kopsimo tu kreatos", .acceptable)]
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -712,7 +712,7 @@ def ka2026_33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("i kinisi ton planiton", .acceptable)]
+    contrasts := [("i kinisi ton planiton", .acceptable)]
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -728,7 +728,7 @@ def ka2026_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := [("to kolibi ton aθliton", .acceptable)]
+    contrasts := [("to kolibi ton aθliton", .acceptable)]
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -744,7 +744,7 @@ def ka2026_34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -760,7 +760,7 @@ def ka2026_34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -776,7 +776,7 @@ def ka2026_34c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -792,7 +792,7 @@ def ka2026_35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -808,7 +808,7 @@ def ka2026_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -824,7 +824,7 @@ def ka2026_35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "none"), ("aspectual", "yes"), ("themeForm", "common"), ("head", "sg")] }
 
@@ -840,7 +840,7 @@ def ka2026_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "pl")] }
 
@@ -856,7 +856,7 @@ def ka2026_36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "pl")] }
 
@@ -872,7 +872,7 @@ def ka2026_36c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "pl")] }
 
@@ -888,7 +888,7 @@ def ka2026_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "genitive"), ("relation", "partWhole")] }
 
@@ -904,7 +904,7 @@ def ka2026_38b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .unacceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "genitive"), ("relation", "ownership")] }
 
@@ -920,7 +920,7 @@ def ka2026_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "apo"), ("relation", "partWhole")] }
 
@@ -936,7 +936,7 @@ def ka2026_39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "apo"), ("relation", "ownership")] }
 

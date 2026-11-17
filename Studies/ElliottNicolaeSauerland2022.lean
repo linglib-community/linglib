@@ -935,7 +935,7 @@ theorem context_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     ∀ e ∈ Examples.all, ∀ κ ∈ ctx? e,
       (∀ i ∈ item? "form" e,
         (i.Usable (HasPluralAntecedent e) (κ.set a b) ↔ e.judgment = .acceptable)) ∧
-      (∀ i ∈ item? "rival" e, ∀ j ∈ e.alternatives.head?.map Prod.snd,
+      (∀ i ∈ item? "rival" e, ∀ j ∈ e.contrasts.head?.map Prod.snd,
         (i.Usable (HasPluralAntecedent e) (κ.set a b) ↔ j = .acceptable)) := by
   simp only [Item.usable_set_iff ha hb hab]
   decide +kernel
@@ -945,7 +945,7 @@ theorem context_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
 theorem usable_ex_68 (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     Item.quien.Usable False (Ctx.several.set a b) ∧
       Item.quienes.Usable False (Ctx.several.set a b) ∧
-        Examples.ex_68.alternatives.head?.map Prod.snd = some .unacceptable :=
+        Examples.ex_68.contrasts.head?.map Prod.snd = some .unacceptable :=
   ⟨(Item.usable_set_iff ha hb hab _ _).2 (.inl not_false),
     (Item.usable_set_iff ha hb hab _ _).2 (.inl rfl), by decide⟩
 

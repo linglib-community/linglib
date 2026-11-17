@@ -11,7 +11,7 @@
     "translation": "Nobody cooked.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"]
@@ -31,7 +31,7 @@
     "translation": "A/the person didn’t cook any egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -73,7 +73,7 @@
     "translation": "Nobody cooked the/an/any egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -94,7 +94,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "+aug"],
@@ -116,7 +116,7 @@
     "translation": "Themba doesn’t cook anyone any meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -140,7 +140,7 @@
     "translation": "Themba doesn’t cook Sipho any meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -164,7 +164,7 @@
     "translation": "Themba doesn’t cook anyone meat/the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -188,7 +188,7 @@
     "translation": "Sipho didn’t teach anyone anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -212,7 +212,7 @@
     "translation": "Sipho didn’t teach the boys anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -236,7 +236,7 @@
     "translation": "Sipho didn’t teach anyone Zulu.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -260,7 +260,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -283,7 +283,7 @@
     "translation": "Nobody taught anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -306,7 +306,7 @@
     "translation": "Nobody sent the children any money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -354,7 +354,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "+aug"],
@@ -378,7 +378,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -402,7 +402,7 @@
     "translation": "Nobody taught (any) girls anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -426,7 +426,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -450,7 +450,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "+aug"],
@@ -474,7 +474,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"],
@@ -499,7 +499,7 @@
     "translation": "Sipho is teaching the girls Zulu for the principal.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -526,7 +526,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -552,7 +552,7 @@
     "translation": "Sipho doesn’t teach (any) kids anything for anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -578,7 +578,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -604,7 +604,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -629,7 +629,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "-aug"]
@@ -649,7 +649,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "-aug"]
@@ -670,7 +670,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -692,7 +692,7 @@
     "translation": "I didn’t say that a/the person/anyone came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -714,7 +714,7 @@
     "translation": "I didn’t say that anyone came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -735,7 +735,7 @@
     "translation": "Nobody will ever teach.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "-aug"]
@@ -755,7 +755,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "-aug"]
@@ -775,7 +775,7 @@
     "translation": "It’s cold.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verbForm", "disjoint"]
@@ -795,7 +795,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verbForm", "conjoint"]
@@ -815,7 +815,7 @@
     "translation": "Sipho’s cooking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "+aug"],
@@ -836,7 +836,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["above", "+aug"],
@@ -857,7 +857,7 @@
     "translation": "Sipho is cooking an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -879,7 +879,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -901,7 +901,7 @@
     "translation": "Sipho is cooking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -922,7 +922,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -943,7 +943,7 @@
     "translation": "Sipho is cooking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -964,7 +964,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -985,7 +985,7 @@
     "translation": "(As for) the egg, Sipho is cooking it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1007,7 +1007,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1029,7 +1029,7 @@
     "translation": "Sipho is cooking the egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1051,7 +1051,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1074,7 +1074,7 @@
     "translation": "Sipho is cooking Mfundo an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1099,7 +1099,7 @@
     "translation": "(As for) Mfundo, Sipho is cooking an egg for him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1124,7 +1124,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1149,7 +1149,7 @@
     "translation": "As for the egg, Sipho is cooking it for Mfundo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1174,7 +1174,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1198,7 +1198,7 @@
     "translation": "Sipho runs well.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1220,7 +1220,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1243,7 +1243,7 @@
     "translation": "Mandla is of the opinion that I like him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1266,7 +1266,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1289,7 +1289,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1312,7 +1312,7 @@
     "translation": "Mandla sees, Monwa, that I like him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1335,7 +1335,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1358,7 +1358,7 @@
     "translation": "Mandla is of the opinion that I like him, Monwa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1381,7 +1381,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1405,7 +1405,7 @@
     "translation": "He’s eating meat as if he’s just discovered it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1428,7 +1428,7 @@
     "translation": "He’s eating as if he’s just discovered meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["vDomain", "sengathi"],
@@ -1449,7 +1449,7 @@
     "translation": "I write with a pen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["vDomain", "+aug"],
@@ -1470,7 +1470,7 @@
     "translation": "I write with a pen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["vDomain", "-aug"]
@@ -1491,7 +1491,7 @@
     "translation": "Mfundo writes letters with a pen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1515,7 +1515,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1538,7 +1538,7 @@
     "translation": "Mfundo doesn’t write letters with any pen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outside", "+aug"],
@@ -1561,7 +1561,7 @@
     "translation": "I want Sipho to cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -1584,7 +1584,7 @@
     "translation": "I want Sipho to cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "+aug"],
@@ -1607,7 +1607,7 @@
     "translation": "I don’t want Sipho to cook any egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -1630,7 +1630,7 @@
     "translation": "I don’t think Sipho saw anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "A-ngi-cabang-i ukuthi uSipho u-bon-e lutho", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1655,7 +1655,7 @@
     "translation": "I don’t expect anyone to cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "-aug"],
@@ -1678,7 +1678,7 @@
     "translation": "I don’t want anyone to cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "-aug"],
@@ -1701,7 +1701,7 @@
     "translation": "I don’t want anyone to cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "-aug"],
@@ -1724,7 +1724,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -1747,7 +1747,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -1770,7 +1770,7 @@
     "translation": "I wish that Sipho would cook an egg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ngi-fisa uSipho a-pheke iqanda", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1795,7 +1795,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "cp"],
@@ -1818,7 +1818,7 @@
     "translation": "I wish that dad would arrive tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "ukuthi"],
@@ -1840,7 +1840,7 @@
     "translation": "I wish that dad would arrive tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "sengathi"],
@@ -1862,7 +1862,7 @@
     "translation": "I wish that dad would arrive tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "+aug"],
@@ -1884,7 +1884,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrixVDomain", "+aug"],

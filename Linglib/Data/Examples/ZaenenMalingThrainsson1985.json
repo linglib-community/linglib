@@ -12,7 +12,7 @@
     "translation": "I helped him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -35,7 +35,7 @@
     "translation": "I will miss him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sakna"],
@@ -58,7 +58,7 @@
     "translation": "People danced yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "dansa"],
@@ -81,7 +81,7 @@
     "translation": "They were helped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -104,7 +104,7 @@
     "translation": "She was missed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sakna"],
@@ -128,7 +128,7 @@
     "translation": "She has always found Olaf boring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -151,7 +151,7 @@
     "translation": "I lack money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "vanta"],
@@ -175,7 +175,7 @@
     "translation": "They hid the truth from Olaf.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "leyna"],
@@ -198,7 +198,7 @@
     "translation": "John asked a favor of me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "biðja"],
@@ -221,7 +221,7 @@
     "translation": "I told you a story.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "segja"],
@@ -245,7 +245,7 @@
     "translation": "Olaf promised Mary this ring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lofa"],
@@ -269,7 +269,7 @@
     "translation": "Mary wished Olaf all the best.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska"],
@@ -292,7 +292,7 @@
     "translation": "I gave her back the money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "skila"],
@@ -316,7 +316,7 @@
     "translation": "She was given back the money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "skila"],
@@ -339,7 +339,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "skila"],
@@ -364,7 +364,7 @@
     "translation": "The king was given female slaves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefa"],
@@ -390,7 +390,7 @@
     "translation": "The maidservant was given to the king.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefa"],
@@ -416,7 +416,7 @@
     "translation": "The sea deprived her of her husband.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "svipta"],
@@ -437,7 +437,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska (transitive)"],
@@ -458,7 +458,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska"],
@@ -482,7 +482,7 @@
     "translation": "I believed Gudrun in my foolishness to miss Harold.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sakna"],
@@ -507,7 +507,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sakna"],
@@ -533,7 +533,7 @@
     "translation": "I believe her always to have found Olaf boring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -558,7 +558,7 @@
     "translation": "She finds her brother boring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -583,7 +583,7 @@
     "translation": "Has she always found Olaf boring?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -608,7 +608,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -634,7 +634,7 @@
     "translation": "When does Jon believe that she considered Olaf boring?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -660,7 +660,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -685,7 +685,7 @@
     "translation": "Someone found Olaf boring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -710,7 +710,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þykja"],
@@ -736,7 +736,7 @@
     "translation": "He says he is diligent, but finds the homework too hard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "finnast"],
@@ -761,7 +761,7 @@
     "translation": "He says he is diligent, but I find [him] lazy.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "finnast"],
@@ -786,7 +786,7 @@
     "translation": "I hope not to lack money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "vanta"],
@@ -811,7 +811,7 @@
     "translation": "I believe them to have been helped on the exam.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -836,7 +836,7 @@
     "translation": "He was often helped by his parents.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -861,7 +861,7 @@
     "translation": "Was he never helped by his parents?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -886,7 +886,7 @@
     "translation": "When does he believe that she was helped?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -911,7 +911,7 @@
     "translation": "Many students have been helped on the exam.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -937,7 +937,7 @@
     "translation": "He says that he is innocent but has apparently been helped on the exam.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -962,7 +962,7 @@
     "translation": "I hope to be helped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hjálpa"],
@@ -987,7 +987,7 @@
     "translation": "I believe the king to have been given slaves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefa"],
@@ -1012,7 +1012,7 @@
     "translation": "I believe the slave to have been given to the king.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefa"],
@@ -1036,7 +1036,7 @@
     "translation": "This was wished.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska (transitive)"],
@@ -1061,7 +1061,7 @@
     "translation": "This was wished to her.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska"],
@@ -1083,7 +1083,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "óska"],
@@ -1108,7 +1108,7 @@
     "translation": "He was helped.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "helfen"],
@@ -1132,7 +1132,7 @@
     "translation": "To be helped is nice.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "helfen"],
@@ -1157,7 +1157,7 @@
     "translation": "To be admitted is nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "aufnehmen"],
@@ -1182,7 +1182,7 @@
     "translation": "He hopes to be admitted.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "aufnehmen"],
@@ -1206,7 +1206,7 @@
     "translation": "He hopes to be helped.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "helfen"],
@@ -1231,7 +1231,7 @@
     "translation": "He came and was arrested.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "verhaften"],
@@ -1255,7 +1255,7 @@
     "translation": "He came and was helped.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "helfen"],
@@ -1280,7 +1280,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefallen"],
@@ -1305,7 +1305,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefallen"],
@@ -1330,7 +1330,7 @@
     "translation": "The boy reading the book is named Wilhelm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lesen"],
@@ -1355,7 +1355,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lesen"],
@@ -1380,7 +1380,7 @@
     "translation": "The book read by the boy is named Seven Legends.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lesen"],
@@ -1405,7 +1405,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "helfen"],
@@ -1430,7 +1430,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefallen"],
@@ -1454,7 +1454,7 @@
     "translation": "I am nauseated.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "übel sein"],
@@ -1477,7 +1477,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "übel sein"],
@@ -1502,7 +1502,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "übel sein"],
@@ -1527,7 +1527,7 @@
     "translation": "I had him recite the poem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "abhören"],
@@ -1550,7 +1550,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "abhören"],
@@ -1575,7 +1575,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "abhören"],

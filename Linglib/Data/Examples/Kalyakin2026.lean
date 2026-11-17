@@ -26,7 +26,7 @@ def ex3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -41,7 +41,7 @@ def ex29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
@@ -56,7 +56,7 @@ def ex30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
@@ -71,7 +71,7 @@ def ex30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -86,7 +86,7 @@ def ex32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -101,7 +101,7 @@ def ex36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -116,7 +116,7 @@ def ex36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -131,7 +131,7 @@ def ex36c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -146,7 +146,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
@@ -161,7 +161,7 @@ def ex52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive", .acceptable)]
     paperFeatures := [("root", "state")] }
 
@@ -176,7 +176,7 @@ def ex52b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("root", "state")] }
 
@@ -191,7 +191,7 @@ def ex57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "manner")] }
 
@@ -207,7 +207,7 @@ def ex58 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "manner")] }
 
@@ -222,7 +222,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "manner")] }
 
@@ -237,7 +237,7 @@ def ex75 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Inchoative antecedent, causative target."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -252,7 +252,7 @@ def ex76 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Causative antecedent, inchoative target."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -267,7 +267,7 @@ def ex78 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -282,7 +282,7 @@ def ex79 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Intransitive antecedent, causativized intransitive target."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -297,7 +297,7 @@ def ex80 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Transitive antecedent, causativized transitive target."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -312,7 +312,7 @@ def ex80_causee : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Transitive antecedent, causativized transitive target."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -327,7 +327,7 @@ def ex85 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Transitive antecedent, antipassive target."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -342,7 +342,7 @@ def ex86 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antipassive antecedent, antipassive target."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 
@@ -357,7 +357,7 @@ def ex88 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "state")] }
 

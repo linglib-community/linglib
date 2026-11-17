@@ -25,7 +25,7 @@ def ex45 : Datum :=
     context := "John started walking toward the other side of the street, but a bus hit him and he never actually made it."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex46 : Datum :=
     context := "Uttered half an hour after John, a normal human being, started swimming from the west coast of Africa towards the Brazilian coast."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex54 : Datum :=
     context := "John, who loves soccer, does not live far from a local college campus where the only soccer field in the neighborhood is located, and goes there regularly to play with his friends."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex54_accident : Datum :=
     context := "Due to a tragic car accident, John cannot control the movements of his legs anymore, and the sentence is uttered after these facts became known to the speaker."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

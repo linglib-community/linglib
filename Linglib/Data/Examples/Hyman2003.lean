@@ -27,7 +27,7 @@ def ex_2a_cr : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CR"), ("suffixes", "CR")] }
 
@@ -43,7 +43,7 @@ def ex_2a_rc : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RC"), ("suffixes", "CR")] }
 
@@ -59,7 +59,7 @@ def ex_2b_rc : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RC"), ("suffixes", "RC")] }
 
@@ -75,7 +75,7 @@ def ex_2b_cr : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CR"), ("suffixes", "RC")] }
 
@@ -91,7 +91,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CA"), ("suffixes", "CA")] }
 
@@ -107,7 +107,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "stir"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -123,7 +123,7 @@ def ex_7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AC"), ("suffixes", "AC")] }
 
@@ -139,7 +139,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "CAR")] }
 
@@ -155,7 +155,7 @@ def ex_8_star : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "RAC")] }
 
@@ -171,7 +171,7 @@ def ex_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AR"), ("suffixes", "AR")] }
 
@@ -187,7 +187,7 @@ def ex_13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "RA")] }
 
@@ -203,7 +203,7 @@ def ex_13c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "AR")] }
 
@@ -219,7 +219,7 @@ def ex_13d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "RAR")] }
 
@@ -235,7 +235,7 @@ def ex_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "ARA")] }
 
@@ -251,7 +251,7 @@ def ex_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AA"), ("suffixes", "AA")] }
 
@@ -267,7 +267,7 @@ def ex_18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CC"), ("suffixes", "CC")] }
 
@@ -283,7 +283,7 @@ def ex_20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "write"), ("scope", "CA"), ("suffixes", "CA")] }
 
@@ -299,7 +299,7 @@ def ex_20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cook"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -313,7 +313,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CA"), ("suffixes", "CA")] }
 
@@ -327,7 +327,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CAP"), ("suffixes", "CAP"), ("subject", "instrument")] }
 
@@ -341,7 +341,7 @@ def ex_22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CAP"), ("suffixes", "CAP"), ("subject", "causee")] }
 
@@ -355,7 +355,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -369,7 +369,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "ACP"), ("suffixes", "CAP"), ("subject", "causee")] }
 
@@ -383,7 +383,7 @@ def ex_23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "ACP"), ("suffixes", "CAP"), ("subject", "instrument")] }
 
@@ -399,7 +399,7 @@ def ex_32c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wake up"), ("scope", "AC"), ("suffixes", "AC")] }
 
@@ -415,7 +415,7 @@ def ex_32d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wake up"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -431,7 +431,7 @@ def ex_48a_car : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CAR"), ("suffixes", "RARC")] }
 
@@ -447,7 +447,7 @@ def ex_48a_acr : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ACR"), ("suffixes", "RARC")] }
 
@@ -463,7 +463,7 @@ def ex_48a_cra : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "RARC")] }
 
@@ -479,7 +479,7 @@ def ex_48a_arc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ARC"), ("suffixes", "RARC")] }
 
@@ -495,7 +495,7 @@ def ex_48a_rca : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "RARC")] }
 
@@ -511,7 +511,7 @@ def ex_48a_rac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "RARC")] }
 
@@ -527,7 +527,7 @@ def ex_48b_car : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CAR"), ("suffixes", "ARC")] }
 
@@ -543,7 +543,7 @@ def ex_48b_acr : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ACR"), ("suffixes", "ARC")] }
 
@@ -559,7 +559,7 @@ def ex_48b_cra : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "ARC")] }
 
@@ -575,7 +575,7 @@ def ex_48b_arc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ARC"), ("suffixes", "ARC")] }
 
@@ -591,7 +591,7 @@ def ex_48b_rca : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "ARC")] }
 
@@ -607,7 +607,7 @@ def ex_48b_rac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "ARC")] }
 
@@ -623,7 +623,7 @@ def ex_48c_car : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CAR"), ("suffixes", "CAR")] }
 
@@ -639,7 +639,7 @@ def ex_48c_acr : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ACR"), ("suffixes", "CAR")] }
 
@@ -655,7 +655,7 @@ def ex_48c_cra : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "CAR")] }
 
@@ -671,7 +671,7 @@ def ex_48c_arc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ARC"), ("suffixes", "CAR")] }
 
@@ -687,7 +687,7 @@ def ex_48c_rca : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "CAR")] }
 
@@ -703,7 +703,7 @@ def ex_48c_rac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "CAR")] }
 
@@ -719,7 +719,7 @@ def ex_48d_car : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CAR"), ("suffixes", "CRAR")] }
 
@@ -735,7 +735,7 @@ def ex_48d_acr : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ACR"), ("suffixes", "CRAR")] }
 
@@ -751,7 +751,7 @@ def ex_48d_cra : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "CRAR")] }
 
@@ -767,7 +767,7 @@ def ex_48d_arc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ARC"), ("suffixes", "CRAR")] }
 
@@ -783,7 +783,7 @@ def ex_48d_rca : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "CRAR")] }
 
@@ -799,7 +799,7 @@ def ex_48d_rac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "CRAR")] }
 
@@ -815,7 +815,7 @@ def ex_48e_car : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CAR"), ("suffixes", "RCAR")] }
 
@@ -831,7 +831,7 @@ def ex_48e_acr : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ACR"), ("suffixes", "RCAR")] }
 
@@ -847,7 +847,7 @@ def ex_48e_cra : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "RCAR")] }
 
@@ -863,7 +863,7 @@ def ex_48e_arc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "ARC"), ("suffixes", "RCAR")] }
 
@@ -879,7 +879,7 @@ def ex_48e_rca : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "RCAR")] }
 
@@ -895,7 +895,7 @@ def ex_48e_rac : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "RCAR")] }
 
@@ -911,7 +911,7 @@ def ex_48_star_cra_cra : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CRA"), ("suffixes", "CRA")] }
 
@@ -927,7 +927,7 @@ def ex_48_star_cra_rca : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "CRA")] }
 
@@ -943,7 +943,7 @@ def ex_48_star_cra_rac : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "CRA")] }
 
@@ -959,7 +959,7 @@ def ex_48_star_rca_rca : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RCA"), ("suffixes", "RCA")] }
 
@@ -975,7 +975,7 @@ def ex_48_star_rca_rac : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "RCA")] }
 
@@ -991,7 +991,7 @@ def ex_48_star_acr : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scope", "ACR"), ("suffixes", "ACR")] }
 

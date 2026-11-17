@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -37,7 +37,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -50,7 +50,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := "John discovers he has a winning lottery ticket and talks to himself."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("roles", "i and u co-incide")] }
 
@@ -63,7 +63,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := "John discovers he has a winning lottery ticket and talks to himself."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("person", "first plural")] }
 
@@ -76,7 +76,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("It seem that Vitesse won.", .ungrammatical)]
+    contrasts := [("It seem that Vitesse won.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -89,7 +89,7 @@ def ex_24b_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "first")] }
 
@@ -102,7 +102,7 @@ def ex_24b_you : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "second")] }
 
@@ -117,7 +117,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Nog jaren ben naar een oplossing gezocht.", .ungrammatical), ("Nog jaren bent naar een oplossing gezocht.", .ungrammatical), ("Nog jaren zijn naar een oplossing gezocht.", .ungrammatical)]
+    contrasts := [("Nog jaren ben naar een oplossing gezocht.", .ungrammatical), ("Nog jaren bent naar een oplossing gezocht.", .ungrammatical), ("Nog jaren zijn naar een oplossing gezocht.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "default agreement"), ("construction", "impersonal passive")] }
 
@@ -132,7 +132,7 @@ def ex_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "featureless")] }
 

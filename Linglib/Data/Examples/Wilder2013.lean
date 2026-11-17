@@ -24,7 +24,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := "They said he didn't have a lot of patients, but …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
@@ -37,7 +37,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := "A: Is he a good doctor?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "vp")] }
 
@@ -50,7 +50,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := "I can't imagine that Bill has a lot of patients, but.."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "subject")] }
 
@@ -63,7 +63,7 @@ def ex51 : Datum :=
     glossedTokens := []
     context := "A: Sue didn't leave her husband."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
@@ -76,7 +76,7 @@ def ex52 : Datum :=
     glossedTokens := []
     context := "A: Sue might have left her husband."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
@@ -89,7 +89,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := "A: We are surprised that Sue didn't leave her husband."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
@@ -102,7 +102,7 @@ def ex74b : Datum :=
     glossedTokens := []
     context := "Bill doesn't have a lot of patients, but …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
@@ -115,7 +115,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := "Although you say that your doctor doesn't treat his patients politely, …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "believeComplement")] }
 
@@ -128,7 +128,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := "Is he good doctor? …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "vp")] }
 
@@ -141,7 +141,7 @@ def ex27c : Datum :=
     glossedTokens := []
     context := "Do the doctors in this hospital treat their patients politely? …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "subject")] }
 
@@ -154,7 +154,7 @@ def ex27d : Datum :=
     glossedTokens := []
     context := "Nobody expected that France would win their first game."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "believeComplement")] }
 
@@ -167,7 +167,7 @@ def ex27e : Datum :=
     glossedTokens := []
     context := "Is the French team doing well this time?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "vp")] }
 
@@ -180,7 +180,7 @@ def ex27f : Datum :=
     glossedTokens := []
     context := "Did the French beat the Italians?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "subject")] }
 
@@ -193,7 +193,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := "A: We heard that your doctor doesn't treat his patients politely."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
@@ -206,7 +206,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := "Is he good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
@@ -219,7 +219,7 @@ def ex28c : Datum :=
     glossedTokens := []
     context := "Do the doctors in this hospital treat their patients politely?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "subject")] }
 
@@ -232,7 +232,7 @@ def ex28d : Datum :=
     glossedTokens := []
     context := "When she heard that your doctor doesn't treat his patients politely,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
@@ -245,7 +245,7 @@ def ex28e : Datum :=
     glossedTokens := []
     context := "Is he good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
@@ -258,7 +258,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := "Paul would be horrified if he wouldn't treat his patients politely, while"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "factiveComplement")] }
 
@@ -271,7 +271,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := "Is he a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "factiveComplement"), ("ctConstituent", "vp")] }
 
@@ -284,7 +284,7 @@ def ex29c : Datum :=
     glossedTokens := []
     context := "Do the doctors in this hospital treat their patients politely? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "factiveComplement"), ("ctConstituent", "subject")] }
 
@@ -297,7 +297,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := "Sue claimed that Dr. Smith doesn't treat his patients politely, but"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "itCleft")] }
 
@@ -310,7 +310,7 @@ def ex30b : Datum :=
     glossedTokens := []
     context := "Is Dr. Smith a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "itCleft"), ("ctConstituent", "vp")] }
 
@@ -323,7 +323,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := "Although Sue claimed that he doesn't treat his patients politely,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "itCleft")] }
 
@@ -336,7 +336,7 @@ def ex30d : Datum :=
     glossedTokens := []
     context := "Is Dr. Smith a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "itCleft"), ("ctConstituent", "vp")] }
 
@@ -349,7 +349,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := "Dr. Smith doesn't treat his patients politely, so"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "restrictiveRelative")] }
 
@@ -362,7 +362,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := "Is Dr. Smith a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "restrictiveRelative"), ("ctConstituent", "vp")] }
 
@@ -375,7 +375,7 @@ def ex31c : Datum :=
     glossedTokens := []
     context := "Although Sue claimed that Dr. Smith doesn't treat patients politely,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "restrictiveRelative")] }
 
@@ -388,7 +388,7 @@ def ex31d : Datum :=
     glossedTokens := []
     context := "Is Dr. Smith a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "restrictiveRelative"), ("ctConstituent", "vp")] }
 
@@ -401,7 +401,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := "She claimed that he doesn't treat his patients politely, but …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "adverbialClause")] }
 
@@ -414,7 +414,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := "Is he a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "adverbialClause"), ("ctConstituent", "vp")] }
 
@@ -427,7 +427,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := "She told me that he didn't treat her politely, so …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "adverbialClause")] }
 
@@ -440,7 +440,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := "Is he a good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "adverbialClause"), ("ctConstituent", "vp")] }
 
@@ -453,7 +453,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := "We heard that your doctor doesn't treat his patients politely."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "whSubjectQuestion")] }
 
@@ -466,7 +466,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := "Is he good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "whSubjectQuestion"), ("ctConstituent", "vp")] }
 
@@ -479,7 +479,7 @@ def ex44b : Datum :=
     glossedTokens := []
     context := "We heard that your doctor doesn't treat his patients politely."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "objectPreposing")] }
 
@@ -492,7 +492,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := "Is he good doctor? …"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "objectPreposing"), ("ctConstituent", "vp")] }
 
@@ -505,7 +505,7 @@ def ex113b : Datum :=
     glossedTokens := []
     context := "What about Fred? What did he eat?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "subject")] }
 
@@ -518,7 +518,7 @@ def ex114b : Datum :=
     glossedTokens := []
     context := "What about the beans? Who ate those?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "object")] }
 
@@ -531,7 +531,7 @@ def ex126a : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "believeComplement")] }
 
@@ -544,7 +544,7 @@ def ex126b : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "believeComplement")] }
 
@@ -557,7 +557,7 @@ def ex127a : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "interrogativeComplement")] }
 
@@ -570,7 +570,7 @@ def ex127b : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "interrogativeComplement")] }
 
@@ -583,7 +583,7 @@ def ex127c : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "factiveComplement")] }
 
@@ -596,7 +596,7 @@ def ex127d : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "itCleft")] }
 
@@ -609,7 +609,7 @@ def ex127e : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "restrictiveRelative")] }
 
@@ -622,7 +622,7 @@ def ex127f : Datum :=
     glossedTokens := []
     context := "Does he treat his patients politely?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "adverbialClause")] }
 
@@ -635,7 +635,7 @@ def ex137c : Datum :=
     glossedTokens := []
     context := "Does he work hard?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "root")] }
 

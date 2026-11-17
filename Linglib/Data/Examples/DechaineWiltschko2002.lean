@@ -24,7 +24,7 @@ def ex32a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "we"), ("dialect", "A")] }
 
@@ -37,7 +37,7 @@ def ex32a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "us"), ("dialect", "A")] }
 
@@ -50,7 +50,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "you"), ("dialect", "A")] }
 
@@ -63,7 +63,7 @@ def ex32c_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "A")] }
 
@@ -76,7 +76,7 @@ def ex32c_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "A")] }
 
@@ -89,7 +89,7 @@ def ex34c_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "B")] }
 
@@ -102,7 +102,7 @@ def ex34c_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "B")] }
 
@@ -115,7 +115,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "he")] }
 
@@ -128,7 +128,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
     paperFeatures := [("test", "boundVariable"), ("pronoun", "me")] }
 
@@ -141,7 +141,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")] }
 
@@ -154,7 +154,7 @@ def ex30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")] }
 
@@ -167,7 +167,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "kare")] }
 

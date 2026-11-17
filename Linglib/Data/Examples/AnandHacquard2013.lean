@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "argumentative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "semifactive"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -63,7 +63,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .ungrammatical)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -76,7 +76,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .ungrammatical)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -89,7 +89,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .ungrammatical)]
     paperFeatures := [("attitude_class", "directive"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -102,7 +102,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("teleological", .acceptable)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "teleological"), ("anchor", "attitude")] }
 
@@ -117,7 +117,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -132,7 +132,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jean a conclu que Marie devait avoir connu son tueur.", .acceptable)]
+    contrasts := [("Jean a conclu que Marie devait avoir connu son tueur.", .acceptable)]
     readings := []
     paperFeatures := [("attitude_class", "argumentative"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -147,7 +147,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "semifactive"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -162,7 +162,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -177,7 +177,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "directive"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -192,7 +192,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -207,7 +207,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -222,7 +222,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "possibility"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -237,7 +237,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -252,7 +252,7 @@ def ex_22 : Datum :=
     lgrConformance := some .wordAligned
     context := "John is reading a mystery novel and wants certain facts to obtain according to its author."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
@@ -265,7 +265,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("second_conjunct", "belief_predicate")] }
 
@@ -278,7 +278,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("second_conjunct", "epistemic_modal"), ("modal_force", "possibility")] }
 
@@ -291,7 +291,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John is home, Mary wanted.", .ungrammatical)]
+    contrasts := [("John is home, Mary wanted.", .ungrammatical)]
     readings := []
     paperFeatures := [("attitude_class", "argumentative"), ("test", "parenthetical")] }
 
@@ -306,7 +306,7 @@ def ex_30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ich will, dass er heute kommt.", .acceptable)]
+    contrasts := [("Ich will, dass er heute kommt.", .acceptable)]
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "verb_second"), ("complement_order", "verb_final")] }
 
@@ -321,7 +321,7 @@ def ex_30c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ich will, dass er kommt heute.", .ungrammatical)]
+    contrasts := [("Ich will, dass er kommt heute.", .ungrammatical)]
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "verb_second"), ("complement_order", "verb_second")] }
 
@@ -334,7 +334,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
@@ -347,7 +347,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := "Nobody among us has had access to the information in this filing cabinet, but we know that it contains the complete evidence (including possibly forged evidence) about the murder of Philip Boyes and narrows down the set of suspects. We are betting on who might have killed Boyes according to the information in the filing cabinet. Harriet, who is innocent, says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
@@ -362,7 +362,7 @@ def ex_42 : Datum :=
     lgrConformance := some .wordAligned
     context := "A asks: Kommt Peter heute? ('Is Peter coming today?')"
     judgment := .acceptable
-    alternatives := [("Ich will, dass er heute kommt.", .ungrammatical)]
+    contrasts := [("Ich will, dass er heute kommt.", .ungrammatical)]
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "answer_to_question")] }
 
@@ -375,7 +375,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := "It is raining."
     judgment := .unacceptable
-    alternatives := [("That is what I hope.", .unacceptable)]
+    contrasts := [("That is what I hope.", .unacceptable)]
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "certainty_context")] }
 
@@ -388,7 +388,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := "It is raining."
     judgment := .acceptable
-    alternatives := [("That is what I want.", .acceptable)]
+    contrasts := [("That is what I want.", .acceptable)]
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "certainty_context")] }
 
@@ -401,7 +401,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := "It isn't raining."
     judgment := .unacceptable
-    alternatives := [("That is not what I hope.", .unacceptable)]
+    contrasts := [("That is not what I hope.", .unacceptable)]
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "certainty_context")] }
 
@@ -414,7 +414,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := "It isn't raining."
     judgment := .acceptable
-    alternatives := [("That is not what I want.", .acceptable)]
+    contrasts := [("That is not what I want.", .acceptable)]
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "certainty_context")] }
 
@@ -429,7 +429,7 @@ def ex_45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "epistemic_indefinite"), ("indefinite", "vreun")] }
 
@@ -444,7 +444,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "epistemic_indefinite"), ("indefinite", "vreun")] }
 
@@ -457,7 +457,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("test", "uncertainty_cancellation"), ("suspender", "in fact")] }
 
@@ -470,7 +470,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("test", "uncertainty_cancellation"), ("suspender", "because")] }
 
@@ -483,7 +483,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "uncertainty_cancellation"), ("suspender", "because")] }
 
@@ -496,7 +496,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John thinks that it's possible that she's the murderer, but that it's very unlikely. He's certain she's innocent.", .unacceptable)]
+    contrasts := [("John thinks that it's possible that she's the murderer, but that it's very unlikely. He's certain she's innocent.", .unacceptable)]
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "uncertainty_cancellation"), ("suspender", "in fact")] }
 
@@ -511,7 +511,7 @@ def ex_65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -526,7 +526,7 @@ def ex_66_muss : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -541,7 +541,7 @@ def ex_66_koennte : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -556,7 +556,7 @@ def ex_67_muss : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -571,7 +571,7 @@ def ex_67_koennte : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -586,7 +586,7 @@ def ex_68 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -601,7 +601,7 @@ def ex_69 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -616,7 +616,7 @@ def ex_70 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deontic", .acceptable), ("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("complement", "finite")] }
 
@@ -631,7 +631,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deontic", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("complement", "infinitival")] }
 
@@ -644,7 +644,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John hopes that Mary can't be the killer.", .unacceptable), ("John hopes that Mary must be the killer.", .unacceptable)]
+    contrasts := [("John hopes that Mary can't be the killer.", .unacceptable), ("John hopes that Mary must be the killer.", .unacceptable)]
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("negation", "under_modal"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
@@ -657,7 +657,7 @@ def fn24_i : Datum :=
     glossedTokens := []
     context := "A has just asserted: Mary must be the murderer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "metalinguistic"), ("focus", "contrastive")] }
 
@@ -670,7 +670,7 @@ def fn25_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("negation", "over_modal")] }
 

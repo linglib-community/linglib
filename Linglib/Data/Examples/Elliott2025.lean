@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -37,7 +37,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "Boys b1 and b2 are only singing, b3 is only dancing, and no other boys are singing or dancing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive scope over the disjunction", .acceptable)]
     paperFeatures := [("section", "2.1")] }
 
@@ -50,7 +50,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "Three boys sneezed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the context", .unacceptable)]
     paperFeatures := [("section", "2.2.1")] }
 
@@ -63,7 +63,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "No boys sneezed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the context", .acceptable)]
     paperFeatures := [("section", "2.2.2")] }
 
@@ -76,7 +76,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > if..then > Dist", .acceptable), ("∃ > Dist > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -89,7 +89,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀ > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -102,7 +102,7 @@ def ex_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -115,7 +115,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := "James plays a two-ball roulette variant, betting on any two numbers and winning if both balls land on them; the croupier has rigged the wheel so the balls land on two predetermined numbers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > if..then (exceptional existential scope)", .acceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -128,7 +128,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1")] }
 
@@ -141,7 +141,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1")] }
 

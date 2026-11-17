@@ -37,7 +37,7 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "context": "",
     "judgment": "acceptable",                // one of the 6 cases
     "verdict": true,                         // optional: a truth-value judgment in the context
-    "alternatives": [{"form": "...", "judgment": "unacceptable"}],
+    "contrasts": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
     "paperFeatures": [["key", "value"], ...],  // the paper's own columns
@@ -282,7 +282,7 @@ def emit_form_judgment_list(xs, where: str, key: str) -> str:
     """Emit a List (String × Judgment) literal.
 
     Each entry is `{key: <string>, judgment: <judgment>}`. `key` is "form"
-    for alternatives or "name" for readings.
+    for contrasts or "name" for readings.
     """
     if not isinstance(xs, list):
         raise ValueError(f"{where}: expected an array")
@@ -341,7 +341,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     verdict     = ex.get("verdict")
     if verdict is not None and not isinstance(verdict, bool):
         raise ValueError(f"{where}.verdict: expected a JSON boolean")
-    alternatives = emit_form_judgment_list(ex.get("alternatives", []), where + ".alternatives", "form")
+    contrasts   = emit_form_judgment_list(ex.get("contrasts", []), where + ".contrasts", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
     raw = ex.get("paperFeatures", [])
@@ -364,7 +364,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     glossedTokens := {glossed}{gloss_lines}
     context := {lean_string(context)}
     judgment := {judgment}{verdict_line}
-    alternatives := {alternatives}
+    contrasts := {contrasts}
     readings := {readings}
     paperFeatures := {features} }}"""
 
@@ -688,7 +688,7 @@ def process_languages(check: bool) -> bool:
 KEY_ORDER = [
     "id", "source", "reportedIn", "method", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
-    "judgment", "verdict", "alternatives", "readings", "paperFeatures", "comment",
+    "judgment", "verdict", "contrasts", "readings", "paperFeatures", "comment",
     "verified",
 ]
 
@@ -747,7 +747,7 @@ def _fmt_value(key: str, v, indent: str) -> str:
     if isinstance(v, list):
         if key == "glossedTokens":
             return _fmt_inline_list([_j(x) for x in v], indent)
-        if key in ("paperFeatures", "alternatives", "readings"):
+        if key in ("paperFeatures", "contrasts", "readings"):
             items = [
                 _fmt_obj_inline(x) if isinstance(x, dict) else _j(x) for x in v
             ]

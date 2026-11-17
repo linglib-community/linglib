@@ -24,7 +24,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "a homogeneous verb heads a non-quantized VP whatever its object")] }
 
@@ -39,7 +39,7 @@ def ex_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "raz- 'in excess' embeds under a phase verb")] }
 
@@ -54,7 +54,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "iz- 'completely' is incompatible with beginning")] }
 
@@ -67,7 +67,7 @@ def ex_20g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "na- means 'a lot', not 'all': no definite object")] }
 

@@ -26,7 +26,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination")] }
 
@@ -41,7 +41,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after-finish", .acceptable), ("after-start", .unacceptable)]
     paperFeatures := [("construction", "after"), ("embedded", "process")] }
 
@@ -56,7 +56,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "imperfective")] }
 
@@ -71,7 +71,7 @@ def ex_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "perfective")] }
 
@@ -86,7 +86,7 @@ def ex_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "pfv.neut")] }
 
@@ -101,7 +101,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "aia")] }
 

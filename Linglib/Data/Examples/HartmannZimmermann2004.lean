@@ -26,7 +26,7 @@ def ex17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "subject"), ("aspect", "perfective"), ("strategy", "postposing")] }
 
@@ -41,7 +41,7 @@ def ex24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "perfective"), ("strategy", "unmarked")] }
 
@@ -56,7 +56,7 @@ def ex24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: Mairo yaa-gó náŋ? 'What did Mairo do?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "suffixI"), ("transitive", "false")] }
 
@@ -71,7 +71,7 @@ def ex25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: What did Laku sell?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
@@ -86,7 +86,7 @@ def ex25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: What did Laku do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
@@ -101,7 +101,7 @@ def ex25c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: What did Laku do at the market? Did she buy a dress or did she sell a dress?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
@@ -116,7 +116,7 @@ def ex31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
@@ -131,7 +131,7 @@ def ex32a : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Lakú n ball náŋ? 'What is Laku writing?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
@@ -146,7 +146,7 @@ def ex32b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Lakú n yaaj náŋ? 'What is Laku doing?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
@@ -161,7 +161,7 @@ def ex32c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Lakú n ball wasíika yá mad wasíika? 'Is Laku WRITING a letter or READING a letter?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
@@ -176,7 +176,7 @@ def ex36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("association", "object")] }
 
@@ -191,7 +191,7 @@ def ex36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("association", "vp")] }
 
@@ -206,7 +206,7 @@ def ex36c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("association", "verb")] }
 

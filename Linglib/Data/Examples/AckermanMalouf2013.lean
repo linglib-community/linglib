@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "polysynthesis"), ("complexity", "enumerative")] }
 

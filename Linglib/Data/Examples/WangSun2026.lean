@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Num _ Cl")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "bare"), ("position", "Cl _ N")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Num _ Cl")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "bare"), ("position", "Num _ Cl")] }
 
@@ -86,7 +86,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Cl _ N")] }
 
@@ -101,7 +101,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dislocation", "Cl N")] }
 
@@ -116,7 +116,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dislocation", "N")] }
 
@@ -131,7 +131,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dislocation", "Num Cl")] }
 
@@ -146,7 +146,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "numeral"), ("modifier", "post-classifier")] }
 
@@ -161,7 +161,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "numeral"), ("modifier", "pre-nominal")] }
 
@@ -176,7 +176,7 @@ def ex_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "none"), ("reading", "sortal")] }
 
@@ -191,7 +191,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "de"), ("reading", "mensural")] }
 
@@ -206,7 +206,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "de-marked"), ("position", "D _ Num")] }
 
@@ -221,7 +221,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "two de-marked"), ("target", "D")] }
 
@@ -236,7 +236,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "nested de-marked")] }
 
@@ -251,7 +251,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topicalisation", "D")] }
 
@@ -266,7 +266,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topicalisation", "N"), ("modifier", "2-part of Cl")] }
 
@@ -281,7 +281,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topicalisation", "N"), ("modifier", "2-part of D")] }
 
@@ -296,7 +296,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "measure"), ("noun", "absent")] }
 

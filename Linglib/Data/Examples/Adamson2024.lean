@@ -26,7 +26,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
@@ -41,7 +41,7 @@ def ex_39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II")] }
 
@@ -56,7 +56,7 @@ def ex_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
@@ -71,7 +71,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II")] }
 
@@ -86,7 +86,7 @@ def ex_44a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
@@ -101,7 +101,7 @@ def ex_44b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "alienable"), ("gender", "II")] }
 
@@ -116,7 +116,7 @@ def ex_45b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "alienable"), ("gender", "II"), ("alienator", "-na")] }
 
@@ -131,7 +131,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "compound"), ("gender", "II")] }
 
@@ -146,7 +146,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I"), ("possessorGender", "II")] }
 
@@ -161,7 +161,7 @@ def ex_50 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "inalienable"), ("article", "proprial")] }
 
@@ -176,7 +176,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II"), ("alienator", "-na")] }
 
@@ -191,7 +191,7 @@ def ex_52 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jane mani", .acceptable)]
+    contrasts := [("Jane mani", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("agreement", "possessor")] }
 
@@ -206,7 +206,7 @@ def ex_53 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("mee mani", .acceptable)]
+    contrasts := [("mee mani", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("agreement", "possessor")] }
 
@@ -221,7 +221,7 @@ def ex_64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Okomobi kaa tao.kana", .acceptable)]
+    contrasts := [("Okomobi kaa tao.kana", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("marker", "juxtaposition")] }
 
@@ -236,7 +236,7 @@ def ex_70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jaki mee afe so to-sa-ke bofe jaa", .acceptable)]
+    contrasts := [("Jaki mee afe so to-sa-ke bofe jaa", .acceptable)]
     readings := []
     paperFeatures := [("agreement", "possessor"), ("target", "declarative")] }
 
@@ -251,7 +251,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jane mani baki", .acceptable)]
+    contrasts := [("Jane mani baki", .acceptable)]
     readings := []
     paperFeatures := [("construction", "complex possessor"), ("pattern", "match")] }
 
@@ -266,7 +266,7 @@ def ex_73 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ti-mano baki", .acceptable)]
+    contrasts := [("ti-mano baki", .acceptable)]
     readings := []
     paperFeatures := [("construction", "complex possessor"), ("pattern", "mismatch")] }
 
@@ -281,7 +281,7 @@ def ex_75a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ee teme biti", .ungrammatical)]
+    contrasts := [("ee teme biti", .ungrammatical)]
     readings := []
     paperFeatures := [("agreement", "attributive"), ("gender", "feminine")] }
 
@@ -296,7 +296,7 @@ def ex_80 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("∅-djagaḍa ni-wini", .acceptable), ("řa-maŋadji nanda-wini", .acceptable)]
+    contrasts := [("∅-djagaḍa ni-wini", .acceptable), ("řa-maŋadji nanda-wini", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
@@ -312,7 +312,7 @@ def ex_88 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("igih e-pe waninggap k-a.", .acceptable), ("igih i-pe waninggap k-a.", .acceptable)]
+    contrasts := [("igih e-pe waninggap k-a.", .acceptable), ("igih i-pe waninggap k-a.", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
@@ -327,7 +327,7 @@ def ex_89 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("basik hi nanih", .acceptable)]
+    contrasts := [("basik hi nanih", .acceptable)]
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
@@ -342,7 +342,7 @@ def ex_100 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("osso", .acceptable), ("ossi", .acceptable)]
+    contrasts := [("osso", .acceptable), ("ossi", .acceptable)]
     readings := []
     paperFeatures := [("number", "on n"), ("gender", "feminine")] }
 

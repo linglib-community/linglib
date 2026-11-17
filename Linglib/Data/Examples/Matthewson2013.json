@@ -22,7 +22,7 @@
     "translation": "It might be raining.",
     "context": "You hear pattering, and you're not entirely sure what it is.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -76,7 +76,7 @@
     "translation": "He must have been sick.",
     "context": "Joe left the meeting looking really green in the face and sweaty. Someone asks you why he left.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -158,7 +158,7 @@
     "translation": "Maybe he's fishing, maybe he's not fishing.",
     "context": "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "possibly not",
@@ -205,7 +205,7 @@
     "translation": "They might have been winning. [according to my evidence last night]",
     "context": "The Canucks were playing last night. You weren't watching the game but you heard your son sounding excited and happy from the living room where he was watching the game, so you thought they were winning. You found out after the game that the Canucks lost 20–0, and your son was happy about something else that his friend had told him on his cellphone.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -259,7 +259,7 @@
     "translation": "They might be winning.",
     "context": "You can hear people hollering, so the Canucks might be winning.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -313,7 +313,7 @@
     "translation": "They might win.",
     "context": "You are watching the Canucks. They might win.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -363,7 +363,7 @@
     "translation": "It might have rained. / It might be raining.",
     "context": "You see puddles, and the flowers looking fresh and damp.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -417,7 +417,7 @@
     "translation": "It might rain (in the future).",
     "context": "You see puddles, and the flowers looking fresh and damp.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -467,7 +467,7 @@
     "translation": "He might have been sick. / He might be sick (now).",
     "context": "Why wasn't Joe at the meeting yesterday?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -521,7 +521,7 @@
     "translation": "He might be sick (in future).",
     "context": "Why wasn't Joe at the meeting yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -571,7 +571,7 @@
     "translation": "It might have rained. / It might be raining.",
     "context": "You hear pattering on the roof.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -625,7 +625,7 @@
     "translation": "It might rain (in the future).",
     "context": "You hear pattering on the roof.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -675,7 +675,7 @@
     "translation": "He might have been sick. / He might be sick (now).",
     "context": "Why isn't Joe here?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -729,7 +729,7 @@
     "translation": "He might be sick (in future).",
     "context": "Why isn't Joe here?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -779,7 +779,7 @@
     "translation": "It might have rained. / It might be raining.",
     "context": "You hear thunder, so you think it might rain soon.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -833,7 +833,7 @@
     "translation": "It might rain (in the future).",
     "context": "You hear thunder, so you think it might rain soon.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -883,7 +883,7 @@
     "translation": "He might have been sick. / He might be sick (now).",
     "context": "He's wearing no coat in the rain, he might get sick.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -937,7 +937,7 @@
     "translation": "He might be sick (in future).",
     "context": "He's wearing no coat in the rain, he might get sick.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -991,7 +991,7 @@
     "translation": "It might have rained. [based on my evidence earlier]",
     "context": "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1053,7 +1053,7 @@
     "translation": "It might have rained. [based on my evidence earlier]",
     "context": "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1107,7 +1107,7 @@
     "translation": "It might have been going to rain.",
     "context": "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1161,7 +1161,7 @@
     "translation": "It might have been going to rain.",
     "context": "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1211,7 +1211,7 @@
     "translation": "(I heard that) Bob sang.",
     "context": "Yesterday, Henry told you that Bob sang last week.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1269,7 +1269,7 @@
     "translation": "(I heard that) Bob would/will sing.",
     "context": "Yesterday, Henry told you that Bob sang last week.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1319,7 +1319,7 @@
     "translation": "(I heard that) Bob sang.",
     "context": "Yesterday, Henry told you that Bob was singing (at that time).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1377,7 +1377,7 @@
     "translation": "(I heard that) Bob would/will sing.",
     "context": "Yesterday, Henry told you that Bob was singing (at that time).",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1427,7 +1427,7 @@
     "translation": "(I heard that) Bob sang.",
     "context": "Yesterday, Henry told you that Bob would be singing later that day.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1481,7 +1481,7 @@
     "translation": "(I heard that) Bob would/will sing.",
     "context": "Yesterday, Henry told you that Bob would be singing later that day.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1567,7 +1567,7 @@
     "translation": "Four people can fit in this car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1645,7 +1645,7 @@
     "translation": "Four people can fit in this car.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1703,7 +1703,7 @@
     "translation": "I was able to work yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1757,7 +1757,7 @@
     "translation": "I was able to work yesterday.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1831,7 +1831,7 @@
     "translation": "I was able to work yesterday, but I didn't.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1901,7 +1901,7 @@
     "translation": "You could eat less cake.",
     "context": "Given that you want to be thinner, ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1971,7 +1971,7 @@
     "translation": "Now we can make noise.",
     "context": "We are burglars in someone's house, and we discover the residents are still at home, so we have to be quiet if we don't want to be caught. Finally the people leave, so we can make noise now.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2029,7 +2029,7 @@
     "translation": "My mother told me I could play.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2084,7 +2084,7 @@
     "translation": "He should be very sick.",
     "context": "Bob ate bad chicken last night. He should be sick now (given the facts about what he ate).",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2142,7 +2142,7 @@
     "translation": "It was allowed that Savanna went home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2200,7 +2200,7 @@
     "translation": "It was allowed that Savanna went home.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2259,7 +2259,7 @@
     "translation": "Berries can grow here.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2317,7 +2317,7 @@
     "translation": "I'm allowed to work tonight. [Lit., They allow me to work tonight.]",
     "context": "\"Can you go out tonight?\" \"No, I have to work.\"",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2375,7 +2375,7 @@
     "translation": "Lisa should/must go home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2437,7 +2437,7 @@
     "translation": "Lisa should/must go home.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2499,7 +2499,7 @@
     "translation": "He should be sick now.",
     "context": "Bob ate bad chicken last night, so he should be sick now.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2589,7 +2589,7 @@
     "translation": "If he wants to go to Whistler, he has to take Highway 99.",
     "context": "There is only one way to get to Whistler: Highway 99.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2675,7 +2675,7 @@
     "translation": "If you go to Lillooet, you should take Highway 99.",
     "context": "There are two ways to get to Lillooet: Highway 99 or Highway 1. Highway 99 is better.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2733,7 +2733,7 @@
     "translation": "You should try this cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2795,7 +2795,7 @@
     "translation": "You MUST try this cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2841,7 +2841,7 @@
     "translation": "I have to sneeze. [Lit., I'm going to sneeze.]",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2888,7 +2888,7 @@
     "translation": "I should sneeze.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2950,7 +2950,7 @@
     "translation": "We must all die.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3012,7 +3012,7 @@
     "translation": "We must all die.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

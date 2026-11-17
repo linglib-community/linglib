@@ -13,7 +13,7 @@
     "context": "Student Mary did not call, and John is agnostic as to whether she called; of every student who called he believes that they called.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -38,7 +38,7 @@
     "context": "Mary is a student who called; John knows exactly who called but does not know that Mary is a student.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -67,7 +67,7 @@
     "context": "Mary is a student who called; John knows exactly who called but does not know that Mary is a student.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -115,7 +115,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -139,7 +139,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -212,7 +212,7 @@
     "context": "Any, even one where John has no idea who, if anyone, is a student.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -237,7 +237,7 @@
     "context": "Bill is married to Sue; both are students and live with each other, and no other students live with their spouses. John is well informed about these facts, except that he falsely believes Sue not to be a student.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -262,7 +262,7 @@
     "context": "Of exactly two elementary particles only one had been discovered by 1978; Feynman's beliefs in 1978 are compatible with the actual world and with one where the discovered particle is the only elementary particle and the only one discovered.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Jean souvent embrasse Marie.", .ungrammatical)]
+    contrasts := [("Jean souvent embrasse Marie.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "T")] }
 
@@ -37,7 +37,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sue eats often fish.", .ungrammatical)]
+    contrasts := [("Sue eats often fish.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "V")] }
 
@@ -50,7 +50,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -65,7 +65,7 @@ def ex_10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -80,7 +80,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "declarative")] }
 
@@ -95,7 +95,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "relative")] }
 
@@ -110,7 +110,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "relative"), ("relPrefixPosition", "T")] }
 
@@ -125,7 +125,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "v2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "false")] }
 
@@ -140,7 +140,7 @@ def ex_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "V")] }
 
@@ -155,7 +155,7 @@ def ex_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "imperativeAff"), ("verbType", "lexical"), ("finitePosition", "C"), ("imperativeForm", "true")] }
 
@@ -170,7 +170,7 @@ def ex_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "imperativeNeg"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "false")] }
 
@@ -185,7 +185,7 @@ def ex_33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "imperativeAff"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "true")] }
 
@@ -200,7 +200,7 @@ def ex_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "imperativeNeg"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "false")] }
 
@@ -213,7 +213,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sue doesn't eat fish.", .acceptable), ("Sue not eats fish.", .ungrammatical), ("Sue eats not fish.", .ungrammatical)]
+    contrasts := [("Sue doesn't eat fish.", .acceptable), ("Sue not eats fish.", .ungrammatical), ("Sue eats not fish.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true"), ("verbForm", "bare")] }
 
@@ -226,7 +226,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sue so eats fish.", .ungrammatical), ("Sue eats so fish.", .ungrammatical)]
+    contrasts := [("Sue so eats fish.", .ungrammatical), ("Sue eats so fish.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "verum"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true"), ("verbForm", "bare")] }
 
@@ -239,7 +239,7 @@ def ex_36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Where Sue eats fish?", .ungrammatical), ("Where eats Sue fish?", .ungrammatical)]
+    contrasts := [("Where Sue eats fish?", .ungrammatical), ("Where eats Sue fish?", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "bare")] }
 
@@ -252,7 +252,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sue isn't eating fish.", .acceptable), ("Sue does not be eating fish.", .ungrammatical), ("Sue doesn't be eating fish.", .ungrammatical)]
+    contrasts := [("Sue isn't eating fish.", .acceptable), ("Sue does not be eating fish.", .ungrammatical), ("Sue doesn't be eating fish.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -265,7 +265,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sue DOES (so) be eating fish.", .ungrammatical)]
+    contrasts := [("Sue DOES (so) be eating fish.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "verum"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -278,7 +278,7 @@ def ex_37c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Where does Sue be eating fish?", .ungrammatical)]
+    contrasts := [("Where does Sue be eating fish?", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "auxiliary"), ("finitePosition", "C"), ("doSupport", "false")] }
 
@@ -291,7 +291,7 @@ def fn38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "subjectWh"), ("verbType", "lexical"), ("finitePosition", "V"), ("doSupport", "false")] }
 
@@ -306,7 +306,7 @@ def ex_51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "V"), ("doSupport", "false")] }
 
@@ -319,7 +319,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "v2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "false")] }
 
@@ -334,7 +334,7 @@ def ex_53a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "T")] }
 
@@ -349,7 +349,7 @@ def ex_53b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -364,7 +364,7 @@ def ex_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "auxiliary"), ("finitePosition", "T")] }
 
@@ -379,7 +379,7 @@ def ex_55 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "auxiliary"), ("finitePosition", "C"), ("doSupport", "false")] }
 
@@ -394,7 +394,7 @@ def ex_56b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("maja-l", .ungrammatical)]
+    contrasts := [("maja-l", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "infinitive")] }
 
@@ -409,7 +409,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "infinitive")] }
 
@@ -422,7 +422,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "ellipsis"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true")] }
 
@@ -437,7 +437,7 @@ def ex_62 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Chciałam mu dać książkę i ją dałam.", .ungrammatical)]
+    contrasts := [("Chciałam mu dać książkę i ją dałam.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "ellipsis"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "false")] }
 
@@ -452,7 +452,7 @@ def ex_67 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mona og Jasper vaskede bilen, eller rettere Mona vaskede.", .ungrammatical)]
+    contrasts := [("Mona og Jasper vaskede bilen, eller rettere Mona vaskede.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "ellipsisV2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true")] }
 
@@ -467,7 +467,7 @@ def ex_70 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
@@ -480,7 +480,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "bare")] }
 
@@ -495,7 +495,7 @@ def ex_74a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
@@ -510,7 +510,7 @@ def ex_74b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
@@ -525,7 +525,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("… och köra bilen gjorde han.", .ungrammatical)]
+    contrasts := [("… och köra bilen gjorde han.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "finite")] }
 
@@ -540,7 +540,7 @@ def ex_80a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
@@ -555,7 +555,7 @@ def ex_80b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
@@ -570,7 +570,7 @@ def ex_80c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
@@ -585,7 +585,7 @@ def ex_82 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := [("Jesteć w domu, jesteśmy.", .ungrammatical)]
+    contrasts := [("Jesteć w domu, jesteśmy.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
@@ -598,7 +598,7 @@ def ex_84 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Went, he did.", .ungrammatical)]
+    contrasts := [("Went, he did.", .ungrammatical)]
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "bare")] }
 

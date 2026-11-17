@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "present"), ("environment", "root"), ("then", "incompatible")] }
 
@@ -37,7 +37,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "root"), ("then", "compatible")] }
 
@@ -50,7 +50,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "root"), ("then", "compatible")] }
 
@@ -63,7 +63,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted present: the pregnancy overlaps the knowledge in 2000", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -89,7 +89,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -102,7 +102,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -115,7 +115,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("double access: Mary loves John at the utterance time and at the finding out", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no")] }
 
@@ -128,7 +128,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
@@ -141,7 +141,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
@@ -154,7 +154,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
@@ -167,7 +167,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -180,7 +180,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -193,7 +193,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -206,7 +206,7 @@ def ex_30d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "deleted"), ("then", "variation")] }
 
@@ -219,7 +219,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
@@ -232,7 +232,7 @@ def ex_31d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "deleted"), ("then", "compatible")] }
 
@@ -245,7 +245,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := "Two friends are making plans to go to the movies on Saturday; one says this before they leave."
     judgment := .ungrammatical
-    alternatives := [("Sonotoki ai-mashou.", .acceptable)]
+    contrasts := [("Sonotoki ai-mashou.", .acceptable)]
     readings := []
     paperFeatures := [("matrix", "future"), ("then", "past-oriented only")] }
 
@@ -258,7 +258,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous: the love overlaps the belief", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "past"), ("then", "compatible")] }
 
@@ -271,7 +271,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the meeting is at the time of the future saying, three days from now", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "deleted past"), ("then", "compatible")] }
 
@@ -284,7 +284,7 @@ def ex_99 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("indexical", "unshifted")] }
 

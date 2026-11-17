@@ -26,7 +26,7 @@ def venir_1sg_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "venir"), ("stem", "veng")] }
 
@@ -41,7 +41,7 @@ def venir_2sg_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "venir"), ("stem", "vien")] }
 
@@ -56,7 +56,7 @@ def venir_1pl_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "venir"), ("stem", "ven")] }
 
@@ -71,7 +71,7 @@ def venir_1sg_sbjv : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.SBJV"), ("lexeme", "venir"), ("stem", "veng")] }
 
@@ -86,7 +86,7 @@ def nacer_1sg_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθk")] }
 
@@ -101,7 +101,7 @@ def nacer_1pl_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθ")] }
 
@@ -116,7 +116,7 @@ def caber_1sg_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kep")] }
 
@@ -131,7 +131,7 @@ def caber_2sg_ind : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kab")] }
 
@@ -146,7 +146,7 @@ def ra_npst_1sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "NPST.1SG"), ("lexeme", "ra")] }
 
@@ -161,7 +161,7 @@ def ra_npst_2sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "NPST.2SG"), ("lexeme", "ra")] }
 
@@ -176,7 +176,7 @@ def ra_npst_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "NPST.3SG"), ("lexeme", "ra")] }
 
@@ -191,7 +191,7 @@ def ra_pst_2sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "PST.2SG"), ("lexeme", "ra")] }
 
@@ -206,7 +206,7 @@ def ra_pst_1sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cell", "PST.1SG"), ("lexeme", "ra")] }
 

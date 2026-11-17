@@ -24,7 +24,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "vuite"), ("pluralForm", "tenne"), ("conditioner", "subject")] }
 
@@ -37,7 +37,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "siika"), ("pluralForm", "saka"), ("conditioner", "subject")] }
 
@@ -50,7 +50,7 @@ def ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "weama"), ("pluralForm", "rehte"), ("conditioner", "subject")] }
 
@@ -63,7 +63,7 @@ def ex3d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "kivake"), ("pluralForm", "kiime"), ("conditioner", "subject")] }
 
@@ -76,7 +76,7 @@ def ex3e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "vo'e"), ("pluralForm", "to'e"), ("conditioner", "subject")] }
 
@@ -89,7 +89,7 @@ def ex3f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "weye"), ("pluralForm", "kaate"), ("conditioner", "subject")] }
 
@@ -102,7 +102,7 @@ def ex3g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "mea"), ("pluralForm", "sua"), ("conditioner", "object")] }
 
@@ -117,7 +117,7 @@ def ex6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Vempo aman vuite-k.", .ungrammatical)]
+    contrasts := [("Vempo aman vuite-k.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "singular")] }
 
@@ -132,7 +132,7 @@ def ex6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Aapo aman tenne-k.", .ungrammatical)]
+    contrasts := [("Aapo aman tenne-k.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "plural")] }
 
@@ -145,7 +145,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "oneReplacement"), ("stranded", "argument")] }
 
@@ -158,7 +158,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "oneReplacement"), ("stranded", "adjunct")] }
 
@@ -173,7 +173,7 @@ def ex26a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "singular")] }
 
@@ -188,7 +188,7 @@ def ex26b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "plural")] }
 
@@ -203,7 +203,7 @@ def ex27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("objectNumber", "singular")] }
 
@@ -218,7 +218,7 @@ def ex27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("objectNumber", "plural")] }
 
@@ -233,7 +233,7 @@ def ex29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "case")] }
 
@@ -248,7 +248,7 @@ def ex29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "case")] }
 
@@ -263,7 +263,7 @@ def ex30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unergative"), ("applicative", "suffixed")] }
 
@@ -278,7 +278,7 @@ def ex30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "transitive"), ("applicative", "suffixed")] }
 
@@ -293,7 +293,7 @@ def ex31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unaccusative"), ("applicative", "suffixed")] }
 
@@ -308,7 +308,7 @@ def ex32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "suffixed")] }
 
@@ -323,7 +323,7 @@ def ex32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "periphrastic")] }
 
@@ -338,7 +338,7 @@ def exfn33_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive"), ("applicative", "suffixed")] }
 

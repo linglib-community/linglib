@@ -54,7 +54,7 @@
     "translation": "Someone might/must have been walking outside, but it was the wind.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -132,7 +132,7 @@
     "translation": "It sounded like someone was walking outside, but it was the wind.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -190,7 +190,7 @@
     "translation": "The pie might/must have been good, but it wasn't good.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -252,7 +252,7 @@
     "translation": "The pie seemed good, but it wasn't good.",
     "context": "It smelled as if the pie was good, but there was too much salt so it was actually horrible.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -298,7 +298,7 @@
     "translation": "He might be going fishing. / He must be going fishing. / He's probably going fishing. / He's likely going fishing. / He could be going fishing. / Maybe/perhaps he's going fishing.",
     "context": "You're wondering where your friend is. You notice his rod and tackle box are not in their usual place.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "possibility",
@@ -369,7 +369,7 @@
     "translation": "Maybe he's fishing, maybe he's not fishing.",
     "context": "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "possibility",
@@ -432,7 +432,7 @@
     "translation": "They are throwing away a lot of food that they could eat. / They are throwing away a lot of food that they should eat.",
     "context": "I am watching people clean out a cooler and throw away various things.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "possibility",
@@ -503,7 +503,7 @@
     "translation": "They are throwing away all the food that they could eat. They are throwing away all their food.",
     "context": "As in (39).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "possibility",
@@ -562,7 +562,7 @@
     "translation": "Mary might be running.",
     "context": "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -612,7 +612,7 @@
     "translation": "Mary might be running.",
     "context": "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -662,7 +662,7 @@
     "translation": "Mary must be running.",
     "context": "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -712,7 +712,7 @@
     "translation": "Mary might be running.",
     "context": "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -770,7 +770,7 @@
     "translation": "Yesterday, I didn't know it was a snake, it might have been a dog.",
     "context": "Stacey bought a bone for Pat's pet, thinking it might be a dog. Later, she finds out the pet is a snake. When Pat asks her why she bought a bone, she says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -820,7 +820,7 @@
     "translation": "You might have been sick.",
     "context": "Your neighbour doesn't show up for work and you know there's been a flu going around. You send your son to bring her hot soup. She actually took the day off because her apartment flooded, so she asks why you sent her soup in the middle of the day.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -862,7 +862,7 @@
     "translation": "It might have rained.",
     "context": "When you looked out of your window earlier today the ground was wet, so it looked like it might have rained. But you find out later that sprinklers had been watering the ground.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -912,7 +912,7 @@
     "translation": "It might have rained. [based on my evidence earlier]",
     "context": "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -970,7 +970,7 @@
     "translation": "It might have been raining earlier.",
     "context": "When you looked out your window earlier today, water was falling, so it looked like it was raining. But you found out later it was the gutters leaking.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1028,7 +1028,7 @@
     "translation": "It might have been going to rain.",
     "context": "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1082,7 +1082,7 @@
     "translation": "It might have rained.",
     "context": "You see puddles, and the flowers looking fresh and damp.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1132,7 +1132,7 @@
     "translation": "It might be raining.",
     "context": "You hear pattering on the roof.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1182,7 +1182,7 @@
     "translation": "It might rain (in the future).",
     "context": "You hear thunder, so you think it might rain soon.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1240,7 +1240,7 @@
     "translation": "He/she/they might have left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1326,7 +1326,7 @@
     "translation": "Tom is fishing today ... he's probably well.",
     "context": "Tom wasn't fishing yesterday, and you were wondering about his health. But today you see him fishing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1404,7 +1404,7 @@
     "translation": "The boy must have fallen in the mud.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1482,7 +1482,7 @@
     "translation": "That child is able to fix motorbikes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1568,7 +1568,7 @@
     "translation": "We should go to Queen Street today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John didn't do all of the homework", "judgment": "acceptable"},
       {"name": "inference: John did all of the homework", "judgment": "unacceptable"}
@@ -35,7 +35,7 @@
     "translation": "",
     "context": "Mary got drunk. What did John do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John didn't get drunk", "judgment": "acceptable"}
     ],
@@ -58,7 +58,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John did some of the homework", "judgment": "acceptable"}
     ],
@@ -82,7 +82,7 @@
     "translation": "",
     "context": "What happened at school today?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John did some of the homework", "judgment": "acceptable"}
     ],
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "Bill went for a run and didn't smoke. What did John do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John smoked", "judgment": "acceptable"}
     ],
@@ -129,7 +129,7 @@
     "translation": "",
     "context": "Bill went for a run. He didn't smoke. What did John do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John smoked", "judgment": "acceptable"}
     ],
@@ -153,7 +153,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the glass is not empty", "judgment": "acceptable"},
       {"name": "inference: the glass is empty", "judgment": "unacceptable"}
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the glass is not full", "judgment": "acceptable"},
       {"name": "inference: the glass is full", "judgment": "unacceptable"}
@@ -203,7 +203,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: a tie is allowed", "judgment": "acceptable"},
       {"name": "inference: a tie is mandatory", "judgment": "unacceptable"}
@@ -227,7 +227,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: Mary's promotion is possible", "judgment": "acceptable"},
       {"name": "inference: Mary's promotion is impossible", "judgment": "unacceptable"}
@@ -251,7 +251,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: this neighbourhood is not dangerous", "judgment": "unacceptable"}
     ],
@@ -274,7 +274,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John is not small", "judgment": "unacceptable"}
     ],
@@ -297,7 +297,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the glass is not opaque", "judgment": "unacceptable"}
     ],
@@ -322,7 +322,7 @@
     "translation": "John is allowed to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John is not required to come", "judgment": "acceptable"}
     ],
@@ -348,7 +348,7 @@
     "translation": "John must come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John-wa ko-naku-te-wa ike-nai.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -373,7 +373,7 @@
     "translation": "John needs to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["case", "too few lexical alternatives"],
@@ -393,7 +393,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: going to confession is optional", "judgment": "acceptable"},
       {"name": "inference: going to confession is required", "judgment": "unacceptable"}
@@ -418,7 +418,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the heater intermittently squeaks", "judgment": "acceptable"},
       {"name": "inference: the heater constantly squeaks", "judgment": "unacceptable"}
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John didn't see all of the students", "judgment": "acceptable"}
     ],
@@ -467,7 +467,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John saw some of the students", "judgment": "acceptable"},
       {"name": "inference, when many is relevant: John saw many of the students", "judgment": "acceptable"}
@@ -492,7 +492,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the glass is not empty", "judgment": "acceptable"}
     ],
@@ -516,7 +516,7 @@
     "translation": "",
     "context": "Bill ran and didn't smoke.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John smoked", "judgment": "acceptable"}
     ],
@@ -540,7 +540,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["case", "rsa"],

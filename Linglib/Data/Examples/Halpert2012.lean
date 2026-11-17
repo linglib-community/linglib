@@ -26,7 +26,7 @@ def ex127a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug")] }
 
@@ -41,7 +41,7 @@ def ex127b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "-aug")] }
 
@@ -56,7 +56,7 @@ def ex127c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("vDomain", "-aug")] }
 
@@ -71,7 +71,7 @@ def ex127d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("vDomain", "+aug")] }
 
@@ -86,7 +86,7 @@ def ex127e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "+aug"), ("vDomain", "-aug")] }
 
@@ -101,7 +101,7 @@ def ex129a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "appl")] }
 
@@ -116,7 +116,7 @@ def ex129b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "+aug"), ("vDomain", "-aug"), ("extension", "appl")] }
 
@@ -131,7 +131,7 @@ def ex129c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("vDomain", "+aug"), ("extension", "appl")] }
 
@@ -146,7 +146,7 @@ def ex130a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -161,7 +161,7 @@ def ex130b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "+aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -176,7 +176,7 @@ def ex130c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("vDomain", "+aug"), ("extension", "caus")] }
 
@@ -191,7 +191,7 @@ def ex134a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "-aug"), ("extension", "caus")] }
 
@@ -206,7 +206,7 @@ def ex134b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -221,7 +221,7 @@ def ex135a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "+aug"), ("vDomain", "-aug"), ("extension", "appl")] }
 
@@ -236,7 +236,7 @@ def ex135b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "appl")] }
 
@@ -251,7 +251,7 @@ def ex135c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "+aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "appl")] }
 
@@ -266,7 +266,7 @@ def ex135d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "-aug"), ("vDomain", "+aug"), ("extension", "appl")] }
 
@@ -281,7 +281,7 @@ def ex137a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "+aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -296,7 +296,7 @@ def ex137b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -311,7 +311,7 @@ def ex137c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "+aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus")] }
 
@@ -326,7 +326,7 @@ def ex137d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug"), ("above", "-aug"), ("vDomain", "+aug"), ("extension", "caus")] }
 
@@ -341,7 +341,7 @@ def ex139 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "+aug"), ("above", "+aug"), ("vDomain", "+aug"), ("extension", "caus"), ("extension", "appl"), ("verbForm", "conjoint")] }
 
@@ -356,7 +356,7 @@ def ex140 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus"), ("extension", "appl")] }
 
@@ -371,7 +371,7 @@ def ex141a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("above", "+aug"), ("vDomain", "-aug"), ("extension", "caus"), ("extension", "appl")] }
 
@@ -386,7 +386,7 @@ def ex141b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "+aug"), ("above", "-aug"), ("vDomain", "-aug"), ("extension", "caus"), ("extension", "appl")] }
 
@@ -401,7 +401,7 @@ def ex141c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "-aug"), ("above", "-aug"), ("vDomain", "+aug"), ("extension", "caus"), ("extension", "appl")] }
 
@@ -416,7 +416,7 @@ def ex118a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "-aug")] }
 
@@ -431,7 +431,7 @@ def ex118b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "-aug")] }
 
@@ -446,7 +446,7 @@ def ex121a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "-aug")] }
 
@@ -461,7 +461,7 @@ def ex121b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug")] }
 
@@ -476,7 +476,7 @@ def ex121c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("above", "-aug")] }
 
@@ -491,7 +491,7 @@ def ex218a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "-aug")] }
 
@@ -506,7 +506,7 @@ def ex218b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "-aug")] }
 
@@ -521,7 +521,7 @@ def ex181a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbForm", "disjoint")] }
 
@@ -536,7 +536,7 @@ def ex181b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbForm", "conjoint")] }
 
@@ -551,7 +551,7 @@ def ex182a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "+aug"), ("verbForm", "conjoint")] }
 
@@ -566,7 +566,7 @@ def ex182b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("above", "+aug"), ("verbForm", "disjoint")] }
 
@@ -581,7 +581,7 @@ def ex183a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "+aug"), ("verbForm", "conjoint")] }
 
@@ -596,7 +596,7 @@ def ex183b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "+aug"), ("verbForm", "disjoint")] }
 
@@ -611,7 +611,7 @@ def ex184a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("verbForm", "disjoint")] }
 
@@ -626,7 +626,7 @@ def ex184b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("verbForm", "conjoint")] }
 
@@ -641,7 +641,7 @@ def ex184c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("verbForm", "disjoint")] }
 
@@ -656,7 +656,7 @@ def ex184d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("verbForm", "conjoint")] }
 
@@ -671,7 +671,7 @@ def ex185a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("verbForm", "disjoint")] }
 
@@ -686,7 +686,7 @@ def ex185b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("verbForm", "conjoint")] }
 
@@ -701,7 +701,7 @@ def ex185c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("verbForm", "disjoint")] }
 
@@ -716,7 +716,7 @@ def ex185d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("verbForm", "conjoint")] }
 
@@ -731,7 +731,7 @@ def ex186a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("above", "+aug"), ("vDomain", "+aug"), ("extension", "appl"), ("verbForm", "conjoint")] }
 
@@ -746,7 +746,7 @@ def ex186b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("vDomain", "+aug"), ("extension", "appl"), ("verbForm", "conjoint")] }
 
@@ -761,7 +761,7 @@ def ex186c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("vDomain", "+aug"), ("extension", "appl"), ("verbForm", "disjoint")] }
 
@@ -776,7 +776,7 @@ def ex186d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("above", "+aug"), ("extension", "appl"), ("verbForm", "conjoint")] }
 
@@ -791,7 +791,7 @@ def ex186e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "+aug"), ("above", "+aug"), ("extension", "appl"), ("verbForm", "disjoint")] }
 
@@ -806,7 +806,7 @@ def ex187a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "adverb"), ("verbForm", "conjoint")] }
 
@@ -821,7 +821,7 @@ def ex187b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "adverb"), ("verbForm", "disjoint")] }
 
@@ -836,7 +836,7 @@ def ex240a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -851,7 +851,7 @@ def ex240b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "sengathi"), ("verbForm", "disjoint")] }
 
@@ -866,7 +866,7 @@ def ex241a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "ukuthi"), ("verbForm", "conjoint")] }
 
@@ -881,7 +881,7 @@ def ex241b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "ukuthi"), ("verbForm", "disjoint")] }
 
@@ -896,7 +896,7 @@ def ex242a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("outside", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -911,7 +911,7 @@ def ex242b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -926,7 +926,7 @@ def ex252a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "+aug"), ("vDomain", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -941,7 +941,7 @@ def ex252b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -956,7 +956,7 @@ def ex252c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vDomain", "sengathi"), ("verbForm", "conjoint")] }
 
@@ -971,7 +971,7 @@ def ex254a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vDomain", "+aug"), ("verbForm", "conjoint")] }
 
@@ -986,7 +986,7 @@ def ex254b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("vDomain", "-aug")] }
 
@@ -1001,7 +1001,7 @@ def ex255a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "+aug"), ("vDomain", "+aug"), ("verbForm", "conjoint")] }
 
@@ -1016,7 +1016,7 @@ def ex255b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "+aug"), ("vDomain", "-aug")] }
 
@@ -1031,7 +1031,7 @@ def ex255c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("outside", "+aug"), ("vDomain", "-aug"), ("vDomain", "+aug")] }
 
@@ -1046,7 +1046,7 @@ def ex67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug"), ("vDomain", "+aug")] }
 
@@ -1061,7 +1061,7 @@ def ex67b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "+aug"), ("matrixVDomain", "ukuthi"), ("vDomain", "+aug")] }
 
@@ -1076,7 +1076,7 @@ def ex112a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug"), ("vDomain", "-aug")] }
 
@@ -1091,7 +1091,7 @@ def ex112b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("A-ngi-cabang-i ukuthi uSipho u-bon-e lutho", .acceptable)]
+    contrasts := [("A-ngi-cabang-i ukuthi uSipho u-bon-e lutho", .acceptable)]
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug"), ("vDomain", "-aug")] }
 
@@ -1106,7 +1106,7 @@ def ex123 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "-aug"), ("matrixVDomain", "cp"), ("vDomain", "+aug")] }
 
@@ -1121,7 +1121,7 @@ def ex124a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "-aug"), ("matrixVDomain", "ukuthi"), ("vDomain", "+aug")] }
 
@@ -1136,7 +1136,7 @@ def ex124a_augmentless : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "-aug"), ("matrixVDomain", "ukuthi"), ("vDomain", "-aug")] }
 
@@ -1151,7 +1151,7 @@ def ex124b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "-aug"), ("vDomain", "+aug")] }
 
@@ -1166,7 +1166,7 @@ def ex124b_augmentless : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "-aug"), ("vDomain", "-aug")] }
 
@@ -1181,7 +1181,7 @@ def ex152a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ngi-fisa uSipho a-pheke iqanda", .acceptable)]
+    contrasts := [("ngi-fisa uSipho a-pheke iqanda", .acceptable)]
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug"), ("vDomain", "+aug")] }
 
@@ -1196,7 +1196,7 @@ def ex152c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "cp"), ("outside", "-aug"), ("vDomain", "+aug")] }
 
@@ -1211,7 +1211,7 @@ def ex245a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "ukuthi"), ("outside", "+aug")] }
 
@@ -1226,7 +1226,7 @@ def ex245b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "sengathi"), ("outside", "+aug")] }
 
@@ -1241,7 +1241,7 @@ def ex246a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "+aug"), ("matrixVDomain", "ukuthi")] }
 
@@ -1256,7 +1256,7 @@ def ex246b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("matrixVDomain", "+aug"), ("matrixVDomain", "sengathi")] }
 

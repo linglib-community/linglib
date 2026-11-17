@@ -24,7 +24,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "selection"), ("category", "verb")] }
 
@@ -37,7 +37,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "selection"), ("category", "noun")] }
 
@@ -50,7 +50,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "pronominalization"), ("category", "verb"), ("proform", "the same/likewise"), ("argument", "stranded")] }
 
@@ -63,7 +63,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "pronominalization"), ("category", "verb"), ("proform", "the same/likewise"), ("argument", "included")] }
 
@@ -78,7 +78,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "selection"), ("category", "verb")] }
 
@@ -93,7 +93,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "selection"), ("category", "noun")] }
 
@@ -108,7 +108,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "npEllipsis"), ("proform", "ien")] }
 
@@ -123,7 +123,7 @@ def ex_17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "pronominalization"), ("category", "noun"), ("proform", "ien"), ("argument", "stranded")] }
 
@@ -138,7 +138,7 @@ def ex_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("construction", "pronominalization"), ("category", "noun"), ("proform", "ien"), ("argument", "included")] }
 
@@ -153,7 +153,7 @@ def ex_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "bons"), ("form", "active")] }
 
@@ -168,7 +168,7 @@ def ex_18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "bons"), ("form", "nominalizedInfinitive")] }
 
@@ -183,7 +183,7 @@ def ex_18c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "bons"), ("form", "passive")] }
 
@@ -198,7 +198,7 @@ def ex_19a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "das"), ("form", "active")] }
 
@@ -213,7 +213,7 @@ def ex_19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "das"), ("form", "passive")] }
 
@@ -228,7 +228,7 @@ def ex_19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "das"), ("form", "nominalizedInfinitive")] }
 
@@ -243,7 +243,7 @@ def ex_20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "strijdbijl"), ("form", "active")] }
 
@@ -258,7 +258,7 @@ def ex_20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "strijdbijl"), ("form", "nominalizedInfinitive")] }
 
@@ -273,7 +273,7 @@ def ex_20c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "strijdbijl"), ("form", "passive")] }
 
@@ -288,7 +288,7 @@ def ex_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "ijs"), ("form", "active")] }
 
@@ -303,7 +303,7 @@ def ex_21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "ijs"), ("form", "nominalizedInfinitive")] }
 
@@ -318,7 +318,7 @@ def ex_21c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "ijs"), ("form", "passive")] }
 
@@ -333,7 +333,7 @@ def ex_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "strijdbijl"), ("form", "nominalization")] }
 
@@ -348,7 +348,7 @@ def ex_22b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "ijs"), ("form", "nominalization")] }
 

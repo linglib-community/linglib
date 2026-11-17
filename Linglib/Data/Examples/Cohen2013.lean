@@ -24,7 +24,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("construction", "generic")] }
 
@@ -37,7 +37,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("construction", "habitual")] }
 
@@ -50,7 +50,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("construction", "habitual")] }
 
@@ -63,7 +63,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("construction", "verb conjunction")] }
 

@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP")] }
 
@@ -37,7 +37,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -50,7 +50,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -63,7 +63,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -76,7 +76,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "NP"), ("conjunct", "AP")] }
 
@@ -89,7 +89,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -102,7 +102,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "AP"), ("conjunct", "PP")] }
 
@@ -115,7 +115,7 @@ def ex_20d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "NP"), ("conjunct", "VP")] }
 
@@ -128,7 +128,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "NP"), ("conjunct", "AP"), ("conjunct", "NP")] }
 
@@ -141,7 +141,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "NP"), ("conjunct", "AP"), ("conjunct", "PP")] }
 
@@ -154,7 +154,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "NP"), ("conjunct", "AP"), ("conjunct", "NP")] }
 
@@ -167,7 +167,7 @@ def ex_21d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "NP"), ("conjunct", "AP"), ("conjunct", "PP")] }
 
@@ -180,7 +180,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "PP"), ("conjunct", "AP"), ("conjunct", "PP")] }
 
@@ -193,7 +193,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "PP"), ("conjunct", "AP"), ("conjunct", "NP")] }
 
@@ -206,7 +206,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -219,7 +219,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -232,7 +232,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP")] }
 
@@ -245,7 +245,7 @@ def ex_39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -258,7 +258,7 @@ def ex_39d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -271,7 +271,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -284,7 +284,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "NP")] }
 
@@ -297,7 +297,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -310,7 +310,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -323,7 +323,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -336,7 +336,7 @@ def ex_42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -349,7 +349,7 @@ def ex_42c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "NP")] }
 
@@ -362,7 +362,7 @@ def ex_42d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -375,7 +375,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -388,7 +388,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "NP")] }
 
@@ -401,7 +401,7 @@ def ex_43c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "follows"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -414,7 +414,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "non-ly AdvP"), ("modifier", "AP")] }
 
@@ -427,7 +427,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "non-ly AdvP")] }
 
@@ -440,7 +440,7 @@ def ex_44c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "AP")] }
 
@@ -453,7 +453,7 @@ def ex_44d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "AP"), ("modifier", "non-ly AdvP")] }
 
@@ -466,7 +466,7 @@ def p15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "-ly AdvP"), ("modifier", "AP")] }
 
@@ -479,7 +479,7 @@ def ex_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -492,7 +492,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -505,7 +505,7 @@ def ex_49c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -518,7 +518,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -531,7 +531,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -544,7 +544,7 @@ def ex_50c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -557,7 +557,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "AdvP"), ("conjunct", "AdvP"), ("conjunct", "AP")] }
 
@@ -570,7 +570,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "AP"), ("conjunct", "AdvP")] }
 
@@ -583,7 +583,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -596,7 +596,7 @@ def ex_55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -609,7 +609,7 @@ def ex_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "non-ly AdvP")] }
 
@@ -622,7 +622,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "non-ly AdvP")] }
 
@@ -635,7 +635,7 @@ def ex_56c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "non-ly AdvP")] }
 
@@ -648,7 +648,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "prenominal"), ("modifier", "-ly AdvP")] }
 
@@ -661,7 +661,7 @@ def ex_57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "-ly AdvP")] }
 
@@ -674,7 +674,7 @@ def ex_57c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "-ly AdvP")] }
 
@@ -687,7 +687,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "non-ly AdvP")] }
 
@@ -700,7 +700,7 @@ def ex_58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "non-ly AdvP")] }
 
@@ -713,7 +713,7 @@ def ex_59a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -726,7 +726,7 @@ def ex_59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -739,7 +739,7 @@ def ex_59c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -752,7 +752,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -765,7 +765,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -778,7 +778,7 @@ def ex_60c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "CP"), ("conjunct", "NP")] }
 
@@ -791,7 +791,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "PP")] }
 
@@ -804,7 +804,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "PP"), ("conjunct", "NP")] }
 
@@ -817,7 +817,7 @@ def ex_62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "NP"), ("conjunct", "PP")] }
 
@@ -830,7 +830,7 @@ def ex_62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "NP"), ("conjunct", "PP")] }
 
@@ -843,7 +843,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "AdvP")] }
 
@@ -856,7 +856,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "NP"), ("selects", "AP"), ("conjunct", "AdvP")] }
 
@@ -869,7 +869,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -882,7 +882,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -895,7 +895,7 @@ def ex_64d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -908,7 +908,7 @@ def ex_64e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "CP"), ("conjunct", "PP")] }
 
@@ -921,7 +921,7 @@ def ex_64f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -934,7 +934,7 @@ def ex_64g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -947,7 +947,7 @@ def ex_64h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -960,7 +960,7 @@ def ex_64i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "PP"), ("conjunct", "NP"), ("conjunct", "PP")] }
 
@@ -973,7 +973,7 @@ def ex_68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "CP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -986,7 +986,7 @@ def ex_68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "CP"), ("conjunct", "NP"), ("conjunct", "CP")] }
 
@@ -999,7 +999,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -1012,7 +1012,7 @@ def ex_69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "NP")] }
 
@@ -1025,7 +1025,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1038,7 +1038,7 @@ def ex_71b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1051,7 +1051,7 @@ def ex_72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -1064,7 +1064,7 @@ def ex_72b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "leftward displacement"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -1077,7 +1077,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "rightward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1090,7 +1090,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "rightward displacement"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1103,7 +1103,7 @@ def ex_74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "rightward displacement"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -1116,7 +1116,7 @@ def ex_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "rightward displacement"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "CP")] }
 
@@ -1129,7 +1129,7 @@ def ex_76a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1142,7 +1142,7 @@ def ex_76b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ellipsis"), ("selects", "CP"), ("conjunct", "CP")] }
 
@@ -1155,7 +1155,7 @@ def ex_77a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "CP")] }
 
@@ -1168,7 +1168,7 @@ def ex_77b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "CP")] }
 
@@ -1181,7 +1181,7 @@ def ex_101d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "-ly AdvP")] }
 

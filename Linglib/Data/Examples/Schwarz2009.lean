@@ -26,7 +26,7 @@ def ex25_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -41,7 +41,7 @@ def ex25_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -56,7 +56,7 @@ def ex26_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -71,7 +71,7 @@ def ex26_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -86,7 +86,7 @@ def ex28_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -101,7 +101,7 @@ def ex28_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -116,7 +116,7 @@ def ex29_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -131,7 +131,7 @@ def ex29_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes")] }
 
@@ -146,7 +146,7 @@ def ex31_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes"), ("covarying", "yes")] }
 
@@ -161,7 +161,7 @@ def ex31_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes"), ("covarying", "yes")] }
 
@@ -176,7 +176,7 @@ def ex40_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "immediateSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -191,7 +191,7 @@ def ex40_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "immediateSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -206,7 +206,7 @@ def ex41_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -221,7 +221,7 @@ def ex41_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "largerSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -236,7 +236,7 @@ def ex42_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -251,7 +251,7 @@ def ex42_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "largerSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -266,7 +266,7 @@ def ex46a_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("unique", "yes"), ("antecedent", "no")] }
 
@@ -281,7 +281,7 @@ def ex46b_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("unique", "no"), ("antecedent", "no")] }
 
@@ -296,7 +296,7 @@ def ex48_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("unique", "yes"), ("antecedent", "no"), ("covarying", "yes")] }
 
@@ -311,7 +311,7 @@ def ex58_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "partWholeBridging"), ("relation", "part"), ("antecedent", "relatum")] }
 
@@ -326,7 +326,7 @@ def ex58_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "partWholeBridging"), ("relation", "part"), ("antecedent", "relatum")] }
 
@@ -341,7 +341,7 @@ def ex59_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
 
@@ -356,7 +356,7 @@ def ex59_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
 
@@ -371,7 +371,7 @@ def ex62_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
@@ -386,7 +386,7 @@ def ex62_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
@@ -401,7 +401,7 @@ def ex63_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "partWholeBridging"), ("relation", "part"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
@@ -416,7 +416,7 @@ def ex231_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other"), ("covarying", "yes")] }
 
@@ -431,7 +431,7 @@ def ex231_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other"), ("covarying", "yes")] }
 
@@ -446,7 +446,7 @@ def ex275_weak : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "weak"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
 
@@ -461,7 +461,7 @@ def ex275_strong : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("article", "strong"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
 

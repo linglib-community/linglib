@@ -24,7 +24,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
@@ -37,7 +37,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
@@ -50,7 +50,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
@@ -63,7 +63,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
@@ -76,7 +76,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
@@ -89,7 +89,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
@@ -102,7 +102,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
@@ -115,7 +115,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "first"), ("redundant", "no")] }
 
@@ -128,7 +128,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "no")] }
 
@@ -141,7 +141,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "no")] }
 
@@ -154,7 +154,7 @@ def ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")] }
 
@@ -167,7 +167,7 @@ def ex50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "yes")] }
 
@@ -180,7 +180,7 @@ def ex63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")] }
 
@@ -193,7 +193,7 @@ def ex148a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀-over-if, equivalent to that of (148b)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")] }
 
@@ -206,7 +206,7 @@ def ex148b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀-over-if, equivalent to that of (148a)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")] }
 

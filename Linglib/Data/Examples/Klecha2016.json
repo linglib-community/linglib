@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Klecha's canonical SOT example. Past matrix (`thought`) + past embedded (`was pregnant`). Both RTs precede speech time; additionally, per the Upper Limit Constraint, the embedded RT (Carissa's pregnancy time) is no later than the matrix RT (Martina's thinking).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "simultaneous (pregnancy at thinking)",
@@ -66,7 +66,7 @@
     "translation": "",
     "context": "Naturally-occurring example showing future-shifted reading of embedded past under `hope`. `She missed the cut` is in past tense morphology but the cut-missing is future-of-the-hoping (Singh hoped, at the time of hoping, that the cut-missing would occur AFTER the hoping).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "future-shifted (missed-cut after hoping)",
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "Second naturally-occurring example of future-shifted past under `hope`. The kill-attempt is future of the hoping; the embedded past tense morphology doesn't force temporal precedence.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "future-shifted (try-to-kill after hoping)",
@@ -138,7 +138,7 @@
     "translation": "",
     "context": "Future-shifted reading under `pray`. `Got open` is past morphology but the getting-open is future-of-the-praying.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "future-shifted (got-open after praying)",
@@ -180,7 +180,7 @@
     "translation": "",
     "context": "Past morphology `survived` in the embedded clause of `pray`, but the surviving is future-of-the-praying (thirteen months out).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "future-shifted (survival after praying)",

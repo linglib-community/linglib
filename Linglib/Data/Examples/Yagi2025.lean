@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presuppositions", "conflicting")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "Bessarabia has a head of state, who is either a king or a president."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presuppositions", "conflicting")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "The state has either a king or a president."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes a king or a president", .acceptable), ("false if the head of state is not opening parliament", .acceptable)]
     paperFeatures := [("presuppositions", "conflicting")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if the liquid is fermenting", .acceptable)]
     paperFeatures := [("negation", "of conflicting disjunction")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if the head of the nation is not opening parliament", .acceptable)]
     paperFeatures := [("negation", "of conflicting disjunction")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that Bill has children", .acceptable)]
     paperFeatures := [("presupposition", "projects")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accommodation", "non-tautological")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the factive presupposition need not project", .acceptable)]
     paperFeatures := [("presupposition", "filtered")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one of the following obtains: it must be here; it must be there", .acceptable)]
     paperFeatures := [("reading", "salient reading")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "The phone will be answered by either a doctor or a secretary."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "modal split")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that if John is a scuba diver he has a wetsuit", .acceptable)]
     paperFeatures := [("presupposition", "conditional")] }
 

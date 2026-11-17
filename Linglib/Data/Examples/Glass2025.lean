@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "There is a meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "know"), ("state", "p")] }
 
@@ -37,7 +37,7 @@ def ex_2a_p : Datum :=
     glossedTokens := []
     context := "There is a meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "p")] }
 
@@ -50,7 +50,7 @@ def ex_2a_unsettled : Datum :=
     glossedTokens := []
     context := "It is open whether there is a meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "unsettled")] }
 
@@ -63,7 +63,7 @@ def ex_2a_notP : Datum :=
     glossedTokens := []
     context := "There is no meeting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "notP")] }
 
@@ -78,7 +78,7 @@ def ex_4_notP : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker faked illness to avoid school."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "notP")] }
 
@@ -93,7 +93,7 @@ def ex_4_p : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker is definitely sick."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "p")] }
 
@@ -108,7 +108,7 @@ def ex_5_notP : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker faked illness to avoid school."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "notP")] }
 
@@ -123,7 +123,7 @@ def ex_5_unsettled : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker feels exhausted and thinks she may indeed be sick, citing her mother's belief as evidence."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "unsettled")] }
 
@@ -138,7 +138,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := "The athlete caught the ball on the edge of the end zone and celebrates while the referees debate the catch; the speaker does not know whether he scored."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "unsettled")] }
 

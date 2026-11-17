@@ -24,7 +24,7 @@ def ex01 : Datum :=
     glossedTokens := []
     context := "Showcases that the underlined past tense \"were\" need not be interpreted as semantically past — the meal time is in the future of utterance, not the past."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("uninterpreted-past (SOT)", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex02 : Datum :=
     glossedTokens := []
     context := "Past tense \"was\" inside the future-complement \"would buy\" — the alive-time is the future buying time, not the saying-time and not the utterance time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("alive-at-buying (later-than-saying)", .acceptable), ("alive-at-saying", .acceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex03 : Datum :=
     glossedTokens := []
     context := "Multi-embedded SOT with two underlined past forms (\"was\", \"got\") both referring to future-of-utterance times."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("pregnancy-at-knowing (future-of-utterance)", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex05 : Datum :=
     glossedTokens := []
     context := "The past tense \"went\" need not refer to a time before the utterance time: will shifts the evaluation time into the future and the embedded past takes us back from there, so the past cannot be analyzed as a pronoun."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("going-to-Harvard before the marrying time, not necessarily before utterance", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := "Uttered at, say, 11 o'clock. John self-locates at 10 o'clock; his belief is not that the time of utterance is 10."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se (John self-locates at 10)", .acceptable), ("indexical (John thinks 11 is 10)", .marginal)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := "Embedded present-under-present. John self-locates at a time when he has a headache."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se (headache at John's now)", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := "Relative clause past tense under a matrix past. The relative-clause tense can be zero-bound (simultaneous with buying) or independently past."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (alive-at-buying, zero tense in RC)", .acceptable), ("independent past (alive-before-buying, past in RC)", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("RC zero-tense (alive-at-buying)", .acceptable), ("RC past-tense (alive-at-saying)", .acceptable)]
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := "Sickness is at yesterday (between thought-time two-days-ago and utterance). \"Would\" makes the relative future-from-thought reachable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sickness yesterday, after the self-located thought time (de se)", .acceptable)]
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := "Without \"would\", the embedded past forces sickness at the thought-time (two days ago), which conflicts with the adverbial \"yesterday\"."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("sickness-at-thought-time", .ungrammatical)]
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := "Past matrix with present embedded. Embedded present can be de re about a present state of Mary that the past ultrasound picture is about."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de re on present state", .marginal)]
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := "Ogihara-style paraphrase that makes the temporal de re explicit."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de re on present state (explicit)", .acceptable)]
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := "Looking at churches in Italy, no previous discourse. English simple past acceptable out of the blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")] }
 
@@ -195,7 +195,7 @@ def ex40b : Datum :=
     lgrConformance := some .wordAligned
     context := "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")] }
 
@@ -210,7 +210,7 @@ def ex40c : Datum :=
     lgrConformance := some .wordAligned
     context := "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")] }
 
@@ -223,7 +223,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := "English simple past in a relative clause inside a future matrix. Felicitous even without a contextually salient past interval."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past")] }
 
@@ -238,7 +238,7 @@ def ex41b : Datum :=
     lgrConformance := some .wordAligned
     context := "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Präteritum")] }
 
@@ -253,7 +253,7 @@ def ex41c : Datum :=
     lgrConformance := some .wordAligned
     context := "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Perfekt")] }
 
@@ -266,7 +266,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := "RC past \"caught\" can have either an anaphoric reading (relative to the dream-time) or an independent backward-shifted reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anaphoric (caught-before-dreaming)", .acceptable), ("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 
@@ -281,7 +281,7 @@ def ex42b : Datum :=
     lgrConformance := some .wordAligned
     context := "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .unacceptable)]
     paperFeatures := [] }
 
@@ -296,7 +296,7 @@ def ex42c : Datum :=
     lgrConformance := some .wordAligned
     context := "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 

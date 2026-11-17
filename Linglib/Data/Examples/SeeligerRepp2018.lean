@@ -24,7 +24,7 @@ def en_pdq : Datum :=
     glossedTokens := []
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
@@ -39,7 +39,7 @@ def de_pdq : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
@@ -54,7 +54,7 @@ def sv_pdq : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
@@ -67,7 +67,7 @@ def en_ndq : Datum :=
     glossedTokens := []
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
@@ -82,7 +82,7 @@ def de_ndq : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
@@ -97,7 +97,7 @@ def sv_ndq : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
@@ -110,7 +110,7 @@ def en_nrq : Datum :=
     glossedTokens := []
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative")] }
 
@@ -125,7 +125,7 @@ def de_nrq_doch_wohl : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative")] }
 
@@ -140,7 +140,7 @@ def sv_nrq_fronted_negation : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative"), ("negation", "fronted"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "direct")] }
 
@@ -153,7 +153,7 @@ def en_prq : Datum :=
     glossedTokens := []
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive")] }
 
@@ -168,7 +168,7 @@ def de_prq_doch_wohl : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive")] }
 
@@ -183,7 +183,7 @@ def sv_prq_men_val : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive"), ("negation", "none"), ("väl", "yes"), ("men", "yes"), ("visst/nog", "no"), ("evidence", "direct")] }
 
@@ -198,7 +198,7 @@ def sv_prq_visst : Datum :=
     lgrConformance := some .wordAligned
     context := "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out."
     judgment := .acceptable
-    alternatives := [("Nog kommer Peter?", .acceptable)]
+    contrasts := [("Nog kommer Peter?", .acceptable)]
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "direct")] }
 
@@ -213,7 +213,7 @@ def sv_23a : Datum :=
     lgrConformance := some .wordAligned
     context := "Ann: Noah is coming to the party tomorrow."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
@@ -228,7 +228,7 @@ def sv_23b : Datum :=
     lgrConformance := some .wordAligned
     context := "Ann: Noah is coming to the party tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "yes"), ("men", "yes"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
@@ -243,7 +243,7 @@ def sv_23c : Datum :=
     lgrConformance := some .wordAligned
     context := "Ann: Noah is coming to the party tomorrow."
     judgment := .unacceptable
-    alternatives := [("Nog är Noah till sjöss?", .unacceptable)]
+    contrasts := [("Nog är Noah till sjöss?", .unacceptable)]
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "indirect")] }
 
@@ -258,7 +258,7 @@ def sv_23d : Datum :=
     lgrConformance := some .wordAligned
     context := "Ann: Noah is coming to the party tomorrow."
     judgment := .unacceptable
-    alternatives := [("Nog är väl Noah till sjöss?", .unacceptable)]
+    contrasts := [("Nog är väl Noah till sjöss?", .unacceptable)]
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "yes"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "indirect")] }
 
@@ -273,7 +273,7 @@ def sv_24a : Datum :=
     lgrConformance := some .wordAligned
     context := "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "low"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
@@ -288,7 +288,7 @@ def sv_24b : Datum :=
     lgrConformance := some .wordAligned
     context := "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "low"), ("väl", "yes"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
@@ -303,7 +303,7 @@ def sv_24c : Datum :=
     lgrConformance := some .wordAligned
     context := "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "fronted"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
@@ -318,7 +318,7 @@ def sv_24d : Datum :=
     lgrConformance := some .wordAligned
     context := "Whenever Noah is on shore leave, he always visits every party. Ann: Noah is not coming to the party tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "fronted"), ("väl", "yes"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "positive"), ("direction", "subsetToSuperset")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "negative"), ("direction", "supersetToSubset")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "negative"), ("pi", "npi")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "positive"), ("pi", "npi")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "positive"), ("pi", "ppi")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some narrow scope under negation", .unacceptable), ("some wide scope over negation", .acceptable)]
     paperFeatures := [("environment", "negative"), ("pi", "ppi")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "exactly12")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "exactly12"), ("pi", "both")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some doves are such that exactly 12 aliens saw them", .acceptable)]
     paperFeatures := [("environment", "exactly12"), ("pi", "ppi")] }
 
@@ -141,7 +141,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "training"), ("expected", "follows")] }
 
@@ -154,7 +154,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "training"), ("expected", "doesNotFollow")] }
 
@@ -167,7 +167,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "training"), ("expected", "intermediate")] }
 
@@ -180,7 +180,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "positive"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
@@ -193,7 +193,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "every"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
@@ -206,7 +206,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "many"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
@@ -219,7 +219,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "negative"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
@@ -232,7 +232,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
@@ -245,7 +245,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "few"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
@@ -258,7 +258,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "exactly12"), ("direction", "supersetToSubset"), ("pi", "both")] }
 
@@ -271,7 +271,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "only12"), ("direction", "supersetToSubset"), ("pi", "both")] }
 
@@ -284,7 +284,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "everyNot"), ("pi", "both")] }
 
@@ -297,7 +297,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "everyNot"), ("direction", "subsetToSuperset"), ("pi", "both")] }
 
@@ -310,7 +310,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "noWithout"), ("direction", "subsetToSuperset"), ("pi", "both")] }
 
@@ -324,7 +324,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "exactly12"), ("direction", "subsetToSuperset"), ("pi", "ppi")] }
 
@@ -337,7 +337,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some doves are such that every alien who didn't see them is hairy", .acceptable)]
     paperFeatures := [("environment", "everyNot"), ("direction", "subsetToSuperset"), ("pi", "ppi")] }
 
@@ -350,7 +350,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "noPI")] }
 
@@ -363,7 +363,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 

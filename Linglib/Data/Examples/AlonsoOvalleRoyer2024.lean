@@ -26,7 +26,7 @@ def ex_22_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You were at a party; you know for a fact that not everyone danced, but, because the lights were off, you don't know who exactly danced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex_22_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You know that only Kixtup and Xun danced at the party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -57,7 +57,7 @@ def ex_22_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You were at a party and you saw that everyone there danced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -72,7 +72,7 @@ def ex_26_27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There was a town party, and meat was served to everyone who wanted it. You know that at least some people ate meat, but since you weren't there, you couldn't tell who."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -87,7 +87,7 @@ def ex_26_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There was a town party and meat was served; you noticed that everyone was happy about that, and so everyone asked for some."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_26_27c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There was a town party, with 20 attendees, and meat was served to everyone who wanted it. But you noticed that, in the end, only Kixtup and Xun ate meat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -117,7 +117,7 @@ def ex_28_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun went to a market and tried a few dishes. You know that Xun liked at least one dish (maybe more), but you're not sure which."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -132,7 +132,7 @@ def ex_28_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun went to a market, tried a few dishes, but didn't like them all. You know exactly which dishes Xun liked, namely soup and tamales."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -147,7 +147,7 @@ def ex_28_29c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun went to the market and tried a few dishes. You know for a fact that he liked all dishes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -162,7 +162,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -177,7 +177,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Your child bought lots of candy, even though you told him not to. You ask him what he bought. He answers:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -192,7 +192,7 @@ def ex_31_32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun wanted to read, but didn't have any specific book in mind. He went to the bookstore and bought one at random."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -207,7 +207,7 @@ def ex_31_32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun wanted to read a specific book, the Popol Wuj, went to the bookstore and bought it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -222,7 +222,7 @@ def ex_31_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun is very wealthy, and a bit insane. He goes to a bookstore, and he starts buying books indiscriminately, to the point where he ends up buying all books."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -237,7 +237,7 @@ def ex_35_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There were strong winds. You know that the wind must have broken many plants, but since you haven't left your house yet, you're not sure which."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -252,7 +252,7 @@ def ex_35_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There were very strong winds. You noticed that all plants are broken."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -267,7 +267,7 @@ def ex_35_36c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There were mild winds, which broke only a few fragile plants. You went to check out the plants after the windstorm, and saw which plants were broken."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -282,7 +282,7 @@ def ex_37_38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A jury needs to select someone in a competition. All participants to the competition are equally good, so they decide to choose one at random."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def ex_37_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A jury needs to select someone in a competition. One participant stands out as the best, so they select them."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -312,7 +312,7 @@ def ex_39_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You saw on the news that it rained somewhere in your region yesterday, but you're not sure where."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -327,7 +327,7 @@ def ex_39_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You saw on the news that it rained everywhere in your region yesterday."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -342,7 +342,7 @@ def ex_39_40c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "While you know from the news that it didn't rain everywhere in your region yesterday, you saw it rained in specific places."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -357,7 +357,7 @@ def ex_41_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malin didn't know where to eat, so she chose a place to eat at random."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -372,7 +372,7 @@ def ex_41_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Malin chose to go try out a new restaurant she heard about."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -387,7 +387,7 @@ def ex_43_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -400,7 +400,7 @@ def ex_45_44 : Datum :=
     glossedTokens := []
     context := "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -415,7 +415,7 @@ def ex_46_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -428,7 +428,7 @@ def ex_48_47 : Datum :=
     glossedTokens := []
     context := "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -443,7 +443,7 @@ def ex_50b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …Xun didn't close his eyes and selected a specific card, that of course, gave him an advantage. I ask you, how did Xun cheat?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -458,7 +458,7 @@ def ex_51b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …You're explaining how not to cheat, using Xun as an example player, you say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -473,7 +473,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -488,7 +488,7 @@ def ex_53b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You're a firefighter, so you know how to stop fire. If you know where the fire is coming from, you don't get worried. You only get worried if you do not know where the fire is coming from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -503,7 +503,7 @@ def ex_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -518,7 +518,7 @@ def ex_55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [("construction", "predicative")] }
 
@@ -533,7 +533,7 @@ def ex_57 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -548,7 +548,7 @@ def ex_58 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -563,7 +563,7 @@ def ex_60a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative")] }
 
@@ -578,7 +578,7 @@ def ex_60b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative")] }
 
@@ -593,7 +593,7 @@ def ex_67 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -608,7 +608,7 @@ def ex_68 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -623,7 +623,7 @@ def ex_82_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating …"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -638,7 +638,7 @@ def ex_82_85 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At the beginning of a boardgame, players must select any card they want from the game. It's the first time you play, and you ask me what you need to do."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("harmonic", .acceptable)]
     paperFeatures := [] }
 
@@ -653,7 +653,7 @@ def ex_86 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("harmonic", .acceptable)]
     paperFeatures := [] }
 
@@ -668,7 +668,7 @@ def ex_90_89 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun thinks that some people danced at the party, but he doesn't know exactly who. As far as he can tell, it could be anyone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("harmonic", .acceptable)]
     paperFeatures := [] }
 
@@ -683,7 +683,7 @@ def ex_93 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -698,7 +698,7 @@ def ex_95 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [("construction", "predicative")] }
 
@@ -713,7 +713,7 @@ def ex_96 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -728,7 +728,7 @@ def ex_99 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [("construction", "predicative")] }
 
@@ -743,7 +743,7 @@ def ex_100 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Xun bought a book on purpose, and the book is simply unremarkable."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .unacceptable)]
     paperFeatures := [] }
 
@@ -758,7 +758,7 @@ def ex_102a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .unacceptable)]
     paperFeatures := [] }
 
@@ -773,7 +773,7 @@ def ex_102b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .unacceptable)]
     paperFeatures := [] }
 
@@ -788,7 +788,7 @@ def ex_103a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [] }
 
@@ -803,7 +803,7 @@ def ex_103b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [] }
 
@@ -818,7 +818,7 @@ def ex_105 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predicative")] }
 
@@ -833,7 +833,7 @@ def ex_106a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive have")] }
 
@@ -848,7 +848,7 @@ def ex_106b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive have")] }
 
@@ -863,7 +863,7 @@ def ex_107a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "secondary predicate")] }
 
@@ -878,7 +878,7 @@ def ex_107b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "secondary predicate")] }
 
@@ -893,7 +893,7 @@ def ex_108a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "attributive")] }
 
@@ -908,7 +908,7 @@ def ex_108b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("unremarkable", .acceptable)]
     paperFeatures := [("construction", "attributive")] }
 
@@ -923,7 +923,7 @@ def ex_109 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -938,7 +938,7 @@ def ex_110 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable), ("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -953,7 +953,7 @@ def ex_111 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -968,7 +968,7 @@ def ex_112 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -983,7 +983,7 @@ def ex_113 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -998,7 +998,7 @@ def ex_115_116 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We're playing a board game, and as part of the rules, you must first pick one card at random. Some cards give you a clear advantage, others put you at disadvantage, so you can't just pick any card you desire, i.e. it's important you pick one at random. At this stage of the game, you ask me what you need to do to respect the rules of the game."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -1013,7 +1013,7 @@ def ex_117 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable), ("random choice", .acceptable)]
     paperFeatures := [] }
 
@@ -1028,7 +1028,7 @@ def ex_118 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable), ("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -1043,7 +1043,7 @@ def ex_119 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -1058,7 +1058,7 @@ def ex_120 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -1073,7 +1073,7 @@ def ex_121 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .questionable)]
     paperFeatures := [] }
 
@@ -1088,7 +1088,7 @@ def ex_122 : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker knows that all contextually relevant people are dancing."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [] }
 
@@ -1103,7 +1103,7 @@ def ex_123 : Datum :=
     lgrConformance := some .wordAligned
     context := "Juan bought all contextually relevant books."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("random choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -1118,7 +1118,7 @@ def fn10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 
@@ -1133,7 +1133,7 @@ def fn20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable)]
     paperFeatures := [] }
 

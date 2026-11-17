@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "A believes that among the relevant individuals only John and Mary went to the party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "complete")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "A believes Antonio went to the party and it is unclear who else did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "partial"), ("contour", "rise-fall-rise")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "A believes Antonio went to the party and it is unclear who else did."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "partial"), ("contour", "falling")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "There are three coffee places nearby: Starbucks, Peet's, and J.P. Licks."
     judgment := .acceptable
-    alternatives := [("Starbucks.", .acceptable), ("Starbucks, Peet's, and J.P. Licks.", .acceptable), ("Starbucks, Peet's, or J.P. Licks.", .acceptable)]
+    contrasts := [("Starbucks.", .acceptable), ("Starbucks, Peet's, and J.P. Licks.", .acceptable), ("Starbucks, Peet's, or J.P. Licks.", .acceptable)]
     readings := [("mention-some", .acceptable), ("conjunctive mention-all", .acceptable), ("disjunctive mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("flavor", "teleological")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "A believes there are two coffee places nearby, Starbucks and Peet's, and that John frequents both."
     judgment := .acceptable
-    alternatives := [("Starbucks.", .marginal), ("Starbucks or Peet's.", .acceptable)]
+    contrasts := [("Starbucks.", .marginal), ("Starbucks or Peet's.", .acceptable)]
     readings := []
     paperFeatures := [("modal", "could"), ("flavor", "epistemic")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "A believes there are two coffee places nearby, Starbucks and Peet's."
     judgment := .acceptable
-    alternatives := [("Starbucks.", .marginal), ("Starbucks or Peet's. (Either is good.)", .acceptable)]
+    contrasts := [("Starbucks.", .marginal), ("Starbucks or Peet's. (Either is good.)", .acceptable)]
     readings := []
     paperFeatures := [("modal", "should"), ("force", "universal")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "The hiring committee wants to prioritize the candidates on the long-list who can teach Psycholinguistics."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("goal", "exhaustive")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("only one of the children came", .acceptable)]
     paperFeatures := [("wh", "singular"), ("inference", "uniqueness")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "Among the children under consideration only Andy and Billy came; the speaker knows multiple children came but not who."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "plural")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "Among the children under consideration only Andy and Billy came; the speaker knows multiple children came but not who."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "singular")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow-scope disjunction", .acceptable)]
     paperFeatures := [("wh", "singular"), ("answer", "higher-order disjunction")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Heim & Kratzer or Meaning & Grammar.", .acceptable), ("Heim & Kratzer and Meaning & Grammar.", .unacceptable)]
+    contrasts := [("Heim & Kratzer or Meaning & Grammar.", .acceptable), ("Heim & Kratzer and Meaning & Grammar.", .unacceptable)]
     readings := []
     paperFeatures := [("wh", "singular"), ("asymmetry", "disjunction-conjunction")] }
 
@@ -180,7 +180,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "A multiple-choice context in which each choice involves a single letter, either a or r."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("local uniqueness", .acceptable)]
     paperFeatures := [("modal", "could"), ("inference", "local uniqueness")] }
 
@@ -193,7 +193,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("we are not allowed to assign more than one chapter", .acceptable)]
     paperFeatures := [("modal", "have to"), ("inference", "local uniqueness")] }
 
@@ -206,7 +206,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := "The book has three chapters. The instructor has told the speaker, a TA, that they could assign either Chap. 1, or Chap. 2, or both Chaps. 2 and 3 next week."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "can"), ("inference", "local uniqueness")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "As in (83)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "can"), ("exhaustification", "local")] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("inference", "local uniqueness")] }
 
@@ -245,7 +245,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could")] }
 
@@ -258,7 +258,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("global uniqueness", .acceptable)]
     paperFeatures := [("modal", "have to"), ("interpretation", "first-order")] }
 
@@ -271,7 +271,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("local uniqueness", .acceptable)]
     paperFeatures := [("modal", "have to"), ("interpretation", "narrow-scope higher-order")] }
 
@@ -284,7 +284,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal local uniqueness", .acceptable)]
     paperFeatures := [("modal", "can"), ("interpretation", "mention-some")] }
 
@@ -297,7 +297,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential local uniqueness", .acceptable)]
     paperFeatures := [("modal", "can"), ("exhaustification", "local")] }
 
@@ -310,7 +310,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Chap. 1 or Chap. 2.", .acceptable), ("Chap. 1 and Chap. 2.", .unacceptable)]
+    contrasts := [("Chap. 1 or Chap. 2.", .acceptable), ("Chap. 1 and Chap. 2.", .unacceptable)]
     readings := [("disjunctive mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("wh", "singular")] }
 

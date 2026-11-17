@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "familiar"), ("number", "singular")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("As vous le livre?", .ungrammatical)]
+    contrasts := [("As vous le livre?", .ungrammatical)]
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("mismatch", "referentially singular")] }
 
@@ -56,7 +56,7 @@ def ex_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Alessandro, è contento?", .ungrammatical)]
+    contrasts := [("Alessandro, è contento?", .ungrammatical)]
     readings := []
     paperFeatures := [("address", "familiar"), ("person", "second")] }
 
@@ -71,7 +71,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Signor Alessandro, sei contento?", .ungrammatical)]
+    contrasts := [("Signor Alessandro, sei contento?", .ungrammatical)]
     readings := []
     paperFeatures := [("address", "polite"), ("person", "third"), ("mismatch", "second-person addressee")] }
 
@@ -86,7 +86,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "familiar"), ("definiteness", "definite pronoun")] }
 
@@ -101,7 +101,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "polite"), ("definiteness", "indefinite pronoun"), ("mismatch", "definite addressee")] }
 
@@ -114,7 +114,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("unattested", "honorific singular")] }
 
@@ -127,7 +127,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("unattested", "honorific first person")] }
 
@@ -140,7 +140,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("unattested", "honorific second person")] }
 
@@ -153,7 +153,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("unattested", "honorific definite")] }
 
@@ -166,7 +166,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "semantic markedness"), ("number", "plural inclusive")] }
 
@@ -179,7 +179,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("each girl owns exactly one hamster", .acceptable), ("mixed: some girls own one, others several", .acceptable)]
     paperFeatures := [("diagnostic", "quantification"), ("number", "plural inclusive")] }
 
@@ -192,7 +192,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Every one of us has to call my mother.", .ungrammatical), ("Every one of us has to call your mother.", .ungrammatical)]
+    contrasts := [("Every one of us has to call my mother.", .ungrammatical), ("Every one of us has to call your mother.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "quantification"), ("person", "third unmarked")] }
 
@@ -205,7 +205,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definiteness", "definite"), ("presupposition", "familiarity")] }
 
@@ -218,7 +218,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definiteness", "indefinite")] }
 
@@ -231,7 +231,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("case", "ceiling")] }
 
@@ -246,7 +246,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "polite"), ("number", "dual"), ("system", "honorific dual only")] }
 
@@ -261,7 +261,7 @@ def ex_74b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reference", "polite"), ("number", "dual for three referents"), ("system", "honorific dual only")] }
 
@@ -276,7 +276,7 @@ def ex_75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("system", "honorific plural only")] }
 
@@ -291,7 +291,7 @@ def ex_75b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "plain dual"), ("number", "dual")] }
 
@@ -307,7 +307,7 @@ def ex_78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("address", "polite"), ("number", "dual or plural"), ("system", "non-escalating")] }
 
@@ -322,7 +322,7 @@ def ex_81 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "quantification"), ("number", "dual intermediate")] }
 

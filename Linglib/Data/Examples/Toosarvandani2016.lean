@@ -27,7 +27,7 @@ def ex_39a : Datum :=
     context := "The boy is bathing. The dog is sitting and looking at him in the bathtub."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "sim"), ("aspect", "prog"), ("markedEvent", "bathe"), ("unmarkedAspect", "ipfv"), ("unmarkedEvent", "watch")] }
 
@@ -43,7 +43,7 @@ def ex_39b : Datum :=
     context := "The boy is bathing. The dog is sitting and looking at him in the bathtub."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "bathe"), ("unmarkedAspect", "ipfv"), ("unmarkedEvent", "watch")] }
 
@@ -58,7 +58,7 @@ def ex_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "sim"), ("aspect", "prog")] }
 
@@ -73,7 +73,7 @@ def ex_40c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "sim"), ("aspect", "pfv")] }
 
@@ -89,7 +89,7 @@ def ex_47a : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "wakeUp"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "miss")] }
 
@@ -105,7 +105,7 @@ def ex_47b : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "sim"), ("aspect", "prog"), ("markedEvent", "wakeUp"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "miss")] }
 
@@ -121,7 +121,7 @@ def ex_66a : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "escape"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "wakeUp")] }
 
@@ -137,7 +137,7 @@ def ex_66b : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "escape"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "wakeUp")] }
 
@@ -153,7 +153,7 @@ def ex_66c : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "wakeUp"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "escape")] }
 
@@ -169,7 +169,7 @@ def ex_66d : Datum :=
     context := "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "wakeUp"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "escape")] }
 
@@ -185,7 +185,7 @@ def ex_71a : Datum :=
     context := "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "play"), ("markedEvent", "dance"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "enter")] }
 
@@ -201,7 +201,7 @@ def ex_71b : Datum :=
     context := "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "dance"), ("markedEvent", "play"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "enter")] }
 

@@ -26,7 +26,7 @@ def ex_6_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complement exclusion: I am nothing else in addition", .acceptable), ("rank order: I am nothing better", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "predicate")] }
 
@@ -42,7 +42,7 @@ def ex_6_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house"), ("inference", "nobody else built a house")] }
 
@@ -57,7 +57,7 @@ def ex_6_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house"), ("inference", "other people also built a house")] }
 
@@ -73,7 +73,7 @@ def ex_6_25c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house")] }
 
@@ -88,7 +88,7 @@ def ex_6_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who did Njelu call yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedObjectFocus")] }
 
@@ -103,7 +103,7 @@ def ex_6_28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "predicate")] }
 
@@ -118,7 +118,7 @@ def ex_6_140 : Datum :=
     lgrConformance := some .wordAligned
     context := "Kule wanted to build a house and a granary last year."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "unmarkedObjectFocus")] }
 
@@ -133,7 +133,7 @@ def ex_6_145a : Datum :=
     lgrConformance := some .wordAligned
     context := "Did Kule give a watch to Dimza and Jajei?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "dependentPronoun")] }
 
@@ -148,7 +148,7 @@ def ex_6_145b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Did Kule give a watch to Dimza and Jajei?"
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "independentPronoun")] }
 
@@ -163,7 +163,7 @@ def ex_6_148a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the only person that Daho calls is Hawwa", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "resumptivePronoun")] }
 
@@ -178,7 +178,7 @@ def ex_6_148b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the only person that Daho calls is Hawwa", .unacceptable), ("Daho does nothing but call", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "topicalizedGap")] }
 
@@ -193,7 +193,7 @@ def ex_6_149 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("whenever Daho calls somebody, she calls Hawwa", .acceptable)]
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "topicalizedGap")] }
 
@@ -209,7 +209,7 @@ def ex_6_150a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "focusedPronoun")] }
 
@@ -224,7 +224,7 @@ def ex_6_150b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "elidedPronoun")] }
 
@@ -239,7 +239,7 @@ def ex_6_151 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "elidedPronoun")] }
 
@@ -254,7 +254,7 @@ def ex_6_153 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they don't sell it or give it out", .acceptable), ("they eat nothing else", .unacceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "elidedObject")] }
 
@@ -269,7 +269,7 @@ def ex_6_158 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "presupposition")] }
 
@@ -284,7 +284,7 @@ def ex_6_159 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("whenever she tries, she passes", .acceptable)]
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "presupposition")] }
 
@@ -299,7 +299,7 @@ def ex_6_160 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Whom did Kule give a watch?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "dependentPronoun")] }
 
@@ -314,7 +314,7 @@ def ex_6_162a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Whom did Kule call?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "independentPronoun")] }
 
@@ -329,7 +329,7 @@ def ex_6_162b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Whom did Kule call?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "dependentPronoun")] }
 
@@ -344,7 +344,7 @@ def ex_6_163 : Datum :=
     lgrConformance := some .wordAligned
     context := "I know that Hawwa built a house, but what about Kule? What did he build?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "elidedTopicalSubject")] }
 
@@ -359,7 +359,7 @@ def ex_6_164 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "dependentPronoun")] }
 
@@ -374,7 +374,7 @@ def ex_6_165 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "preverbalSubject")] }
 
@@ -389,7 +389,7 @@ def ex_6_166 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza didn't build anything else"), ("inference", "he was expected to build more"), ("inference", "Dimza built a house")] }
 
@@ -404,7 +404,7 @@ def ex_6_167 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza built a house"), ("inference", "Dimza built something else")] }
 
@@ -419,7 +419,7 @@ def ex_6_168 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza built a house"), ("inference", "he was expected to build less"), ("inference", "Dimza built something else")] }
 
@@ -434,7 +434,7 @@ def ex_6_169 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "predicate"), ("inference", "the speaker is nothing better than a secretary"), ("inference", "the speaker was expected to be something better")] }
 
@@ -449,7 +449,7 @@ def ex_6_170 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "predicate"), ("inference", "Bah is a teacher"), ("inference", "he was expected to be something worse")] }
 
@@ -464,7 +464,7 @@ def ex_7_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "distinctBackgroundDistinctFocus")] }
 
@@ -479,7 +479,7 @@ def ex_7_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "distinctBackgroundParallelFocus")] }
 
@@ -494,7 +494,7 @@ def ex_7_43 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelUnmarkedBackground")] }
 
@@ -509,7 +509,7 @@ def ex_7_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelMarkedBackground")] }
 
@@ -524,7 +524,7 @@ def ex_7_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "modalizedAntecedent")] }
 
@@ -539,7 +539,7 @@ def ex_7_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "nonParallel")] }
 
@@ -554,7 +554,7 @@ def ex_7_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelMarkedBackground")] }
 
