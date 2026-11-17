@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "John.",
         "judgment": "acceptable"
@@ -57,7 +57,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "His worst one.",
         "judgment": "acceptable"
@@ -94,7 +94,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "wh-wide-scope",
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-all",
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Mary.",
         "judgment": "acceptable"
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "Asked by an Italian tourist in your home-town.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -209,7 +209,7 @@
     "translation": "",
     "context": "The questioner knows who their father is.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "The questioner has the information that Joop Zoetemelk ended second in the Tour de France of 1979.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -263,7 +263,7 @@
     "translation": "",
     "context": "The questioner wrongly believes that Joop Zoetemelk was the winner in 1979.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -290,7 +290,7 @@
     "translation": "",
     "context": "Asked by the salesmanager of a client; the property applies to a single member of her staff.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -317,7 +317,7 @@
     "translation": "",
     "context": "The questioner knows that Prof. A. is bound to be the last one to send in his contribution.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "At least from Prof. A.",
         "judgment": "acceptable"
@@ -344,7 +344,7 @@
     "translation": "",
     "context": "Prof. A. is also always the first to accept an invitation to attend a conference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The same answer (42) is of little help toward a complete answer to (43): the exhaustive answer to (41) came from the interrogative's abstract, not from the term.",
@@ -363,7 +363,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "John.",
         "judgment": "acceptable"
@@ -400,7 +400,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "wh-wide-scope",
@@ -432,7 +432,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "wh-wide-scope",
@@ -464,7 +464,7 @@
     "translation": "",
     "context": "John loves Suzy; Mary loves Suzy and Bill.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Suzy and Bill.",
         "judgment": "acceptable"
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "John loves Suzy; Mary loves Suzy and Bill.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Suzy.",
         "judgment": "acceptable"
@@ -542,7 +542,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "A watch.",
         "judgment": "acceptable"
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "pair-list",
@@ -612,7 +612,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "pair-list",
@@ -645,7 +645,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "wh-wide-scope",
@@ -677,7 +677,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "With the extensional know the choice and widest-scope readings coincide, but only because John or Mary is rigid; with two girls they come apart.",
@@ -696,7 +696,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -724,7 +724,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -752,7 +752,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -783,7 +783,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Not in the drawer.",
         "judgment": "acceptable"
@@ -816,7 +816,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-all",
@@ -844,7 +844,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-all",
@@ -875,7 +875,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -899,7 +899,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -931,7 +931,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Bel lives in the wood, and Nap lives near the lake",
         "judgment": "acceptable"
@@ -976,7 +976,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1005,7 +1005,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1034,7 +1034,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1063,7 +1063,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1096,7 +1096,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1129,7 +1129,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1162,7 +1162,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",
@@ -1198,7 +1198,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "mention-some",

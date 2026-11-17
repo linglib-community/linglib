@@ -26,7 +26,7 @@ def ex15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Bill-wa teineini kuruma-o araw-anak-atta 'Bill didn't wash the car carefully'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "null"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -41,7 +41,7 @@ def ex16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "null"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -56,7 +56,7 @@ def ex17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "null"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -71,7 +71,7 @@ def ex18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "null"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -86,7 +86,7 @@ def ex19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "null"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -101,7 +101,7 @@ def ex20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -116,7 +116,7 @@ def ex21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -131,7 +131,7 @@ def ex22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -146,7 +146,7 @@ def ex23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako both did careless work. Antecedent: Taroo-wa teineini kuruma-o araw-anak-atta 'Taroo did not wash the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -161,7 +161,7 @@ def ex24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako do not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kak-ana-i 'Taroo does not write papers with Word'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -176,7 +176,7 @@ def ex25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Taroo-wa kenkyuuhi-de manga-o kaw-ana-i 'Taroo does not buy comic books with his research fund'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -191,7 +191,7 @@ def ex26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako washed a car together: Taroo the body, then Hanako the windows. Taroo was thorough, Hanako not. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -206,7 +206,7 @@ def ex27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo gave his paper to his advisor expecting comments with the Comments feature of Word, but the advisor does not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kai-ta 'Taroo wrote the paper with Word'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -221,7 +221,7 @@ def ex32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Boku-wa [Taroo-wa [pro baka-da kara] kaisya-o yame-ta to] omottei-ru 'I think that Taroo quit the company because he was a fool'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "reason"), ("object", "null"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -236,7 +236,7 @@ def ex39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Densya-wa zikandoorini ki-ta 'The train came on time'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "absent"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -251,7 +251,7 @@ def ex41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Taroo-wa {zikandoorini / okurete} syukudai-o dasi-ta 'Taroo submitted the homework on time / late'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -266,7 +266,7 @@ def ex43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo washed his car, meaning to wipe the windows after the body, but felt tired. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "yes"), ("available", "no")] }
 
@@ -281,7 +281,7 @@ def ex44b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo writes his own papers and looks at his students' papers every day. Antecedent: Taroo-wa Word-de zibun-no ronbun-o kak-u 'Taroo writes his own papers with Word'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "yes"), ("available", "no")] }
 
@@ -296,7 +296,7 @@ def ex51b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo and Hanako washed their parents' cars to get an allowance. But Taroo was thorough in his work while Hanako was not. Antecedent: Kuruma-o Taroo-wa teineini arat-ta 'Taroo washed the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -311,7 +311,7 @@ def ex52b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Both did careless work. Antecedent: Kuruma-o Taroo-wa teineini araw-anak-atta."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -326,7 +326,7 @@ def ex53b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Antecedent: Syatai-o Taroo-wa teineini arat-ta 'Taroo washed the body of the car carefully'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -341,7 +341,7 @@ def ex55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "focused"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -356,7 +356,7 @@ def ex55b2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "focused"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -371,7 +371,7 @@ def ex56b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no? 'Did you wash this car carefully?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "focused"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -386,7 +386,7 @@ def ex56b2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .acceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "focused"), ("subjectNull", "no"), ("available", "yes")] }
 
@@ -401,7 +401,7 @@ def ex57b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -416,7 +416,7 @@ def ex57b2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -431,7 +431,7 @@ def ex58b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 
@@ -446,7 +446,7 @@ def ex58b2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("null adjunct", .unacceptable)]
     paperFeatures := [("adjunct", "vp"), ("object", "overt"), ("subjectNull", "no"), ("available", "no")] }
 

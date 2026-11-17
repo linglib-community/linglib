@@ -50,7 +50,7 @@
     "translation": "I really regret that I did not devote greater attention to the construction.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Naistina săžaljavam, če ne otdelix poveče vnimanie na postrojkata.",
         "judgment": "acceptable"
@@ -125,7 +125,7 @@
     "translation": "I am only angry that the bracelet disappeared after the eclipse.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Samo me e jad, če grivnata izčezna sled zatămnenieto.",
         "judgment": "acceptable"
@@ -200,7 +200,7 @@
     "translation": "I do not regret at all that their meeting has not taken place.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nikak ne săžaljavam, če sreštata im se e provalila.",
         "judgment": "acceptable"
@@ -279,7 +279,7 @@
     "translation": "Is it my fault that the guests arrived late?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Vinoven li săm če gostite pristignaxa kăsno?",
         "judgment": "acceptable"
@@ -358,7 +358,7 @@
     "translation": "I regret that you couldn't stay longer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Săžaljavam, če ne moža da ostaneš poveče.",
         "judgment": "acceptable"
@@ -441,7 +441,7 @@
     "translation": "I resent the fact that they were not able to organize the meeting.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Văzmutix se če ne sa mogli da provedat sreštata.",
         "judgment": "acceptable"
@@ -508,7 +508,7 @@
     "translation": "I found out that their meeting has failed.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Otkrix če sreštata im se e provalila.",
         "judgment": "acceptable"
@@ -567,7 +567,7 @@
     "translation": "I am sorry about the failure of the meeting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Săžaljavam na provala na sreštata.",
         "judgment": "ungrammatical"
@@ -634,7 +634,7 @@
     "translation": "Am I responsible for the late arrival of the guests?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Vinoven li săm na zakăsnenieto na gostite?",
         "judgment": "ungrammatical"
@@ -709,7 +709,7 @@
     "translation": "I resent the fact that they were not able to organize the meeting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.",
         "judgment": "ungrammatical"

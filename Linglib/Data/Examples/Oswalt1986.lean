@@ -24,7 +24,7 @@ def s1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "performative")] }
 
@@ -37,7 +37,7 @@ def s2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
@@ -50,7 +50,7 @@ def s4 : Datum :=
     glossedTokens := []
     context := "Said in the situation in which an English speaker says good-bye."
     judgment := .acceptable
-    alternatives := [("cohtocéla", .ungrammatical)]
+    contrasts := [("cohtocéla", .ungrammatical)]
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
@@ -65,7 +65,7 @@ def s6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The sight of the children of a man the speaker killed years earlier prompts the remark."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
@@ -80,7 +80,7 @@ def s7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A response to a remark by someone else."
     judgment := .acceptable
-    alternatives := [("men s̓ímela", .acceptable), ("men s̓ímelam", .ungrammatical)]
+    contrasts := [("men s̓ímela", .acceptable), ("men s̓ímelam", .ungrammatical)]
     readings := []
     paperFeatures := [("mode", "responsive"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
@@ -93,7 +93,7 @@ def s8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "factualVisual")] }
 
@@ -106,7 +106,7 @@ def s9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
@@ -121,7 +121,7 @@ def s13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("general truth", .acceptable), ("witnessed", .acceptable)]
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "factualVisual")] }
 
@@ -134,7 +134,7 @@ def s14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "auditory")] }
 
@@ -147,7 +147,7 @@ def s15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "auditory")] }
 
@@ -160,7 +160,7 @@ def s16 : Datum :=
     glossedTokens := []
     context := "Opens a conversation, prompted by the barking."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "auditory")] }
 
@@ -173,7 +173,7 @@ def s17 : Datum :=
     glossedTokens := []
     context := "A continuation of the conversation S16 opens."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "auditory")] }
 
@@ -186,7 +186,7 @@ def s19 : Datum :=
     glossedTokens := []
     context := "Said on discovering that the person is no longer present; the leaving itself was neither seen nor heard."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "inferential")] }
 
@@ -199,7 +199,7 @@ def s19_visual : Datum :=
     glossedTokens := []
     context := "The leaving was seen."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
@@ -212,7 +212,7 @@ def s19_auditory : Datum :=
     glossedTokens := []
     context := "The leaving was heard."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "auditory")] }
 
@@ -227,7 +227,7 @@ def s22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The picture is seen; the act of taking it was not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "inferential")] }
 
@@ -242,7 +242,7 @@ def s25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "narrative"), ("evidential", "personalExperience")] }
 
@@ -257,7 +257,7 @@ def s26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "remote"), ("evidential", "remotePast")] }
 
@@ -272,7 +272,7 @@ def s27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "narrative"), ("evidential", "quotative")] }
 
@@ -287,7 +287,7 @@ def s28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "From a conversation in the responsive mode; the event takes place elsewhere."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "quotative")] }
 
@@ -302,7 +302,7 @@ def s29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "From the same conversation as S28."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "quotative")] }
 
@@ -317,7 +317,7 @@ def s32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A woman saw a man approaching but could not recognize him until he arrived."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "inferentialII")] }
 

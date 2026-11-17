@@ -24,7 +24,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreference", .unacceptable)]
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "none")] }
 
@@ -37,7 +37,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("coreference", .unacceptable)]
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "np1")] }
 
@@ -50,7 +50,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "np2")] }
 
@@ -63,7 +63,7 @@ def ex_11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "both")] }
 
@@ -76,7 +76,7 @@ def IIa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "relative"), ("np1", "02111"), ("np2", "110"), ("pronouns", "np2")] }
 
@@ -89,7 +89,7 @@ def IIb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "relative"), ("np1", "02111"), ("np2", "110"), ("pronouns", "np1")] }
 
@@ -102,7 +102,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "np2")] }
 
@@ -115,7 +115,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "np1")] }
 
@@ -128,7 +128,7 @@ def ex_12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "none")] }
 
@@ -141,7 +141,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "np2")] }
 
@@ -154,7 +154,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "none")] }
 
@@ -167,7 +167,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "np1")] }
 
@@ -180,7 +180,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "010"), ("np2", "21"), ("pronouns", "np2")] }
 
@@ -193,7 +193,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "0"), ("np2", "2100"), ("pronouns", "np1")] }
 
@@ -206,7 +206,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "0"), ("np2", "2100"), ("pronouns", "none")] }
 
@@ -219,7 +219,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "11"), ("np2", "2100"), ("pronouns", "np1")] }
 
@@ -232,7 +232,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "verbalPP"), ("np1", "111"), ("np2", "11310"), ("pronouns", "np1")] }
 
@@ -245,7 +245,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "vos"), ("np1", "01"), ("np2", "11"), ("pronouns", "np1")] }
 
@@ -258,7 +258,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "vos"), ("np1", "011"), ("np2", "1"), ("pronouns", "np2")] }
 

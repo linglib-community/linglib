@@ -24,7 +24,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -37,7 +37,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -50,7 +50,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Who are leaving early?", .ungrammatical)]
+    contrasts := [("Who are leaving early?", .ungrammatical)]
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "BI")] }
 
@@ -65,7 +65,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -80,7 +80,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -95,7 +95,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -110,7 +110,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -125,7 +125,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -140,7 +140,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -155,7 +155,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -170,7 +170,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -185,7 +185,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -200,7 +200,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -215,7 +215,7 @@ def ex_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -230,7 +230,7 @@ def ex_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -245,7 +245,7 @@ def ex_24a : Datum :=
     lgrConformance := some .wordAligned
     context := "One of my friends called"
     judgment := .acceptable
-    alternatives := [("pero no me acuerdo quiénes", .unacceptable)]
+    contrasts := [("pero no me acuerdo quiénes", .unacceptable)]
     readings := []
     paperFeatures := [("context", "exactlyOne"), ("form", "quien"), ("rival", "quienes")] }
 
@@ -260,7 +260,7 @@ def ex_24b : Datum :=
     lgrConformance := some .wordAligned
     context := "At least one person called"
     judgment := .acceptable
-    alternatives := [("pero no me acuerdo quiénes", .unacceptable)]
+    contrasts := [("pero no me acuerdo quiénes", .unacceptable)]
     readings := []
     paperFeatures := [("context", "atLeastOne"), ("form", "quien"), ("rival", "quienes")] }
 
@@ -275,7 +275,7 @@ def ex_24c : Datum :=
     lgrConformance := some .wordAligned
     context := "Several friends called"
     judgment := .acceptable
-    alternatives := [("pero no me acuerdo quién", .questionable)]
+    contrasts := [("pero no me acuerdo quién", .questionable)]
     readings := []
     paperFeatures := [("context", "several"), ("antecedent", "plural"), ("form", "quienes"), ("rival", "quien")] }
 
@@ -290,7 +290,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := "Juan is expecting at least one friend to come to the party."
     judgment := .acceptable
-    alternatives := [("Juan no sabe quiénes van a venir a la fiesta", .unacceptable)]
+    contrasts := [("Juan no sabe quiénes van a venir a la fiesta", .unacceptable)]
     readings := []
     paperFeatures := [("context", "atLeastOne"), ("form", "quePl"), ("rival", "quienes")] }
 
@@ -305,7 +305,7 @@ def ex_57 : Datum :=
     lgrConformance := some .wordAligned
     context := "A context that does not satisfy existence."
     judgment := .acceptable
-    alternatives := [("¿Quiénes hay en la fiesta?", .unacceptable)]
+    contrasts := [("¿Quiénes hay en la fiesta?", .unacceptable)]
     readings := []
     paperFeatures := [("context", "noExistence"), ("form", "quien"), ("rival", "quienes")] }
 
@@ -320,7 +320,7 @@ def ex_59 : Datum :=
     lgrConformance := some .wordAligned
     context := "Juan is expecting at least one of his friends to come with him to the party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "atLeastOne"), ("form", "quienes")] }
 
@@ -335,7 +335,7 @@ def ex_66 : Datum :=
     lgrConformance := some .wordAligned
     context := "Juan is expecting at least one friend to come to the party, but two or more might come."
     judgment := .acceptable
-    alternatives := [("Juan no sabe qué amigo van a venir", .unacceptable)]
+    contrasts := [("Juan no sabe qué amigo van a venir", .unacceptable)]
     readings := []
     paperFeatures := [("context", "atLeastOne"), ("form", "quePl"), ("rival", "queSg")] }
 
@@ -350,7 +350,7 @@ def ex_68 : Datum :=
     lgrConformance := some .wordAligned
     context := "Mary and John arrive at their apartment, where there is supposed to be no one. They hear two people whispering inside. Mary asks:"
     judgment := .acceptable
-    alternatives := [("¿Quiénes está ahí?", .unacceptable)]
+    contrasts := [("¿Quiénes está ahí?", .unacceptable)]
     readings := []
     paperFeatures := [("context", "twoWhispering"), ("form", "quien"), ("rival", "quienes")] }
 
@@ -366,7 +366,7 @@ def n19i : Datum :=
     lgrConformance := some .wordAligned
     context := "The speaker isn't certain if anyone entered the room, but if someone did, it was at least two people."
     judgment := .acceptable
-    alternatives := [("¿Quénes entraron en la habitación?", .unacceptable)]
+    contrasts := [("¿Quénes entraron en la habitación?", .unacceptable)]
     readings := []
     paperFeatures := [("context", "zeroOrSeveral"), ("form", "quien"), ("rival", "quienes")] }
 
@@ -381,7 +381,7 @@ def ex_76 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("two-group answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -396,7 +396,7 @@ def ex_79 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SBI")] }
 
@@ -411,7 +411,7 @@ def ex_80 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SBI")] }
 
@@ -426,7 +426,7 @@ def ex_81 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive answer", .acceptable), ("collective answer", .unacceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -441,7 +441,7 @@ def ex_82 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("¿Quién bebió 40 cervezas juntos?", .unacceptable)]
+    contrasts := [("¿Quién bebió 40 cervezas juntos?", .unacceptable)]
     readings := []
     paperFeatures := [("type", "PBI")] }
 

@@ -24,7 +24,7 @@ def ctx1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "disyllable")] }
 
@@ -37,7 +37,7 @@ def ctx2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "monosyllable")] }
 
@@ -50,7 +50,7 @@ def ctx3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "disyllable")] }
 
@@ -63,7 +63,7 @@ def ctx4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "monosyllable")] }
 
@@ -76,7 +76,7 @@ def ctx5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "disyllable")] }
 
@@ -89,7 +89,7 @@ def ctx6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "monosyllable")] }
 
@@ -102,7 +102,7 @@ def ctx7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "disyllable")] }
 
@@ -115,7 +115,7 @@ def ctx8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "monosyllable")] }
 

@@ -24,7 +24,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := "The passive with the external argument in Spec,vP and no movement of the participle phrase."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
@@ -37,7 +37,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := "The passive derived by PartP movement to Spec,VoiceP, (22) and (30)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
@@ -50,7 +50,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := "Barss and Lasnik c-command test: a negative quantifier in the by-phrase and a negative polarity item in a preceding PP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
@@ -63,7 +63,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := "Barss and Lasnik c-command test: each in the by-phrase and the other in a preceding PP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "each professor"), ("patient", "the book"), ("pp", "to the other")] }
 
@@ -76,7 +76,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := "The PP follows the by-phrase: it evacuated PartP before the remnant fronted, (58), and the external argument c-commands it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
@@ -89,7 +89,7 @@ def ex10d : Datum :=
     glossedTokens := []
     context := "The PP follows the by-phrase, evacuated before the remnant PartP fronted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "each professor"), ("patient", "a book"), ("pp", "to the other")] }
 
@@ -102,7 +102,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := "A particle verb passivized: the particle precedes the external argument."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
@@ -115,7 +115,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := "The order head movement of the verb to Voice would derive, stranding the particle after the external argument."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
@@ -128,7 +128,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := "A pseudo-passive: the stranded preposition precedes the external argument."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
@@ -141,7 +141,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := "The order head movement of the verb to Voice would derive, stranding the preposition after the external argument."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
@@ -154,7 +154,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := "Active perfect: the participle is c-selected by have, and there is no VoiceP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "have"), ("voiceP", "false")] }
 
@@ -167,7 +167,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := "Passive with have: the participle in Spec,VoiceP is already licensed by Voice and cannot also be checked by have."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "have"), ("voiceP", "true")] }
 
@@ -180,7 +180,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := "Passive with be, which imposes no requirement on its complement; Voice licenses the participle."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "be"), ("voiceP", "true")] }
 
@@ -193,7 +193,7 @@ def ex23d : Datum :=
     glossedTokens := []
     context := "Active with be and no VoiceP: nothing licenses the participle."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "be"), ("voiceP", "false")] }
 
@@ -206,7 +206,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := "A passive participle modifying a noun: VoiceP present, no auxiliary."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "none"), ("voiceP", "true")] }
 
@@ -219,7 +219,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := "A past participle modifying a noun: neither a Voice head nor have."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "none"), ("voiceP", "false")] }
 
@@ -232,7 +232,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := "The internal argument in the by-phrase and the external argument raised to Spec,IP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "byComplement"), ("complement", "DP")] }
 
@@ -245,7 +245,7 @@ def ex56c : Datum :=
     glossedTokens := []
     context := "The PP pied-piped inside PartP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
@@ -258,7 +258,7 @@ def ex56d : Datum :=
     glossedTokens := []
     context := "The PP evacuated to Spec,XP before the remnant PartP fronted, (58)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
@@ -271,7 +271,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := "A quantifier in the by-phrase binding a pronoun in a PP that follows it, evacuated before the remnant PartP fronted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "every student"), ("patient", "a gift"), ("pp", "to his professor")] }
 
@@ -284,7 +284,7 @@ def ex72a : Datum :=
     glossedTokens := []
     context := "Principle A with the reflexive inside the fronted PartP: binding needs reconstruction, (73)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to herself")] }
 
@@ -297,7 +297,7 @@ def ex74a : Datum :=
     glossedTokens := []
     context := "Principle A with the reflexive in an evacuated PP: the external argument c-commands it without reconstruction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to herself")] }
 
@@ -310,7 +310,7 @@ def ex75 : Datum :=
     glossedTokens := []
     context := "A quantifier in the by-phrase binding a pronoun inside the fronted PartP: licensed once PartP reconstructs, without a Weak Crossover violation (§9.1)."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "every boy"), ("patient", "money"), ("pp", "to his mother")] }
 
@@ -323,7 +323,7 @@ def ex76a : Datum :=
     glossedTokens := []
     context := "Principle C with the name inside the fronted PartP and a coindexed pronoun in the by-phrase."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "her"), ("patient", "the magazines"), ("be", "were"), ("pp", "to Mary's mother"), ("adjunct", "yesterday"), ("felicity", "infelicitous")] }
 
@@ -336,7 +336,7 @@ def ex80a : Datum :=
     glossedTokens := []
     context := "Principle B: the pronoun, coindexed with the external argument, is c-commanded by it when the external argument Merges, (84)."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "pronoun"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to her")] }
 
@@ -349,7 +349,7 @@ def ex85a : Datum :=
     glossedTokens := []
     context := "Principle C: the pronoun inside the fronted PartP does not c-command the name in the by-phrase."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "pp"), ("dependent", "external"), ("verb", "given"), ("agent", "John's mother"), ("patient", "the book"), ("pp", "to him")] }
 
@@ -362,7 +362,7 @@ def ex85b : Datum :=
     glossedTokens := []
     context := "Principle C: the pronoun in the by-phrase c-commands the name in the evacuated PP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "him"), ("patient", "the book"), ("pp", "to John's mother")] }
 
@@ -375,7 +375,7 @@ def ex91a : Datum :=
     glossedTokens := []
     context := "A reciprocal in a PP that follows the by-phrase, evacuated before the remnant PartP fronted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "the students"), ("patient", "books"), ("be", "were"), ("pp", "to each other")] }
 
@@ -388,7 +388,7 @@ def ex91b : Datum :=
     glossedTokens := []
     context := "A reciprocal in the by-phrase with its antecedent in a PP inside the fronted PartP, which does not c-command the external argument."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "pp"), ("dependent", "external"), ("verb", "given"), ("agent", "each other"), ("patient", "books"), ("be", "were"), ("pp", "to the students")] }
 

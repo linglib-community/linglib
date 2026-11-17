@@ -26,7 +26,7 @@ def ex2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("meʎʎo kivəŋ, kumuqetəŋ", .acceptable)]
+    contrasts := [("meʎʎo kivəŋ, kumuqetəŋ", .acceptable)]
     readings := [("says", .acceptable), ("thinks", .acceptable), ("allows", .acceptable), ("hopes", .acceptable), ("fears", .acceptable), ("knows", .ungrammatical), ("imagines", .ungrammatical), ("wishes", .ungrammatical)]
     paperFeatures := [("section", "1")] }
 
@@ -41,7 +41,7 @@ def ex4 : Datum :=
     lgrConformance := some .wordAligned
     context := "Hewngyto is walking down the street. Melljo sees him and asks: 'Where is your wife? Is she making jam at home?' He replies with the first sentence. He continues walking. Qechghylqot sees him and asks: 'Where is your wife? Is she picking berries in the forest?' Hewngyto replies with the second."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -56,7 +56,7 @@ def ex5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -71,7 +71,7 @@ def ex6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -86,7 +86,7 @@ def ex7 : Datum :=
     lgrConformance := some .wordAligned
     context := "We're walking down the street and there are many people with raincoats. Melljo says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("said", .acceptable), ("allowed", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -101,7 +101,7 @@ def ex8a : Datum :=
     lgrConformance := some .wordAligned
     context := "Two balls are in a box: one white, one black. I pull out one and do not show it to you."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("necessity", .unacceptable), ("possibility", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -116,7 +116,7 @@ def ex8b : Datum :=
     lgrConformance := some .wordAligned
     context := "Two balls are in a box: one white, one black. I pull out one and do not show it to you."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the thought of (8a)", .acceptable), ("the ball is half white and half black", .unacceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -131,7 +131,7 @@ def ex9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -146,7 +146,7 @@ def ex14a : Datum :=
     lgrConformance := some .wordAligned
     context := "A teacher is always complaining to his wife about how bad his students are. One day, the principal asks him about his students, and he tells him that they are great."
     judgment := .acceptable
-    alternatives := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu metʔaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču qekwaŋ kojajɣočawŋəlaŋ.", .unacceptable)]
+    contrasts := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu metʔaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču qekwaŋ kojajɣočawŋəlaŋ.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -161,7 +161,7 @@ def ex14b : Datum :=
     lgrConformance := some .wordAligned
     context := "A teacher is always complaining to his wife about how bad his students are. One day, the principal asks him about his students, and he tells him that they are great."
     judgment := .acceptable
-    alternatives := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu qekwaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču metʔaŋ kojajɣočawŋəlaŋ", .unacceptable)]
+    contrasts := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu qekwaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču metʔaŋ kojajɣočawŋəlaŋ", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -176,7 +176,7 @@ def ex20 : Datum :=
     lgrConformance := some .wordAligned
     context := "A principal enters the classroom of a teacher whose students are doing poorly in class and asks him how the students are doing. The teacher doesn't want to disappoint the principal, so he says 'The students are doing well'."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4")] }
 

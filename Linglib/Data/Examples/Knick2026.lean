@@ -27,7 +27,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "eventive"), ("adverbial", "now")] }
 
@@ -43,7 +43,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "eventive"), ("adverbial", "tomorrow")] }
 
@@ -59,7 +59,7 @@ def ex_7c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "eventive"), ("adverbial", "now")] }
 
@@ -75,7 +75,7 @@ def ex_7d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "eventive"), ("adverbial", "tomorrow")] }
 
@@ -91,7 +91,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "stative"), ("adverbial", "now")] }
 
@@ -107,7 +107,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "stative"), ("adverbial", "tomorrow")] }
 
@@ -123,7 +123,7 @@ def ex_8c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "stative"), ("adverbial", "now")] }
 
@@ -139,7 +139,7 @@ def ex_8d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aktionsart", "stative"), ("adverbial", "tomorrow")] }
 

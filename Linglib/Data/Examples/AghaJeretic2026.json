@@ -56,7 +56,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -89,7 +89,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -122,7 +122,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -155,7 +155,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -188,7 +188,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -221,7 +221,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -254,7 +254,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -287,7 +287,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -320,7 +320,7 @@
       "translation": "",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -353,7 +353,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -386,7 +386,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -468,7 +468,7 @@
       "translation": "You must wash the dishes but you are not obliged to do it.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -554,7 +554,7 @@
       "translation": "You ought to wash the dishes but you are not obliged to do it.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -632,7 +632,7 @@
       "translation": "You must do the dishes but you are not obliged to do them.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -706,7 +706,7 @@
       "translation": "You ought to do the dishes but you are not obliged to do them.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -783,7 +783,7 @@
       "translation": "It is better/best that he will resign, but he doesn't have to resign.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -873,7 +873,7 @@
       "translation": "Javanese people ought to be able to speak Krama, and the Sultan's son has to be able to.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -918,7 +918,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -960,7 +960,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1002,7 +1002,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1044,7 +1044,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1086,7 +1086,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1128,7 +1128,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1170,7 +1170,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1212,7 +1212,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1254,7 +1254,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -1329,7 +1329,7 @@
       "translation": "I still should/have to go to the party!",
       "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1395,7 +1395,7 @@
       "translation": "I should go to the party.",
       "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         [
@@ -1452,7 +1452,7 @@
       "translation": "You can take these two blankets. / You should take these two blankets.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1506,7 +1506,7 @@
       "translation": "You can't go.",
       "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1568,7 +1568,7 @@
       "translation": "If I can call the doctor, I will.",
       "context": "Prompt: If I have to call the doctor, I will.",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1619,7 +1619,7 @@
       "translation": "One has to cross the river.",
       "context": "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1666,7 +1666,7 @@
       "translation": "We mustn't go.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1717,7 +1717,7 @@
       "translation": "If I can / must go, I will go.",
       "context": "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1792,7 +1792,7 @@
       "translation": "Alice is allowed to go out, but she is also allowed to stay.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1847,7 +1847,7 @@
       "translation": "Isac has to pay a fine.",
       "context": "I'm telling a story in which Isac illegally parked the car, and the police caught him.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "necessity",
@@ -1902,7 +1902,7 @@
       "translation": "Peter is not allowed to leave the prison.",
       "context": "Peter is a prisoner.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -1973,7 +1973,7 @@
       "translation": "If Lucas is allowed to have ice cream, he will be happy.",
       "context": "Lucas loves ice cream, but only eats it when his mom gives him permission.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2044,7 +2044,7 @@
       "translation": "If Maria has to pay a fine, she will be unhappy.",
       "context": "Maria took the train without paying and is worried about getting caught.",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "necessity",
@@ -2081,7 +2081,7 @@
       "translation": "Kabunga might/should be coming to class today.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2143,7 +2143,7 @@
       "translation": "According to the rules, you can't play.",
       "context": "A player has been hurt in a football match, and the ref is speaking to them, and saying:",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2185,7 +2185,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2231,7 +2231,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2277,7 +2277,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2323,7 +2323,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2369,7 +2369,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2415,7 +2415,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2461,7 +2461,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2507,7 +2507,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2553,7 +2553,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2599,7 +2599,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2645,7 +2645,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2691,7 +2691,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "possibility",
@@ -2737,7 +2737,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -2775,7 +2775,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "wide",
@@ -2813,7 +2813,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "could",
@@ -2851,7 +2851,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "could",
@@ -2889,7 +2889,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "could",
@@ -2927,7 +2927,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {
           "name": "could",

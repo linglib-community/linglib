@@ -24,7 +24,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := "Kind anaphora to an object-referring antecedent, with a number mismatch between the singular antecedent and the plural anaphor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
@@ -37,7 +37,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := "Kind anaphora to a mass antecedent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
@@ -50,7 +50,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := "Kind anaphora and one-anaphora reach a concept introduced under negation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")] }
 
@@ -63,7 +63,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := "Kind anaphora and some-anaphora reach a mass concept introduced under negation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "mass"), ("island", "negation"), ("anaphor", "it")] }
 
@@ -76,7 +76,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := "An entity pronoun cannot reach a referent introduced under negation."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "entityPronoun")] }
 
@@ -89,7 +89,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := "A count antecedent, singular or plural, requires the plural kind anaphor."
     judgment := .acceptable
-    alternatives := [("He has a phobia against it.", .ungrammatical)]
+    contrasts := [("He has a phobia against it.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
@@ -102,7 +102,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := "A mass antecedent requires the singular kind anaphor."
     judgment := .acceptable
-    alternatives := [("He is allergic against them.", .ungrammatical)]
+    contrasts := [("He is allergic against them.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
@@ -115,7 +115,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := "The same individuals under a mass noun take the singular kind anaphor."
     judgment := .acceptable
-    alternatives := [("I am allergic against them.", .ungrammatical)]
+    contrasts := [("I am allergic against them.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
@@ -128,7 +128,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := "The same individuals under a count noun take the plural kind anaphor."
     judgment := .acceptable
-    alternatives := [("I am allergic against it.", .questionable)]
+    contrasts := [("I am allergic against it.", .questionable)]
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
@@ -141,7 +141,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := "Kind anaphora: John is afraid of dogs, since dogs from the shelter downtown do not form a kind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("afraid of dogs", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")] }
 
@@ -154,7 +154,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := "Concept anaphora: Mary got a dog from the shelter downtown, the full property of the antecedent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a dog from the shelter downtown", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "one")] }
 

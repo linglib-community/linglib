@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "A: Who did Mary invite to the party?"
     judgment := .acceptable
-    alternatives := [("Mary invited only John and Mike.", .acceptable)]
+    contrasts := [("Mary invited only John and Mike.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("only", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := "A: Is John graduating this Spring?"
     judgment := .acceptable
-    alternatives := [("No, John is only a sophomore.", .acceptable)]
+    contrasts := [("No, John is only a sophomore.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "rankOrder"), ("only", "yes")] }
 
@@ -50,7 +50,7 @@ def ex_2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Only the thought of you sends shivers down my spine.", .unacceptable)]
+    contrasts := [("Only the thought of you sends shivers down my spine.", .unacceptable)]
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
@@ -63,7 +63,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := "A: Where did Mary go for her vacation this year?"
     judgment := .acceptable
-    alternatives := [("She only went to Spain and Portugal.", .acceptable)]
+    contrasts := [("She only went to Spain and Portugal.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("only", "yes"), ("case", "37a")] }
 
@@ -76,7 +76,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := "A: What is Mary's job at the hospital?"
     judgment := .acceptable
-    alternatives := [("She is only an intern.", .acceptable)]
+    contrasts := [("She is only an intern.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "rankOrder"), ("only", "yes"), ("case", "37a")] }
 
@@ -89,7 +89,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I really expected a suite but only got a single room with 2 beds.", .acceptable)]
+    contrasts := [("I really expected a suite but only got a single room with 2 beds.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "exclusive"), ("only", "yes")] }
 
@@ -102,7 +102,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("London police expected a turnout of 100000 but only 15000 showed up. What happened?", .acceptable)]
+    contrasts := [("London police expected a turnout of 100000 but only 15000 showed up. What happened?", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "exclusive"), ("only", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := "A: How good was the food?"
     judgment := .acceptable
-    alternatives := [("The food was only amazing!", .unacceptable)]
+    contrasts := [("The food was only amazing!", .unacceptable)]
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("only", "no")] }
 
@@ -128,7 +128,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := "A: How big is the Empire State Building?"
     judgment := .acceptable
-    alternatives := [("The Empire State Building is just huge!", .acceptable), ("The Empire State Building is just enormous!", .acceptable)]
+    contrasts := [("The Empire State Building is just huge!", .acceptable), ("The Empire State Building is just enormous!", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -141,7 +141,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -154,7 +154,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -167,7 +167,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
@@ -180,7 +180,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := "Many gardeners are finding the new selections of miniature amaryllis more to their liking. ... don't be misled by the word \"miniature.\""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
@@ -193,7 +193,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
@@ -206,7 +206,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
@@ -219,7 +219,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Fafen, the daughter only older than Siri, had done the family duty and become a monk.", .unacceptable)]
+    contrasts := [("Fafen, the daughter only older than Siri, had done the family duty and become a monk.", .unacceptable)]
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("only", "no"), ("case", "37a")] }
 
@@ -232,7 +232,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
@@ -245,7 +245,7 @@ def ex_9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
@@ -258,7 +258,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
@@ -271,7 +271,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
@@ -284,7 +284,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "temporal")] }
 
@@ -297,7 +297,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "temporal")] }
 
@@ -310,7 +310,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "temporal")] }
 
@@ -323,7 +323,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "spatial")] }
 
@@ -336,7 +336,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "spatial")] }
 
@@ -349,7 +349,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
@@ -362,7 +362,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := "What GPA is sufficient for Jason to stay in the program?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
@@ -375,7 +375,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := "A: Why is the lamp broken?"
     judgment := .acceptable
-    alternatives := [("I was sitting there and the lamp only broke!", .unacceptable)]
+    contrasts := [("I was sitting there and the lamp only broke!", .unacceptable)]
     readings := []
     paperFeatures := [("flavor", "unexplanatory"), ("only", "no"), ("case", "37b")] }
 
@@ -388,7 +388,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unexplanatory")] }
 
@@ -401,7 +401,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unexplanatory")] }
 
@@ -414,7 +414,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := "A: Why did you make mango-mousse cake?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "weakExplanation"), ("only", "no")] }
 
@@ -427,7 +427,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := "A: How did Mary get into the bar?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "weakExplanation"), ("only", "no")] }
 
@@ -440,7 +440,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := "A: What is a proton?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
@@ -453,7 +453,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := "A: Why are you mad?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
@@ -466,7 +466,7 @@ def ex_17c : Datum :=
     glossedTokens := []
     context := "A: What kind of dog is Fido?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
@@ -479,7 +479,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := "A: What happened to your relationship?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "counterexpectational"), ("only", "no"), ("case", "37a")] }
 
@@ -492,7 +492,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := "A: What happened at the church?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "counterexpectational"), ("only", "no"), ("case", "37a")] }
 
@@ -505,7 +505,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := "A: How did John do on the exam?"
     judgment := .acceptable
-    alternatives := [("He only got a B.", .acceptable), ("He just got an A+.", .marginal), ("He only got an A+.", .marginal), ("He just sailed through.", .acceptable), ("He only sailed through.", .unacceptable)]
+    contrasts := [("He only got a B.", .acceptable), ("He just got an A+.", .marginal), ("He only got an A+.", .marginal), ("He just sailed through.", .acceptable), ("He only sailed through.", .unacceptable)]
     readings := []
     paperFeatures := [("flavor", "rankOrder")] }
 
@@ -518,7 +518,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Alphonso simply grabbed whatever tool was handy.", .acceptable)]
+    contrasts := [("Alphonso simply grabbed whatever tool was handy.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("case", "37c")] }
 
@@ -531,7 +531,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := "A: Is Fafen older than Siri?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
@@ -544,7 +544,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := "A: How much older than Siri is Fafen?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("focus", "just"), ("case", "37a")] }
 
@@ -557,7 +557,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("focus", "just")] }
 
@@ -570,7 +570,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("focus", "cheaper")] }
 
@@ -583,7 +583,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := "Q: How full is the tank?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("case", "37a")] }
 
@@ -596,7 +596,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := "A: When did your sister get here?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "temporal"), ("case", "37a")] }
 
@@ -609,7 +609,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("Roughly speaking, this essay is perfect.", .unacceptable)]
+    contrasts := [("Roughly speaking, this essay is perfect.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "roughlySpeaking"), ("adjective", "extreme")] }
 
@@ -622,7 +622,7 @@ def ex_58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Roughly speaking, this theater is empty.", .acceptable)]
+    contrasts := [("Roughly speaking, this theater is empty.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "roughlySpeaking"), ("adjective", "maximumStandard")] }
 
@@ -635,7 +635,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := "Q: How tasty is that soup?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -648,7 +648,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The door is completely closed!", .acceptable), ("The door is absolutely closed!", .acceptable)]
+    contrasts := [("The door is completely closed!", .acceptable), ("The door is absolutely closed!", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("adjective", "maximumStandard")] }
 
@@ -661,7 +661,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The tank is completely full!", .acceptable), ("The tank is absolutely full!", .acceptable)]
+    contrasts := [("The tank is completely full!", .acceptable), ("The tank is absolutely full!", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("adjective", "maximumStandard")] }
 
@@ -674,7 +674,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := "A: Which emotions was the funeral full of?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -687,7 +687,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := "A: How do pink bathrooms compare to other-color bathrooms?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
@@ -700,7 +700,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("response", "denial")] }
 
@@ -713,7 +713,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("response", "negation")] }
 
@@ -726,7 +726,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("response", "denial")] }
 
@@ -739,7 +739,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("C: Yes! Even a goldfish will make him happy.", .acceptable)]
+    contrasts := [("C: Yes! Even a goldfish will make him happy.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("response", "denial")] }
 
@@ -752,7 +752,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("B': No, it isn't! I found it too verbose.", .acceptable), ("B'': I don't think so. I hate how pretentious it sounds.", .acceptable)]
+    contrasts := [("B': No, it isn't! I found it too verbose.", .acceptable), ("B'': I don't think so. I hate how pretentious it sounds.", .acceptable)]
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("response", "faultlessDisagreement")] }
 

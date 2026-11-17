@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("answers: John / It was John / The person who kicked Sam was John", .acceptable), ("non-answers: *He / *Sam kicked John / *China is populous", .ungrammatical), ("responses but not answers: I don't know / Ask Sam", .marginal)]
     paperFeatures := [("claim", "answerhood is as entrenched as sentencehood")] }
 
@@ -37,7 +37,7 @@ def gas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")] }
 
@@ -50,7 +50,7 @@ def basket : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")] }
 
@@ -63,7 +63,7 @@ def prime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("target", "Karttunen-style unique denotations")] }
 
@@ -76,7 +76,7 @@ def unicorns : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("for each of two actual unicorns, John wonders where it lives", .acceptable), ("John wonders where the single place is at which two unicorns live", .acceptable), ("quantifier between wonder and the wh: each unicorn possibly living in a different place", .acceptable)]
     paperFeatures := [("phenomenon", "quantifying into questions")] }
 
@@ -89,7 +89,7 @@ def grades : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "quantifying into questions"), ("embedding", "depend")] }
 
@@ -102,7 +102,7 @@ def king : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "quantifying into a whether"), ("status", "no true answers")] }
 
@@ -115,7 +115,7 @@ def china : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
 
@@ -128,7 +128,7 @@ def redhead : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
 
@@ -141,7 +141,7 @@ def john : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "inconsistent — likely an answer, not guaranteed")] }
 
@@ -154,7 +154,7 @@ def mary : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
 

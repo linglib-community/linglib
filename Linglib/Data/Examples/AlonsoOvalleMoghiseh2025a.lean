@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "downward entailing")] }
 
@@ -41,7 +41,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("modal", "deontic necessity"), ("inference", "free choice")] }
 
@@ -56,7 +56,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "vreun"), ("environment", "unembedded"), ("modalInsertion", "no"), ("partialExhaustification", "no")] }
 
@@ -71,7 +71,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("inference", "speaker ignorance")] }
 
@@ -84,7 +84,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "namely")] }
 
@@ -99,7 +99,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "un NP cualquiera"), ("environment", "unembedded"), ("inference", "agent indifference")] }
 
@@ -114,7 +114,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded")] }
 
@@ -129,7 +129,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "namely")] }
 
@@ -144,7 +144,7 @@ def ex_10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("inference", "uniqueness")] }
 
@@ -157,7 +157,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded")] }
 
@@ -172,7 +172,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek"), ("environment", "unembedded")] }
 
@@ -187,7 +187,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "numeral -i"), ("environment", "unembedded")] }
 
@@ -202,7 +202,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "numeral"), ("environment", "unembedded")] }
 
@@ -217,7 +217,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i plural"), ("environment", "unembedded")] }
 
@@ -232,7 +232,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "bare -i"), ("environment", "unembedded")] }
 
@@ -247,7 +247,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("scope", "doubt > ∃")] }
 
@@ -262,7 +262,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("scope", "if > ∃")] }
 
@@ -277,7 +277,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "sentential negation")] }
 
@@ -290,7 +290,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "sentential negation")] }
 
@@ -303,7 +303,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "sentential negation")] }
 
@@ -318,7 +318,7 @@ def ex_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("inference", "free choice")] }
 
@@ -333,7 +333,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("inference", "free choice")] }
 
@@ -348,7 +348,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("inference", "modal variation")] }
 
@@ -363,7 +363,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "modal variation")] }
 
@@ -376,7 +376,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic necessity"), ("inference", "modal variation")] }
 
@@ -392,7 +392,7 @@ def ex_25 : Datum :=
     context := "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek"), ("modal", "deontic possibility"), ("scenario", "permitted24")] }
 
@@ -408,7 +408,7 @@ def ex_26 : Datum :=
     context := "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("scenario", "permitted24")] }
 
@@ -423,7 +423,7 @@ def ex_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "continuation incompatible with free choice")] }
 
@@ -439,7 +439,7 @@ def ex_29 : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek"), ("modal", "deontic necessity"), ("scenario", "required28")] }
 
@@ -455,7 +455,7 @@ def ex_30 : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("scenario", "required28")] }
 
@@ -471,7 +471,7 @@ def ex_32 : Datum :=
     context := "There are only five books (b1–b5). The speaker is convinced that Forood hasn't bought b4 or b5, but for all he knows Forood could have bought any of the other books, or even none."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("scenario", "known31")] }
 
@@ -486,7 +486,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "continuation incompatible with free choice")] }
 
@@ -502,7 +502,7 @@ def ex_35 : Datum :=
     context := "There are only five books (b1–b5). The speaker is convinced that Forood has bought a book, but knows that he hasn't bought b4 or b5."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("scenario", "known34")] }
 
@@ -517,7 +517,7 @@ def ex_36 : Datum :=
     lgrConformance := some .wordAligned
     context := "Forood wanted to buy The Iliad and did so. He wouldn't have bought any other book."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("modalInsertion", "no"), ("partialExhaustification", "yes")] }
 
@@ -532,7 +532,7 @@ def ex_40 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "which-question")] }
 
@@ -545,7 +545,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "which-question")] }
 
@@ -560,7 +560,7 @@ def ex_42 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("continuation", "guess who")] }
 
@@ -575,7 +575,7 @@ def ex_43 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "guess what")] }
 
@@ -588,7 +588,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("continuation", "previously mentioned witness")] }
 
@@ -603,7 +603,7 @@ def ex_45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "previously mentioned witness")] }
 
@@ -618,7 +618,7 @@ def ex_47 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "how-many question"), ("inference", "uniqueness")] }
 
@@ -631,7 +631,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "how-many question")] }
 
@@ -646,7 +646,7 @@ def ex_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "uniqueness absent")] }
 
@@ -661,7 +661,7 @@ def ex_50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "free choice absent")] }
 
@@ -676,7 +676,7 @@ def ex_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "continuation"), ("inference", "no anti-plurality under possibility")] }
 
@@ -691,7 +691,7 @@ def ex_73a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic possibility"), ("inference", "modal variation")] }
 
@@ -706,7 +706,7 @@ def ex_81a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("modalInsertion", "yes"), ("partialExhaustification", "no")] }
 
@@ -722,7 +722,7 @@ def ex_105a : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic necessity"), ("scenario", "anyNumber104")] }
 
@@ -738,7 +738,7 @@ def ex_105b : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "irgendein"), ("modal", "deontic necessity"), ("scenario", "anyNumber104")] }
 
@@ -754,7 +754,7 @@ def ex_106 : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("scenario", "anyNumber104")] }
 
@@ -770,7 +770,7 @@ def ex_109 : Datum :=
     context := "There are only five books (b1–b5). Forood is required to buy two books, and any book is a permissible option."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("scenario", "twoBooks108")] }
 
@@ -785,7 +785,7 @@ def ex_110 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "continuation")] }
 
@@ -800,7 +800,7 @@ def ex_111 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "embedded uniqueness absent")] }
 
@@ -813,7 +813,7 @@ def ex_121 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("inference", "embedded uniqueness")] }
 
@@ -828,7 +828,7 @@ def ex_125 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There is a box on the desk. Forood doesn't know what the box contains."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("You see! There is one book", .acceptable), ("You see! There are three books", .unacceptable)]
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "embedded uniqueness")] }
 
@@ -843,7 +843,7 @@ def ex_128 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "apparent counterexample")] }
 

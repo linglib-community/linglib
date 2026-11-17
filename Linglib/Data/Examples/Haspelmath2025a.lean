@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "classificational")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equational")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "attributional")] }
 
@@ -63,7 +63,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predlocative")] }
 
@@ -76,7 +76,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential")] }
 
@@ -89,7 +89,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predpossessive")] }
 
@@ -102,7 +102,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "appertentive")] }
 
@@ -118,7 +118,7 @@ def ex8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "classificational"), ("bold", "ja"), ("boldGloss", "COP")] }
 
@@ -134,7 +134,7 @@ def ex8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equational"), ("bold", "ja"), ("boldGloss", "COP")] }
 
@@ -150,7 +150,7 @@ def ex9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "classificational"), ("bold", "Mae"), ("boldGloss", "be.PRS.3SG")] }
 
@@ -166,7 +166,7 @@ def ex9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equational"), ("bold", "yw"), ("boldGloss", "be.PRS.3SG")] }
 
@@ -182,7 +182,7 @@ def ex10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "classificational")] }
 
@@ -198,7 +198,7 @@ def ex10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Miħammad ʕAli.", .ungrammatical)]
+    contrasts := [("Miħammad ʕAli.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "equational"), ("bold", "huwwa"), ("boldGloss", "COP")] }
 
@@ -213,7 +213,7 @@ def ex23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "transpossessive"), ("bold", "dâram"), ("boldGloss", "have")] }
 
@@ -229,7 +229,7 @@ def ex24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compossessive"), ("bold", "ta-nàa"), ("boldGloss", "3F.SG-be")] }
 
@@ -245,7 +245,7 @@ def ex25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "locpossessive"), ("bold", "on"), ("boldGloss", "is")] }
 
@@ -260,7 +260,7 @@ def ex26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "oblique-possessor"), ("bold", "prinadležit"), ("boldGloss", "belongs")] }
 
@@ -276,7 +276,7 @@ def ex27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "independent-possessor"), ("bold", "es"), ("boldGloss", "is")] }
 
@@ -292,7 +292,7 @@ def ex31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("bold", "y"), ("boldGloss", "COP")] }
 
@@ -307,7 +307,7 @@ def ex33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("bold", "Hay"), ("boldGloss", "EXV")] }
 
@@ -323,7 +323,7 @@ def ex50 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "existive-copula"), ("bold", "May"), ("boldGloss", "EXV")] }
 
@@ -339,7 +339,7 @@ def ex51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "transpossessive-existential"), ("bold", "annan"), ("boldGloss", "have")] }
 
@@ -354,7 +354,7 @@ def ex52 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "prolocative"), ("bold", "Ci"), ("boldGloss", "PROLOC"), ("bold", "sono"), ("boldGloss", "are")] }
 
@@ -369,7 +369,7 @@ def ex53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "existent-postposing"), ("bold", "on"), ("boldGloss", "is")] }
 
@@ -382,7 +382,7 @@ def ex53cf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predlocative")] }
 
@@ -398,7 +398,7 @@ def ex57 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "predlocative"), ("construction", "existential"), ("bold", "bé"), ("boldGloss", "LCOP")] }
 
@@ -414,7 +414,7 @@ def ex61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "existential"), ("bold", "dá-u"), ("boldGloss", "EXV-Q")] }
 
@@ -430,7 +430,7 @@ def ex64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "hyparctic"), ("bold", "sum"), ("boldGloss", "I.exist")] }
 
@@ -446,7 +446,7 @@ def ex65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "hyparctic"), ("bold", "est"), ("boldGloss", "is")] }
 
@@ -462,7 +462,7 @@ def ex66 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "hyparctic"), ("bold", "dáa"), ("boldGloss", "EXV")] }
 

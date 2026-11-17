@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("process", "stress")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
@@ -56,7 +56,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("had͡ʒχ-él", .ungrammatical), ("darpr-él", .ungrammatical)]
+    contrasts := [("had͡ʒχ-él", .ungrammatical), ("darpr-él", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("amsin-utjún", .ungrammatical), ("irgun-ajín", .ungrammatical)]
+    contrasts := [("amsin-utjún", .ungrammatical), ("irgun-ajín", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")] }
 
@@ -86,7 +86,7 @@ def ex_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "schwa")] }
 
@@ -101,7 +101,7 @@ def ex_5c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "compound"), ("reduction", "both")] }
 
@@ -116,7 +116,7 @@ def ex_7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "none")] }
 
@@ -131,7 +131,7 @@ def ex_7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "diphthong")] }
 
@@ -146,7 +146,7 @@ def ex_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "deletion")] }
 
@@ -161,7 +161,7 @@ def ex_10e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "cInflection"), ("reduction", "none")] }
 
@@ -176,7 +176,7 @@ def ex_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "diphthong")] }
 
@@ -191,7 +191,7 @@ def ex_41 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")] }
 
@@ -206,7 +206,7 @@ def ex_42 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("amusən-utjún", .ungrammatical), ("aznv-utjún", .ungrammatical)]
+    contrasts := [("amusən-utjún", .ungrammatical), ("aznv-utjún", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
@@ -221,7 +221,7 @@ def ex_47a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("həvant-anál", .ungrammatical), ("hankist-anál", .ungrammatical), ("amsin-anál", .ungrammatical)]
+    contrasts := [("həvant-anál", .ungrammatical), ("hankist-anál", .ungrammatical), ("amsin-anál", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
@@ -236,7 +236,7 @@ def ex_48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")] }
 
@@ -251,7 +251,7 @@ def ex_65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "both")] }
 
@@ -266,7 +266,7 @@ def ex_66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "plural"), ("reduction", "both")] }
 
@@ -281,7 +281,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "none")] }
 

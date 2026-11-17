@@ -26,7 +26,7 @@ def ex_1a_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -41,7 +41,7 @@ def ex_1a_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -56,7 +56,7 @@ def ex_1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
@@ -71,7 +71,7 @@ def ex_2a_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -86,7 +86,7 @@ def ex_2a_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -101,7 +101,7 @@ def ex_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
@@ -116,7 +116,7 @@ def ex_3a_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -131,7 +131,7 @@ def ex_3a_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -146,7 +146,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
@@ -161,7 +161,7 @@ def ex_4a_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -176,7 +176,7 @@ def ex_4a_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -191,7 +191,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
@@ -206,7 +206,7 @@ def ex_5_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -221,7 +221,7 @@ def ex_5_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -236,7 +236,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
@@ -251,7 +251,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -266,7 +266,7 @@ def ex_6c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -279,7 +279,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
@@ -292,7 +292,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo")] }
 
@@ -305,7 +305,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -318,7 +318,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
@@ -333,7 +333,7 @@ def ex_9_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -348,7 +348,7 @@ def ex_9_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -363,7 +363,7 @@ def ex_10_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -378,7 +378,7 @@ def ex_10_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -393,7 +393,7 @@ def ex_11_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -408,7 +408,7 @@ def ex_11_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -423,7 +423,7 @@ def ex_12_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -438,7 +438,7 @@ def ex_12_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -453,7 +453,7 @@ def ex_13_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -468,7 +468,7 @@ def ex_13_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -483,7 +483,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
@@ -498,7 +498,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -511,7 +511,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive")] }
 
@@ -524,7 +524,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "forTo")] }
 
@@ -537,7 +537,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
@@ -552,7 +552,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
@@ -567,7 +567,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
@@ -582,7 +582,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
@@ -597,7 +597,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
@@ -610,7 +610,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
@@ -625,7 +625,7 @@ def ex_22_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -640,7 +640,7 @@ def ex_22_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -655,7 +655,7 @@ def ex_23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -670,7 +670,7 @@ def ex_23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -683,7 +683,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "forTo")] }
 
@@ -696,7 +696,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -711,7 +711,7 @@ def ex_25_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -726,7 +726,7 @@ def ex_25_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -741,7 +741,7 @@ def ex_25_fut : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -756,7 +756,7 @@ def ex_26_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -771,7 +771,7 @@ def ex_26_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -786,7 +786,7 @@ def ex_26_fut : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -801,7 +801,7 @@ def ex_27_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -816,7 +816,7 @@ def ex_27_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -831,7 +831,7 @@ def ex_28_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
@@ -846,7 +846,7 @@ def ex_28_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
@@ -861,7 +861,7 @@ def ex_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
@@ -876,7 +876,7 @@ def ex_37 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
@@ -891,7 +891,7 @@ def ex_38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
@@ -906,7 +906,7 @@ def ex_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
@@ -921,7 +921,7 @@ def ex_40_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -936,7 +936,7 @@ def ex_40_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -951,7 +951,7 @@ def ex_41_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -966,7 +966,7 @@ def ex_41_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -981,7 +981,7 @@ def ex_42a_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -996,7 +996,7 @@ def ex_42a_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -1011,7 +1011,7 @@ def ex_42b_sbjv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -1026,7 +1026,7 @@ def ex_42b_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -1041,7 +1041,7 @@ def ex_45a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -1056,7 +1056,7 @@ def ex_45b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -1071,7 +1071,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
@@ -1086,7 +1086,7 @@ def ex_46b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -1099,7 +1099,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "bareInfinitive")] }
 
@@ -1112,7 +1112,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
@@ -1125,7 +1125,7 @@ def ex_49a_want : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
@@ -1138,7 +1138,7 @@ def ex_49a_hope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
@@ -1151,7 +1151,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
@@ -1164,7 +1164,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
@@ -1177,7 +1177,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
@@ -1190,7 +1190,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
@@ -1205,7 +1205,7 @@ def ex_53 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
@@ -1220,7 +1220,7 @@ def ex_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
@@ -1233,7 +1233,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo"), ("diagnostic", "consistency")] }
 
@@ -1246,7 +1246,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative"), ("diagnostic", "consistency")] }
 
@@ -1259,7 +1259,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
@@ -1272,7 +1272,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
@@ -1285,7 +1285,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
@@ -1298,7 +1298,7 @@ def ex_90_aim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "infinitive")] }
 
@@ -1311,7 +1311,7 @@ def ex_90_try : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "infinitive")] }
 
@@ -1324,7 +1324,7 @@ def ex_91_aim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "indicative")] }
 
@@ -1337,7 +1337,7 @@ def ex_91_try : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "indicative")] }
 
@@ -1350,7 +1350,7 @@ def ex_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1363,7 +1363,7 @@ def ex_93 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "foresee")] }
 
@@ -1376,7 +1376,7 @@ def ex_94 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "foresee")] }
 
@@ -1389,7 +1389,7 @@ def ex_96a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1402,7 +1402,7 @@ def ex_96b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1415,7 +1415,7 @@ def ex_97a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
@@ -1428,7 +1428,7 @@ def ex_97b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
@@ -1441,7 +1441,7 @@ def ex_98a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1454,7 +1454,7 @@ def ex_99a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
@@ -1469,7 +1469,7 @@ def ex_100 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "subjunctive"), ("reading", "intention")] }
 
@@ -1484,7 +1484,7 @@ def ex_101 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
@@ -1499,7 +1499,7 @@ def ex_102 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "subjunctive"), ("reading", "intention")] }
 
@@ -1514,7 +1514,7 @@ def ex_103 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
@@ -1529,7 +1529,7 @@ def ex_104 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1544,7 +1544,7 @@ def ex_105 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
@@ -1557,7 +1557,7 @@ def ex_106 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "infinitive"), ("reading", "intention")] }
 
@@ -1570,7 +1570,7 @@ def ex_107a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
@@ -1583,7 +1583,7 @@ def ex_107b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
@@ -1596,7 +1596,7 @@ def ex_112_plan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "infinitive"), ("reading", "intention"), ("construction", "anankastic")] }
 
@@ -1609,7 +1609,7 @@ def ex_112_hope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("reading", "intention"), ("construction", "anankastic")] }
 
@@ -1622,7 +1622,7 @@ def ex_113_plan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "intention"), ("construction", "anankastic")] }
 
@@ -1635,7 +1635,7 @@ def ex_113_hope : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative"), ("reading", "intention"), ("construction", "anankastic")] }
 
@@ -1648,7 +1648,7 @@ def ex_115a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "infinitive")] }
 
@@ -1661,7 +1661,7 @@ def ex_115b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "gerund")] }
 
@@ -1674,7 +1674,7 @@ def ex_116 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "indicative")] }
 
@@ -1689,7 +1689,7 @@ def ex_117 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "infinitive")] }
 
@@ -1704,7 +1704,7 @@ def ex_118 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "indicative")] }
 
@@ -1719,7 +1719,7 @@ def ex_119 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "subjunctive")] }
 
@@ -1732,7 +1732,7 @@ def ex_120 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "gerund"), ("reading", "event")] }
 
@@ -1745,7 +1745,7 @@ def ex_121 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "indicative"), ("reading", "proposition")] }
 
@@ -1760,7 +1760,7 @@ def ex_122 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "subjunctive"), ("reading", "event")] }
 
@@ -1775,7 +1775,7 @@ def ex_123 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "indicative"), ("reading", "proposition")] }
 
@@ -1788,7 +1788,7 @@ def ex_124 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "bareInfinitive"), ("reading", "event")] }
 
@@ -1801,7 +1801,7 @@ def ex_125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "indicative"), ("reading", "proposition")] }
 
@@ -1816,7 +1816,7 @@ def ex_126 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "subjunctive"), ("reading", "event")] }
 
@@ -1831,7 +1831,7 @@ def ex_127 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "indicative"), ("reading", "proposition")] }
 
@@ -1844,7 +1844,7 @@ def ex_128a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo")] }
 
@@ -1857,7 +1857,7 @@ def ex_128b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 

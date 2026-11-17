@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "none"), ("soe", "none")] }
 
@@ -41,7 +41,7 @@ def ex_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "individual")] }
 
@@ -56,7 +56,7 @@ def ex_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .unacceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "individual")] }
 
@@ -71,7 +71,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -86,7 +86,7 @@ def ex_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "none"), ("soe", "none")] }
 
@@ -101,7 +101,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "sempre"), ("soe", "none")] }
 
@@ -116,7 +116,7 @@ def ex_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "sempre"), ("soe", "none")] }
 
@@ -131,7 +131,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := "A suitable discourse context which provides a restriction for the Q-adverb (footnote 9)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "sempre"), ("soe", "none")] }
 
@@ -146,7 +146,7 @@ def ex_9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "negativeKindIndefinite"), ("qAdverb", "none"), ("soe", "none")] }
 
@@ -159,7 +159,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable), ("PROG", .unacceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -172,7 +172,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable), ("PROG", .unacceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -185,7 +185,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "Gianni had the habit of smoking Tuscan cigars without an inclination for any particular sub-kind (footnote 12)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -198,7 +198,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -211,7 +211,7 @@ def fn11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -224,7 +224,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "none")] }
 
@@ -237,7 +237,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "ogni"), ("soe", "none")] }
 
@@ -250,7 +250,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "ogni"), ("soe", "none")] }
 
@@ -263,7 +263,7 @@ def fn29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("PROG", .marginal)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
@@ -278,7 +278,7 @@ def fn31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "sempre"), ("soe", "none")] }
 
@@ -291,7 +291,7 @@ def tennis : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "none"), ("soe", "none")] }
 
@@ -304,7 +304,7 @@ def frequentative : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 

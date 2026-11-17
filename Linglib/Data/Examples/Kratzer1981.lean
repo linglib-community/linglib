@@ -25,7 +25,7 @@ def first : Datum :=
     context := "In w, all I want is to become mayor. In w, the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def one : Datum :=
     context := "In w, all I want is two things, namely to become mayor and not to go to the pub regularly. In w the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def two : Datum :=
     context := "In w, all I want is two things, namely to become mayor and not to go to the pub regularly. In w the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def three : Datum :=
     context := "In w, all I want is two things, namely to become mayor and not to go to the pub regularly. In w the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -81,7 +81,7 @@ def four : Datum :=
     context := "In w, all I want is two things, namely to become mayor and not to go to the pub regularly. In w the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -95,7 +95,7 @@ def five : Datum :=
     context := "In w, all I want is two things, namely to become mayor and not to go to the pub regularly. In w the relevant circumstances are such that I will become mayor only if I go to the pub regularly."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -109,7 +109,7 @@ def ex_75 : Datum :=
     context := "The modal base is empty and the ordering source is what is morally commanded."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -123,7 +123,7 @@ def ex_76 : Datum :=
     context := "The modal base is empty and the ordering source is what is morally commanded."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -137,7 +137,7 @@ def ex_77 : Datum :=
     context := "The modal base is empty and the ordering source is what is morally commanded."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

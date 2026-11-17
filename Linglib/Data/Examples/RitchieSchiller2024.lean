@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "A room with one book, on a table, and no other books or tables."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(1′) The book in this room is on the table.", .acceptable)]
     paperFeatures := [("restriction", "location"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -37,7 +37,7 @@ def ex_1_fig2 : Datum :=
     glossedTokens := []
     context := "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "location"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("The funniest book ever written is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "aesthetic"), ("setup", "none")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("The book on structuralism I read in graduate school is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "history"), ("setup", "none")] }
 
@@ -76,7 +76,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room. The speaker aims to talk about the blue things in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("The blue book in this room is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "color"), ("setup", "none")] }
 
@@ -89,7 +89,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "A room with three books, on a table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(3′) Every book in this room is on the table.", .acceptable)]
     paperFeatures := [("restriction", "location"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -102,7 +102,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := "Three books on a table and several stacks of books on the floor; the books on the table are all the hardcover books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every hardcover book in this room is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "subkind"), ("setup", "none")] }
 
@@ -115,7 +115,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := "Three books on a table and several stacks on the floor; the books on the table are all the depressing books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every depressing book in this room is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "aesthetic"), ("setup", "none")] }
 
@@ -128,7 +128,7 @@ def ex_4c : Datum :=
     glossedTokens := []
     context := "Three books on a table and several stacks on the floor; the books on the table are all the coffee-stained books in the room."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every coffee-stained book in this room is on the table.", .unacceptable)]
     paperFeatures := [("restriction", "history"), ("setup", "none")] }
 
@@ -141,7 +141,7 @@ def ex_3_now : Datum :=
     glossedTokens := []
     context := "A room with three books, on a table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every book is on the table right now.", .acceptable)]
     paperFeatures := [("restriction", "time"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -154,7 +154,7 @@ def ex_3_tomorrow : Datum :=
     glossedTokens := []
     context := "A room with three books, on a table."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every book is on the table tomorrow.", .unacceptable)]
     paperFeatures := [("restriction", "time"), ("setup", "none"), ("anchor", "elsewhere")] }
 
@@ -167,7 +167,7 @@ def fn4 : Datum :=
     glossedTokens := []
     context := "Asked to describe what the room will look like tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every book is on the table tomorrow.", .acceptable)]
     paperFeatures := [("restriction", "time"), ("setup", "question"), ("anchor", "elsewhere")] }
 
@@ -180,7 +180,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "A and B work in a department store and must create a display of blue merchandise; A asks: Where are the blue things? There are three books on the table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The blue book in this room is on the table.", .acceptable)]
     paperFeatures := [("restriction", "color"), ("setup", "question")] }
 
@@ -193,7 +193,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "Question under discussion: What is the way things are at Civil Coffee on Figueroa today?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(8) The front door of Civil Coffee on Figueroa is locked.", .acceptable)]
     paperFeatures := [("restriction", "location"), ("setup", "question"), ("anchor", "elsewhere")] }
 
@@ -206,7 +206,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "Question under discussion: What is the way things are at Civil Coffee today? The tables are mostly square, with one round and one rectangular table."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("(9′) The round table at Civil Coffee on Figueroa is wobbly and has three laptops on it.", .unacceptable)]
     paperFeatures := [("restriction", "shape"), ("setup", "question")] }
 
@@ -219,7 +219,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "Leto and Duncan are discussing potential co-conspirators."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(11) Leto, Duncan, Amir, Jessica, and Yueh are here.", .acceptable)]
     paperFeatures := [("restriction", "plan"), ("setup", "priorGoal")] }
 
@@ -232,7 +232,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "A room with green books visible on the shelves; it is common knowledge that numerous books in the room are hidden from view."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "availability"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -245,7 +245,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "A room with green books visible on the shelves; it is common knowledge that numerous books in the room are hidden from view."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "availability"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -258,7 +258,7 @@ def ex_18_room : Datum :=
     glossedTokens := []
     context := "An enclosed room; the plants within arm’s reach are blooming but some plants near the door are not."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "salience"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -271,7 +271,7 @@ def ex_18_window : Datum :=
     glossedTokens := []
     context := "An enclosed room; every plant in the room is blooming but some plants visible through a window are not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "location"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -284,7 +284,7 @@ def ex_18_meadow : Datum :=
     glossedTokens := []
     context := "A large open meadow; the plants near the conversationalists are blooming but some at the meadow’s edges are not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "salience"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -297,7 +297,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "A backyard on a winter night after a snowfall: the lawn furniture, potted plants, and garden gnomes are covered, the clouds, the moon, and the trees in the near distance are not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "manipulability"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -310,7 +310,7 @@ def ex_20_hands : Datum :=
     glossedTokens := []
     context := "Entering a room with bare hands."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("smaller objects and some furniture", .acceptable)]
     paperFeatures := [("restriction", "manipulability"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -323,7 +323,7 @@ def ex_20_hammers : Datum :=
     glossedTokens := []
     context := "Entering the same room armed with sledgehammers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the sheetrock walls included", .acceptable)]
     paperFeatures := [("restriction", "manipulability"), ("setup", "none"), ("anchor", "hereNow")] }
 
@@ -336,7 +336,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "A: The blue merchandise belongs in the display by the door. The items may be in another room or a warehouse across town."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "color"), ("setup", "assertion")] }
 
@@ -349,7 +349,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := "A: Bring the blue merchandise to the display by the door."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "color"), ("setup", "directive")] }
 
@@ -362,7 +362,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "Arman and Bea planned to see a newly acquired Cy Twombly painting and meet in the room where it hangs with many other paintings, some more salient."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "plan"), ("setup", "priorGoal")] }
 
@@ -375,7 +375,7 @@ def library : Datum :=
     glossedTokens := []
     context := "Two parents have the aim of collecting all the library books their children checked out, from under couches, the car, and backpacks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restriction", "plan"), ("setup", "priorGoal")] }
 
@@ -388,7 +388,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "Discourse-initial, at a cafe; common knowledge that Carl works in the UCLA linguistics department."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("everyone in the UCLA linguistics department", .acceptable)]
     paperFeatures := [("restriction", "location"), ("setup", "displacement"), ("anchor", "elsewhere")] }
 
@@ -401,7 +401,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "On the phone with Dan, who reports on the state of his kitchen, while shopping for his party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("everything in Dan’s kitchen", .acceptable)]
     paperFeatures := [("restriction", "location"), ("setup", "displacement"), ("anchor", "elsewhere")] }
 

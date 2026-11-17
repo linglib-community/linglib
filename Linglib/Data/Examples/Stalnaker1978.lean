@@ -25,7 +25,7 @@ def fool : Datum :=
     context := "Said to O'Leary, who is a fool. Daniels, who is no fool, is standing nearby and thinks he is the one addressed."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def meter : Datum :=
     context := "Said by an authority fixing the reference of 'one meter' by means of a certain metal bar."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def holmes : Datum :=
     context := "Said in the actual world by a speaker who has heard three rumors about the origin of the Sherlock Holmes stories and does not know which is true."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

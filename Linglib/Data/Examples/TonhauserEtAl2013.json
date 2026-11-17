@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "definite"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "definite"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "definite"],
@@ -73,7 +73,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "definite"],
@@ -98,7 +98,7 @@
     "translation": "That bastard Marko now wants me to work in his brother’s butcher shop.",
     "context": "Julia and Maria work in a bakery; their boss, who is generally strict but fair, is called Marko. One day, he calls Julia into his office; when she emerges, she says to Maria:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "expressive"],
@@ -125,7 +125,7 @@
     "translation": "Simon, my ex-boyfriend, speaks German.",
     "context": "Raul is new in town. His neighbor Simon invites him to his house for a party and introduces him to Maria. When Simon has walked away, Maria tells Raul:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "appositive"],
@@ -153,7 +153,7 @@
     "translation": "Pope Benedict the 16th, who was born in Germany, lives in Rome.",
     "context": "The children in a history class have to give presentations about famous people. Malena has to talk about the pope. She starts with:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "NRRC"],
@@ -183,7 +183,7 @@
     "translation": "It seems that Malena is sick. She almost threw up.",
     "context": "A mother calls for her daughter to come down for dinner. Her daughter doesn’t appear so she goes upstairs to check on her. When she comes back down, she says to her husband:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "aimete ‘almost’"],
@@ -210,7 +210,7 @@
     "translation": "Only I clean our house!",
     "context": "Carla, a mother of three teenage daughters, falls on the way to the supermarket and breaks her leg. She’s been in the hospital for a week when her daughters come to visit her for the first time. When she asks them how they are doing, her youngest daughter blurts out:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "-nte ‘only’"],
@@ -236,7 +236,7 @@
     "translation": "That man is your father.",
     "context": "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -262,7 +262,7 @@
     "translation": "He’s a man.",
     "context": "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ha’e ‘3rd’"],
@@ -289,7 +289,7 @@
     "translation": "Our bus driver is eating empanadas, too.",
     "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -316,7 +316,7 @@
     "translation": "Our bus driver is eating empanadas, too.",
     "context": "Same as in (17a), except that Malena is eating empanadas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -342,7 +342,7 @@
     "translation": "That little boy is my younger brother.",
     "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -368,7 +368,7 @@
     "translation": "That little boy is my younger brother.",
     "context": "As in (18a), but now Marko also brings to the presentation a picture of a person that he shows to the class.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -394,7 +394,7 @@
     "translation": "S/he is a farmer.",
     "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ha’e ‘3rd’"],
@@ -424,7 +424,7 @@
     "translation": "My father’s name is Juan. He is a farmer.",
     "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ha’e ‘3rd’"],
@@ -452,7 +452,7 @@
     "translation": "I have to go now to feed my dog.",
     "context": "A woman who is being interviewed by a school director for a job as a teacher suddenly interrupts and says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "possessive NP"],
@@ -478,7 +478,7 @@
     "translation": "I’ve stopped doing drugs.",
     "context": "Laura, who doesn’t live with her parents, visits them and asks them to sit down with her because she has to tell them something:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "n(d)(a)-…-vé-i-ma ‘not anymore’"],
@@ -505,7 +505,7 @@
     "translation": "She knows that she has to use her glasses to drive.",
     "context": "A girl backs out of a driveway and hits Susi’s car. A woman comes running out of the house, apologizes that her daughter hit Susi’s car, and says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "(oi)kuaa ‘know’"],
@@ -532,7 +532,7 @@
     "translation": "This boss from France lives in London.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -559,7 +559,7 @@
     "translation": "This boss from France does not live in London.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -586,7 +586,7 @@
     "translation": "Our bus driver is eating empanadas, too.",
     "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -613,7 +613,7 @@
     "translation": "It’s possible that our bus driver is eating empanadas, too.",
     "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -641,7 +641,7 @@
     "translation": "If our bus driver is also eating empanadas, I am going to leave the bus.",
     "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -668,7 +668,7 @@
     "translation": "Is our driver eating empanadas, too?",
     "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -695,7 +695,7 @@
     "translation": "Our bus driver is eating empanadas, too.",
     "context": "Same as in (30), except that Malena is eating empanadas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -722,7 +722,7 @@
     "translation": "It’s possible that our bus driver is eating empanadas, too.",
     "context": "Same as in (30), except that Malena is eating empanadas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -750,7 +750,7 @@
     "translation": "If our bus driver is also eating empanadas, I am going to leave the bus.",
     "context": "Same as in (30), except that Malena is eating empanadas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -777,7 +777,7 @@
     "translation": "Is our driver eating empanadas, too?",
     "context": "Same as in (30), except that Malena is eating empanadas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -801,7 +801,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "stop"],
@@ -828,7 +828,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "NRRC"],
@@ -851,7 +851,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "stop"],
@@ -874,7 +874,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "NRRC"],
@@ -905,7 +905,7 @@
     "translation": "Raul moved to Buenos Aires, but Juan doesn’t know that. He thinks that Malena, too, moved to Buenos Aires.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "avei ‘too’"],
@@ -940,7 +940,7 @@
     "translation": "Look! There’s a man. Malena doesn’t see him. She thinks he is sick.",
     "context": "The speaker, Ricardo, and Malena are lost in a city they’ve never visited before. The speaker, who, together with Ricardo, is a bit ahead of Malena, says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ha’e ‘3rd’"],
@@ -968,7 +968,7 @@
     "translation": "Juan thinks that Malena almost broke her leg and that Malena broke her leg.",
     "context": "Juan is a doctor at the scene of an accident. His friend says about him:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "aimete ‘almost’"],
@@ -996,7 +996,7 @@
     "translation": "Juan thinks that only Malena broke her leg and that Malena didn’t break her leg.",
     "context": "Juan is a doctor at the scene of an accident. His friend says about him:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "-nte ‘only’"],
@@ -1025,7 +1025,7 @@
     "translation": "Angel thinks that his father knows that his sister has a boyfriend and Angel also thinks that his sister doesn’t have a boyfriend.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "(oi)kuaa ‘know’"],
@@ -1052,7 +1052,7 @@
     "translation": "Juan thinks that Angela Merkel, the German chancellor, is the Argentinian president.",
     "context": "Sabine is from Germany and knows the politicians there very well. Angela Merkel, the chancellor of Germany, is currently visiting farmers in Paraguay, among them Juan. Sabine says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "appositive"],
@@ -1085,7 +1085,7 @@
     "translation": "Look! There’s a man over there, but Malena doesn’t know that (it’s a man). She thinks he is a stone sculpture.",
     "context": "The speaker, Ricardo, and Malena are lost and looking for somebody to ask for directions. The speaker, who is walking ahead with Ricardo, says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ha’e ‘3rd’"],
@@ -1112,7 +1112,7 @@
     "translation": "Brian thinks that Carmen’s dog is fierce.",
     "context": "Brian and Pedro are strolling down the street. They see a dog chasing a cat. Brian comments to Pedro that the dog looks fierce. Pedro knows that the dog is Carmen’s, but Brian doesn’t know that. Pedro later says to his wife:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "possessive NP"],
@@ -1143,7 +1143,7 @@
     "translation": "Raul is a (company) boss, but Malena doesn’t know that. She thinks this boss is a priest.",
     "context": "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -1173,7 +1173,7 @@
     "translation": "Raul is a (company) boss, but Malena doesn’t know that. She thinks this boss is a priest.",
     "context": "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -1200,7 +1200,7 @@
     "translation": "Sabina thinks that I live in that house.",
     "context": "Marko and Maria are walking down the street together when Marko points at a house; their school friend Sabina is not with them.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "demonstrative NP"],
@@ -1224,7 +1224,7 @@
     "translation": "",
     "context": "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "that N"],
@@ -1248,7 +1248,7 @@
     "translation": "",
     "context": "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "that N"],
@@ -1272,7 +1272,7 @@
     "translation": "",
     "context": "Barney points at a car and says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "that N"],

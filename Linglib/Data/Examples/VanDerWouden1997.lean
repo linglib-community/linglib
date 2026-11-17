@@ -26,7 +26,7 @@ def ex_184a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ooit"), ("context", "notMonotoneDecreasing")] }
 
@@ -41,7 +41,7 @@ def ex_184b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ooit"), ("context", "monotoneDecreasing")] }
 
@@ -56,7 +56,7 @@ def ex_184c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ooit"), ("context", "antiAdditive")] }
 
@@ -71,7 +71,7 @@ def ex_184d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ooit"), ("context", "antimorphic")] }
 
@@ -86,7 +86,7 @@ def ex_228b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "universalRestrictor")] }
 
@@ -101,7 +101,7 @@ def ex_228d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "noRestrictor")] }
 
@@ -116,7 +116,7 @@ def ex_229b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "question")] }
 
@@ -131,7 +131,7 @@ def ex_229d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "conditionalAntecedent")] }
 
@@ -146,7 +146,7 @@ def ex_232a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "clausalComparative")] }
 
@@ -161,7 +161,7 @@ def ex_233a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "superlative")] }
 
@@ -176,7 +176,7 @@ def ex_234a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "universalRestrictor")] }
 
@@ -191,7 +191,7 @@ def ex_234c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "superordinateNegation")] }
 
@@ -206,7 +206,7 @@ def ex_234e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "hoeven"), ("context", "beforeClause")] }
 

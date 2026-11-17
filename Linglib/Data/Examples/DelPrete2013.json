@@ -13,7 +13,7 @@
     "translation": "(During that period) Gianni used to read the newspaper. / (At that moment) Gianni was reading the newspaper.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"},
       {"name": "PROG", "judgment": "acceptable"}
@@ -40,7 +40,7 @@
     "translation": "(During that period) Gianni used to drive a sports car. / (At that moment) Gianni was driving a sports car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"},
       {"name": "PROG", "judgment": "acceptable"}
@@ -67,7 +67,7 @@
     "translation": "#(During that period) Gianni used to read a philosophy book. / (At that moment) Gianni was reading a philosophy book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "unacceptable"},
       {"name": "PROG", "judgment": "acceptable"}
@@ -94,7 +94,7 @@
     "translation": "(During that period) Gianni used to smoke a kind of Tuscan cigar (the Toscanello).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -119,7 +119,7 @@
     "translation": "Gianni (generally) travels by train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -145,7 +145,7 @@
     "translation": "Gianni always travels by train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -172,7 +172,7 @@
     "translation": "When he goes visit his relatives, Gianni always travels by train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -199,7 +199,7 @@
     "translation": "(During that period) Gianni would always / often read a philosophy book.",
     "context": "A suitable discourse context which provides a restriction for the Q-adverb (footnote 9).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -225,7 +225,7 @@
     "translation": "Gianni used to smoke no kind of Tuscan cigar (but now he has a passion for the Toscanello).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -248,7 +248,7 @@
     "translation": "(During that period) Gianni used to read philosophy books. / #(At that moment) Gianni was reading philosophy books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"},
       {"name": "PROG", "judgment": "unacceptable"}
@@ -272,7 +272,7 @@
     "translation": "Gianni used to read a kind of philosophy books (books of moral philosophy). / #Gianni was reading a kind of philosophy books (books of moral philosophy).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"},
       {"name": "PROG", "judgment": "unacceptable"}
@@ -296,7 +296,7 @@
     "translation": "Gianni used to smoke Tuscan cigars.",
     "context": "Gianni had the habit of smoking Tuscan cigars without an inclination for any particular sub-kind (footnote 12).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -319,7 +319,7 @@
     "translation": "(During that period) Gianni used to read a certain kind of books (i.e. philosophy books).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -342,7 +342,7 @@
     "translation": "(At that moment) Gianni was eating cherries. / (During that period) Gianni used to eat cherries.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"},
       {"name": "PROG", "judgment": "acceptable"}
@@ -369,7 +369,7 @@
     "translation": "At 3pm Gianni was at home, he was reading a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "PROG", "judgment": "acceptable"}
     ],
@@ -392,7 +392,7 @@
     "translation": "Every day at 3pm Gianni would take coffee.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -415,7 +415,7 @@
     "translation": "During that period, every day at 3pm Gianni would take coffee.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -438,7 +438,7 @@
     "translation": "? At 3pm Gianni was driving sports cars.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "PROG",
@@ -468,7 +468,7 @@
     "translation": "When he wanted to meditate, Gianni would always read a philosophy book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -491,7 +491,7 @@
     "translation": "(During that period) Gianni used to play tennis.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "HAB", "judgment": "acceptable"}
     ],
@@ -514,7 +514,7 @@
     "translation": "Gianni smoked Toscanelli for twenty years.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["object", "barePlural"],

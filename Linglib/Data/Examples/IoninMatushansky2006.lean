@@ -24,7 +24,7 @@ def s1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("operation", "multiplication")] }
 
@@ -39,7 +39,7 @@ def s1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("operation", "multiplication")] }
 
@@ -52,7 +52,7 @@ def s2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("operation", "addition")] }
 
@@ -65,7 +65,7 @@ def s2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("operation", "addition")] }
 
@@ -80,7 +80,7 @@ def s2c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Hurford 2003"), ("operation", "addition")] }
 
@@ -93,7 +93,7 @@ def s3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("claim", "the same four as in four books")] }
 
@@ -106,7 +106,7 @@ def s3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("claim", "the same four as in four hundred books")] }
 
@@ -119,7 +119,7 @@ def s14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "cardinals combine with determiners, so are not determiners")] }
 
@@ -134,7 +134,7 @@ def s20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Nelson and Toivonen 2000"), ("claim", "the lexical xNP is morphologically singular")] }
 
@@ -149,7 +149,7 @@ def s21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Mittendorf and Sadler 2005"), ("claim", "the lexical xNP is morphologically singular")] }
 
@@ -162,7 +162,7 @@ def s24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "counting dissimilar entities is odd")] }
 
@@ -175,7 +175,7 @@ def s24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "rescued by the shared property of being human")] }
 
@@ -188,7 +188,7 @@ def s26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
@@ -201,7 +201,7 @@ def s26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
@@ -214,7 +214,7 @@ def s26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
@@ -229,7 +229,7 @@ def s27a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "measure noun singular")] }
 
@@ -244,7 +244,7 @@ def s27b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "cardinal singular")] }
 
@@ -259,7 +259,7 @@ def s28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "semantic concord throughout in Russian")] }
 
@@ -272,7 +272,7 @@ def s37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("claim", "overgeneration: only multiples serve as complements")] }
 
@@ -285,7 +285,7 @@ def s37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("claim", "overgeneration: only multiples serve as complements")] }
 
@@ -298,7 +298,7 @@ def s38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("operation", "coordination as addition")] }
 
@@ -313,7 +313,7 @@ def s38b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("source", "Saeed 1999"), ("operation", "coordination as addition")] }
 
@@ -326,7 +326,7 @@ def s38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("operation", "coordination as addition")] }
 
@@ -341,7 +341,7 @@ def s45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("source", "Hurford 1975:198"), ("claim", "the lexical xNP inside the complex cardinal; subtraction by a preposition")] }
 
@@ -354,7 +354,7 @@ def s53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("claim", "split reading of coordinated plural predicates")] }
 
@@ -367,7 +367,7 @@ def s53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("claim", "full split reading")] }
 
@@ -380,7 +380,7 @@ def s54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("readings", "joint: each a friend and a colleague; split: each a friend or a colleague")] }
 
@@ -393,7 +393,7 @@ def s56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("readings", "joint (56a) absent; split (56b) must be a full split")] }
 
@@ -406,7 +406,7 @@ def s57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in the overt coordination")] }
 
@@ -419,7 +419,7 @@ def s57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap with different lexical xNPs")] }
 
@@ -432,7 +432,7 @@ def s57c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap without cardinals")] }
 
@@ -445,7 +445,7 @@ def s58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in measurements")] }
 
@@ -458,7 +458,7 @@ def s58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in money")] }
 
@@ -471,7 +471,7 @@ def s59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.1"), ("source", "Hofweber 2005"), ("claim", "and as 'in addition to' outside cardinals")] }
 
@@ -484,7 +484,7 @@ def s61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "overlap available: joint appointments may count twice")] }
 
@@ -497,7 +497,7 @@ def s61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "overlap available: five deans may be among the ten professors")] }
 
@@ -510,7 +510,7 @@ def s63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "marginal overlap under different implicit restrictions, with stress on the conjunction")] }
 
@@ -523,7 +523,7 @@ def s72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Appendix 2"), ("claim", "cardinals as arguments in arithmetic")] }
 
@@ -536,7 +536,7 @@ def s74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Appendix 2"), ("claim", "cardinal as singular term")] }
 
@@ -549,7 +549,7 @@ def s74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Appendix 2"), ("claim", "xNP-internal cardinal, the basic use")] }
 
@@ -562,7 +562,7 @@ def s75c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Appendix 2"), ("source", "Hofweber 2005"), ("claim", "plural agreement: implicit quantification over an elided xNP")] }
 

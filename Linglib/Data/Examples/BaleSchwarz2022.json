@@ -137,7 +137,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The mixture contains 0.1 grams of salt per milliliter.", "judgment": "acceptable"}
     ],
     "paperFeatures": [

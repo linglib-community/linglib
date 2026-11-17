@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "We don't know whether John has a violin."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "We don't know whether John has a violin."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects"), ("direction", "right-to-left")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "We don't know whether John has a violin."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "filtered"), ("direction", "left-to-right")] }
 
@@ -65,7 +65,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := "Li said the sentence as a prediction. In fact, afterwards both Zhang and Wang came. Do you consider Li's prediction correct or incorrect?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inclusive", .acceptable), ("exclusive", .marginal)]
     paperFeatures := [("task", "norming"), ("monotonicity", "UE")] }
 
@@ -80,7 +80,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := "I didn't know Li at all before, and I didn't know if he ever drank. At tonight's dinner gathering, most people drank, but Li didn't drink a drop, so I thought:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "PSFIRST"), ("monotonicity", "DE"), ("trigger", "jie"), ("context", "explicitly ignorant")] }
 

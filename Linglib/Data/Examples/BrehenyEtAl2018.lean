@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John didn't do all of the homework", .acceptable), ("inference: John did all of the homework", .unacceptable)]
     paperFeatures := [("case", "direct"), ("prejacent", "some"), ("alternative", "all"), ("symmetric alternative", "some but not all")] }
 
@@ -37,7 +37,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "Mary got drunk. What did John do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John didn't get drunk", .acceptable)]
     paperFeatures := [("case", "particularised"), ("prejacent", "smoked pot"), ("alternative", "got drunk")] }
 
@@ -50,7 +50,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John did some of the homework", .acceptable)]
     paperFeatures := [("case", "indirect"), ("prejacent", "not all"), ("alternative", "not any"), ("symmetric alternative", "some")] }
 
@@ -63,7 +63,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "What happened at school today?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John did some of the homework", .acceptable)]
     paperFeatures := [("case", "indirect"), ("prejacent", "not all"), ("focus", "broad")] }
 
@@ -76,7 +76,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := "Bill went for a run and didn't smoke. What did John do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John smoked", .acceptable)]
     paperFeatures := [("case", "particularised"), ("prejacent", "run"), ("alternative", "run and not smoke"), ("symmetric alternative", "run and smoke")] }
 
@@ -89,7 +89,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "Bill went for a run. He didn't smoke. What did John do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John smoked", .acceptable)]
     paperFeatures := [("case", "particularised"), ("prejacent", "run"), ("alternative", "not smoke"), ("symmetric alternative", "smoke")] }
 
@@ -102,7 +102,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the glass is not empty", .acceptable), ("inference: the glass is empty", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not full"), ("alternative", "not empty"), ("symmetric alternative", "empty")] }
 
@@ -115,7 +115,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the glass is not full", .acceptable), ("inference: the glass is full", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not empty"), ("alternative", "not full"), ("symmetric alternative", "full")] }
 
@@ -128,7 +128,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: a tie is allowed", .acceptable), ("inference: a tie is mandatory", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not required"), ("alternative", "not allowed")] }
 
@@ -141,7 +141,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: Mary's promotion is possible", .acceptable), ("inference: Mary's promotion is impossible", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not certain"), ("alternative", "not possible")] }
 
@@ -154,7 +154,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: this neighbourhood is not dangerous", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not safe"), ("scale", "upper closed")] }
 
@@ -167,7 +167,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John is not small", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not tall"), ("scale", "open")] }
 
@@ -180,7 +180,7 @@ def ex_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the glass is not opaque", .unacceptable)]
     paperFeatures := [("case", "gradable adjective"), ("prejacent", "not transparent"), ("scale", "closed")] }
 
@@ -195,7 +195,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John is not required to come", .acceptable)]
     paperFeatures := [("case", "too few lexical alternatives"), ("prejacent", "allowed"), ("alternative", "required")] }
 
@@ -210,7 +210,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("John-wa ko-naku-te-wa ike-nai.", .acceptable)]
+    contrasts := [("John-wa ko-naku-te-wa ike-nai.", .acceptable)]
     readings := []
     paperFeatures := [("case", "too few lexical alternatives"), ("prejacent", "required")] }
 
@@ -225,7 +225,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("case", "too few lexical alternatives"), ("prejacent", "required")] }
 
@@ -238,7 +238,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: going to confession is optional", .acceptable), ("inference: going to confession is required", .unacceptable)]
     paperFeatures := [("case", "too many lexical alternatives"), ("prejacent", "permitted"), ("alternative", "required"), ("symmetric alternative", "optional")] }
 
@@ -251,7 +251,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the heater intermittently squeaks", .acceptable), ("inference: the heater constantly squeaks", .unacceptable)]
     paperFeatures := [("case", "too many lexical alternatives"), ("prejacent", "sometimes"), ("alternative", "constantly"), ("symmetric alternative", "intermittently")] }
 
@@ -264,7 +264,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John didn't see all of the students", .acceptable)]
     paperFeatures := [("case", "rsa"), ("prejacent", "some"), ("alternative", "all"), ("symmetric alternative", "just some")] }
 
@@ -277,7 +277,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John saw some of the students", .acceptable), ("inference, when many is relevant: John saw many of the students", .acceptable)]
     paperFeatures := [("case", "rsa"), ("prejacent", "not all"), ("alternative", "none"), ("symmetric alternative", "some")] }
 
@@ -290,7 +290,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the glass is not empty", .acceptable)]
     paperFeatures := [("case", "rsa"), ("prejacent", "not full"), ("alternative", "not empty"), ("symmetric alternative", "empty")] }
 
@@ -303,7 +303,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := "Bill ran and didn't smoke."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John smoked", .acceptable)]
     paperFeatures := [("case", "rsa"), ("prejacent", "run"), ("alternative", "run and not smoke"), ("symmetric alternative", "run and smoke")] }
 
@@ -316,7 +316,7 @@ def ex_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("case", "rsa"), ("prejacent", "often"), ("alternative", "always"), ("symmetric alternative", "intermittently")] }
 

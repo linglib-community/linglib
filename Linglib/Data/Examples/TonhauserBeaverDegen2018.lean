@@ -25,7 +25,7 @@ def tbd2018_1a_nrrc : Datum :=
     glossedTokens := []
     context := "Projective content: 'These muffins have blueberries in them.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "NRRC")] }
 
@@ -39,7 +39,7 @@ def tbd2018_1a_nominalAppositive : Datum :=
     glossedTokens := []
     context := "Projective content: 'Martha's new car is a BMW'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "nominalAppositive")] }
 
@@ -53,7 +53,7 @@ def tbd2018_1a_possessiveNP : Datum :=
     glossedTokens := []
     context := "Projective content: 'Martha's new car is a BMW'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "possessiveNP")] }
 
@@ -67,7 +67,7 @@ def tbd2018_1a_annoyed : Datum :=
     glossedTokens := []
     context := "Projective content: 'Martha has a new BMW.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "annoyed")] }
 
@@ -81,7 +81,7 @@ def tbd2018_1a_discover : Datum :=
     glossedTokens := []
     context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "discover")] }
 
@@ -95,7 +95,7 @@ def tbd2018_1a_know : Datum :=
     glossedTokens := []
     context := "Projective content: 'Martha has a new BMW.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "know")] }
 
@@ -109,7 +109,7 @@ def tbd2018_1a_only : Datum :=
     glossedTokens := []
     context := "Projective content: 'These muffins have blueberries in them.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "only")] }
 
@@ -123,7 +123,7 @@ def tbd2018_1a_stop : Datum :=
     glossedTokens := []
     context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "stop")] }
 
@@ -137,7 +137,7 @@ def tbd2018_1a_stupid : Datum :=
     glossedTokens := []
     context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "stupid")] }
 
@@ -151,7 +151,7 @@ def tbd2018_1a_sampleTarget_nominalAppositive : Datum :=
     glossedTokens := []
     context := "Projective content: 'Richie is a stuntman'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "nominal appositive")] }
 
@@ -165,7 +165,7 @@ def tbd2018_1a_sampleTarget_beStupidTo : Datum :=
     glossedTokens := []
     context := "Projective content: 'Richie is a stuntman'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "be stupid to")] }
 
@@ -179,7 +179,7 @@ def tbd2018_1a_control : Datum :=
     glossedTokens := []
     context := "Main-clause control: the content 'Richie is a stuntman' is at-issue and not projective."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "main clause")] }
 
@@ -193,7 +193,7 @@ def tbd2018_1b_sample_aware : Datum :=
     glossedTokens := []
     context := "Projective content: 'Raul was drinking chamomile tea'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "be aware")] }
 
@@ -207,7 +207,7 @@ def tbd2018_1b_sample_discover : Datum :=
     glossedTokens := []
     context := "Projective content: 'Raul was drinking chamomile tea'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("expression", "discover")] }
 

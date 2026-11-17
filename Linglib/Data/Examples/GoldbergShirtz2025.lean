@@ -25,7 +25,7 @@ def gs2025_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
@@ -39,7 +39,7 @@ def gs2025_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
@@ -53,7 +53,7 @@ def gs2025_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
@@ -67,7 +67,7 @@ def gs2025_t2_simple : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "head noun")] }
 
@@ -81,7 +81,7 @@ def gs2025_t2_old : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "head noun")] }
 
@@ -95,7 +95,7 @@ def gs2025_t2_mustsee : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "head noun")] }
 
@@ -109,7 +109,7 @@ def gs2025_t2_romney : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "predicative adjective")] }
 
@@ -122,7 +122,7 @@ def gs2025_t2_honey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "verb"), ("inflection", "gerund")] }
 
@@ -136,7 +136,7 @@ def gs2025_t2_welcome : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "verb")] }
 
@@ -149,7 +149,7 @@ def gs2025_t3_jespersen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "head noun"), ("inflection", "plural")] }
 
@@ -162,7 +162,7 @@ def gs2025_t3_diy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "head noun"), ("inflection", "agentive -er + plural")] }
 
@@ -175,7 +175,7 @@ def gs2025_t3_nyt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "verb"), ("inflection", "gerund")] }
 
@@ -190,7 +190,7 @@ def gs2025_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
@@ -205,7 +205,7 @@ def gs2025_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
@@ -220,7 +220,7 @@ def gs2025_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
@@ -235,7 +235,7 @@ def gs2025_15c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
@@ -250,7 +250,7 @@ def gs2025_16b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 
@@ -265,7 +265,7 @@ def gs2025_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 
@@ -280,7 +280,7 @@ def gs2025_18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 

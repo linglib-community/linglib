@@ -26,7 +26,7 @@ def ex_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "complement")] }
 
@@ -41,7 +41,7 @@ def ex_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "adjunct"), ("next", "footed")] }
 
@@ -56,7 +56,7 @@ def ex_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "neg"), ("allomorph", "short"), ("syntax", "complement")] }
 
@@ -71,7 +71,7 @@ def ex_36b : Datum :=
     lgrConformance := some .wordAligned
     context := "De anjoro ngura bega e, … 'This coconut is too unripe, …'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "neg"), ("allomorph", "long"), ("syntax", "adjunct"), ("next", "footed")] }
 
@@ -86,7 +86,7 @@ def ex_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "short"), ("syntax", "host")] }
 
@@ -101,7 +101,7 @@ def ex_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
@@ -116,7 +116,7 @@ def ex_41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "which"), ("allomorph", "short"), ("syntax", "host")] }
 
@@ -131,7 +131,7 @@ def ex_41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "which"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
@@ -146,7 +146,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "who"), ("allomorph", "short"), ("syntax", "host")] }
 
@@ -161,7 +161,7 @@ def ex_42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "who"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
@@ -176,7 +176,7 @@ def ex_56a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("affix", "verbalizer")] }
 
@@ -191,7 +191,7 @@ def ex_56b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "host"), ("affix", "verbalizer")] }
 
@@ -206,7 +206,7 @@ def ex_76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
@@ -221,7 +221,7 @@ def ex_76b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "what"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
@@ -236,7 +236,7 @@ def ex_77a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "which"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
@@ -251,7 +251,7 @@ def ex_77b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "which"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
@@ -266,7 +266,7 @@ def ex_78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 
@@ -281,7 +281,7 @@ def ex_78b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 
@@ -296,7 +296,7 @@ def ex_83b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
@@ -311,7 +311,7 @@ def ex_84 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "that"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "different")] }
 
@@ -326,7 +326,7 @@ def ex_86a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
@@ -341,7 +341,7 @@ def ex_86b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "that"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "different")] }
 
@@ -356,7 +356,7 @@ def ex_92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 

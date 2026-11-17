@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "donkey anaphora"]
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["resolution", "full"],
@@ -55,7 +55,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "it = the donkey", "judgment": "unacceptable"}
     ],
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cover", "x ↦ z ↤ y"],
@@ -100,7 +100,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"],
@@ -123,7 +123,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "it = the donkey", "judgment": "acceptable"},
       {"name": "it = John", "judgment": "unacceptable"}
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "it = the cup", "judgment": "acceptable"},
       {"name": "it = the plate", "judgment": "acceptable"}
@@ -175,7 +175,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "he = John", "judgment": "acceptable"},
       {"name": "he = the brother", "judgment": "acceptable"}
@@ -201,7 +201,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "he = John", "judgment": "acceptable"},
       {"name": "he = the brother", "judgment": "acceptable"}
@@ -224,7 +224,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["resolution", "preferential"]
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["resolution", "preferential"]
@@ -269,7 +269,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "ripe bananas, cheeky bananas", "judgment": "acceptable"},
       {"name": "ripe bananas, cheeky monkeys", "judgment": "acceptable"},

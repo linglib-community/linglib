@@ -26,7 +26,7 @@ def zmt1985_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "active"), ("cases", "nom dat")] }
 
@@ -41,7 +41,7 @@ def zmt1985_8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("cases", "nom gen")] }
 
@@ -56,7 +56,7 @@ def zmt1985_9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dansa"), ("voice", "passive"), ("cases", "")] }
 
@@ -71,7 +71,7 @@ def zmt1985_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("cases", "dat")] }
 
@@ -86,7 +86,7 @@ def zmt1985_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "passive"), ("cases", "gen")] }
 
@@ -101,7 +101,7 @@ def zmt1985_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("cases", "dat nom")] }
 
@@ -116,7 +116,7 @@ def zmt1985_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "vanta"), ("voice", "active"), ("cases", "acc acc")] }
 
@@ -131,7 +131,7 @@ def zmt1985_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "leyna"), ("voice", "active"), ("cases", "nom acc dat")] }
 
@@ -146,7 +146,7 @@ def zmt1985_37b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "biðja"), ("voice", "active"), ("cases", "nom acc gen")] }
 
@@ -161,7 +161,7 @@ def zmt1985_37c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "segja"), ("voice", "active"), ("cases", "nom dat acc")] }
 
@@ -176,7 +176,7 @@ def zmt1985_37d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lofa"), ("voice", "active"), ("cases", "nom dat dat")] }
 
@@ -191,7 +191,7 @@ def zmt1985_37e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "active"), ("cases", "nom dat gen")] }
 
@@ -206,7 +206,7 @@ def zmt1985_42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "active"), ("cases", "nom dat dat")] }
 
@@ -221,7 +221,7 @@ def zmt1985_42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "passive"), ("cases", "dat dat"), ("test", "passive"), ("tested", "goal")] }
 
@@ -234,7 +234,7 @@ def zmt1985_42c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 
@@ -249,7 +249,7 @@ def zmt1985_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("cases", "dat nom"), ("test", "passive"), ("tested", "goal")] }
 
@@ -264,7 +264,7 @@ def zmt1985_44b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("cases", "nom dat"), ("test", "passive"), ("tested", "theme")] }
 
@@ -279,7 +279,7 @@ def zmt1985_64a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "svipta"), ("voice", "active"), ("cases", "nom acc dat")] }
 
@@ -292,7 +292,7 @@ def zmt1985_66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska (transitive)"), ("voice", "active"), ("cases", "nom gen")] }
 
@@ -305,7 +305,7 @@ def zmt1985_66c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "active")] }
 
@@ -320,7 +320,7 @@ def zmt1985_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("test", "raising"), ("tested", "experiencer")] }
 
@@ -335,7 +335,7 @@ def zmt1985_14d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("test", "raising"), ("tested", "theme")] }
 
@@ -350,7 +350,7 @@ def zmt1985_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "raising"), ("tested", "experiencer")] }
 
@@ -365,7 +365,7 @@ def zmt1985_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "reflexivization"), ("tested", "experiencer")] }
 
@@ -380,7 +380,7 @@ def zmt1985_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "inversion"), ("tested", "experiencer")] }
 
@@ -395,7 +395,7 @@ def zmt1985_21c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "inversion"), ("tested", "theme")] }
 
@@ -410,7 +410,7 @@ def zmt1985_23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "extraction"), ("tested", "experiencer")] }
 
@@ -425,7 +425,7 @@ def zmt1985_23d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "extraction"), ("tested", "theme")] }
 
@@ -440,7 +440,7 @@ def zmt1985_25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "postposing"), ("tested", "experiencer")] }
 
@@ -455,7 +455,7 @@ def zmt1985_25c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "postposing"), ("tested", "theme")] }
 
@@ -470,7 +470,7 @@ def zmt1985_27a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "finnast"), ("voice", "active"), ("test", "ellipsis"), ("tested", "experiencer")] }
 
@@ -485,7 +485,7 @@ def zmt1985_27b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "finnast"), ("voice", "active"), ("test", "ellipsis"), ("tested", "theme")] }
 
@@ -500,7 +500,7 @@ def zmt1985_29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "vanta"), ("voice", "active"), ("test", "control"), ("tested", "experiencer")] }
 
@@ -515,7 +515,7 @@ def zmt1985_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "raising"), ("tested", "theme")] }
 
@@ -530,7 +530,7 @@ def zmt1985_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "reflexivization"), ("tested", "theme")] }
 
@@ -545,7 +545,7 @@ def zmt1985_32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "inversion"), ("tested", "theme")] }
 
@@ -560,7 +560,7 @@ def zmt1985_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "extraction"), ("tested", "theme")] }
 
@@ -575,7 +575,7 @@ def zmt1985_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "postposing"), ("tested", "theme")] }
 
@@ -590,7 +590,7 @@ def zmt1985_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "ellipsis"), ("tested", "theme")] }
 
@@ -605,7 +605,7 @@ def zmt1985_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
@@ -620,7 +620,7 @@ def zmt1985_45a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("test", "raising"), ("tested", "goal")] }
 
@@ -635,7 +635,7 @@ def zmt1985_45b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("test", "raising"), ("tested", "theme")] }
 
@@ -650,7 +650,7 @@ def zmt1985_68a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska (transitive)"), ("voice", "passive"), ("cases", "gen"), ("test", "passive"), ("tested", "theme")] }
 
@@ -665,7 +665,7 @@ def zmt1985_68a_prime : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 
@@ -678,7 +678,7 @@ def zmt1985_68c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "passive"), ("cases", "dat gen"), ("test", "passive"), ("tested", "goal")] }
 
@@ -693,7 +693,7 @@ def zmt1985_78 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "helfen"), ("voice", "passive"), ("cases", "dat")] }
 
@@ -708,7 +708,7 @@ def zmt1985_79b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "helfen"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
@@ -723,7 +723,7 @@ def zmt1985_79c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "aufnehmen"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
@@ -738,7 +738,7 @@ def zmt1985_81a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "aufnehmen"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
@@ -753,7 +753,7 @@ def zmt1985_81b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "helfen"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
@@ -768,7 +768,7 @@ def zmt1985_82b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "verhaften"), ("voice", "passive"), ("test", "ellipsis"), ("tested", "theme")] }
 
@@ -783,7 +783,7 @@ def zmt1985_82c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "helfen"), ("voice", "passive"), ("test", "ellipsis"), ("tested", "theme")] }
 
@@ -798,7 +798,7 @@ def zmt1985_82d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefallen"), ("voice", "active"), ("test", "ellipsis"), ("tested", "experiencer")] }
 
@@ -813,7 +813,7 @@ def zmt1985_82e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefallen"), ("voice", "active"), ("test", "ellipsis"), ("tested", "experiencer")] }
 
@@ -828,7 +828,7 @@ def zmt1985_83a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lesen"), ("voice", "active"), ("test", "relative reduction"), ("tested", "agent")] }
 
@@ -843,7 +843,7 @@ def zmt1985_83b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lesen"), ("voice", "active"), ("test", "relative reduction"), ("tested", "theme")] }
 
@@ -858,7 +858,7 @@ def zmt1985_83c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lesen"), ("voice", "passive"), ("test", "relative reduction"), ("tested", "theme")] }
 
@@ -873,7 +873,7 @@ def zmt1985_83d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "helfen"), ("voice", "passive"), ("test", "relative reduction"), ("tested", "theme")] }
 
@@ -888,7 +888,7 @@ def zmt1985_83e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefallen"), ("voice", "active"), ("test", "relative reduction"), ("tested", "experiencer")] }
 
@@ -903,7 +903,7 @@ def zmt1985_84 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "übel sein"), ("voice", "active"), ("cases", "dat")] }
 
@@ -918,7 +918,7 @@ def zmt1985_85a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "übel sein"), ("voice", "active"), ("test", "control"), ("tested", "experiencer")] }
 
@@ -933,7 +933,7 @@ def zmt1985_85b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "übel sein"), ("voice", "active"), ("test", "control"), ("tested", "experiencer")] }
 
@@ -948,7 +948,7 @@ def zmt1985_88a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abhören"), ("voice", "active"), ("cases", "nom acc acc")] }
 
@@ -963,7 +963,7 @@ def zmt1985_88b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abhören"), ("voice", "passive"), ("cases", "nom acc"), ("test", "passive"), ("tested", "goal")] }
 
@@ -978,7 +978,7 @@ def zmt1985_88c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abhören"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 

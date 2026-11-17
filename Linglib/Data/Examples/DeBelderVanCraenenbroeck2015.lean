@@ -26,7 +26,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "waarom"), ("class", "wh"), ("structure", "nominal")] }
 
@@ -41,7 +41,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "wat/hoe/wie/waar"), ("class", "wh"), ("structure", "nominal")] }
 
@@ -56,7 +56,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "jij"), ("class", "pronoun"), ("structure", "verbal")] }
 
@@ -71,7 +71,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "ik"), ("class", "pronoun"), ("structure", "nominal")] }
 
@@ -86,7 +86,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "maar"), ("class", "conjunction"), ("structure", "verbal")] }
 
@@ -101,7 +101,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "het"), ("class", "article"), ("structure", "compound")] }
 
@@ -116,7 +116,7 @@ def ex_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "tik"), ("class", "lexical"), ("structure", "geNominal")] }
 
@@ -131,7 +131,7 @@ def ex_8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "fluit"), ("class", "lexical"), ("structure", "geNominal")] }
 
@@ -146,7 +146,7 @@ def ex_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "maar"), ("class", "conjunction"), ("structure", "geNominal")] }
 
@@ -161,7 +161,7 @@ def ex_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "alhoewel"), ("class", "conjunction"), ("structure", "geNominal")] }
 
@@ -176,7 +176,7 @@ def ex_9c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "of"), ("class", "conjunction"), ("structure", "geNominal")] }
 
@@ -191,7 +191,7 @@ def ex_9d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "hé"), ("class", "particle"), ("structure", "geNominal")] }
 
@@ -206,7 +206,7 @@ def ex_9e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "waarom"), ("class", "wh"), ("structure", "geNominal")] }
 
@@ -221,7 +221,7 @@ def ex_9f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "nooit"), ("class", "adverb"), ("structure", "geNominal")] }
 
@@ -236,7 +236,7 @@ def ex_9g : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "rootPosition"), ("item", "ik"), ("class", "pronoun"), ("structure", "geNominal")] }
 
@@ -251,7 +251,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mijn tweede ik ben ongelukkig.", .ungrammatical)]
+    contrasts := [("Mijn tweede ik ben ongelukkig.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "agreement"), ("item", "ik"), ("class", "pronoun"), ("copula", "is")] }
 
@@ -266,7 +266,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4"), ("construction", "selection"), ("item", "maar"), ("class", "conjunction")] }
 

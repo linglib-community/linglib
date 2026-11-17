@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Who are leaving?", .ungrammatical)]
+    contrasts := [("Who are leaving?", .ungrammatical)]
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "BI")] }
 
@@ -65,7 +65,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -80,7 +80,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -95,7 +95,7 @@ def ex_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("two-group answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -110,7 +110,7 @@ def ex_27a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjunction of an atom and a plurality", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -125,7 +125,7 @@ def ex_28a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjunction of pluralities", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -140,7 +140,7 @@ def ex_53a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -155,7 +155,7 @@ def ex_58a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive answer", .acceptable), ("group answer", .unacceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -170,7 +170,7 @@ def ex_59a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -185,7 +185,7 @@ def ex_66a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjunction of pluralities", .acceptable), ("disjunction of atoms", .unacceptable), ("disjunction of an atom and a plurality", .unacceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -200,7 +200,7 @@ def ex_78 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "PBI")] }
 

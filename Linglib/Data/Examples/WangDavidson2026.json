@@ -10,7 +10,7 @@
     "translation": "",
     "context": "We don't know whether John has a violin.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["presupposition", "John has a violin"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "We don't know whether John has a violin.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["presupposition", "John has a violin"],
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "We don't know whether John has a violin.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["presupposition", "John has a violin"],
@@ -75,7 +75,7 @@
     "translation": "I believe Zhang will come or Wang will come.",
     "context": "Li said the sentence as a prediction. In fact, afterwards both Zhang and Wang came. Do you consider Li's prediction correct or incorrect?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inclusive", "judgment": "acceptable"},
       {"name": "exclusive", "judgment": "marginal"}
@@ -103,7 +103,7 @@
     "translation": "If Li has quit drinking or never drank, then his behavior tonight makes total sense.",
     "context": "I didn't know Li at all before, and I didn't know if he ever drank. At tonight's dinner gathering, most people drank, but Li didn't drink a drop, so I thought:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["condition", "PSFIRST"],

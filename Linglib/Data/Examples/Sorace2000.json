@@ -11,7 +11,7 @@
     "translation": "Maria came to the party.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "venire"],
@@ -33,7 +33,7 @@
     "translation": "Marie arrived late.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "arriver"],
@@ -56,7 +56,7 @@
     "translation": "The letter arrived with the second post.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "komen"],
@@ -78,7 +78,7 @@
     "translation": "The train arrived late.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "ankommen"],
@@ -101,7 +101,7 @@
     "translation": "Guests arrived for hours.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "arrivare"],
@@ -125,7 +125,7 @@
     "translation": "Maria fell on purpose to scare us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "cadere"],
@@ -149,7 +149,7 @@
     "translation": "The glass fell from the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "cadere"],
@@ -171,7 +171,7 @@
     "translation": "The children arrived.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "arrivare"],
@@ -194,7 +194,7 @@
     "translation": "The temperature suddenly rose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La temperatura ha salito improvvisamente", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -219,7 +219,7 @@
     "translation": "The apples rotted in the sun.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Le mele hanno marcito al sole", "judgment": "marginal"}
     ],
     "readings": [],
@@ -244,7 +244,7 @@
     "translation": "The plant blossomed twice this year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La pianta ha fiorito due volte quest'anno", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -269,7 +269,7 @@
     "translation": "My daughter was born at five o'clock in the morning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "naître"],
@@ -292,7 +292,7 @@
     "translation": "The teacher suddenly died.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sterven"],
@@ -315,7 +315,7 @@
     "translation": "The twins were born in April.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gebären"],
@@ -338,7 +338,7 @@
     "translation": "Her baby has grown enormously this month.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Haar baby heeft deze maand enorm gegroeid", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -363,7 +363,7 @@
     "translation": "The smoke rose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "steigen"],
@@ -387,7 +387,7 @@
     "translation": "The temperature rose for three hours but then dropped again.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "De temperatuur heeft 3 uurlang gestegen, maar is toen weer gezakt.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -412,7 +412,7 @@
     "translation": "The child became sad.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "L'enfant a devenu triste", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -436,7 +436,7 @@
     "translation": "Marie blushed because she was ashamed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "rougir"],
@@ -459,7 +459,7 @@
     "translation": "The book recently appeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Le livre a paru récemment", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -484,7 +484,7 @@
     "translation": "His secret escaped him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "échapper"],
@@ -507,7 +507,7 @@
     "translation": "Once again I remained alone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ancora una volta ho rimasto solo", "judgment": "marginal"}
     ],
     "readings": [],
@@ -532,7 +532,7 @@
     "translation": "The war lasted a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La guerra ha durato a lungo", "judgment": "marginal"}
     ],
     "readings": [],
@@ -557,7 +557,7 @@
     "translation": "The president lasted in post for two years.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il presidente ha durato in carica due anni", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -583,7 +583,7 @@
     "translation": "My parents survived the earthquake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mes parents sont survécus au tremblement de terre", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -608,7 +608,7 @@
     "translation": "The apples lasted the whole winter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Die Äpfel sind den ganzen Winter gehalten", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -633,7 +633,7 @@
     "translation": "The hiker stayed briefly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Der Wanderer ist kurz verweilt", "judgment": "questionable"}
     ],
     "readings": [],
@@ -658,7 +658,7 @@
     "translation": "Only one candidate remained in the end.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "overblijven"],
@@ -681,7 +681,7 @@
     "translation": "The concert lasted a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Het concert is een hele tijd geduurd", "judgment": "questionable"}
     ],
     "readings": [],
@@ -706,7 +706,7 @@
     "translation": "Marie stayed at home with the children.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Marie a resté à la maison avec les enfants", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -731,7 +731,7 @@
     "translation": "The unexpected guest stayed for a meal.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "De onverwachte gast heeft voor het eten gebleven", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -756,7 +756,7 @@
     "translation": "The guests remained seated at the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Die Gäste haben am Tisch sitzen geblieben", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -781,7 +781,7 @@
     "translation": "The dinosaurs existed 65 million years ago.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I dinosauri hanno esistito 65 milioni di anni fa.", "judgment": "questionable"}
     ],
     "readings": [],
@@ -806,7 +806,7 @@
     "translation": "There wasn't enough flour to make the cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La farina non ha bastato per fare la torta.", "judgment": "questionable"}
     ],
     "readings": [],
@@ -831,7 +831,7 @@
     "translation": "The play seemed interesting to everyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La commedia ha sembrato interessante a tutti", "judgment": "questionable"}
     ],
     "readings": [],
@@ -857,7 +857,7 @@
     "translation": "A very long life would have just sufficed to satisfy my heart.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "bastare"],
@@ -880,7 +880,7 @@
     "translation": "My life belonged only to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "appartenere"],
@@ -903,7 +903,7 @@
     "translation": "The food ran short supply among the earthquake victims.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il cibo ha scarseggiato tra i terremotati.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -928,7 +928,7 @@
     "translation": "The dinosaurs existed 65 million years ago.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Les dinosaures sont existé il y a 65 millions d'ans.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -952,7 +952,7 @@
     "translation": "I liked the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "gefallen"],
@@ -974,7 +974,7 @@
     "translation": "This was enough for me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "genügen"],
@@ -997,7 +997,7 @@
     "translation": "The book was lying on the floor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Das Buch hat auf dem Boden gelegen.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1021,7 +1021,7 @@
     "translation": "I depended on her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ich habe von ihr abgehangen.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1046,7 +1046,7 @@
     "translation": "The picture stood on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "staan"],
@@ -1069,7 +1069,7 @@
     "translation": "The magic sword really existed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "bestaan"],
@@ -1092,7 +1092,7 @@
     "translation": "Sofie seemed a good teacher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "blijken"],
@@ -1115,7 +1115,7 @@
     "translation": "Peter was abroad for a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sein"],
@@ -1138,7 +1138,7 @@
     "translation": "Anne was in Australia last winter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "zijn"],
@@ -1161,7 +1161,7 @@
     "translation": "My colleagues chatted the whole afternoon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "chiacchierare"],
@@ -1184,7 +1184,7 @@
     "translation": "The policemen worked all night.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "travailler"],
@@ -1207,7 +1207,7 @@
     "translation": "The trumpeter blew with puffed-out cheeks.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "blazen"],
@@ -1230,7 +1230,7 @@
     "translation": "Kurt worked all day Sunday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "arbeiten"],
@@ -1254,7 +1254,7 @@
     "translation": "The food sent by the UN worked only as a palliative.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il cibo inviato dall'ONU è funzionato solo come palliativo.", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1280,7 +1280,7 @@
     "translation": "The policemen worked until dawn.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lavorare"],
@@ -1304,7 +1304,7 @@
     "translation": "Maria yielded to your pressure.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maria è ceduta alle tue insistenze", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1329,7 +1329,7 @@
     "translation": "The floor suddenly yielded.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il pavimento è ceduto all'improvviso", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1355,7 +1355,7 @@
     "translation": "The Swedish athletes ran at the Olympic Games.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Gli atleti svedesi sono corsi alle Olimpiadi", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1380,7 +1380,7 @@
     "translation": "The vagabond ran all over the place.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "De zwerver is overal gelopen", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1405,7 +1405,7 @@
     "translation": "Marie swam the whole afternoon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Marie est nagée tout l'après-midi", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1430,7 +1430,7 @@
     "translation": "Uschi ran the whole day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Uschi hat den ganzen Tag gerannt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1455,7 +1455,7 @@
     "translation": "Uschi walked the whole day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Uschi hat den ganzen Tag gelaufen", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1480,7 +1480,7 @@
     "translation": "Uschi swam the whole day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Uschi hat den ganzen Tag geschwommen", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1504,7 +1504,7 @@
     "translation": "The ball rolled.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "De bal is gerold", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1529,7 +1529,7 @@
     "translation": "The ball rolled downstairs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "De bal heeft naar beneden gerold", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1555,7 +1555,7 @@
     "translation": "Hans and Rita danced in the hall.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hans und Rita sind im Saal getanzt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1580,7 +1580,7 @@
     "translation": "Hans and Rita danced into the hall.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hans und Rita haben in den Saal getanzt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1605,7 +1605,7 @@
     "translation": "Maria ran fast.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maria è corsa velocemente.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1630,7 +1630,7 @@
     "translation": "Maria ran to the pharmacy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maria ha corso in farmacia", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1656,7 +1656,7 @@
     "translation": "Paola swam with perfect style.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Paola è nuotata con perfetto stile", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1680,7 +1680,7 @@
     "translation": "Paola swam to the shore.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Paola è nuotata a riva", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1705,7 +1705,7 @@
     "translation": "Marie ran very fast.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Marie est courue très vite", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1730,7 +1730,7 @@
     "translation": "Marie ran home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Marie est courue jusqu'à la maison", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1756,7 +1756,7 @@
     "translation": "The rumor spread that Maria is getting married.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ha corso voce che Maria si sposa", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1782,7 +1782,7 @@
     "translation": "It turned out that the magistrates were corrupted.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ha saltato fuori che i magistrati erano corrotti", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1808,7 +1808,7 @@
     "translation": "The pilot landed on the emergency runway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il pilota è atterrato sulla pista di emergenza", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1833,7 +1833,7 @@
     "translation": "The plane landed on the emergency runway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "L'aereo ha atterrato sulla pista di emergenza", "judgment": "marginal"}
     ],
     "readings": [],
@@ -1859,7 +1859,7 @@
     "translation": "The religious faith wavered even in the strongest people.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La fede religiosa è tentennata anche nei più forti", "judgment": "questionable"}
     ],
     "readings": [],
@@ -1884,7 +1884,7 @@
     "translation": "Paolo wavered for a long time before he made up his mind.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Paolo è tentennato a lungo prima di decidersi", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1909,7 +1909,7 @@
     "translation": "Mario coughed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mario è tossito", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1934,7 +1934,7 @@
     "translation": "Mario coughed on purpose to attract attention.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tossire"],
@@ -1957,7 +1957,7 @@
     "translation": "The telephone rang.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il telefono è squillato.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1982,7 +1982,7 @@
     "translation": "The echo resounded in the cave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "L'eco è risuonato nella caverna", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2006,7 +2006,7 @@
     "translation": "The thunder rumbled.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Il tuono è rimbombato", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2030,7 +2030,7 @@
     "translation": "The bell tolled.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "La campana è rintoccata", "judgment": "marginal"}
     ],
     "readings": [],
@@ -2055,7 +2055,7 @@
     "translation": "Yesterday it rained all day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ieri è piovuto tutto il giorno", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2080,7 +2080,7 @@
     "translation": "Yesterday it snowed all day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ieri è nevicato tutto il giorno", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2105,7 +2105,7 @@
     "translation": "Yesterday it hailed all day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ieri è grandinato tutto il giorno", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2129,7 +2129,7 @@
     "translation": "It rained over my head.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi ha piovuto sulla testa", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2155,7 +2155,7 @@
     "translation": "It thundered a lot during the storm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "È tuonato molto durante il temporale", "judgment": "marginal"}
     ],
     "readings": [],
@@ -2179,7 +2179,7 @@
     "translation": "It flashed lightning suddenly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "È lampeggiato all'improvviso", "judgment": "marginal"}
     ],
     "readings": [],
@@ -2203,7 +2203,7 @@
     "translation": "It thundered over us.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tuonare"],
@@ -2226,7 +2226,7 @@
     "translation": "It flashed over us.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "lampeggiare"],

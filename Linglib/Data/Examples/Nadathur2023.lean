@@ -26,7 +26,7 @@ def ex_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "onnistua"), ("matrix", "positive"), ("entails", "complement")] }
 
@@ -41,7 +41,7 @@ def ex_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "onnistua"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -56,7 +56,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "uskaltaa"), ("matrix", "positive"), ("entails", "complement")] }
 
@@ -71,7 +71,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "uskaltaa"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -86,7 +86,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "jaksaa"), ("matrix", "positive"), ("entails", "nothing")] }
 
@@ -101,7 +101,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "jaksaa"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -116,7 +116,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "viitsiä"), ("matrix", "positive"), ("entails", "complement")] }
 
@@ -131,7 +131,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "viitsiä"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -146,7 +146,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "malttaa"), ("matrix", "positive"), ("entails", "complement")] }
 
@@ -161,7 +161,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "malttaa"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -176,7 +176,7 @@ def ex_27a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hennoa"), ("matrix", "positive"), ("entails", "complement")] }
 
@@ -191,7 +191,7 @@ def ex_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hennoa"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -206,7 +206,7 @@ def ex_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pystyä"), ("matrix", "positive"), ("entails", "nothing")] }
 
@@ -221,7 +221,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pystyä"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -236,7 +236,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mahtua"), ("matrix", "positive"), ("entails", "nothing")] }
 
@@ -251,7 +251,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mahtua"), ("matrix", "negated"), ("entails", "negation")] }
 
@@ -266,7 +266,7 @@ def ex_44a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "laiminlyödä"), ("matrix", "positive"), ("entails", "negation")] }
 
@@ -281,7 +281,7 @@ def ex_44b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "laiminlyödä"), ("matrix", "negated"), ("entails", "complement")] }
 
@@ -296,7 +296,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "epäröidä"), ("matrix", "positive"), ("entails", "nothing")] }
 
@@ -311,7 +311,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "epäröidä"), ("matrix", "negated"), ("entails", "complement")] }
 

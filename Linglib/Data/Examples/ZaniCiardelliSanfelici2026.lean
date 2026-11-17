@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "SDA")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "AR"), ("type", "specificational")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")] }
 
@@ -76,7 +76,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "DCR")] }
 
@@ -89,7 +89,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "free choice")] }
 
@@ -102,7 +102,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "plural definite homogeneity")] }
 
@@ -117,7 +117,7 @@ def target_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "target"), ("schema", "(9a)")] }
 
@@ -132,7 +132,7 @@ def target_ctf : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "target"), ("schema", "(9a)")] }
 
@@ -147,7 +147,7 @@ def control_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "control"), ("expected", "true")] }
 
@@ -162,7 +162,7 @@ def control_ctf : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "control"), ("expected", "true")] }
 
@@ -177,7 +177,7 @@ def closeness_ind : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "closeness evaluation")] }
 
@@ -192,7 +192,7 @@ def closeness_ctf : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "closeness evaluation")] }
 
@@ -207,7 +207,7 @@ def app_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agreement", "singular"), ("reading", "DCR")] }
 
@@ -222,7 +222,7 @@ def app_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agreement", "plural"), ("reading", "DCR")] }
 

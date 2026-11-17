@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the telling overlaps the missing", .acceptable), ("anteriority: the missing precedes the telling", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the pregnancy overlaps John's now", .acceptable), ("anteriority: the pregnancy precedes John's now", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("double access: the pregnancy contains the believing time and the utterance time", .acceptable), ("nonpast: the pregnancy overlaps John's now only", .ungrammatical)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")] }
 
@@ -63,7 +63,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the pregnancy overlaps the finding out", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
@@ -76,7 +76,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("double access: the pregnancy contains the finding out and the utterance time", .unacceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")] }
 
@@ -91,7 +91,7 @@ def ex5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the telling overlaps the missing", .acceptable)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")] }
 
@@ -106,7 +106,7 @@ def ex6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anteriority: the missing precedes the telling", .acceptable), ("nonpast: the telling overlaps the missing", .ungrammatical)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "no")] }
 
@@ -121,7 +121,7 @@ def ex12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")] }
 
@@ -136,7 +136,7 @@ def ex12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 

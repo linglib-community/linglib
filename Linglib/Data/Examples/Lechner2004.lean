@@ -24,7 +24,7 @@ def ch2_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")] }
 
@@ -37,7 +37,7 @@ def ch2_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")] }
 
@@ -50,7 +50,7 @@ def ch4_83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "him = Peter"), ("remnant_case", "NOM")] }
 
@@ -63,7 +63,7 @@ def ch4_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "he = Peter"), ("remnant_case", "ACC")] }
 
@@ -78,7 +78,7 @@ def ch4_87a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "ihm = Peter"), ("remnant_case", "NOM")] }
 
@@ -93,7 +93,7 @@ def ch4_87b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "er = Peter"), ("remnant_case", "DAT")] }
 
@@ -108,7 +108,7 @@ def ch4_90a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "ihn = Präsident"), ("remnant_case", "ACC")] }
 
@@ -123,7 +123,7 @@ def ch4_91a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coreference", "er = Präsident"), ("remnant_case", "NOM")] }
 

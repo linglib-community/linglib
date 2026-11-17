@@ -24,7 +24,7 @@ def iai2001_ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "anteriority")] }
 
@@ -37,7 +37,7 @@ def iai2001_ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "universal"), ("adverbial", "since"), ("predicate", "stative")] }
 
@@ -50,7 +50,7 @@ def iai2001_ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "experiential")] }
 
@@ -63,7 +63,7 @@ def iai2001_ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of result")] }
 
@@ -76,7 +76,7 @@ def iai2001_ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of recent past")] }
 
@@ -89,7 +89,7 @@ def iai2001_ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
@@ -102,7 +102,7 @@ def iai2001_ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
@@ -115,7 +115,7 @@ def iai2001_ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("tense", "past and future perfect"), ("point", "RB set by tense")] }
 
@@ -128,7 +128,7 @@ def iai2001_ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("He has had brown eyes.", .ungrammatical)]
+    contrasts := [("He has had brown eyes.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "individual-level stative"), ("adverbial", "required")] }
 
@@ -141,7 +141,7 @@ def iai2001_ex9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "stage-level stative"), ("reading", "not universal")] }
 
@@ -154,7 +154,7 @@ def iai2001_ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "perfect of recent past")] }
 
@@ -169,7 +169,7 @@ def iai2001_ex13B : Datum :=
     lgrConformance := some .wordAligned
     context := "A: I haven't seen Mary in a while. Where is she?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "no perfect of recent past")] }
 
@@ -182,7 +182,7 @@ def iai2001_ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("She was sick lately.", .ungrammatical)]
+    contrasts := [("She was sick lately.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the present perfect")] }
 
@@ -197,7 +197,7 @@ def iai2001_ex14d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Tja e bila bolna naposleduk.", .ungrammatical)]
+    contrasts := [("Tja e bila bolna naposleduk.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the past in Bulgarian")] }
 
@@ -210,7 +210,7 @@ def iai2001_ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "progressive"), ("reading", "not universal")] }
 
@@ -223,7 +223,7 @@ def iai2001_ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I am sick since yesterday.", .ungrammatical), ("I was sick since 1990.", .ungrammatical)]
+    contrasts := [("I am sick since yesterday.", .ungrammatical), ("I was sick since 1990.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since is perfect-level")] }
 
@@ -236,7 +236,7 @@ def iai2001_ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "universal and existential")] }
 
@@ -249,7 +249,7 @@ def iai2001_ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "existential only")] }
 
@@ -262,7 +262,7 @@ def iai2001_ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "universal and existential")] }
 
@@ -275,7 +275,7 @@ def iai2001_ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
@@ -288,7 +288,7 @@ def iai2001_ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level for under perfect-level since"), ("reading", "existential")] }
 
@@ -301,7 +301,7 @@ def iai2001_ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for"), ("readings", "universal if perfect-level, existential if eventuality-level")] }
 
@@ -314,7 +314,7 @@ def iai2001_ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "ambiguous")] }
 
@@ -327,7 +327,7 @@ def iai2001_ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
@@ -340,7 +340,7 @@ def iai2001_ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since, sentence-initial"), ("reading", "existential")] }
 
@@ -353,7 +353,7 @@ def iai2001_ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Emma is always tall.", .ungrammatical), ("Emma was always tall.", .ungrammatical)]
+    contrasts := [("Emma is always tall.", .ungrammatical), ("Emma was always tall.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "perfect-level always"), ("predicate", "individual-level")] }
 
@@ -366,7 +366,7 @@ def iai2001_ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "always with since"), ("predicate", "individual-level")] }
 
@@ -379,7 +379,7 @@ def iai2001_ex27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level always"), ("predicate", "stage-level")] }
 
@@ -392,7 +392,7 @@ def iai2001_ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("point", "PTS is not the E-R interval"), ("LB", "1991"), ("event", "fall 1993")] }
 
@@ -407,7 +407,7 @@ def iai2001_ex30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("reading", "universal unavailable"), ("participle", "perfective")] }
 
@@ -422,7 +422,7 @@ def iai2001_ex31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Eχtisa ena spiti γιa ena χrono.", .ungrammatical)]
+    contrasts := [("Eχtisa ena spiti γιa ena χrono.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "perfective, bounded")] }
 
@@ -437,7 +437,7 @@ def iai2001_ex32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Eχtiza to spiti mesa se ena χrono.", .ungrammatical)]
+    contrasts := [("Eχtiza to spiti mesa se ena χrono.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "imperfective, unbounded")] }
 
@@ -452,7 +452,7 @@ def iai2001_ex33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.1"), ("aspect", "perfective on a stative is inchoative")] }
 
@@ -467,7 +467,7 @@ def iai2001_ex34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.1"), ("reading", "existential only"), ("participle", "perfective")] }
 
@@ -482,7 +482,7 @@ def iai2001_ex35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marija vinagi e obiknala Ivan.", .ungrammatical), ("Marija e obiknala Ivan ot 1980 nasam.", .ungrammatical)]
+    contrasts := [("Marija vinagi e obiknala Ivan.", .ungrammatical), ("Marija e obiknala Ivan ot 1980 nasam.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "existential only"), ("participle", "perfective")] }
 
@@ -497,7 +497,7 @@ def iai2001_ex36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "imperfective")] }
 
@@ -512,7 +512,7 @@ def iai2001_ex39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "neutral")] }
 
@@ -525,7 +525,7 @@ def iai2001_ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("aspect", "the English perfect of a telic is bounded")] }
 
@@ -538,7 +538,7 @@ def iai2001_ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "activity, nonprogressive"), ("reading", "universal unavailable")] }
 
@@ -551,7 +551,7 @@ def iai2001_ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "telic, nonprogressive"), ("reading", "universal unavailable")] }
 
@@ -566,7 +566,7 @@ def iai2001_ex45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("reading", "throughout with a bounded activity ending at RB")] }
 
@@ -579,7 +579,7 @@ def iai2001_ex47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test"), ("feature", "unbounded")] }
 
@@ -592,7 +592,7 @@ def iai2001_ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test passed by a progressive"), ("feature", "unbounded")] }
 
@@ -607,7 +607,7 @@ def iai2001_ex49a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Ivan pišeše pismoto kogato Maria vleze v stajata.", .acceptable)]
+    contrasts := [("Ivan pišeše pismoto kogato Maria vleze v stajata.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4"), ("test", "the neutral fails Vlach's test"), ("feature", "unbounded")] }
 

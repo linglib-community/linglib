@@ -24,7 +24,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("object", "indefinite"), ("creation", "yes")] }
 
@@ -37,7 +37,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("object", "definite"), ("creation", "yes")] }
 
@@ -52,7 +52,7 @@ def ex28_indefinite : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "inSitu"), ("object", "indefinite"), ("creation", "no")] }
 
@@ -67,7 +67,7 @@ def ex28_definite : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "inSitu"), ("object", "definite"), ("creation", "no")] }
 

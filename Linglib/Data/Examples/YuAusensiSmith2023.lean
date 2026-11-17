@@ -24,7 +24,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Rappaport Hovav and Levin")] }
 
@@ -37,7 +37,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Rappaport Hovav and Levin")] }
 
@@ -50,7 +50,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Rappaport Hovav and Levin")] }
 
@@ -63,7 +63,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Jackendoff")] }
 
@@ -76,7 +76,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Jackendoff")] }
 
@@ -89,7 +89,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state"), ("judgedBy", "Jackendoff")] }
 
@@ -102,7 +102,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .acceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
@@ -115,7 +115,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "John buys a knife that was forged in such a way that it was already sharp. John uses it until it becomes blunt. He uses a whetting stone to make it sharp once more."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
@@ -128,7 +128,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := "A film producer makes a 4 hour long film, which is significantly longer than the norm. She is pressured to reduce its length, so cuts it to be two hours. But then the director and actors protest, so she restores it to 4 hours."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
@@ -141,7 +141,7 @@ def ex_24c : Datum :=
     glossedTokens := []
     context := "Kim takes a photo that is too large to use as a Facebook profile photo. She shrinks it to a more appropriate size, but thinks it does not look good. So she restores it to its original size and puts it on her personal website instead."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
@@ -154,7 +154,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := "Mary requested a potter to make a plate in separate pieces so she can practice her pottery-mending skills. She took a day to put the pieces together. John, who was secretly angry with Mary for previously breaking his favorite bowl, snatched the mended plate from Mary and broke it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
@@ -167,7 +167,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := "Leah kills a rabbit, takes it home and skins and butchers it and then puts the fresh meat in the freezer for three days. She then takes it out and puts it on the table to thaw."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
@@ -180,7 +180,7 @@ def ex_25c : Datum :=
     glossedTokens := []
     context := "An ice cream factory manufactures ice cream from a package of ingredients by adding water and then freezing the result. After adding the contents of the package to water and freezing it, Kim lets it melt into a liquid state."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
@@ -193,7 +193,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("durative", .acceptable), ("internal", .acceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "property concept")] }
 
@@ -206,7 +206,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
@@ -219,7 +219,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
@@ -232,7 +232,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
@@ -245,7 +245,7 @@ def fn11i : Datum :=
     glossedTokens := []
     context := "Jill is an astronaut in a space station currently in outer space and had a piece of frozen meat she wanted to eat. She left it out to thaw but because things freeze so quickly in outer space, it only managed to stay thawed for 1 minute before it refroze."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
@@ -258,7 +258,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -271,7 +271,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -284,7 +284,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -297,7 +297,7 @@ def ex_31c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -310,7 +310,7 @@ def ex_31d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -323,7 +323,7 @@ def ex_31e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -336,7 +336,7 @@ def ex_31f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
@@ -349,7 +349,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
@@ -362,7 +362,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
@@ -375,7 +375,7 @@ def ex_35c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
@@ -388,7 +388,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "entailment denial"), ("root class", "change of state")] }
 
@@ -401,7 +401,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "entailment denial"), ("root class", "change of state"), ("judgedBy", "Rappaport Hovav")] }
 
@@ -414,7 +414,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "entailment denial"), ("root class", "change of state"), ("judgedBy", "Rappaport Hovav")] }
 
@@ -427,7 +427,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := "John broke his hands. It was such a severe fracture that the sharp edges of the broken bones in his hand pierced through his flesh when they broke and he bled profusely."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
@@ -440,7 +440,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := "There was a door leading to the garden. The hinges were really loose and the door was on the verge of falling off them. John wanted to go out to his garden to tend to his plants. He opened the door with too much force, however, and the door broke off its hinges and fell onto his garden lawn."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 

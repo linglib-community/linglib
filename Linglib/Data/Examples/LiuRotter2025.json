@@ -13,7 +13,7 @@
   "translation": "",
   "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility single-modal (SM) cell of the 2x2 FORCE x NUMBER design.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["force", "possibility"],
@@ -47,7 +47,7 @@
   "translation": "",
   "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility modal-concord (MC) cell of the 2x2 FORCE x NUMBER design.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["force", "possibility"],
@@ -81,7 +81,7 @@
   "translation": "",
   "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity single-modal (SM) cell of the 2x2 FORCE x NUMBER design.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["force", "necessity"],
@@ -115,7 +115,7 @@
   "translation": "",
   "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity modal-concord (MC) cell of the 2x2 FORCE x NUMBER design.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["force", "necessity"],

@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: some but not all players responded", .acceptable)]
     paperFeatures := [("case", "bare"), ("excluded", "scalar"), ("available", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: all players responded", .unacceptable)]
     paperFeatures := [("case", "bare"), ("excluded", "symmetric"), ("available", "no")] }
 
@@ -50,7 +50,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: some but not all players responded", .acceptable)]
     paperFeatures := [("case", "negated"), ("excluded", "scalar"), ("available", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: no players responded", .unacceptable)]
     paperFeatures := [("case", "negated"), ("excluded", "symmetric"), ("available", "no")] }
 
@@ -76,7 +76,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: some but not all players were inside", .acceptable)]
     paperFeatures := [("case", "antonym"), ("excluded", "scalar"), ("available", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: all players were inside", .unacceptable)]
     paperFeatures := [("case", "antonym"), ("excluded", "symmetric"), ("available", "no")] }
 
@@ -102,7 +102,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: permitted and not required", .acceptable)]
     paperFeatures := [("case", "lexicalized"), ("excluded", "scalar"), ("available", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: permitted and required", .unacceptable)]
     paperFeatures := [("case", "lexicalized"), ("excluded", "symmetric"), ("available", "no")] }
 
@@ -128,7 +128,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex_55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("preferred: taking drugs is required", .acceptable)]
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("preferred: taking drugs is required", .acceptable)]
     paperFeatures := [] }
 
@@ -182,7 +182,7 @@ def ex_76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: John is allowed but not required to come", .acceptable)]
     paperFeatures := [("case", "minimal"), ("excluded", "scalar"), ("available", "yes")] }
 
@@ -197,7 +197,7 @@ def ex_76b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strengthened: John must come", .unacceptable)]
     paperFeatures := [("case", "minimal"), ("excluded", "symmetric"), ("available", "no")] }
 

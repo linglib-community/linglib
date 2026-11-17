@@ -24,7 +24,7 @@ def s1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("presupposition", "Patrick believes he owns a cello")] }
 
@@ -37,7 +37,7 @@ def s2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("presupposition", "none as a whole")] }
 
@@ -50,7 +50,7 @@ def s10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("rule", "(13): true in w iff it rains in every world of Dox_J(w)")] }
 
@@ -63,7 +63,7 @@ def s19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(20): too_i coindexed with Mary_i, Susan focused"), ("presupposition", "none as a whole")] }
 
@@ -76,7 +76,7 @@ def s25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "guaranteed undefined after the first conjunct"), ("felicity", "infelicitous")] }
 
@@ -89,7 +89,7 @@ def s26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "undefined; the conditional inherits its antecedent's presupposition"), ("felicity", "infelicitous")] }
 
@@ -102,7 +102,7 @@ def s28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
@@ -115,7 +115,7 @@ def s29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
@@ -128,7 +128,7 @@ def s30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
@@ -142,7 +142,7 @@ def s32a : Datum :=
     context := "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("source", "Asher 1987")] }
 
@@ -156,7 +156,7 @@ def s32b : Datum :=
     context := "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("source", "Asher 1987")] }
 
@@ -169,7 +169,7 @@ def s33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("truth", "true under (31), false under (27)")] }
 
@@ -182,7 +182,7 @@ def s41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.3"), ("status", "no doubt about where John will be")] }
 
@@ -195,7 +195,7 @@ def s42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.3"), ("status", "wanting what one is convinced will not happen")] }
 
@@ -208,7 +208,7 @@ def s44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.3"), ("presupposition", "Patrick believes he has a cello independently of what he does")] }
 
@@ -221,7 +221,7 @@ def s46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("presupposition", "not filtered: want before believe")] }
 
@@ -234,7 +234,7 @@ def s47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987"), ("anaphora", "it as the car his wife will buy him")] }
 
@@ -247,7 +247,7 @@ def s47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987")] }
 
@@ -260,7 +260,7 @@ def s47c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987")] }
 
@@ -273,7 +273,7 @@ def s48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987"), ("reading", "the belief as an implicit conditional")] }
 
@@ -286,7 +286,7 @@ def s49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Cresswell 1988"), ("reading", "the belief as an implicit conditional")] }
 
@@ -299,7 +299,7 @@ def s50 : Datum :=
     glossedTokens := []
     context := "Suppose I had to miss the last set of the Wimbledon women's final because of a hairdresser's appointment, so I don't know who won, though I do know the game is over and decided by now."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4")] }
 
@@ -312,7 +312,7 @@ def s51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2.4")] }
 
@@ -325,7 +325,7 @@ def s52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal base", "not doxastic: John may be certain he will not teach Tuesdays")] }
 
@@ -338,7 +338,7 @@ def s53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
@@ -351,7 +351,7 @@ def s54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "John believes he will teach on Tuesdays")] }
 
@@ -364,7 +364,7 @@ def s55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "satisfied in the belief-worlds")] }
 
@@ -377,7 +377,7 @@ def s56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
@@ -390,7 +390,7 @@ def s56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
@@ -403,7 +403,7 @@ def s57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "accommodated: Patrick believes he sold his cello")] }
 
@@ -416,7 +416,7 @@ def s57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "accommodated: Patrick believes he did not sell his cello")] }
 
@@ -429,7 +429,7 @@ def s59 : Datum :=
     glossedTokens := []
     context := "It is already in the common ground that Mary attended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("presupposition", "someone else attended, in the common ground")] }
 
@@ -442,7 +442,7 @@ def s60 : Datum :=
     glossedTokens := []
     context := "It is already in the common ground that Mary attended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("presupposition", "someone else attended, in the common ground")] }
 

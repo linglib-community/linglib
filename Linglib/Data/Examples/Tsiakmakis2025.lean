@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "negative"), ("mood", "indicative")] }
 
@@ -37,7 +37,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "negative"), ("host", "imperative")] }
 
@@ -50,7 +50,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
 
@@ -63,7 +63,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "preposed negation question"), ("class", "apparent")] }
 
@@ -76,7 +76,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "rhetorical question"), ("class", "apparent")] }
 
@@ -89,7 +89,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "It is shared knowledge that dad does not like meatball soup."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "negative"), ("host", "rhetorical question")] }
 
@@ -102,7 +102,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
@@ -115,7 +115,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
@@ -128,7 +128,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "NCI licensing")] }
 
@@ -141,7 +141,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "left-periphery merge")] }
 
@@ -154,7 +154,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "conditional"), ("class", "proper")] }
 
@@ -167,7 +167,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("host", "conditional"), ("conjunction", "an")] }
 
@@ -180,7 +180,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "polar question"), ("class", "proper")] }
 
@@ -193,7 +193,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
 
@@ -206,7 +206,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
@@ -219,7 +219,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "lo"), ("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
@@ -232,7 +232,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := "Benedeit, Le voyage de Saint Brendan, 1121."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "negative predicate"), ("class", "proper")] }
 
@@ -245,7 +245,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "no"), ("use", "expletive"), ("host", "dubitative predicate"), ("class", "proper")] }
 
@@ -258,7 +258,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := "Plato, Meno, 89d."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "me: ouk"), ("use", "expletive with canonical negation"), ("host", "dubitative predicate"), ("class", "proper")] }
 
@@ -271,7 +271,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "non"), ("use", "negative"), ("host", "temporal expression"), ("class", "apparent")] }
 
@@ -284,7 +284,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "negative adverbial"), ("class", "apparent")] }
 
@@ -297,7 +297,7 @@ def ex_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "unless-conditional"), ("class", "apparent")] }
 
@@ -310,7 +310,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "comparative"), ("class", "apparent")] }
 
@@ -323,7 +323,7 @@ def ex_84 : Datum :=
     glossedTokens := []
     context := "Cicero, De Natura Deorum, 3,89."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "non -ne"), ("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
 
@@ -336,7 +336,7 @@ def ex_87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("host", "rhetorical question"), ("polarity", "positive")] }
 
@@ -349,7 +349,7 @@ def ex_90 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
 
@@ -362,7 +362,7 @@ def ex_92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negator", "lo"), ("use", "expletive"), ("host", "free relative"), ("class", "proper, tentative")] }
 

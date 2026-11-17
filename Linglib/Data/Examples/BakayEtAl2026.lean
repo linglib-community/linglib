@@ -26,7 +26,7 @@ def ex_5a_match : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "plural")] }
 
@@ -41,7 +41,7 @@ def ex_5a_mismatch : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "singular")] }
 
@@ -56,7 +56,7 @@ def ex_5b_match : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")] }
 
@@ -71,7 +71,7 @@ def ex_5b_mismatch : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "singular")] }
 
@@ -86,7 +86,7 @@ def ex_8a_match : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Match"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
@@ -101,7 +101,7 @@ def ex_8a_mismatch : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Mismatch"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "singular")] }
 
@@ -116,7 +116,7 @@ def ex_8b_match : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Match"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")] }
 
@@ -131,7 +131,7 @@ def ex_8b_mismatch : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Mismatch"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "singular")] }
 
@@ -146,7 +146,7 @@ def ex_8c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Singular Subject, IO Match"), ("target", "subject"), ("targetNumber", "singular"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
@@ -161,7 +161,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "IO, Dative"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
@@ -176,7 +176,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Dative"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")] }
 
@@ -191,7 +191,7 @@ def ex_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Genitive"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")] }
 

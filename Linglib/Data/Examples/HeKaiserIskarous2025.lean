@@ -24,7 +24,7 @@ def house_no_bathroom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "low")] }
 
@@ -37,7 +37,7 @@ def house_ballroom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "positive"), ("statePrior", "low")] }
 
@@ -50,7 +50,7 @@ def house_no_ballroom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "high")] }
 
@@ -64,7 +64,7 @@ def exp1_pos : Datum :=
     glossedTokens := []
     context := "Emma visited a friend's house yesterday."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("experiment", "1")] }
 
@@ -78,7 +78,7 @@ def exp1_neg : Datum :=
     glossedTokens := []
     context := "Emma visited a friend's house yesterday."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("experiment", "1")] }
 
@@ -92,7 +92,7 @@ def classroom_no_board : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("statePrior", "low")] }
 
@@ -106,7 +106,7 @@ def classroom_stove : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("statePrior", "low")] }
 
@@ -120,7 +120,7 @@ def exp2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("polarity", "positive"), ("experiment", "2")] }
 

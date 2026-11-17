@@ -26,7 +26,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Maria's whereabouts."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "assertedNegation"), ("focus", "clause")] }
 
@@ -41,7 +41,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A couple is on its house entrance seeing people passing by. One individual says (7)."
     judgment := .unacceptable
-    alternatives := [("Juanchu-ka oveja-ta ranti-rka.", .acceptable)]
+    contrasts := [("Juanchu-ka oveja-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("focus", "clause")] }
 
@@ -56,7 +56,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing."
     judgment := .unacceptable
-    alternatives := [("Ari, Maria-ka wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Ari, Maria-ka wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("question", "polar"), ("focus", "clause")] }
 
@@ -71,7 +71,7 @@ def ex_8c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing."
     judgment := .unacceptable
-    alternatives := [("Mana, Maria-ka mana wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Mana, Maria-ka mana wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("question", "polar"), ("focus", "clause"), ("polarity", "negative")] }
 
@@ -86,7 +86,7 @@ def fn5_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Maria-ka wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Maria-ka wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("question", "constituent"), ("focus", "clause")] }
 
@@ -101,7 +101,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "debate"), ("question", "polar"), ("focus", "clause")] }
 
@@ -116,7 +116,7 @@ def ex_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "none"), ("question", "negativeBiased"), ("focus", "clause")] }
 
@@ -131,7 +131,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "One individual asks a question about Maria's whereabouts and another individual replies. There has been some discussion about Maria's whereabouts, with it being suggested that Maria didn't buy a cow in addition to it being suggested that she did buy one, but the discussion is still open. The individual wants to settle the matter, so they ask the second individual to do so."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "debate"), ("question", "positiveBiased"), ("focus", "clause")] }
 
@@ -146,7 +146,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "direct"), ("continuation", "deniesScope")] }
 
@@ -161,7 +161,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "direct"), ("continuation", "deniesEvidence")] }
 
@@ -176,7 +176,7 @@ def ex_19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "reportative"), ("continuation", "deniesScope")] }
 
@@ -191,7 +191,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "reportative"), ("continuation", "deniesEvidence")] }
 
@@ -206,7 +206,7 @@ def ex_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They saw Juan doing so, but could not intervene."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "directEvidential"), ("focus", "clause")] }
 
@@ -221,7 +221,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They were told that Juan did so, and they trust the source."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "reportativeEvidential"), ("focus", "clause")] }
 
@@ -236,7 +236,7 @@ def fn9_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan went to the river. They were told that Juan did so, but they don't trust the source."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "reportativeEvidential"), ("focus", "clause"), ("polarity", "negative")] }
 
@@ -251,7 +251,7 @@ def fn10_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evidential", "reportative"), ("continuation", "confirmsThenDeniesScope")] }
 
@@ -266,7 +266,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "object"), ("contrast", "object")] }
 
@@ -281,7 +281,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of who bought a sheep at the Sunday market."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "subject"), ("contrast", "subject")] }
 
@@ -296,7 +296,7 @@ def ex_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing Pedro's whereabouts, in particular, where he went for the day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "goal"), ("contrast", "goal")] }
 
@@ -311,7 +311,7 @@ def ex_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two individuals are discussing Pedro's whereabouts. Since heading to the mine is an activity that takes all day, it excludes any other activity."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "verbPhrase"), ("contrast", "verbPhrase")] }
 
@@ -326,7 +326,7 @@ def ex_27b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "object"), ("contrast", "object")] }
 
@@ -342,7 +342,7 @@ def ex_27c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .unacceptable
-    alternatives := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "subject"), ("contrast", "object")] }
 
@@ -357,7 +357,7 @@ def ex_27d : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market."
     judgment := .unacceptable
-    alternatives := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Mana, Segundo wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "verb"), ("contrast", "object")] }
 
@@ -372,7 +372,7 @@ def ex_28_modifier : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
+    contrasts := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("focus", "modifier")] }
 
@@ -387,7 +387,7 @@ def ex_28_object : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
+    contrasts := [("Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("focus", "object")] }
 
@@ -402,7 +402,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "An individual asks another one about the farm animal that Pedro bought at the Sunday market."
     judgment := .unacceptable
-    alternatives := [("Pedro-ka oveja-ta ranti-rka.", .acceptable)]
+    contrasts := [("Pedro-ka oveja-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("question", "constituent"), ("focus", "object")] }
 
@@ -417,7 +417,7 @@ def ex_29c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "An individual asks another one about the farm animal that Pedro bought at the Sunday market."
     judgment := .unacceptable
-    alternatives := [("Oveja-ta Pedro-ka ranti-rka.", .acceptable)]
+    contrasts := [("Oveja-ta Pedro-ka ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "none"), ("question", "constituent"), ("focus", "object")] }
 
@@ -432,7 +432,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep."
     judgment := .acceptable
-    alternatives := [("Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta ranti-rka.", .acceptable)]
+    contrasts := [("Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "object"), ("contrast", "object")] }
 
@@ -447,7 +447,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep."
     judgment := .acceptable
-    alternatives := [("Pedro-ka mana oveja-ta ranti-rka; wakra-ta Pedro-ka ranti-rka.", .acceptable)]
+    contrasts := [("Pedro-ka mana oveja-ta ranti-rka; wakra-ta Pedro-ka ranti-rka.", .acceptable)]
     readings := []
     paperFeatures := [("prior", "correction"), ("focus", "object"), ("contrast", "object")] }
 

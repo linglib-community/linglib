@@ -24,7 +24,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("O andras ke i gineka ine eksipna.", .ungrammatical)]
+    contrasts := [("O andras ke i gineka ine eksipna.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "M")] }
 
@@ -37,7 +37,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("O pinakas ke i karekla ine vromiki.", .ungrammatical)]
+    contrasts := [("O pinakas ke i karekla ine vromiki.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "inanimate M + inanimate F"), ("resolved", "N")] }
 
@@ -50,7 +50,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human F + human F"), ("resolved", "F")] }
 
@@ -63,7 +63,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human M + human M"), ("resolved", "M")] }
 
@@ -76,7 +76,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I gineka ke to koritsi ine eksipni.", .ungrammatical)]
+    contrasts := [("I gineka ke to koritsi ine eksipni.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "human F + fixed-gender N (female)"), ("resolved", "F")] }
 
@@ -89,7 +89,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I megalofiia ke i adherfi tu ine charumenes.", .ungrammatical)]
+    contrasts := [("I megalofiia ke i adherfi tu ine charumenes.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender F (male) + human F"), ("resolved", "M")] }
 
@@ -102,7 +102,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("To thima ke i mitera tis ine charumeni pu kerdhisan.", .ungrammatical), ("To thima ke i mitera tis ine charumena pu kerdhisan.", .ungrammatical)]
+    contrasts := [("To thima ke i mitera tis ine charumeni pu kerdhisan.", .ungrammatical), ("To thima ke i mitera tis ine charumena pu kerdhisan.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (female) + human F"), ("resolved", "F")] }
 
@@ -115,7 +115,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate F"), ("resolved", "F")] }
 
@@ -128,7 +128,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate M + inanimate M"), ("resolved", "M")] }
 
@@ -141,7 +141,7 @@ def ex_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate N"), ("resolved", "N")] }
 
@@ -154,7 +154,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("To scholio ke i ekklisia ine vromiki.", .ungrammatical), ("To scholio ke i ekklisia ine vromikes.", .ungrammatical)]
+    contrasts := [("To scholio ke i ekklisia ine vromiki.", .ungrammatical), ("To scholio ke i ekklisia ine vromikes.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate F"), ("resolved", "N")] }
 
@@ -167,7 +167,7 @@ def ex_40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("To balkoni ke o dhiadhromos ine vromiki.", .ungrammatical)]
+    contrasts := [("To balkoni ke o dhiadhromos ine vromiki.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate M"), ("resolved", "N")] }
 
@@ -180,7 +180,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate F"), ("resolved", "N")] }
 
@@ -193,7 +193,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := [("Ksafnika egine aoratos i megalofiia ke o filos tu.", .ungrammatical)]
+    contrasts := [("Ksafnika egine aoratos i megalofiia ke o filos tu.", .ungrammatical)]
     readings := []
     paperFeatures := [("agreement", "closest conjunct"), ("value", "uF")] }
 
@@ -206,7 +206,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Ine vromiko o pinakas ke i karekla.", .ungrammatical)]
+    contrasts := [("Ine vromiko o pinakas ke i karekla.", .ungrammatical)]
     readings := []
     paperFeatures := [("agreement", "closest conjunct"), ("value", "uF")] }
 
@@ -219,7 +219,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := [("O kleftis ke to daxtilidi ine afanta.", .questionable)]
+    contrasts := [("O kleftis ke to daxtilidi ine afanta.", .questionable)]
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("resolved", "ineffable"), ("alsoJudged", "ungrammatical")] }
 
@@ -232,7 +232,7 @@ def ex_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("agreement", "verb, no gender")] }
 
@@ -245,7 +245,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("O Giorgos ke to pukamiso tu ine elkistiki.", .ungrammatical), ("O Giorgos ke to pukamiso tu ine elkistikes.", .ungrammatical), ("O Giorgos ke to pukamiso tu ine elkistika.", .ungrammatical)]
+    contrasts := [("O Giorgos ke to pukamiso tu ine elkistiki.", .ungrammatical), ("O Giorgos ke to pukamiso tu ine elkistikes.", .ungrammatical), ("O Giorgos ke to pukamiso tu ine elkistika.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("predicate", "uninflected")] }
 
@@ -258,7 +258,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate M"), ("resolved", "M")] }
 
@@ -271,7 +271,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human F + inanimate F"), ("resolved", "F")] }
 
@@ -284,7 +284,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I megalofiia ke o pinakas tu ine afantes.", .ungrammatical), ("I megalofiia ke o pinakas tu ine afanta.", .ungrammatical)]
+    contrasts := [("I megalofiia ke o pinakas tu ine afantes.", .ungrammatical), ("I megalofiia ke o pinakas tu ine afanta.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender F (male) + inanimate M"), ("resolved", "M")] }
 
@@ -297,7 +297,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("To thima ke o pinakas tu ine afantes.", .ungrammatical), ("To thima ke o pinakas tu ine afanta.", .ungrammatical)]
+    contrasts := [("To thima ke o pinakas tu ine afantes.", .ungrammatical), ("To thima ke o pinakas tu ine afanta.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (male) + inanimate M"), ("resolved", "M")] }
 
@@ -310,7 +310,7 @@ def ex_57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("To thima ke i fotografia tis ine afanti.", .ungrammatical), ("To thima ke i fotografia tis ine afanta.", .ungrammatical)]
+    contrasts := [("To thima ke i fotografia tis ine afanti.", .ungrammatical), ("To thima ke i fotografia tis ine afanta.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (female) + inanimate F"), ("resolved", "F")] }
 
@@ -323,7 +323,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "clause + clause"), ("resolved", "N")] }
 
@@ -336,7 +336,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate M"), ("resolved", "N")] }
 
@@ -349,7 +349,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Maðurinn og konan eru þreyttir.", .ungrammatical), ("Maðurinn og konan eru þreyttar.", .ungrammatical)]
+    contrasts := [("Maðurinn og konan eru þreyttir.", .ungrammatical), ("Maðurinn og konan eru þreyttar.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "N")] }
 
@@ -362,7 +362,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Skáldið og Jón eru fræg.", .ungrammatical)]
+    contrasts := [("Skáldið og Jón eru fræg.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (male) + human M"), ("resolved", "M")] }
 
@@ -375,7 +375,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "M")] }
 
@@ -388,7 +388,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate F"), ("resolved", "M")] }
 
@@ -401,7 +401,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Naše selo i celo jedno brdo su izgorela.", .ungrammatical)]
+    contrasts := [("Naše selo i celo jedno brdo su izgorela.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate N"), ("resolved", "M")] }
 

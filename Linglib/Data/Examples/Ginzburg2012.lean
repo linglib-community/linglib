@@ -24,7 +24,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("clausal confirmation: Are you asking who Bo (of all people) admires?", .acceptable), ("intended content: Who do you mean 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "addressee")] }
 
@@ -37,7 +37,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("self-correction: Did I say 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "original speaker")] }
 
@@ -50,7 +50,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := "A keeps the turn."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Why own a parakeet?", .acceptable), ("Why are you asking which members of this audience own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "kept")] }
 
@@ -63,7 +63,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := "B takes the turn."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Why are you asking which members of this audience own a parakeet?", .acceptable), ("Why own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "taken")] }
 
@@ -76,7 +76,7 @@ def ex_23c : Datum :=
     glossedTokens := []
     context := "A keeps the turn."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("turn", "kept")] }
 
@@ -89,7 +89,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := "Taking place conversation-initially."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_95 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("genre", "CasualChat")] }
 
@@ -154,7 +154,7 @@ def ch6_90 : Datum :=
     glossedTokens := []
     context := "B is unsure about the intended reference of 'George'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ccur", "Parameter Focussing")] }
 
@@ -167,7 +167,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("repair", "other-initiated")] }
 
@@ -180,7 +180,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("repair", "self-initiated")] }
 

@@ -25,7 +25,7 @@ def coin_heads : Datum :=
     context := "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def coin_tails : Datum :=
     context := "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex28 : Datum :=
     context := "John fell asleep while watching television, so his watching did not extend beyond the time he fell asleep."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

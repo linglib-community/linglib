@@ -12,7 +12,7 @@
     "translation": "Tselmeg reads a poem now.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "eventive"],
@@ -35,7 +35,7 @@
     "translation": "Tselmeg will read a poem tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "eventive"],
@@ -57,7 +57,7 @@
     "translation": "Suvdmaa dances now.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "eventive"],
@@ -79,7 +79,7 @@
     "translation": "Suvdmaa will dance tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "eventive"],
@@ -102,7 +102,7 @@
     "translation": "Bat knows my secret now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "stative"],
@@ -125,7 +125,7 @@
     "translation": "Bat will know my secret tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "stative"],
@@ -148,7 +148,7 @@
     "translation": "The statue is placed at the top of the mountain now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "stative"],
@@ -171,7 +171,7 @@
     "translation": "The statue will be placed at the top of the mountain tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["aktionsart", "stative"],

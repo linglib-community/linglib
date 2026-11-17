@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A future irrealis infinitive.",
@@ -27,7 +27,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A propositional infinitive.",
@@ -44,7 +44,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -61,7 +61,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Leo believed Julia to be bringing the toys right then.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["syntax", "control"]
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Leo claimed to eat dinner.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Yesterday, John tried to leave.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -154,7 +154,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -171,7 +171,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "scheduled future", "judgment": "acceptable"}
     ],
@@ -192,7 +192,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["syntax", "ECM"]
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Infinitival future is relative: the party precedes the utterance time.",
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Leo decided a week ago that he will go to the party.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -247,7 +247,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The paper leaves the lowest clause open with an ellipsis.",
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Temporal would under will is out; a conditional would is fine.",
@@ -281,7 +281,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "would, past plus woll, is relative.",
@@ -298,7 +298,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "unacceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
@@ -318,7 +318,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
@@ -337,7 +337,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
@@ -356,7 +356,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"},
       {"name": "shifted past", "judgment": "unacceptable"}
@@ -376,7 +376,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "would's past must delete, and no past is above it.",
@@ -393,7 +393,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "unacceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
@@ -413,7 +413,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Leo sings in the shower.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -432,7 +432,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -449,7 +449,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -466,7 +466,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "John was singing in the shower when the mailman arrived.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -485,7 +485,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "unacceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
@@ -525,7 +525,7 @@
     "translation": "",
     "context": "Is John available tomorrow at 5 p.m.?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -542,7 +542,7 @@
     "translation": "",
     "context": "Is John available tomorrow at 5 p.m.?",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I don't think so. He expects to be working at 5 p.m. tomorrow.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -561,7 +561,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -578,7 +578,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A past matrix does not help: the reference time is the attitude holder's NOW.",
@@ -595,7 +595,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -612,7 +612,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -629,7 +629,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["syntax", "control"]
@@ -648,7 +648,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -665,7 +665,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -682,7 +682,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -699,7 +699,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A past matrix reference time is extended enough to include the event.",
@@ -716,7 +716,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reading", "double access"]
@@ -735,7 +735,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "propositional"]
@@ -754,7 +754,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
@@ -773,7 +773,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "near future", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "unacceptable"}
@@ -793,7 +793,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -812,7 +812,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Yesterday, John managed to sing.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -831,7 +831,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "The bridge began to tremble.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -852,7 +852,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "The bridge seems to be trembling right now.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -871,7 +871,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -888,7 +888,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Leo seemed to be singing at 5 p.m. yesterday.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -907,7 +907,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -924,7 +924,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "John is trying to eat his breakfast right now.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -943,7 +943,7 @@
     "translation": "",
     "context": "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -960,7 +960,7 @@
     "translation": "",
     "context": "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time.",
@@ -977,7 +977,7 @@
     "translation": "",
     "context": "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",

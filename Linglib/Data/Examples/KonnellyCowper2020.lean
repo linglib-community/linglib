@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "ungendered"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1"), ("firstStage", "1")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1"), ("firstStage", "1")] }
 
@@ -50,7 +50,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "ungendered"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1"), ("firstStage", "1")] }
 
@@ -63,7 +63,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("firstStage", "2")] }
 
@@ -76,7 +76,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("firstStage", "2")] }
 
@@ -89,7 +89,7 @@ def ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("firstStage", "2")] }
 
@@ -102,7 +102,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "2"), ("firstStage", "3")] }
 
@@ -115,7 +115,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "masc"), ("referent", "known"), ("pronoun", "they"), ("stage", "2"), ("firstStage", "3")] }
 
@@ -128,7 +128,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("father", .ungrammatical), ("aunt", .ungrammatical)]
+    contrasts := [("father", .ungrammatical), ("aunt", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "2"), ("firstStage", "3")] }
 
@@ -141,7 +141,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "ungendered"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "1")] }
 
@@ -154,7 +154,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "1")] }
 
@@ -167,7 +167,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "2")] }
 
@@ -180,7 +180,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "2")] }
 
@@ -193,7 +193,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -206,7 +206,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "masc"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -219,7 +219,7 @@ def ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("themselves", .acceptable)]
+    contrasts := [("themselves", .acceptable)]
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -232,7 +232,7 @@ def ex7d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "masc"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -245,7 +245,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "masc"), ("pronoun", "he"), ("stage", "3")] }
 
@@ -258,7 +258,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "fem"), ("pronoun", "she"), ("stage", "3")] }
 
@@ -271,7 +271,7 @@ def ex10_it : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "inanimate"), ("referent", "unknown"), ("pronoun", "it"), ("stage", "3")] }
 
@@ -284,7 +284,7 @@ def ex10_them : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "inanimate"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "3")] }
 
@@ -297,7 +297,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "masc"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1"), ("firstStage", "1")] }
 
@@ -310,7 +310,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "fem"), ("referent", "unknown"), ("pronoun", "she"), ("stage", "1")] }
 
@@ -323,7 +323,7 @@ def ex12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "fem"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1"), ("firstStage", "1")] }
 
@@ -336,7 +336,7 @@ def ex12d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "masc"), ("referent", "unknown"), ("pronoun", "he"), ("stage", "1")] }
 
@@ -349,7 +349,7 @@ def ex13_its : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "inanimate"), ("referent", "unknown"), ("pronoun", "it"), ("stage", "1")] }
 
@@ -362,7 +362,7 @@ def ex13_their : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "quantified"), ("noun", "inanimate"), ("referent", "unknown"), ("pronoun", "they"), ("stage", "1")] }
 
@@ -375,7 +375,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "ungendered"), ("referent", "known"), ("pronoun", "they"), ("stage", "2"), ("firstStage", "2")] }
 
@@ -388,7 +388,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "masc"), ("referent", "known"), ("pronoun", "they"), ("stage", "2")] }
 
@@ -401,7 +401,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "2")] }
 
@@ -414,7 +414,7 @@ def ex23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "fem"), ("number", "plural"), ("pronoun", "they"), ("stage", "2")] }
 
@@ -427,7 +427,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "fem"), ("number", "plural"), ("pronoun", "she"), ("stage", "2")] }
 
@@ -440,7 +440,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "masc"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -453,7 +453,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "3"), ("firstStage", "3")] }
 
@@ -466,7 +466,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "fem"), ("pronoun", "she"), ("stage", "3")] }
 
@@ -479,7 +479,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "known"), ("pronoun", "they"), ("stage", "3")] }
 
@@ -492,7 +492,7 @@ def ex26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "masc"), ("pronoun", "he"), ("stage", "3")] }
 

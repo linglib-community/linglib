@@ -26,7 +26,7 @@ def ex18_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after", .acceptable), ("because", .acceptable)]
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex18_53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after", .acceptable), ("because", .unacceptable)]
     paperFeatures := [] }
 

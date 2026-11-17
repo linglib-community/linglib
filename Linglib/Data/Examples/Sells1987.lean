@@ -26,7 +26,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "yè"), ("environment", "logophoric verb")] }
 
@@ -41,7 +41,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "yè"), ("environment", "psych-verb")] }
 
@@ -56,7 +56,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "sig"), ("environment", "logophoric verb")] }
 
@@ -69,7 +69,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "logophoric verb")] }
 
@@ -82,7 +82,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "psych-verb")] }
 
@@ -97,7 +97,7 @@ def ex_45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable), ("external speaker", .marginal)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "that fool"), ("environment", "logophoric verb")] }
 
@@ -112,7 +112,7 @@ def ex_46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable), ("external speaker", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "that fool"), ("environment", "logophoric verb")] }
 
@@ -127,7 +127,7 @@ def ex_47 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .unacceptable), ("external speaker", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "that fool"), ("environment", "psych-verb")] }
 
@@ -142,7 +142,7 @@ def ex_48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .unacceptable), ("external speaker", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "that fool"), ("environment", "3POV")] }
 
@@ -157,7 +157,7 @@ def ex_49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("diagnostic", "mysteriously"), ("environment", "logophoric verb")] }
 
@@ -172,7 +172,7 @@ def ex_50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("diagnostic", "mysteriously"), ("environment", "logophoric verb")] }
 
@@ -187,7 +187,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("diagnostic", "mysteriously"), ("environment", "psych-verb")] }
 
@@ -202,7 +202,7 @@ def ex_52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .unacceptable), ("external speaker", .acceptable)]
     paperFeatures := [("diagnostic", "mysteriously"), ("environment", "3POV")] }
 
@@ -217,7 +217,7 @@ def ex_56 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "beloved"), ("environment", "logophoric verb")] }
 
@@ -232,7 +232,7 @@ def ex_57 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "beloved"), ("environment", "logophoric verb")] }
 
@@ -247,7 +247,7 @@ def ex_58 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "beloved"), ("environment", "psych-verb")] }
 
@@ -262,7 +262,7 @@ def ex_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal protagonist", .acceptable)]
     paperFeatures := [("pronoun", "zibun"), ("diagnostic", "beloved"), ("environment", "3POV")] }
 
@@ -277,7 +277,7 @@ def ex_60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "3POV")] }
 
@@ -292,7 +292,7 @@ def ex_61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "external")] }
 
@@ -307,7 +307,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "3POV")] }
 
@@ -322,7 +322,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "logophoric verb")] }
 
@@ -337,7 +337,7 @@ def ex_73 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "logophoric verb")] }
 
@@ -352,7 +352,7 @@ def ex_74 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "psych-verb")] }
 
@@ -367,7 +367,7 @@ def ex_75 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "zibun"), ("environment", "3POV")] }
 
@@ -382,7 +382,7 @@ def ex_76 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "sig"), ("environment", "external")] }
 
@@ -397,7 +397,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "sig"), ("environment", "logophoric verb")] }
 

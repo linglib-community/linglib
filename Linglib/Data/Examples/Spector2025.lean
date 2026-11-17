@@ -24,7 +24,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := "Gloria is a scientist. She's investigating a new substance, whose density she does not know. She will perform an experiment by throwing ten marbles, believed to have the same density, into the substance. She of course expects the marbles to behave uniformly, i.e. that they will all float or all sink. She's also interested in how the marbles might collide with each other. She will report to her friend Alfred, who knows all of this but does not witness the experiment. To her surprise, the marbles did not behave uniformly; some sank and others floated. She hasn't reported this to Alfred yet. Then Alfred asks her: 'So what happened?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "some")] }
 
@@ -37,7 +37,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := "Gloria is a scientist. She's investigating a new substance, whose density she does not know. She will perform an experiment by throwing ten marbles, believed to have the same density, into the substance. She of course expects the marbles to behave uniformly, i.e. that they will all float or all sink. She's also interested in how the marbles might collide with each other. She will report to her friend Alfred, who knows all of this but does not witness the experiment. To her surprise, the marbles did not behave uniformly; some sank and others floated. She hasn't reported this to Alfred yet. Then Alfred asks her: 'So what happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "some but not all")] }
 
@@ -50,7 +50,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := "To get admission to this group of Hitchcock movie fans, one has to prove that they have watched at least one Hitchcock movie. Sue, Peter and Gloria all belong to the club, and know this. Sue talks with Gloria, and then tells Peter:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "some")] }
 
@@ -63,7 +63,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := "To get admission to this group of Hitchcock movie fans, one has to prove that they have watched at least one Hitchcock movie. Sue, Peter and Gloria all belong to the club, and know this. Sue talks with Gloria, and then tells Peter:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "not all")] }
 
@@ -76,7 +76,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := "At an international conference, one expects talks to be in English. Gloria reports:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "some")] }
 
@@ -89,7 +89,7 @@ def ex_15c : Datum :=
     glossedTokens := []
     context := "At an international conference, one expects talks to be in English. Gloria reports:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("message", "not all")] }
 
@@ -102,7 +102,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := "Gloria is experimenting with just two marbles, a blue one and a red one. She throws them both into an unknown substance, and it is expected that they will either both sink or both float. She then reports the results of this experiment to her friend Alfred: Alfred: What happened?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

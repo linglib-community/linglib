@@ -24,7 +24,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := "Extraction from a subject that has raised from the specifier of vP."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "subjectSubextraction")] }
 
@@ -37,7 +37,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := "Remnant vP fronting after the subject has raised out of vP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "remnantFronting")] }
 
@@ -52,7 +52,7 @@ def ex22a : Datum :=
     lgrConformance := some .wordAligned
     context := "A verb-second clause moved to Spec,IP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "v2Moved")] }
 
@@ -67,7 +67,7 @@ def ex22c : Datum :=
     lgrConformance := some .wordAligned
     context := "A verb-second clause in situ."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "v2InSitu")] }
 
@@ -82,7 +82,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := "A possessor extracted from a fronted object."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessorExtraction")] }
 
@@ -97,7 +97,7 @@ def ex42a : Datum :=
     lgrConformance := some .wordAligned
     context := "An r-pronoun extracted from a PP moved out of the embedded clause."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "rPronounExtraction")] }
 
@@ -110,7 +110,7 @@ def ex58 : Datum :=
     glossedTokens := []
     context := "Collins's smuggling derivation of the passive: PartP to Spec,VoiceP, then the object out of it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "smugglingPassive")] }
 

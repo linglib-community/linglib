@@ -26,7 +26,7 @@ def s1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S/A = set B on ajin, O = set A on the nominalized verb")] }
 
@@ -41,7 +41,7 @@ def s1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S = set B on ajin, no set A on the nominalized verb")] }
 
@@ -56,7 +56,7 @@ def s2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "A = set A, O = set B inside the nominalized clause")] }
 
@@ -71,7 +71,7 @@ def s2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "S = set A")] }
 
@@ -86,7 +86,7 @@ def s3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "A = set A, O = set B, the suffix -on supplying object Case")] }
 
@@ -101,7 +101,7 @@ def s3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "S = set A")] }
 
@@ -116,7 +116,7 @@ def s62 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "process nominal without an external argument")] }
 
@@ -131,7 +131,7 @@ def s64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the external argument appears in a relative clause")] }
 
@@ -146,7 +146,7 @@ def s65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the by-phrase counterpart is degraded")] }
 
@@ -161,7 +161,7 @@ def s66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "two set A markers impossible in either order")] }
 
@@ -176,7 +176,7 @@ def s67 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "a sole argument is the internal argument")] }
 
@@ -191,7 +191,7 @@ def s68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")] }
 
@@ -206,7 +206,7 @@ def s68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")] }
 
@@ -221,7 +221,7 @@ def s69 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unaccusative nominalized in subject position; the internal argument takes genitive")] }
 
@@ -236,7 +236,7 @@ def s70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Coon 2013a:141"), ("nominalization", "external and internal argument both inside")] }
 
@@ -251,7 +251,7 @@ def s71 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "p.c. Pedro Mateo Pedro"), ("nominalization", "external argument inside the nominalized clause")] }
 
@@ -266,7 +266,7 @@ def s76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active root transitive")] }
 
@@ -281,7 +281,7 @@ def s76b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive root transitive without overt passive morphology")] }
 
@@ -296,7 +296,7 @@ def s78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active, lax vowel")] }
 
@@ -311,7 +311,7 @@ def s78b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive, tensed vowel")] }
 
@@ -326,7 +326,7 @@ def s80a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")] }
 
@@ -341,7 +341,7 @@ def s80b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")] }
 
@@ -356,7 +356,7 @@ def s82a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active derived transitive")] }
 
@@ -371,7 +371,7 @@ def s82b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive suffix -x replaces -j")] }
 
@@ -386,7 +386,7 @@ def s83a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")] }
 
@@ -401,7 +401,7 @@ def s83b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")] }
 
@@ -416,7 +416,7 @@ def s85 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "object genitive from D, subject absolutive from the matrix Infl")] }
 
@@ -431,7 +431,7 @@ def s90 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("theta", "ajin assigns an agentive θ-role to its subject")] }
 
@@ -446,7 +446,7 @@ def s91 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "unergative base: no DP inside, no genitive")] }
 
@@ -461,7 +461,7 @@ def s92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "unaccusative base resists nominalization under ajin")] }
 
@@ -476,7 +476,7 @@ def s93a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "the unaccusative appears as a finite verb under ajin")] }
 
@@ -491,7 +491,7 @@ def s93b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective")] }
 
@@ -506,7 +506,7 @@ def s94 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "passive base resists nominalization under ajin")] }
 
@@ -521,7 +521,7 @@ def s95 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective passive")] }
 
@@ -534,7 +534,7 @@ def s96a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists an unaccusative gerund")] }
 
@@ -547,7 +547,7 @@ def s96b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists a passive gerund")] }
 
@@ -562,7 +562,7 @@ def s97 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Macario et al. 1998"), ("case", "no preposition when a single DP takes absolutive from Infl")] }
 
@@ -577,7 +577,7 @@ def s98a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject inherent ergative from transitive v, object genitive: both set A")] }
 
@@ -592,7 +592,7 @@ def s98b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject set A on chäp, no genitive inside")] }
 
@@ -608,7 +608,7 @@ def s100 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "García Matzar and Rodríguez Guaján 1997:457"), ("strategy", "antipassive: object oblique under the relational noun")] }
 
@@ -623,7 +623,7 @@ def s102 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization, no set A")] }
 
@@ -638,7 +638,7 @@ def s103 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization under chäp")] }
 
@@ -653,7 +653,7 @@ def s104 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "set A impossible on the -oj nominalization")] }
 
@@ -668,7 +668,7 @@ def s107 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a determiner-marked object cannot be incorporated")] }
 
@@ -683,7 +683,7 @@ def s109 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a numeral-marked object cannot be incorporated")] }
 
@@ -698,7 +698,7 @@ def s112 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a possessed object cannot be incorporated")] }
 
@@ -713,7 +713,7 @@ def s113 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "no wh-extraction of the incorporated object")] }
 
@@ -728,7 +728,7 @@ def s114 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "wh-extraction from the -ïk nominalization")] }
 

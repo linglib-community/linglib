@@ -24,7 +24,7 @@ def ex16a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strong")] }
 
@@ -37,7 +37,7 @@ def ex16a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strong")] }
 
@@ -50,7 +50,7 @@ def ex16b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strong")] }
 
@@ -63,7 +63,7 @@ def ex16b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strong")] }
 
@@ -76,7 +76,7 @@ def ex16b_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strong")] }
 
@@ -89,7 +89,7 @@ def ex16c_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strong")] }
 
@@ -102,7 +102,7 @@ def ex16c_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strong")] }
 
@@ -115,7 +115,7 @@ def ex32a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "meFirst")] }
 
@@ -128,7 +128,7 @@ def ex32a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "meFirst")] }
 
@@ -141,7 +141,7 @@ def ex32b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "meFirst")] }
 
@@ -154,7 +154,7 @@ def ex32b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "meFirst")] }
 
@@ -167,7 +167,7 @@ def ex39a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "weak")] }
 
@@ -180,7 +180,7 @@ def ex39a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "weak")] }
 
@@ -193,7 +193,7 @@ def ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "weak")] }
 
@@ -206,7 +206,7 @@ def ex39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "weak")] }
 
@@ -219,7 +219,7 @@ def ex51a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
@@ -232,7 +232,7 @@ def ex51a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
@@ -245,7 +245,7 @@ def ex51a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
@@ -258,7 +258,7 @@ def ex51b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strictlyDescending")] }
 
@@ -271,7 +271,7 @@ def ex51b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strictlyDescending")] }
 
@@ -284,7 +284,7 @@ def ex51c_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strictlyDescending")] }
 
@@ -297,7 +297,7 @@ def ex51c_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strictlyDescending")] }
 
@@ -310,7 +310,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -323,7 +323,7 @@ def ex60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -336,7 +336,7 @@ def ex60c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -349,7 +349,7 @@ def ex61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -362,7 +362,7 @@ def ex61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -375,7 +375,7 @@ def ex61c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
@@ -388,7 +388,7 @@ def ex62a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
@@ -401,7 +401,7 @@ def ex62a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
@@ -414,7 +414,7 @@ def ex62a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
@@ -427,7 +427,7 @@ def ex62b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strongOrWeak")] }
 
@@ -440,7 +440,7 @@ def ex62b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strongOrWeak")] }
 
@@ -453,7 +453,7 @@ def ex63a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
@@ -466,7 +466,7 @@ def ex63a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
@@ -479,7 +479,7 @@ def ex63a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
@@ -492,7 +492,7 @@ def ex63b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
@@ -505,7 +505,7 @@ def ex63b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 

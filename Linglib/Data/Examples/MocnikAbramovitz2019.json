@@ -13,7 +13,7 @@
     "translation": "Melljo says that it's raining.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "meʎʎo kivəŋ, kumuqetəŋ", "judgment": "acceptable"}
     ],
     "readings": [
@@ -75,7 +75,7 @@
     "translation": "I don't know. I allow for the possibility that she's making jam at home. I don't know. I allow for the possibility that she's in the forest picking berries.",
     "context": "Hewngyto is walking down the street. Melljo sees him and asks: 'Where is your wife? Is she making jam at home?' He replies with the first sentence. He continues walking. Qechghylqot sees him and asks: 'Where is your wife? Is she picking berries in the forest?' Hewngyto replies with the second.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2"]
@@ -98,7 +98,7 @@
     "translation": "Hewngyto allows that it is raining but also allows that it is not raining.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2"]
@@ -121,7 +121,7 @@
     "translation": "Hewngyto allows that it is raining but also allows that it is not raining.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2"]
@@ -144,7 +144,7 @@
     "translation": "Everybody who said that it will rain brought a raincoat.",
     "context": "We're walking down the street and there are many people with raincoats. Melljo says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "said", "judgment": "acceptable"},
       {"name": "allowed", "judgment": "acceptable"}
@@ -170,7 +170,7 @@
     "translation": "I allow that the ball is white and I allow that it is black.",
     "context": "Two balls are in a box: one white, one black. I pull out one and do not show it to you.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "necessity", "judgment": "unacceptable"},
       {"name": "possibility", "judgment": "acceptable"}
@@ -197,7 +197,7 @@
     "translation": "I don't think that the ball is white and I don't think that it is black.",
     "context": "Two balls are in a box: one white, one black. I pull out one and do not show it to you.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the thought of (8a)", "judgment": "acceptable"},
       {"name": "the ball is half white and half black", "judgment": "unacceptable"}
@@ -222,7 +222,7 @@
     "translation": "I allow for the possibility that it will rain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2"]
@@ -246,7 +246,7 @@
     "translation": "The teacher said that his students studied well but thought to himself that they studied badly.",
     "context": "A teacher is always complaining to his wife about how bad his students are. One day, the principal asks him about his students, and he tells him that they are great.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu metʔaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču qekwaŋ kojajɣočawŋəlaŋ.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -272,7 +272,7 @@
     "translation": "The teacher thought that his students studied badly but openly said that they studied well.",
     "context": "A teacher is always complaining to his wife about how bad his students are. One day, the principal asks him about his students, and he tells him that they are great.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu qekwaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču metʔaŋ kojajɣočawŋəlaŋ", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -298,7 +298,7 @@
     "translation": "The teacher said that his students are studying well but thought that they were studying badly.",
     "context": "A principal enters the classroom of a teacher whose students are doing poorly in class and asks him how the students are doing. The teacher doesn't want to disappoint the principal, so he says 'The students are doing well'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"]

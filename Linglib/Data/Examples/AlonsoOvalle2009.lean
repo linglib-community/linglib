@@ -25,7 +25,7 @@ def ex_1 : Datum :=
     context := "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather or sun cold"), ("modal", "would")] }
 
@@ -40,7 +40,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "singular")] }
 
@@ -55,7 +55,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "plural")] }
 
@@ -70,7 +70,7 @@ def ex_15c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "plural")] }
 
@@ -84,7 +84,7 @@ def ex_29 : Datum :=
     context := "Kratzer, p.c., a variation on an example in Nute 1980."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined Germany or the U.S."), ("modal", "would"), ("polarity", "negated")] }
 
@@ -98,7 +98,7 @@ def ex_30a : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined Germany"), ("modal", "would")] }
 
@@ -112,7 +112,7 @@ def ex_30b : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined the U.S."), ("modal", "would")] }
 
@@ -125,7 +125,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := "Continuation of (29) (Kratzer, p.c.)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "continuation")] }
 
@@ -138,7 +138,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sandy saw none of the cats", .acceptable), ("Sandy didn't see every cat", .unacceptable)]
     paperFeatures := [("phenomenon", "homogeneity")] }
 
@@ -151,7 +151,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sandy saw none of the cats", .unacceptable)]
     paperFeatures := [("phenomenon", "homogeneity"), ("polarity", "wide-scope negation")] }
 
@@ -164,7 +164,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "strengthening the antecedent"), ("role", "premise")] }
 
@@ -177,7 +177,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "strengthening the antecedent"), ("role", "conclusion")] }
 
@@ -190,7 +190,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "any")] }
 
@@ -204,7 +204,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("npi", "ever")] }
 
@@ -217,7 +217,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "premise")] }
 
@@ -230,7 +230,7 @@ def ex_42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "premise")] }
 
@@ -243,7 +243,7 @@ def ex_42c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "conclusion")] }
 
@@ -256,7 +256,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "contraposition"), ("role", "premise")] }
 
@@ -269,7 +269,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "contraposition"), ("role", "conclusion")] }
 
@@ -283,7 +283,7 @@ def ex_49a : Datum :=
     context := "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather"), ("modal", "would")] }
 
@@ -297,7 +297,7 @@ def ex_49b : Datum :=
     context := "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "sun cold"), ("modal", "would")] }
 
@@ -311,7 +311,7 @@ def ex_51 : Datum :=
     context := "After a magic show in which the magician bent a fork with the power of his mind."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book or newborn baby"), ("modal", "might")] }
 
@@ -325,7 +325,7 @@ def ex_58a : Datum :=
     context := "After a magic show in which the magician bent a fork with the power of his mind."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book"), ("modal", "might")] }
 
@@ -339,7 +339,7 @@ def ex_58b : Datum :=
     context := "After a magic show in which the magician bent a fork with the power of his mind."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "newborn baby"), ("modal", "might")] }
 
@@ -352,7 +352,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := "After a magic show in which the magician bent a fork with the power of his mind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book"), ("modal", "would")] }
 
@@ -365,7 +365,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := "Mom, to Dad."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "may"), ("antecedent", "disjunctive")] }
 
@@ -378,7 +378,7 @@ def ex_66a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "may")] }
 
@@ -391,7 +391,7 @@ def ex_66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "may")] }
 
@@ -404,7 +404,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "may")] }
 
@@ -417,7 +417,7 @@ def ex_68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "must")] }
 
@@ -430,7 +430,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := "After a magic show in which the magician bent a fork with the power of his mind."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "might")] }
 
@@ -443,7 +443,7 @@ def ex_79 : Datum :=
     glossedTokens := []
     context := "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather or sun cold"), ("modal", "might")] }
 
@@ -457,7 +457,7 @@ def ex_80 : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scenario", "budget"), ("antecedent", "defense or education"), ("modal", "would"), ("closure", "existential")] }
 
@@ -470,7 +470,7 @@ def ex_83 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "would"), ("verdict", "contradictory")] }
 
@@ -483,7 +483,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
@@ -496,7 +496,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
@@ -509,7 +509,7 @@ def ex_84c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
@@ -522,7 +522,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
@@ -535,7 +535,7 @@ def ex_85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
@@ -548,7 +548,7 @@ def ex_85c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
@@ -561,7 +561,7 @@ def fn12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("anaphor", "then"), ("role", "intersentential")] }
 
@@ -574,7 +574,7 @@ def fn18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "might")] }
 
@@ -587,7 +587,7 @@ def fn22 : Datum :=
     glossedTokens := []
     context := "(81) John is playing a game of luck with white, black, and red balls. We know (but he doesn't) that none of the white balls has a winning number, but that taken together 30% of the black and red balls have a winning number. John picked a ball, and lost."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("If John had picked a ball that wasn't white, he would have had 30% chances of winning", .acceptable)]
     paperFeatures := [("closure", "existential")] }
 
@@ -600,7 +600,7 @@ def bennettD : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "premise")] }
 
@@ -613,7 +613,7 @@ def bennettDr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "conclusion")] }
 
@@ -626,7 +626,7 @@ def bennettDf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "conclusion")] }
 
@@ -639,7 +639,7 @@ def lewis1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "disjunctive")] }
 
@@ -652,7 +652,7 @@ def lewis4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction under a modal")] }
 
@@ -665,7 +665,7 @@ def lewis5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction under a modal")] }
 
@@ -678,7 +678,7 @@ def lewis6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction under whether")] }
 

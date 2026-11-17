@@ -26,7 +26,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "team"), ("subject", "demonstrative")] }
 
@@ -39,7 +39,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "brother"), ("subject", "demonstrative")] }
 
@@ -52,7 +52,7 @@ def ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "favorite movie"), ("subject", "demonstrative")] }
 
@@ -65,7 +65,7 @@ def ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "father"), ("subject", "demonstrative")] }
 
@@ -78,7 +78,7 @@ def ex17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "favorite movie"), ("subject", "demonstrative")] }
 
@@ -92,7 +92,7 @@ def ex17c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "teacher"), ("subject", "demonstrative")] }
 
@@ -106,7 +106,7 @@ def ex17d : Datum :=
     glossedTokens := []
     context := "pointing"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "father"), ("subject", "possessive")] }
 
@@ -120,7 +120,7 @@ def ex17e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "favorite movie"), ("subject", "possessive")] }
 
@@ -133,7 +133,7 @@ def ex17f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "father"), ("subject", "demonstrative")] }
 
@@ -148,7 +148,7 @@ def ex23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive")] }
 
@@ -163,7 +163,7 @@ def ex23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "possessive")] }
 
@@ -178,7 +178,7 @@ def ex24a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "genitive")] }
 
@@ -193,7 +193,7 @@ def ex24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "genitive")] }
 
@@ -208,7 +208,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("murderer of Petja", .acceptable)]
     paperFeatures := [("construction", "genitive")] }
 
@@ -223,7 +223,7 @@ def ex25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("murderer of Petja", .unacceptable), ("a murderer Petja has hired", .acceptable)]
     paperFeatures := [("construction", "possessive")] }
 
@@ -239,7 +239,7 @@ def ex26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Diese Bücher sind alte.", .ungrammatical)]
+    contrasts := [("Diese Bücher sind alte.", .ungrammatical)]
     readings := []
     paperFeatures := [("agreement", "nonagreeing")] }
 
@@ -255,7 +255,7 @@ def ex27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Diese Bücher sind mein.", .ungrammatical)]
+    contrasts := [("Diese Bücher sind mein.", .ungrammatical)]
     readings := []
     paperFeatures := [("agreement", "agreeing")] }
 
@@ -271,7 +271,7 @@ def ex28a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("agreement", "agreeing")] }
 
@@ -287,7 +287,7 @@ def ex28b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .unacceptable)]
     paperFeatures := [("agreement", "nonagreeing")] }
 
@@ -303,7 +303,7 @@ def ex29a : Datum :=
     lgrConformance := some .wordAligned
     context := "A newly naturalized citizen speaks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("agreement", "agreeing")] }
 
@@ -319,7 +319,7 @@ def ex29b : Datum :=
     lgrConformance := some .wordAligned
     context := "A conqueror speaks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .unacceptable)]
     paperFeatures := [("agreement", "nonagreeing")] }
 
@@ -335,7 +335,7 @@ def ex30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("agreement", "agreeing")] }
 
@@ -351,7 +351,7 @@ def ex30b : Datum :=
     lgrConformance := some .wordAligned
     context := "A custody fight."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .unacceptable)]
     paperFeatures := [("agreement", "nonagreeing")] }
 
@@ -366,7 +366,7 @@ def ex32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "instrumental")] }
 
@@ -381,7 +381,7 @@ def ex32b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "instrumental")] }
 
@@ -396,7 +396,7 @@ def ex33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .unacceptable)]
     paperFeatures := [("case", "nominative")] }
 
@@ -411,7 +411,7 @@ def ex33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("case", "nominative")] }
 
@@ -427,7 +427,7 @@ def ex34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "instrumental")] }
 
@@ -443,7 +443,7 @@ def ex34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "instrumental")] }
 
@@ -459,7 +459,7 @@ def ex35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .unacceptable)]
     paperFeatures := [("case", "nominative")] }
 
@@ -475,7 +475,7 @@ def ex35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("case", "nominative")] }
 
@@ -491,7 +491,7 @@ def ex35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "nominative")] }
 
@@ -505,7 +505,7 @@ def exfn13nom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable)]
     paperFeatures := [("case", "nominative")] }
 
@@ -519,7 +519,7 @@ def exfn13instr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .unacceptable), ("argument", .acceptable)]
     paperFeatures := [("case", "instrumental")] }
 

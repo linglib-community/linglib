@@ -9,7 +9,7 @@
     "translation": "Mary is prouder of John than he is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "he = John"],
@@ -28,7 +28,7 @@
     "translation": "Mary is prouder of John than he believes that I am.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "he = John"],
@@ -47,7 +47,7 @@
     "translation": "Sally introduced him to more friends than Peter's sister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "him = Peter"],
@@ -66,7 +66,7 @@
     "translation": "He introduced Sally to more friends than Peter's sister.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "he = Peter"],
@@ -89,7 +89,7 @@
     "translation": "She introduced more people to him than Peter's sister did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "ihm = Peter"],
@@ -112,7 +112,7 @@
     "translation": "He introduced more people to her than to Peter's sister.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "er = Peter"],
@@ -135,7 +135,7 @@
     "translation": "The wife of the president appreciates the public more than him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "ihn = Präsident"],
@@ -158,7 +158,7 @@
     "translation": "The public appreciates the wife of the president more than he (does).",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["coreference", "er = Präsident"],

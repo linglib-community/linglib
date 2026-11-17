@@ -24,7 +24,7 @@ def poss_sm : Datum :=
     glossedTokens := []
     context := "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility single-modal (SM) cell of the 2x2 FORCE x NUMBER design."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "possibility"), ("number", "SM"), ("commitment", "522"), ("grammaticality", "645"), ("ses", "487"), ("education", "494"), ("formality", "484"), ("politeness", "545"), ("confidence", "436"), ("friendliness", "503"), ("warmth", "494"), ("coolness", "456"), ("rebelliousness", "309")] }
 
@@ -37,7 +37,7 @@ def poss_mc : Datum :=
     glossedTokens := []
     context := "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility modal-concord (MC) cell of the 2x2 FORCE x NUMBER design."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "possibility"), ("number", "MC"), ("commitment", "511"), ("grammaticality", "506"), ("ses", "473"), ("education", "469"), ("formality", "473"), ("politeness", "536"), ("confidence", "403"), ("friendliness", "492"), ("warmth", "482"), ("coolness", "429"), ("rebelliousness", "311")] }
 
@@ -50,7 +50,7 @@ def nece_sm : Datum :=
     glossedTokens := []
     context := "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity single-modal (SM) cell of the 2x2 FORCE x NUMBER design."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "necessity"), ("number", "SM"), ("commitment", "612"), ("grammaticality", "641"), ("ses", "487"), ("education", "489"), ("formality", "476"), ("politeness", "528"), ("confidence", "519"), ("friendliness", "497"), ("warmth", "486"), ("coolness", "453"), ("rebelliousness", "312")] }
 
@@ -63,7 +63,7 @@ def nece_mc : Datum :=
     glossedTokens := []
     context := "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity modal-concord (MC) cell of the 2x2 FORCE x NUMBER design."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force", "necessity"), ("number", "MC"), ("commitment", "640"), ("grammaticality", "490"), ("ses", "485"), ("education", "480"), ("formality", "499"), ("politeness", "539"), ("confidence", "548"), ("friendliness", "476"), ("warmth", "462"), ("coolness", "420"), ("rebelliousness", "304")] }
 

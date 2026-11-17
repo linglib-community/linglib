@@ -26,7 +26,7 @@ def s1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("use", "conjunctive")] }
 
@@ -41,7 +41,7 @@ def s1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("use", "conjunctive")] }
 
@@ -56,7 +56,7 @@ def s2 : Datum :=
     lgrConformance := some .wordAligned
     context := "HOUSE. A and B are trying to figure out whether or not to buy the house they are currently visiting."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("scenario", "HOUSE"), ("clause", "declarative"), ("qud", "should A and B buy the house")] }
 
@@ -71,7 +71,7 @@ def s3 : Datum :=
     lgrConformance := some .wordAligned
     context := "VEGETARIAN. Carla believes Mia is vegetarian. Mia has just ordered a steak. Carla says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("scenario", "VEGETARIAN"), ("clause", "negative polar question, negative bias"), ("qud", "will Mia eat meat")] }
 
@@ -86,7 +86,7 @@ def s4 : Datum :=
     lgrConformance := some .wordAligned
     context := "Ezio is sitting in his living room with all the windows closed even though it is very warm outside. When Anna walks in, Ezio complains that it is stifling inside. Anna sees that all the windows are closed and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("clause", "imperative")] }
 
@@ -101,7 +101,7 @@ def s5 : Datum :=
     lgrConformance := some .wordAligned
     context := "Olivia arrives at Marco's house while he is baking a cake."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("clause", "exclamative")] }
 
@@ -114,7 +114,7 @@ def s6 : Datum :=
     glossedTokens := []
     context := "HOUSE."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "HOUSE"), ("clause", "declarative")] }
 
@@ -129,7 +129,7 @@ def s7a : Datum :=
     lgrConformance := some .wordAligned
     context := "BAKERY. Lia is in a bakery, in line waiting to be served. It's now her turn. The shopkeeper behind the counter asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "BAKERY"), ("clause", "out-of-the-blue information-seeking question")] }
 
@@ -142,7 +142,7 @@ def s7b : Datum :=
     glossedTokens := []
     context := "BAKERY."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "BAKERY"), ("clause", "out-of-the-blue information-seeking question")] }
 
@@ -157,7 +157,7 @@ def s9 : Datum :=
     lgrConformance := some .wordAligned
     context := "HELP. Negative bias: B expected nobody would help Teo."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "HELP"), ("clause", "wh-question, negative bias"), ("qud", "will someone help Teo")] }
 
@@ -172,7 +172,7 @@ def s10 : Datum :=
     lgrConformance := some .wordAligned
     context := "TWIN SISTERS. Carla and Paola Levi are twin sisters. On their birthday, a parcel arrives sent to 'Mrs. Levi'. Nothing else is written on the parcel. Carla says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "TWIN SISTERS"), ("clause", "wh-question, ignorance reading"), ("qud", "is the recipient Carla or Paola")] }
 
@@ -187,7 +187,7 @@ def s11 : Datum :=
     lgrConformance := some .wordAligned
     context := "NIGHT. Leo wakes Max in the middle of the night."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "NIGHT"), ("clause", "wh-question, ignorance reading"), ("qud", "is it time for Max to wake up")] }
 
@@ -200,7 +200,7 @@ def s12 : Datum :=
     glossedTokens := []
     context := "HELP."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "HELP"), ("clause", "wh-question, negative bias")] }
 
@@ -213,7 +213,7 @@ def s13 : Datum :=
     glossedTokens := []
     context := "TWIN SISTERS."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "TWIN SISTERS"), ("clause", "wh-question, ignorance reading")] }
 
@@ -226,7 +226,7 @@ def s14 : Datum :=
     glossedTokens := []
     context := "NIGHT."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "NIGHT"), ("clause", "wh-question, ignorance reading")] }
 
@@ -241,7 +241,7 @@ def s20 : Datum :=
     lgrConformance := some .wordAligned
     context := "DINNER. Luisa is one of the Rossis."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("scenario", "DINNER"), ("clause", "declarative"), ("qud", "will the Rossis come to dinner tonight")] }
 
@@ -256,7 +256,7 @@ def s35b : Datum :=
     lgrConformance := some .wordAligned
     context := "KEY. Only A has a key to open the front door. A: When you're ready, go in through the front door. I'll be there shortly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "negative polar question")] }
 
@@ -271,7 +271,7 @@ def s35b2 : Datum :=
     lgrConformance := some .wordAligned
     context := "KEY. Only A has a key to open the front door. A: When you're ready, go in through the front door. I'll be there shortly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "positive polar question, ignorance reading"), ("qud", "can B get into the house")] }
 
@@ -284,7 +284,7 @@ def s37b : Datum :=
     glossedTokens := []
     context := "KEY. Only A has a key to open the front door. A: When you're ready, go in through the front door. I'll be there shortly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "negative polar question")] }
 
@@ -297,7 +297,7 @@ def s37b2 : Datum :=
     glossedTokens := []
     context := "KEY. Only A has a key to open the front door. A: When you're ready, go in through the front door. I'll be there shortly."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "positive polar question, ignorance reading")] }
 
@@ -312,7 +312,7 @@ def s38 : Datum :=
     lgrConformance := some .wordAligned
     context := "The question under discussion is who will help Lena. The domain of individuals that are relevant to the question includes only Carlo and Fabio. Anna believes that Fabio but not Carlo will help Lena."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("clause", "wh-question, positive bias"), ("qud", "who will help Lena")] }
 
@@ -325,7 +325,7 @@ def s39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "counterexpectational")] }
 
@@ -338,7 +338,7 @@ def s39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "correctional")] }
 
@@ -351,7 +351,7 @@ def s39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "opposition")] }
 
@@ -364,7 +364,7 @@ def s41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("source", "Toosarvandani 2014"), ("qud", "is the player clumsy")] }
 
@@ -377,7 +377,7 @@ def s44 : Datum :=
     glossedTokens := []
     context := "Aldo is a collector of postcards. Among the postcards that Aldo is still looking for, there are postcards of a few European cities. Bice will travel to Europe this summer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("clause", "specificational but-question")] }
 
@@ -390,7 +390,7 @@ def s46 : Datum :=
     glossedTokens := []
     context := "TWIN SISTERS."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("scenario", "TWIN SISTERS"), ("clause", "specificational but-question")] }
 
@@ -403,7 +403,7 @@ def s47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("reading", "negative bias unavailable without would")] }
 
@@ -416,7 +416,7 @@ def s48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("reading", "negative bias available with would")] }
 
@@ -429,7 +429,7 @@ def s49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("clause", "modally subordinated wh-question")] }
 

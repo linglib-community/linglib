@@ -26,7 +26,7 @@ def ex_5_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "verbPosition"), ("sentenceType", "constituent"), ("embedding", "matrix")] }
 
@@ -41,7 +41,7 @@ def ex_5_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "verbPosition"), ("sentenceType", "constituent"), ("embedding", "insubordinated")] }
 
@@ -54,7 +54,7 @@ def ex_5_36a : Datum :=
     glossedTokens := []
     context := "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "hearerKnowledge"), ("sentenceType", "polar"), ("embedding", "matrix")] }
 
@@ -67,7 +67,7 @@ def ex_5_36b : Datum :=
     glossedTokens := []
     context := "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "hearerKnowledge"), ("sentenceType", "polar"), ("embedding", "insubordinated")] }
 
@@ -82,7 +82,7 @@ def ex_5_44 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "deonticMood"), ("sentenceType", "declarative"), ("embedding", "insubordinated")] }
 
@@ -95,7 +95,7 @@ def ex_5_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "epistemicMood"), ("sentenceType", "declarative"), ("embedding", "matrix")] }
 
@@ -110,7 +110,7 @@ def ex_5_81 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("phenomenon", "deonticMood"), ("sentenceType", "declarative"), ("embedding", "insubordinated")] }
 
@@ -125,7 +125,7 @@ def ex_6_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -140,7 +140,7 @@ def ex_6_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -155,7 +155,7 @@ def ex_6_21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -170,7 +170,7 @@ def ex_6_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -185,7 +185,7 @@ def ex_6_22b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "ja")] }
 
@@ -200,7 +200,7 @@ def ex_6_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "checkQuestion"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -215,7 +215,7 @@ def ex_6_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalQuestion"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -230,7 +230,7 @@ def ex_6_28a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -245,7 +245,7 @@ def ex_6_28b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -260,7 +260,7 @@ def ex_6_29 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -275,7 +275,7 @@ def ex_6_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -290,7 +290,7 @@ def ex_6_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "denn")] }
 
@@ -305,7 +305,7 @@ def ex_6_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "checkQuestion"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -320,7 +320,7 @@ def ex_6_33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalQuestion"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -335,7 +335,7 @@ def ex_6_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -350,7 +350,7 @@ def ex_6_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -365,7 +365,7 @@ def ex_6_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -380,7 +380,7 @@ def ex_6_37b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "wohl")] }
 
@@ -395,7 +395,7 @@ def ex_6_38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "indirectRequest"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -410,7 +410,7 @@ def ex_6_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "indirectRequest"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -423,7 +423,7 @@ def ex_6_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalRequest"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -436,7 +436,7 @@ def ex_6_108 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.1"), ("phenomenon", "typeMismatch"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -449,7 +449,7 @@ def ex_6_117 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.1"), ("phenomenon", "useConditions"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
@@ -462,7 +462,7 @@ def ex_6_124 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -477,7 +477,7 @@ def ex_6_128 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "ja")] }
 
@@ -490,7 +490,7 @@ def ex_6_134 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -505,7 +505,7 @@ def ex_6_138 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "externalMotivation"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -520,7 +520,7 @@ def ex_6_139 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "externalMotivation"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
@@ -533,7 +533,7 @@ def ex_6_141 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "denn")] }
 

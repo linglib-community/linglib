@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
@@ -56,7 +56,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -71,7 +71,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -86,7 +86,7 @@ def ex_15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -101,7 +101,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -116,7 +116,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -131,7 +131,7 @@ def ex_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -146,7 +146,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs"), ("extracted", "S")] }
 
@@ -161,7 +161,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -176,7 +176,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "P")] }
 
@@ -191,7 +191,7 @@ def ex_21c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("agent extraction", .ungrammatical), ("patient extraction", .acceptable)]
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
@@ -206,7 +206,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -221,7 +221,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("agent extraction", .acceptable), ("patient extraction", .acceptable)]
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
@@ -236,7 +236,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
@@ -251,7 +251,7 @@ def ex_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -266,7 +266,7 @@ def ex_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -281,7 +281,7 @@ def ex_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -296,7 +296,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -311,7 +311,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -326,7 +326,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -341,7 +341,7 @@ def ex_31a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -356,7 +356,7 @@ def ex_32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -371,7 +371,7 @@ def ex_32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -386,7 +386,7 @@ def ex_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -401,7 +401,7 @@ def ex_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -416,7 +416,7 @@ def ex_34a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -431,7 +431,7 @@ def ex_34b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -446,7 +446,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -461,7 +461,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -476,7 +476,7 @@ def ex_35c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -491,7 +491,7 @@ def ex_35d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "antipassive"), ("object", "caseless")] }
 
@@ -506,7 +506,7 @@ def ex_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -521,7 +521,7 @@ def ex_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -536,7 +536,7 @@ def ex_36c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -551,7 +551,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -566,7 +566,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -581,7 +581,7 @@ def ex_38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -596,7 +596,7 @@ def ex_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "antipassive"), ("object", "caseless")] }
 
@@ -611,7 +611,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "oblique")] }
 
@@ -626,7 +626,7 @@ def ex_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "caseless")] }
 
@@ -641,7 +641,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -656,7 +656,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -671,7 +671,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -686,7 +686,7 @@ def ex_43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -701,7 +701,7 @@ def ex_43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -716,7 +716,7 @@ def ex_43c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -731,7 +731,7 @@ def ex_44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -746,7 +746,7 @@ def ex_45 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -761,7 +761,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
@@ -776,7 +776,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -791,7 +791,7 @@ def ex_48a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -806,7 +806,7 @@ def ex_48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -821,7 +821,7 @@ def ex_49a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg"), ("extracted", "S")] }
 
@@ -836,7 +836,7 @@ def ex_49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg"), ("extracted", "S")] }
 
@@ -851,7 +851,7 @@ def ex_57a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -866,7 +866,7 @@ def ex_57b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -881,7 +881,7 @@ def ex_58a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -896,7 +896,7 @@ def ex_58b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -911,7 +911,7 @@ def ex_58c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -926,7 +926,7 @@ def ex_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique")] }
 
@@ -941,7 +941,7 @@ def ex_60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique"), ("extracted", "A")] }
 
@@ -956,7 +956,7 @@ def ex_61a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique"), ("extracted", "A")] }
 
@@ -971,7 +971,7 @@ def ex_69a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
@@ -986,7 +986,7 @@ def ex_69b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
@@ -1001,7 +1001,7 @@ def ex_71a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -1016,7 +1016,7 @@ def ex_71c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1031,7 +1031,7 @@ def ex_72a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1046,7 +1046,7 @@ def ex_72b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
@@ -1061,7 +1061,7 @@ def ex_73a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -1076,7 +1076,7 @@ def ex_73b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -1091,7 +1091,7 @@ def ex_74 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
@@ -1106,7 +1106,7 @@ def ex_75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1121,7 +1121,7 @@ def ex_75b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1136,7 +1136,7 @@ def ex_75c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1151,7 +1151,7 @@ def ex_76a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1166,7 +1166,7 @@ def ex_76b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1181,7 +1181,7 @@ def ex_77b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless")] }
 
@@ -1196,7 +1196,7 @@ def ex_78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maktxel max s-b'on[-o'] te' s-na?", .ungrammatical)]
+    contrasts := [("Maktxel max s-b'on[-o'] te' s-na?", .ungrammatical)]
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1211,7 +1211,7 @@ def ex_78a_clf : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1226,7 +1226,7 @@ def ex_78b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maktxel max s-b'on-on[-i] s-na?", .ungrammatical)]
+    contrasts := [("Maktxel max s-b'on-on[-i] s-na?", .ungrammatical)]
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1241,7 +1241,7 @@ def ex_78b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1256,7 +1256,7 @@ def ex_79a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1271,7 +1271,7 @@ def ex_79b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1286,7 +1286,7 @@ def ex_81a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mach s-mak' ewi s-b'a?", .ungrammatical)]
+    contrasts := [("Mach s-mak' ewi s-b'a?", .ungrammatical)]
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
@@ -1301,7 +1301,7 @@ def ex_81a_adv : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A"), ("separated", "yes")] }
 
@@ -1316,7 +1316,7 @@ def ex_81b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
@@ -1331,7 +1331,7 @@ def ex_82a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "low")] }
 
@@ -1346,7 +1346,7 @@ def ex_82b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -1361,7 +1361,7 @@ def ex_82c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
@@ -1376,7 +1376,7 @@ def ex_86a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
@@ -1391,7 +1391,7 @@ def ex_86b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 

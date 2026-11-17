@@ -24,7 +24,7 @@ def bas2026_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "because"), ("relation", "grounding")] }
 
@@ -37,7 +37,7 @@ def bas2026_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cause"), ("relation", "grounding")] }
 
@@ -50,7 +50,7 @@ def bas2026_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "because of"), ("relation", "grounding")] }
 
@@ -63,7 +63,7 @@ def bas2026_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "lexical causative"), ("entails", "(2b)")] }
 
@@ -76,7 +76,7 @@ def bas2026_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sam opened a window and a gust blew the door open", .acceptable)]
     paperFeatures := [("construction", "periphrastic causative")] }
 
@@ -89,7 +89,7 @@ def bas2026_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the demonstrators")] }
 
@@ -102,7 +102,7 @@ def bas2026_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the city council")] }
 
@@ -115,7 +115,7 @@ def bas2026_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cause"), ("enrichment", "John drank enough wine to impair his driving")] }
 

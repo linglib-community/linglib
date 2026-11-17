@@ -26,7 +26,7 @@ def ex11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "S Aux O Part V"), ("verb", "ni"), ("particleATR", "plus")] }
 
@@ -41,7 +41,7 @@ def ex11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "S V O Part"), ("verb", "ni"), ("particleATR", "minus")] }
 
@@ -56,7 +56,7 @@ def ex11c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "S Part V O")] }
 
@@ -71,7 +71,7 @@ def ex12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "S Aux O Part V"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
@@ -86,7 +86,7 @@ def ex13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "S V O Part"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
@@ -101,7 +101,7 @@ def ex21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "Part S V O"), ("verb", "ni"), ("particleATR", "minus")] }
 
@@ -116,7 +116,7 @@ def ex21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "Part V S V O")] }
 
@@ -131,7 +131,7 @@ def ex21c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "V S V O Part")] }
 
@@ -146,7 +146,7 @@ def ex21d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "V S O Part")] }
 
@@ -161,7 +161,7 @@ def ex21e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "Part S V O Part")] }
 
@@ -176,7 +176,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
@@ -191,7 +191,7 @@ def ex24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("jɔkʊ².³ ɔ³ ji³ ɟaci²³.¹ ni⁴", .ungrammatical)]
+    contrasts := [("jɔkʊ².³ ɔ³ ji³ ɟaci²³.¹ ni⁴", .ungrammatical)]
     readings := []
     paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
@@ -206,7 +206,7 @@ def ex41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus"), ("interveningATR", "minus")] }
 
@@ -221,7 +221,7 @@ def ex49a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "minus"), ("demATR", "minus")] }
 
@@ -236,7 +236,7 @@ def ex49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "plus"), ("demATR", "plus")] }
 
@@ -251,7 +251,7 @@ def ex50a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "minus"), ("demATR", "minus")] }
 
@@ -266,7 +266,7 @@ def ex50b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "plus"), ("demATR", "plus")] }
 
@@ -281,7 +281,7 @@ def ex50c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "plus"), ("demATR", "minus")] }
 
@@ -296,7 +296,7 @@ def ex50d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "minus"), ("demATR", "plus")] }
 

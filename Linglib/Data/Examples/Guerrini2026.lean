@@ -24,7 +24,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -37,7 +37,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -50,7 +50,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -63,7 +63,7 @@ def ex_21d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -78,7 +78,7 @@ def ex_22a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -93,7 +93,7 @@ def ex_22b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -108,7 +108,7 @@ def ex_22c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -123,7 +123,7 @@ def ex_22d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -136,7 +136,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -149,7 +149,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
@@ -162,7 +162,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -175,7 +175,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
@@ -188,7 +188,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := "Stage level: There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -201,7 +201,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := "Stage level: There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
@@ -214,7 +214,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -227,7 +227,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("fewBirdsFly", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -240,7 +240,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("fewBirdsMigrating", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -253,7 +253,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
@@ -266,7 +266,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
@@ -279,7 +279,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
@@ -292,7 +292,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
@@ -305,7 +305,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
@@ -318,7 +318,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
@@ -331,7 +331,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
@@ -344,7 +344,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
@@ -357,7 +357,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -370,7 +370,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -383,7 +383,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
@@ -396,7 +396,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
@@ -409,7 +409,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -422,7 +422,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -435,7 +435,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
@@ -448,7 +448,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
@@ -461,7 +461,7 @@ def ex_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
@@ -474,7 +474,7 @@ def ex_38d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
@@ -489,7 +489,7 @@ def ex_44 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "singularIndefinite")] }
 
@@ -504,7 +504,7 @@ def ex_45_indicative : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
@@ -519,7 +519,7 @@ def ex_45_subjunctive : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
@@ -532,7 +532,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -545,7 +545,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -558,7 +558,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -571,7 +571,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -584,7 +584,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -599,7 +599,7 @@ def ex_59 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -612,7 +612,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := "We are exploring a new planet. I discover a kind of animal that lives on this planet, called wugs. I tell you:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -625,7 +625,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := "We are exploring a new planet. I discover a kind of animal that lives on this planet, called wugs. I tell you:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -640,7 +640,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
@@ -655,7 +655,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
@@ -668,7 +668,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -681,7 +681,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .unacceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
@@ -694,7 +694,7 @@ def ex_89a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -707,7 +707,7 @@ def ex_89b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -720,7 +720,7 @@ def ex_90a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -733,7 +733,7 @@ def ex_90b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -746,7 +746,7 @@ def ex_99a : Datum :=
     glossedTokens := []
     context := "There was a press conference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -759,7 +759,7 @@ def ex_99b : Datum :=
     glossedTokens := []
     context := "There was a press conference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -772,7 +772,7 @@ def ex_100a : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -785,7 +785,7 @@ def ex_100b : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -798,7 +798,7 @@ def ex_101a : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -811,7 +811,7 @@ def ex_101b : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -824,7 +824,7 @@ def ex_102a : Datum :=
     glossedTokens := []
     context := "When it comes to elections, it's important to consider the wide range of perspectives that influence voting behavior, as..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -837,7 +837,7 @@ def ex_102b : Datum :=
     glossedTokens := []
     context := "When it comes to elections, it's important to consider the wide range of perspectives that influence voting behavior, as..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -850,7 +850,7 @@ def ex_103a : Datum :=
     glossedTokens := []
     context := "In the modern media world..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -863,7 +863,7 @@ def ex_103b : Datum :=
     glossedTokens := []
     context := "In the modern media world..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -876,7 +876,7 @@ def ex_107 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("kind", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "kindDenotingPlural")] }
 
@@ -891,7 +891,7 @@ def ex_109 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianBarePlural")] }
 
@@ -906,7 +906,7 @@ def ex_110 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .unacceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianDefinitePlural")] }
 
@@ -921,7 +921,7 @@ def ex_113 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianDefinitePlural")] }
 
@@ -936,7 +936,7 @@ def ex_114 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianBarePlural")] }
 
@@ -949,7 +949,7 @@ def ex_115a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wideScope", .acceptable), ("lowScope", .unacceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "singularIndefinite")] }
 
@@ -962,7 +962,7 @@ def ex_115b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wideScope", .unacceptable), ("lowScope", .acceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "kindDenotingPlural")] }
 
@@ -975,7 +975,7 @@ def ex_133c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
@@ -988,7 +988,7 @@ def ex_133d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
@@ -1001,7 +1001,7 @@ def ex_135a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -1014,7 +1014,7 @@ def ex_135a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
@@ -1027,7 +1027,7 @@ def ex_135b_i : Datum :=
     glossedTokens := []
     context := "There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -1040,7 +1040,7 @@ def ex_135b_ii : Datum :=
     glossedTokens := []
     context := "There is a ghost on campus."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
@@ -1053,7 +1053,7 @@ def ex_136a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -1066,7 +1066,7 @@ def ex_136b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "singularDefinite")] }
 

@@ -26,7 +26,7 @@ def ex14a_bare : Datum :=
     lgrConformance := some .wordAligned
     context := "Out of the blue; the bare noun read as definite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -41,7 +41,7 @@ def ex14b_na : Datum :=
     lgrConformance := some .wordAligned
     context := "Out of the blue; na-CL-N as the demonstrative description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -56,7 +56,7 @@ def ex17_partwhole_bare : Datum :=
     lgrConformance := some .wordAligned
     context := "Part-whole bridging from 'car' to its license plate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -71,7 +71,7 @@ def ex18_anaphoric_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Anaphoric reference to a boy introduced by an indefinite in the previous sentence."
     judgment := .acceptable
-    alternatives := [("wo zuotian yudao nansheng.", .unacceptable)]
+    contrasts := [("wo zuotian yudao nansheng.", .unacceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "anaphoric")] }
 
@@ -86,7 +86,7 @@ def ex21_partwhole_na : Datum :=
     lgrConformance := some .wordAligned
     context := "Part-whole bridging: the minimal situation with the bike contains a unique seat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -101,7 +101,7 @@ def ex22_relational_na : Datum :=
     lgrConformance := some .wordAligned
     context := "Relational bridging: the author is not contained in the situation of buying the book, so situational uniqueness cannot resolve reference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none")] }
 
@@ -116,7 +116,7 @@ def ex24a_de_child : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The de-possessive diagnostic for relational nouns."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")] }
 
@@ -131,7 +131,7 @@ def ex24b_de_person : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The de-possessive diagnostic for relational nouns."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
@@ -146,7 +146,7 @@ def ex25_de_flower : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The de-possessive diagnostic for relational nouns."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
@@ -161,7 +161,7 @@ def ex28a_study1_partwhole_na : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 1 target item (bike, seat): the seat is uniquely identified as a part of the bike."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")] }
 
@@ -176,7 +176,7 @@ def ex28b_study1_relational_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 1 target item (CD, singer): one-to-one association; the singer is not physically contained in the CD."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")] }
 
@@ -191,7 +191,7 @@ def ex32_study1_painter : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 1 item REL2 (painting, painter), the only item where demonstratives were rated significantly higher than bare nouns (p = 0.02)."
     judgment := .acceptable
-    alternatives := [("Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.", .acceptable)]
+    contrasts := [("Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")] }
 
@@ -206,7 +206,7 @@ def ex33a_study1_steeringwheel : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 1 item PW1 (car, steering wheel), where bare nouns were rated significantly higher than demonstratives (p = 0.00134)."
     judgment := .acceptable
-    alternatives := [("Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.", .acceptable)]
+    contrasts := [("Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")] }
 
@@ -221,7 +221,7 @@ def ex37_study3_partwhole_bare : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 production item: the background sentence introduces 'computer'; participants choose the nominal form filling the blank."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "83.2")] }
 
@@ -236,7 +236,7 @@ def ex37_study3_partwhole_na : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 production item, demonstrative option in the part-whole condition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "51.3")] }
 
@@ -251,7 +251,7 @@ def ex38_study3_relational_bare : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 production item, relational condition: the computer is the relatum of the relational noun 'charger'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "73.4")] }
 
@@ -266,7 +266,7 @@ def ex38_study3_relational_na : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 production item, demonstrative option in the relational condition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "51.9")] }
 
@@ -281,7 +281,7 @@ def ex39_study3_sn : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 SN control: a singular indefinite antecedent; the blank is filled by the same noun (bare or with na)."
     judgment := .acceptable
-    alternatives := [("Wang Yawen zhengzai yong yi tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
+    contrasts := [("Wang Yawen zhengzai yong yi tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "SN"), ("pct_bn", "67"), ("pct_dem", "80.2")] }
 
@@ -296,7 +296,7 @@ def ex40_study3_pn : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 PN control: a plural indefinite antecedent, where neither singular form was expected to be chosen."
     judgment := .acceptable
-    alternatives := [("Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
+    contrasts := [("Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "PN"), ("pct_bn", "53.8"), ("pct_dem", "38.8")] }
 
@@ -311,7 +311,7 @@ def ex41_study3_rn : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 RN control: a bare-noun antecedent repeated in the test sentence."
     judgment := .acceptable
-    alternatives := [("Wang Yawen zhengzai yong diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
+    contrasts := [("Wang Yawen zhengzai yong diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "RN"), ("pct_bn", "68"), ("pct_dem", "75")] }
 
@@ -326,7 +326,7 @@ def ex42_study3_nn : Datum :=
     lgrConformance := some .wordAligned
     context := "Study 3 NN control: no nominal antecedent; a computer cannot be uniquely identified from the working situation."
     judgment := .acceptable
-    alternatives := [("Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
+    contrasts := [("Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "NN"), ("pct_bn", "89.5"), ("pct_dem", "29.6")] }
 
@@ -341,7 +341,7 @@ def ex59_study4_bare_author : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 4 target: the bridged noun is the lexically relational zuozhe 'author', covarying with the novel."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")] }
 
@@ -356,7 +356,7 @@ def ex59_study4_na_author : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 4 target: demonstrative with the relational noun."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")] }
 
@@ -371,7 +371,7 @@ def ex59_study4_bare_novelist : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 4 target: the bridged noun is the non-relational xiaoshuo-jia 'novelist', which fails the de diagnostic."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")] }
 
@@ -386,7 +386,7 @@ def ex59_study4_na_novelist : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Study 4 target: demonstrative with the non-relational noun."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")] }
 
@@ -401,7 +401,7 @@ def fn13_intersentential_novelist : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The intersentential version of the Study 4 item, reported in a footnote."
     judgment := .acceptable
-    alternatives := [("... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.", .acceptable)]
+    contrasts := [("... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -416,7 +416,7 @@ def ex61a_de_owner : Datum :=
     lgrConformance := some .wordAligned
     context := "The de diagnostic used to classify Study 4 nouns."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")] }
 
@@ -431,7 +431,7 @@ def ex61b_de_person : Datum :=
     lgrConformance := some .wordAligned
     context := "The de diagnostic used to classify Study 4 nouns."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
@@ -446,7 +446,7 @@ def ex62a_de_author : Datum :=
     lgrConformance := some .wordAligned
     context := "Norming study (n = 8) rating the naturalness of de-constructions."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de"), ("norming_rating", "4.88")] }
 
@@ -461,7 +461,7 @@ def ex62b_de_novelist : Datum :=
     lgrConformance := some .wordAligned
     context := "Norming study (n = 8) rating the naturalness of de-constructions."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de"), ("norming_rating", "1.50")] }
 
@@ -476,7 +476,7 @@ def ex63_moon : Datum :=
     lgrConformance := some .wordAligned
     context := "The unique moon; the demonstrative variant is degraded."
     judgment := .acceptable
-    alternatives := [("na ge yueliang sheng shang lai le.", .unacceptable)]
+    contrasts := [("na ge yueliang sheng shang lai le.", .unacceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -489,7 +489,7 @@ def ex20a_the_roof : Datum :=
     glossedTokens := []
     context := "Part-whole bridging from 'house' to its roof; the continuation introduces no second roof."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -502,7 +502,7 @@ def ex20b_that_roof : Datum :=
     glossedTokens := []
     context := "Part-whole bridging with a demonstrative; no reason to extend the situation to another roof."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -515,7 +515,7 @@ def ex34a_study2_partwhole_the : Datum :=
     glossedTokens := []
     context := "Study 2 target: English translation of the Study 1 (bike, seat) item with a definite description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")] }
 
@@ -528,7 +528,7 @@ def ex34a_study2_partwhole_that : Datum :=
     glossedTokens := []
     context := "Study 2 target, demonstrative description in the part-whole condition."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")] }
 
@@ -541,7 +541,7 @@ def ex34b_study2_relational_that : Datum :=
     glossedTokens := []
     context := "Study 2 target: English translation of the Study 1 (CD, singer) item with a demonstrative description."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
@@ -554,7 +554,7 @@ def ex34b_study2_relational_the : Datum :=
     glossedTokens := []
     context := "Study 2 target, definite description in the relational condition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
@@ -567,7 +567,7 @@ def ex36a_study2_author : Datum :=
     glossedTokens := []
     context := "Study 2 item REL1 (novel, author), one of two items without a significant definite vs demonstrative difference (p = 0.189)."
     judgment := .acceptable
-    alternatives := [("Lucas read a novel yesterday, and if possible, he really wants to meet that author.", .acceptable)]
+    contrasts := [("Lucas read a novel yesterday, and if possible, he really wants to meet that author.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
@@ -580,7 +580,7 @@ def ex36b_study2_director : Datum :=
     glossedTokens := []
     context := "Study 2 item REL3 (movie, director), the other item without a significant difference (p = 0.124)."
     judgment := .acceptable
-    alternatives := [("Ryan watched a movie last week, and he believed that he ran into that director after the movie.", .acceptable)]
+    contrasts := [("Ryan watched a movie last week, and he believed that he ran into that director after the movie.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
@@ -593,7 +593,7 @@ def ex49_author_at_issue : Datum :=
     glossedTokens := []
     context := "B's 'the author' is intended as the author of the featured book; A rejects it because the book-author relation fails, although the person B met is an author."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none"), ("at_issue", "relation")] }
 
@@ -606,7 +606,7 @@ def ex54_deferred : Datum :=
     glossedTokens := []
     context := "Said while pointing to a poster of the movie."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "deferred")] }
 
@@ -619,7 +619,7 @@ def ex60a_of_author : Datum :=
     glossedTokens := []
     context := "The of-diagnostic for relational nouns."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "of")] }
 
@@ -632,7 +632,7 @@ def ex60b_of_novelist : Datum :=
     glossedTokens := []
     context := "The of-diagnostic for relational nouns."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "of")] }
 

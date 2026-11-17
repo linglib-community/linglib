@@ -26,7 +26,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
@@ -41,7 +41,7 @@ def ex_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Peti heard the noise of crying."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
@@ -56,7 +56,7 @@ def ex_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
@@ -71,7 +71,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Peti az-t hit-t-e, hogy Mari szomorú vol-t.", .acceptable)]
+    contrasts := [("Peti az-t hit-t-e, hogy Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
@@ -86,7 +86,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
@@ -101,7 +101,7 @@ def ex_9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", .acceptable)]
+    contrasts := [("Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
@@ -116,7 +116,7 @@ def ex_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
     paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
 
@@ -131,7 +131,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -146,7 +146,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -161,7 +161,7 @@ def ex_11c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -176,7 +176,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", .acceptable)]
+    contrasts := [("Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -191,7 +191,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", .acceptable), ("Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", .acceptable)]
+    contrasts := [("Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", .acceptable), ("Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -206,7 +206,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", .acceptable)]
+    contrasts := [("Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
@@ -221,7 +221,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "morog"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
 
@@ -236,7 +236,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
     paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
 
@@ -251,7 +251,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "rikolt"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
 
@@ -264,7 +264,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateTense", "future"), ("deepestTense", "past")] }
 
@@ -277,7 +277,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clauseSize", "cP"), ("directPerception", "no")] }
 
@@ -292,7 +292,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", .unacceptable)]
+    contrasts := [("Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", .unacceptable)]
     readings := []
     paperFeatures := [("diagnostic", "evaluativeAdverb")] }
 
@@ -307,7 +307,7 @@ def ex_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The focused phrase is extracted from the embedded clause to the matrix Spec,FocP."
     judgment := .acceptable
-    alternatives := [("Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", .questionable), ("Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", .questionable)]
+    contrasts := [("Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", .questionable), ("Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", .questionable)]
     readings := []
     paperFeatures := [("diagnostic", "focusMovement"), ("embeddedAdverb", "no")] }
 
@@ -322,7 +322,7 @@ def ex_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", .questionable)]
+    contrasts := [("Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", .questionable)]
     readings := []
     paperFeatures := [("diagnostic", "whMovement")] }
 
@@ -335,7 +335,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := "[TP Ed seems [TP __ to be sad]]"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "raising"), ("crossed", "tP")] }
 
@@ -348,7 +348,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "[TP Ed seems [CP __ is sad]]"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "raising"), ("crossed", "cP")] }
 

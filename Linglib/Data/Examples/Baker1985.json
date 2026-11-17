@@ -12,7 +12,7 @@
     "translation": "They are small.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "small"],
@@ -40,7 +40,7 @@
     "translation": "The children are going to be spanked by their father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "spank"],
@@ -73,7 +73,7 @@
     "translation": "I made them eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "eat"],
@@ -105,7 +105,7 @@
     "translation": "I had the children spanked by their father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "spank"],
@@ -138,7 +138,7 @@
     "translation": "He is causing them to beat each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "beat"],
@@ -171,7 +171,7 @@
     "translation": "They let someone beat each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "beat"],
@@ -205,7 +205,7 @@
     "translation": "I made Mwape and Mutumba see each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "see"],
@@ -237,7 +237,7 @@
     "translation": "Mwape and Chilufya made each other see Mutumba.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "see"],
@@ -269,7 +269,7 @@
     "translation": "Four children were bought a knife.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "buy"],
@@ -301,7 +301,7 @@
     "translation": "The teacher was brought the book by Nuru.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "bring"],
@@ -335,7 +335,7 @@
     "translation": "The book was brought the teacher by Nuru.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "bring"],
@@ -369,7 +369,7 @@
     "translation": "The pen was written-with the letter by the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "write"],
@@ -405,7 +405,7 @@
     "translation": "The letter was written with the pen by the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "write"],

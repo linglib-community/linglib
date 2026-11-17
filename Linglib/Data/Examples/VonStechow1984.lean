@@ -24,7 +24,7 @@ def yacht : Datum :=
     glossedTokens := []
     context := "A guest to a touchy yacht owner, on first seeing the yacht."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de re: ACTUALLY in the than-clause, consistent thought", .acceptable), ("de dicto: no ACTUALLY, contradictory thought", .unacceptable)]
     paperFeatures := [("phenomenon", "RA")] }
 
@@ -37,7 +37,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("informative: than-clauses anchored to the actual world by ACTUALLY", .acceptable), ("trivial: than-clauses evaluated in the counterfactual world, antecedent and consequent contradictory", .unacceptable)]
     paperFeatures := [("phenomenon", "AC")] }
 
@@ -50,7 +50,7 @@ def exIII : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "anyone"), ("polarity", "negative")] }
 
@@ -63,7 +63,7 @@ def exIV : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "ever"), ("polarity", "negative")] }
 
@@ -76,7 +76,7 @@ def ex70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "any, ever"), ("polarity", "negative")] }
 
@@ -89,7 +89,7 @@ def ex71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "any, ever"), ("polarity", "negative")] }
 
@@ -102,7 +102,7 @@ def ex72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "already"), ("polarity", "positive")] }
 
@@ -115,7 +115,7 @@ def ex72b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "already"), ("polarity", "positive")] }
 
@@ -128,7 +128,7 @@ def exV : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "Q&C"), ("entails", "Konstanz is nicer than Düsseldorf and Stuttgart")] }
 
@@ -141,7 +141,7 @@ def exVI : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "Q&C"), ("entails", "Ede is fatter than everyone of us")] }
 
@@ -154,7 +154,7 @@ def exVII : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "UI"), ("doesNotEntail", "Ede is fatter than everyone")] }
 
@@ -167,7 +167,7 @@ def ex99a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NQ")] }
 
@@ -180,7 +180,7 @@ def ex99b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "NQ")] }
 
@@ -193,7 +193,7 @@ def exX : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "modal")] }
 
@@ -206,7 +206,7 @@ def exXI : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "multihead")] }
 
@@ -219,7 +219,7 @@ def ex171a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
@@ -232,7 +232,7 @@ def ex171b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
@@ -245,7 +245,7 @@ def ex171c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
@@ -258,7 +258,7 @@ def ex217 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "plural noun"), ("measure", "cardinality")] }
 
@@ -271,7 +271,7 @@ def ex218 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "mass noun"), ("measure", "amount of the totality")] }
 
@@ -284,7 +284,7 @@ def ex224c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "adverb"), ("measure", "loudness")] }
 
@@ -297,7 +297,7 @@ def ex227 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "too"), ("paraphrase", "If one could lift this pack, then it would be at least 50 kg less heavy than it actually is")] }
 
@@ -310,7 +310,7 @@ def ex230 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "too")] }
 

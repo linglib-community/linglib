@@ -24,7 +24,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "state"), ("temporal", "state")] }
 
@@ -37,7 +37,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "accomplishment"), ("temporal", "activity")] }
 
@@ -50,7 +50,7 @@ def ex_69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "achievement"), ("temporal", "activity")] }
 
@@ -63,7 +63,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "activity"), ("temporal", "accomplishment")] }
 
@@ -76,7 +76,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "activity"), ("temporal", "achievement")] }
 
@@ -89,7 +89,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "while"), ("main", "activity"), ("temporal", "accomplishment")] }
 
@@ -102,7 +102,7 @@ def ex_86 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "as long as"), ("main", "state"), ("temporal", "state")] }
 
@@ -115,7 +115,7 @@ def ex_87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "as long as"), ("main", "activity"), ("temporal", "activity")] }
 
@@ -128,7 +128,7 @@ def ex_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "as long as"), ("main", "accomplishment"), ("temporal", "state")] }
 
@@ -141,7 +141,7 @@ def ex_89 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "as long as"), ("main", "activity"), ("temporal", "achievement")] }
 
@@ -154,7 +154,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "state"), ("temporal", "achievement")] }
 
@@ -167,7 +167,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "activity"), ("temporal", "achievement")] }
 
@@ -180,7 +180,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "activity"), ("temporal", "accomplishment")] }
 
@@ -193,7 +193,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "activity"), ("temporal", "state")] }
 
@@ -206,7 +206,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "accomplishment"), ("temporal", "achievement")] }
 
@@ -219,7 +219,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("main", "achievement"), ("temporal", "achievement")] }
 

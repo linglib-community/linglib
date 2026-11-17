@@ -26,7 +26,7 @@ def ch2_105 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Situacija čto grjadut reformy javljaetsja vernoj.", .ungrammatical), ("Ideja čto grjadut reformy javljaetsja ošibočnoj.", .acceptable)]
+    contrasts := [("Situacija čto grjadut reformy javljaetsja vernoj.", .ungrammatical), ("Ideja čto grjadut reformy javljaetsja ošibočnoj.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
@@ -41,7 +41,7 @@ def ch2_106 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i cham-i-ta.", .acceptable)]
+    contrasts := [("Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i cham-i-ta.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
@@ -56,7 +56,7 @@ def ch2_107 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Swuna-ka mwuncey-lul phwul-un sanghwang-i cham-i-ta.", .ungrammatical)]
+    contrasts := [("Swuna-ka mwuncey-lul phwul-un sanghwang-i cham-i-ta.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")] }
 
@@ -71,7 +71,7 @@ def ch2_108 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Včera proizošla ideja čto moj zakaz zaderžali.", .ungrammatical), ("Včera slučilas’ situacija čto moj zakaz zaderžali.", .acceptable)]
+    contrasts := [("Včera proizošla ideja čto moj zakaz zaderžali.", .ungrammatical), ("Včera slučilas’ situacija čto moj zakaz zaderžali.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
@@ -86,7 +86,7 @@ def ch2_109 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")] }
 
@@ -101,7 +101,7 @@ def ch2_110 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
@@ -117,7 +117,7 @@ def ch2_111 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "content")] }
 
@@ -132,7 +132,7 @@ def ch2_112 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "situation")] }
 
@@ -147,7 +147,7 @@ def ch2_120a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Lena zametila slučaj čto èta ženščina priexala na kone.", .acceptable)]
+    contrasts := [("Lena zametila slučaj čto èta ženščina priexala na kone.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-a")] }
 
@@ -162,7 +162,7 @@ def ch2_120b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
@@ -177,7 +177,7 @@ def ch2_120c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Lena zametila slučaj čto koroleva Velikobritanii priexala na kone.", .acceptable)]
+    contrasts := [("Lena zametila slučaj čto koroleva Velikobritanii priexala na kone.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "conclusion")] }
 
@@ -192,7 +192,7 @@ def ch2_121a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "premise-a")] }
 
@@ -207,7 +207,7 @@ def ch2_121b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
@@ -222,7 +222,7 @@ def ch2_121c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "conclusion"), ("inference", "invalid")] }
 
@@ -237,7 +237,7 @@ def ch2_122a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "premise-a")] }
 
@@ -252,7 +252,7 @@ def ch2_122b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
@@ -267,7 +267,7 @@ def ch2_122c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "conclusion"), ("inference", "valid")] }
 
@@ -282,7 +282,7 @@ def ch4_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "Cont-CP"), ("shape", "bare gɘ-žɘ clause")] }
 
@@ -297,7 +297,7 @@ def ch4_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "Sit-CP"), ("shape", "nominalized participial clause")] }
 
@@ -312,7 +312,7 @@ def ch4_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauseType", "Cont-CP"), ("shape", "nominalized gɘ-participial clause")] }
 

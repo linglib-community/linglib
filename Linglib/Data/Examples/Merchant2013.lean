@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -38,7 +38,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -52,7 +52,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -66,7 +66,7 @@ def ex1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -79,7 +79,7 @@ def ex1e : Datum :=
     glossedTokens := []
     context := "Prison guards deserve their good salaries."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -92,7 +92,7 @@ def ex1f : Datum :=
     glossedTokens := []
     context := "it = a computer system"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -105,7 +105,7 @@ def ex1g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -119,7 +119,7 @@ def ex1h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -133,7 +133,7 @@ def ex1i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -146,7 +146,7 @@ def ex1j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -159,7 +159,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -172,7 +172,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -186,7 +186,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -200,7 +200,7 @@ def ex2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -214,7 +214,7 @@ def ex2e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -228,7 +228,7 @@ def ex2f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -242,7 +242,7 @@ def ex2g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -256,7 +256,7 @@ def ex2h : Datum :=
     glossedTokens := []
     context := "The Watch was"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -269,7 +269,7 @@ def ex2i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -282,7 +282,7 @@ def ex2j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -295,7 +295,7 @@ def ex2k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -308,7 +308,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -321,7 +321,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -334,7 +334,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -347,7 +347,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -360,7 +360,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -375,7 +375,7 @@ def ex6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -390,7 +390,7 @@ def ex6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -405,7 +405,7 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -420,7 +420,7 @@ def ex7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -435,7 +435,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -450,7 +450,7 @@ def ex25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -463,7 +463,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -478,7 +478,7 @@ def ex9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -493,7 +493,7 @@ def ex9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -506,7 +506,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "gapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -519,7 +519,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "gapping"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -532,7 +532,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "stripping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -547,7 +547,7 @@ def ex11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "stripping"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -560,7 +560,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -573,7 +573,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -588,7 +588,7 @@ def ex13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -603,7 +603,7 @@ def ex13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -618,7 +618,7 @@ def ex13c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -633,7 +633,7 @@ def ex13d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -646,7 +646,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -661,7 +661,7 @@ def ex14b_i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -676,7 +676,7 @@ def ex14b_ii : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -689,7 +689,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -702,7 +702,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -715,7 +715,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -730,7 +730,7 @@ def ex16b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -745,7 +745,7 @@ def ex26a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -760,7 +760,7 @@ def ex26b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -773,7 +773,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "unaccusative"), ("targetV", "transitive")] }
 
@@ -786,7 +786,7 @@ def ex30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -799,7 +799,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -814,7 +814,7 @@ def ex31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -829,7 +829,7 @@ def ex31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "transitive"), ("targetV", "transitive")] }
 
@@ -842,7 +842,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -855,7 +855,7 @@ def ex35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -868,7 +868,7 @@ def ex35c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -881,7 +881,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -894,7 +894,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -907,7 +907,7 @@ def ex36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -920,7 +920,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "doubleObject")] }
 
@@ -933,7 +933,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeTo"), ("targetV", "applicativeTo")] }
 
@@ -946,7 +946,7 @@ def ex38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "doubleObject")] }
 
@@ -959,7 +959,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "applicativeTo")] }
 
@@ -972,7 +972,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "plain")] }
 
@@ -985,7 +985,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "applicativeWith")] }
 
@@ -998,7 +998,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "plain")] }
 
@@ -1011,7 +1011,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "applicativeTo")] }
 
@@ -1024,7 +1024,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeWith"), ("targetV", "applicativeOn")] }
 
@@ -1037,7 +1037,7 @@ def ex43b : Datum :=
     glossedTokens := []
     context := "On the image impression reading of with what, not the manner reading."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeOn"), ("targetV", "applicativeWith")] }
 
@@ -1050,7 +1050,7 @@ def ex44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeOn"), ("targetV", "applicativeWith")] }
 
@@ -1063,7 +1063,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "plain"), ("targetV", "applicativeWith")] }
 
@@ -1076,7 +1076,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeWith"), ("targetV", "applicativeWith")] }
 
@@ -1089,7 +1089,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "doubleObject"), ("targetV", "applicativeTo")] }
 
@@ -1102,7 +1102,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeTo"), ("targetV", "applicativeTo")] }
 
@@ -1115,7 +1115,7 @@ def ex49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .ungrammatical)]
     paperFeatures := [("ellipsis", "vpEllipsis")] }
 

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A comparison of two degrees of height, both on the scale of spatial distances."
@@ -26,7 +26,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Tall and long both measure spatial distance, so the two degrees lie on one scale."
@@ -42,7 +42,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Grammatical but semantically anomalous: the degrees of height and of cleverness lie on different scales."
@@ -58,7 +58,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Six feet names a degree on the upward scale of spatial distances."
@@ -74,7 +74,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The degree name six feet as the degree argument of tall."
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Not a comparative: six feet names the degree read upward, and the degree argument of short is read downward, so the degree lies outside the domain of short."
@@ -106,7 +106,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The degree of the totality of ebbing water exceeds that of flowing mud, both volumes."
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Listed without an asterisk as an instance of the single meaning of more, although beauty and cleverness are distinct scales, as in the starred (65)."
@@ -138,7 +138,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Pluralization supplies the numerical scale: the number of walking men exceeds the number of flying birds."
@@ -154,7 +154,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Synonymous with (57) although all combines with the plural and every with the singular."
@@ -170,7 +170,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Synonymous with (56)."
@@ -186,7 +186,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The scale of beauty has no unit; its degrees are the classes of the comparison relation."
@@ -202,7 +202,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Anomalous: Bill's tallness and Arabella's beauty are represented on different scales."
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Prima facie anomalous but said; the speaker uses the words as if their meanings produced a scale common to age and wisdom."
@@ -234,7 +234,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Long measures an event on the temporal scale and a physical object on the spatial one."
@@ -250,7 +250,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A trans-world comparison: Bill's height in the nearest world where he smokes against his height in the actual world."
@@ -266,7 +266,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Means, at least usually, that Bill is taller than Arabella and taller than Clarissa, not the disjunction of the two comparisons."

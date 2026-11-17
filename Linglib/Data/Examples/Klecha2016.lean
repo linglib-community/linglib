@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "Klecha's canonical SOT example. Past matrix (`thought`) + past embedded (`was pregnant`). Both RTs precede speech time; additionally, per the Upper Limit Constraint, the embedded RT (Carissa's pregnancy time) is no later than the matrix RT (Martina's thinking)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (pregnancy at thinking)", .acceptable), ("shifted (pregnancy before thinking)", .acceptable), ("future-shifted (pregnancy after thinking)", .ungrammatical)]
     paperFeatures := [("verb", "think"), ("past", "available"), ("present", "available"), ("future", "unavailable")] }
 
@@ -37,7 +37,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := "Naturally-occurring example showing future-shifted reading of embedded past under `hope`. `She missed the cut` is in past tense morphology but the cut-missing is future-of-the-hoping (Singh hoped, at the time of hoping, that the cut-missing would occur AFTER the hoping)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future-shifted (missed-cut after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")] }
 
@@ -51,7 +51,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := "Second naturally-occurring example of future-shifted past under `hope`. The kill-attempt is future of the hoping; the embedded past tense morphology doesn't force temporal precedence."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future-shifted (try-to-kill after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")] }
 
@@ -64,7 +64,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := "Future-shifted reading under `pray`. `Got open` is past morphology but the getting-open is future-of-the-praying."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future-shifted (got-open after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")] }
 
@@ -78,7 +78,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := "Past morphology `survived` in the embedded clause of `pray`, but the surviving is future-of-the-praying (thirteen months out)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future-shifted (survival after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")] }
 

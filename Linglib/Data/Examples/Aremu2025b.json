@@ -11,7 +11,7 @@
     "translation": "Adé killed A RAT.",
     "context": "Answer to: Kí ni Adé pa? 'What did Adé kill?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -32,7 +32,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -53,7 +53,7 @@
     "translation": "ADÉ ate the food.",
     "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -74,7 +74,7 @@
     "translation": "ADÉ ate the food.",
     "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -95,7 +95,7 @@
     "translation": "ADÉ ate the food.",
     "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -116,7 +116,7 @@
     "translation": "ADÉ ate the food.",
     "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"]
@@ -136,7 +136,7 @@
     "translation": "It was me that beat Akin.",
     "context": "Subject focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -158,7 +158,7 @@
     "translation": "It was you that beat Akin.",
     "context": "Subject focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -180,7 +180,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -201,7 +201,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -222,7 +222,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -243,7 +243,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"]
@@ -263,7 +263,7 @@
     "translation": "Adé saw TOLÚ.",
     "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"]
@@ -283,7 +283,7 @@
     "translation": "Adé saw Tolú YESTERDAY.",
     "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"],
@@ -304,7 +304,7 @@
     "translation": "Adé saw Tolú YESTERDAY.",
     "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"],
@@ -325,7 +325,7 @@
     "translation": "Adé saw Tolú YESTERDAY.",
     "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"]
@@ -346,7 +346,7 @@
     "translation": "Adé saw Tolú YESTERDAY.",
     "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "adjunct"]
@@ -366,7 +366,7 @@
     "translation": "Adé BOUGHT A BOOK.",
     "context": "Answer to: What did Adé do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"]
@@ -386,7 +386,7 @@
     "translation": "Adé BOUGHT A BOOK.",
     "context": "Answer to: What did Adé do?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "vp"]
@@ -406,7 +406,7 @@
     "translation": "Adé BOUGHT a book.",
     "context": "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "verb"],
@@ -427,7 +427,7 @@
     "translation": "Adé BOUGHT a book.",
     "context": "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "verb"],
@@ -449,7 +449,7 @@
     "translation": "ADÉ ate the food (and not Bọ́lá).",
     "context": "Contrastive subject focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -472,7 +472,7 @@
     "translation": "ADÉ ate the food (and not Bọ́lá).",
     "context": "Labelled new information subject focus.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -494,7 +494,7 @@
     "translation": "Adé ate RICE (and not beans).",
     "context": "Contrastive object focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
@@ -516,7 +516,7 @@
     "translation": "Adé ate RICE.",
     "context": "New information object focus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"]
@@ -537,7 +537,7 @@
     "translation": "Adé ate RICE (and not beans).",
     "context": "New information object focus.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],

@@ -26,7 +26,7 @@ def ex_1a_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "singular"), ("case", "part")] }
 
@@ -41,7 +41,7 @@ def ex_1a_numeral : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "numeral"), ("case", "part")] }
 
@@ -56,7 +56,7 @@ def ex_1a_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "plural"), ("case", "part")] }
 
@@ -71,7 +71,7 @@ def ex_1b_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "singular"), ("case", "acc")] }
 
@@ -86,7 +86,7 @@ def ex_1b_numeral : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "numeral"), ("case", "acc")] }
 
@@ -101,7 +101,7 @@ def ex_1b_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ampua"), ("object", "plural"), ("case", "acc")] }
 
@@ -116,7 +116,7 @@ def ex_2a_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "singular"), ("case", "part")] }
 
@@ -131,7 +131,7 @@ def ex_2a_numeral : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "numeral"), ("case", "part")] }
 
@@ -146,7 +146,7 @@ def ex_2a_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "plural"), ("case", "part")] }
 
@@ -161,7 +161,7 @@ def ex_2b_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "singular"), ("case", "acc")] }
 
@@ -176,7 +176,7 @@ def ex_2b_numeral : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "numeral"), ("case", "acc")] }
 
@@ -191,7 +191,7 @@ def ex_2b_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "saada"), ("object", "plural"), ("case", "acc")] }
 
@@ -206,7 +206,7 @@ def ex_3a_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "singular"), ("case", "part")] }
 
@@ -221,7 +221,7 @@ def ex_3a_numeral : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "numeral"), ("case", "part")] }
 
@@ -236,7 +236,7 @@ def ex_3a_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "plural"), ("case", "part")] }
 
@@ -251,7 +251,7 @@ def ex_3b_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "singular"), ("case", "acc")] }
 
@@ -266,7 +266,7 @@ def ex_3b_numeral : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "numeral"), ("case", "acc")] }
 
@@ -281,7 +281,7 @@ def ex_3b_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "etsiä"), ("object", "plural"), ("case", "acc")] }
 
@@ -296,7 +296,7 @@ def ex_4a_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "singular"), ("case", "part")] }
 
@@ -311,7 +311,7 @@ def ex_4a_numeral : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "numeral"), ("case", "part")] }
 
@@ -326,7 +326,7 @@ def ex_4a_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "plural"), ("case", "part")] }
 
@@ -341,7 +341,7 @@ def ex_4b_singular : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "singular"), ("case", "acc")] }
 
@@ -356,7 +356,7 @@ def ex_4b_numeral : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "numeral"), ("case", "acc")] }
 
@@ -371,7 +371,7 @@ def ex_4b_plural : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "omistaa"), ("object", "plural"), ("case", "acc")] }
 

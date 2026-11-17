@@ -26,7 +26,7 @@ def ex1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "goalOriented"), ("actualityEntailment", "false")] }
 
@@ -41,7 +41,7 @@ def ex1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -54,7 +54,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
@@ -67,7 +67,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -80,7 +80,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.0"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
@@ -93,7 +93,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.0"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
@@ -106,7 +106,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.0"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -119,7 +119,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.0"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -132,7 +132,7 @@ def ex81a : Datum :=
     glossedTokens := []
     context := "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.3"), ("phenomenon", "eventIdentification"), ("aspect", "perfective"), ("flavor", "circumstantial"), ("actualityEntailment", "true")] }
 
@@ -145,7 +145,7 @@ def ex81b : Datum :=
     glossedTokens := []
     context := "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.3"), ("phenomenon", "eventIdentification"), ("aspect", "perfective"), ("flavor", "circumstantial"), ("actualityEntailment", "true")] }
 
@@ -158,7 +158,7 @@ def ex86 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -171,7 +171,7 @@ def ex87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -184,7 +184,7 @@ def ex88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -199,7 +199,7 @@ def ex89a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective")] }
 
@@ -212,7 +212,7 @@ def ex89b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -225,7 +225,7 @@ def ex89c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
@@ -238,7 +238,7 @@ def ex100a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -251,7 +251,7 @@ def ex100b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -264,7 +264,7 @@ def ex101a : Datum :=
     glossedTokens := []
     context := "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
@@ -277,7 +277,7 @@ def ex101b : Datum :=
     glossedTokens := []
     context := "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
@@ -290,7 +290,7 @@ def ex103 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "counterfactualImperfective"), ("aspect", "imperfective"), ("flavor", "goalOriented"), ("actualityEntailment", "false")] }
 
@@ -305,7 +305,7 @@ def ex201 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic: given my evidence now, Jane must have taken the train", .acceptable), ("goalOriented: given Jane's circumstances then, Jane had to take the train", .acceptable)]
     paperFeatures := [("section", "3.4.1"), ("phenomenon", "eventBinding")] }
 
@@ -318,7 +318,7 @@ def ex242a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "progressiveComplement"), ("aspect", "imperfective"), ("flavor", "epistemic")] }
 
@@ -331,7 +331,7 @@ def ex242b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "progressiveComplement"), ("aspect", "imperfective"), ("flavor", "epistemic")] }
 
@@ -344,7 +344,7 @@ def ex244a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("flavor", "ability")] }
 
@@ -357,7 +357,7 @@ def ex244b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("flavor", "ability")] }
 
@@ -372,7 +372,7 @@ def ex245a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("aspect", "perfective"), ("flavor", "epistemic"), ("actualityEntailment", "false")] }
 
@@ -385,7 +385,7 @@ def ex246 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("flavor", "ability")] }
 
@@ -398,7 +398,7 @@ def ex247b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("speechBoundEpistemic: possible given the speaker's evidence", .acceptable), ("aspectBoundEpistemic: an epistemic necessity for Jane at a past belief state", .questionable)]
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("aspect", "perfective")] }
 
@@ -411,7 +411,7 @@ def ex249b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("aspect", "perfective"), ("actualityEntailment", "true")] }
 

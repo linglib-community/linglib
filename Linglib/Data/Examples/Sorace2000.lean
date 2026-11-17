@@ -26,7 +26,7 @@ def ex1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "venire"), ("position", "changeOfLocation"), ("aux", "be")] }
 
@@ -41,7 +41,7 @@ def ex1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arriver"), ("position", "changeOfLocation"), ("aux", "be")] }
 
@@ -56,7 +56,7 @@ def ex1c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "komen"), ("position", "changeOfLocation"), ("aux", "be")] }
 
@@ -71,7 +71,7 @@ def ex1d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ankommen"), ("position", "changeOfLocation"), ("aux", "be")] }
 
@@ -86,7 +86,7 @@ def ex4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "be"), ("predicate", "detelicized")] }
 
@@ -101,7 +101,7 @@ def ex5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be"), ("subject", "agentive")] }
 
@@ -116,7 +116,7 @@ def ex5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be")] }
 
@@ -131,7 +131,7 @@ def ex30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "have")] }
 
@@ -146,7 +146,7 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La temperatura ha salito improvvisamente", .unacceptable)]
+    contrasts := [("La temperatura ha salito improvvisamente", .unacceptable)]
     readings := []
     paperFeatures := [("verb", "salire"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -161,7 +161,7 @@ def ex7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Le mele hanno marcito al sole", .marginal)]
+    contrasts := [("Le mele hanno marcito al sole", .marginal)]
     readings := []
     paperFeatures := [("verb", "marcire"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -176,7 +176,7 @@ def ex8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La pianta ha fiorito due volte quest'anno", .acceptable)]
+    contrasts := [("La pianta ha fiorito due volte quest'anno", .acceptable)]
     readings := []
     paperFeatures := [("verb", "fiorire"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -191,7 +191,7 @@ def ex9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "naître"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -206,7 +206,7 @@ def ex9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sterven"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -221,7 +221,7 @@ def ex9c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gebären"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -236,7 +236,7 @@ def ex10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Haar baby heeft deze maand enorm gegroeid", .ungrammatical)]
+    contrasts := [("Haar baby heeft deze maand enorm gegroeid", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "groeien"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -251,7 +251,7 @@ def ex10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "steigen"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -266,7 +266,7 @@ def ex11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("De temperatuur heeft 3 uurlang gestegen, maar is toen weer gezakt.", .acceptable)]
+    contrasts := [("De temperatuur heeft 3 uurlang gestegen, maar is toen weer gezakt.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "stijgen"), ("position", "changeOfState"), ("aux", "be"), ("predicate", "detelicized")] }
 
@@ -281,7 +281,7 @@ def ex12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("L'enfant a devenu triste", .ungrammatical)]
+    contrasts := [("L'enfant a devenu triste", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "devenir"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -296,7 +296,7 @@ def ex13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rougir"), ("position", "changeOfState"), ("aux", "have")] }
 
@@ -311,7 +311,7 @@ def ex14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Le livre a paru récemment", .acceptable)]
+    contrasts := [("Le livre a paru récemment", .acceptable)]
     readings := []
     paperFeatures := [("verb", "paraître"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -326,7 +326,7 @@ def ex14c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "échapper"), ("position", "changeOfState"), ("aux", "be")] }
 
@@ -341,7 +341,7 @@ def ex15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ancora una volta ho rimasto solo", .marginal)]
+    contrasts := [("Ancora una volta ho rimasto solo", .marginal)]
     readings := []
     paperFeatures := [("verb", "rimanere"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -356,7 +356,7 @@ def ex15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La guerra ha durato a lungo", .marginal)]
+    contrasts := [("La guerra ha durato a lungo", .marginal)]
     readings := []
     paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -371,7 +371,7 @@ def ex15c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il presidente ha durato in carica due anni", .acceptable)]
+    contrasts := [("Il presidente ha durato in carica due anni", .acceptable)]
     readings := []
     paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be"), ("subject", "agentive")] }
 
@@ -386,7 +386,7 @@ def ex16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mes parents sont survécus au tremblement de terre", .ungrammatical)]
+    contrasts := [("Mes parents sont survécus au tremblement de terre", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "survivre"), ("position", "continuationOfState"), ("aux", "have")] }
 
@@ -401,7 +401,7 @@ def ex17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Die Äpfel sind den ganzen Winter gehalten", .unacceptable)]
+    contrasts := [("Die Äpfel sind den ganzen Winter gehalten", .unacceptable)]
     readings := []
     paperFeatures := [("verb", "halten"), ("position", "continuationOfState"), ("aux", "have")] }
 
@@ -416,7 +416,7 @@ def ex17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Der Wanderer ist kurz verweilt", .questionable)]
+    contrasts := [("Der Wanderer ist kurz verweilt", .questionable)]
     readings := []
     paperFeatures := [("verb", "verweilen"), ("position", "continuationOfState"), ("aux", "have")] }
 
@@ -431,7 +431,7 @@ def ex18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "overblijven"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -446,7 +446,7 @@ def ex18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Het concert is een hele tijd geduurd", .questionable)]
+    contrasts := [("Het concert is een hele tijd geduurd", .questionable)]
     readings := []
     paperFeatures := [("verb", "duren"), ("position", "continuationOfState"), ("aux", "have")] }
 
@@ -461,7 +461,7 @@ def ex19a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marie a resté à la maison avec les enfants", .ungrammatical)]
+    contrasts := [("Marie a resté à la maison avec les enfants", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "rester"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -476,7 +476,7 @@ def ex19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("De onverwachte gast heeft voor het eten gebleven", .ungrammatical)]
+    contrasts := [("De onverwachte gast heeft voor het eten gebleven", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "blijven"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -491,7 +491,7 @@ def ex19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Die Gäste haben am Tisch sitzen geblieben", .ungrammatical)]
+    contrasts := [("Die Gäste haben am Tisch sitzen geblieben", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "bleiben"), ("position", "continuationOfState"), ("aux", "be")] }
 
@@ -506,7 +506,7 @@ def ex20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("I dinosauri hanno esistito 65 milioni di anni fa.", .questionable)]
+    contrasts := [("I dinosauri hanno esistito 65 milioni di anni fa.", .questionable)]
     readings := []
     paperFeatures := [("verb", "esistere"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -521,7 +521,7 @@ def ex20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La farina non ha bastato per fare la torta.", .questionable)]
+    contrasts := [("La farina non ha bastato per fare la torta.", .questionable)]
     readings := []
     paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -536,7 +536,7 @@ def ex20c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La commedia ha sembrato interessante a tutti", .questionable)]
+    contrasts := [("La commedia ha sembrato interessante a tutti", .questionable)]
     readings := []
     paperFeatures := [("verb", "sembrare"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -551,7 +551,7 @@ def ex21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -566,7 +566,7 @@ def ex21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "appartenere"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -581,7 +581,7 @@ def ex21c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il cibo ha scarseggiato tra i terremotati.", .acceptable)]
+    contrasts := [("Il cibo ha scarseggiato tra i terremotati.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "scarseggiare"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -596,7 +596,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Les dinosaures sont existé il y a 65 millions d'ans.", .unacceptable)]
+    contrasts := [("Les dinosaures sont existé il y a 65 millions d'ans.", .unacceptable)]
     readings := []
     paperFeatures := [("verb", "exister"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -611,7 +611,7 @@ def ex23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "gefallen"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -626,7 +626,7 @@ def ex23b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "genügen"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -641,7 +641,7 @@ def ex23c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Das Buch hat auf dem Boden gelegen.", .acceptable)]
+    contrasts := [("Das Buch hat auf dem Boden gelegen.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "liegen"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -656,7 +656,7 @@ def ex23d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ich habe von ihr abgehangen.", .acceptable)]
+    contrasts := [("Ich habe von ihr abgehangen.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "abhängen"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -671,7 +671,7 @@ def ex24a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "staan"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -686,7 +686,7 @@ def ex24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bestaan"), ("position", "existenceOfState"), ("aux", "have")] }
 
@@ -701,7 +701,7 @@ def ex24c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "blijken"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -716,7 +716,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sein"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -731,7 +731,7 @@ def ex25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "zijn"), ("position", "existenceOfState"), ("aux", "be")] }
 
@@ -746,7 +746,7 @@ def ex33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "chiacchierare"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
@@ -761,7 +761,7 @@ def ex33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "travailler"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
@@ -776,7 +776,7 @@ def ex33c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "blazen"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
@@ -791,7 +791,7 @@ def ex33d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arbeiten"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
@@ -806,7 +806,7 @@ def ex34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il cibo inviato dall'ONU è funzionato solo come palliativo.", .marginal)]
+    contrasts := [("Il cibo inviato dall'ONU è funzionato solo come palliativo.", .marginal)]
     readings := []
     paperFeatures := [("verb", "funzionare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
 
@@ -821,7 +821,7 @@ def ex35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lavorare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
@@ -836,7 +836,7 @@ def ex36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maria è ceduta alle tue insistenze", .ungrammatical)]
+    contrasts := [("Maria è ceduta alle tue insistenze", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
@@ -851,7 +851,7 @@ def ex36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il pavimento è ceduto all'improvviso", .marginal)]
+    contrasts := [("Il pavimento è ceduto all'improvviso", .marginal)]
     readings := []
     paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
 
@@ -866,7 +866,7 @@ def ex37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Gli atleti svedesi sono corsi alle Olimpiadi", .marginal)]
+    contrasts := [("Gli atleti svedesi sono corsi alle Olimpiadi", .marginal)]
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -881,7 +881,7 @@ def ex37b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("De zwerver is overal gelopen", .marginal)]
+    contrasts := [("De zwerver is overal gelopen", .marginal)]
     readings := []
     paperFeatures := [("verb", "lopen"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -896,7 +896,7 @@ def ex37c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marie est nagée tout l'après-midi", .marginal)]
+    contrasts := [("Marie est nagée tout l'après-midi", .marginal)]
     readings := []
     paperFeatures := [("verb", "nager"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -911,7 +911,7 @@ def ex38_rennen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Uschi hat den ganzen Tag gerannt", .ungrammatical)]
+    contrasts := [("Uschi hat den ganzen Tag gerannt", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "rennen"), ("position", "motionalProcess"), ("aux", "be")] }
 
@@ -926,7 +926,7 @@ def ex38_laufen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Uschi hat den ganzen Tag gelaufen", .ungrammatical)]
+    contrasts := [("Uschi hat den ganzen Tag gelaufen", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "laufen"), ("position", "motionalProcess"), ("aux", "be")] }
 
@@ -941,7 +941,7 @@ def ex38_schwimmen : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Uschi hat den ganzen Tag geschwommen", .ungrammatical)]
+    contrasts := [("Uschi hat den ganzen Tag geschwommen", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "schwimmen"), ("position", "motionalProcess"), ("aux", "be")] }
 
@@ -956,7 +956,7 @@ def ex39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("De bal is gerold", .ungrammatical)]
+    contrasts := [("De bal is gerold", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -971,7 +971,7 @@ def ex39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("De bal heeft naar beneden gerold", .ungrammatical)]
+    contrasts := [("De bal heeft naar beneden gerold", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
@@ -986,7 +986,7 @@ def ex40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hans und Rita sind im Saal getanzt", .ungrammatical)]
+    contrasts := [("Hans und Rita sind im Saal getanzt", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -1001,7 +1001,7 @@ def ex40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hans und Rita haben in den Saal getanzt", .ungrammatical)]
+    contrasts := [("Hans und Rita haben in den Saal getanzt", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
@@ -1016,7 +1016,7 @@ def ex41a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maria è corsa velocemente.", .acceptable)]
+    contrasts := [("Maria è corsa velocemente.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -1031,7 +1031,7 @@ def ex41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Maria ha corso in farmacia", .ungrammatical)]
+    contrasts := [("Maria ha corso in farmacia", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
@@ -1046,7 +1046,7 @@ def ex41c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Paola è nuotata con perfetto stile", .ungrammatical)]
+    contrasts := [("Paola è nuotata con perfetto stile", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -1061,7 +1061,7 @@ def ex41d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Paola è nuotata a riva", .ungrammatical)]
+    contrasts := [("Paola è nuotata a riva", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
@@ -1076,7 +1076,7 @@ def ex42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marie est courue très vite", .ungrammatical)]
+    contrasts := [("Marie est courue très vite", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -1091,7 +1091,7 @@ def ex42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marie est courue jusqu'à la maison", .ungrammatical)]
+    contrasts := [("Marie est courue jusqu'à la maison", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
@@ -1106,7 +1106,7 @@ def ex43a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ha corso voce che Maria si sposa", .marginal)]
+    contrasts := [("Ha corso voce che Maria si sposa", .marginal)]
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
@@ -1121,7 +1121,7 @@ def ex43b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ha saltato fuori che i magistrati erano corrotti", .marginal)]
+    contrasts := [("Ha saltato fuori che i magistrati erano corrotti", .marginal)]
     readings := []
     paperFeatures := [("verb", "saltare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
@@ -1136,7 +1136,7 @@ def ex44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il pilota è atterrato sulla pista di emergenza", .marginal)]
+    contrasts := [("Il pilota è atterrato sulla pista di emergenza", .marginal)]
     readings := []
     paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "have")] }
 
@@ -1151,7 +1151,7 @@ def ex44b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("L'aereo ha atterrato sulla pista di emergenza", .marginal)]
+    contrasts := [("L'aereo ha atterrato sulla pista di emergenza", .marginal)]
     readings := []
     paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
@@ -1166,7 +1166,7 @@ def ex45a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La fede religiosa è tentennata anche nei più forti", .questionable)]
+    contrasts := [("La fede religiosa è tentennata anche nei più forti", .questionable)]
     readings := []
     paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1181,7 +1181,7 @@ def ex45b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Paolo è tentennato a lungo prima di decidersi", .ungrammatical)]
+    contrasts := [("Paolo è tentennato a lungo prima di decidersi", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
 
@@ -1196,7 +1196,7 @@ def ex46a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mario è tossito", .ungrammatical)]
+    contrasts := [("Mario è tossito", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1211,7 +1211,7 @@ def ex46b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
 
@@ -1226,7 +1226,7 @@ def ex47a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il telefono è squillato.", .acceptable)]
+    contrasts := [("Il telefono è squillato.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "squillare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1241,7 +1241,7 @@ def ex47b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("L'eco è risuonato nella caverna", .acceptable)]
+    contrasts := [("L'eco è risuonato nella caverna", .acceptable)]
     readings := []
     paperFeatures := [("verb", "risuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1256,7 +1256,7 @@ def ex47c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Il tuono è rimbombato", .acceptable)]
+    contrasts := [("Il tuono è rimbombato", .acceptable)]
     readings := []
     paperFeatures := [("verb", "rimbombare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1271,7 +1271,7 @@ def ex47d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("La campana è rintoccata", .marginal)]
+    contrasts := [("La campana è rintoccata", .marginal)]
     readings := []
     paperFeatures := [("verb", "rintoccare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1286,7 +1286,7 @@ def ex48_piovere : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ieri è piovuto tutto il giorno", .acceptable)]
+    contrasts := [("Ieri è piovuto tutto il giorno", .acceptable)]
     readings := []
     paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1301,7 +1301,7 @@ def ex48_nevicare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ieri è nevicato tutto il giorno", .acceptable)]
+    contrasts := [("Ieri è nevicato tutto il giorno", .acceptable)]
     readings := []
     paperFeatures := [("verb", "nevicare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1316,7 +1316,7 @@ def ex48_grandinare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ieri è grandinato tutto il giorno", .acceptable)]
+    contrasts := [("Ieri è grandinato tutto il giorno", .acceptable)]
     readings := []
     paperFeatures := [("verb", "grandinare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1331,7 +1331,7 @@ def ex49 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mi ha piovuto sulla testa", .ungrammatical)]
+    contrasts := [("Mi ha piovuto sulla testa", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
@@ -1346,7 +1346,7 @@ def ex50a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("È tuonato molto durante il temporale", .marginal)]
+    contrasts := [("È tuonato molto durante il temporale", .marginal)]
     readings := []
     paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1361,7 +1361,7 @@ def ex50b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("È lampeggiato all'improvviso", .marginal)]
+    contrasts := [("È lampeggiato all'improvviso", .marginal)]
     readings := []
     paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
@@ -1376,7 +1376,7 @@ def ex51_tuonare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
@@ -1391,7 +1391,7 @@ def ex51_lampeggiare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 

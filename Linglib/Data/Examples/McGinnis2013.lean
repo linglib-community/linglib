@@ -26,7 +26,7 @@ def ex_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a"), ("suffix2", "t")] }
 
@@ -41,7 +41,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es")] }
 
@@ -56,7 +56,7 @@ def ex_3a_pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es")] }
 
@@ -71,7 +71,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es"), ("suffix2", "t")] }
 
@@ -86,7 +86,7 @@ def ex_5c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a")] }
 
@@ -101,7 +101,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "es")] }
 
@@ -116,7 +116,7 @@ def ex_6b_we : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")] }
 
@@ -131,7 +131,7 @@ def ex_6b_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")] }
 
@@ -146,7 +146,7 @@ def ex_6c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e")] }
 
@@ -161,7 +161,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s")] }
 
@@ -176,7 +176,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t")] }
 
@@ -191,7 +191,7 @@ def ex_18b_st : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s"), ("suffix3", "t")] }
 
@@ -206,7 +206,7 @@ def ex_18b_ts : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t"), ("suffix3", "s")] }
 
@@ -221,7 +221,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "e"), ("suffix2", "t")] }
 
@@ -236,7 +236,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "m"), ("suffix1", "a")] }
 
@@ -251,7 +251,7 @@ def ex_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a")] }
 
@@ -266,7 +266,7 @@ def ex_23b_t : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a"), ("suffix2", "t")] }
 
@@ -281,7 +281,7 @@ def ex_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "es")] }
 

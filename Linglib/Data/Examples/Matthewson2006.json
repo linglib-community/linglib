@@ -12,7 +12,7 @@
     "translation": "I am hungry now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "present"]
@@ -33,7 +33,7 @@
     "translation": "I dried it yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "past"]
@@ -54,7 +54,7 @@
     "translation": "I played on Friday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "past"]
@@ -75,7 +75,7 @@
     "translation": "I will be hungry tomorrow.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "future"]
@@ -96,7 +96,7 @@
     "translation": "I will dry it tomorrow.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "future"]
@@ -117,7 +117,7 @@
     "translation": "I will play tomorrow.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "future"]

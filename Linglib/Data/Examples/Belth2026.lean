@@ -26,7 +26,7 @@ def ex_53a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "default l: tier-preceding consonant not lateral")] }
 
@@ -41,7 +41,7 @@ def ex_53b1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation from tier-adjacent stem l")] }
 
@@ -56,7 +56,7 @@ def ex_53b2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation across the coronal n")] }
 
@@ -71,7 +71,7 @@ def ex_53c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening r")] }
 
@@ -86,7 +86,7 @@ def ex_53d1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by an intervening non-coronal consonant")] }
 
@@ -101,7 +101,7 @@ def ex_53d2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening g")] }
 
@@ -116,7 +116,7 @@ def ex_46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("process", "backness harmony"), ("tier", "vowels")] }
 
@@ -131,7 +131,7 @@ def ex_47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("process", "secondary rounding harmony"), ("target", "high vowels only")] }
 
@@ -146,7 +146,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("process", "backness harmony"), ("neutral vowels", "i, e off the tier"), ("default", "front when only neutral vowels precede")] }
 

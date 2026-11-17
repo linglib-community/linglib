@@ -24,7 +24,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -37,7 +37,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the vase"), ("animate", "false"), ("entailment", "denied")] }
 
@@ -50,7 +50,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -63,7 +63,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the vase"), ("animate", "false")] }
 
@@ -76,7 +76,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "the prisoners"), ("inferred", "true")] }
 
@@ -89,7 +89,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the prisoners"), ("entailment", "denied")] }
 
@@ -102,7 +102,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false"), ("inferred", "true")] }
 
@@ -115,7 +115,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false"), ("inferred", "true")] }
 
@@ -128,7 +128,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "the computer"), ("animate", "false"), ("inferred", "true")] }
 
@@ -141,7 +141,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "the computer"), ("animate", "false"), ("inferred", "true")] }
 
@@ -154,7 +154,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
@@ -167,7 +167,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
@@ -180,7 +180,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
@@ -193,7 +193,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "the door"), ("animate", "false"), ("neutralized", "true")] }
 
@@ -206,7 +206,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "the vase"), ("animate", "false"), ("neutralized", "true")] }
 
@@ -219,7 +219,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "the door"), ("animate", "false"), ("neutralized", "true")] }
 
@@ -232,7 +232,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
@@ -245,7 +245,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
@@ -258,7 +258,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
@@ -271,7 +271,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "John"), ("verbClass", "stative")] }
 
@@ -284,7 +284,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "I"), ("verbClass", "stative")] }
 
@@ -297,7 +297,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "progressive"), ("participant", "I"), ("verbClass", "stative")] }
 
@@ -310,7 +310,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "you"), ("verbClass", "stative")] }
 
@@ -323,7 +323,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "progressive"), ("participant", "you"), ("verbClass", "stative")] }
 
@@ -336,7 +336,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
@@ -349,7 +349,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
@@ -362,7 +362,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John"), ("verbClass", "stative")] }
 
@@ -375,7 +375,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
@@ -388,7 +388,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "volitive"), ("participant", "John")] }
 
@@ -401,7 +401,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "John")] }
 
@@ -414,7 +414,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "John")] }
 
@@ -427,7 +427,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "John"), ("verbClass", "process")] }
 
@@ -440,7 +440,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "John"), ("verbClass", "process")] }
 
@@ -453,7 +453,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "purpose"), ("features", "agentive"), ("participant", "John")] }
 
@@ -466,7 +466,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -479,7 +479,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "imperative"), ("features", "agentive"), ("participant", "the addressee"), ("inferred", "true")] }
 
@@ -492,7 +492,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -505,7 +505,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -518,7 +518,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -531,7 +531,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -544,7 +544,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", ""), ("participant", "John"), ("inferred", "true")] }
 
@@ -557,7 +557,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
@@ -570,7 +570,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", "volitive+agentive"), ("participant", "John")] }
 
@@ -583,7 +583,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
@@ -596,7 +596,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
@@ -609,7 +609,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
@@ -622,7 +622,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
@@ -635,7 +635,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
@@ -648,7 +648,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
@@ -661,7 +661,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false")] }
 
@@ -674,7 +674,7 @@ def ex_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("participant", "the stone"), ("animate", "false")] }
 
@@ -687,7 +687,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "instrumental"), ("participant", "a stone"), ("animate", "false")] }
 
@@ -700,7 +700,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "instrumental"), ("participant", "the stone"), ("animate", "false")] }
 
@@ -713,7 +713,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "a stone"), ("animate", "false")] }
 
@@ -726,7 +726,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "instrumental"), ("participant", "this key"), ("animate", "false")] }
 
@@ -739,7 +739,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "initiative"), ("participant", "the warder")] }
 
@@ -752,7 +752,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "initiative"), ("participant", "John")] }
 
@@ -765,7 +765,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "John")] }
 
@@ -778,7 +778,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "John")] }
 
@@ -791,7 +791,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "the warder")] }
 
@@ -804,7 +804,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
@@ -817,7 +817,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
@@ -830,7 +830,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the fire"), ("animate", "false")] }
 
@@ -843,7 +843,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the sea"), ("animate", "false")] }
 
@@ -856,7 +856,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
@@ -869,7 +869,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
@@ -882,7 +882,7 @@ def ex_73 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the ball"), ("animate", "false"), ("inferred", "true")] }
 
@@ -895,7 +895,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the ball"), ("animate", "false"), ("inferred", "true")] }
 
@@ -908,7 +908,7 @@ def ex_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
@@ -921,7 +921,7 @@ def ex_76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
@@ -934,7 +934,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "John")] }
 
@@ -947,7 +947,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "John")] }
 
@@ -960,7 +960,7 @@ def ex_79 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
@@ -973,7 +973,7 @@ def ex_80 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the hawk"), ("inferred", "true")] }
 
@@ -986,7 +986,7 @@ def ex_81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the model aeroplane"), ("animate", "false"), ("inferred", "true")] }
 
@@ -999,7 +999,7 @@ def ex_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "causative"), ("features", ""), ("participant", "the stone"), ("animate", "false")] }
 
@@ -1012,7 +1012,7 @@ def ex_83 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "causative"), ("features", "agentive"), ("participant", "the hawk"), ("inferred", "true")] }
 
@@ -1025,7 +1025,7 @@ def ex_84 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "causative"), ("features", "agentive"), ("participant", "the model aeroplane"), ("animate", "false"), ("inferred", "true")] }
 
@@ -1038,7 +1038,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the machine"), ("animate", "false")] }
 
@@ -1051,7 +1051,7 @@ def ex_85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
@@ -1064,7 +1064,7 @@ def ex_86a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "John")] }
 
@@ -1077,7 +1077,7 @@ def ex_86b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "John")] }
 
@@ -1090,7 +1090,7 @@ def ex_87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
@@ -1103,7 +1103,7 @@ def ex_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "effective"), ("participant", "the machine"), ("animate", "false")] }
 
@@ -1116,7 +1116,7 @@ def ex_89 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "agentive"), ("participant", "John")] }
 
@@ -1129,7 +1129,7 @@ def ex_90 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "effective"), ("participant", "John")] }
 
@@ -1142,7 +1142,7 @@ def ex_91 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "manner"), ("participant", "John")] }
 

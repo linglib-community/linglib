@@ -26,7 +26,7 @@ def ex22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear pattering, and you're not entirely sure what it is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -41,7 +41,7 @@ def ex29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Joe left the meeting looking really green in the face and sweaty. Someone asks you why he left."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false"), ("figure", "4"), ("force", "necessity"), ("flavor", "epistemic")] }
 
@@ -56,7 +56,7 @@ def ex30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibly not", .acceptable)]
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("negated", "true")] }
 
@@ -71,7 +71,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The Canucks were playing last night. You weren't watching the game but you heard your son sounding excited and happy from the living room where he was watching the game, so you thought they were winning. You found out after the game that the Canucks lost 20–0, and your son was happy about something else that his friend had told him on his cellphone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -86,7 +86,7 @@ def ex38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You can hear people hollering, so the Canucks might be winning."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -101,7 +101,7 @@ def ex38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are watching the Canucks. They might win."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -116,7 +116,7 @@ def ex39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
@@ -131,7 +131,7 @@ def ex40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -146,7 +146,7 @@ def ex41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
@@ -161,7 +161,7 @@ def ex42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -176,7 +176,7 @@ def ex39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear pattering on the roof."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -191,7 +191,7 @@ def ex40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear pattering on the roof."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -206,7 +206,7 @@ def ex41b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Why isn't Joe here?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -221,7 +221,7 @@ def ex42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Why isn't Joe here?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -236,7 +236,7 @@ def ex39c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear thunder, so you think it might rain soon."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -251,7 +251,7 @@ def ex40c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear thunder, so you think it might rain soon."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -266,7 +266,7 @@ def ex41c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -281,7 +281,7 @@ def ex42c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -296,7 +296,7 @@ def ex43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
@@ -311,7 +311,7 @@ def ex43a_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -326,7 +326,7 @@ def ex44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
@@ -341,7 +341,7 @@ def ex44_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -356,7 +356,7 @@ def ex47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob sang last week."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
@@ -371,7 +371,7 @@ def ex48a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob sang last week."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -386,7 +386,7 @@ def ex47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob was singing (at that time)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -401,7 +401,7 @@ def ex48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob was singing (at that time)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -416,7 +416,7 @@ def ex47c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob would be singing later that day."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -431,7 +431,7 @@ def ex48c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob would be singing later that day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
@@ -446,7 +446,7 @@ def ex53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -461,7 +461,7 @@ def ex53_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -476,7 +476,7 @@ def ex56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -491,7 +491,7 @@ def ex56_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -506,7 +506,7 @@ def ex62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("actualityEntailment", "false")] }
 
@@ -521,7 +521,7 @@ def ex63a : Datum :=
     lgrConformance := some .wordAligned
     context := "Given that you want to be thinner, ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "bouletic")] }
 
@@ -536,7 +536,7 @@ def ex64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We are burglars in someone's house, and we discover the residents are still at home, so we have to be quiet if we don't want to be caught. Finally the people leave, so we can make noise now."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "teleological")] }
 
@@ -551,7 +551,7 @@ def ex65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "deontic")] }
 
@@ -567,7 +567,7 @@ def ex66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bob ate bad chicken last night. He should be sick now (given the facts about what he ate)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
@@ -582,7 +582,7 @@ def ex73 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -597,7 +597,7 @@ def ex73_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -613,7 +613,7 @@ def ex79 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "possibility"), ("flavor", "pure circumstantial")] }
 
@@ -628,7 +628,7 @@ def ex80 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "\"Can you go out tonight?\" \"No, I have to work.\""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "necessity"), ("flavor", "deontic")] }
 
@@ -643,7 +643,7 @@ def ex83 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true"), ("flavor", "deontic")] }
 
@@ -658,7 +658,7 @@ def ex83_prime : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false"), ("flavor", "deontic")] }
 
@@ -673,7 +673,7 @@ def ex86a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Bob ate bad chicken last night, so he should be sick now."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
@@ -688,7 +688,7 @@ def ex89 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There is only one way to get to Whistler: Highway 99."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "teleological")] }
 
@@ -703,7 +703,7 @@ def ex90 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There are two ways to get to Lillooet: Highway 99 or Highway 1. Highway 99 is better."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "weak necessity"), ("flavor", "teleological")] }
 
@@ -718,7 +718,7 @@ def ex91 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("flavor", "bouletic")] }
 
@@ -733,7 +733,7 @@ def ex92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "bouletic")] }
 
@@ -748,7 +748,7 @@ def ex95a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "dim")] }
 
@@ -764,7 +764,7 @@ def ex96 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
@@ -779,7 +779,7 @@ def ex100a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
@@ -794,7 +794,7 @@ def ex100b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 

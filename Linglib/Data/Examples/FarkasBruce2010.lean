@@ -24,7 +24,7 @@ def ex_36_yes : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "positive"), ("particle", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_36_no : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "no")] }
 
@@ -50,7 +50,7 @@ def ex_37_yes : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Is Sam home?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "positive"), ("particle", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_37_no : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Is Sam home?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "no")] }
 
@@ -76,7 +76,7 @@ def ex_35_assertion_yes : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is not home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_35_assertion_no : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is not home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "no")] }
 
@@ -102,7 +102,7 @@ def ex_35_question_yes : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Is Sam not home?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_35_question_no : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Is Sam not home?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "negative"), ("particle", "no")] }
 
@@ -128,7 +128,7 @@ def ex_38_yes : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is not home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "yes")] }
 
@@ -141,7 +141,7 @@ def ex_38_no : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is not home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "no")] }
 
@@ -154,7 +154,7 @@ def ex_50_assertion : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Sam is not home.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "yes"), ("particle2", "no")] }
 
@@ -167,7 +167,7 @@ def ex_50_question : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Is Sam not home?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "negative"), ("particle", "yes"), ("particle2", "no")] }
 
@@ -180,7 +180,7 @@ def ex_4_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Horea e acasă?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
@@ -193,7 +193,7 @@ def ex_4_ba_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Horea e acasă?'."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
@@ -206,7 +206,7 @@ def ex_5_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Horea e acasă.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
@@ -219,7 +219,7 @@ def ex_5_ba_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Horea e acasă.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
@@ -232,7 +232,7 @@ def ex_39_da : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Ana a plecat.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "positive"), ("particle", "da")] }
 
@@ -245,7 +245,7 @@ def ex_40_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Ana nu a plecat.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "nu")] }
 
@@ -258,7 +258,7 @@ def ex_41_da : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Ana a plecat?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "positive"), ("particle", "da")] }
 
@@ -271,7 +271,7 @@ def ex_41_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Ana a plecat?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
@@ -284,7 +284,7 @@ def ex_42_ba_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Ana a plecat.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
@@ -297,7 +297,7 @@ def ex_42_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Ana a plecat.'."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
@@ -310,7 +310,7 @@ def ex_43_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Ana a plecat?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
@@ -323,7 +323,7 @@ def ex_43_ba_nu : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Ana a plecat?'."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
@@ -336,7 +336,7 @@ def ex_44_ba_da : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Ana nu a plecat.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "ba"), ("particle2", "da")] }
 
@@ -349,7 +349,7 @@ def ex_45_ba_da : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Ana nu a plecat?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "ba"), ("particle2", "da")] }
 
@@ -362,7 +362,7 @@ def ex_46_si : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion \"Anne n'est pas partie.\"."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "si")] }
 
@@ -375,7 +375,7 @@ def ex_47_si : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question \"Anne n'est pas partie?\"."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "si")] }
 
@@ -388,7 +388,7 @@ def ex_48_doch : Datum :=
     glossedTokens := []
     context := "Reacting to the assertion 'Anna kommt nicht mit ins Kino.'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "doch")] }
 
@@ -401,7 +401,7 @@ def ex_49_doch : Datum :=
     glossedTokens := []
     context := "Reacting to the polar question 'Wollen Sie den Job nicht?'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "doch")] }
 

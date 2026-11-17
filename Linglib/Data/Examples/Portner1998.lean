@@ -25,7 +25,7 @@ def ex11 : Datum :=
     context := "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex39 : Datum :=
     context := "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -53,7 +53,7 @@ def ex18_ordinary : Datum :=
     context := "Mary, an ordinary person, attacks the town barracks and fights whomever she sees; there is really no chance that she can wipe out the local garrison, much less the whole army."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex18_hero : Datum :=
     context := "Mary, against all odds, actually succeeds in destroying the whole Roman army."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

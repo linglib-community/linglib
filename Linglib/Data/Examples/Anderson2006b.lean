@@ -24,7 +24,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("neutralized", "loc{goal}"), ("neutralized", "loc")] }
 
@@ -37,7 +37,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")] }
 
@@ -50,7 +50,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc{goal}"), ("subject", "abs")] }
 
@@ -63,7 +63,7 @@ def ex_39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs,erg"), ("arg", "loc{goal}"), ("subject", "abs,erg")] }
 
@@ -76,7 +76,7 @@ def ex_39h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")] }
 
@@ -89,7 +89,7 @@ def ex_39i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "erg,loc{goal}"), ("arg", "abs"), ("subject", "erg,loc{goal}")] }
 
@@ -102,7 +102,7 @@ def ex_39j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs,erg,loc{goal}"), ("arg", "loc{src}"), ("subject", "abs,erg,loc{goal}")] }
 
@@ -115,7 +115,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs,erg,loc{goal}"), ("arg", "loc{src}"), ("subject", "abs,erg,loc{goal}")] }
 
@@ -128,7 +128,7 @@ def ex_4_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")] }
 
@@ -141,7 +141,7 @@ def ex_4_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "abs,loc"), ("adjunct", "abs"), ("subject", "abs,loc")] }
 
@@ -154,7 +154,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")] }
 

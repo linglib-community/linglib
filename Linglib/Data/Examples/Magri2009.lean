@@ -26,7 +26,7 @@ def ex_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("generic", .unacceptable)]
     paperFeatures := [("predicate_level", "stage"), ("position", "right")] }
 
@@ -39,7 +39,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "stage"), ("position", "left")] }
 
@@ -54,7 +54,7 @@ def ex_8c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "right")] }
 
@@ -67,7 +67,7 @@ def ex_8d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "left")] }
 

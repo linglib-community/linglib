@@ -25,7 +25,7 @@ def ex1_exhaustive : Datum :=
     context := "Student Mary did not call, and John is agnostic as to whether she called; of every student who called he believes that they called."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -39,7 +39,7 @@ def ex1_dedicto : Datum :=
     context := "Mary is a student who called; John knows exactly who called but does not know that Mary is a student."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("reading", "de dicto")] }
 
@@ -53,7 +53,7 @@ def ex6 : Datum :=
     context := "Mary is a student who called; John knows exactly who called but does not know that Mary is a student."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -66,7 +66,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -79,7 +79,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -92,7 +92,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -105,7 +105,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -118,7 +118,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -132,7 +132,7 @@ def ex21 : Datum :=
     context := "Any, even one where John has no idea who, if anyone, is a student."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -146,7 +146,7 @@ def ex24 : Datum :=
     context := "Bill is married to Sue; both are students and live with each other, and no other students live with their spouses. John is well informed about these facts, except that he falsely believes Sue not to be a student."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -160,7 +160,7 @@ def fn8ii : Datum :=
     context := "Of exactly two elementary particles only one had been discovered by 1978; Feynman's beliefs in 1978 are compatible with the actual world and with one where the discovered particle is the only elementary particle and the only one discovered."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 

@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("concord", "determiner adjective"), ("index", "verb pronoun")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "neuter singular"), ("agreement", "index")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "feminine singular"), ("agreement", "pragmatic")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("agreement", "concord")] }
 
@@ -86,7 +86,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("target", "participle")] }
 
@@ -101,7 +101,7 @@ def ex_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "sudija"), ("sex", "male"), ("gender", "masculine")] }
 
@@ -116,7 +116,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "sudija"), ("sex", "female"), ("gender", "feminine")] }
 
@@ -131,7 +131,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kit"), ("sex", "unspecified")] }
 
@@ -146,7 +146,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "kit"), ("gender", "masculine")] }
 
@@ -161,7 +161,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ova telad su pasla.", .acceptable)]
+    contrasts := [("Ova telad su pasla.", .acceptable)]
     readings := []
     paperFeatures := [("noun", "telad"), ("predicate", "nondistributive")] }
 
@@ -176,7 +176,7 @@ def ex_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ova telad ima po dva roga.", .ungrammatical), ("Ova telad ima po dva roga.", .unacceptable)]
+    contrasts := [("Ova telad ima po dva roga.", .ungrammatical), ("Ova telad ima po dva roga.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "telad"), ("predicate", "distributive")] }
 
@@ -191,7 +191,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "Steva"), ("declension", "II"), ("gender", "masculine")] }
 
@@ -206,7 +206,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mušterija"), ("sex", "unspecified")] }
 
@@ -221,7 +221,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mušterija"), ("sex", "male")] }
 
@@ -236,7 +236,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "sudije"), ("number", "plural")] }
 
@@ -251,7 +251,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "naočare"), ("type", "plurale tantum")] }
 
@@ -266,7 +266,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "braća"), ("pronoun", "neuter plural")] }
 
@@ -281,7 +281,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "braća"), ("concord", "feminine singular")] }
 
@@ -296,7 +296,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "braća"), ("concord", "feminine singular")] }
 
@@ -311,7 +311,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Sreo sam gospodu. Ona su bila jako ljubazna.", .ungrammatical), ("Sreo sam gospodu. Ona su bila jako ljubazna.", .unacceptable)]
+    contrasts := [("Sreo sam gospodu. Ona su bila jako ljubazna.", .ungrammatical), ("Sreo sam gospodu. Ona su bila jako ljubazna.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "gospoda"), ("pronoun", "masculine plural")] }
 
@@ -326,7 +326,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("concord", "feminine singular"), ("index", "neuter plural")] }
 
@@ -341,7 +341,7 @@ def ex_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("index", "neuter plural")] }
 
@@ -356,7 +356,7 @@ def ex_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "participle")] }
 
@@ -371,7 +371,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "finite verb")] }
 
@@ -386,7 +386,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ja smatram decu gladnim.", .ungrammatical), ("Ja smatram decu gladnim.", .unacceptable)]
+    contrasts := [("Ja smatram decu gladnim.", .ungrammatical), ("Ja smatram decu gladnim.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "secondary predicate")] }
 
@@ -401,7 +401,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jelena i deca su došle.", .ungrammatical), ("Jelena i deca su došle.", .unacceptable)]
+    contrasts := [("Jelena i deca su došle.", .ungrammatical), ("Jelena i deca su došle.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -416,7 +416,7 @@ def ex_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jelena i deca su gladne.", .ungrammatical), ("Jelena i deca su gladne.", .unacceptable)]
+    contrasts := [("Jelena i deca su gladne.", .ungrammatical), ("Jelena i deca su gladne.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -431,7 +431,7 @@ def ex_28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ta deca i ta čudovišta su se lepo igrali.", .marginal), ("Ta deca i ta čudovišta su se lepo igrali.", .marginal)]
+    contrasts := [("Ta deca i ta čudovišta su se lepo igrali.", .marginal), ("Ta deca i ta čudovišta su se lepo igrali.", .marginal)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -446,7 +446,7 @@ def ex_29 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("deca koja je tada bila", .ungrammatical), ("deca koja je tada bila", .unacceptable)]
+    contrasts := [("deca koja je tada bila", .ungrammatical), ("deca koja je tada bila", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "nominative")] }
 
@@ -461,7 +461,7 @@ def ex_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "accusative")] }
 
@@ -476,7 +476,7 @@ def ex_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("deca kojih se svi plaše", .acceptable), ("deca kojih se svi plaše", .acceptable)]
+    contrasts := [("deca kojih se svi plaše", .acceptable), ("deca kojih se svi plaše", .acceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "genitive")] }
 
@@ -491,7 +491,7 @@ def ex_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("moja deca, što je nije briga nizašta", .ungrammatical), ("moja deca, što je nije briga nizašta", .unacceptable)]
+    contrasts := [("moja deca, što je nije briga nizašta", .ungrammatical), ("moja deca, što je nije briga nizašta", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što")] }
 
@@ -506,7 +506,7 @@ def ex_33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("moja deca, što je se svi plaše", .ungrammatical)]
+    contrasts := [("moja deca, što je se svi plaše", .ungrammatical)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što")] }
 
@@ -521,7 +521,7 @@ def ex_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "Majestad"), ("concord", "feminine"), ("index", "masculine")] }
 
@@ -536,7 +536,7 @@ def ex_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što"), ("resumptive", "singular")] }
 

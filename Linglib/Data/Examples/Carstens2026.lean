@@ -26,7 +26,7 @@ def ex6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "ummi"), ("conjunct2", "umongameli"), ("agreement", "2")] }
 
@@ -41,7 +41,7 @@ def ex6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2")] }
 
@@ -56,7 +56,7 @@ def ex7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isazi"), ("agreement", "8")] }
 
@@ -71,7 +71,7 @@ def ex8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "iqanda"), ("conjunct2", "icepe"), ("agreement", "8"), ("rejected", "6")] }
 
@@ -86,7 +86,7 @@ def ex9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "intombi"), ("agreement", "2")] }
 
@@ -101,7 +101,7 @@ def ex9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "ubhaka"), ("conjunct2", "incwadi"), ("agreement", "8")] }
 
@@ -116,7 +116,7 @@ def ex37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umgewu"), ("conjunct2", "umlwelwe"), ("agreement", "2"), ("rejected", "4"), ("matching", "0"), ("default", "15"), ("judgments", "15")] }
 
@@ -131,7 +131,7 @@ def ex38a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umnqwazi"), ("conjunct2", "umpu"), ("agreement", "8"), ("rejected", "4"), ("matching", "1"), ("default", "33"), ("judgments", "45")] }
 
@@ -146,7 +146,7 @@ def ex38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umhlonyane"), ("conjunct2", "umnquma"), ("agreement", "8"), ("rejected", "4")] }
 
@@ -161,7 +161,7 @@ def ex38c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umkhonto"), ("conjunct2", "umbhobho"), ("agreement", "8"), ("rejected", "4")] }
 
@@ -176,7 +176,7 @@ def ex40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "igqwetha"), ("conjunct2", "isela"), ("agreement", "2"), ("rejected", "6"), ("matching", "0"), ("default", "19"), ("judgments", "30")] }
 
@@ -191,7 +191,7 @@ def ex40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "igorha"), ("conjunct2", "ikhoboka"), ("agreement", "2"), ("rejected", "6")] }
 
@@ -206,7 +206,7 @@ def ex41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "ilitye"), ("conjunct2", "iqanda"), ("agreement", "8"), ("rejected", "6"), ("matching", "0"), ("default", "22"), ("judgments", "30")] }
 
@@ -221,7 +221,7 @@ def ex41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "icepe"), ("conjunct2", "icici"), ("agreement", "8"), ("rejected", "6")] }
 
@@ -236,7 +236,7 @@ def ex44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "umfazi"), ("agreement", "2"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
@@ -251,7 +251,7 @@ def ex45a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2"), ("matching", "22"), ("default", "7"), ("judgments", "30")] }
 
@@ -266,7 +266,7 @@ def ex45b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "uloliwe"), ("conjunct2", "umatshini"), ("agreement", "2")] }
 
@@ -281,7 +281,7 @@ def ex46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isibane"), ("conjunct2", "isitya"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
@@ -296,7 +296,7 @@ def ex46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isiXhosa"), ("conjunct2", "isiZulu"), ("agreement", "8")] }
 
@@ -311,7 +311,7 @@ def ex47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isangoma"), ("agreement", "8"), ("agreement", "2"), ("matching", "18"), ("default", "9"), ("judgments", "30")] }
 
@@ -326,7 +326,7 @@ def ex47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "8"), ("agreement", "2")] }
 
@@ -341,7 +341,7 @@ def ex48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "imbongi"), ("agreement", "10"), ("agreement", "2"), ("matching", "15"), ("default", "12"), ("judgments", "30")] }
 
@@ -356,7 +356,7 @@ def ex48b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "ingcaphephe"), ("conjunct2", "ingcali"), ("agreement", "10"), ("agreement", "2")] }
 
@@ -371,7 +371,7 @@ def ex49a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "incwadi"), ("conjunct2", "ipeni"), ("agreement", "10"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
@@ -386,7 +386,7 @@ def ex49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "indlovu"), ("conjunct2", "ingwe"), ("agreement", "10")] }
 
@@ -401,7 +401,7 @@ def ex55a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umvundla"), ("conjunct2", "umqhagi"), ("agreement", "10"), ("rejected", "4")] }
 
@@ -416,7 +416,7 @@ def ex55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isikhova"), ("conjunct2", "ihobe"), ("agreement", "10")] }
 
@@ -431,7 +431,7 @@ def ex81a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "8")] }
 
@@ -446,7 +446,7 @@ def ex81b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "2")] }
 
@@ -461,7 +461,7 @@ def ex83 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "unonkala"), ("conjunct2", "ukrebe"), ("agreement", "2"), ("agreement", "10")] }
 
@@ -476,7 +476,7 @@ def ex85a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umgulukudu"), ("conjunct2", "ipolisa"), ("agreement", "2")] }
 
@@ -491,7 +491,7 @@ def ex85b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umnqathe"), ("conjunct2", "iqanda"), ("agreement", "8")] }
 
@@ -506,7 +506,7 @@ def ex89 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "uloliwe"), ("agreement", "2")] }
 
@@ -521,7 +521,7 @@ def ex91 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "uloliwe"), ("rejected", "8"), ("rejected", "2")] }
 
@@ -536,7 +536,7 @@ def ex111 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "indlovu"), ("rejected", "2"), ("rejected", "10")] }
 
@@ -551,7 +551,7 @@ def ex58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "murume"), ("conjunct2", "mukadzi"), ("agreement", "2")] }
 
@@ -566,7 +566,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "munwe"), ("conjunct2", "muromo"), ("agreement", "8"), ("rejected", "4")] }
 
@@ -581,7 +581,7 @@ def ex60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "dombo"), ("conjunct2", "zai"), ("agreement", "8"), ("rejected", "6")] }
 
@@ -596,7 +596,7 @@ def ex61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "benzi"), ("conjunct2", "dinga"), ("agreement", "2"), ("rejected", "6")] }
 
@@ -611,7 +611,7 @@ def ex62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "chingwa"), ("conjunct2", "chibage"), ("agreement", "8")] }
 
@@ -626,7 +626,7 @@ def ex63 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "chidhakwa"), ("conjunct2", "chikomana"), ("agreement", "2"), ("agreement", "8")] }
 
@@ -641,7 +641,7 @@ def ex64b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "nherera"), ("conjunct2", "nyanzvi"), ("agreement", "2"), ("rejected", "10")] }
 
@@ -656,7 +656,7 @@ def ex64c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "imbwa"), ("conjunct2", "mhou"), ("agreement", "8"), ("rejected", "10")] }
 
@@ -671,7 +671,7 @@ def ex64d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "mhuno"), ("conjunct2", "nzeve"), ("agreement", "8"), ("rejected", "10")] }
 
@@ -686,7 +686,7 @@ def ex64e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "mbiya"), ("conjunct2", "sando"), ("agreement", "8"), ("rejected", "10")] }
 
@@ -701,7 +701,7 @@ def ex64f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "nyota"), ("conjunct2", "nzara"), ("agreement", "8"), ("rejected", "10")] }
 
@@ -716,7 +716,7 @@ def ex65a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "rukova"), ("conjunct2", "rukova"), ("agreement", "8"), ("rejected", "10")] }
 
@@ -731,7 +731,7 @@ def ex66a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "uta"), ("conjunct2", "utanho"), ("agreement", "8"), ("rejected", "6")] }
 
@@ -746,7 +746,7 @@ def ex68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "kasikana"), ("conjunct2", "kakomana"), ("agreement", "2"), ("rejected", "13")] }
 
@@ -761,7 +761,7 @@ def ex68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunct1", "kamba"), ("conjunct2", "kamotokari"), ("agreement", "8"), ("rejected", "13")] }
 

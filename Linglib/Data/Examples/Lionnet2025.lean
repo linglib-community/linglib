@@ -26,7 +26,7 @@ def ex11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("underlying", "ꜜɳi ꜜmwa ꜜɳii ꜜme"), ("surface", "(ꜜ)ɳi ꜜmwa ꜜɳii ꜜme"), ("levels", "4 3 2 1")] }
 
@@ -41,7 +41,7 @@ def ex13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ko te ꜜbeɽu-ɽe"), ("surface", "ko te ꜜbeɽu-ɽe"), ("levels", "4 4 3 2.5 2.5")] }
 
@@ -56,7 +56,7 @@ def ex13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ko te ꜜbeɽu-ɽe"), ("surface", "ko ꜛte ꜜbeɽu-ɽe"), ("levels", "4 5 2.5 2 2")] }
 
@@ -71,7 +71,7 @@ def ex19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("underlying", "ꜜtaa dɪɪ bee"), ("surface", "(ꜜ)taa dɪɪ bee"), ("levels", "4 4 4")] }
 
@@ -86,7 +86,7 @@ def ex20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("underlying", "ꜜtaa bee pwi + ꜛ%"), ("surface", "(ꜜ)taa bee ꜛ%pwi"), ("levels", "4 4 5")] }
 
@@ -101,7 +101,7 @@ def ex30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "ko te tɪɪ-ɽe kuɽe"), ("surface", "ko te tɪɪ-ɽe kuɽe"), ("levels", "4 4 4 4 4")] }
 
@@ -116,7 +116,7 @@ def ex32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "goo ꜜmie"), ("surface", "ꜛgoo ꜜmie"), ("levels", "5 3")] }
 
@@ -131,7 +131,7 @@ def ex33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "ꜜgoo ꜜmie"), ("surface", "(ꜜ)goo ꜜmie"), ("levels", "4 3")] }
 
@@ -146,7 +146,7 @@ def ex53a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "koꜜo kwɛ-ɽe"), ("surface", "ꜛkoo ꜜkwɛ-ɽe"), ("levels", "5 4")] }
 
@@ -161,7 +161,7 @@ def ex53b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "koꜜo ꜜkwe-ɽe"), ("surface", "ꜛkoo ꜜꜜkwe-ɽe"), ("levels", "5 3")] }
 
@@ -174,7 +174,7 @@ def ex56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ʈa-uɽu"), ("surface", "ʈa-uɽu")] }
 
@@ -187,7 +187,7 @@ def ex56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ʈa-ꜜtie"), ("surface", "ꜜʈa-ꜜtie")] }
 
@@ -202,7 +202,7 @@ def ex57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ko te ʈa-ꜜtie-ɽe"), ("surface", "ko ꜛte ꜜʈa-ꜜtie-ɽe"), ("levels", "4 4.5 4 3 3 3")] }
 
@@ -217,7 +217,7 @@ def ex18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ꜜɳḛ ꜜmwa̰ ꜜvḛ"), ("surface", "(ꜜ)ɳḛ ꜜmwa̰ꜛa̰ ꜜvḛ")] }
 
@@ -232,7 +232,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "dɛɳu a ɳa + ꜜ%"), ("surface", "dɛɳu ꜛa ꜜ%ɳa"), ("levels", "4 4 4.5 3")] }
 
@@ -247,7 +247,7 @@ def ex24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "jaa ɲĩ + ꜜ%"), ("surface", "ꜛɟaa ꜜ%ɲĩ"), ("levels", "5 4")] }
 
@@ -262,7 +262,7 @@ def ex25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "jaa ꜜɲĩ + ꜜ%"), ("surface", "ꜛɟaa ꜜꜜ%ɲĩ"), ("levels", "5 3.5")] }
 
@@ -277,7 +277,7 @@ def ex26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "dɛɳʊ a mḭḭ + ꜜ%"), ("surface", "dɛɳʊ a mḭḭ"), ("levels", "4 4 4 4")] }
 
@@ -292,7 +292,7 @@ def ex28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "ꜜtẽẽ-ꜜẽ nõ bɛꜜtĩĩ ku + ꜜ%"), ("surface", "(ꜜ)tẽẽ-ꜜẽ nõ ꜛbɛꜜtĩĩ ku"), ("levels", "5 4 4 5 3 3")] }
 
@@ -307,7 +307,7 @@ def ex38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6"), ("underlying", "ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%"), ("surface", "(ꜜ)cĩĩꜛbu ꜜmwã ꜜku ꜛmwoꜜ%ɽo"), ("levels", "4 5 4 3 4 3")] }
 
@@ -322,7 +322,7 @@ def ex52 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "yaꜜa ꜜmḛ geꜜe ꜜmḛ ɲaꜜi"), ("surface", "ꜛyaa ꜜꜜmḛ ꜛgee ꜜꜜmḛ ꜛɲaꜜi"), ("levels", "5 3 5 3 4 3")] }
 
@@ -337,7 +337,7 @@ def ex62 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("underlying", "gu ꜜcapɛ ꜜpaɳa̰a̰ ꜜko̰ ɲʊ ꜜwii to"), ("surface", "ꜛgu ꜜcaꜛpɛ ꜜpaꜛɳa̰a̰ ꜜko̰ ꜛɲʊ ꜜwii to"), ("levels", "5 4 4.5 3 3.5 2 2.5 1.5 1.5")] }
 

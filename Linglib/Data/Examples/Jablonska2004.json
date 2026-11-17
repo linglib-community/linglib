@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -47,7 +47,7 @@
     "translation": "Marek got greyer in two years.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -67,7 +67,7 @@
     "translation": "Marek got greyer in a year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -86,7 +86,7 @@
     "translation": "Marek walked for two hours.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -106,7 +106,7 @@
     "translation": "Marek walked for an hour.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -125,7 +125,7 @@
     "translation": "kick somebody once in a second",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -145,7 +145,7 @@
     "translation": "rust in half a year",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -165,7 +165,7 @@
     "translation": "trust in half a year",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -185,7 +185,7 @@
     "translation": "dig in half a year",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -205,7 +205,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -224,7 +224,7 @@
     "translation": "These men get effeminated simultaneously.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -245,7 +245,7 @@
     "translation": "Suddenly everyone got sad.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -265,7 +265,7 @@
     "translation": "I read all the books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -286,7 +286,7 @@
     "translation": "I read all the books.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -307,7 +307,7 @@
     "translation": "Maria has hidden (all) the toys distributively / for a while.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -327,7 +327,7 @@
     "translation": "Maria distributively / for a while rewrote (all) the letters.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -347,7 +347,7 @@
     "translation": "The boys sang for a while.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -366,7 +366,7 @@
     "translation": "People entered distributively (for a while and then stopped).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -385,7 +385,7 @@
     "translation": "Marek discussed his dissertation at every conference this year.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -404,7 +404,7 @@
     "translation": "begin rewriting the letters distributively / for a while",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3"],
@@ -423,7 +423,7 @@
     "translation": "you will copy the letters distributively / for a while",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "actual present", "judgment": "unacceptable"},
       {"name": "future", "judgment": "acceptable"}
@@ -445,7 +445,7 @@
     "translation": "The windows have been closed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3"],
@@ -464,7 +464,7 @@
     "translation": "Marek began to wave once.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -483,7 +483,7 @@
     "translation": "You will wave once soon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "actual present", "judgment": "unacceptable"},
       {"name": "future", "judgment": "acceptable"}
@@ -505,7 +505,7 @@
     "translation": "Someone immediately ran away to bring a doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.4"],
@@ -524,7 +524,7 @@
     "translation": "smoke at low intensity",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -543,7 +543,7 @@
     "translation": "Maria was in the process of blowing at the soup for a short time when Jan entered.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -562,7 +562,7 @@
     "translation": "Maria had a habit of gambling at the races when Jan came.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -581,7 +581,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -600,7 +600,7 @@
     "translation": "Mary will reach the bank by swimming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -619,7 +619,7 @@
     "translation": "Maria always reaches the bank by swimming/is reaching the bank by swimming just now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "actual present", "judgment": "acceptable"}
     ],
@@ -640,7 +640,7 @@
     "translation": "When we finally finished comparing all the works, we could proceed to giving marks.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -660,7 +660,7 @@
     "translation": "Have all the participants confirmed their (respective) participation?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],

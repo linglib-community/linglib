@@ -24,7 +24,7 @@ def vFI2005_1_harlem : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "harlemBase")] }
 
@@ -37,7 +37,7 @@ def vFI2005_2_sugarWaiter : Datum :=
     glossedTokens := []
     context := "Waiter has the only access to sugar."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "anankastic")] }
 
@@ -50,7 +50,7 @@ def vFI2005_3_sugarDiabetes : Datum :=
     glossedTokens := []
     context := "Excessive desire for sugar may indicate diabetes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "non-anankastic")] }
 
@@ -63,7 +63,7 @@ def vFI2005_4_harlemPurpose : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "harlemBase"), ("clauseType", "purpose")] }
 
@@ -76,7 +76,7 @@ def vFI2005_11_hoboken : Datum :=
     glossedTokens := []
     context := "You actually want to go to Hoboken; I do not know that. Best way to Hoboken is the PATH train; best way to Harlem is the A train."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "hoboken")] }
 
@@ -89,7 +89,7 @@ def vFI2005_13_hobokenSaebo : Datum :=
     glossedTokens := []
     context := "In the actual world you want to go to Hoboken; I do not know that and am uncertain whether you want to go to Hoboken or to Harlem. The best way to Hoboken is the PATH train, the best way to Harlem is the A train; there is not enough time to go to both places."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")] }
 
@@ -102,7 +102,7 @@ def vFI2005_22_mayorPub : Datum :=
     glossedTokens := []
     context := "You want to become mayor. You also want to not go to the pub regularly. You will become mayor only if you go to the pub regularly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")] }
 
@@ -115,7 +115,7 @@ def vFI2005_p12_vanNistelrooy : Datum :=
     glossedTokens := []
     context := "Either A train or C train goes to Harlem. You are an incorrigible fan of Ruud van Nistelrooy and most want to meet him. Van Nistelrooy regularly rides the A train."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "correlatedIrrelevant"), ("holds", "no")] }
 
@@ -128,7 +128,7 @@ def vFI2005_36_pedroMartinez : Datum :=
     glossedTokens := []
     context := "Both the A train and the C train go to Harlem. The C train will have Pedro Martinez on it. You want to kiss Pedro Martinez."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "nonCausalCoincidence")] }
 
@@ -141,7 +141,7 @@ def vFI2005_34c_harlemBreathe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "have-to")] }
 
@@ -154,7 +154,7 @@ def vFI2005_35_harlemBreatheOught : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "ought-to"), ("felicity", "infelicitous")] }
 
@@ -167,7 +167,7 @@ def vFI2005_23_slomanOughtNot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")] }
 
@@ -180,7 +180,7 @@ def vFI2005_p13_londonByNoon : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("If you want to get to London by noon then you have to go by train.", .acceptable)]
+    contrasts := [("If you want to get to London by noon then you have to go by train.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")] }
 
@@ -193,7 +193,7 @@ def vFI2005_29_vladivostokHave : Datum :=
     glossedTokens := []
     context := "Two trains cross Siberia to Vladivostok: Russian and Chinese. The Chinese train is significantly more comfortable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "have-to"), ("speakerVariation", "Klein-vs-Percus")] }
 
@@ -206,7 +206,7 @@ def vFI2005_30_vladivostokOught : Datum :=
     glossedTokens := []
     context := "Same Vladivostok scenario."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "ought-to")] }
 
@@ -219,7 +219,7 @@ def vFI2005_28_burdicks : Datum :=
     glossedTokens := []
     context := "A announces an itinerary; no to-clause or if-clause overtly supplies a goal."
     judgment := .acceptable
-    alternatives := [("You ought to have some hot chocolate at Burdick's.", .acceptable)]
+    contrasts := [("You ought to have some hot chocolate at Burdick's.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "contextualDesignation")] }
 
@@ -232,7 +232,7 @@ def vFI2005_20_weinerJoe : Datum :=
     glossedTokens := []
     context := "Joe has been considering buying a used car in Harlem. If he hasn't bought it yet, the A train is his only way to Harlem; if he has bought it, he can drive or take the A train. The only reason Joe would want Harlem is to buy the car (so if he wants Harlem, he hasn't bought it)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .marginal), ("anankastic", .acceptable)]
     paperFeatures := [("puzzle", "weinerJoe")] }
 

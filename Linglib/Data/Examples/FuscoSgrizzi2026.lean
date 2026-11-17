@@ -26,7 +26,7 @@ def ex4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "belief"), ("grammatical", "yes")] }
 
@@ -41,7 +41,7 @@ def ex4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "intention"), ("grammatical", "yes")] }
 
@@ -56,7 +56,7 @@ def ex4a_control : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "subjectControl"), ("grammatical", "yes")] }
 
@@ -71,7 +71,7 @@ def ex11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "truthAssessable"), ("grammatical", "yes")] }
 
@@ -86,7 +86,7 @@ def ex11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "truthAssessable"), ("grammatical", "no")] }
 
@@ -101,7 +101,7 @@ def ex12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "passive"), ("grammatical", "yes")] }
 
@@ -116,7 +116,7 @@ def ex13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "aspectual"), ("grammatical", "yes")] }
 
@@ -131,7 +131,7 @@ def ex14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "cliticClimbing"), ("grammatical", "yes")] }
 
@@ -146,7 +146,7 @@ def ex15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "cliticClimbing"), ("grammatical", "no")] }
 
@@ -161,7 +161,7 @@ def ex16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "negation"), ("grammatical", "yes")] }
 
@@ -176,7 +176,7 @@ def ex17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "independentTime"), ("grammatical", "yes")] }
 
@@ -191,7 +191,7 @@ def ex18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "independentTime"), ("grammatical", "no")] }
 

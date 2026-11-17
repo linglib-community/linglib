@@ -12,7 +12,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -35,7 +35,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -59,7 +59,7 @@
     "translation": "Father is reluctant to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sumɔ"],
@@ -82,7 +82,7 @@
     "translation": "Father is reluctant to see you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sumɔ"],
@@ -107,7 +107,7 @@
     "translation": "I hope to go to school one day",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kã-nɔ"],
@@ -131,7 +131,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi-i tao (ni) na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -158,7 +158,7 @@
     "translation": "I hope to go to school one day",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kã-nɔ"],
@@ -182,7 +182,7 @@
     "translation": "I tried to close the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "mia-mi-hiɛ"],
@@ -206,7 +206,7 @@
     "translation": "You forgot to pick (up) the shoe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -232,7 +232,7 @@
     "translation": "You forgot to close the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -258,7 +258,7 @@
     "translation": "The children managed to buy a home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "nyɛ"],
@@ -283,7 +283,7 @@
     "translation": "Father is reluctant to see you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "sumɔ"],
@@ -306,7 +306,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -330,7 +330,7 @@
     "translation": "Ameele remembered to buy a book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "E kai ni e-he wolo", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -357,7 +357,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -381,7 +381,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -405,7 +405,7 @@
     "translation": "I remembered to buy a book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -429,7 +429,7 @@
     "translation": "I helped Ama to go to school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "wa"],
@@ -453,7 +453,7 @@
     "translation": "Jojo's children forgot to wash the utensils.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -481,7 +481,7 @@
     "translation": "Jojo's children forgot to wash the utensils.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -508,7 +508,7 @@
     "translation": "The children's father remembered to buy the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -536,7 +536,7 @@
     "translation": "The children's father remembered to buy the book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -563,7 +563,7 @@
     "translation": "Jojo said that Debo forgot to buy the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -589,7 +589,7 @@
     "translation": "Aku said she wants to go to school one day",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -615,7 +615,7 @@
     "translation": "I said that Debo forgot to buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -641,7 +641,7 @@
     "translation": "I said that Debo forgot to buy the book",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
@@ -666,7 +666,7 @@
     "translation": "Mary agreed to go to the party and Peter also (agreed to go to the party).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sloppy", "judgment": "acceptable"},
       {"name": "strict", "judgment": "unacceptable"}
@@ -694,7 +694,7 @@
     "translation": "Ajele expects to win the prize.",
     "context": "Imagine a scenario where Ajele Thompson has been nominated to win a prize but has no knowledge of this. Ajele comes to a notice that reads “Ayele Tomson is nominated for the Anisha prize”. Ajele anticipates that Ayele will win the prize, not knowing that she is the one nominated for the prize, but her name was misspelled. Ajele comes to believe that Ayele will win the prize.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kpã-gbɛ"],
@@ -719,7 +719,7 @@
     "translation": "I helped Ama to go to school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "wa"],
@@ -743,7 +743,7 @@
     "translation": "I urged/encouraged Kofi to clean the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kenya"],
@@ -767,7 +767,7 @@
     "translation": "I forced Kofi to go to school",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "dai"],
@@ -791,7 +791,7 @@
     "translation": "I persuaded Kojo to stop drinking (alcohol).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "laka"],
@@ -815,7 +815,7 @@
     "translation": "I coaxed Aku into sharing her sweets/I coaxed Aku to share her sweets",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "laka"],
@@ -839,7 +839,7 @@
     "translation": "I asked Ayele to tell me a story.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "bi"],
@@ -863,7 +863,7 @@
     "translation": "Ameele remembered to buy a book",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -886,7 +886,7 @@
     "translation": "I left home early",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["person", "1"],
@@ -908,7 +908,7 @@
     "translation": "I will be expecting you on Sunday",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["person", "1"],
@@ -931,7 +931,7 @@
     "translation": "I went to school early",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Wɔ tee skul mra", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -955,7 +955,7 @@
     "translation": "You went to school early",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Nyɛ tee skul mra", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -979,7 +979,7 @@
     "translation": "They went to school early",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Amɛ tee skul mra", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1003,7 +1003,7 @@
     "translation": "Peace be unto you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "subjunctive"],
@@ -1026,7 +1026,7 @@
     "translation": "He ought to/needs to /should leave",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "subjunctive"],
@@ -1049,7 +1049,7 @@
     "translation": "They should ask her",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "subjunctive"],
@@ -1071,7 +1071,7 @@
     "translation": "I want to see you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -1098,7 +1098,7 @@
     "translation": "I want to see you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -1126,7 +1126,7 @@
     "translation": "I remember that I bought the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi kai ake má he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1152,7 +1152,7 @@
     "translation": "I managed to wash the dishes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi nyɛ má sha tsensii lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1178,7 +1178,7 @@
     "translation": "I agreed to go to school tomorrow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi kpleno ni mi ya skul wɔ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1205,7 +1205,7 @@
     "translation": "I planned to leave early",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mi kpaŋ ni mi shi mra", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1232,7 +1232,7 @@
     "translation": "Aku will like to leave tomorrow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "controlled", "judgment": "acceptable"},
       {"name": "free", "judgment": "unacceptable"}
@@ -1260,7 +1260,7 @@
     "translation": "Go home!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "imperative"],
@@ -1283,7 +1283,7 @@
     "translation": "Let's go!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "imperative"],
@@ -1306,7 +1306,7 @@
     "translation": "I will go home early today",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "future"],
@@ -1328,7 +1328,7 @@
     "translation": "She will visit us tomorrow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "future"],
@@ -1351,7 +1351,7 @@
     "translation": "She will visit us tomorrow",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "future"],
@@ -1375,7 +1375,7 @@
     "translation": "If it rains, the party will be cancelled.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "conditional"],
@@ -1399,7 +1399,7 @@
     "translation": "If I win, I will dance",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kɛ mi ye lɛ mi-bàá jo", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1425,7 +1425,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -1454,7 +1454,7 @@
     "translation": "I want to see you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -1479,7 +1479,7 @@
     "translation": "You forgot to pick (up) the shoe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "O hiɛ-kpa-nɔ ni ó baa-kɔ aspaatere lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1510,7 +1510,7 @@
     "translation": "She forgot to close the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "È hiɛ-kpa-nɔ ni é baa-ŋa shinaa lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1541,7 +1541,7 @@
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "le"],
@@ -1564,7 +1564,7 @@
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "le"],
@@ -1587,7 +1587,7 @@
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "le"],
@@ -1610,7 +1610,7 @@
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kplɛnɔ"],
@@ -1635,7 +1635,7 @@
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kplɛnɔ"],
@@ -1660,7 +1660,7 @@
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kplɛnɔ"],
@@ -1685,7 +1685,7 @@
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kpaŋ"],
@@ -1711,7 +1711,7 @@
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kpaŋ"],
@@ -1735,7 +1735,7 @@
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kpaŋ"],
@@ -1759,7 +1759,7 @@
     "translation": "Aku remembered that it was a book that she bought",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku kai ni wolo ni e he", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1784,7 +1784,7 @@
     "translation": "Aku doesn't know whether you or he bought the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku lé ni bo aloo lɛ ni he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1809,7 +1809,7 @@
     "translation": "Aku agreed yesterday to buy a book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku kplɛnɔ nyɛ ni e-baa-he wolo", "judgment": "ungrammatical"},
       {"form": "Aku kplɛnɔ nyɛ ni e-he wolo", "judgment": "ungrammatical"}
     ],
@@ -1839,7 +1839,7 @@
     "translation": "Aku thought s/he bought the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku dwɛŋ ni è hè wolo", "judgment": "acceptable"}
     ],
     "readings": [
@@ -1869,7 +1869,7 @@
     "translation": "Aku thought they will buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku dwɛŋ ni amɛ̀ baa-hè wolo", "judgment": "acceptable"}
     ],
     "readings": [
@@ -1899,7 +1899,7 @@
     "translation": "Aku thought to buy a book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku dwɛŋ akɛ é hè wolo", "judgment": "ungrammatical"},
       {"form": "Aku dwɛŋ ni amɛ̀ hè wolo", "judgment": "ungrammatical"}
     ],
@@ -1931,7 +1931,7 @@
     "translation": "Nobody came here",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "npi"],
@@ -1953,7 +1953,7 @@
     "translation": "Jojo said Okoe didn't see anybody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kɛɛ"],
@@ -1977,7 +1977,7 @@
     "translation": "Aku remembered that she didn't buy anything",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -2001,7 +2001,7 @@
     "translation": "Jojo didn't say that Okoe saw anybody",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kɛɛ"],
@@ -2025,7 +2025,7 @@
     "translation": "Aku didn't remember that she bought anything",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -2049,7 +2049,7 @@
     "translation": "Aku didn't remember to buy anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -2076,7 +2076,7 @@
     "translation": "John didn't tell Mary to buy anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kɛɛ"],
@@ -2102,7 +2102,7 @@
     "translation": "Aku wanted to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku tao ni è na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2131,7 +2131,7 @@
     "translation": "Aku wants to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku mii-tao ni é mii-na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2160,7 +2160,7 @@
     "translation": "Aku will want to see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku baa-tao ni é baa-na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2188,7 +2188,7 @@
     "translation": "Aku does not eat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "negation"],
@@ -2210,7 +2210,7 @@
     "translation": "Aku will not buy food",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "negation"],
@@ -2232,7 +2232,7 @@
     "translation": "Aku did not buy food",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "negation"],
@@ -2255,7 +2255,7 @@
     "translation": "Jojo agreed not to buy the book / to not buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jojo kplɛnɔ ni é ka he-ka wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2285,7 +2285,7 @@
     "translation": "Aku wanted to not see you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Aku tao ni é ka na-ka bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2314,7 +2314,7 @@
     "translation": "Asibi bought the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Asibi e he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2336,7 +2336,7 @@
     "translation": "She bought the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "E e he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -2358,7 +2358,7 @@
     "translation": "Jojo did not buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "negation"],

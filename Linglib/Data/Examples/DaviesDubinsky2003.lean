@@ -24,7 +24,7 @@ def ex52a_write : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "write"), ("creation", "yes"), ("object", "definite")] }
 
@@ -37,7 +37,7 @@ def ex52a_read : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "read"), ("creation", "no"), ("object", "definite")] }
 
@@ -50,7 +50,7 @@ def ex52b_write : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "write"), ("creation", "yes"), ("object", "indefinite")] }
 
@@ -63,7 +63,7 @@ def ex52b_read : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "read"), ("creation", "no"), ("object", "indefinite")] }
 
@@ -76,7 +76,7 @@ def ex53a_tell : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "tell"), ("creation", "yes"), ("object", "definite")] }
 
@@ -89,7 +89,7 @@ def ex53a_hear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "hear"), ("creation", "no"), ("object", "definite")] }
 
@@ -102,7 +102,7 @@ def ex53b_tell : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "tell"), ("creation", "yes"), ("object", "indefinite")] }
 
@@ -115,7 +115,7 @@ def ex53b_hear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "hear"), ("creation", "no"), ("object", "indefinite")] }
 
@@ -128,7 +128,7 @@ def ex54a_paint : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "paint"), ("creation", "yes"), ("object", "definite")] }
 
@@ -141,7 +141,7 @@ def ex54a_see : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "see"), ("creation", "no"), ("object", "definite")] }
 
@@ -154,7 +154,7 @@ def ex54b_paint : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "paint"), ("creation", "yes"), ("object", "indefinite")] }
 
@@ -167,7 +167,7 @@ def ex54b_see : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("verb", "see"), ("creation", "no"), ("object", "indefinite")] }
 

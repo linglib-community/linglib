@@ -26,7 +26,7 @@ def cleft_24_mi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
@@ -41,7 +41,7 @@ def cleft_24_ye : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
@@ -56,7 +56,7 @@ def cleft_25_we : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "we")] }
 
@@ -71,7 +71,7 @@ def cleft_25_ye : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
@@ -86,7 +86,7 @@ def cleft_29a_si : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "si")] }
 
@@ -101,7 +101,7 @@ def cleft_29a_o : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "o")] }
 
@@ -116,7 +116,7 @@ def cleft_29b_nyi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "nyi")] }
 
@@ -131,7 +131,7 @@ def cleft_29b_o : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "o")] }
 
@@ -146,7 +146,7 @@ def island_31_we : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "we")] }
 
@@ -161,7 +161,7 @@ def island_31_ye : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
@@ -176,7 +176,7 @@ def island_32_mi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
@@ -191,7 +191,7 @@ def island_32_ye : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
@@ -206,7 +206,7 @@ def island_33_mi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
@@ -221,7 +221,7 @@ def island_33_ye : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
@@ -236,7 +236,7 @@ def pg_36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye")] }
 
@@ -251,7 +251,7 @@ def pg_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye")] }
 
@@ -264,7 +264,7 @@ def table4_sp1_ye_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "1")] }
 
@@ -277,7 +277,7 @@ def table4_sp1_mi_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "1")] }
 
@@ -290,7 +290,7 @@ def table4_sp1_mi_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "1")] }
 
@@ -303,7 +303,7 @@ def table4_sp1_ye_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "1")] }
 
@@ -316,7 +316,7 @@ def table4_sp2_ye_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "2")] }
 
@@ -329,7 +329,7 @@ def table4_sp2_mi_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "2")] }
 
@@ -342,7 +342,7 @@ def table4_sp2_mi_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "2")] }
 
@@ -355,7 +355,7 @@ def table4_sp2_ye_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "2")] }
 
@@ -368,7 +368,7 @@ def table4_sp3_ye_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "3")] }
 
@@ -381,7 +381,7 @@ def table4_sp3_mi_ye : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "3")] }
 
@@ -394,7 +394,7 @@ def table4_sp3_mi_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "3")] }
 
@@ -407,7 +407,7 @@ def table4_sp3_ye_mi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "3")] }
 

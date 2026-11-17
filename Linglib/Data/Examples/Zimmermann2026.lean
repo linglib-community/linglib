@@ -26,7 +26,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "sluicing antecedent")] }
 
@@ -41,7 +41,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scope", "wide"), ("context", "Audu bought a lot of fish, but")] }
 
@@ -56,7 +56,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scope", "narrow"), ("context", "the market was closed, so")] }
 
@@ -71,7 +71,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "specificity")] }
 
@@ -86,7 +86,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scope", "wide only")] }
 
@@ -101,7 +101,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "There were three students: Mary, Sue, and Joe. All of them wrote letters, but none of them sent all of them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "ko"), ("reading", "existentially closed choice function")] }
 
@@ -116,7 +116,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("co-occurrence", "INDEF and DEF")] }
 
@@ -131,7 +131,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("bare NP", "definite or indefinite")] }
 

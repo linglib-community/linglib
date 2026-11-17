@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("goal", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "goal"), ("mismatch", "none")] }
 
@@ -41,7 +41,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("mismatch", "none")] }
 
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("adjective", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("mismatch", "piedPiping")] }
 
@@ -71,7 +71,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "predicate"), ("mismatch", "piedPiping")] }
 
@@ -86,7 +86,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("mismatch", "antiPiedPiping")] }
 
@@ -101,7 +101,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "subject"), ("mismatch", "antiPiedPiping")] }
 
@@ -116,7 +116,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to 'What happened?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "subject"), ("leftmost", "strong"), ("mismatch", "antiPiedPiping")] }
 
@@ -131,7 +131,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to 'What did that woman do?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("leftmost", "strong"), ("mismatch", "antiPiedPiping")] }
 
@@ -146,7 +146,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("leftmost", "strong")] }
 
@@ -161,7 +161,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("object", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "predicate"), ("leftmost", "weak")] }
 
@@ -176,7 +176,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("object", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("leftmost", "weak")] }
 
@@ -191,7 +191,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable), ("sentence", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "subject"), ("leftmost", "strong")] }
 
@@ -206,7 +206,7 @@ def ex_65_goal : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Kunga's a very good person. She prays at the temple every day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "goal"), ("leftmost", "weak")] }
 
@@ -221,7 +221,7 @@ def ex_65_theme : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Kunga's a very good person. She prays at the temple every day."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .marginal)]
     paperFeatures := [("process", "particle"), ("msf", "theme"), ("leftmost", "weak")] }
 
@@ -236,7 +236,7 @@ def ex_66a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At yesterday's party, not only did Hanako dance, but ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "subject"), ("leftmost", "weak")] }
 
@@ -251,7 +251,7 @@ def ex_66b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At yesterday's party, not only did Hanako dance, but ..."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .marginal)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("leftmost", "weak")] }
 
@@ -266,7 +266,7 @@ def ex_67_goal : Datum :=
     lgrConformance := some .morphemeAligned
     context := "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "goal"), ("leftmost", "weak")] }
 
@@ -281,7 +281,7 @@ def ex_67_theme : Datum :=
     lgrConformance := some .morphemeAligned
     context := "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .marginal)]
     paperFeatures := [("process", "particle"), ("msf", "theme"), ("leftmost", "weak")] }
 
@@ -296,7 +296,7 @@ def ex_68a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("theme", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "theme"), ("leftmost", "strong")] }
 
@@ -311,7 +311,7 @@ def ex_68b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("goal", .acceptable), ("predicate", .ungrammatical)]
     paperFeatures := [("process", "movement"), ("msf", "goal"), ("leftmost", "strong")] }
 
@@ -326,7 +326,7 @@ def ex_69a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Q: What does Abdul do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "goal"), ("leftmost", "weak")] }
 
@@ -341,7 +341,7 @@ def ex_69b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Q: What does Abdul do?"
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .marginal)]
     paperFeatures := [("process", "movement"), ("msf", "theme"), ("leftmost", "weak")] }
 
@@ -356,7 +356,7 @@ def ex_70a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "subject"), ("leftmost", "free")] }
 
@@ -371,7 +371,7 @@ def ex_70b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("leftmost", "free")] }
 
@@ -386,7 +386,7 @@ def ex_109a : Datum :=
     lgrConformance := some .wordAligned
     context := "Q: What's new?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .unacceptable), ("object", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("leftmost", "strong")] }
 
@@ -401,7 +401,7 @@ def ex_109b : Datum :=
     lgrConformance := some .wordAligned
     context := "Q: What's new?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("leftmost", "strong"), ("skipped", "subject")] }
 
@@ -416,7 +416,7 @@ def ex_111a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At yesterday's party, not only did Hanako dance a dance, but ..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .unacceptable)]
     paperFeatures := [("process", "particle"), ("msf", "subject"), ("leftmost", "weak"), ("skipped", "subject")] }
 
@@ -431,7 +431,7 @@ def ex_111b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At yesterday's party, not only did Hanako dance a dance, but ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "object"), ("leftmost", "weak"), ("skipped", "subject")] }
 
@@ -446,7 +446,7 @@ def ex_114a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "subject"), ("leftmost", "strong")] }
 
@@ -461,7 +461,7 @@ def ex_114b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sentence", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "object"), ("leftmost", "strong"), ("skipped", "subject")] }
 
@@ -474,7 +474,7 @@ def ex_120a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "strong")] }
 
@@ -487,7 +487,7 @@ def ex_120b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("wh", .ungrammatical)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "strong")] }
 
@@ -500,7 +500,7 @@ def ex_121a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "strong")] }
 
@@ -513,7 +513,7 @@ def ex_121b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("wh", .ungrammatical)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "strong")] }
 
@@ -526,7 +526,7 @@ def ex_123 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "strong"), ("skipped", "phrase")] }
 
@@ -541,7 +541,7 @@ def ex_124 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("phrase", .acceptable)]
     paperFeatures := [("process", "particle"), ("msf", "demonstrative"), ("leftmost", "strong"), ("skipped", "phrase")] }
 
@@ -556,7 +556,7 @@ def ex_125 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "free")] }
 
@@ -569,7 +569,7 @@ def ex_126 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh", .acceptable)]
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "free")] }
 

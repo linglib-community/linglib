@@ -12,7 +12,7 @@
     "translation": "DEP.PRF of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -40,7 +40,7 @@
     "translation": "PRF of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -68,7 +68,7 @@
     "translation": "IMPRF of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -96,7 +96,7 @@
     "translation": "DEP.PRF of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -124,7 +124,7 @@
     "translation": "PRF of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -152,7 +152,7 @@
     "translation": "IMPRF of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -180,7 +180,7 @@
     "translation": "DEP.PRF of 'arrest'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -208,7 +208,7 @@
     "translation": "PRF of 'arrest'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -236,7 +236,7 @@
     "translation": "IMPRF of 'arrest'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -264,7 +264,7 @@
     "translation": "DEP.PRF of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "sɨħab-",
         "judgment": "acceptable"
@@ -297,7 +297,7 @@
     "translation": "PRF of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -325,7 +325,7 @@
     "translation": "IMPRF of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -353,7 +353,7 @@
     "translation": "2-JUSS of 'weigh'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -381,7 +381,7 @@
     "translation": "IMP of 'weigh'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -409,7 +409,7 @@
     "translation": "2-JUSS of 'leave'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -437,7 +437,7 @@
     "translation": "IMP of 'leave'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -465,7 +465,7 @@
     "translation": "2-JUSS of 'get up'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -493,7 +493,7 @@
     "translation": "IMP of 'get up'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -521,7 +521,7 @@
     "translation": "PRF-3MSG of 'leave'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -553,7 +553,7 @@
     "translation": "PRF-3MSG of 'wash'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -585,7 +585,7 @@
     "translation": "2-JUSS of 'wash'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -613,7 +613,7 @@
     "translation": "PRF-3MSG of 'flee'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -645,7 +645,7 @@
     "translation": "2-IMPRF of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -673,7 +673,7 @@
     "translation": "2-IMPRF of 'slaughter'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -701,7 +701,7 @@
     "translation": "2-IMPRF of 'escape'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -729,7 +729,7 @@
     "translation": "IMP of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -757,7 +757,7 @@
     "translation": "IMP of 'teach'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -785,7 +785,7 @@
     "translation": "IMP of 'ask'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -813,7 +813,7 @@
     "translation": "IMP-F of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -845,7 +845,7 @@
     "translation": "IMP.M of 'bark'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -873,7 +873,7 @@
     "translation": "IMP-F of 'bark'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -905,7 +905,7 @@
     "translation": "IMP.M of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -933,7 +933,7 @@
     "translation": "IMP-F of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -965,7 +965,7 @@
     "translation": "IMP.M of 'uncover'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -993,7 +993,7 @@
     "translation": "IMP-F of 'uncover'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1025,7 +1025,7 @@
     "translation": "IMP-FPL of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1057,7 +1057,7 @@
     "translation": "2-IMP.M of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1085,7 +1085,7 @@
     "translation": "2-IMP.M of 'ask'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1113,7 +1113,7 @@
     "translation": "2-IMP.M of 'load'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1141,7 +1141,7 @@
     "translation": "2-IMP.M of 'uncover'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1169,7 +1169,7 @@
     "translation": "2-IMP.M of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1197,7 +1197,7 @@
     "translation": "GER of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1225,7 +1225,7 @@
     "translation": "GER+POSS of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1257,7 +1257,7 @@
     "translation": "GER of 'bark'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1285,7 +1285,7 @@
     "translation": "GER+POSS of 'bark'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "mɨ-nbɨħ-u",
         "judgment": "acceptable"
@@ -1322,7 +1322,7 @@
     "translation": "GER of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1350,7 +1350,7 @@
     "translation": "GER+POSS of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "mɨ-smɨʕ-ej",
         "judgment": "acceptable"
@@ -1387,7 +1387,7 @@
     "translation": "GER of 'uncover'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1415,7 +1415,7 @@
     "translation": "GER+POSS of 'uncover'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "mɨ-glɨh-om",
         "judgment": "acceptable"
@@ -1452,7 +1452,7 @@
     "translation": "GER+POSS of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "mɨsmɨʕu",
         "judgment": "acceptable"
@@ -1489,7 +1489,7 @@
     "translation": "PASS-PRF of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1517,7 +1517,7 @@
     "translation": "2-IMPRF of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1549,7 +1549,7 @@
     "translation": "PASS-PRF of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "tɨ-sɨħib",
         "judgment": "acceptable"
@@ -1586,7 +1586,7 @@
     "translation": "2-IMPRF of 'teach'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1618,7 +1618,7 @@
     "translation": "PASS-PRF of 'teach'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "tɨ-mɨhir",
         "judgment": "acceptable"
@@ -1655,7 +1655,7 @@
     "translation": "2-IMPRF of 'ask'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1687,7 +1687,7 @@
     "translation": "PASS-PRF of 'ask'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "tɨ-sɨʔil",
         "judgment": "acceptable"
@@ -1724,7 +1724,7 @@
     "translation": "DEP.PRF-3MSG of 'whip'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1756,7 +1756,7 @@
     "translation": "DEP.PRF-3MSG of 'hurt'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1788,7 +1788,7 @@
     "translation": "GER of 'hurt'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1816,7 +1816,7 @@
     "translation": "DEP.PRF-3MSG of 'bless'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1848,7 +1848,7 @@
     "translation": "GER of 'bless'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1880,7 +1880,7 @@
     "translation": "PRF-3MSG of √ʕrf",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1912,7 +1912,7 @@
     "translation": "2-JUSS of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1940,7 +1940,7 @@
     "translation": "make.listen.PRF-2MSG",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1972,7 +1972,7 @@
     "translation": "2-JUSS of 'leave'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2000,7 +2000,7 @@
     "translation": "2-JUSS of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2028,7 +2028,7 @@
     "translation": "2-JUSS-F of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2060,7 +2060,7 @@
     "translation": "IMP of √ʕrf",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2088,7 +2088,7 @@
     "translation": "DEP.PRF of √ʕrf",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2116,7 +2116,7 @@
     "translation": "IMP of 'pull'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "sɨħab",
         "judgment": "acceptable"
@@ -2149,7 +2149,7 @@
     "translation": "DEP.PRF-1SG of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "sʌmaʕɨku",
         "judgment": "acceptable"
@@ -2186,7 +2186,7 @@
     "translation": "PASS-PRF-3PL of 'hear'",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

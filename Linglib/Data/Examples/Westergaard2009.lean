@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "wh-question"), ("order", "V2")] }
 
@@ -39,7 +39,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "non-subject-initial declarative"), ("order", "V2")] }
 
@@ -52,7 +52,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "wh-question"), ("order", "V2")] }
 
@@ -65,7 +65,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "yes/no-question"), ("order", "V1")] }
 
@@ -78,7 +78,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Belfast English"), ("clause", "embedded question"), ("complementizer", "none"), ("order", "V2")] }
 
@@ -91,7 +91,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Belfast English"), ("clause", "imperative"), ("order", "V2")] }
 
@@ -106,7 +106,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Han sa at han kommer ikke.", .acceptable)]
+    contrasts := [("Han sa at han kommer ikke.", .acceptable)]
     readings := []
     paperFeatures := [("clause", "embedded declarative"), ("embedding", "bridge verb"), ("order", "non-V2 or V2")] }
 
@@ -121,7 +121,7 @@ def ex_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Han sa han kommer ikke.", .acceptable)]
+    contrasts := [("Han sa han kommer ikke.", .acceptable)]
     readings := []
     paperFeatures := [("clause", "embedded declarative"), ("embedding", "bridge verb"), ("complementizer", "none"), ("order", "non-V2 or V2")] }
 
@@ -136,7 +136,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ka slags bil du kjøpte?", .ungrammatical)]
+    contrasts := [("Ka slags bil du kjøpte?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "phrase"), ("order", "V2")] }
 
@@ -151,7 +151,7 @@ def ex_9 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Korfor ho gikk?", .ungrammatical)]
+    contrasts := [("Korfor ho gikk?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "disyllabic"), ("order", "V2")] }
 
@@ -166,7 +166,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Korsen ungan har det?", .ungrammatical)]
+    contrasts := [("Korsen ungan har det?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "disyllabic"), ("order", "V2")] }
 
@@ -181,7 +181,7 @@ def ex_11 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "yes/no-question"), ("order", "V1")] }
 
@@ -196,7 +196,7 @@ def ex_12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "exclamative"), ("order", "V2")] }
 
@@ -211,7 +211,7 @@ def ex_13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kanskje kommer kongen.", .acceptable)]
+    contrasts := [("Kanskje kommer kongen.", .acceptable)]
     readings := []
     paperFeatures := [("clause", "declarative"), ("adverb", "kanskje"), ("order", "non-V2 or V2")] }
 
@@ -226,7 +226,7 @@ def ex_14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hvem du liker best?", .ungrammatical)]
+    contrasts := [("Hvem du liker best?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("wh", "monosyllabic"), ("order", "V2")] }
 
@@ -241,7 +241,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Hvilken bil du kjøpte?", .ungrammatical)]
+    contrasts := [("Hvilken bil du kjøpte?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("wh", "phrase"), ("order", "V2")] }
 
@@ -256,7 +256,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kem du like best?", .acceptable)]
+    contrasts := [("Kem du like best?", .acceptable)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "monosyllabic"), ("order", "V2 or non-V2")] }
 
@@ -271,7 +271,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Korsen bil du kjøpte?", .ungrammatical)]
+    contrasts := [("Korsen bil du kjøpte?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "phrase"), ("order", "V2")] }
 
@@ -286,7 +286,7 @@ def ex_18 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kåin lika du best?", .acceptable)]
+    contrasts := [("Kåin lika du best?", .acceptable)]
     readings := []
     paperFeatures := [("variety", "Nordmøre"), ("wh", "monosyllabic"), ("order", "non-V2 or V2")] }
 
@@ -301,7 +301,7 @@ def ex_19 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kåles bil kjøpte du?", .acceptable)]
+    contrasts := [("Kåles bil kjøpte du?", .acceptable)]
     readings := []
     paperFeatures := [("variety", "Nordmøre"), ("wh", "phrase"), ("order", "non-V2 or V2")] }
 
@@ -317,7 +317,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("subject", "new"), ("order", "V2")] }
 
@@ -333,7 +333,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("subject", "given"), ("order", "non-V2")] }
 
@@ -349,7 +349,7 @@ def ex_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("clause", "subject question"), ("order", "non-V2")] }
 
@@ -364,7 +364,7 @@ def ex_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "subject-initial declarative"), ("adverb", "focus-sensitive")] }
 
@@ -379,7 +379,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("clause", "wh-question"), ("order", "V2")] }
 
@@ -394,7 +394,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("clause", "non-subject-initial declarative"), ("order", "V2")] }
 
@@ -409,7 +409,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kem kommer ikkje til festen?", .ungrammatical)]
+    contrasts := [("Kem kommer ikkje til festen?", .ungrammatical)]
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("clause", "subject question"), ("som", "inserted")] }
 

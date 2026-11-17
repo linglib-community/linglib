@@ -26,7 +26,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "dep"), ("matrixVerb", "oyla")] }
 
@@ -41,7 +41,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "proform"), ("clause", "converb"), ("height", "VP")] }
 
@@ -56,7 +56,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "proform"), ("clause", "converb"), ("height", "TP")] }
 
@@ -71,7 +71,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "nci"), ("clause", "converb"), ("height", "TP")] }
 
@@ -86,7 +86,7 @@ def ex_26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "nci"), ("clause", "converb"), ("height", "VP")] }
 
@@ -101,7 +101,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "dep"), ("matrixVerb", "warqira")] }
 
@@ -116,7 +116,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "dp"), ("verbForm", "finite")] }
 
@@ -131,7 +131,7 @@ def ex_39a_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "none"), ("verbForm", "finite")] }
 
@@ -146,7 +146,7 @@ def ex_39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira"), ("complement", "none"), ("verbForm", "finite")] }
 
@@ -161,7 +161,7 @@ def ex_39b_dp : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira"), ("complement", "dp"), ("verbForm", "finite")] }
 
@@ -176,7 +176,7 @@ def ex_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "participial"), ("verbForm", "finite")] }
 
@@ -191,7 +191,7 @@ def ex_40b_participial : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira"), ("complement", "participial"), ("verbForm", "finite")] }
 
@@ -206,7 +206,7 @@ def ex_41a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "dp"), ("verbForm", "converb")] }
 
@@ -221,7 +221,7 @@ def ex_41a_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "none"), ("verbForm", "converb")] }
 
@@ -236,7 +236,7 @@ def ex_41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de"), ("complement", "participial"), ("verbForm", "converb")] }
 
@@ -251,7 +251,7 @@ def ex_42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "oyla"), ("complement", "dp"), ("verbForm", "converb")] }
 
@@ -266,7 +266,7 @@ def ex_42a_bare : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "oyla"), ("complement", "none"), ("verbForm", "converb")] }
 
@@ -281,7 +281,7 @@ def ex_42b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "oyla"), ("complement", "participial"), ("verbForm", "converb")] }
 
@@ -296,7 +296,7 @@ def ex_49a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Tursun-ning ket-ken-lik-i méni hayran qal-dur-d-i.", .acceptable)]
+    contrasts := [("Tursun-ning ket-ken-lik-i méni hayran qal-dur-d-i.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "subject"), ("clause", "participial")] }
 
@@ -311,7 +311,7 @@ def ex_49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Tursun-ni ket-t-i de-p méni hayran qal-dur-d-i.", .ungrammatical)]
+    contrasts := [("Tursun-ni ket-t-i de-p méni hayran qal-dur-d-i.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subject"), ("clause", "dep")] }
 
@@ -326,7 +326,7 @@ def ex_54a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "nci"), ("clause", "dep"), ("height", "VP"), ("matrixVerb", "warqira")] }
 
@@ -341,7 +341,7 @@ def ex_54b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "nci"), ("clause", "dep"), ("height", "TP"), ("matrixVerb", "ket")] }
 
@@ -356,7 +356,7 @@ def ex_55a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "proform"), ("clause", "dep"), ("height", "VP"), ("matrixVerb", "oyla")] }
 
@@ -371,7 +371,7 @@ def ex_55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "proform"), ("clause", "dep"), ("height", "TP"), ("matrixVerb", "ket")] }
 
@@ -386,7 +386,7 @@ def ex_61a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "denial"), ("clause", "participial"), ("matrixVerb", "bil")] }
 
@@ -401,7 +401,7 @@ def ex_61b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "denial"), ("clause", "dep"), ("matrixVerb", "bil")] }
 
@@ -416,7 +416,7 @@ def ex_65a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forgot that", .acceptable)]
     paperFeatures := [("clause", "participial"), ("matrixVerb", "unut")] }
 
@@ -431,7 +431,7 @@ def ex_65b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forgot that", .unacceptable), ("forgot something, saying", .acceptable)]
     paperFeatures := [("clause", "dep"), ("matrixVerb", "unut")] }
 
@@ -446,7 +446,7 @@ def ex_84a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "ye"), ("case", "bare"), ("objectPosition", "afterAdverb")] }
 
@@ -461,7 +461,7 @@ def ex_84a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "ye"), ("case", "ACC"), ("objectPosition", "afterAdverb")] }
 
@@ -476,7 +476,7 @@ def ex_84b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "ye"), ("case", "ACC"), ("objectPosition", "beforeAdverb")] }
 
@@ -491,7 +491,7 @@ def ex_84b_bare : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "ye"), ("case", "bare"), ("objectPosition", "beforeAdverb")] }
 
@@ -506,7 +506,7 @@ def ex_88a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "bol"), ("case", "bare")] }
 
@@ -521,7 +521,7 @@ def ex_88a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "bol"), ("case", "ACC")] }
 
@@ -536,7 +536,7 @@ def ex_89a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "object"), ("verb", "qil"), ("case", "ACC")] }
 
@@ -551,7 +551,7 @@ def ex_110a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "finite"), ("case", "ACC"), ("matrixVerb", "de"), ("matrixSubject", "animate"), ("sayer", "animate")] }
 
@@ -566,7 +566,7 @@ def ex_110b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "warqira"), ("matrixSubject", "animate"), ("sayer", "animate")] }
 
@@ -581,7 +581,7 @@ def ex_110c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "ket"), ("matrixSubject", "animate"), ("sayer", "animate")] }
 
@@ -596,7 +596,7 @@ def ex_113a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "participial"), ("case", "GEN"), ("matrixVerb", "éyt"), ("matrixSubject", "animate")] }
 
@@ -611,7 +611,7 @@ def ex_113a_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "participial"), ("case", "ACC"), ("matrixVerb", "éyt"), ("matrixSubject", "animate")] }
 
@@ -626,7 +626,7 @@ def ex_122 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "éyt"), ("matrixVoice", "passive"), ("matrixSubject", "none"), ("impliedAgent", "yes"), ("sayer", "animate")] }
 
@@ -641,7 +641,7 @@ def ex_123 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "ket"), ("matrixSubject", "animate"), ("sayer", "animate")] }
 
@@ -656,7 +656,7 @@ def ex_124 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "éyt"), ("matrixSubject", "animate"), ("matrixObject", "ACC"), ("sayer", "animate")] }
 
@@ -671,7 +671,7 @@ def ex_127 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "bare"), ("matrixVerb", "bol"), ("matrixSubject", "none"), ("sayer", "none")] }
 
@@ -686,7 +686,7 @@ def ex_127_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "bol"), ("matrixSubject", "none"), ("sayer", "none")] }
 
@@ -701,7 +701,7 @@ def ex_128 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "bare"), ("matrixVerb", "bol"), ("matrixSubject", "inanimate"), ("sayer", "inanimate")] }
 
@@ -716,7 +716,7 @@ def ex_128_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "bol"), ("matrixSubject", "inanimate"), ("sayer", "inanimate")] }
 
@@ -731,7 +731,7 @@ def ex_129 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "bol"), ("matrixSubject", "none"), ("sayer", "animate")] }
 
@@ -746,7 +746,7 @@ def ex_130 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "qil"), ("matrixSubject", "animate"), ("matrixObject", "ACC"), ("sayer", "animate")] }
 
@@ -761,7 +761,7 @@ def ex_131 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "case"), ("np", "embeddedSubject"), ("clause", "dep"), ("case", "ACC"), ("matrixVerb", "qil"), ("matrixVoice", "passive"), ("matrixSubject", "inanimate"), ("impliedAgent", "yes"), ("sayer", "animate")] }
 

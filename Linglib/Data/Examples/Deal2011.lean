@@ -29,7 +29,7 @@ def ex1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A friend is preparing for a camping trip. I am taking this person around my camping supplies and suggesting appropriate things. I hand them two blankets and say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded")] }
 
@@ -45,7 +45,7 @@ def ex5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Prompt: We have to get home before it gets dark."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")] }
 
@@ -61,7 +61,7 @@ def ex6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Prompt: To speak well, you have to know a lot of words."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")] }
 
@@ -76,7 +76,7 @@ def ex10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A discussion of how young people speak quickly, making them hard to understand."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")] }
 
@@ -92,7 +92,7 @@ def ex46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The referee is talking to an injured player."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")] }
 
@@ -108,7 +108,7 @@ def ex47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")] }
 
@@ -124,7 +124,7 @@ def ex48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "negation")] }
 
@@ -140,7 +140,7 @@ def ex49 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")] }
 
@@ -156,7 +156,7 @@ def ex50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I tell someone my number and I see that they are trying to remember it. I say, 'You don't have to remember it; here's my card.'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")] }
 
@@ -172,7 +172,7 @@ def ex51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I am watching people clean out a cooler and throw away various things."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "existential restriction")] }
 
@@ -188,7 +188,7 @@ def ex52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I am watching people clean out a cooler and throw away various things."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
@@ -204,7 +204,7 @@ def ex53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
@@ -220,7 +220,7 @@ def ex54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
@@ -236,7 +236,7 @@ def ex57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")] }
 
@@ -252,7 +252,7 @@ def ex58 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")] }
 
@@ -268,7 +268,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")] }
 
@@ -284,7 +284,7 @@ def ex60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Prompt: If I have to call the doctor, I will."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent"), ("force", "necessity")] }
 

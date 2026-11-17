@@ -26,7 +26,7 @@ def ex_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
@@ -41,7 +41,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -56,7 +56,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -71,7 +71,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -86,7 +86,7 @@ def ex_7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -101,7 +101,7 @@ def ex_7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -116,7 +116,7 @@ def ex_7c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -131,7 +131,7 @@ def ex_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -146,7 +146,7 @@ def ex_8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -161,7 +161,7 @@ def ex_8c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -176,7 +176,7 @@ def ex_9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -191,7 +191,7 @@ def ex_9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -206,7 +206,7 @@ def ex_9c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -221,7 +221,7 @@ def ex_10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -236,7 +236,7 @@ def ex_10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -251,7 +251,7 @@ def ex_10c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -266,7 +266,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -281,7 +281,7 @@ def ex_11b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -296,7 +296,7 @@ def ex_11c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -311,7 +311,7 @@ def ex_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -326,7 +326,7 @@ def ex_12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -341,7 +341,7 @@ def ex_12c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -356,7 +356,7 @@ def ex_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -371,7 +371,7 @@ def ex_13b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -386,7 +386,7 @@ def ex_13c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -401,7 +401,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -416,7 +416,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -431,7 +431,7 @@ def ex_14c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -446,7 +446,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -461,7 +461,7 @@ def ex_15b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -476,7 +476,7 @@ def ex_15c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -491,7 +491,7 @@ def ex_16a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "se te")] }
 
@@ -506,7 +506,7 @@ def ex_16b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "te le")] }
 
@@ -521,7 +521,7 @@ def ex_16c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "se te le")] }
 
@@ -536,7 +536,7 @@ def ex_17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "se le")] }
 
@@ -551,7 +551,7 @@ def ex_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "le le")] }
 
@@ -566,7 +566,7 @@ def ex_17c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "se le le")] }
 
@@ -581,7 +581,7 @@ def ex_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "se nos")] }
 
@@ -596,7 +596,7 @@ def ex_18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "nos le")] }
 
@@ -611,7 +611,7 @@ def ex_18c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "se nos le")] }
 
@@ -626,7 +626,7 @@ def ex_19a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les")] }
 
@@ -641,7 +641,7 @@ def ex_19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "les le")] }
 
@@ -656,7 +656,7 @@ def ex_19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les le")] }
 
@@ -671,7 +671,7 @@ def ex_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "recomendar"), ("construction", "ditransitive"), ("dative", "3SG"), ("cluster", "nos le")] }
 
@@ -686,7 +686,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "recomendar"), ("construction", "ditransitive"), ("dative", "3SG"), ("cluster", "me le")] }
 
@@ -701,7 +701,7 @@ def ex_29 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les")] }
 
@@ -716,7 +716,7 @@ def ex_30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me les")] }
 
@@ -731,7 +731,7 @@ def ex_30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me les")] }
 
@@ -746,7 +746,7 @@ def ex_36b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
@@ -761,7 +761,7 @@ def ex_37 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
@@ -776,7 +776,7 @@ def ex_38b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
@@ -791,7 +791,7 @@ def ex_38c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
@@ -806,7 +806,7 @@ def ex_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -821,7 +821,7 @@ def ex_39b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -836,7 +836,7 @@ def ex_39c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -851,7 +851,7 @@ def ex_40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me")] }
 
@@ -866,7 +866,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -881,7 +881,7 @@ def ex_41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
@@ -896,7 +896,7 @@ def ex_42 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
@@ -911,7 +911,7 @@ def ex_43a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me")] }
 
@@ -926,7 +926,7 @@ def ex_43b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -941,7 +941,7 @@ def ex_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -956,7 +956,7 @@ def ex_44b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -971,7 +971,7 @@ def ex_49a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -986,7 +986,7 @@ def ex_49b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -1001,7 +1001,7 @@ def ex_49c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
@@ -1016,7 +1016,7 @@ def ex_50a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
@@ -1031,7 +1031,7 @@ def ex_50b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
@@ -1046,7 +1046,7 @@ def ex_50c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 

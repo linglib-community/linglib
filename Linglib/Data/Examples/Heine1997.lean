@@ -26,7 +26,7 @@ def ex_2_pt : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "action")] }
 
@@ -39,7 +39,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")] }
 
@@ -52,7 +52,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")] }
 
@@ -65,7 +65,7 @@ def ex_73c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("There is flu at the Markovs.", .acceptable), ("The Markovs have the flu now.", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "true")] }
 
@@ -78,7 +78,7 @@ def ex_73d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possession", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "false"), ("target", "true")] }
 
@@ -91,7 +91,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "permanent")] }
 
@@ -104,7 +104,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inalienable")] }
 
@@ -117,7 +117,7 @@ def ex_84c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "abstract")] }
 
@@ -130,7 +130,7 @@ def ex_84d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inanimateInalienable")] }
 
@@ -145,7 +145,7 @@ def ex_85a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "location"), ("notion", "physical")] }
 
@@ -160,7 +160,7 @@ def ex_85b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "permanent")] }
 
@@ -175,7 +175,7 @@ def ex_85c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")] }
 
@@ -190,7 +190,7 @@ def ex_85d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")] }
 
@@ -205,7 +205,7 @@ def ex_85e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inanimateInalienable")] }
 
@@ -220,7 +220,7 @@ def ex_86a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "indefinite"), ("notion", "permanent")] }
 
@@ -235,7 +235,7 @@ def ex_86b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "definite"), ("notion", "physical")] }
 
@@ -250,7 +250,7 @@ def ex_87a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "indefinite"), ("notion", "permanent")] }
 
@@ -265,7 +265,7 @@ def ex_87b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "definite"), ("notion", "physical")] }
 

@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "future")] }
 
@@ -63,7 +63,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "episodic"), ("device", "covertModal")] }
 
@@ -76,7 +76,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
@@ -89,7 +89,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "imperative")] }
 
@@ -102,7 +102,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic"), ("device", "covertModal")] }
 
@@ -115,7 +115,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "episodicSubtrigged")] }
 
@@ -128,7 +128,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "future")] }
 
@@ -141,7 +141,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "future")] }
 
@@ -154,7 +154,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "imperative")] }
 
@@ -167,7 +167,7 @@ def ex10d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "imperative")] }
 
@@ -180,7 +180,7 @@ def ex10e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable), ("existential", .marginal)]
     paperFeatures := [("item", "pureFci"), ("environment", "possibility")] }
 
@@ -193,7 +193,7 @@ def ex10f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
@@ -206,7 +206,7 @@ def ex10g : Datum :=
     glossedTokens := []
     context := "If you go to Naples, you must go to Scaturchio."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable), ("existential", .marginal)]
     paperFeatures := [("item", "pureFci"), ("environment", "necessity")] }
 
@@ -219,7 +219,7 @@ def ex10h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
@@ -232,7 +232,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
@@ -245,7 +245,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodicSubtrigged")] }
 
@@ -258,7 +258,7 @@ def ex11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "pureFci"), ("environment", "episodic")] }
 
@@ -271,7 +271,7 @@ def ex11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "episodicSubtrigged")] }
 
@@ -284,7 +284,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negation")] }
 
@@ -297,7 +297,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negationSubtrigged")] }
 
@@ -310,7 +310,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "negation")] }
 
@@ -323,7 +323,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
@@ -336,7 +336,7 @@ def ex49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
@@ -349,7 +349,7 @@ def ex55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "generic")] }
 
@@ -362,7 +362,7 @@ def ex55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
@@ -375,7 +375,7 @@ def ex64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
@@ -388,7 +388,7 @@ def ex67a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
@@ -401,7 +401,7 @@ def ex68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
@@ -414,7 +414,7 @@ def ex69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negation")] }
 
@@ -427,7 +427,7 @@ def ex71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "future")] }
 
@@ -440,7 +440,7 @@ def ex77c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
@@ -453,7 +453,7 @@ def ex79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
@@ -466,7 +466,7 @@ def ex83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
@@ -479,7 +479,7 @@ def ex86a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic"), ("device", "intervention")] }
 
@@ -492,7 +492,7 @@ def ex88a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
@@ -505,7 +505,7 @@ def ex90a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("negativePolarity", .acceptable), ("rhetorical", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "negationNecessity")] }
 
@@ -518,7 +518,7 @@ def ex90b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "negationNecessity")] }
 
@@ -531,7 +531,7 @@ def ex92a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("universal", .marginal)]
     paperFeatures := [("item", "npiFci"), ("environment", "imperative")] }
 
@@ -544,7 +544,7 @@ def ex92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("universal", .marginal)]
     paperFeatures := [("item", "pureFci"), ("environment", "imperative")] }
 
@@ -557,7 +557,7 @@ def ex115 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
@@ -570,7 +570,7 @@ def fn42i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("universal", .unacceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "possibility")] }
 

@@ -28,7 +28,7 @@ def ex_1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("I Elena ipe pu eçi episkefti tin Vrazilia.", .ungrammatical)]
+    contrasts := [("I Elena ipe pu eçi episkefti tin Vrazilia.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "oti"), ("verbClass", "saying"), ("verb", "leo"), ("position", "internal_argument")] }
 
@@ -43,7 +43,7 @@ def ex_1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("I Elena metanjose oti paretiθike.", .ungrammatical)]
+    contrasts := [("I Elena metanjose oti paretiθike.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "pu"), ("verbClass", "emotive-factive"), ("verb", "metaniono"), ("position", "internal_argument")] }
 
@@ -58,7 +58,7 @@ def ex_31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'")] }
 
@@ -73,7 +73,7 @@ def ex_31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "internal_argument")] }
 
@@ -88,7 +88,7 @@ def ex_31c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "p_complement")] }
 
@@ -103,7 +103,7 @@ def ex_32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono")] }
 
@@ -118,7 +118,7 @@ def ex_32b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("complementizer", "pu"), ("verb", "metaniono"), ("position", "internal_argument")] }
 
@@ -133,7 +133,7 @@ def ex_32c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono"), ("complementizer", "pu"), ("position", "p_complement"), ("confound", "p_ban")] }
 
@@ -148,7 +148,7 @@ def ex_33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Afti i fimi ine lanθasmeni.", .acceptable)]
+    contrasts := [("Afti i fimi ine lanθasmeni.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
@@ -163,7 +163,7 @@ def ex_33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Afti i katastasi ine lanθasmeni.", .unacceptable)]
+    contrasts := [("Afti i katastasi ine lanθasmeni.", .unacceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")] }
 
@@ -178,7 +178,7 @@ def ex_34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := [("Tetjes iδees δen simvenun sixna.", .unacceptable), ("Tetjes proiδopiisis δen simvenun sixna.", .unacceptable), ("Tetjes pepiθisis δen simvenun sixna.", .unacceptable), ("Tetjes ipoθesis δen simvenun sixna.", .unacceptable), ("Tetjes θeories δen simvenun sixna.", .unacceptable)]
+    contrasts := [("Tetjes iδees δen simvenun sixna.", .unacceptable), ("Tetjes proiδopiisis δen simvenun sixna.", .unacceptable), ("Tetjes pepiθisis δen simvenun sixna.", .unacceptable), ("Tetjes ipoθesis δen simvenun sixna.", .unacceptable), ("Tetjes θeories δen simvenun sixna.", .unacceptable)]
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")] }
 
@@ -193,7 +193,7 @@ def ex_34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Tetjes katastasis δen simvenun sixna.", .acceptable)]
+    contrasts := [("Tetjes katastasis δen simvenun sixna.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
@@ -208,7 +208,7 @@ def ex_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("To pistevi pu katalaveni tin katastasi.", .ungrammatical)]
+    contrasts := [("To pistevi pu katalaveni tin katastasi.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")] }
 
@@ -223,7 +223,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("To metanjose oti δen θa ksanavlepodan pote.", .ungrammatical)]
+    contrasts := [("To metanjose oti δen θa ksanavlepodan pote.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")] }
 
@@ -238,7 +238,7 @@ def ex_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("composition", "predicate_modification")] }
 
@@ -253,7 +253,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("explanandum", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("nominalized", "yes"), ("composition", "functional_application")] }
 
@@ -268,7 +268,7 @@ def ex_4c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling"), ("composition", "predicate_modification")] }
 
@@ -283,7 +283,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Oti i Ji ine stroɟili eksijiθike tis δonatas.", .ungrammatical)]
+    contrasts := [("Oti i Ji ine stroɟili eksijiθike tis δonatas.", .ungrammatical)]
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "derived_subject"), ("diagnostic", "passivization")] }
 
@@ -298,7 +298,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument")] }
 
@@ -313,7 +313,7 @@ def ex_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument")] }
 
@@ -328,7 +328,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "internal_argument")] }
 
@@ -343,7 +343,7 @@ def ex_14b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "derived_subject")] }
 
@@ -358,7 +358,7 @@ def ex_19c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("θimose apotoma pu apoliun prosopiko.", .ungrammatical)]
+    contrasts := [("θimose apotoma pu apoliun prosopiko.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
@@ -373,7 +373,7 @@ def ex_20c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Metanjose efkola pu aɣorase mavro pukamiso.", .ungrammatical)]
+    contrasts := [("Metanjose efkola pu aɣorase mavro pukamiso.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
@@ -388,7 +388,7 @@ def ex_21a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Iksere efkola oti prepi na alaksi stratijiki.", .ungrammatical)]
+    contrasts := [("Iksere efkola oti prepi na alaksi stratijiki.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
@@ -403,7 +403,7 @@ def ex_21b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Arketos kosmos δen katalaveni (efkola) oti i periɣrafiki kanones ine δjaforetiki apo tus riθmistikus.", .acceptable)]
+    contrasts := [("Arketos kosmos δen katalaveni (efkola) oti i periɣrafiki kanones ine δjaforetiki apo tus riθmistikus.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "sinidhitopio"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
@@ -418,7 +418,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
@@ -433,7 +433,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
@@ -448,7 +448,7 @@ def ex_23c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("θimose mesa se pede lepta pu psifistike o nomos.", .ungrammatical)]
+    contrasts := [("θimose mesa se pede lepta pu psifistike o nomos.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "in-adverbial")] }
 
@@ -461,7 +461,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Akuse ti fimi pu i Ji ine stroɟili.", .ungrammatical)]
+    contrasts := [("Akuse ti fimi pu i Ji ine stroɟili.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "noun-complement")] }
 
@@ -474,7 +474,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Afora tin periptosi oti o pateras ine apon.", .ungrammatical)]
+    contrasts := [("Afora tin periptosi oti o pateras ine apon.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "noun-complement")] }
 
@@ -487,7 +487,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "truth-predicates")] }
 
@@ -500,7 +500,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "truth-predicates")] }
 
@@ -513,7 +513,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")] }
 
@@ -526,7 +526,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")] }
 
@@ -541,7 +541,7 @@ def fn14_i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Içe simvi pu kanume laθos.", .ungrammatical)]
+    contrasts := [("Içe simvi pu kanume laθos.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "simveni"), ("complementizer", "oti")] }
 
@@ -556,7 +556,7 @@ def ex_43a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument"), ("nominalized", "yes")] }
 
@@ -571,7 +571,7 @@ def ex_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument"), ("nominalized", "yes")] }
 

@@ -26,7 +26,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "root")] }
 
@@ -41,7 +41,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("ʔɨt-om ʔanɛ z-ɨ-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical), ("ʔɨt-om ʔanɛ z-ɛj-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical)]
+    contrasts := [("ʔɨt-om ʔanɛ z-ɨ-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical), ("ʔɨt-om ʔanɛ z-ɛj-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical)]
     readings := []
     paperFeatures := [("clause", "relative")] }
 
@@ -56,7 +56,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "seem")] }
 
@@ -71,7 +71,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "conditional")] }
 
@@ -86,7 +86,7 @@ def ex_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "complement"), ("verb_class", "utterance"), ("typer", "kemzi"), ("matrix_verb", "ask")] }
 
@@ -101,7 +101,7 @@ def ex_20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "subjunctive"), ("verb_class", "control"), ("typer", "ki"), ("matrix_verb", "try")] }
 
@@ -116,7 +116,7 @@ def ex_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "subjunctive"), ("verb_class", "directive"), ("typer", "ki"), ("matrix_verb", "order")] }
 
@@ -131,7 +131,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "subjunctive"), ("verb_class", "desire"), ("typer", "ki"), ("matrix_verb", "want")] }
 
@@ -146,7 +146,7 @@ def ex_23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "purpose")] }
 
@@ -161,7 +161,7 @@ def ex_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "future")] }
 
@@ -176,7 +176,7 @@ def ex_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ", .ungrammatical)]
+    contrasts := [("dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("clause", "ilu"), ("verb_class", "utterance"), ("typer", "ilu"), ("matrix_verb", "explain")] }
 
@@ -191,7 +191,7 @@ def ex_29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "factive"), ("typer", "kemzi"), ("matrix_verb", "know")] }
 
@@ -206,7 +206,7 @@ def ex_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "factive"), ("typer", "kemzi"), ("matrix_verb", "forget")] }
 
@@ -221,7 +221,7 @@ def ex_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "factive"), ("typer", "kemzi"), ("matrix_verb", "admit")] }
 
@@ -236,7 +236,7 @@ def ex_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "factive"), ("typer", "kemzi"), ("matrix_verb", "accept")] }
 
@@ -251,7 +251,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "cognitive_non_factive"), ("typer", "kemzi"), ("matrix_verb", "think")] }
 
@@ -266,7 +266,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "cognitive_non_factive"), ("typer", "kemzi"), ("matrix_verb", "believe")] }
 
@@ -281,7 +281,7 @@ def ex_35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "cognitive_non_factive"), ("typer", "kemzi"), ("matrix_verb", "suspect")] }
 
@@ -296,7 +296,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "perception"), ("typer", "kemzi"), ("matrix_verb", "hear")] }
 
@@ -311,7 +311,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ", .ungrammatical)]
+    contrasts := [("nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ", .ungrammatical)]
     readings := []
     paperFeatures := [("verb_class", "perception"), ("typer", "kemzi"), ("matrix_verb", "see")] }
 
@@ -326,7 +326,7 @@ def ex_53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "cognitive_non_factive"), ("typer", "ilu"), ("matrix_verb", "suspect")] }
 
@@ -341,7 +341,7 @@ def ex_54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "fiction"), ("typer", "ilu"), ("matrix_verb", "dream")] }
 
@@ -356,7 +356,7 @@ def ex_55 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb_class", "utterance"), ("typer", "ilu"), ("matrix_verb", "read")] }
 

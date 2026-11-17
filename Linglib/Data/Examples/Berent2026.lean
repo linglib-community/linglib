@@ -24,7 +24,7 @@ def dideb : Datum :=
     glossedTokens := []
     context := "A form on the root d-d-b, which begins with two identical consonants."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -38,7 +38,7 @@ def bided : Datum :=
     glossedTokens := []
     context := "A form on the root b-d-d, which ends with two identical consonants."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

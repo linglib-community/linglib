@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "V"), ("prep", "for")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "N"), ("prep", "for")] }
 
@@ -50,7 +50,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "A"), ("prep", "for")] }
 
@@ -65,7 +65,7 @@ def ex2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "V"), ("prep", "b-")] }
 
@@ -80,7 +80,7 @@ def ex2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "N"), ("prep", "b-")] }
 
@@ -95,7 +95,7 @@ def ex2c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "A"), ("prep", "b-")] }
 
@@ -108,7 +108,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "V"), ("prep", "on")] }
 
@@ -121,7 +121,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "N"), ("prep", "in")] }
 
@@ -134,7 +134,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "A"), ("prep", "of")] }
 
@@ -149,7 +149,7 @@ def ex6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "brk"), ("category", "V"), ("prep", "b-")] }
 
@@ -164,7 +164,7 @@ def ex6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("root", "brk"), ("category", "N"), ("prep", "ʕala")] }
 
@@ -179,7 +179,7 @@ def ex11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("root", "xwf"), ("template", "XaYaZ"), ("prep", "min")] }
 
@@ -194,7 +194,7 @@ def ex11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("root", "xwf"), ("template", "XaYYaZ"), ("prep", "min")] }
 
@@ -209,7 +209,7 @@ def ex13ai : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "krh"), ("template", "XaYaZ"), ("prep", "none")] }
 
@@ -224,7 +224,7 @@ def ex13aii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "krh"), ("template", "XaYYaZ"), ("prep", "fi")] }
 
@@ -239,7 +239,7 @@ def ex13bi : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYaZ"), ("prep", "bi-")] }
 
@@ -254,7 +254,7 @@ def ex13bii : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYYaZ"), ("prep", "ʕla")] }
 
@@ -269,7 +269,7 @@ def ex14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYaZ"), ("prep", "ʕala")] }
 
@@ -284,7 +284,7 @@ def ex14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYYaZ"), ("prep", "none")] }
 
@@ -297,7 +297,7 @@ def ex15a_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "wsʔ"), ("template", "XaYaZ"), ("prep", "b-")] }
 
@@ -310,7 +310,7 @@ def ex15a_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "wsʔ"), ("template", "nXaYaZ"), ("prep", "b-")] }
 
@@ -323,7 +323,7 @@ def ex15b_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʤðb"), ("template", "XaYaZ"), ("prep", "la-/ʕala")] }
 
@@ -336,7 +336,7 @@ def ex15b_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʤðb"), ("template", "nXaYaZ"), ("prep", "la-")] }
 
@@ -349,7 +349,7 @@ def ex15c_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃkw"), ("template", "XaYaZ"), ("prep", "la-")] }
 
@@ -362,7 +362,7 @@ def ex15c_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃkw"), ("template", "nXaYaZ"), ("prep", "ʕala")] }
 
@@ -375,7 +375,7 @@ def ex16a_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYYaZ"), ("prep", "ʕala")] }
 
@@ -388,7 +388,7 @@ def ex16a_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "tXaYYaZ"), ("prep", "ʕala")] }
 
@@ -401,7 +401,7 @@ def ex16b_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃwq"), ("template", "XaYYaZ"), ("prep", "ʕala")] }
 
@@ -414,7 +414,7 @@ def ex16b_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃwq"), ("template", "tXaYYaZ"), ("prep", "ʕala/la-")] }
 
@@ -427,7 +427,7 @@ def ex16c_active : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYYaZ"), ("prep", "none")] }
 
@@ -440,7 +440,7 @@ def ex16c_nonactive : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "tXaYYaZ"), ("prep", "b-")] }
 
@@ -455,7 +455,7 @@ def ex17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ṭpl"), ("template", "XiYeZ"), ("prep", "be-")] }
 
@@ -470,7 +470,7 @@ def ex17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "ṭpl"), ("template", "XuYaZ"), ("prep", "none")] }
 
@@ -485,7 +485,7 @@ def ex18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "špʕ"), ("template", "hiXYiZ"), ("prep", "al")] }
 
@@ -500,7 +500,7 @@ def ex18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "špʕ"), ("template", "huXYaZ"), ("prep", "none")] }
 
@@ -515,7 +515,7 @@ def ex19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "srb"), ("template", "XiYeZ"), ("prep", "le-")] }
 
@@ -530,7 +530,7 @@ def ex19b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "srb"), ("template", "XuYaZ")] }
 
@@ -545,7 +545,7 @@ def ex20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "rbc"), ("template", "hiXYiZ"), ("prep", "le-")] }
 
@@ -560,7 +560,7 @@ def ex20b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "rbc"), ("template", "huXYaZ")] }
 
@@ -573,7 +573,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "pseudopassive")] }
 
@@ -586,7 +586,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "-able")] }
 
@@ -599,7 +599,7 @@ def ex21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "middle")] }
 
@@ -612,7 +612,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "passive")] }
 
@@ -625,7 +625,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "-able")] }
 
@@ -638,7 +638,7 @@ def ex22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "middle")] }
 

@@ -12,7 +12,7 @@
     "translation": "",
     "context": "A: John did not read 'War and Peace'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -52,7 +52,7 @@
     "translation": "Karl DOES write a screenplay",
     "context": "A: Ich habe Hanna gefragt, was Karl gerade macht, und sie hat die alberne Behauptung aufgestellt, dass er ein Drehbuch schreibt.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -96,7 +96,7 @@
     "translation": "(No) Karl DIDN'T lie",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -136,7 +136,7 @@
     "translation": "I assure you that he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -176,7 +176,7 @@
     "translation": "I assure you that he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -216,7 +216,7 @@
     "translation": "For sure she DID go to the meeting",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -256,7 +256,7 @@
     "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -296,7 +296,7 @@
     "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -336,7 +336,7 @@
     "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -376,7 +376,7 @@
     "translation": "Of course, he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -416,7 +416,7 @@
     "translation": "Of course, I do listen to you",
     "context": "A: No me escuchas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -456,7 +456,7 @@
     "translation": "Of course, I do listen to you",
     "context": "A: Non mi ascolti.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -496,7 +496,7 @@
     "translation": "Something he must know",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -536,7 +536,7 @@
     "translation": "Something he must have done during his holidays",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -576,7 +576,7 @@
     "translation": "I said that I was going to finish the book and the book I finished",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -616,7 +616,7 @@
     "translation": "But that's what she does!",
     "context": "A: Marie devrait passer son permis de conduire.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -656,7 +656,7 @@
     "translation": "[Lit.] It is not that the time I didn't give it to you; I gave it to you, the time",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -701,7 +701,7 @@
     "translation": "Ah well, the solution, we're going to find it",
     "context": "A: no, niente, eh, trovare una soluzione.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -746,7 +746,7 @@
     "translation": "Of course, he has arrived! / Absolutely!",
     "context": "A: È poi arrivato Gianni?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -790,7 +790,7 @@
     "translation": "She DID sing",
     "context": "A: No ha cantado la soprano.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -837,7 +837,7 @@
     "translation": "This weekend Carrefour is offering incredibly low prices! Now, that's a real anniversary!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -881,7 +881,7 @@
     "translation": "",
     "context": "A: Il ne fait pas beau.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -921,7 +921,7 @@
     "translation": "But I DID take them, the pills",
     "context": "A: Non hai preso le pastiglie.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -961,7 +961,7 @@
     "translation": "The pills, I DID take them (but not the whole medical prescription)",
     "context": "A: Non hai preso le pastiglie.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1001,7 +1001,7 @@
     "translation": "…because he did have a vision",
     "context": "Monsieur le Président, (…) il faut rendre honneur à la présidence française, il faut rendre honneur au président Chirac, qui a été au charbon, qui a combattu et qui a vaincu sur sa vision de l'Europe,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1041,7 +1041,7 @@
     "translation": "…because he did have a vision",
     "context": "Señor Presidente, (…) hay que rendir honores a la Presidencia francesa, hay que rendir honores al Presidente Chirac, que se ha dejado la piel, que ha luchido y que ha vencido con su visión de Europa,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1081,7 +1081,7 @@
     "translation": "…because he did have a vision",
     "context": "Signor Presidente, (…) occorre rendere omaggio alla Presidenza francese, occorre rendere omaggio al Presidente Chirac che, costretto a un'opera improba, ha combattuto e ha vinto con la sua visione dell'Europa,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1121,7 +1121,7 @@
     "translation": "…the tools are there",
     "context": "Dovremmo, credo, dare maggiore informazione sugli strumenti a disposizione, valutare le cose positive che sono state fatte – anche se noi non siamo contente fino in fondo, perché ancora resta molto da fare – ma non dobbiamo abbatterci per il fatto che non abbiamo strumenti a disposizione:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1161,7 +1161,7 @@
     "translation": "…nonetheless, we really have laid the foundations for zero tolerance.",
     "context": "Onorevole Maes, lei ha sollevato problemi di importanza fondamentale, il primo dei quali sulla tolleranza zero. (…) E' di solito un lavoro che nessuno vuole affrontare, (…)",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1201,7 +1201,7 @@
     "translation": "…but let us genuinely group macroeconomic issues and labour and structural problems together, right now",
     "context": "È chiaro allora che diventa indispensabile mettere assieme i tre processi. Purtroppo la nostra terminologia è orrenda,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1241,7 +1241,7 @@
     "translation": "We always made this effort",
     "context": "Per riuscirci è indispensabile tener fede a un principio che è alla base del nostro stare nell'Unione europea. (…) È quello secondo il quale nello sviluppo della costruzione europea occorre sempre fare uno sforzo per comprendere le ragioni degli altri, farsene in qualche modo carico.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1281,7 +1281,7 @@
     "translation": "Yes, Mr. President, I can answer",
     "context": "Pienso que el Sr. Ramón de Miguel puede manifestar que consultará al Consejo y que más tarde dará una respuesta más detallada, que ahora no está en disposición de dar. Pero pienso que manifestar simplemente que no puede dar una respuesta no forma parte de las reglas del juego. Considero que puede someter a la Presidencia, al Consejo, las preguntas que se le han formulado, y que puede declarar que, con respecto a algunas de ellas, ahora no está en disposición de dar una respuesta. Pero considero que, por regla general, corresponde al Consejo responder a todas las preguntas.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1321,7 +1321,7 @@
     "translation": "On this level, then, yes, Turkey is a totally European State",
     "context": "(…) sigue habiendo detenciones arbitrarias y violaciones de los derechos humanos. (…) se sigue poniendo en dificultades a los defensores de los derechos humanos (…) permanece todavía en la cárcel una Premio Sajarov, como la Sra. Leyla Zana. (…) Turquía, en el lugar estratégico que ocupa, es el único Estado completamente laico (…)",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1361,7 +1361,7 @@
     "translation": "…moments when the European Council has been sitting back",
     "context": "Sí quisiera decirle a mi buen amigo, el diputado Jacques Poos, que creo que aquí alguien se ha podido quedar con las manos cruzadas. Sus Señorías saben muy bien que quien les habla nunca ha estado con las manos cruzadas, ni cuando era ministro representando a su país –cuando era colega suyo y tuvimos muchos momentos para hablar –; por lo tanto, seamos también respetuosos con las palabras que utilizamos. Si su Señoría piensa que yo he estado con las manos cruzadas en este conflicto, creo que se equivoca y, si me lo permite, podría hasta echar la vista atrás para ver",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1401,7 +1401,7 @@
     "translation": "…but we do have the ability to introduce mobile dikes and build an underground subway",
     "context": "No podemos evitar el acqua alta – eso es un fenómeno de la naturaleza –",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1441,7 +1441,7 @@
     "translation": "…but that it is satisfactory in some respects",
     "context": "Con ello no quiero decirles que el acuerdo alcanzado sea óptimo en todos sus aspectos,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1481,7 +1481,7 @@
     "translation": "That really is a scandal",
     "context": "Esto es escandaloso, esto merecería un titular: sólo seis Estados miembros nos dicen qué hacen con la recuperación de los fondos que han usado mal.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

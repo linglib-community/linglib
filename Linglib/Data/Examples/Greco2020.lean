@@ -26,7 +26,7 @@ def ex_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "baseline"), ("requirement", "any")] }
 
@@ -41,7 +41,7 @@ def ex_9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "weak NPI"), ("requirement", "negScope"), ("polarity", "weak NPI")] }
 
@@ -56,7 +56,7 @@ def ex_9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "n-word"), ("requirement", "negScope"), ("polarity", "n-word")] }
 
@@ -71,7 +71,7 @@ def ex_9c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "strong NPI"), ("requirement", "negScope"), ("polarity", "strong NPI")] }
 
@@ -86,7 +86,7 @@ def ex_9d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "not-also conjunction"), ("requirement", "negScope"), ("polarity", "not-also conjunction")] }
 
@@ -101,7 +101,7 @@ def ex_23a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "al-word"), ("requirement", "negScope")] }
 
@@ -116,7 +116,7 @@ def ex_24b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "PPI"), ("requirement", "noNegScope")] }
 
@@ -131,7 +131,7 @@ def ex_17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "fronted topic"), ("requirement", "any")] }
 
@@ -146,7 +146,7 @@ def ex_17b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "fronted contrastive focus"), ("requirement", "freeFocP")] }
 
@@ -161,7 +161,7 @@ def ex_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "in-situ topic"), ("requirement", "any")] }
 
@@ -176,7 +176,7 @@ def ex_18b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "in-situ focus"), ("requirement", "freeFocP")] }
 
@@ -191,7 +191,7 @@ def ex_53a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "hanging topic"), ("requirement", "any")] }
 
@@ -206,7 +206,7 @@ def ex_53c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "scene-setting topic"), ("requirement", "any")] }
 
@@ -221,7 +221,7 @@ def ex_54 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "mirative fronting"), ("requirement", "freeFocP")] }
 
@@ -236,7 +236,7 @@ def ex_55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "quantifier fronting"), ("requirement", "freeFocP")] }
 
@@ -251,7 +251,7 @@ def ex_56 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Gianni è andato al bar invece di andare a scuola."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "anaphoric anteposition"), ("requirement", "freeFocP")] }
 
@@ -266,7 +266,7 @@ def ex_57c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "solo in situ"), ("requirement", "any")] }
 
@@ -281,7 +281,7 @@ def ex_57d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "solo fronted"), ("requirement", "freeFocP")] }
 
@@ -296,7 +296,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Che cosa è successo?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to a propositional question"), ("requirement", "activeFocP")] }
 
@@ -311,7 +311,7 @@ def ex_27 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Chi è sceso dal treno?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to an entity question"), ("requirement", "freeFocP")] }
 
@@ -326,7 +326,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "expletive e"), ("requirement", "activeFocP")] }
 
@@ -341,7 +341,7 @@ def ex_74b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "presuppositional mica"), ("requirement", "any")] }
 
@@ -356,7 +356,7 @@ def ex_76a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "wh-element"), ("requirement", "freeFocP")] }
 
@@ -371,7 +371,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "quantifier raising"), ("requirement", "freeFocP")] }
 
@@ -386,7 +386,7 @@ def ex_60 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "phrasal negator no"), ("requirement", "phrasalNegator")] }
 
@@ -401,7 +401,7 @@ def ex_61a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "past participle clause"), ("requirement", "noTP")] }
 
@@ -416,7 +416,7 @@ def ex_64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "Aux-to-Comp"), ("requirement", "negScope")] }
 
@@ -431,7 +431,7 @@ def ex_72b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Luke thinks that Mary did not get off the train!", .unacceptable), ("Luke thinks that Mary got off the train!", .acceptable)]
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "NEG-raising reading"), ("requirement", "negScope"), ("reading", "Luke thinks that Mary did not get off the train!")] }
 
@@ -446,7 +446,7 @@ def ex_81a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "indirect question"), ("requirement", "embedded")] }
 
@@ -461,7 +461,7 @@ def ex_81b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "factive predicate"), ("requirement", "embedded")] }
 
@@ -476,7 +476,7 @@ def ex_81c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "bridge verb"), ("requirement", "embedded")] }
 
@@ -491,7 +491,7 @@ def ex_83B : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
@@ -506,7 +506,7 @@ def ex_83B2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
@@ -521,7 +521,7 @@ def ex_84B : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
@@ -536,7 +536,7 @@ def ex_84B2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
@@ -551,7 +551,7 @@ def ex_85B : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
@@ -566,7 +566,7 @@ def ex_85B2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
@@ -579,7 +579,7 @@ def ex_86a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "preverbal subject"), ("requirement", "any")] }
 
@@ -592,7 +592,7 @@ def ex_86b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "postverbal subject"), ("requirement", "any")] }
 
@@ -605,7 +605,7 @@ def ex_31B : Datum :=
     glossedTokens := []
     context := "A: Sembri sconvolto. Cos'è successo?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
@@ -620,7 +620,7 @@ def ex_31B2 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Sembri sconvolto. Cos'è successo?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
@@ -635,7 +635,7 @@ def ex_34a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "dopo tutto"), ("diagnostic", "dopo tutto")] }
 
@@ -650,7 +650,7 @@ def ex_34b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "dopo tutto"), ("diagnostic", "dopo tutto")] }
 
@@ -665,7 +665,7 @@ def ex_35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 
@@ -680,7 +680,7 @@ def ex_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 
@@ -695,7 +695,7 @@ def ex_40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "factive embedding"), ("diagnostic", "factive embedding")] }
 
@@ -710,7 +710,7 @@ def ex_40b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "factive embedding"), ("diagnostic", "factive embedding")] }
 
@@ -725,7 +725,7 @@ def ex_41B : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Sembri sconvolto. Cos'è successo?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
@@ -740,7 +740,7 @@ def ex_42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 

@@ -9,7 +9,7 @@
     "translation": "",
     "context": "The passive with the external argument in Spec,vP and no movement of the participle phrase.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "The passive derived by PartP movement to Spec,VoiceP, (22) and (30).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "Barss and Lasnik c-command test: a negative quantifier in the by-phrase and a negative polarity item in a preceding PP.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "Barss and Lasnik c-command test: each in the by-phrase and the other in a preceding PP.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -101,7 +101,7 @@
     "translation": "",
     "context": "The PP follows the by-phrase: it evacuated PartP before the remnant fronted, (58), and the external argument c-commands it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -126,7 +126,7 @@
     "translation": "",
     "context": "The PP follows the by-phrase, evacuated before the remnant PartP fronted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -151,7 +151,7 @@
     "translation": "",
     "context": "A particle verb passivized: the particle precedes the external argument.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -173,7 +173,7 @@
     "translation": "",
     "context": "The order head movement of the verb to Voice would derive, stranding the particle after the external argument.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -195,7 +195,7 @@
     "translation": "",
     "context": "A pseudo-passive: the stranded preposition precedes the external argument.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -217,7 +217,7 @@
     "translation": "",
     "context": "The order head movement of the verb to Voice would derive, stranding the preposition after the external argument.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -239,7 +239,7 @@
     "translation": "",
     "context": "Active perfect: the participle is c-selected by have, and there is no VoiceP.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "Passive with have: the participle in Spec,VoiceP is already licensed by Voice and cannot also be checked by have.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -279,7 +279,7 @@
     "translation": "",
     "context": "Passive with be, which imposes no requirement on its complement; Voice licenses the participle.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -299,7 +299,7 @@
     "translation": "",
     "context": "Active with be and no VoiceP: nothing licenses the participle.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -319,7 +319,7 @@
     "translation": "",
     "context": "A passive participle modifying a noun: VoiceP present, no auxiliary.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -339,7 +339,7 @@
     "translation": "The man who has written a book just came in.",
     "context": "A past participle modifying a noun: neither a Voice head nor have.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "participle"],
@@ -359,7 +359,7 @@
     "translation": "The book was written by John.",
     "context": "The internal argument in the by-phrase and the external argument raised to Spec,IP.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "byComplement"],
@@ -378,7 +378,7 @@
     "translation": "",
     "context": "The PP pied-piped inside PartP.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -400,7 +400,7 @@
     "translation": "",
     "context": "The PP evacuated to Spec,XP before the remnant PartP fronted, (58).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -422,7 +422,7 @@
     "translation": "",
     "context": "A quantifier in the by-phrase binding a pronoun in a PP that follows it, evacuated before the remnant PartP fronted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -447,7 +447,7 @@
     "translation": "",
     "context": "Principle A with the reflexive inside the fronted PartP: binding needs reconstruction, (73).",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -473,7 +473,7 @@
     "translation": "",
     "context": "Principle A with the reflexive in an evacuated PP: the external argument c-commands it without reconstruction.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -499,7 +499,7 @@
     "translation": "",
     "context": "A quantifier in the by-phrase binding a pronoun inside the fronted PartP: licensed once PartP reconstructs, without a Weak Crossover violation (§9.1).",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -524,7 +524,7 @@
     "translation": "",
     "context": "Principle C with the name inside the fronted PartP and a coindexed pronoun in the by-phrase.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -552,7 +552,7 @@
     "translation": "",
     "context": "Principle B: the pronoun, coindexed with the external argument, is c-commanded by it when the external argument Merges, (84).",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -578,7 +578,7 @@
     "translation": "",
     "context": "Principle C: the pronoun inside the fronted PartP does not c-command the name in the by-phrase.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -603,7 +603,7 @@
     "translation": "",
     "context": "Principle C: the pronoun in the by-phrase c-commands the name in the evacuated PP.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -628,7 +628,7 @@
     "translation": "",
     "context": "A reciprocal in a PP that follows the by-phrase, evacuated before the remnant PartP fronted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],
@@ -654,7 +654,7 @@
     "translation": "",
     "context": "A reciprocal in the by-phrase with its antecedent in a PP inside the fronted PartP, which does not c-command the external argument.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "licensing"],

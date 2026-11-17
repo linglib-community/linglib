@@ -24,7 +24,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable), ("ignorance", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
@@ -37,7 +37,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := "Alice asks Bob how one can get credit for a certain course."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjunctive obligation", .acceptable), ("ignorance", .acceptable)]
     paperFeatures := [("modal1", "must"), ("modal2", "must"), ("coordinator", "or"), ("narrowReading", "disjunctive obligation")] }
 
@@ -50,7 +50,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := "Alice's friends Bob, Charlie and Diana each invited her to their birthday party this week. Mom says she cannot go to Diana's party, then:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("conjunctive permission", .acceptable), ("conjunction of permissions", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "and"), ("narrowReading", "conjunctive permission")] }
 
@@ -63,7 +63,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("conjunctive permission", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "and"), ("narrowReading", "conjunctive permission")] }
 
@@ -76,7 +76,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "it's ok"), ("modal2", "it's ok"), ("coordinator", "or")] }
 
@@ -89,7 +89,7 @@ def ex19b_allowed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "be allowed"), ("modal2", "be allowed"), ("coordinator", "or")] }
 
@@ -102,7 +102,7 @@ def ex19b_required : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "be required"), ("modal2", "be required"), ("coordinator", "or")] }
 
@@ -115,7 +115,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
@@ -128,7 +128,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
@@ -141,7 +141,7 @@ def exfn4i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "can"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
@@ -154,7 +154,7 @@ def ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("permission to do neither", .acceptable), ("obligation to do neither", .unacceptable)]
     paperFeatures := [("modal1", "need"), ("modal2", "need"), ("coordinator", "and"), ("narrowReading", "permission to do neither"), ("negated", "true")] }
 
@@ -167,7 +167,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "may")] }
 
@@ -180,7 +180,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "must")] }
 
@@ -193,7 +193,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "be permitted")] }
 
@@ -206,7 +206,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "be required")] }
 
@@ -219,7 +219,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "need"), ("negated", "true")] }
 
@@ -232,7 +232,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "may"), ("negated", "true")] }
 
@@ -245,7 +245,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "need"), ("negated", "true")] }
 
@@ -258,7 +258,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "may"), ("negated", "true")] }
 

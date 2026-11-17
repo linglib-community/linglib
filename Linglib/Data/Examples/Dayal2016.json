@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.2"],
@@ -34,7 +34,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.2"],
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.2"],
@@ -75,7 +75,7 @@
     "translation": "",
     "context": "Mary is in Paris; John thinks she is in London.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John thinks Mary is in London.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -96,7 +96,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.3"],
@@ -115,7 +115,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.3"],
@@ -137,7 +137,7 @@
     "translation": "",
     "context": "John likes exactly one woman, Mary.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "John likes two women, Mary and Sue.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "John likes exactly one woman, Mary.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -206,7 +206,7 @@
     "translation": "",
     "context": "John likes two women, Mary and Sue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -229,7 +229,7 @@
     "translation": "",
     "context": "John likes exactly one woman, Mary.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -252,7 +252,7 @@
     "translation": "",
     "context": "John likes two women, Mary and Sue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.1"],
@@ -272,7 +272,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.2"],
@@ -291,7 +291,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.2"],
@@ -310,7 +310,7 @@
     "translation": "",
     "context": "Two women in the domain, Mary and Sue.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.3"],
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "Two women in the domain, Mary and Sue.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.3"],
@@ -351,7 +351,7 @@
     "translation": "",
     "context": "Two eggs are sufficient.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Two eggs are sufficient.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -372,7 +372,7 @@
     "translation": "",
     "context": "Three people left.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Three people left.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -394,7 +394,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.3"],
@@ -414,7 +414,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.3"],
@@ -434,7 +434,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill loves Mary and John loves Sue.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -458,7 +458,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill loves Mary and John loves Sue.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -482,7 +482,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill knows where Mary bought Emma and John knows where she bought Persuasion.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -506,7 +506,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill knows where Mary bought Emma and John knows where she bought Persuasion.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -533,7 +533,7 @@
     "translation": "",
     "context": "No one left the party.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -558,7 +558,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -600,7 +600,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -624,7 +624,7 @@
     "translation": "",
     "context": "No one left the party.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -645,7 +645,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -670,7 +670,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -689,7 +689,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3.4"],
@@ -710,7 +710,7 @@
     "translation": "",
     "context": "Bill saw Alice but not Betty or Cal.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill saw Alice.", "judgment": "acceptable"},
       {"form": "Bill saw only Alice.", "judgment": "acceptable"}
     ],
@@ -733,7 +733,7 @@
     "translation": "",
     "context": "Bill saw Alice and Betty but not Cal.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.4"],
@@ -753,7 +753,7 @@
     "translation": "",
     "context": "Bill saw no one.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.4"],
@@ -773,7 +773,7 @@
     "translation": "",
     "context": "Bill saw Alice and Betty but not Cal.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Bill saw Alice and Betty.", "judgment": "acceptable"},
       {"form": "Bill saw only Alice and Betty.", "judgment": "acceptable"}
     ],
@@ -796,7 +796,7 @@
     "translation": "",
     "context": "Bill saw Alice but not Betty or Cal.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.4"],
@@ -816,7 +816,7 @@
     "translation": "",
     "context": "Bill saw no one.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.4"],

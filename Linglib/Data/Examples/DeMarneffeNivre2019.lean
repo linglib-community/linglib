@@ -24,7 +24,7 @@ def fig1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyTree"), ("projective", "yes")] }
 
@@ -37,7 +37,7 @@ def fig2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("projective", "yes")] }
 
@@ -50,7 +50,7 @@ def fig3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "projectivity"), ("projective", "no")] }
 
@@ -63,7 +63,7 @@ def fig4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "headChoice"), ("projective", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "initial")] }
 
@@ -89,7 +89,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "final")] }
 
@@ -102,7 +102,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "no")] }
 
@@ -128,7 +128,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "neither")] }
 
@@ -141,7 +141,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "neither")] }
 
@@ -154,7 +154,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "object")] }
 
@@ -167,7 +167,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "subject")] }
 
@@ -180,7 +180,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "ellipsis")] }
 
@@ -193,7 +193,7 @@ def fig5_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "determiner")] }
 
@@ -208,7 +208,7 @@ def fig5_sv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "inflection")] }
 
@@ -223,7 +223,7 @@ def fig5_wsk : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "determiner")] }
 
@@ -238,7 +238,7 @@ def fig5_ru : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "unmarked")] }
 
@@ -253,7 +253,7 @@ def fig6_sv : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "SwedishTreebank")] }
 
@@ -268,7 +268,7 @@ def fig6_da : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "DanishDependencyTreebank")] }
 
@@ -281,7 +281,7 @@ def fig6_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "StanfordTypedDependencies")] }
 
@@ -294,7 +294,7 @@ def fig7_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "functionWords")] }
 
@@ -309,7 +309,7 @@ def fig7_fi : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "case")] }
 
@@ -322,7 +322,7 @@ def fig8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonsyntacticRelations")] }
 
@@ -335,7 +335,7 @@ def fig9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "enhancedDependencies")] }
 

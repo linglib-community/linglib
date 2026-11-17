@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -36,7 +36,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -60,7 +60,7 @@
     "translation": "",
     "context": "Reacting to the polar question 'Is Sam home?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "Reacting to the polar question 'Is Sam home?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -108,7 +108,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is not home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -132,7 +132,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is not home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -156,7 +156,7 @@
     "translation": "",
     "context": "Reacting to the polar question 'Is Sam not home?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -180,7 +180,7 @@
     "translation": "",
     "context": "Reacting to the polar question 'Is Sam not home?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -204,7 +204,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is not home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is not home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -252,7 +252,7 @@
     "translation": "",
     "context": "Reacting to the assertion 'Sam is not home.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -277,7 +277,7 @@
     "translation": "",
     "context": "Reacting to the polar question 'Is Sam not home?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -302,7 +302,7 @@
     "translation": "No, he isn't.",
     "context": "Reacting to the polar question 'Horea e acasă?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -326,7 +326,7 @@
     "translation": "No, he isn't.",
     "context": "Reacting to the polar question 'Horea e acasă?'.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -351,7 +351,7 @@
     "translation": "No, he isn't.",
     "context": "Reacting to the assertion 'Horea e acasă.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -375,7 +375,7 @@
     "translation": "No, he isn't.",
     "context": "Reacting to the assertion 'Horea e acasă.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -400,7 +400,7 @@
     "translation": "Yes, she left.",
     "context": "Reacting to the assertion 'Ana a plecat.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -424,7 +424,7 @@
     "translation": "No, she hasn't.",
     "context": "Reacting to the assertion 'Ana nu a plecat.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -448,7 +448,7 @@
     "translation": "Yes, she left.",
     "context": "Reacting to the polar question 'Ana a plecat?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -472,7 +472,7 @@
     "translation": "No, she hasn't left.",
     "context": "Reacting to the polar question 'Ana a plecat?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -496,7 +496,7 @@
     "translation": "No, she didn't.",
     "context": "Reacting to the assertion 'Ana a plecat.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -521,7 +521,7 @@
     "translation": "No, she didn't.",
     "context": "Reacting to the assertion 'Ana a plecat.'.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -545,7 +545,7 @@
     "translation": "No, she hasn't.",
     "context": "Reacting to the polar question 'Ana a plecat?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -569,7 +569,7 @@
     "translation": "No, she hasn't.",
     "context": "Reacting to the polar question 'Ana a plecat?'.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -594,7 +594,7 @@
     "translation": "You are wrong, she did.",
     "context": "Reacting to the assertion 'Ana nu a plecat.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -619,7 +619,7 @@
     "translation": "Yes, she did.",
     "context": "Reacting to the polar question 'Ana nu a plecat?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -644,7 +644,7 @@
     "translation": "You are wrong, she did.",
     "context": "Reacting to the assertion \"Anne n'est pas partie.\".",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -668,7 +668,7 @@
     "translation": "Yes, she did.",
     "context": "Reacting to the polar question \"Anne n'est pas partie?\".",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],
@@ -692,7 +692,7 @@
     "translation": "You are wrong. She's coming.",
     "context": "Reacting to the assertion 'Anna kommt nicht mit ins Kino.'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "assertion"],
@@ -716,7 +716,7 @@
     "translation": "But I do. I need the money.",
     "context": "Reacting to the polar question 'Wollen Sie den Job nicht?'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reaction", "question"],

@@ -24,7 +24,7 @@ def s1a : Datum :=
     glossedTokens := []
     context := "A friend walks in and shakes off a wet umbrella. You say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "epistemic")] }
 
@@ -37,7 +37,7 @@ def s1b : Datum :=
     glossedTokens := []
     context := "You are reading the specifications of a homework assignment. It partially reads:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "deontic")] }
 
@@ -50,7 +50,7 @@ def s2a : Datum :=
     glossedTokens := []
     context := "A friend is leaving and grabs an umbrella on the way out, saying:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "epistemic")] }
 
@@ -63,7 +63,7 @@ def s2b : Datum :=
     glossedTokens := []
     context := "A mother offers a treat to a child for finishing an assignment:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "deontic")] }
 
@@ -78,7 +78,7 @@ def s3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You have a headache that won't go away, so you go to the doctor. All the tests show negative. There is nothing wrong, so it must just be tension."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5c)"), ("force", "strong"), ("flavor", "epistemic")] }
 
@@ -93,7 +93,7 @@ def s3b : Datum :=
     lgrConformance := some .wordAligned
     context := "His car isn't there."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5e)"), ("force", "weak"), ("flavor", "epistemic")] }
 

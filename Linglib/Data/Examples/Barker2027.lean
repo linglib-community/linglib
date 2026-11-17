@@ -24,7 +24,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .unacceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .acceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀", .acceptable), ("∀ > ∃", .acceptable)]
     paperFeatures := [] }
 

@@ -24,7 +24,7 @@ def ex1_58b_more : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the upper bound"), ("base", "3")] }
 
@@ -37,7 +37,7 @@ def ex1_58b_fewer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the lower bound"), ("base", "3")] }
 
@@ -50,7 +50,7 @@ def ex1_59a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("asserts", "at least 3"), ("implicates", "at most 3")] }
 
@@ -63,7 +63,7 @@ def ex1_59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("negation", "of the lower bound")] }
 
@@ -76,7 +76,7 @@ def ex1_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "cancelling the upper bound"), ("base", "3")] }
 
@@ -89,7 +89,7 @@ def ex1_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "contradicting the assertion of only"), ("base", "3")] }
 
@@ -102,7 +102,7 @@ def ex1_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "at least")] }
 
@@ -115,7 +115,7 @@ def ex1_63c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "exact")] }
 
@@ -128,7 +128,7 @@ def ex1_72a_fact : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "contradicting the implicature")] }
 
@@ -141,7 +141,7 @@ def ex1_72a_susp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension")] }
 
@@ -154,7 +154,7 @@ def ex1_72b_cold : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension")] }
 
@@ -167,7 +167,7 @@ def ex1_72b_warm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension across scales")] }
 
@@ -180,7 +180,7 @@ def ex1_73c_hot_warm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension by a weaker member")] }
 
@@ -193,7 +193,7 @@ def ex1_82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "suspension"), ("intonation", "rising")] }
 
@@ -206,7 +206,7 @@ def ex1_82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("intonation", "falling")] }
 
@@ -219,7 +219,7 @@ def ex1_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "suspension"), ("polarity item", "positive")] }
 
@@ -232,7 +232,7 @@ def ex1_85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("polarity item", "negative")] }
 
@@ -245,7 +245,7 @@ def ex1_93_ok : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension")] }
 
@@ -258,7 +258,7 @@ def ex1_93_bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension by a weaker member")] }
 
@@ -271,7 +271,7 @@ def ex2_1a_some_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")] }
 
@@ -284,7 +284,7 @@ def ex2_1a_all_some : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension by a weaker member")] }
 
@@ -297,7 +297,7 @@ def ex2_1a_many_most : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")] }
 
@@ -310,7 +310,7 @@ def ex2_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantificational adverb"), ("construction", "suspension")] }
 
@@ -323,7 +323,7 @@ def ex2_1e_few : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "suspension")] }
 
@@ -336,7 +336,7 @@ def ex2_3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a suspender disjunction")] }
 
@@ -349,7 +349,7 @@ def ex2_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a true disjunction")] }
 
@@ -362,7 +362,7 @@ def ex2_24a_somebody : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "cancelling the implicature")] }
 
@@ -375,7 +375,7 @@ def ex2_24b_some_not_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "asserting the implicature")] }
 
@@ -388,7 +388,7 @@ def ex2_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "asserting the implicature")] }
 
@@ -401,7 +401,7 @@ def ex2_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "of the lower bound")] }
 
@@ -414,7 +414,7 @@ def ex2_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "external")] }
 
@@ -427,7 +427,7 @@ def ex2_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.13"), ("ambiguity", "NEG-V vs NEG-Q")] }
 
@@ -440,7 +440,7 @@ def ex2_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.13"), ("reading", "NEG-V only")] }
 
@@ -453,7 +453,7 @@ def ex2_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("entails", "and entails or"), ("implicates", "or implicates not and")] }
 
@@ -466,7 +466,7 @@ def ex2_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("context", "conditional")] }
 
@@ -479,7 +479,7 @@ def ex2_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("construction", "suspension of exclusivity")] }
 
@@ -492,7 +492,7 @@ def ex2_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")] }
 
@@ -505,7 +505,7 @@ def ex2_51d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
@@ -518,7 +518,7 @@ def ex2_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
@@ -531,7 +531,7 @@ def ex2_55c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
@@ -544,7 +544,7 @@ def ex2_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
@@ -557,7 +557,7 @@ def ex2_58c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")] }
 
@@ -570,7 +570,7 @@ def ex4_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "and"), ("lexicalization", "nor = and~"), ("route", "inner")] }
 
@@ -583,7 +583,7 @@ def ex4_49a_prime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "or"), ("lexicalization", "*nand = or~"), ("route", "inner")] }
 
@@ -596,7 +596,7 @@ def ex4_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "both"), ("lexicalization", "neither = both~"), ("route", "inner")] }
 
@@ -609,7 +609,7 @@ def ex4_50a_prime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "either"), ("lexicalization", "*noth = not both"), ("route", "inner")] }
 
@@ -622,7 +622,7 @@ def ex4_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "all"), ("compatibility", "incompatible with a lower negation")] }
 
@@ -635,7 +635,7 @@ def ex4_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "most"), ("compatibility", "incompatible with a lower negation")] }
 
@@ -648,7 +648,7 @@ def ex4_56c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "half"), ("compatibility", "compatible with a lower negation")] }
 
@@ -661,7 +661,7 @@ def ex4_56e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "some"), ("compatibility", "compatible with a lower negation")] }
 
@@ -674,7 +674,7 @@ def ex4_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "many"), ("compatibility", "compatible with a lower negation")] }
 
@@ -687,7 +687,7 @@ def ex4_57a_prime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "not many"), ("compatibility", "incompatible with a lower negation")] }
 
@@ -700,7 +700,7 @@ def ex4_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("quantifier", "some"), ("implicates", "not all"), ("lexicalization", "~some = none; some~ unlexicalized")] }
 
@@ -713,7 +713,7 @@ def ex4_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "possible"), ("implicates", "not necessary"), ("lexicalization", "~possible = impossible; possible~ unlexicalized")] }
 
@@ -726,7 +726,7 @@ def ex4_60f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("connective", "either...or"), ("implicates", "not both"), ("lexicalization", "~(either...or) = neither...nor"), ("route", "outer")] }
 
@@ -739,7 +739,7 @@ def ex4_66a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "allow"), ("compatibility", "compatible"), ("lexicalization", "~allow = disallow")] }
 
@@ -752,7 +752,7 @@ def ex4_66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "prove"), ("compatibility", "incompatible"), ("lexicalization", "prove~ = disprove")] }
 
@@ -765,7 +765,7 @@ def ex4_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "true"), ("compatibility", "incompatible"), ("lexicalization", "true~ = false; ~true = untrue")] }
 

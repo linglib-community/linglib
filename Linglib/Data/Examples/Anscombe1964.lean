@@ -24,7 +24,7 @@ def i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "transitivity")] }
 
@@ -37,7 +37,7 @@ def ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity")] }
 
@@ -50,7 +50,7 @@ def mutual_before : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "mutual")] }
 
@@ -63,7 +63,7 @@ def mutual_after : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
@@ -76,7 +76,7 @@ def born : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity_failure")] }
 
@@ -89,7 +89,7 @@ def scout : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "alternative_verifications")] }
 
@@ -102,7 +102,7 @@ def james1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_begin")] }
 
@@ -115,7 +115,7 @@ def james2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_stop")] }
 
@@ -128,7 +128,7 @@ def james3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "overlap_after_begin")] }
 
@@ -141,7 +141,7 @@ def james4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "after_stop")] }
 
@@ -154,7 +154,7 @@ def greece : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "quantification")] }
 
@@ -167,7 +167,7 @@ def italy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "quantification")] }
 
@@ -180,7 +180,7 @@ def glass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "before_ever")] }
 
@@ -193,7 +193,7 @@ def battle : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
@@ -206,7 +206,7 @@ def quarrel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
@@ -219,7 +219,7 @@ def report : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
@@ -232,7 +232,7 @@ def arrival : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "nominal"), ("instantaneous", "yes")] }
 
@@ -245,7 +245,7 @@ def john_tom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "instantaneous"), ("instantaneous", "yes")] }
 

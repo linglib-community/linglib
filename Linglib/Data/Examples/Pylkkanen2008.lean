@@ -24,7 +24,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
@@ -39,7 +39,7 @@ def ex19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
@@ -54,7 +54,7 @@ def ex19c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
@@ -69,7 +69,7 @@ def ex19d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
@@ -82,7 +82,7 @@ def ex19e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
@@ -97,7 +97,7 @@ def ex19f : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
@@ -110,7 +110,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -123,7 +123,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -138,7 +138,7 @@ def ex21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -153,7 +153,7 @@ def ex21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -168,7 +168,7 @@ def ex22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -183,7 +183,7 @@ def ex22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -198,7 +198,7 @@ def ex23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -213,7 +213,7 @@ def ex23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -228,7 +228,7 @@ def ex24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -243,7 +243,7 @@ def ex24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -258,7 +258,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "unergative")] }
 
@@ -273,7 +273,7 @@ def ex25b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "static")] }
 
@@ -286,7 +286,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "depictiveObject")] }
 
@@ -299,7 +299,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
@@ -314,7 +314,7 @@ def ex40a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
@@ -329,7 +329,7 @@ def ex43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Mustafa is healthy and Katonga is sick."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
@@ -344,7 +344,7 @@ def ex12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source")] }
 
@@ -359,7 +359,7 @@ def ex82a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source"), ("construction", "possessorDative")] }
 
@@ -374,7 +374,7 @@ def ex120a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source"), ("construction", "adversityGapped")] }
 
@@ -389,7 +389,7 @@ def ex121a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "malefactive"), ("construction", "adversityGapless")] }
 
@@ -402,7 +402,7 @@ def ex95 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "rootCausativeUnergative")] }
 
@@ -417,7 +417,7 @@ def ex96 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "rootCausativeUnergative")] }
 

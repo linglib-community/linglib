@@ -24,7 +24,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("factor", "locality"), ("dependency", "subject")] }
 
@@ -37,7 +37,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("factor", "locality"), ("dependency", "object")] }
 
@@ -50,7 +50,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("factor", "referential load")] }
 
@@ -63,7 +63,7 @@ def ex44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "that")] }
 
@@ -76,7 +76,7 @@ def ex44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "if")] }
 
@@ -89,7 +89,7 @@ def ex44c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "who")] }
 
@@ -102,7 +102,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("factor", "filler complexity"), ("filler", "simple")] }
 
@@ -115,7 +115,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("factor", "filler complexity"), ("filler", "complex")] }
 
@@ -128,7 +128,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("island", "complexNP")] }
 
@@ -142,7 +142,7 @@ def ex48_bareDef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "definite")] }
 
@@ -156,7 +156,7 @@ def ex48_barePl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "plural")] }
 
@@ -170,7 +170,7 @@ def ex48_bareIndef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "indefinite")] }
 
@@ -184,7 +184,7 @@ def ex48_whichDef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "definite")] }
 
@@ -198,7 +198,7 @@ def ex48_whichPl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "plural")] }
 
@@ -212,7 +212,7 @@ def ex48_whichIndef : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "indefinite")] }
 
@@ -225,7 +225,7 @@ def ex48_baseline : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "none"), ("filler", "whichN")] }
 
@@ -239,7 +239,7 @@ def ex49_bare : Datum :=
     glossedTokens := []
     context := "Albert learned that the managers dismissed the employee with poor sales after the annual performance review."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "embeddedQuestion"), ("filler", "bare")] }
 
@@ -253,7 +253,7 @@ def ex49_which : Datum :=
     glossedTokens := []
     context := "Albert learned that the managers dismissed the employee with poor sales after the annual performance review."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "embeddedQuestion"), ("filler", "whichN")] }
 
@@ -267,7 +267,7 @@ def ex49_baseline : Datum :=
     glossedTokens := []
     context := "Albert learned that the managers dismissed the employee with poor sales after the annual performance review."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "none"), ("filler", "bare")] }
 

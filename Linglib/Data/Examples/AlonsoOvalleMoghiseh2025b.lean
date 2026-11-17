@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "BI")] }
 
@@ -50,7 +50,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -66,7 +66,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -82,7 +82,7 @@ def ex_21 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -97,7 +97,7 @@ def ex_16 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -112,7 +112,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
@@ -127,7 +127,7 @@ def ex_22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -143,7 +143,7 @@ def ex_23 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -158,7 +158,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -174,7 +174,7 @@ def ex_25 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -190,7 +190,7 @@ def ex_26 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -206,7 +206,7 @@ def ex_27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -222,7 +222,7 @@ def ex_28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
@@ -238,7 +238,7 @@ def ex_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -254,7 +254,7 @@ def ex_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -270,7 +270,7 @@ def ex_47 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "specificity")] }
 
@@ -286,7 +286,7 @@ def ex_56 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -302,7 +302,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SCI")] }
 
@@ -319,7 +319,7 @@ def ex_60 : Datum :=
     context := "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SBI")] }
 
@@ -336,7 +336,7 @@ def ex_61 : Datum :=
     context := "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SCI")] }
 
@@ -353,7 +353,7 @@ def ex_62 : Datum :=
     context := "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SBI")] }
 
@@ -370,7 +370,7 @@ def ex_63 : Datum :=
     context := "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SCI")] }
 
@@ -386,7 +386,7 @@ def ex_64 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
@@ -402,7 +402,7 @@ def ex_65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
@@ -418,7 +418,7 @@ def ex_66 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Maybe this thing", .acceptable), ("Maybe this thing and that thing", .acceptable)]
     paperFeatures := [("type", "SBI"), ("use", "epistemic indefinite")] }
 
@@ -434,7 +434,7 @@ def ex_67 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Maybe this book", .acceptable), ("Maybe this book and that book", .unacceptable)]
     paperFeatures := [("type", "SCI"), ("use", "epistemic indefinite")] }
 
@@ -451,7 +451,7 @@ def ex_69 : Datum :=
     context := "Forood looks confused. Ava sees him and asks Roya what is going on. Roya replies:"
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "which CI"), ("property", "D-linked")] }
 
@@ -467,7 +467,7 @@ def ex_70a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "which CI")] }
 
@@ -483,7 +483,7 @@ def ex_70b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "which CI")] }
 
@@ -500,7 +500,7 @@ def ex_73 : Datum :=
     context := "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "which CI"), ("inference", "free choice")] }
 
@@ -514,7 +514,7 @@ def ex_74 : Datum :=
     context := "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "which CI")] }
 
@@ -531,7 +531,7 @@ def ex_75 : Datum :=
     context := "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "which CI")] }
 
@@ -547,7 +547,7 @@ def fn2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "SBI"), ("agreement", "singular")] }
 

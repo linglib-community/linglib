@@ -24,7 +24,7 @@ def bkg2020_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive: again scopes over the root state", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "root")] }
 
@@ -37,7 +37,7 @@ def bkg2020_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive over the change: again scopes over v_become", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_become")] }
 
@@ -50,7 +50,7 @@ def bkg2020_25c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive over the causation: again scopes over v_cause", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_cause")] }
 
@@ -63,7 +63,7 @@ def bkg2020_ch2_46a : Datum :=
     glossedTokens := []
     context := "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("root class", "property concept"), ("diagnostic", "restitutive again")] }
 
@@ -76,7 +76,7 @@ def bkg2020_ch2_47a : Datum :=
     glossedTokens := []
     context := "A boutique store makes their shirts in the back. Sandy buys one, decides she does not want it, and exchanges it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive: necessarily two returnings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
@@ -89,7 +89,7 @@ def bkg2020_ch2_47b : Datum :=
     glossedTokens := []
     context := "Leah kills a rabbit, butchers it, freezes the fresh meat for three days, then puts it out to thaw."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
@@ -102,7 +102,7 @@ def bkg2020_ch2_48 : Datum :=
     glossedTokens := []
     context := "John finds a fruit that naturally has brown, fatty edges, trims off the edges, refrigerates it, and later fries it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("repetitive: necessarily two fryings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
@@ -115,7 +115,7 @@ def bkg2020_ch3_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root class", "true possession"), ("diagnostic", "result denial")] }
 
@@ -128,7 +128,7 @@ def bkg2020_ch3_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root class", "release"), ("diagnostic", "result denial")] }
 
@@ -141,7 +141,7 @@ def bkg2020_ch3_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root class", "transfer of possession by motion"), ("diagnostic", "result denial")] }
 
@@ -154,7 +154,7 @@ def bkg2020_ch4_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "result denial")] }
 
@@ -167,7 +167,7 @@ def bkg2020_ch4_26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "object deletion")] }
 
@@ -180,7 +180,7 @@ def bkg2020_ch4_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "action denial")] }
 

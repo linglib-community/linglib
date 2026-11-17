@@ -12,7 +12,7 @@
     "translation": "Did Ali sleep?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic_site", "default"],
@@ -34,7 +34,7 @@
     "translation": "Was it Ali who slept?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic_site", "subject"],
@@ -56,7 +56,7 @@
     "translation": "No.",
     "context": "Answer to (5).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "negative particle"],
@@ -78,7 +78,7 @@
     "translation": "No, Veli slept.",
     "context": "Answer to (5).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "negative particle with continuation"],
@@ -101,7 +101,7 @@
     "translation": "Yannis wondered whether Ali slept.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic_site", "below diye"],
@@ -124,7 +124,7 @@
     "translation": "Is it whether Ali slept that Yannis wondered?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic_site", "above diye"],
@@ -146,7 +146,7 @@
     "translation": "Yes, Ali slept.",
     "context": "Answer to (22) at a world where Ali had to sleep and did sleep.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "positive"],
@@ -169,7 +169,7 @@
     "translation": "Yes, Ali had to sleep and he slept.",
     "context": "Answer to (22) at a world where Ali had to sleep and did sleep.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "modal conjunction"],
@@ -191,7 +191,7 @@
     "translation": "Ali had to sleep.",
     "context": "(39): Ali injured himself and went to the doctor for instructions; his partner tells us he slept for several hours after the appointment; we ask (22).",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "modal"],

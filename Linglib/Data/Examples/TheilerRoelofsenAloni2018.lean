@@ -24,7 +24,7 @@ def theileretal2018_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def theileretal2018_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def theileretal2018_12 : Datum :=
     glossedTokens := []
     context := "Only Ann and Bill passed the exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def theileretal2018_13a : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def theileretal2018_13b : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def theileretal2018_15 : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def theileretal2018_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def theileretal2018_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def theileretal2018_26 : Datum :=
     glossedTokens := []
     context := "Only Anna and Bill, not Chris and Daniel, passed the exam."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def theileretal2018_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def theileretal2018_31 : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def theileretal2018_32 : Datum :=
     glossedTokens := []
     context := "John briefly saw a card of four coloured squares and tries to remember which were blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def theileretal2018_37 : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def theileretal2018_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def theileretal2018_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def theileretal2018_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def theileretal2018_42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def theileretal2018_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def theileretal2018_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -271,7 +271,7 @@ def theileretal2018_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def theileretal2018_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def theileretal2018_67 : Datum :=
     glossedTokens := []
     context := "Three stores, Newstopia, Paperworld and Celluloid City; only the first two sell Italian newspapers. Janna knows that Newstopia does and has no beliefs about the others; Rupert knows that Newstopia does and falsely believes that Celluloid City does too."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -310,7 +310,7 @@ def theileretal2018_69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -323,7 +323,7 @@ def theileretal2018_69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -336,7 +336,7 @@ def theileretal2018_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -349,7 +349,7 @@ def theileretal2018_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -362,7 +362,7 @@ def theileretal2018_79 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -375,7 +375,7 @@ def theileretal2018_84 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

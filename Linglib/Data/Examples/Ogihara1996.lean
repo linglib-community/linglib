@@ -26,7 +26,7 @@ def ex2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
@@ -41,7 +41,7 @@ def ex2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
@@ -54,7 +54,7 @@ def ex19d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "pastPerfectProgressive")] }
 
@@ -67,7 +67,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
@@ -82,7 +82,7 @@ def ex10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
@@ -95,7 +95,7 @@ def ex4_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "future"), ("form", "simplePast")] }
 

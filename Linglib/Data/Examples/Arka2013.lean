@@ -26,7 +26,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("past", .acceptable), ("present", .acceptable), ("future", .acceptable)]
     paperFeatures := [] }
 
@@ -41,7 +41,7 @@ def ex_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "S<E-R")] }
 
@@ -56,7 +56,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "E-R<S")] }
 
@@ -71,7 +71,7 @@ def ex_4c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "E-R-S")] }
 
@@ -86,7 +86,7 @@ def ex_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "E<S,R")] }
 
@@ -101,7 +101,7 @@ def ex_5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "E<R<S")] }
 
@@ -116,7 +116,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -131,7 +131,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -146,7 +146,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -161,7 +161,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -176,7 +176,7 @@ def ex_10 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "S<E-R")] }
 
@@ -191,7 +191,7 @@ def ex_11a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mereka ingin [akan datang besok].", .ungrammatical)]
+    contrasts := [("Mereka ingin [akan datang besok].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex_11c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -221,7 +221,7 @@ def ex_12a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia sudah makan.", .acceptable), ("Dia sedang makan.", .acceptable)]
+    contrasts := [("Dia sudah makan.", .acceptable), ("Dia sedang makan.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -236,7 +236,7 @@ def ex_12b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya menyuruh dia [akan makan].", .ungrammatical), ("Saya menyuruh dia [sudah makan].", .ungrammatical), ("Saya menyuruh dia [sedang makan].", .ungrammatical)]
+    contrasts := [("Saya menyuruh dia [akan makan].", .ungrammatical), ("Saya menyuruh dia [sudah makan].", .ungrammatical), ("Saya menyuruh dia [sedang makan].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -251,7 +251,7 @@ def ex_13a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Orang itu mendorong saya [ _ akan jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sedang jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sudah jatuh].", .ungrammatical)]
+    contrasts := [("Orang itu mendorong saya [ _ akan jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sedang jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sudah jatuh].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -266,7 +266,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
+    contrasts := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -281,7 +281,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya belajar bisa [menembak].", .ungrammatical)]
+    contrasts := [("Saya belajar bisa [menembak].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -296,7 +296,7 @@ def ex_15c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -312,7 +312,7 @@ def ex_18a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -326,7 +326,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -341,7 +341,7 @@ def ex_34a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
+    contrasts := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
     readings := [("past", .acceptable), ("future", .unacceptable)]
     paperFeatures := [] }
 
@@ -356,7 +356,7 @@ def ex_34b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("future", .acceptable)]
     paperFeatures := [] }
 
@@ -371,7 +371,7 @@ def ex_34d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -386,7 +386,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kapan akan beli=nya?", .ungrammatical)]
+    contrasts := [("kapan akan beli=nya?", .ungrammatical)]
     readings := [("past", .acceptable), ("future", .unacceptable)]
     paperFeatures := [] }
 
@@ -401,7 +401,7 @@ def ex_35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -416,7 +416,7 @@ def ex_36a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kapan akan lahirnya?", .ungrammatical)]
+    contrasts := [("Kapan akan lahirnya?", .ungrammatical)]
     readings := [("past", .acceptable), ("future", .unacceptable)]
     paperFeatures := [] }
 
@@ -431,7 +431,7 @@ def ex_36c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -446,7 +446,7 @@ def ex_37a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("soa", "future"), ("evaluation", "deontic")] }
 
@@ -461,7 +461,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("soa", "past"), ("evaluation", "counterfactual")] }
 
@@ -476,7 +476,7 @@ def ex_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("soa", "future"), ("evaluation", "epistemic")] }
 
@@ -491,7 +491,7 @@ def ex_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("soa", "past"), ("evaluation", "past ability")] }
 
@@ -506,7 +506,7 @@ def ex_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("soa", "future")] }
 
@@ -521,7 +521,7 @@ def ex_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("evaluation", "counterfactual"), ("soa", "present"), ("soa", "past")] }
 
@@ -536,7 +536,7 @@ def ex_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
+    contrasts := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -551,7 +551,7 @@ def ex_41 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -566,7 +566,7 @@ def ex_42a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -581,7 +581,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -596,7 +596,7 @@ def ex_43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -611,7 +611,7 @@ def ex_43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -626,7 +626,7 @@ def ex_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia adalah tidur.", .ungrammatical)]
+    contrasts := [("Dia adalah tidur.", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -641,7 +641,7 @@ def ex_45a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -654,7 +654,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -669,7 +669,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -684,7 +684,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -699,7 +699,7 @@ def ex_47a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ali tidak guru itu.", .ungrammatical)]
+    contrasts := [("Ali tidak guru itu.", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -712,7 +712,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Guru itu tidak Ali.", .ungrammatical)]
+    contrasts := [("Guru itu tidak Ali.", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -727,7 +727,7 @@ def ex_48a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[_ tidur] tidak mau=nya", .ungrammatical)]
+    contrasts := [("[_ tidur] tidak mau=nya", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -742,7 +742,7 @@ def ex_48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mau=nya tidak tidur", .acceptable)]
+    contrasts := [("Mau=nya tidak tidur", .acceptable)]
     readings := [("The/his/her/my wish was not to sleep.", .acceptable), ("It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", .acceptable)]
     paperFeatures := [] }
 
@@ -757,7 +757,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]
+    contrasts := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -770,7 +770,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("katanya adalah [kamu pembohong].", .ungrammatical)]
+    contrasts := [("katanya adalah [kamu pembohong].", .ungrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -783,7 +783,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

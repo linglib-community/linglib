@@ -24,7 +24,7 @@ def ex37 : Datum :=
     glossedTokens := []
     context := "P visits M in the hospital. P sees through the window of the hospital room that the doctors look worried. P says:"
     judgment := .acceptable
-    alternatives := [("She should be very sick.", .unacceptable)]
+    contrasts := [("She should be very sick.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "seems"), ("timing", "evidence acquired after the event")] }
 
@@ -37,7 +37,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := "P poisons M's food and leaves. Later P says:"
     judgment := .acceptable
-    alternatives := [("She seems to be very sick.", .unacceptable)]
+    contrasts := [("She seems to be very sick.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "should"), ("timing", "evidence acquired before the event")] }
 
@@ -52,7 +52,7 @@ def ex40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We're outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked. I say to you:"
     judgment := .acceptable
-    alternatives := [("č̓ɛkʷi č̓ɛχ.", .unacceptable)]
+    contrasts := [("č̓ɛkʷi č̓ɛχ.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
@@ -65,7 +65,7 @@ def ex41 : Datum :=
     glossedTokens := []
     context := "Same as (40)."
     judgment := .acceptable
-    alternatives := [("It must be cooked (by now).", .acceptable)]
+    contrasts := [("It must be cooked (by now).", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
@@ -80,7 +80,7 @@ def ex42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Daniel left from t̓ɩšosəm to go back home to Vancouver. We know he left pretty early, so in the evening when we see the time, I say:"
     judgment := .acceptable
-    alternatives := [("č̓ɛkʷi θo hɛwt.", .unacceptable)]
+    contrasts := [("č̓ɛkʷi θo hɛwt.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
@@ -93,7 +93,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := "Same as (42)."
     judgment := .acceptable
-    alternatives := [("He must have gotten home (by now).", .acceptable)]
+    contrasts := [("He must have gotten home (by now).", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
@@ -108,7 +108,7 @@ def ex44 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The villain puts poison in the hero's food that he has prepped for dinner and then leaves. An hour or so after dinnertime, the villain tells his sidekick:"
     judgment := .acceptable
-    alternatives := [("č̓ɛkʷi qey.", .unacceptable)]
+    contrasts := [("č̓ɛkʷi qey.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
@@ -121,7 +121,7 @@ def ex45 : Datum :=
     glossedTokens := []
     context := "Same as (44)."
     judgment := .acceptable
-    alternatives := [("He must be dead (by now).", .acceptable)]
+    contrasts := [("He must be dead (by now).", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
@@ -136,7 +136,7 @@ def ex46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time—the ground is really soaked. Then I notice that Felipe left his coat in my bag, which is with me on campus. I figure Felipe will be just home by now, but must have been soaked on his way. I say:"
     judgment := .acceptable
-    alternatives := [("χʷɛt č̓ɛkʷa ƛəm̓mot Felipe.", .unacceptable)]
+    contrasts := [("χʷɛt č̓ɛkʷa ƛəm̓mot Felipe.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT but ET < EAT"), ("role", "wedge against the EAT analysis")] }
 
@@ -149,7 +149,7 @@ def ex47 : Datum :=
     glossedTokens := []
     context := "Same as (46)."
     judgment := .acceptable
-    alternatives := [("Felipe must have gotten really soaked.", .acceptable)]
+    contrasts := [("Felipe must have gotten really soaked.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT but ET < EAT"), ("role", "wedge against the EAT analysis")] }
 
@@ -164,7 +164,7 @@ def ex48 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "It's winter. Last night, it was very cold, with strong winds and some snow. Today, I find out that my friend had been clam-digging last night."
     judgment := .acceptable
-    alternatives := [("hɛhɛw č̓ɛkʷa č̓ɩmč̓ɛʔmamot.", .unacceptable)]
+    contrasts := [("hɛhɛw č̓ɛkʷa č̓ɩmč̓ɛʔmamot.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT but ET < EAT")] }
 
@@ -177,7 +177,7 @@ def ex49 : Datum :=
     glossedTokens := []
     context := "Same as (48)."
     judgment := .acceptable
-    alternatives := [("She must have been really cold!", .acceptable)]
+    contrasts := [("She must have been really cold!", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT but ET < EAT")] }
 
@@ -192,7 +192,7 @@ def ex50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I'm cooking a fish, and I'm guessing by the smell that it is cooked. I remark to you:"
     judgment := .acceptable
-    alternatives := [("səmkʷi č̓ɛχ.", .unacceptable)]
+    contrasts := [("səmkʷi č̓ɛχ.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
@@ -205,7 +205,7 @@ def ex51 : Datum :=
     glossedTokens := []
     context := "Same as (50)."
     judgment := .acceptable
-    alternatives := [("It will be cooked (by now).", .unacceptable)]
+    contrasts := [("It will be cooked (by now).", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
@@ -220,7 +220,7 @@ def ex52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Someone was out earlier, and now I see his car in his driveway."
     judgment := .acceptable
-    alternatives := [("səmkʷi θo hɛwt.", .unacceptable)]
+    contrasts := [("səmkʷi θo hɛwt.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
@@ -233,7 +233,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := "Same as (52)."
     judgment := .acceptable
-    alternatives := [("He will have gotten home.", .unacceptable)]
+    contrasts := [("He will have gotten home.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
@@ -248,7 +248,7 @@ def ex54 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "My brother was hiking, and at one point there was a cliff looking out over the water. Looking down, he could see a bear, but it was just laid out, not moving."
     judgment := .acceptable
-    alternatives := [("qəqey=səm.", .unacceptable)]
+    contrasts := [("qəqey=səm.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
@@ -261,7 +261,7 @@ def ex55 : Datum :=
     glossedTokens := []
     context := "Same as (54)."
     judgment := .acceptable
-    alternatives := [("It will be dead.", .unacceptable)]
+    contrasts := [("It will be dead.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
@@ -276,7 +276,7 @@ def ex56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tim is Bailey's cat that's gone missing. He hasn't been seen for a while now. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "no evidence")] }
 
@@ -291,7 +291,7 @@ def ex57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "It's after 6, so it's the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on. I think to myself."
     judgment := .acceptable
-    alternatives := [("səmkʷi nɛʔ ʔamot.", .unacceptable)]
+    contrasts := [("səmkʷi nɛʔ ʔamot.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "evidence before and at PrejT")] }
 
@@ -304,7 +304,7 @@ def ex58 : Datum :=
     glossedTokens := []
     context := "Same as (57)."
     judgment := .acceptable
-    alternatives := [("He will be home.", .unacceptable)]
+    contrasts := [("He will be home.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "evidence before and at PrejT")] }
 
@@ -319,7 +319,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "This fish has been in the oven for 20 min, which should be sufficient given its size. In addition, the fish is starting to smell cooked."
     judgment := .acceptable
-    alternatives := [("č̓ɛkʷi č̓ɛχ šɛtᶿ kʷukʷ.", .acceptable)]
+    contrasts := [("č̓ɛkʷi č̓ɛχ šɛtᶿ kʷukʷ.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm or č̓ɛ"), ("timing", "the smell may be set aside")] }
 
@@ -332,7 +332,7 @@ def ex60 : Datum :=
     glossedTokens := []
     context := "Same as (59)."
     judgment := .acceptable
-    alternatives := [("The fish must be cooked.", .acceptable)]
+    contrasts := [("The fish must be cooked.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will or must"), ("timing", "the smell may be set aside")] }
 
@@ -347,7 +347,7 @@ def ex68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We had a meeting this morning, and Freddie had told me he would come, but never showed up. Later I tell you, 'Freddie was going to come but he never came.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("perspective", "past"), ("orientation", "future"), ("environment", "embedded")] }
 
@@ -362,7 +362,7 @@ def ex69 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "From a traditional story about Mink and Wolf."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("perspective", "past"), ("orientation", "future"), ("environment", "narrative")] }
 
@@ -377,7 +377,7 @@ def ex70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("orientation", "present")] }
 
@@ -392,7 +392,7 @@ def ex71 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("orientation", "future")] }
 
@@ -405,7 +405,7 @@ def ex75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("modal", "would"), ("perspective", "past")] }
 
@@ -418,7 +418,7 @@ def ex76 : Datum :=
     glossedTokens := []
     context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("modal", "will"), ("orientation", "present")] }
 
@@ -431,7 +431,7 @@ def ex77 : Datum :=
     glossedTokens := []
     context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("modal", "will"), ("orientation", "future")] }
 
@@ -446,7 +446,7 @@ def ex91 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We go past Freddie's home, and I say that he must be home because his lights are on."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ"), ("orientation", "present")] }
 
@@ -461,7 +461,7 @@ def ex92 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass. I say to Gloria, who's with me:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ"), ("orientation", "past")] }
 
@@ -476,7 +476,7 @@ def ex93 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You feel a change in the weather and see storm clouds gathering."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ over səm"), ("timing", "two presuppositions")] }
 
@@ -489,7 +489,7 @@ def ex97 : Datum :=
     glossedTokens := []
     context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
-    alternatives := [("Her baby must be asleep.", .unacceptable)]
+    contrasts := [("Her baby must be asleep.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "will"), ("pragmatics", "Maximize Presupposition")] }
 

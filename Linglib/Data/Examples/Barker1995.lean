@@ -24,7 +24,7 @@ def ch2_39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "uniqueness")] }
 
@@ -37,7 +37,7 @@ def ch2_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "maximality")] }
 
@@ -50,7 +50,7 @@ def ch2_46 : Datum :=
     glossedTokens := []
     context := "Richard serves coffee at 4; seats are first-come-first-served; Tom arrives late to a full office."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "uniqueness relative to cases")] }
 
@@ -63,7 +63,7 @@ def ch2_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "uniqueness relative to cases")] }
 
@@ -76,7 +76,7 @@ def ch2_50a : Datum :=
     glossedTokens := []
     context := "Neutral context; the child has not been mentioned."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "lexical")] }
 
@@ -89,7 +89,7 @@ def ch2_50b : Datum :=
     glossedTokens := []
     context := "Neutral context; the person has not been mentioned."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "extrinsic")] }
 
@@ -102,7 +102,7 @@ def ch2_53a : Datum :=
     glossedTokens := []
     context := "Neutral context."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "conventional")] }
 
@@ -115,7 +115,7 @@ def ch2_53b : Datum :=
     glossedTokens := []
     context := "Neutral context."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "extrinsic")] }
 
@@ -128,7 +128,7 @@ def ch4_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "proportion")] }
 
@@ -141,7 +141,7 @@ def ch4_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "asymmetric quantification")] }
 
@@ -154,7 +154,7 @@ def ch4_7 : Datum :=
     glossedTokens := []
     context := "Simona favors red, Tony green, Lola, Max and Sandy blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "asymmetric quantification")] }
 
@@ -167,7 +167,7 @@ def ch4_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "proportion")] }
 
@@ -180,7 +180,7 @@ def ch4_11 : Datum :=
     glossedTokens := []
     context := "Nine planets; only three (say, Saturn, Neptune and Uranus) have rings; at least two of the three have rings made of ice."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrowing")] }
 
@@ -193,7 +193,7 @@ def ch4_12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrowing")] }
 
@@ -206,7 +206,7 @@ def ch4_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "perspective paradox")] }
 
@@ -219,7 +219,7 @@ def ch4_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "lexical vs extrinsic")] }
 
@@ -232,7 +232,7 @@ def ch4_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "perspective paradox")] }
 

@@ -24,7 +24,7 @@ def amavi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", ""), ("h5", "agr"), ("h5exp", "-ī"), ("target", "5"), ("conditioner", "3"), ("claim", "attested")] }
 
@@ -37,7 +37,7 @@ def amavisti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", ""), ("h5", "agr"), ("h5exp", "-istī"), ("target", "5"), ("conditioner", "3"), ("claim", "attested")] }
 
@@ -50,7 +50,7 @@ def amaveram : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-sā"), ("h5", "agr"), ("h5exp", "-m"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")] }
 
@@ -63,7 +63,7 @@ def amaverim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-sī"), ("h5", "agr"), ("h5exp", "-m"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")] }
 
@@ -76,7 +76,7 @@ def amavero : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-si"), ("h5", "agr"), ("h5exp", "-ō"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")] }
 
@@ -89,7 +89,7 @@ def capimus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")] }
 
@@ -102,7 +102,7 @@ def capessimus_root : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", "-ess"), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")] }
 
@@ -115,7 +115,7 @@ def capessimus_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", "-ess"), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")] }
 
@@ -128,7 +128,7 @@ def marriage : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "MARRY"), ("h1", "n"), ("h1exp", "-age"), ("target", "1"), ("conditioner", "root"), ("claim", "attested")] }
 
@@ -141,7 +141,7 @@ def marrying : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "MARRY"), ("h1", "v"), ("h1exp", ""), ("h2", "n"), ("h2exp", "-ing"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")] }
 
@@ -154,7 +154,7 @@ def bent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BEND"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", "-t"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")] }
 
@@ -167,7 +167,7 @@ def breakability : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BREAK"), ("h1", "a"), ("h1exp", "-able"), ("h2", "n"), ("h2exp", "-ity"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")] }
 
@@ -180,7 +180,7 @@ def colorization_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "COLOR"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "n"), ("h2exp", "-ation"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")] }
 
@@ -193,7 +193,7 @@ def colorization_root : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "COLOR"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "n"), ("h2exp", "-ation"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")] }
 
@@ -206,7 +206,7 @@ def bachaanaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", "-aa"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")] }
 
@@ -219,7 +219,7 @@ def bachvaanaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voicePassive"), ("h2exp", "-v"), ("h3", "v"), ("h3exp", ""), ("h4", "voice"), ("h4exp", "-aa"), ("target", "4"), ("conditioner", "root"), ("claim", "blocked")] }
 

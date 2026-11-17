@@ -12,7 +12,7 @@
     "translation": "The man repaired the bicycle.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.13"],
@@ -38,7 +38,7 @@
     "translation": "The man forgot my name.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.13"],
@@ -63,7 +63,7 @@
     "translation": "The mirror has fallen down.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.22"],
@@ -86,7 +86,7 @@
     "translation": "The water has boiled.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.22"],
@@ -110,7 +110,7 @@
     "translation": "The child has broken the mirror.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.22"],
@@ -134,7 +134,7 @@
     "translation": "The girl came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.23"],
@@ -157,7 +157,7 @@
     "translation": "The doctor came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.23"],
@@ -181,7 +181,7 @@
     "translation": "The doctor healed the girl.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.23"],
@@ -205,7 +205,7 @@
     "translation": "Patimat came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.24"],
@@ -228,7 +228,7 @@
     "translation": "Ahmad came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.24"],
@@ -251,7 +251,7 @@
     "translation": "Ahmad ploughed the field.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "1.24"],
@@ -276,7 +276,7 @@
     "translation": "Kitso will write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.1"],
@@ -302,7 +302,7 @@
     "translation": "The letter will be written by Kitso.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.1"],
@@ -331,7 +331,7 @@
     "translation": "Sékou will write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.2"],
@@ -357,7 +357,7 @@
     "translation": "The letter will be written by Sékou.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.2"],
@@ -384,7 +384,7 @@
     "translation": "Sékou wrote the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.3"],
@@ -409,7 +409,7 @@
     "translation": "The letter was written by Sékou.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.3"],
@@ -437,7 +437,7 @@
     "translation": "The children broke the mirror.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.4"],
@@ -462,7 +462,7 @@
     "translation": "The mirror broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.4"],
@@ -490,7 +490,7 @@
     "translation": "We will seek work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.5"],
@@ -517,7 +517,7 @@
     "translation": "We will seek work for your friend.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.5"],
@@ -548,7 +548,7 @@
     "translation": "I'll write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.6"],
@@ -576,7 +576,7 @@
     "translation": "I'll write the letter to/for Kitso.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.6"],
@@ -609,7 +609,7 @@
     "translation": "The letter will be written by me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.6"],
@@ -641,7 +641,7 @@
     "translation": "They will make me write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.6"],
@@ -674,7 +674,7 @@
     "translation": "The cook flavors the porridge with meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.13"],
@@ -701,7 +701,7 @@
     "translation": "Meat gives flavor to the porridge.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.13"],
@@ -733,7 +733,7 @@
     "translation": "Kitso will write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.14"],
@@ -760,7 +760,7 @@
     "translation": "The letter will be written by Kitso.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.14"],
@@ -791,7 +791,7 @@
     "translation": "A letter will be written.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.14"],
@@ -821,7 +821,7 @@
     "translation": "The women will cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.14"],
@@ -847,7 +847,7 @@
     "translation": "The people will cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.14"],
@@ -877,7 +877,7 @@
     "translation": "Moussa ate the rice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.15"],
@@ -904,7 +904,7 @@
     "translation": "Ali had Moussa eat the rice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.15"],
@@ -935,7 +935,7 @@
     "translation": "The rice was eaten.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.15"],
@@ -965,7 +965,7 @@
     "translation": "Péter was laughing at János.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.16"],
@@ -990,7 +990,7 @@
     "translation": "Péter laughed at János.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.16"],
@@ -1021,7 +1021,7 @@
     "translation": "Your cloth is dirty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.18"],
@@ -1047,7 +1047,7 @@
     "translation": "You have soiled your cloth.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.18"],
@@ -1078,7 +1078,7 @@
     "translation": "The child broke the eggs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.19"],
@@ -1103,7 +1103,7 @@
     "translation": "The eggs broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.19"],
@@ -1132,7 +1132,7 @@
     "translation": "The woman tears the shirt.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.21"],
@@ -1157,7 +1157,7 @@
     "translation": "The woman tears a shirt.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.21"],
@@ -1186,7 +1186,7 @@
     "translation": "Gáleto looked at Atejo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.23"],
@@ -1212,7 +1212,7 @@
     "translation": "Gáleto looked at himself (in the mirror) before going out.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.23"],
@@ -1241,7 +1241,7 @@
     "translation": "Gáleto greeted Atejo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.24"],
@@ -1267,7 +1267,7 @@
     "translation": "Gáleto and Atejo greeted (each other).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.24"],
@@ -1296,7 +1296,7 @@
     "translation": "The anchor sank.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.27"],
@@ -1321,7 +1321,7 @@
     "translation": "I had the anchor sunk (me negatively affected).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.27"],
@@ -1351,7 +1351,7 @@
     "translation": "(Be careful,) the child might fall down.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.28"],
@@ -1377,7 +1377,7 @@
     "translation": "(Be careful,) the child might fall into the well.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.28"],
@@ -1407,7 +1407,7 @@
     "translation": "I will go.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.33"],
@@ -1432,7 +1432,7 @@
     "translation": "I will take it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.33"],
@@ -1462,7 +1462,7 @@
     "translation": "I'll write a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1489,7 +1489,7 @@
     "translation": "The letter will be written.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1521,7 +1521,7 @@
     "translation": "I'll write the letter to Mpho.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1554,7 +1554,7 @@
     "translation": "Kitso will make me write the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1587,7 +1587,7 @@
     "translation": "Kitso will make someone write a letter to Mpho.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1620,7 +1620,7 @@
     "translation": "A letter will be written to Mpho.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1652,7 +1652,7 @@
     "translation": "Someone will make me write a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1684,7 +1684,7 @@
     "translation": "Someone will make someone else write a letter to Mpho.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.38"],
@@ -1715,7 +1715,7 @@
     "translation": "You are eating the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.39"],
@@ -1741,7 +1741,7 @@
     "translation": "I am making you eat the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.39"],
@@ -1772,7 +1772,7 @@
     "translation": "I am making you eat (unspecified things).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.39"],
@@ -1802,7 +1802,7 @@
     "translation": "They are making you eat the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.39"],
@@ -1832,7 +1832,7 @@
     "translation": "They are making you eat (unspecified things).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.39"],
@@ -1862,7 +1862,7 @@
     "translation": "I took the shirt.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.47"],
@@ -1892,7 +1892,7 @@
     "translation": "I took the shirt.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.47"],
@@ -1919,7 +1919,7 @@
     "translation": "The man bought fish at the store.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.48"],
@@ -1949,7 +1949,7 @@
     "translation": "The man bought fish at the store.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.48"],
@@ -1983,7 +1983,7 @@
     "translation": "The man bought fish at the store.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.48"],
@@ -2017,7 +2017,7 @@
     "translation": "The man bought fish for the child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.48"],
@@ -2051,7 +2051,7 @@
     "translation": "The man bought fish with the money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.48"],
@@ -2085,7 +2085,7 @@
     "translation": "Mother bought rice from that person.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.50"],
@@ -2112,7 +2112,7 @@
     "translation": "Mother bought rice from that person.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.50"],
@@ -2143,7 +2143,7 @@
     "translation": "S/he kissed his/her little brother/sister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.51"],
@@ -2170,7 +2170,7 @@
     "translation": "I made him/her kiss his/her little brother/sister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.51"],
@@ -2201,7 +2201,7 @@
     "translation": "They have met Tomo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.52"],
@@ -2227,7 +2227,7 @@
     "translation": "They have met Tomo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.52"],
@@ -2254,7 +2254,7 @@
     "translation": "Tomo has been met by them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "8.52"],
@@ -2281,7 +2281,7 @@
     "translation": "The woman made the child cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "12.2"],
@@ -2311,7 +2311,7 @@
     "translation": "The child cried.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "12.2"],
@@ -2337,7 +2337,7 @@
     "translation": "The woman brought the food.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "12.3"],
@@ -2367,7 +2367,7 @@
     "translation": "The woman came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "12.3"],
@@ -2392,7 +2392,7 @@
     "translation": "The food came.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["example", "12.3"],

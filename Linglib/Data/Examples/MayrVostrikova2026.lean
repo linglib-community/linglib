@@ -24,7 +24,7 @@ def ex_1_but : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every student who is not Ann passed, Ann did not pass, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "every"), ("inference", "exception")] }
 
@@ -37,7 +37,7 @@ def ex_1_except : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every student who is not Ann passed, Ann did not pass, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "except"), ("determiner", "every"), ("inference", "exception")] }
 
@@ -50,7 +50,7 @@ def ex_1_besides : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every student who is not Ann passed, Ann did not pass, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "besides"), ("determiner", "every"), ("inference", "exception")] }
 
@@ -63,7 +63,7 @@ def ex_2_but : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no student who is not Ann passed, Ann passed, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "no"), ("inference", "addition")] }
 
@@ -76,7 +76,7 @@ def ex_2_except : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no student who is not Ann passed, Ann passed, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "except"), ("determiner", "no"), ("inference", "addition")] }
 
@@ -89,7 +89,7 @@ def ex_2_besides : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no student who is not Ann passed, Ann passed, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "besides"), ("determiner", "no"), ("inference", "addition")] }
 
@@ -102,7 +102,7 @@ def ex_3a_but : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
 
@@ -115,7 +115,7 @@ def ex_3b_but_atLeast : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "at least")] }
 
@@ -128,7 +128,7 @@ def ex_3b_but_exactly : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "exactly")] }
 
@@ -141,7 +141,7 @@ def ex_3c_but_atMost : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "at most")] }
 
@@ -154,7 +154,7 @@ def ex_3c_but_moreThan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "more than")] }
 
@@ -167,7 +167,7 @@ def ex_3a_except : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "some")] }
 
@@ -180,7 +180,7 @@ def ex_3b_except_atLeast : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "at least")] }
 
@@ -193,7 +193,7 @@ def ex_3b_except_exactly : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "exactly")] }
 
@@ -206,7 +206,7 @@ def ex_3c_except_atMost : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "at most")] }
 
@@ -219,7 +219,7 @@ def ex_3c_except_moreThan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "more than")] }
 
@@ -232,7 +232,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some student who is not Ann passed, Ann passed, and Ann is a student", .acceptable)]
     paperFeatures := [("exceptive", "besides"), ("determiner", "some"), ("inference", "addition")] }
 
@@ -245,7 +245,7 @@ def ex_5_at_least : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "at least"), ("inference", "addition")] }
 
@@ -258,7 +258,7 @@ def ex_5_more_than : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "more than"), ("inference", "addition")] }
 
@@ -271,7 +271,7 @@ def ex_5_exactly : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "exactly"), ("inference", "addition")] }
 
@@ -284,7 +284,7 @@ def ex_6_at_most : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "at most"), ("inference", "addition")] }
 
@@ -297,7 +297,7 @@ def ex_6_fewer_than : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "fewer than"), ("inference", "addition")] }
 
@@ -310,7 +310,7 @@ def ex_7a_but : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "which")] }
 
@@ -323,7 +323,7 @@ def ex_7a_except : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "except"), ("determiner", "which")] }
 
@@ -336,7 +336,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "which"), ("inference", "addition")] }
 
@@ -349,7 +349,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ann and Bill both did not pass", .acceptable)]
     paperFeatures := [("exceptive", "besides"), ("determiner", "every"), ("inference", "exception")] }
 

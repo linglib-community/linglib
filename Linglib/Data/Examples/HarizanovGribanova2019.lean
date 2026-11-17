@@ -26,7 +26,7 @@ def ex2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -41,7 +41,7 @@ def ex2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -56,7 +56,7 @@ def ex3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -71,7 +71,7 @@ def ex3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -86,7 +86,7 @@ def ex4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "true")] }
 
@@ -101,7 +101,7 @@ def ex4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "false")] }
 
@@ -116,7 +116,7 @@ def ex5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "adverb")] }
 
@@ -131,7 +131,7 @@ def ex5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "negation")] }
 
@@ -146,7 +146,7 @@ def ex5c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "quantifier")] }
 
@@ -159,7 +159,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
@@ -172,7 +172,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
@@ -187,7 +187,7 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
@@ -202,7 +202,7 @@ def ex7b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
@@ -217,7 +217,7 @@ def ex8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "root"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -232,7 +232,7 @@ def ex8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -247,7 +247,7 @@ def ex9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -262,7 +262,7 @@ def ex9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -277,7 +277,7 @@ def ex10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -292,7 +292,7 @@ def ex10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -307,7 +307,7 @@ def ex11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "verbalComplex")] }
 
@@ -322,7 +322,7 @@ def ex12 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -337,7 +337,7 @@ def ex13 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "false")] }
 
@@ -352,7 +352,7 @@ def ex14 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "coordination")] }
 
@@ -367,7 +367,7 @@ def ex29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
@@ -382,7 +382,7 @@ def ex29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary")] }
 
@@ -397,7 +397,7 @@ def ex30a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
@@ -412,7 +412,7 @@ def ex30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary")] }
 
@@ -427,7 +427,7 @@ def ex31a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
@@ -442,7 +442,7 @@ def ex31b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary"), ("locality", "crossesTwoHeads")] }
 
@@ -457,7 +457,7 @@ def ex32a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "crossesNontensedClause")] }
 
@@ -472,7 +472,7 @@ def ex32b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "crossesTensedClause")] }
 
@@ -487,7 +487,7 @@ def ex33a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "island")] }
 
@@ -502,7 +502,7 @@ def ex33b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "island")] }
 
@@ -517,7 +517,7 @@ def ex42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "verbalComplex")] }
 
@@ -532,7 +532,7 @@ def ex58 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.1"), ("phenomenon", "verbSecond")] }
 
@@ -547,7 +547,7 @@ def ex60 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.2"), ("phenomenon", "verbSecond")] }
 
@@ -562,7 +562,7 @@ def ex64a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("phenomenon", "polarityFocus")] }
 
@@ -577,7 +577,7 @@ def ex64b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("phenomenon", "polarityFocus")] }
 

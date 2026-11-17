@@ -24,7 +24,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := "Asking a question in a quiz show, where the wh-phrase stays in situ."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "whInSitu")] }
 
@@ -37,7 +37,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := "The wh-phrase stops at the edge of the embedded declarative CP, with the interpretation of (20)."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "whAtDeclarativeEdge")] }
 
@@ -50,7 +50,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := "An indirect question: the wh-phrase at the edge of an interrogative CP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "whAtInterrogativeEdge")] }
 

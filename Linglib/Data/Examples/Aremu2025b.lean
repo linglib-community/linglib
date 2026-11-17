@@ -26,7 +26,7 @@ def ex_2b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kí ni Adé pa? 'What did Adé kill?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object")] }
 
@@ -41,7 +41,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object")] }
 
@@ -56,7 +56,7 @@ def ex_10b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject")] }
 
@@ -71,7 +71,7 @@ def ex_10b_noRP : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject")] }
 
@@ -86,7 +86,7 @@ def ex_10b_noRin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject")] }
 
@@ -101,7 +101,7 @@ def ex_10c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject")] }
 
@@ -116,7 +116,7 @@ def ex_16a : Datum :=
     lgrConformance := some .wordAligned
     context := "Subject focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("person", "first")] }
 
@@ -131,7 +131,7 @@ def ex_16b : Datum :=
     lgrConformance := some .wordAligned
     context := "Subject focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("person", "second")] }
 
@@ -146,7 +146,7 @@ def ex_22b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object")] }
 
@@ -161,7 +161,7 @@ def ex_22b_RP : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object")] }
 
@@ -176,7 +176,7 @@ def ex_22b_noRin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object")] }
 
@@ -191,7 +191,7 @@ def ex_22c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object")] }
 
@@ -206,7 +206,7 @@ def ex_22c_rin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Nèé Adé rí-i? 'Who did Adé see?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object")] }
 
@@ -221,7 +221,7 @@ def ex_27b : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct"), ("fronted", "adjunct")] }
 
@@ -236,7 +236,7 @@ def ex_27b_noRin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct"), ("fronted", "adjunct")] }
 
@@ -251,7 +251,7 @@ def ex_27c : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct")] }
 
@@ -266,7 +266,7 @@ def ex_27c_rin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "adjunct")] }
 
@@ -281,7 +281,7 @@ def ex_29a : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: What did Adé do?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp")] }
 
@@ -296,7 +296,7 @@ def ex_29a_rin : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: What did Adé do?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "vp")] }
 
@@ -311,7 +311,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "verb"), ("fronted", "verb")] }
 
@@ -326,7 +326,7 @@ def ex_29b_noRin : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "verb"), ("fronted", "verb")] }
 
@@ -341,7 +341,7 @@ def ex_31a : Datum :=
     lgrConformance := some .wordAligned
     context := "Contrastive subject focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("fronted", "subject"), ("continuation", "contrastive")] }
 
@@ -356,7 +356,7 @@ def ex_31b : Datum :=
     lgrConformance := some .wordAligned
     context := "Labelled new information subject focus."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("continuation", "contrastive")] }
 
@@ -371,7 +371,7 @@ def ex_32a : Datum :=
     lgrConformance := some .wordAligned
     context := "Contrastive object focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("fronted", "object"), ("continuation", "contrastive")] }
 
@@ -386,7 +386,7 @@ def ex_32b : Datum :=
     lgrConformance := some .wordAligned
     context := "New information object focus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object")] }
 
@@ -401,7 +401,7 @@ def ex_32b_contrast : Datum :=
     lgrConformance := some .wordAligned
     context := "New information object focus."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "object"), ("continuation", "contrastive")] }
 

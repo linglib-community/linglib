@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "and"], ["presuppositionalClause", "second"], ["redundant", "no"]],
     "comment": "The conjunction inherits the presupposition of its left conjunct only, so the antecedent does not presuppose that Mia has money.",
@@ -25,7 +25,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "and"], ["presuppositionalClause", "first"], ["redundant", "yes"]],
     "comment": "Marked # in the paper: the antecedent presupposes that Mia has money, so its second conjunct is uninformative.",
@@ -41,7 +41,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "if"], ["presuppositionalClause", "second"], ["redundant", "no"]],
     "comment": "A redundancy contrast with (9b): the conditional inherits the presupposition of its antecedent only.",
@@ -57,7 +57,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "if"], ["presuppositionalClause", "first"], ["redundant", "yes"]],
     "comment": "Marked # in the paper: the conditional presupposes that Mia has money, so its consequent is uninformative.",
@@ -73,7 +73,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "and"], ["presuppositionalClause", "second"], ["redundant", "no"]],
     "comment": "A redundancy contrast with (10b).",
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "and"], ["presuppositionalClause", "first"], ["redundant", "yes"]],
     "comment": "Marked # in the paper: the conjunction presupposes that Mia has money, so its second conjunct is uninformative.",
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "or"], ["presuppositionalClause", "second"], ["redundant", "no"]],
     "comment": "Equivalent to (11b): the disjunction does not project the presupposition of its left disjunct.",
@@ -121,7 +121,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["connective", "or"], ["presuppositionalClause", "first"], ["redundant", "no"]],
     "comment": "Unlike (9b) and (10b), not a violator of the Cooperative Principle: or is symmetric.",
@@ -137,7 +137,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", "judgment": "acceptable"},
       {"name": "∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", "judgment": "acceptable"}
@@ -156,7 +156,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", "judgment": "acceptable"},
       {"name": "∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", "judgment": "ungrammatical"}
@@ -175,7 +175,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", "judgment": "acceptable"},
       {"name": "∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", "judgment": "acceptable"}
@@ -194,7 +194,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", "judgment": "acceptable"},
       {"name": "∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers", "judgment": "ungrammatical"}
@@ -213,7 +213,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", "judgment": "acceptable"},
       {"name": "∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", "judgment": "acceptable"}
@@ -232,7 +232,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∀-over-if, equivalent to that of (148b)", "judgment": "acceptable"}
     ],
@@ -250,7 +250,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∀-over-if, equivalent to that of (148a)", "judgment": "acceptable"}
     ],

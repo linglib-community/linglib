@@ -198,7 +198,7 @@
     "translation": "It is not the case there are not people in the room, right?",
     "context": "The speaker believes that there is no one in a room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause_type", "polar"],
@@ -222,7 +222,7 @@
     "translation": "Lisi will not come",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause_type", "declarative"]
@@ -244,7 +244,7 @@
     "translation": "Why does Zhangsan go to school?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause_type", "wh-question"]

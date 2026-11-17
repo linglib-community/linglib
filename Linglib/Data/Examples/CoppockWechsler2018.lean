@@ -26,7 +26,7 @@ def ex_27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "declarative"), ("marking", "ego")] }
 
@@ -41,7 +41,7 @@ def ex_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "declarative"), ("marking", "ego")] }
 
@@ -56,7 +56,7 @@ def ex_34a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "ego")] }
 
@@ -71,7 +71,7 @@ def ex_34b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "plain")] }
 
@@ -86,7 +86,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "ego")] }
 
@@ -101,7 +101,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "plain")] }
 

@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determinate", .acceptable), ("indeterminate", .acceptable)]
     paperFeatures := [("phenomenon", "bare nominal")] }
 
@@ -39,7 +39,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -52,7 +52,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -65,7 +65,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John considers this woman competent.", .acceptable), ("John considers this woman a good teacher.", .acceptable), ("John considers this woman his girlfriend.", .acceptable), ("John considers this woman Mary.", .ungrammatical), ("John considers this woman some particular queen.", .ungrammatical), ("John considers this woman you.", .ungrammatical)]
+    contrasts := [("John considers this woman competent.", .acceptable), ("John considers this woman a good teacher.", .acceptable), ("John considers this woman his girlfriend.", .acceptable), ("John considers this woman Mary.", .ungrammatical), ("John considers this woman some particular queen.", .ungrammatical), ("John considers this woman you.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -78,7 +78,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
@@ -91,7 +91,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
@@ -104,7 +104,7 @@ def ex_7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
@@ -117,7 +117,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Dr. Jekyll and Mr. Hyde has passed away.", .ungrammatical)]
+    contrasts := [("Dr. Jekyll and Mr. Hyde has passed away.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
@@ -130,7 +130,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Some great man and some good father has passed away.", .ungrammatical)]
+    contrasts := [("Some great man and some good father has passed away.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
@@ -143,7 +143,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -156,7 +156,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -169,7 +169,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -182,7 +182,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "only")] }
 
@@ -195,7 +195,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -208,7 +208,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
@@ -221,7 +221,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -234,7 +234,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("more than one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -247,7 +247,7 @@ def ex_15c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("at least one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -260,7 +260,7 @@ def ex_15d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("at least one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -273,7 +273,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "no existence implication")] }
 
@@ -286,7 +286,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "no existence implication")] }
 
@@ -299,7 +299,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -312,7 +312,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -325,7 +325,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -338,7 +338,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -351,7 +351,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
@@ -364,7 +364,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
@@ -377,7 +377,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
@@ -390,7 +390,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
@@ -403,7 +403,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
@@ -416,7 +416,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -429,7 +429,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -442,7 +442,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -455,7 +455,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -468,7 +468,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -481,7 +481,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
@@ -494,7 +494,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("multiple authors", .acceptable), ("equative", .unacceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -507,7 +507,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -520,7 +520,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -533,7 +533,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -546,7 +546,7 @@ def ex_41c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
@@ -559,7 +559,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The king of France does not exist—there are two.", .unacceptable)]
+    contrasts := [("The king of France does not exist—there are two.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "uniqueness at issue")] }
 
@@ -572,7 +572,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The man who can best her in a battle of wits does not exist—there are two.", .unacceptable)]
+    contrasts := [("The man who can best her in a battle of wits does not exist—there are two.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "uniqueness at issue")] }
 
@@ -585,7 +585,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
@@ -598,7 +598,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -611,7 +611,7 @@ def ex_45a : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
@@ -624,7 +624,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -637,7 +637,7 @@ def ex_46a : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
@@ -650,7 +650,7 @@ def ex_46b : Datum :=
     glossedTokens := []
     context := "An iguana has been dissected and an observer points to an unidentified part."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
@@ -663,7 +663,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
@@ -676,7 +676,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
@@ -689,7 +689,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
@@ -702,7 +702,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "be shift")] }
 
@@ -715,7 +715,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Scott is an only author of Waverley.", .ungrammatical)]
+    contrasts := [("Scott is an only author of Waverley.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
@@ -728,7 +728,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
@@ -741,7 +741,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
@@ -754,7 +754,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I don't know how many books Frida has written. But as it happens, I'm now reading the book she wrote.", .unacceptable)]
+    contrasts := [("I don't know how many books Frida has written. But as it happens, I'm now reading the book she wrote.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "blocking"), ("contextUniqueness", "open")] }
 
@@ -767,7 +767,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Frida has written exactly one book. But as it happens, I'm now reading a book she wrote.", .unacceptable)]
+    contrasts := [("Frida has written exactly one book. But as it happens, I'm now reading a book she wrote.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "blocking"), ("contextUniqueness", "given")] }
 
@@ -780,7 +780,7 @@ def ex_76a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
@@ -793,7 +793,7 @@ def ex_76b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
@@ -806,7 +806,7 @@ def ex_77a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
@@ -819,7 +819,7 @@ def ex_77b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
@@ -832,7 +832,7 @@ def ex_78a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -845,7 +845,7 @@ def ex_78b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
@@ -858,7 +858,7 @@ def ex_79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "indefinite")] }
 
@@ -871,7 +871,7 @@ def ex_79b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "indefinite")] }
 
@@ -884,7 +884,7 @@ def ex_80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -897,7 +897,7 @@ def ex_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determinate", .acceptable), ("anti-uniqueness", .marginal)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
@@ -910,7 +910,7 @@ def ex_81a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -923,7 +923,7 @@ def ex_81b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
@@ -936,7 +936,7 @@ def ex_82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -949,7 +949,7 @@ def ex_82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
@@ -962,7 +962,7 @@ def ex_83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -975,7 +975,7 @@ def ex_83b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
@@ -988,7 +988,7 @@ def ex_95 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("indeterminate", .acceptable), ("determinate", .unacceptable)]
     paperFeatures := [("phenomenon", "no determinate indefinite")] }
 
@@ -1001,7 +1001,7 @@ def ex_97a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
@@ -1014,7 +1014,7 @@ def ex_97b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
@@ -1027,7 +1027,7 @@ def ex_101a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -1040,7 +1040,7 @@ def ex_101b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .unacceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
@@ -1053,7 +1053,7 @@ def ex_102a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1066,7 +1066,7 @@ def ex_102b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1079,7 +1079,7 @@ def ex_103a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1092,7 +1092,7 @@ def ex_103b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1105,7 +1105,7 @@ def ex_104a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1118,7 +1118,7 @@ def ex_104b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1131,7 +1131,7 @@ def ex_105a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1144,7 +1144,7 @@ def ex_105b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1157,7 +1157,7 @@ def ex_106a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1170,7 +1170,7 @@ def ex_106b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1183,7 +1183,7 @@ def ex_107a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1196,7 +1196,7 @@ def ex_107b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1209,7 +1209,7 @@ def ex_108a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1222,7 +1222,7 @@ def ex_108b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1235,7 +1235,7 @@ def ex_109a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1248,7 +1248,7 @@ def ex_109b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
@@ -1261,7 +1261,7 @@ def ex_110 : Datum :=
     glossedTokens := []
     context := "A bird-watching expedition in which the participants are keeping track of how many birds have been seen."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
@@ -1274,7 +1274,7 @@ def ex_111 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anti-uniqueness", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -1287,7 +1287,7 @@ def ex_112a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "possessive"), ("verdict", "contradictory")] }
 
@@ -1300,7 +1300,7 @@ def ex_112b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "some"), ("verdict", "notContradictory")] }
 
@@ -1313,7 +1313,7 @@ def ex_113a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "possessive"), ("verdict", "equivalent")] }
 
@@ -1326,7 +1326,7 @@ def ex_113b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "some"), ("verdict", "notEquivalent")] }
 
@@ -1339,7 +1339,7 @@ def ex_114a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativePossessive"), ("verdict", "notContradictory")] }
 
@@ -1352,7 +1352,7 @@ def ex_114b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativeIndefinite"), ("verdict", "notContradictory")] }
 
@@ -1365,7 +1365,7 @@ def ex_114c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativeDefinite"), ("verdict", "contradictory")] }
 
@@ -1378,7 +1378,7 @@ def ex_115a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativePossessive"), ("verdict", "notEquivalent")] }
 
@@ -1391,7 +1391,7 @@ def ex_115b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativeIndefinite"), ("verdict", "notEquivalent")] }
 
@@ -1404,7 +1404,7 @@ def ex_115c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativeDefinite"), ("verdict", "equivalent")] }
 
@@ -1417,7 +1417,7 @@ def ex_116a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1430,7 +1430,7 @@ def ex_116b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1443,7 +1443,7 @@ def ex_117 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1456,7 +1456,7 @@ def ex_118a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1469,7 +1469,7 @@ def ex_118b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1482,7 +1482,7 @@ def ex_119a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1495,7 +1495,7 @@ def ex_119b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1508,7 +1508,7 @@ def ex_120 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Trotsky is 100% Superman.", .unacceptable)]
+    contrasts := [("Trotsky is 100% Superman.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1521,7 +1521,7 @@ def ex_121 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Trotsky is to some extent Superman.", .unacceptable)]
+    contrasts := [("Trotsky is to some extent Superman.", .unacceptable)]
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1534,7 +1534,7 @@ def ex_122 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1547,7 +1547,7 @@ def ex_123a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1560,7 +1560,7 @@ def ex_123b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1573,7 +1573,7 @@ def ex_124 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("multiple contributions", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness")] }
 
@@ -1586,7 +1586,7 @@ def ex_125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1599,7 +1599,7 @@ def ex_126 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
@@ -1613,7 +1613,7 @@ def ex_131 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("multiple contributions", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -1627,7 +1627,7 @@ def ex_132 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("multiple appearances", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness"), ("verb", "entityIntroducing")] }
 
@@ -1640,7 +1640,7 @@ def ex_135 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("indeterminate", .acceptable)]
     paperFeatures := [("phenomenon", "bare nominal")] }
 

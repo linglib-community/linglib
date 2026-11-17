@@ -26,7 +26,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cabanga"), ("role", "complement"), ("mood", "indicative")] }
 
@@ -41,7 +41,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ngi-ku-funa ukudla.", .ungrammatical)]
+    contrasts := [("Ngi-ku-funa ukudla.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("diagnostic", "objectMarking")] }
 
@@ -56,7 +56,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Ngi-ku-funa ukuthi uZodwa a-pheke.", .ungrammatical)]
+    contrasts := [("Ngi-ku-funa ukuthi uZodwa a-pheke.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("mood", "subjunctive"), ("diagnostic", "objectMarking")] }
 
@@ -71,7 +71,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "danisa"), ("role", "obliquePassiveSubject")] }
 
@@ -86,7 +86,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "khuluma nga"), ("role", "prepositionObject")] }
 
@@ -101,7 +101,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bala"), ("role", "subject")] }
 

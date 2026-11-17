@@ -25,7 +25,7 @@ def ex_10_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[-fem]"), ("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -41,7 +41,7 @@ def ex_10_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("gender", "feminine")] }
 
@@ -57,7 +57,7 @@ def ex_10_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "u[-fem]"), ("gender", "masculine")] }
 
@@ -73,7 +73,7 @@ def ex_10_5c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[-fem]"), ("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -89,7 +89,7 @@ def ex_10_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "plain"), ("gender", "masculine")] }
 
@@ -105,7 +105,7 @@ def ex_10_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "plain"), ("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -121,7 +121,7 @@ def ex_10_10a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[-fem]"), ("gender", "masculine")] }
 
@@ -137,7 +137,7 @@ def ex_10_10b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[-fem]"), ("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -153,7 +153,7 @@ def ex_10_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[-fem]"), ("head", "i[+fem]"), ("gender", "feminine")] }
 
@@ -169,7 +169,7 @@ def ex_10_21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "a"), ("head", "plain"), ("gender", "masculine")] }
 
@@ -185,7 +185,7 @@ def ex_10_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "plain"), ("gender", "masculine")] }
 
@@ -201,7 +201,7 @@ def ex_10_25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "plain"), ("gender", "masculine")] }
 
@@ -217,7 +217,7 @@ def ex_10_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "plain"), ("gender", "masculine")] }
 
@@ -231,7 +231,7 @@ def ex_10_27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("gender", "feminine")] }
 
@@ -245,7 +245,7 @@ def ex_10_27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "plain"), ("gender", "masculine")] }
 
@@ -261,7 +261,7 @@ def ex_10_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -277,7 +277,7 @@ def ex_10_29b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -293,7 +293,7 @@ def ex_10_29c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -309,7 +309,7 @@ def ex_10_29d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("head", "plain"), ("gender", "neuter")] }
 
@@ -325,7 +325,7 @@ def ex_10_29e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("head", "plain"), ("gender", "neuter")] }
 
@@ -341,7 +341,7 @@ def ex_10_29f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("head", "plain"), ("gender", "neuter")] }
 
@@ -357,7 +357,7 @@ def ex_10_30b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "plain"), ("gender", "neuter")] }
 
@@ -373,7 +373,7 @@ def ex_10_35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("gender", "feminine")] }
 
@@ -389,7 +389,7 @@ def ex_10_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("gender", "feminine")] }
 
@@ -405,7 +405,7 @@ def ex_10_35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[-fem]"), ("gender", "masculine")] }
 
@@ -421,7 +421,7 @@ def ex_10_35d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "plain"), ("gender", "masculine")] }
 
@@ -437,7 +437,7 @@ def ex_10_35e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[+fem]"), ("head", "dim"), ("gender", "feminine")] }
 
@@ -453,7 +453,7 @@ def ex_10_35f : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "u[+fem]"), ("head", "dim"), ("gender", "feminine")] }
 
@@ -469,7 +469,7 @@ def ex_10_35g : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "i[-fem]"), ("head", "dim"), ("gender", "masculine")] }
 
@@ -485,7 +485,7 @@ def ex_10_35h : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("head", "plain"), ("head", "dim"), ("gender", "masculine")] }
 

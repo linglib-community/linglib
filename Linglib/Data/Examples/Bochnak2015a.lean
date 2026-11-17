@@ -26,7 +26,7 @@ def ex10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You borrowed a pot from Beverly, and now you need to give it back to her."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "deontic")] }
 
@@ -41,7 +41,7 @@ def ex11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A friend comes to visit, and brings her dog along. You don’t want the dog to come in the house."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "deontic")] }
 
@@ -56,7 +56,7 @@ def ex12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "I ask you where you will spend the day tomorrow. You say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "metaphysical")] }
 
@@ -71,7 +71,7 @@ def ex13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At a school dance, you wonder whether a shy boy will talk to a girl he likes. Your friend says “Yes, …”"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "metaphysical")] }
 
@@ -86,7 +86,7 @@ def ex14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are planning to drive over the mountains. It’s started to snow, and you know that whenever it snows, the road over the mountains is closed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "epistemic")] }
 
@@ -101,7 +101,7 @@ def ex15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are at a restaurant, and the waiter says that today’s special is fish, your favorite food. You say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "bouletic")] }
 
@@ -116,7 +116,7 @@ def ex16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At a school dance, you tell your friend that a boy who is being shy should talk to a girl he likes."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "weak necessity"), ("flavor", "bouletic")] }
 
@@ -131,7 +131,7 @@ def ex17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("flavor", "generic")] }
 
@@ -146,7 +146,7 @@ def ex18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Mary’s friends come over to see if she is allowed to come out to play."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "deontic")] }
 
@@ -161,7 +161,7 @@ def ex19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "At a school dance, you see a shy boy who wants to talk to a girl but isn’t. You ask your friend if that boy is allowed to talk to that girl. Your friend responds: “Yes …”"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "deontic")] }
 
@@ -176,7 +176,7 @@ def ex20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You have been working on building a house for quite a while now. I ask when you will be finished. You say it’s possible you’ll finish tomorrow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "metaphysical")] }
 
@@ -191,7 +191,7 @@ def ex21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You hear a knock at the door. You can’t see who it is, but can see that the person looks about the same height as Beverly."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "epistemic")] }
 
@@ -206,7 +206,7 @@ def ex22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You see someone trying to pick up a very heavy rock. You are very strong, so you tell them that you can lift that rock."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "circumstantial")] }
 
@@ -221,7 +221,7 @@ def ex23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You are discussing what could grow in the garden, given the type of soil."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "circumstantial")] }
 
@@ -236,7 +236,7 @@ def ex30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You see someone trying to pick up a very heavy rock, but they can’t lift it. You are not very strong, so you say that you can’t pick up the rock either."
     judgment := .acceptable
-    alternatives := [("deʔek t’-i:yel-iʔ-ŋa di-bips-i-š-gi k’-eʔ-e:s-i", .ungrammatical)]
+    contrasts := [("deʔek t’-i:yel-iʔ-ŋa di-bips-i-š-gi k’-eʔ-e:s-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "circumstantial"), ("prejacent", "negated")] }
 
@@ -251,7 +251,7 @@ def ex31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You have been working on building a house for quite a while now, and you still won’t finish it by tomorrow."
     judgment := .acceptable
-    alternatives := [("wat di-do:da-mamaʔ-gab-i-š-gi k’-eʔ-e:s-i", .ungrammatical)]
+    contrasts := [("wat di-do:da-mamaʔ-gab-i-š-gi k’-eʔ-e:s-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 
@@ -266,7 +266,7 @@ def ex32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Someone offers you some candy, but your doctor says you shouldn’t eat candy."
     judgment := .acceptable
-    alternatives := [("demuc’uc’u-ŋa le-iʔiw-i-gi L-eʔ-e:s-i", .ungrammatical)]
+    contrasts := [("demuc’uc’u-ŋa le-iʔiw-i-gi L-eʔ-e:s-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "deontic"), ("prejacent", "negated")] }
 
@@ -281,7 +281,7 @@ def ex33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "You have been working on building a house for quite a while now, and you’re not sure if you’ll finish it by tomorrow."
     judgment := .acceptable
-    alternatives := [("wat di-do:da-mamaʔ-hel-i-gi L-eʔ-e:s-i", .ungrammatical)]
+    contrasts := [("wat di-do:da-mamaʔ-hel-i-gi L-eʔ-e:s-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("force", "possibility"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 
@@ -296,7 +296,7 @@ def ex34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "We are discussing the weather for tomorrow. It might rain, but it might not."
     judgment := .acceptable
-    alternatives := [("wát háʔaš-gab-i-gi k’-éʔ-e:s-i", .ungrammatical)]
+    contrasts := [("wát háʔaš-gab-i-gi k’-éʔ-e:s-i", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("force", "possibility"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 

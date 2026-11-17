@@ -24,7 +24,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "strong"), ("npi", "in years")] }
 
@@ -37,7 +37,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "zero"), ("strength", "strong"), ("npi", "in years")] }
 
@@ -50,7 +50,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "weak"), ("npi", "ever"), ("npi", "anything")] }
 
@@ -63,7 +63,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "zero"), ("strength", "weak"), ("npi", "anything")] }
 
@@ -76,7 +76,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "zero"), ("strength", "weak"), ("npi", "any")] }
 
@@ -89,7 +89,7 @@ def ex46_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "weak"), ("npi", "any")] }
 
@@ -102,7 +102,7 @@ def ex46_few : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "few"), ("strength", "weak"), ("npi", "any")] }
 
@@ -115,7 +115,7 @@ def ex47_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "strong"), ("npi", "in years")] }
 
@@ -128,7 +128,7 @@ def ex47_few : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "few"), ("strength", "strong"), ("npi", "in years")] }
 

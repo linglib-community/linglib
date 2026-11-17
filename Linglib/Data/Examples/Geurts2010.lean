@@ -24,7 +24,7 @@ def table2_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "false"), ("quantifier", "some"), ("alternative", "many"), ("alternative", "most"), ("alternative", "all")] }
 
@@ -37,7 +37,7 @@ def table2_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "false"), ("quantifier", "many"), ("alternative", "most"), ("alternative", "all")] }
 
@@ -50,7 +50,7 @@ def table2_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "false"), ("quantifier", "most"), ("alternative", "all")] }
 
@@ -63,7 +63,7 @@ def table2_iv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "false"), ("quantifier", "all")] }
 
@@ -76,7 +76,7 @@ def table2_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "true"), ("quantifier", "some")] }
 
@@ -89,7 +89,7 @@ def table2_vi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "true"), ("quantifier", "many"), ("alternative", "some")] }
 
@@ -102,7 +102,7 @@ def table2_vii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "true"), ("quantifier", "most"), ("alternative", "some"), ("alternative", "many")] }
 
@@ -115,7 +115,7 @@ def table2_viii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negated", "true"), ("quantifier", "all"), ("alternative", "some"), ("alternative", "many"), ("alternative", "most")] }
 
@@ -128,7 +128,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "He may be British."), ("conveys", "true")] }
 
@@ -141,7 +141,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "He may be British."), ("conveys", "true")] }
 
@@ -154,7 +154,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "My son asks what is for dessert; the modal is deontic and performative."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "You can have chocolate cake."), ("conveys", "true")] }
 
@@ -167,7 +167,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "sameLength"), ("inference", "George doesn't believe that all the nurses were drunk."), ("conveys", "true")] }
 
@@ -180,7 +180,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("inference", "George doesn't know whether all the nurses were drunk."), ("conveys", "true")] }
 
@@ -193,7 +193,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "sameLength"), ("inference", "I didn't hurt my thumb."), ("conveys", "true")] }
 
@@ -206,7 +206,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "longer"), ("inference", "I didn't hurt my big toe."), ("conveys", "false")] }
 
@@ -219,7 +219,7 @@ def ex_6_figs : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "figs"), ("inference", "Cleo didn't eat all the figs."), ("conveys", "true")] }
 
@@ -232,7 +232,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "mango"), ("inference", "Cleo didn't have a mango."), ("conveys", "false")] }
 
@@ -245,7 +245,7 @@ def ex_31_x : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "referent"), ("inference", "The sailor in question didn't show all the symptoms of delirium."), ("conveys", "true")] }
 
@@ -258,7 +258,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "everySailor"), ("inference", "Last year, no Dutch sailor showed all the symptoms of delirium."), ("conveys", "false")] }
 
@@ -271,7 +271,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "all"), ("inference", "None of them own both."), ("conveys", "false")] }
 
@@ -284,7 +284,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "moreThanOne"), ("inference", "At least 300 of them don't own both."), ("conveys", "false")] }
 
@@ -297,7 +297,7 @@ def ex_61c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "exactlyTwo"), ("inference", "Only six farmers in this region own goats or sheep but not both."), ("conveys", "false")] }
 
@@ -310,7 +310,7 @@ def ex_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude", "hope"), ("inference", "I hope that not all of them will remember it."), ("conveys", "false")] }
 
@@ -323,7 +323,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude", "have to"), ("inference", "You're not allowed to read all of them."), ("conveys", "false")] }
 
@@ -336,7 +336,7 @@ def ex_56c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("attitude", "want"), ("inference", "I want you not to give me all of your biscuits."), ("conveys", "false")] }
 

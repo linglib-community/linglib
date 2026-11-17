@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Non-standard English.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "strict"],
@@ -32,7 +32,7 @@
     "translation": "Nobody has said anything",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "negative spread"]
@@ -53,7 +53,7 @@
     "translation": "I have heard nothing / I haven't heard anything",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "negative"],
@@ -75,7 +75,7 @@
     "translation": "I have heard something",
     "context": "Intended with a positive reading of rien.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "negative"]
@@ -96,7 +96,7 @@
     "translation": "Nobody came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "strict"],
@@ -118,7 +118,7 @@
     "translation": "I saw nobody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "strict"],
@@ -140,7 +140,7 @@
     "translation": "Nobody came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -163,7 +163,7 @@
     "translation": "I didn't see anybody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -186,7 +186,7 @@
     "translation": "Nobody went",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "strict"],
@@ -209,7 +209,7 @@
     "translation": "No one was here last night",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -232,7 +232,7 @@
     "translation": "Not a single taxi stopped",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -255,7 +255,7 @@
     "translation": "I can't hear a single word",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -278,7 +278,7 @@
     "translation": "I didn't see anything",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -301,7 +301,7 @@
     "translation": "Nobody saw me",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -325,7 +325,7 @@
     "translation": "because nobody abuses his own",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -348,7 +348,7 @@
     "translation": "Nobody has seen John",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -369,7 +369,7 @@
     "translation": "",
     "context": "African American Vernacular English.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -392,7 +392,7 @@
     "translation": "I haven't seen anybody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -416,7 +416,7 @@
     "translation": "Nobody has seen me",
     "context": "Brabantic Belgian Dutch.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -439,7 +439,7 @@
     "translation": "I have seen nobody",
     "context": "Brabantic Belgian Dutch.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -463,7 +463,7 @@
     "translation": "I couldn't see your book anywhere",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -485,7 +485,7 @@
     "translation": "I didn't see anything",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -508,7 +508,7 @@
     "translation": "I saw nobody",
     "context": "Informal Welsh.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],
@@ -529,7 +529,7 @@
     "translation": "But surely one cannot bring to the emperor any Jew with beard and earlocks",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "non-strict"],

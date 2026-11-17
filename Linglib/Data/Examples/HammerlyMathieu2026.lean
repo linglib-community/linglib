@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("lda", "none")] }
 
@@ -41,7 +41,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3"), ("lda", "subject")] }
 
@@ -56,7 +56,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "none")] }
 
@@ -71,7 +71,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ea")] }
 
@@ -86,7 +86,7 @@ def ex_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("disjoint", .acceptable), ("coreferent", .ungrammatical)]
     paperFeatures := [] }
 
@@ -101,7 +101,7 @@ def ex_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ea"), ("order", "PROX V OBV")] }
 
@@ -114,7 +114,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ea"), ("order", "V PROX OBV")] }
 
@@ -127,7 +127,7 @@ def ex_9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ea"), ("order", "V OBV PROX")] }
 
@@ -140,7 +140,7 @@ def ex_9d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ea"), ("order", "OBV V PROX")] }
 
@@ -155,7 +155,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ia"), ("order", "PROX V OBV")] }
 
@@ -168,7 +168,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ia"), ("order", "V PROX OBV")] }
 
@@ -181,7 +181,7 @@ def ex_10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ia"), ("order", "V OBV PROX")] }
 
@@ -194,7 +194,7 @@ def ex_10d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "obv"), ("lda", "ia"), ("order", "OBV V PROX")] }
 
@@ -209,7 +209,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "obv"), ("ia", "prox"), ("lda", "ia")] }
 
@@ -224,7 +224,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "obv"), ("ia", "prox"), ("lda", "ea")] }
 
@@ -239,7 +239,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("lda", "ea")] }
 
@@ -254,7 +254,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("lda", "ia")] }
 
@@ -269,7 +269,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("lda", "ea")] }
 
@@ -284,7 +284,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("lda", "ia")] }
 
@@ -299,7 +299,7 @@ def ex_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "prox"), ("lda", "ea")] }
 
@@ -314,7 +314,7 @@ def ex_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "prox"), ("lda", "ia")] }
 
@@ -329,7 +329,7 @@ def ex_15a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "2"), ("lda", "ea")] }
 
@@ -344,7 +344,7 @@ def ex_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "2"), ("lda", "ia")] }
 
@@ -359,7 +359,7 @@ def ex_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "prox"), ("lda", "ia")] }
 
@@ -374,7 +374,7 @@ def ex_16b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "prox"), ("lda", "ia")] }
 
@@ -389,7 +389,7 @@ def ex_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "prox"), ("lda", "ea")] }
 
@@ -404,7 +404,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "1"), ("lda", "ea")] }
 
@@ -419,7 +419,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "prox"), ("ia", "1"), ("lda", "ia")] }
 

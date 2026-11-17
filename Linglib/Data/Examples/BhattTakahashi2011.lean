@@ -24,7 +24,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -37,7 +37,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -50,7 +50,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -63,7 +63,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -76,7 +76,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -89,7 +89,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -104,7 +104,7 @@ def ex35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -117,7 +117,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "yes"), ("than_internal_scope", "unavailable")] }
 
@@ -130,7 +130,7 @@ def ex43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "available")] }
 
@@ -145,7 +145,7 @@ def ex40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "unavailable")] }
 

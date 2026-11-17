@@ -24,7 +24,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused")] }
 
@@ -37,7 +37,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused"), ("effect", "negated")] }
 
@@ -52,7 +52,7 @@ def ex_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")] }
 
@@ -67,7 +67,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause")] }
 
@@ -82,7 +82,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")] }
 
@@ -97,7 +97,7 @@ def ex_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "AND"), ("order", "cause-effect")] }
 
@@ -112,7 +112,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated")] }
 
@@ -127,7 +127,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "free")] }
 
@@ -142,7 +142,7 @@ def ex_104 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound"), ("effect", "negated")] }
 
@@ -157,7 +157,7 @@ def ch4_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "basic")] }
 
@@ -172,7 +172,7 @@ def ch4_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "lexical causative"), ("clauses", "one"), ("vcause", "fused")] }
 
@@ -187,7 +187,7 @@ def ch4_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "basic")] }
 
@@ -202,7 +202,7 @@ def ch4_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "morphological causative"), ("clauses", "one"), ("vcause", "bound"), ("causee", "ACC")] }
 
@@ -217,7 +217,7 @@ def ch4_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "PURP causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("causee", "DAT")] }
 
@@ -232,7 +232,7 @@ def ch4_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("subject", "NOM")] }
 
@@ -247,7 +247,7 @@ def ch4_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kiho-ka cini-ka kwail cɨp-ɨl masi-ke-lɨl ha-əss-ta", .acceptable)]
+    contrasts := [("kiho-ka cini-ka kwail cɨp-ɨl masi-ke-lɨl ha-əss-ta", .acceptable)]
     readings := []
     paperFeatures := [("construction", "complement causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("causee", "NOM")] }
 
@@ -262,7 +262,7 @@ def ch4_6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "PURP causative"), ("clause", "omitted")] }
 
@@ -277,7 +277,7 @@ def ch4_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("clause", "omitted")] }
 
@@ -292,7 +292,7 @@ def ch4_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "PURP causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("causee", "ACC")] }
 
@@ -307,7 +307,7 @@ def ch4_9_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("subject", "ACC")] }
 
@@ -322,7 +322,7 @@ def ch4_9_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("subject", "DAT")] }
 
@@ -337,7 +337,7 @@ def ch4_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("subject", "NOM")] }
 
@@ -352,7 +352,7 @@ def ch4_11_acc : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kɨ-ka na-lɨl kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta", .acceptable)]
+    contrasts := [("kɨ-ka na-lɨl kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta", .acceptable)]
     readings := []
     paperFeatures := [("construction", "PURP causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated"), ("causee", "ACC")] }
 
@@ -367,7 +367,7 @@ def ch4_11_dat : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kɨ-ka na-eke kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta", .acceptable)]
+    contrasts := [("kɨ-ka na-eke kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta", .acceptable)]
     readings := []
     paperFeatures := [("construction", "PURP causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated"), ("causee", "DAT")] }
 

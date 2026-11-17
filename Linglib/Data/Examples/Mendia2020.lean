@@ -25,7 +25,7 @@ def ex_14a : Datum :=
     context := "There are three bull-dogs and two beagles in the next room."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex_14b : Datum :=
     context := "There is only Fido, who is a border collie and a watch-dog, in the next room."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -52,7 +52,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -65,7 +65,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -78,7 +78,7 @@ def fn9_ia : Datum :=
     glossedTokens := []
     context := "The rabies vaccine is now ineffective because of a mutation that the virus has undergone. So one must be very careful not to get bit by potentially rabies-carrying animals."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -91,7 +91,7 @@ def fn9_ib : Datum :=
     glossedTokens := []
     context := "The rabies vaccine is now ineffective because of a mutation that the virus has undergone. So one must be very careful not to get bit by potentially rabies-carrying animals."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "referential situation pronoun", "judgment": "acceptable"},
       {"name": "bound situation pronoun", "judgment": "acceptable"}
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "Attributive: Smith is found foully murdered and no one knows by whom. Referential: Jones is on trial for the murder and behaving oddly in court.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "referential", "judgment": "acceptable"},
       {"name": "attributive", "judgment": "acceptable"}
@@ -57,7 +57,7 @@
     "translation": "",
     "context": "The man gestured at is drinking water from a martini glass.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["chapter", "5"],
@@ -77,7 +77,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Scott is Scott.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "strong", "judgment": "acceptable"}
     ],
@@ -121,7 +121,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "If a man beats a donkey, the donkey kicks him.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -143,7 +143,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "covarying", "judgment": "acceptable"}
     ],
@@ -165,7 +165,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de dicto", "judgment": "acceptable"},
       {"name": "de re", "judgment": "acceptable"}
@@ -189,7 +189,7 @@
     "translation": "",
     "context": "The speaker does not know how many planets there are, but astronomical theory dictates that the number is odd.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "attributive de re", "judgment": "acceptable"}
     ],
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.",
         "judgment": "acceptable"
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["chapter", "8"],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I do not know whether there are any ghosts in Hans's attic. But if there is exactly one ghost in his attic and it is quiet tonight, he will hold a party.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -285,7 +285,7 @@
     "translation": "",
     "context": "Hans sincerely says both.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I am unsure whether there is a ghost in my attic. I would like there to be an entity such that it is a ghost in my attic and nothing else is a ghost in my attic and it is quiet tonight.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -308,7 +308,7 @@
     "translation": "",
     "context": "The speaker does not believe in the existence of a fountain of youth.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no speaker commitment to a fountain of youth", "judgment": "acceptable"}
     ],
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "Said in a room containing exactly one table, in a world containing many.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["chapter", "9"],
@@ -350,7 +350,7 @@
     "translation": "",
     "context": "The final verb phrase is downstressed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "strict",
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "The final verb phrase is downstressed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "strict", "judgment": "acceptable"},
       {"name": "sloppy", "judgment": "acceptable"}
@@ -402,7 +402,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "strong", "judgment": "acceptable"}
     ],
@@ -427,7 +427,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["chapter", "10"],
@@ -447,7 +447,7 @@
     "translation": "",
     "context": "Said while pointing at Benedict XVI.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Benedict XVI is usually an Italian.",
         "judgment": "acceptable"
@@ -474,7 +474,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "It which rolls fastest gathers no moss.", "judgment": "ungrammatical"},
       {"form": "he of the fiery sword", "judgment": "acceptable"},
       {"form": "he of Mary", "judgment": "ungrammatical"}

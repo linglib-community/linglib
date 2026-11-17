@@ -26,7 +26,7 @@ def bu2022_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("root class", "naturally reflexive")] }
 
@@ -41,7 +41,7 @@ def bu2022_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("reading", "generic")] }
 
@@ -56,7 +56,7 @@ def bu2022_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "passive middle"), ("reading", "episodic")] }
 
@@ -71,7 +71,7 @@ def bu2022_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "agent denial")] }
 
@@ -86,7 +86,7 @@ def bu2022_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "dengan sendiri=nya")] }
 
@@ -101,7 +101,7 @@ def bu2022_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "di- passive"), ("diagnostic", "oleh phrase")] }
 
@@ -116,7 +116,7 @@ def bu2022_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A charity bachelor auction."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "rationale clause")] }
 
@@ -131,7 +131,7 @@ def bu2022_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("diagnostic", "dengan sendiri=nya")] }
 
@@ -146,7 +146,7 @@ def bu2022_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("compositional: washed his eyes", .acceptable), ("idiomatic: watched the girls go by (24b)", .acceptable)]
     paperFeatures := [("middle type", "incorporation"), ("object", "incorporated NP")] }
 
@@ -161,7 +161,7 @@ def bu2022_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "non-separability")] }
 
@@ -176,7 +176,7 @@ def bu2022_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "discourse opacity")] }
 
@@ -191,7 +191,7 @@ def bu2022_26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "E.g. sold into servitude."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "incorporated reflexive"), ("object", "diri")] }
 
@@ -206,7 +206,7 @@ def bu2022_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "complementary distribution")] }
 
@@ -221,7 +221,7 @@ def bu2022_44a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tono dressed himself and Ali was dressed by his mother."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "mixed readings"), ("analysis", "open variable vs existential")] }
 
@@ -236,7 +236,7 @@ def bu2022_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "conflation"), ("root class", "relational noun")] }
 
@@ -251,7 +251,7 @@ def bu2022_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "conflation"), ("diagnostic", "change denial")] }
 
@@ -266,7 +266,7 @@ def bu2022_67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "anticausative"), ("diagnostic", "causer denial")] }
 
@@ -281,7 +281,7 @@ def bu2022_74 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "causer denial")] }
 

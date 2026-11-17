@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dugar mi:sgɘi zagaha ɘdi-xɘ gɘžɘ han-a:", .acceptable)]
+    contrasts := [("Dugar mi:sgɘi zagaha ɘdi-xɘ gɘžɘ han-a:", .acceptable)]
     readings := []
     paperFeatures := [("complement", "CP"), ("translation", "think")] }
 
@@ -41,7 +41,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The fish was missing. Dugar was wrong about who ate it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "CP"), ("test", "denial")] }
 
@@ -56,7 +56,7 @@ def ex_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("translation", "remember")] }
 
@@ -71,7 +71,7 @@ def ex_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The fish was missing. Dugar is wrong about who ate it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "denial")] }
 
@@ -86,7 +86,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "ignorance")] }
 
@@ -101,7 +101,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "CP"), ("test", "ignorance")] }
 
@@ -116,7 +116,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "pre-existence")] }
 
@@ -131,7 +131,7 @@ def ex_4c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "pre-existence")] }
 
@@ -146,7 +146,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was pregnant with a baby, she has seen her/him during an ultrasound."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "noun phrase"), ("test", "pre-existence")] }
 
@@ -161,7 +161,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was not pregnant. But she really wanted a baby and was planning to have one."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "noun phrase"), ("test", "pre-existence")] }
 
@@ -176,7 +176,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Children at school are asked to imagine a magical animal that does not exist and draw it."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "noun phrase"), ("test", "pre-existence")] }
 
@@ -191,7 +191,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Children at school are asked to imagine a magical animal that does not exist and draw it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "came into head")] }
 
@@ -206,7 +206,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Seseg is not pregnant."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "tuxai phrase"), ("test", "pre-existence")] }
 
@@ -221,7 +221,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Badma is imagining a non-existing magical animal."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "tuxai phrase"), ("test", "pre-existence")] }
 
@@ -236,7 +236,7 @@ def ex_8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Badma is currently alive."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("argument", "noun phrase")] }
 
@@ -251,7 +251,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker is ignorant about whether Badma broke the cart or not, and is wondering whether Sajana might have thoughts on the matter."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "question")] }
 
@@ -266,7 +266,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker wants to convey that Sajana's thoughts are consistent with reality."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "negation")] }
 
@@ -281,7 +281,7 @@ def ex_43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "CP"), ("test", "false memory")] }
 
@@ -296,7 +296,7 @@ def ex_43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "NMN"), ("test", "false memory")] }
 
@@ -311,7 +311,7 @@ def ex_65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The cat didn't eat the fish, but someone made a false claim that it did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "nominalized CP"), ("test", "denial")] }
 
@@ -326,7 +326,7 @@ def ex_66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Dugar was the first person to think that the cat ate the fish."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "nominalized CP"), ("test", "pre-existence")] }
 

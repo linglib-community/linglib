@@ -11,7 +11,7 @@
     "translation": "S/he came. / S/he is coming. / S/he will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "past", "judgment": "acceptable"},
       {"name": "present", "judgment": "acceptable"},
@@ -33,7 +33,7 @@
     "translation": "S/he will come tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "S<E-R"]
@@ -53,7 +53,7 @@
     "translation": "He came in yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "E-R<S"]
@@ -73,7 +73,7 @@
     "translation": "She is coming now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "E-R-S"]
@@ -93,7 +93,7 @@
     "translation": "S/he has left (now).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "E<S,R"]
@@ -113,7 +113,7 @@
     "translation": "S/he (had) already left yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "E<R<S"]
@@ -134,7 +134,7 @@
     "translation": "Ali is beating his own head.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -153,7 +153,7 @@
     "translation": "Ali is beating his own head.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -172,7 +172,7 @@
     "translation": "Ali didn't enter the house (while he's expected to do so).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -190,7 +190,7 @@
     "translation": "He was/is eating while watching TV.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -208,7 +208,7 @@
     "translation": "They will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "S<E-R"]
@@ -228,7 +228,7 @@
     "translation": "They want to come tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mereka ingin [akan datang besok].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -249,7 +249,7 @@
     "translation": "I know that they will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -267,7 +267,7 @@
     "translation": "S/he will eat/has eaten/is eating.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Dia sudah makan.", "judgment": "acceptable"},
       {"form": "Dia sedang makan.", "judgment": "acceptable"}
     ],
@@ -288,7 +288,7 @@
     "translation": "I asked him to eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Saya menyuruh dia [akan makan].", "judgment": "ungrammatical"},
       {"form": "Saya menyuruh dia [sudah makan].", "judgment": "ungrammatical"},
       {"form": "Saya menyuruh dia [sedang makan].", "judgment": "ungrammatical"}
@@ -311,7 +311,7 @@
     "translation": "The person pushed me (and as a result I) fell off.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Orang itu mendorong saya [ _ akan jatuh].", "judgment": "ungrammatical"},
       {"form": "Orang itu mendorong saya [ _ sedang jatuh].", "judgment": "ungrammatical"},
       {"form": "Orang itu mendorong saya [ _ sudah jatuh].", "judgment": "ungrammatical"}
@@ -333,7 +333,7 @@
     "translation": "S/he came while crying.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Dia datang [(sambil) sedang menangis].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -353,7 +353,7 @@
     "translation": "I'm learning to shoot.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Saya belajar bisa [menembak].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -374,7 +374,7 @@
     "translation": "I am learning so that I can shoot.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -394,7 +394,7 @@
     "translation": "...along the way many cows that eat grass.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Google-attested; the actor voice verb with sedang.",
@@ -411,7 +411,7 @@
     "translation": "In one of the supermarkets, the officers found kind of bread/biscuits in boxes whose packages had been tampered and contents were already eaten by mice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Google-attested; the passive verb with sudah.",
@@ -429,7 +429,7 @@
     "translation": "'Who is that?', he asked. / #he will ask.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "'Siapa itu?' akan tanyanya (nanti).", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -452,7 +452,7 @@
     "translation": "'Who is that?', he will ask later.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "future", "judgment": "acceptable"}
     ],
@@ -473,7 +473,7 @@
     "translation": "'Who is that?', he will ask later.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -491,7 +491,7 @@
     "translation": "(i) When did you buy it? (ii) When are you going to buy it?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kapan akan beli=nya?", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -514,7 +514,7 @@
     "translation": "When will you buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -532,7 +532,7 @@
     "translation": "(i) When was s/he born? (ii) When is s/he going to be born?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kapan akan lahirnya?", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -555,7 +555,7 @@
     "translation": "When will s/he be born?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Printed under (36) after (36b) without a letter of its own.",
@@ -573,7 +573,7 @@
     "translation": "You should come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["soa", "future"],
@@ -594,7 +594,7 @@
     "translation": "You should have come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["soa", "past"],
@@ -615,7 +615,7 @@
     "translation": "S/he can cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["soa", "future"],
@@ -636,7 +636,7 @@
     "translation": "Crying was/is the thing s/he could do.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["soa", "past"],
@@ -657,7 +657,7 @@
     "translation": "S/he wants/want(ed) to go home. / I want(ed) to go home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["soa", "future"]
@@ -677,7 +677,7 @@
     "translation": "The/his/her/my wish was/is to go home (but for some reason (s)he/I couldn't).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evaluation", "counterfactual"],
@@ -699,7 +699,7 @@
     "translation": "It appears that there are people coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sedang tampak=nya [ada orang datang].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -719,7 +719,7 @@
     "translation": "It is visible that there are people coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -737,7 +737,7 @@
     "translation": "She was ill.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -755,7 +755,7 @@
     "translation": "She was ill, I heard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -773,7 +773,7 @@
     "translation": "You're a liar, I heard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -791,7 +791,7 @@
     "translation": "You're a liar, s/he complained.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -809,7 +809,7 @@
     "translation": "S/he is sleeping.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Dia adalah tidur.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -829,7 +829,7 @@
     "translation": "Ali is the teacher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -845,7 +845,7 @@
     "translation": "The teacher is Ali.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -863,7 +863,7 @@
     "translation": "To sleep was the wish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -881,7 +881,7 @@
     "translation": "The/my wish was to sleep.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -899,7 +899,7 @@
     "translation": "Ali is not the teacher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ali tidak guru itu.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -917,7 +917,7 @@
     "translation": "The teacher is not Ali.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Guru itu tidak Ali.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -937,7 +937,7 @@
     "translation": "To sleep was not the/his/her wish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[_ tidur] tidak mau=nya", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -957,7 +957,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mau=nya tidak tidur", "judgment": "acceptable"}
     ],
     "readings": [
@@ -980,7 +980,7 @@
     "translation": "You're a liar, I heard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "[Kamu pembohong] adalah katanya.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -998,7 +998,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "katanya adalah [kamu pembohong].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -1016,7 +1016,7 @@
     "translation": "You're a liar, I heard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",

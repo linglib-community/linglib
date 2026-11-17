@@ -26,7 +26,7 @@ def beat_past_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Past participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "beat"), ("part", "past_participle"), ("suffix", "-n")] }
 
@@ -41,7 +41,7 @@ def beat_past_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Past finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "beat"), ("part", "past_finite"), ("suffix", "∅")] }
 
@@ -56,7 +56,7 @@ def beat_nonpast_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast finite 3rd sg' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "beat"), ("part", "nonpast_3sg"), ("suffix", "-z")] }
 
@@ -71,7 +71,7 @@ def beat_nonpast_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "beat"), ("part", "nonpast_participle"), ("suffix", "-ing")] }
 
@@ -86,7 +86,7 @@ def beat_nonpast_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Nonpast finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "beat"), ("part", "nonpast_finite"), ("suffix", "∅")] }
 
@@ -101,7 +101,7 @@ def put_past_participle : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Past participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "put"), ("part", "past_participle"), ("suffix", "∅")] }
 
@@ -116,7 +116,7 @@ def put_past_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Past finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "put"), ("part", "past_finite"), ("suffix", "∅")] }
 
@@ -131,7 +131,7 @@ def put_nonpast_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast finite 3rd sg' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "put"), ("part", "nonpast_3sg"), ("suffix", "-z")] }
 
@@ -146,7 +146,7 @@ def put_nonpast_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "put"), ("part", "nonpast_participle"), ("suffix", "-ing")] }
 
@@ -161,7 +161,7 @@ def put_nonpast_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Nonpast finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "put"), ("part", "nonpast_finite"), ("suffix", "∅")] }
 
@@ -176,7 +176,7 @@ def dwell_past_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Past participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dwell"), ("part", "past_participle"), ("suffix", "-t")] }
 
@@ -191,7 +191,7 @@ def dwell_past_finite : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Past finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dwell"), ("part", "past_finite"), ("suffix", "-t")] }
 
@@ -206,7 +206,7 @@ def dwell_nonpast_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast finite 3rd sg' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dwell"), ("part", "nonpast_3sg"), ("suffix", "-z")] }
 
@@ -221,7 +221,7 @@ def dwell_nonpast_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dwell"), ("part", "nonpast_participle"), ("suffix", "-ing")] }
 
@@ -236,7 +236,7 @@ def dwell_nonpast_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Nonpast finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "dwell"), ("part", "nonpast_finite"), ("suffix", "∅")] }
 
@@ -251,7 +251,7 @@ def play_past_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Past participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "play"), ("part", "past_participle"), ("suffix", "-d")] }
 
@@ -266,7 +266,7 @@ def play_past_finite : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Past finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "play"), ("part", "past_finite"), ("suffix", "-d")] }
 
@@ -281,7 +281,7 @@ def play_nonpast_3sg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast finite 3rd sg' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "play"), ("part", "nonpast_3sg"), ("suffix", "-z")] }
 
@@ -296,7 +296,7 @@ def play_nonpast_participle : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Row 'Nonpast participle' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "play"), ("part", "nonpast_participle"), ("suffix", "-ing")] }
 
@@ -311,7 +311,7 @@ def play_nonpast_finite : Datum :=
     lgrConformance := some .wordAligned
     context := "Row 'Nonpast finite' of the principal-parts table."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "play"), ("part", "nonpast_finite"), ("suffix", "∅")] }
 

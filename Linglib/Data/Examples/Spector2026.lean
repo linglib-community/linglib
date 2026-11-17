@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -37,7 +37,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -50,7 +50,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2")] }
 
@@ -89,7 +89,7 @@ def s2_2_singing : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one person singing and standing", .unacceptable)]
     paperFeatures := [("section", "2.2")] }
 
@@ -102,7 +102,7 @@ def s3_1_purple : Datum :=
     glossedTokens := []
     context := "out of the blue"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -115,7 +115,7 @@ def s3_1_table : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -128,7 +128,7 @@ def s3_3_bathroom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -141,7 +141,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4")] }
 
@@ -154,7 +154,7 @@ def fn15_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4")] }
 
@@ -167,7 +167,7 @@ def s4_smokes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one person smokes and drinks", .unacceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -180,7 +180,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a woman is singing, and the room is locked or one of the singing women is a guitarist playing", .unacceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -193,7 +193,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("everyone spoke to someone (narrow scope)", .acceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -206,7 +206,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("everyone spoke to someone (narrow scope)", .acceptable)]
     paperFeatures := [("section", "5")] }
 
@@ -219,7 +219,7 @@ def fn19_he : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = a male student who did not come", .unacceptable)]
     paperFeatures := [("section", "6.2")] }
 
@@ -232,7 +232,7 @@ def fn19_they : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = all the students", .acceptable), ("they = the students who did not come", .unacceptable)]
     paperFeatures := [("section", "6.2")] }
 
@@ -245,7 +245,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.6")] }
 
@@ -258,7 +258,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sue has no donkey or a donkey she does not beat (weak)", .unacceptable), ("Sue beats no donkey she has", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -271,7 +271,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := "Sue has two umbrellas, and she took one with her and left the other one at home."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -284,7 +284,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no farmer who owns a donkey beats any donkey they have", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -297,7 +297,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no student who has an umbrella left every umbrella they have at home", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -310,7 +310,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -323,7 +323,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -336,7 +336,7 @@ def ex_47c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -349,7 +349,7 @@ def ex_47d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -362,7 +362,7 @@ def ex_47e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -375,7 +375,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := "It is raining."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sue left every umbrella she has home", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -388,7 +388,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := "It is raining."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some students left all their umbrellas home", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -401,7 +401,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -414,7 +414,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -427,7 +427,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every credit card she has is one she did not pay with (strong)", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -440,7 +440,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -453,7 +453,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("either Sue has no card she bought a cake with, or she has one she bought a cake and a book with", .acceptable)]
     paperFeatures := [("section", "7")] }
 
@@ -466,7 +466,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7")] }
 
@@ -479,7 +479,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("one student liked the book they read", .acceptable)]
     paperFeatures := [("section", "App.")] }
 

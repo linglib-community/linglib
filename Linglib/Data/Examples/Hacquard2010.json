@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "root: given Mary's circumstances then, a past necessity to take the train then",
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic over past: given what is known now, it is necessary that Mary was home",
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -195,7 +195,7 @@
     "translation": "Gianni may have talked to Maria.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic",
@@ -257,7 +257,7 @@
     "translation": "Gianni was able to talk to Maria.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "deontic or ability",
@@ -339,7 +339,7 @@
     "translation": "Mary was able to lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -367,7 +367,7 @@
     "translation": "John may have taken the train, even though it's possible he didn't.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic",
@@ -404,7 +404,7 @@
     "translation": "Mary may have taken the train / was able to take the train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic over aspect: some world compatible with what is known holds a past train-taking by Mary",
@@ -441,7 +441,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "given Mary's circumstances then, she had to take the train then",
@@ -478,7 +478,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "given what I know now, it must be the case that Mary was home then",
@@ -515,7 +515,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "given what John knew at his thinking time, it was possible Mary was home",
@@ -552,7 +552,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -580,7 +580,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "speech event: given what I know now, it is possible that John thought Mary had taken the train",
@@ -613,7 +613,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "attitude event: given what John thought yesterday, it was possible that Mary had taken the train",
@@ -650,7 +650,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "VP event: given Mary's circumstances the day before yesterday, it was necessary that she take the train",
@@ -687,7 +687,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -715,7 +715,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rain is compatible with what John believes",
@@ -748,7 +748,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -776,7 +776,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -808,7 +808,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic for the subject: it was necessary, last night, given what Mary knew, that she took the train",
@@ -841,7 +841,7 @@
     "translation": "John could see/notice that Mary was nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic for the subject: Mary being nice was compatible with what John came to know",
@@ -874,7 +874,7 @@
     "translation": "John could see/notice that Mary was nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic for the subject: Mary being nice was compatible with what John came to know",
@@ -907,7 +907,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -935,7 +935,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

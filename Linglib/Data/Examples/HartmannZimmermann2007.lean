@@ -26,7 +26,7 @@ def ex3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "cee"), ("host_tone", "L"), ("stab_tone", "H")] }
 
@@ -41,7 +41,7 @@ def ex3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "nonSubject"), ("stabilizer", "nee"), ("host_tone", "H"), ("stab_tone", "L")] }
 
@@ -56,7 +56,7 @@ def ex8 : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Wàaneenèe zâi tàfi Jamùs? 'Who will go to Germany?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "future")] }
 
@@ -71,7 +71,7 @@ def ex17a1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: Wàa ya-kèe kirà-ntà? 'Who is calling her?'"
     judgment := .acceptable
-    alternatives := [("Daudàa ya-kèe kirà-ntà.", .acceptable)]
+    contrasts := [("Daudàa ya-kèe kirà-ntà.", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "nee"), ("tam", "continuous")] }
 
@@ -86,7 +86,7 @@ def ex17a2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to: Wàa ya-kèe kirà-ntà? 'Who is calling her?'"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "continuous")] }
 
@@ -101,7 +101,7 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Mèenee nèe Kandè ta-kèe dafàawaa? 'What is Kande cooking?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "nee")] }
 
@@ -116,7 +116,7 @@ def ex23 : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Dàgà wànè gàrii ka zoo? 'From which city do you come?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
@@ -131,7 +131,7 @@ def ex24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Corrective reply to: Tsoohowar̃-sà cee ta mutù? 'Was it his mother who died?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "corrective"), ("focused", "subject"), ("stabilizer", "cee")] }
 
@@ -146,7 +146,7 @@ def ex25 : Datum :=
     lgrConformance := some .wordAligned
     context := "Corrective reply to: Nair̃àa àshìr̃in zaa kà biyaa in yaa yi makà. 'It is twenty Naira that you will pay if he makes it for you.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "corrective"), ("focused", "nonSubject"), ("stabilizer", "nee")] }
 
@@ -161,7 +161,7 @@ def ex26 : Datum :=
     lgrConformance := some .wordAligned
     context := "Contrastive reply to: In mùtûm yanàa yîn sallàa, baa àa bî ta gàbansà. 'If a man is praying, you shouldn't pass in front of him.'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
@@ -176,7 +176,7 @@ def ex27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
@@ -191,7 +191,7 @@ def ex29 : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Gùdaa koo ɓaarìi? '(Do you want) a whole or a half?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
@@ -206,7 +206,7 @@ def ex30 : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to: Kòofii zaa-kà shaa koo kùwa shaayìi? 'Will you drink coffee or tea?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 

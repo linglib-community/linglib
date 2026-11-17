@@ -26,7 +26,7 @@ def ex_9a_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -41,7 +41,7 @@ def ex_9a_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -56,7 +56,7 @@ def ex_9a_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -71,7 +71,7 @@ def ex_9b_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -86,7 +86,7 @@ def ex_9b_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -101,7 +101,7 @@ def ex_9b_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -116,7 +116,7 @@ def ex_9c_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -131,7 +131,7 @@ def ex_9c_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -146,7 +146,7 @@ def ex_9c_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -161,7 +161,7 @@ def ex_13a_completive : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -176,7 +176,7 @@ def ex_13a_continuous : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -191,7 +191,7 @@ def ex_13a_irrealis : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -206,7 +206,7 @@ def ex_13b_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -221,7 +221,7 @@ def ex_13b_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -236,7 +236,7 @@ def ex_13b_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -251,7 +251,7 @@ def ex_13c_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -266,7 +266,7 @@ def ex_13c_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -281,7 +281,7 @@ def ex_13c_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -296,7 +296,7 @@ def ex_13d_completive : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
@@ -311,7 +311,7 @@ def ex_13d_continuous : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
@@ -326,7 +326,7 @@ def ex_13d_irrealis : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
@@ -341,7 +341,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "tense")] }
 
@@ -356,7 +356,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "tense")] }
 
@@ -371,7 +371,7 @@ def ex_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")] }
 
@@ -386,7 +386,7 @@ def ex_16b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")] }
 
@@ -401,7 +401,7 @@ def ex_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")] }
 
@@ -416,7 +416,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")] }
 
@@ -431,7 +431,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "subject")] }
 
@@ -446,7 +446,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "subject")] }
 
@@ -461,7 +461,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("controlled", .acceptable), ("free", .ungrammatical)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -476,7 +476,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("controlled", .ungrammatical), ("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -491,7 +491,7 @@ def ex_18c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kôni Maria ná kusi =rí", .acceptable)]
+    contrasts := [("Kôni Maria ná kusi =rí", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -506,7 +506,7 @@ def ex_18d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kôni Maria ná kusi lěe =ñá", .acceptable)]
+    contrasts := [("Kôni Maria ná kusi lěe =ñá", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
@@ -521,7 +521,7 @@ def ex_19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Ntùkú Maria ná ku'un =rà tienda", .ungrammatical), ("Ntùkú Maria ná ku'un =ñá tienda", .ungrammatical)]
+    contrasts := [("Ntùkú Maria ná ku'un =rà tienda", .ungrammatical), ("Ntùkú Maria ná ku'un =ñá tienda", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -536,7 +536,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Nàkú'ún ini Maria ná kata bà'a =rà", .ungrammatical), ("Nàkú'ún ini Maria ná kata bà'a =ñá", .ungrammatical)]
+    contrasts := [("Nàkú'ún ini Maria ná kata bà'a =rà", .ungrammatical), ("Nàkú'ún ini Maria ná kata bà'a =ñá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -551,7 +551,7 @@ def ex_40a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Xíniñu'u Maria ná kwiin =rà iin koto xàá", .ungrammatical), ("Xíniñu'u Maria ná kwiin =ñá iin koto xàá", .ungrammatical)]
+    contrasts := [("Xíniñu'u Maria ná kwiin =rà iin koto xàá", .ungrammatical), ("Xíniñu'u Maria ná kwiin =ñá iin koto xàá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -566,7 +566,7 @@ def ex_40b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Kìxǎ Maria ná kata bà'a =rà", .ungrammatical), ("Kìxǎ Maria ná kata bà'a =ñá", .ungrammatical)]
+    contrasts := [("Kìxǎ Maria ná kata bà'a =rà", .ungrammatical), ("Kìxǎ Maria ná kata bà'a =ñá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
@@ -581,7 +581,7 @@ def ex_41a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
@@ -596,7 +596,7 @@ def ex_41b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
@@ -611,7 +611,7 @@ def ex_20a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatǔ'un"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -626,7 +626,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -641,7 +641,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -656,7 +656,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kuntàà ini"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -671,7 +671,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -686,7 +686,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -701,7 +701,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -716,7 +716,7 @@ def ex_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -731,7 +731,7 @@ def ex_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -746,7 +746,7 @@ def ex_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -761,7 +761,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -776,7 +776,7 @@ def ex_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
@@ -791,7 +791,7 @@ def ex_109 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
@@ -806,7 +806,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "ellipsis")] }
 
@@ -821,7 +821,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "ellipsis")] }
 
@@ -836,7 +836,7 @@ def ex_32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Maria is not in the race, but she wants Marco to win."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
@@ -851,7 +851,7 @@ def ex_32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Raul's mother is not an athlete, but she hopes her son will go to the Olympics."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
@@ -866,7 +866,7 @@ def ex_33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Laura cannot swim, but she knows that Ana can."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .ungrammatical)]
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
@@ -881,7 +881,7 @@ def ex_33b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Juan did not go to the store, but he remembers Maria did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy", .acceptable), ("strict", .ungrammatical)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
@@ -896,7 +896,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")] }
 
@@ -911,7 +911,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")] }
 
@@ -926,7 +926,7 @@ def ex_43a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -941,7 +941,7 @@ def ex_43b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -956,7 +956,7 @@ def ex_44a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -971,7 +971,7 @@ def ex_44b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -986,7 +986,7 @@ def ex_45a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -1001,7 +1001,7 @@ def ex_45b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -1016,7 +1016,7 @@ def ex_46a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -1031,7 +1031,7 @@ def ex_46b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
@@ -1046,7 +1046,7 @@ def ex_67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
@@ -1061,7 +1061,7 @@ def ex_67b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
@@ -1076,7 +1076,7 @@ def ex_67c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
@@ -1091,7 +1091,7 @@ def ex_68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
@@ -1106,7 +1106,7 @@ def ex_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
@@ -1121,7 +1121,7 @@ def ex_75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
@@ -1136,7 +1136,7 @@ def ex_75b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
@@ -1151,7 +1151,7 @@ def ex_86a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
@@ -1166,7 +1166,7 @@ def ex_86b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
@@ -1181,7 +1181,7 @@ def ex_87a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
@@ -1196,7 +1196,7 @@ def ex_87b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 

@@ -12,7 +12,7 @@
     "translation": "Do you have the book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "familiar"],
@@ -34,7 +34,7 @@
     "translation": "Do you (HON) have the book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "As vous le livre?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -59,7 +59,7 @@
     "translation": "Alessandro, are you happy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Alessandro, è contento?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -83,7 +83,7 @@
     "translation": "Sir Alessandro, are you (HON) happy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Signor Alessandro, sei contento?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -109,7 +109,7 @@
     "translation": "You (all) are grown men",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "familiar"],
@@ -131,7 +131,7 @@
     "translation": "As you (HON) are asking",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "polite"],
@@ -152,7 +152,7 @@
     "translation": "Intended: Do you all (HON) have the book?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["unattested", "honorific singular"]
@@ -171,7 +171,7 @@
     "translation": "Intended: Sir Alessandro, are you (HON) happy?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["unattested", "honorific first person"]
@@ -190,7 +190,7 @@
     "translation": "Intended: Is Sir Alessandro (HON) happy?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["unattested", "honorific second person"]
@@ -209,7 +209,7 @@
     "translation": "Intended: As someone (HON) are asking",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["unattested", "honorific definite"]
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "semantic markedness"],
@@ -248,7 +248,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "each girl owns exactly one hamster", "judgment": "acceptable"},
       {"name": "mixed: some girls own one, others several", "judgment": "acceptable"}
@@ -271,7 +271,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Every one of us has to call my mother.", "judgment": "ungrammatical"},
       {"form": "Every one of us has to call your mother.", "judgment": "ungrammatical"}
     ],
@@ -294,7 +294,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definiteness", "definite"],
@@ -314,7 +314,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definiteness", "indefinite"]
@@ -333,7 +333,7 @@
     "translation": "Do you all (HON) have the book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "polite"],
@@ -357,7 +357,7 @@
     "translation": "Hey, you (HON)! Come here for a second.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "polite"],
@@ -381,7 +381,7 @@
     "translation": "I have three younger brothers (HON).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reference", "polite"],
@@ -405,7 +405,7 @@
     "translation": "Would you (HON) like to sit down?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "polite"],
@@ -429,7 +429,7 @@
     "translation": "Would you like to sit down?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "plain dual"],
@@ -452,7 +452,7 @@
     "translation": "You (HON) have gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["address", "polite"],
@@ -476,7 +476,7 @@
     "translation": "Every student brought his books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "quantification"],

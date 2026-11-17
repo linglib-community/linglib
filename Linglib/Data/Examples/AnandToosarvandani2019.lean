@@ -24,7 +24,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .acceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "now")] }
 
@@ -37,7 +37,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .unacceptable), ("forward-shifted", .unacceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "now"), ("aspect", "state cannot overlap")] }
 
@@ -50,7 +50,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forward-shifted", .acceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "now"), ("sister", "yes"), ("anterior", "no")] }
 
@@ -63,7 +63,7 @@ def ex_29_initial : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("backshifted", .unacceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "now"), ("sister", "yes"), ("anterior", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_29_final : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("backshifted", .unacceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "now"), ("anterior", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forward-shifted", .acceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "then"), ("sister", "yes"), ("anterior", "no")] }
 
@@ -102,7 +102,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .unacceptable), ("forward-shifted", .unacceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "then"), ("aspect", "state cannot overlap")] }
 
@@ -115,7 +115,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backshifted", .acceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "then"), ("sister", "yes"), ("anterior", "yes")] }
 
@@ -128,7 +128,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backshifted", .unacceptable), ("forward-shifted", .acceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "then"), ("sister", "yes"), ("anterior", "no")] }
 
@@ -141,7 +141,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .acceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "now")] }
 
@@ -154,7 +154,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .acceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "then")] }
 
@@ -167,7 +167,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .acceptable)]
     paperFeatures := [("position", "initial"), ("demonstrative", "now"), ("sister", "no"), ("anterior", "no")] }
 
@@ -180,7 +180,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("overlapping", .acceptable)]
     paperFeatures := [("position", "final"), ("demonstrative", "now")] }
 

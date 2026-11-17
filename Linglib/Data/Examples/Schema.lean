@@ -22,7 +22,7 @@ sentence-level counterpart of `Data/Wordlist/`.
 ## Main definitions
 
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
-  `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
+  `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
 * `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
   morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
@@ -167,7 +167,7 @@ structure Datum where
   verdict : Option Bool := none
   /-- The other forms the source judges in the same frame, each a whole sentence, with their
   judgments. -/
-  alternatives : List (String × Judgment) := []
+  contrasts : List (String × Judgment) := []
   /-- The readings the source distinguishes for the expression, each with its judgment. -/
   readings : List (String × Judgment) := []
   /-- The paper's own columns, as key-value pairs. -/

@@ -26,7 +26,7 @@ def ex1_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker saw José play."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "visual"), ("source", "visual")] }
 
@@ -41,7 +41,7 @@ def ex1_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker heard the noise of a game but could not see it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "nonvisual"), ("source", "nonvisual")] }
 
@@ -56,7 +56,7 @@ def ex1_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The football and José's boots are gone and crowds return from the ground."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "inferred"), ("source", "inference")] }
 
@@ -71,7 +71,7 @@ def ex1_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "José is out on a Sunday afternoon, when he usually plays."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "assumed"), ("source", "assumption")] }
 
@@ -86,7 +86,7 @@ def ex1_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Someone told the speaker."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "reported"), ("source", "report")] }
 
@@ -101,7 +101,7 @@ def ex2_16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Said by somebody told about the sickness."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report")] }
 
@@ -116,7 +116,7 @@ def ex2_17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Said by somebody who has just woken up."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "inference")] }
 
@@ -131,7 +131,7 @@ def ex2_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Said by somebody listening to her play."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "nonvisual")] }
 
@@ -146,7 +146,7 @@ def ex2_40 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker saw them."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "direct"), ("source", "visual")] }
 
@@ -161,7 +161,7 @@ def ex2_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker infers it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "inferred"), ("source", "inference")] }
 
@@ -176,7 +176,7 @@ def ex2_42 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The speaker was told."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "reported"), ("source", "report")] }
 
@@ -191,7 +191,7 @@ def ex4_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A past action the speaker did not witness but assumes from a present result or a report."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "perfect"), ("source", "nonfirsthand")] }
 
@@ -206,7 +206,7 @@ def ex4_55 : Datum :=
     lgrConformance := some .wordAligned
     context := "Reported information the speaker distances themself from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report"), ("extension", "epistemic")] }
 

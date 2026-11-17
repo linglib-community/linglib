@@ -10,7 +10,7 @@
   "translation": "",
   "context": "A woman says to the boyfriend (close interlocutor): S2. Participant rates speaker commitment (Q1), appropriateness (Q2), grammaticality (Q3), and the speaker's social background + persona. Necessity single-modal (SM), close context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "close"], ["force", "necessity"], ["number", "SM"],
@@ -33,7 +33,7 @@
   "translation": "",
   "context": "A woman says to the boyfriend (close interlocutor): S2. Necessity modal-concord (MC), close context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "close"], ["force", "necessity"], ["number", "MC"],
@@ -56,7 +56,7 @@
   "translation": "",
   "context": "A woman says to the boyfriend (close interlocutor): S2. Possibility single-modal (SM), close context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "close"], ["force", "possibility"], ["number", "SM"],
@@ -79,7 +79,7 @@
   "translation": "",
   "context": "A woman says to the boyfriend (close interlocutor): S2. Possibility modal-concord (MC), close context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "close"], ["force", "possibility"], ["number", "MC"],
@@ -102,7 +102,7 @@
   "translation": "",
   "context": "A woman says to the landlord (distant interlocutor): S2. Necessity single-modal (SM), distant context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "distant"], ["force", "necessity"], ["number", "SM"],
@@ -125,7 +125,7 @@
   "translation": "",
   "context": "A woman says to the landlord (distant interlocutor): S2. Necessity modal-concord (MC), distant context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "distant"], ["force", "necessity"], ["number", "MC"],
@@ -148,7 +148,7 @@
   "translation": "",
   "context": "A woman says to the landlord (distant interlocutor): S2. Possibility single-modal (SM), distant context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "distant"], ["force", "possibility"], ["number", "SM"],
@@ -171,7 +171,7 @@
   "translation": "",
   "context": "A woman says to the landlord (distant interlocutor): S2. Possibility modal-concord (MC), distant context.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    ["context", "distant"], ["force", "possibility"], ["number", "MC"],

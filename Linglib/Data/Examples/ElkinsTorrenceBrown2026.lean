@@ -26,7 +26,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")] }
 
@@ -41,7 +41,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")] }
 
@@ -56,7 +56,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "ergative"), ("reflex", "blocked")] }
 
@@ -71,7 +71,7 @@ def ex_13a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("El tsu'na' Li'y spik'b'il tu'n xb'uy.", .ungrammatical)]
+    contrasts := [("El tsu'na' Li'y spik'b'il tu'n xb'uy.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "none"), ("reflex", "blocked")] }
 
@@ -86,7 +86,7 @@ def ex_13b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Alqu'n el tsu'na' Li'y spik'b'il?", .acceptable), ("Alqu'n el tsu'n Li'y spik'b'il?", .acceptable)]
+    contrasts := [("Alqu'n el tsu'na' Li'y spik'b'il?", .acceptable), ("Alqu'n el tsu'n Li'y spik'b'il?", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "instrument"), ("reflex", "licensed")] }
 
@@ -101,7 +101,7 @@ def ex_14b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "benefactive"), ("reflex", "licensed")] }
 
@@ -116,7 +116,7 @@ def ex_15b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "dative"), ("reflex", "licensed")] }
 
@@ -131,7 +131,7 @@ def ex_16b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.3"), ("mover", "locative"), ("reflex", "licensed")] }
 
@@ -146,7 +146,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "reason"), ("reflex", "licensed")] }
 
@@ -161,7 +161,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "purpose"), ("reflex", "licensed")] }
 
@@ -176,7 +176,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.5"), ("mover", "manner"), ("reflex", "licensed")] }
 
@@ -191,7 +191,7 @@ def ex_20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jtoj kxe'l telq'a'na' Xwan chmek'?", .ungrammatical)]
+    contrasts := [("Jtoj kxe'l telq'a'na' Xwan chmek'?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")] }
 
@@ -206,7 +206,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jtoje xi' telq'a'na' Xwan chmek'?", .ungrammatical)]
+    contrasts := [("Jtoje xi' telq'a'na' Xwan chmek'?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")] }
 
@@ -221,7 +221,7 @@ def ex_22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("mover", "locative"), ("directionals", "1"), ("hosts", "2")] }
 
@@ -236,7 +236,7 @@ def ex_24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
@@ -251,7 +251,7 @@ def ex_26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "embedded"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")] }
 
@@ -266,7 +266,7 @@ def ex_28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("matrix locative (where Juan stole it)", .acceptable), ("relative-clause locative (where the women bought it)", .unacceptable)]
     paperFeatures := [("section", "3.2"), ("mover", "locative")] }
 
@@ -281,7 +281,7 @@ def ex_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "locative")] }
 
@@ -296,7 +296,7 @@ def ex_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("mover", "locative"), ("embeddedSize", "voiceP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
@@ -311,7 +311,7 @@ def ex_34 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("mover", "benefactive"), ("embeddedSize", "bareVP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "blocked")] }
 
@@ -326,7 +326,7 @@ def ex_35c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answering: Did Juan buy the jocotes in the market?"
     judgment := .ungrammatical
-    alternatives := [("Iku', atzu tzaj tlq'o'na'", .acceptable)]
+    contrasts := [("Iku', atzu tzaj tlq'o'na'", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("mover", "none"), ("reflex", "blocked")] }
 
@@ -341,7 +341,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "locative"), ("reflex", "licensed"), ("voice", "passive")] }
 
@@ -356,7 +356,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "ergative"), ("antipassive", "embedded only")] }
 
@@ -371,7 +371,7 @@ def ex_63 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("mover", "locative"), ("directionals", "2"), ("hosts", "3")] }
 
@@ -386,7 +386,7 @@ def ex_65 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jni' hor kub' kjonae' chib'j?", .ungrammatical)]
+    contrasts := [("Jni' hor kub' kjonae' chib'j?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "temporal"), ("reflex", "blocked")] }
 
@@ -401,7 +401,7 @@ def ex_51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Jawi xatb'ee iwiir?", .ungrammatical)]
+    contrasts := [("Jawi xatb'ee iwiir?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("reflex", "licensed")] }
 
@@ -416,7 +416,7 @@ def ex_52 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
@@ -431,7 +431,7 @@ def ex_53 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "instrument"), ("embeddedSize", "aspP"), ("landing", "matrix"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")] }
 
@@ -446,7 +446,7 @@ def ex_64 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Achike ruma xsamäj wi ri a Juan?", .ungrammatical)]
+    contrasts := [("Achike ruma xsamäj wi ri a Juan?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "reason"), ("reflex", "blocked")] }
 

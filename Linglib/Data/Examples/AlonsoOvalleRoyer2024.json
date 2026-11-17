@@ -12,7 +12,7 @@
     "translation": "A person or group of people danced, I don't know who (maybe all did).",
     "context": "You were at a party; you know for a fact that not everyone danced, but, because the lights were off, you don't know who exactly danced.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -33,7 +33,7 @@
     "translation": "A person or group of people danced, I don't know who (maybe all did).",
     "context": "You know that only Kixtup and Xun danced at the party.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -55,7 +55,7 @@
     "translation": "A person or group of people danced, I don't know who (maybe all did).",
     "context": "You were at a party and you saw that everyone there danced.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -76,7 +76,7 @@
     "translation": "A person/some people (maybe all) ate meat at the party.",
     "context": "There was a town party, and meat was served to everyone who wanted it. You know that at least some people ate meat, but since you weren't there, you couldn't tell who.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -97,7 +97,7 @@
     "translation": "A person/some people (maybe all) ate meat at the party.",
     "context": "There was a town party and meat was served; you noticed that everyone was happy about that, and so everyone asked for some.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -118,7 +118,7 @@
     "translation": "A person/some people (maybe all) ate meat at the party.",
     "context": "There was a town party, with 20 attendees, and meat was served to everyone who wanted it. But you noticed that, in the end, only Kixtup and Xun ate meat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -139,7 +139,7 @@
     "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
     "context": "Xun went to a market and tried a few dishes. You know that Xun liked at least one dish (maybe more), but you're not sure which.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -160,7 +160,7 @@
     "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
     "context": "Xun went to a market, tried a few dishes, but didn't like them all. You know exactly which dishes Xun liked, namely soup and tamales.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -181,7 +181,7 @@
     "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
     "context": "Xun went to the market and tried a few dishes. You know for a fact that he liked all dishes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -202,7 +202,7 @@
     "translation": "Xun liked a dish at random.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "unacceptable"}
     ],
@@ -222,7 +222,7 @@
     "translation": "I bought something, and anything is a possibility.",
     "context": "Your child bought lots of candy, even though you told him not to. You ask him what he bought. He answers:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -243,7 +243,7 @@
     "translation": "Xun bought a random book / some random books.",
     "context": "Xun wanted to read, but didn't have any specific book in mind. He went to the bookstore and bought one at random.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -264,7 +264,7 @@
     "translation": "Xun bought a random book / some random books.",
     "context": "Xun wanted to read a specific book, the Popol Wuj, went to the bookstore and bought it.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "unacceptable"}
     ],
@@ -285,7 +285,7 @@
     "translation": "Xun bought a random book / some random books.",
     "context": "Xun is very wealthy, and a bit insane. He goes to a bookstore, and he starts buying books indiscriminately, to the point where he ends up buying all books.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -306,7 +306,7 @@
     "translation": "Yalnhej plants were broken by the wind.",
     "context": "There were strong winds. You know that the wind must have broken many plants, but since you haven't left your house yet, you're not sure which.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -327,7 +327,7 @@
     "translation": "Yalnhej plants were broken by the wind.",
     "context": "There were very strong winds. You noticed that all plants are broken.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -348,7 +348,7 @@
     "translation": "Yalnhej plants were broken by the wind.",
     "context": "There were mild winds, which broke only a few fragile plants. You went to check out the plants after the windstorm, and saw which plants were broken.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -369,7 +369,7 @@
     "translation": "Yalnhej who was selected by them.",
     "context": "A jury needs to select someone in a competition. All participants to the competition are equally good, so they decide to choose one at random.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -390,7 +390,7 @@
     "translation": "Yalnhej who was selected by them.",
     "context": "A jury needs to select someone in a competition. One participant stands out as the best, so they select them.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "unacceptable"}
     ],
@@ -411,7 +411,7 @@
     "translation": "There was rain yalnhej where yesterday.",
     "context": "You saw on the news that it rained somewhere in your region yesterday, but you're not sure where.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -432,7 +432,7 @@
     "translation": "There was rain yalnhej where yesterday.",
     "context": "You saw on the news that it rained everywhere in your region yesterday.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -453,7 +453,7 @@
     "translation": "There was rain yalnhej where yesterday.",
     "context": "While you know from the news that it didn't rain everywhere in your region yesterday, you saw it rained in specific places.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -474,7 +474,7 @@
     "translation": "Malin ate yalnhej where.",
     "context": "Malin didn't know where to eat, so she chose a place to eat at random.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -495,7 +495,7 @@
     "translation": "Malin ate yalnhej where.",
     "context": "Malin chose to go try out a new restaurant she heard about.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "unacceptable"}
     ],
@@ -516,7 +516,7 @@
     "translation": "She grabbed some tool(s) at random.",
     "context": "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -534,7 +534,7 @@
     "translation": "",
     "context": "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Context (44). Wh-ever free relatives convey maximality.",
@@ -554,7 +554,7 @@
     "translation": "Xuwan ate things that Telex made yesterday, but I don't know what exactly.",
     "context": "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -572,7 +572,7 @@
     "translation": "",
     "context": "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Context (47).",
@@ -591,7 +591,7 @@
     "translation": "He didn't grab a card at random.",
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …Xun didn't close his eyes and selected a specific card, that of course, gave him an advantage. I ask you, how did Xun cheat?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -613,7 +613,7 @@
     "translation": "If Xun grabs a card at random, he's playing well.",
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …You're explaining how not to cheat, using Xun as an example player, you say:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -635,7 +635,7 @@
     "translation": "It's not the case that Xun liked some dish and I don't know what dish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -657,7 +657,7 @@
     "translation": "If fire starts in some place and I don't know where, I get worried.",
     "context": "You're a firefighter, so you know how to stop fire. If you know where the fire is coming from, you don't get worried. You only get worried if you do not know where the fire is coming from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -678,7 +678,7 @@
     "translation": "Juan bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -699,7 +699,7 @@
     "translation": "Juan is an unremarkable student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -723,7 +723,7 @@
     "translation": "If Juan bought a random book, he will regret it soon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -744,7 +744,7 @@
     "translation": "Nobody bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -765,7 +765,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "predicative"]
@@ -786,7 +786,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "predicative"]
@@ -809,7 +809,7 @@
     "translation": "A: María married a linguistics student. B: With which one?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The paper marks B's question #, deviant after algún; the row's judgment is B's.",
@@ -829,7 +829,7 @@
     "translation": "A: Juan entered the store and bought a random book. B: Which book did he buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Not deviant: uno cualquiera conveys no ignorance.",
@@ -848,7 +848,7 @@
     "translation": "Grab a card at random!",
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -869,7 +869,7 @@
     "translation": "",
     "context": "At the beginning of a boardgame, players must select any card they want from the game. It's the first time you play, and you ask me what you need to do.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "harmonic", "judgment": "acceptable"}
     ],
@@ -889,7 +889,7 @@
     "translation": "Grab a book, any book!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "harmonic", "judgment": "acceptable"}
     ],
@@ -911,7 +911,7 @@
     "translation": "Xun thinks that a person or people danced, and any person is a possibility.",
     "context": "Xun thinks that some people danced at the party, but he doesn't know exactly who. As far as he can tell, it could be anyone.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "harmonic", "judgment": "acceptable"}
     ],
@@ -933,7 +933,7 @@
     "translation": "Juan must have gone to see a movie at random.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
@@ -955,7 +955,7 @@
     "translation": "Hans is an unremarkable student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -978,7 +978,7 @@
     "translation": "Xun bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -998,7 +998,7 @@
     "translation": "Xun is an unremarkable student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -1021,7 +1021,7 @@
     "translation": "",
     "context": "Xun bought a book on purpose, and the book is simply unremarkable.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "unacceptable"}
     ],
@@ -1042,7 +1042,7 @@
     "translation": "Xun chose an unremarkable student.",
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "unacceptable"}
     ],
@@ -1063,7 +1063,7 @@
     "translation": "An unremarkable student received the prize.",
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "unacceptable"}
     ],
@@ -1084,7 +1084,7 @@
     "translation": "Xun chose an unremarkable student.",
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -1105,7 +1105,7 @@
     "translation": "An unremarkable student received the prize.",
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -1126,7 +1126,7 @@
     "translation": "Xun is an unremarkable student.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "predicative"]
@@ -1147,7 +1147,7 @@
     "translation": "Katal has some siblings, but I don't know who they are.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "possessive have"]
@@ -1168,7 +1168,7 @@
     "translation": "Katal has many siblings (Lit: Katal's siblings are many).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "possessive have"]
@@ -1189,7 +1189,7 @@
     "translation": "Some visitors come here, and I don't who they are.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "secondary predicate"]
@@ -1210,7 +1210,7 @@
     "translation": "Many visitors come here. (Lit: The visitors come many here.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "secondary predicate"]
@@ -1231,7 +1231,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "attributive"]
@@ -1252,7 +1252,7 @@
     "translation": "Xun grabbed a yellow average gift.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "unremarkable", "judgment": "acceptable"}
     ],
@@ -1276,7 +1276,7 @@
     "translation": "If Juan bought a book / books, I will talk to his father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -1297,7 +1297,7 @@
     "translation": "Hans never bought any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"},
       {"name": "random choice", "judgment": "unacceptable"}
@@ -1319,7 +1319,7 @@
     "translation": "Nobody grabbed a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -1340,7 +1340,7 @@
     "translation": "No one brought along a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -1361,7 +1361,7 @@
     "translation": "No one brought along a book at random.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -1383,7 +1383,7 @@
     "translation": "If you pick a random card, you're complying with the rules of the game.",
     "context": "We're playing a board game, and as part of the rules, you must first pick one card at random. Some cards give you a clear advantage, others put you at disadvantage, so you can't just pick any card you desire, i.e. it's important you pick one at random. At this stage of the game, you ask me what you need to do to respect the rules of the game.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"}
     ],
@@ -1404,7 +1404,7 @@
     "translation": "Hans bought some book or other / a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"},
       {"name": "random choice", "judgment": "acceptable"}
@@ -1425,7 +1425,7 @@
     "translation": "Juan bought some book or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"},
       {"name": "random choice", "judgment": "unacceptable"}
@@ -1447,7 +1447,7 @@
     "translation": "Juan bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
@@ -1469,7 +1469,7 @@
     "translation": "Marie bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
@@ -1491,7 +1491,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "questionable"}
     ],
@@ -1511,7 +1511,7 @@
     "translation": "Some person or other is dancing.",
     "context": "The speaker knows that all contextually relevant people are dancing.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
@@ -1532,7 +1532,7 @@
     "translation": "Juan bought a random book.",
     "context": "Juan bought all contextually relevant books.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "random choice", "judgment": "unacceptable"}
     ],
@@ -1552,7 +1552,7 @@
     "translation": "Someone danced but I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -1573,7 +1573,7 @@
     "translation": "Some of Katal's siblings arrived, but I'm not sure which. / All of Katal's siblings arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],

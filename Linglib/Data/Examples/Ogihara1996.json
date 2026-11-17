@@ -12,7 +12,7 @@
     "translation": "Taro said that Hanako was sick [at that time].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "shifted", "judgment": "unacceptable"}
@@ -37,7 +37,7 @@
     "translation": "Taro said that Hanako had been sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "shifted", "judgment": "acceptable"}
@@ -59,7 +59,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"}
     ],
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "shifted", "judgment": "acceptable"}
@@ -105,7 +105,7 @@
     "translation": "Taro said that Hanako was in Seattle [at that time].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "shifted", "judgment": "unacceptable"}
@@ -127,7 +127,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "shifted", "judgment": "acceptable"}

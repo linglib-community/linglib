@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -40,7 +40,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -68,7 +68,7 @@
     "translation": "I will marry any doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -101,7 +101,7 @@
     "translation": "Yesterday a student (I don't know/don't care who) called for you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -138,7 +138,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -171,7 +171,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -204,7 +204,7 @@
     "translation": "I went out on the street and started knocking like a madman at a door whatever with wooden shutters.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -241,7 +241,7 @@
     "translation": "I went out on the street and started knocking like a madman at whatever door with wooden shutters.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -274,7 +274,7 @@
     "translation": "Tomorrow I will interrogate whatever student that I will lay my eyes on.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -311,7 +311,7 @@
     "translation": "Tomorrow I will interrogate a student whatever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -344,7 +344,7 @@
     "translation": "Take any sweet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -381,7 +381,7 @@
     "translation": "Take a sweet whatever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -414,7 +414,7 @@
     "translation": "You can take any sweet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -451,7 +451,7 @@
     "translation": "You can take a sweet whatever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -484,7 +484,7 @@
     "translation": "You must take any sweet with liquor.",
     "context": "If you go to Naples, you must go to Scaturchio.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -521,7 +521,7 @@
     "translation": "You must take a sweet whatever with liquor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -554,7 +554,7 @@
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who).",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -582,7 +582,7 @@
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who) that was interested in speaking with me.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -610,7 +610,7 @@
     "translation": "Yesterday I spoke with any philosopher.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -638,7 +638,7 @@
     "translation": "Yesterday I spoke with any philosopher that was interested in speaking with me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -671,7 +671,7 @@
     "translation": "I won't read (just) any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -708,7 +708,7 @@
     "translation": "I won't read any book that Gianni will recommend to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -745,7 +745,7 @@
     "translation": "I won't read a book whatever (that Gianni will recommend to me).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -782,7 +782,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -810,7 +810,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -838,7 +838,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -871,7 +871,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -904,7 +904,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -941,7 +941,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -969,7 +969,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -1002,7 +1002,7 @@
     "translation": "I didn't see just any student.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -1039,7 +1039,7 @@
     "translation": "I will see whatever student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "universal",
@@ -1072,7 +1072,7 @@
     "translation": "I should have discussed it with a whatever philosopher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1105,7 +1105,7 @@
     "translation": "I have married a whatsoever doctor.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1133,7 +1133,7 @@
     "translation": "I can marry a whatsoever doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1166,7 +1166,7 @@
     "translation": "A linguist has married a whatever doctor.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1198,7 +1198,7 @@
     "translation": "A whatever citizen can raise a whatever question.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1231,7 +1231,7 @@
     "translation": "No one had to invite anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "negativePolarity",
@@ -1268,7 +1268,7 @@
     "translation": "No one had to invite just anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "rhetorical",
@@ -1305,7 +1305,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1342,7 +1342,7 @@
     "translation": "Taste any doughnut.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1379,7 +1379,7 @@
     "translation": "I must marry a doctor whatever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",
@@ -1412,7 +1412,7 @@
     "translation": "He could do something or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "existential",

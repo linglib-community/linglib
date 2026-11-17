@@ -26,7 +26,7 @@ def ex_78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
@@ -41,7 +41,7 @@ def ex_78b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
@@ -56,7 +56,7 @@ def ex_78c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
@@ -71,7 +71,7 @@ def ex_79 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
@@ -86,7 +86,7 @@ def ex_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "=i")] }
 
@@ -101,7 +101,7 @@ def ex_85a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
@@ -116,7 +116,7 @@ def ex_85b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
@@ -131,7 +131,7 @@ def ex_85c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
@@ -146,7 +146,7 @@ def ex_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "=i")] }
 
@@ -161,7 +161,7 @@ def ex_86a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -176,7 +176,7 @@ def ex_86b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -191,7 +191,7 @@ def ex_86c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -206,7 +206,7 @@ def ex_87a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "3pl"), ("morphemes", "qa")] }
 
@@ -221,7 +221,7 @@ def ex_87b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "3pl"), ("morphemes", "qa")] }
 
@@ -236,7 +236,7 @@ def ex_87c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "3pl"), ("morphemes", "qa")] }
 
@@ -251,7 +251,7 @@ def ex_88b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
@@ -266,7 +266,7 @@ def ex_88c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -281,7 +281,7 @@ def ex_88d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "3pl"), ("morphemes", "qa")] }
 
@@ -296,7 +296,7 @@ def ex_69a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "object"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
@@ -311,7 +311,7 @@ def ex_89a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -326,7 +326,7 @@ def ex_89b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")] }
 
@@ -341,7 +341,7 @@ def ex_90b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")] }
 
@@ -356,7 +356,7 @@ def ex_91a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
@@ -371,7 +371,7 @@ def ex_91b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "=i")] }
 
@@ -386,7 +386,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "agreeingObject"), ("cell", "1sg"), ("setB", "chin")] }
 
@@ -401,7 +401,7 @@ def ex_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "defaultObject"), ("cell", "1sg"), ("setB", "tz'")] }
 
@@ -416,7 +416,7 @@ def ex_73 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "extendedErgative"), ("position", "S"), ("cell", "1sg"), ("setA", "w")] }
 
@@ -431,7 +431,7 @@ def ex_77a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "t")] }
 
@@ -446,7 +446,7 @@ def ex_77b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "w")] }
 

@@ -26,7 +26,7 @@ def ex_5a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O1"), ("particle", "caseMarker"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -41,7 +41,7 @@ def ex_5b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -56,7 +56,7 @@ def ex_6a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "ga"), ("test", "quantifierFloat")] }
 
@@ -71,7 +71,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "o"), ("test", "quantifierFloat")] }
 
@@ -86,7 +86,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "kara"), ("test", "quantifierFloat")] }
 
@@ -101,7 +101,7 @@ def ex_7b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "de"), ("test", "quantifierFloat")] }
 
@@ -116,7 +116,7 @@ def ex_8a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "ga"), ("test", "cleftWithParticle")] }
 
@@ -131,7 +131,7 @@ def ex_8b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "o"), ("test", "cleftWithParticle")] }
 
@@ -146,7 +146,7 @@ def ex_9a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "kara"), ("test", "cleftWithParticle")] }
 
@@ -161,7 +161,7 @@ def ex_9b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "de"), ("test", "cleftWithParticle")] }
 
@@ -176,7 +176,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "NP")] }
 
@@ -191,7 +191,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "AP")] }
 
@@ -206,7 +206,7 @@ def ex_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "PP")] }
 
@@ -221,7 +221,7 @@ def ex_11a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "ga"), ("test", "cleftWithoutParticle")] }
 
@@ -236,7 +236,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "caseMarker"), ("form", "o"), ("test", "cleftWithoutParticle")] }
 
@@ -251,7 +251,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "kara"), ("test", "cleftWithoutParticle"), ("alsoJudged", "questionable")] }
 
@@ -266,7 +266,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "de"), ("test", "cleftWithoutParticle"), ("alsoJudged", "acceptable")] }
 
@@ -281,7 +281,7 @@ def ex_16a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "A"), ("particle", "caseMarker"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -296,7 +296,7 @@ def ex_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "A"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -311,7 +311,7 @@ def ex_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O1"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -326,7 +326,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "A"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -341,7 +341,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O1"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -356,7 +356,7 @@ def ex_20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H3"), ("particle", "postposition"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -371,7 +371,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H3"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -386,7 +386,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -401,7 +401,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H3"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -416,7 +416,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithoutParticle"), ("alsoJudged", "acceptable")] }
 
@@ -431,7 +431,7 @@ def ex_24a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "D"), ("particle", "caseMarker"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -446,7 +446,7 @@ def ex_24b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N2"), ("particle", "caseMarker"), ("form", "ni"), ("test", "quantifierFloat"), ("reading", "affected")] }
 
@@ -461,7 +461,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "D"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -476,7 +476,7 @@ def ex_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N2"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -491,7 +491,7 @@ def ex_26a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "D"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -506,7 +506,7 @@ def ex_26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N2"), ("particle", "caseMarker"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -521,7 +521,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "J1"), ("particle", "insertion"), ("form", "ni"), ("test", "quantifierFloat")] }
 
@@ -536,7 +536,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "J1"), ("particle", "insertion"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -551,7 +551,7 @@ def ex_30c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "J1"), ("particle", "insertion"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -566,7 +566,7 @@ def ex_34b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "Q"), ("particle", "copula"), ("form", "ni"), ("test", "cleftWithParticle")] }
 
@@ -581,7 +581,7 @@ def ex_34c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "Q"), ("particle", "copula"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
@@ -596,7 +596,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "A"), ("particle", "caseMarker"), ("form", "ni"), ("reading", "affected")] }
 
@@ -611,7 +611,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O1"), ("particle", "caseMarker"), ("form", "ni"), ("reading", "affected")] }
 
@@ -626,7 +626,7 @@ def ex_36a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H3"), ("particle", "postposition"), ("form", "ni"), ("reading", "nonaffected")] }
 
@@ -641,7 +641,7 @@ def ex_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("reading", "nonaffected")] }
 
@@ -656,7 +656,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N2"), ("particle", "caseMarker"), ("particle", "postposition"), ("form", "ni"), ("reading", "affected"), ("reading", "nonaffected")] }
 
@@ -671,7 +671,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "D"), ("particle", "caseMarker"), ("particle", "postposition"), ("form", "ni"), ("reading", "affected"), ("reading", "nonaffected")] }
 
@@ -686,7 +686,7 @@ def ex_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "postposition"), ("form", "ni"), ("test", "quantifierFloat"), ("reading", "nonaffected")] }
 
@@ -701,7 +701,7 @@ def app1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "A"), ("particle", "caseMarker"), ("form", "ni")] }
 
@@ -716,7 +716,7 @@ def app2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "B"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -731,7 +731,7 @@ def app3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "C1"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -746,7 +746,7 @@ def app4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "C2"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -761,7 +761,7 @@ def app5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "C3"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -776,7 +776,7 @@ def app6 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "D"), ("particle", "caseMarker"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -791,7 +791,7 @@ def app7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "E"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -806,7 +806,7 @@ def app8 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -821,7 +821,7 @@ def app9 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "G"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -836,7 +836,7 @@ def app10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H1"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -851,7 +851,7 @@ def app11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H2"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -866,7 +866,7 @@ def app12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "H3"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -881,7 +881,7 @@ def app13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "I"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -896,7 +896,7 @@ def app14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "J1"), ("particle", "insertion"), ("form", "ni")] }
 
@@ -911,7 +911,7 @@ def app15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "J2"), ("particle", "insertion"), ("form", "ni")] }
 
@@ -926,7 +926,7 @@ def app16 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "K"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -941,7 +941,7 @@ def app17 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "L1"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -956,7 +956,7 @@ def app18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "L2"), ("particle", "insertion"), ("form", "ni")] }
 
@@ -971,7 +971,7 @@ def app19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "M"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -986,7 +986,7 @@ def app20 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N1"), ("particle", "caseMarker"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1001,7 +1001,7 @@ def app21 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "N2"), ("particle", "caseMarker"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1016,7 +1016,7 @@ def app22 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O1"), ("particle", "caseMarker"), ("form", "ni")] }
 
@@ -1031,7 +1031,7 @@ def app23 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "O2"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1046,7 +1046,7 @@ def app24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "P1"), ("particle", "copula"), ("form", "ni")] }
 
@@ -1061,7 +1061,7 @@ def app25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "P2"), ("particle", "copula"), ("form", "ni")] }
 
@@ -1076,7 +1076,7 @@ def app26 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "Q"), ("particle", "copula"), ("form", "ni")] }
 
@@ -1091,7 +1091,7 @@ def app27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "R"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1106,7 +1106,7 @@ def app28 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "S"), ("particle", "copula"), ("form", "ni")] }
 
@@ -1121,7 +1121,7 @@ def app29 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "T"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1136,7 +1136,7 @@ def app30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "U"), ("particle", "postposition"), ("form", "ni")] }
 
@@ -1151,7 +1151,7 @@ def app31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "V"), ("particle", "copula"), ("form", "ni")] }
 

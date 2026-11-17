@@ -26,7 +26,7 @@ def ex1 : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
@@ -41,7 +41,7 @@ def ex2 : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
@@ -56,7 +56,7 @@ def ex4a : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "alle"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")] }
 
@@ -71,7 +71,7 @@ def ex4b : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "numeralIndefinite"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")] }
 
@@ -86,7 +86,7 @@ def ex4c : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "definitePlural"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "yes")] }
 
@@ -101,7 +101,7 @@ def ex22a : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
@@ -116,7 +116,7 @@ def ex22b : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
@@ -131,7 +131,7 @@ def ex22c : Datum :=
     lgrConformance := some .wordAligned
     context := "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
@@ -147,7 +147,7 @@ def ex23b : Datum :=
     lgrConformance := some .wordAligned
     context := "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
@@ -163,7 +163,7 @@ def ex23c : Datum :=
     lgrConformance := some .wordAligned
     context := "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
@@ -179,7 +179,7 @@ def ex24b : Datum :=
     lgrConformance := some .wordAligned
     context := "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
@@ -195,7 +195,7 @@ def ex24c : Datum :=
     lgrConformance := some .wordAligned
     context := "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
@@ -211,7 +211,7 @@ def ex24d : Datum :=
     lgrConformance := some .wordAligned
     context := "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
@@ -226,7 +226,7 @@ def ex26 : Datum :=
     lgrConformance := some .wordAligned
     context := "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "numeralIndefinite"), ("scenario", "nonMaximal")] }
 

@@ -24,7 +24,7 @@ def ex_119 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_120 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_131 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("transparent", .acceptable), ("opaque", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_132 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("transparent", .unacceptable), ("opaque", .acceptable)]
     paperFeatures := [] }
 
@@ -77,7 +77,7 @@ def ex_135a : Datum :=
     context := "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -91,7 +91,7 @@ def ex_135b : Datum :=
     context := "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -105,7 +105,7 @@ def ex_135c : Datum :=
     context := "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

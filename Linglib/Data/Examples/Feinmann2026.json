@@ -12,7 +12,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -36,7 +36,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -60,7 +60,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -84,7 +84,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -108,7 +108,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -132,7 +132,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -156,7 +156,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -180,7 +180,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -204,7 +204,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party? B: Mary's parents gave me conflicting reports.",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [],
   "comment": "The judged utterance is A's follow-up, printed with #.",
@@ -223,7 +223,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party? B: Jeff Bezos hates Bill Gates.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [],
   "comment": "The judged utterance is A's follow-up, printed with a check mark.",
@@ -242,7 +242,7 @@
   "translation": "",
   "context": "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box.",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -266,7 +266,7 @@
   "translation": "",
   "context": "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box.",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -290,7 +290,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -314,7 +314,7 @@
   "translation": "",
   "context": "A: Is Mary driving to the party?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -338,7 +338,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -362,7 +362,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -386,7 +386,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "unacceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -410,7 +410,7 @@
   "translation": "",
   "context": "A: Is Mary coming to the party tonight?",
   "judgment": "questionable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [

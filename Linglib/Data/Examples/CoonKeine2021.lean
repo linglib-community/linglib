@@ -26,7 +26,7 @@ def ex_3a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -41,7 +41,7 @@ def ex_3b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -56,7 +56,7 @@ def ex_3c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -71,7 +71,7 @@ def ex_3d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -86,7 +86,7 @@ def ex_10b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -101,7 +101,7 @@ def ex_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -116,7 +116,7 @@ def ex_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datAbs"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -131,7 +131,7 @@ def ex_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "absDat"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("lowerOpaque", "yes"), ("aftermath", "clitic")] }
 
@@ -146,7 +146,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "clitic")] }
 
@@ -161,7 +161,7 @@ def ex_50 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Itxaso-ri zu gustatzen d-i-o-zu.", .ungrammatical)]
+    contrasts := [("Itxaso-ri zu gustatzen d-i-o-zu.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "clitic")] }
 
@@ -176,7 +176,7 @@ def ex_24 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -191,7 +191,7 @@ def ex_28 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -206,7 +206,7 @@ def ex_31_2_1 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("2 > 1", .acceptable), ("1 > 2", .acceptable)]
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -221,7 +221,7 @@ def ex_31_1_2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("2 > 1", .acceptable), ("1 > 2", .acceptable)]
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -236,7 +236,7 @@ def ex_44a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -251,7 +251,7 @@ def ex_44a_me : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -266,7 +266,7 @@ def ex_44a_te : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -281,7 +281,7 @@ def ex_44b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -296,7 +296,7 @@ def ex_44b_mi : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -311,7 +311,7 @@ def ex_44b_ti : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -326,7 +326,7 @@ def ex_46a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -341,7 +341,7 @@ def ex_46b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("higherShielded", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -356,7 +356,7 @@ def ex_48a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
@@ -371,7 +371,7 @@ def ex_48b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "clitic")] }
 
@@ -386,7 +386,7 @@ def ex_51a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -401,7 +401,7 @@ def ex_51b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -416,7 +416,7 @@ def ex_52a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "pl"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -431,7 +431,7 @@ def ex_52b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -446,7 +446,7 @@ def ex_54a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -461,7 +461,7 @@ def ex_54b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
@@ -476,7 +476,7 @@ def fn32_ia : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPast")] }
 
@@ -491,7 +491,7 @@ def ex_68a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A Bollywood movie where two people are swapping identities."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
@@ -506,7 +506,7 @@ def ex_68b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A Bollywood movie where someone is swapping identities with me."
     judgment := .ungrammatical
-    alternatives := [("aaj-se Ramesh mẼ hũ:", .ungrammatical)]
+    contrasts := [("aaj-se Ramesh mẼ hũ:", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
@@ -521,7 +521,7 @@ def ex_69a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "pl"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
@@ -536,7 +536,7 @@ def ex_69b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
@@ -551,7 +551,7 @@ def fn34_i : Datum :=
     lgrConformance := some .wordAligned
     context := "A Bollywood movie where I swapped identities with Ramesh."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPast")] }
 
@@ -566,7 +566,7 @@ def ex_70a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "portuguesePresent")] }
 
@@ -581,7 +581,7 @@ def ex_70b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "portuguesePresent")] }
 
@@ -596,7 +596,7 @@ def ex_71 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("higher", "3"), ("lower", "2")] }
 
@@ -611,7 +611,7 @@ def ex_72 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copula"), ("higher", "3"), ("lower", "3"), ("lowerNumber", "pl")] }
 
@@ -626,7 +626,7 @@ def ex_73 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("higher", "3"), ("lower", "3"), ("lowerNumber", "pl")] }
 
@@ -641,7 +641,7 @@ def ex_74 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
@@ -656,7 +656,7 @@ def ex_76a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
@@ -671,7 +671,7 @@ def ex_76b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "icelandicLikaPast")] }
 
@@ -686,7 +686,7 @@ def ex_77 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
@@ -701,7 +701,7 @@ def ex_78a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
@@ -716,7 +716,7 @@ def ex_78b_agree : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "pl"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
@@ -731,7 +731,7 @@ def ex_78b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "pl"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
@@ -746,7 +746,7 @@ def ex_84a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
@@ -761,7 +761,7 @@ def ex_84b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
@@ -776,7 +776,7 @@ def ex_86 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "participles"), ("higher", "3"), ("higherNumber", "pl")] }
 
@@ -791,7 +791,7 @@ def fn37_i : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "expletive"), ("lower", "1"), ("lowerNumber", "pl")] }
 

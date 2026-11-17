@@ -26,7 +26,7 @@ def ex_29a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "mandar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
@@ -41,7 +41,7 @@ def ex_30 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "preparar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
@@ -56,7 +56,7 @@ def ex_31 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sacar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "source")] }
 
@@ -71,7 +71,7 @@ def ex_32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "lavar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
@@ -86,7 +86,7 @@ def ex_33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "admirar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
@@ -101,7 +101,7 @@ def ex_34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "llegar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
@@ -116,7 +116,7 @@ def ex_35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "romperCausative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -131,7 +131,7 @@ def ex_36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "romperInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -146,7 +146,7 @@ def ex_37 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "gustar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "experiencer")] }
 
@@ -161,7 +161,7 @@ def ex_38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sobrar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
@@ -176,7 +176,7 @@ def ex_39a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "caminar"), ("animate", "yes"), ("dative", "clitic"), ("meaning", "ethical")] }
 
@@ -191,7 +191,7 @@ def ex_49 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "suceder"), ("animate", "yes"), ("dative", "dp"), ("meaning", "experiencer")] }
 
@@ -206,7 +206,7 @@ def ex_54a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "salir"), ("animate", "no"), ("dative", "dp"), ("meaning", "possessor")] }
 
@@ -221,7 +221,7 @@ def ex_55 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional responsibility", .acceptable)]
     paperFeatures := [("predicate", "quemarInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -236,7 +236,7 @@ def ex_60 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("affected", .acceptable), ("unintentional responsibility", .ungrammatical)]
     paperFeatures := [("predicate", "romperInchoative"), ("animate", "no"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -251,7 +251,7 @@ def ex_66 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "correr"), ("animate", "yes"), ("dative", "dp")] }
 
@@ -266,7 +266,7 @@ def ex_67a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "correrTransitive"), ("animate", "yes"), ("dative", "dp")] }
 
@@ -281,7 +281,7 @@ def ex_78 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "caminar"), ("animate", "yes"), ("dative", "dp")] }
 
@@ -296,7 +296,7 @@ def ex_90a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "abrirCausative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -311,7 +311,7 @@ def ex_90b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "abrirInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
@@ -324,7 +324,7 @@ def ex_85ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "pass"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
@@ -337,7 +337,7 @@ def ex_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "openCausative"), ("animate", "yes"), ("dative", "dp")] }
 
@@ -350,7 +350,7 @@ def ex_89a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "openInchoative"), ("animate", "yes"), ("dative", "dp")] }
 
@@ -363,7 +363,7 @@ def ex_92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "arrive"), ("animate", "yes"), ("dative", "dp")] }
 

@@ -26,7 +26,7 @@ def concrete_hafa : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "concrete"), ("construction", "clausal"), ("verb", "hafa")] }
 
@@ -41,7 +41,7 @@ def concrete_eiga : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "concrete"), ("construction", "clausal"), ("verb", "eiga")] }
 
@@ -56,7 +56,7 @@ def kinship_hafa : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "kinship"), ("construction", "clausal"), ("verb", "hafa")] }
 
@@ -71,7 +71,7 @@ def kinship_eiga : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "kinship"), ("construction", "clausal"), ("verb", "eiga")] }
 
@@ -86,7 +86,7 @@ def bodyPart_hafa : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "bodyPart"), ("construction", "clausal"), ("verb", "hafa")] }
 
@@ -101,7 +101,7 @@ def bodyPart_eiga : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "bodyPart"), ("construction", "clausal"), ("verb", "eiga")] }
 
@@ -116,7 +116,7 @@ def abstract_hafa : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "abstract"), ("construction", "clausal"), ("verb", "hafa")] }
 
@@ -131,7 +131,7 @@ def abstract_eiga : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "abstract"), ("construction", "clausal"), ("verb", "eiga")] }
 
@@ -146,7 +146,7 @@ def concrete_attrA : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "concrete"), ("construction", "attributiveA")] }
 
@@ -161,7 +161,7 @@ def concrete_attrB : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "concrete"), ("construction", "attributiveB")] }
 
@@ -176,7 +176,7 @@ def concrete_attrC : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "concrete"), ("construction", "attributiveC")] }
 
@@ -191,7 +191,7 @@ def kinship_attrA : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "kinship"), ("construction", "attributiveA")] }
 
@@ -206,7 +206,7 @@ def kinship_attrB : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "kinship"), ("construction", "attributiveB")] }
 
@@ -221,7 +221,7 @@ def kinship_attrC : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "kinship"), ("construction", "attributiveC")] }
 
@@ -236,7 +236,7 @@ def bodyPart_attrA : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "bodyPart"), ("construction", "attributiveA")] }
 
@@ -251,7 +251,7 @@ def bodyPart_attrB : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "bodyPart"), ("construction", "attributiveB")] }
 
@@ -266,7 +266,7 @@ def bodyPart_attrC : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "bodyPart"), ("construction", "attributiveC")] }
 
@@ -281,7 +281,7 @@ def abstract_attrA : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "abstract"), ("construction", "attributiveA")] }
 
@@ -296,7 +296,7 @@ def abstract_attrB : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "abstract"), ("construction", "attributiveB")] }
 
@@ -311,7 +311,7 @@ def abstract_attrC : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "abstract"), ("construction", "attributiveC")] }
 

@@ -27,7 +27,7 @@ def ex_1 : Datum :=
     lgrConformance := some .wordAligned
     context := "Who is chewing colanut?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "a before subject")] }
 
@@ -43,7 +43,7 @@ def ex_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable)]
     paperFeatures := [("marking", "a between verb and object")] }
 
@@ -59,7 +59,7 @@ def ex_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "discourse-initial"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "a clause-final")] }
 
@@ -75,7 +75,7 @@ def ex_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "a clause-final")] }
 
@@ -91,7 +91,7 @@ def fn4_i : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("phrase within VP", .acceptable)]
     paperFeatures := [("marking", "a before phrase within VP")] }
 
@@ -107,7 +107,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := "Who ate a mango?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "le after subject")] }
 
@@ -123,7 +123,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := "Why are you angry?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "le after subject")] }
 
@@ -139,7 +139,7 @@ def ex_7 : Datum :=
     lgrConformance := some .wordAligned
     context := "What did Atim do? / What did Atim eat?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("VP", .acceptable), ("object", .acceptable)]
     paperFeatures := [("marking", "ka before object")] }
 
@@ -155,7 +155,7 @@ def ex_8 : Datum :=
     lgrConformance := some .wordAligned
     context := "Atim hit Amoak."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("verb", .acceptable)]
     paperFeatures := [("marking", "kama after VP")] }
 
@@ -171,7 +171,7 @@ def ex_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "relative form")] }
 
@@ -187,7 +187,7 @@ def ex_11 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "absolute form")] }
 
@@ -203,7 +203,7 @@ def ex_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "relative form"), ("particle", "cee after subject")] }
 
@@ -219,7 +219,7 @@ def ex_13 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee clause-final")] }
 
@@ -235,7 +235,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What is Kande cooking?"
     judgment := .acceptable
-    alternatives := [("Kànde ta-nàa dafà àyàbà cee.", .ungrammatical)]
+    contrasts := [("Kànde ta-nàa dafà àyàbà cee.", .ungrammatical)]
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee clause-final"), ("agreement", "masculine despite feminine object")] }
 
@@ -251,7 +251,7 @@ def ex_15 : Datum :=
     lgrConformance := some .wordAligned
     context := "A black horse kicked the boy."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("part of subject", .acceptable)]
     paperFeatures := [("marking", "relative form"), ("particle", "nee after subject")] }
 
@@ -267,7 +267,7 @@ def ex_17 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee after object")] }
 
@@ -283,7 +283,7 @@ def ex_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "a")] }
 
@@ -299,7 +299,7 @@ def ex_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "la"), ("movement", "object fronted")] }
 
@@ -315,7 +315,7 @@ def ex_18c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What is Omar doing? / Is he buying fish?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("verb", .acceptable), ("VP", .acceptable)]
     paperFeatures := [("marking", "dafa")] }
 
@@ -331,7 +331,7 @@ def ex_19 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What is happening?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "ngi"), ("aspect", "imperfective")] }
 
@@ -347,7 +347,7 @@ def ex_20 : Datum :=
     lgrConformance := some .wordAligned
     context := "What happened?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "na"), ("aspect", "perfective")] }
 
@@ -363,7 +363,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What happened?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
@@ -379,7 +379,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("verb", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
@@ -395,7 +395,7 @@ def ex_39 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("VP", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
@@ -411,7 +411,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "What did Alombah cook? / What did Alombah do with the maize? / What did Alombah do? / Who cooked the maize? / What happened?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("subject", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "none")] }
 
@@ -424,7 +424,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("verb", .acceptable), ("object", .unacceptable), ("VP", .unacceptable), ("clause", .unacceptable), ("subject", .unacceptable), ("subject and verb", .acceptable)]
     paperFeatures := [("marking", "nuclear stress on verb")] }
 
@@ -440,7 +440,7 @@ def ex_56 : Datum :=
     lgrConformance := some .wordAligned
     context := "Can I borrow your car?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject and verb", .acceptable)]
     paperFeatures := [("marking", "absolute form")] }
 
@@ -456,7 +456,7 @@ def ex_57a : Datum :=
     lgrConformance := some .wordAligned
     context := "What happened to Jean?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject and verb", .acceptable)]
     paperFeatures := [("marking", "na")] }
 
@@ -472,7 +472,7 @@ def ex_59 : Datum :=
     lgrConformance := some .wordAligned
     context := "Did Atim eat the mango?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("subject and verb", .acceptable)]
     paperFeatures := [("marking", "le after subject")] }
 

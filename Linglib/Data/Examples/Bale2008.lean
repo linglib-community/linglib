@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("entails", "(1b)")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("entails", "none")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -78,7 +78,7 @@ def ex_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "più")] }
 
@@ -93,7 +93,7 @@ def ex_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "più")] }
 
@@ -108,7 +108,7 @@ def ex_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "-er")] }
 
@@ -123,7 +123,7 @@ def ex_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "-er")] }
 
@@ -138,7 +138,7 @@ def ex_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "plus")] }
 
@@ -153,7 +153,7 @@ def ex_5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "plus")] }
 
@@ -168,7 +168,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "mai")] }
 
@@ -183,7 +183,7 @@ def ex_6b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "mai")] }
 
@@ -196,7 +196,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
@@ -209,7 +209,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
@@ -222,7 +222,7 @@ def ex_7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "deviation")] }
 
@@ -235,7 +235,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
@@ -248,7 +248,7 @@ def ex_8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
@@ -261,7 +261,7 @@ def ex_8d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
@@ -274,7 +274,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -287,7 +287,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
@@ -300,7 +300,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -313,7 +313,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
@@ -326,7 +326,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -339,7 +339,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -352,7 +352,7 @@ def ex_18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -365,7 +365,7 @@ def ex_18d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -379,7 +379,7 @@ def ex_19a : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "committee"), ("subject", "b"), ("subjectScale", "beauty"), ("standard", "h"), ("standardScale", "intelligence")] }
 
@@ -393,7 +393,7 @@ def ex_19b : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "committee"), ("subject", "b"), ("subjectScale", "intelligence"), ("standard", "e"), ("standardScale", "beauty")] }
 
@@ -406,7 +406,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -419,7 +419,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -432,7 +432,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
@@ -445,7 +445,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
@@ -458,7 +458,7 @@ def ex_25d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
@@ -471,7 +471,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -484,7 +484,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
@@ -498,7 +498,7 @@ def ex_31a : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("model", "measured"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width")] }
 
@@ -512,7 +512,7 @@ def ex_31b : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct"), ("model", "measured"), ("subject", "s"), ("subjectScale", "width"), ("standard", "s"), ("standardScale", "height")] }
 
@@ -525,7 +525,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
@@ -539,7 +539,7 @@ def ex_35 : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "men"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width")] }
 
@@ -553,7 +553,7 @@ def ex_37 : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "men"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width")] }
 
@@ -566,7 +566,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -579,7 +579,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
@@ -592,7 +592,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -605,7 +605,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -618,7 +618,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -631,7 +631,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
@@ -644,7 +644,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
@@ -657,7 +657,7 @@ def ex_42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 

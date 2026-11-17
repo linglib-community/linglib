@@ -26,7 +26,7 @@ def ex1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grupo")] }
 
@@ -41,7 +41,7 @@ def ex1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón")] }
 
@@ -56,7 +56,7 @@ def ex1c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mierda")] }
 
@@ -71,7 +71,7 @@ def ex2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grupo"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
@@ -86,7 +86,7 @@ def ex2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
@@ -101,7 +101,7 @@ def ex2c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mierda"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
@@ -114,7 +114,7 @@ def ex5_bocha : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bocha"), ("elided", "coda")] }
 
@@ -127,7 +127,7 @@ def ex5_grupo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grupo"), ("elided", "coda")] }
 
@@ -142,7 +142,7 @@ def ex6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("ellipsis", .unacceptable)]
     paperFeatures := [("noun", "mierda"), ("elided", "coda")] }
 
@@ -155,7 +155,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bocha"), ("elided", "coda"), ("diagnostic", "subextraction")] }
 
@@ -168,7 +168,7 @@ def ex45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "subextraction")] }
 
@@ -183,7 +183,7 @@ def ex52a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mierda"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
@@ -198,7 +198,7 @@ def ex52b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mierda"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
@@ -213,7 +213,7 @@ def ex53a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
@@ -228,7 +228,7 @@ def ex53b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
@@ -241,7 +241,7 @@ def ex54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("ellipsis", .unacceptable)]
     paperFeatures := [("noun", "mierda"), ("elided", "coda")] }
 
@@ -256,7 +256,7 @@ def ex48 : Datum :=
     lgrConformance := some .wordAligned
     context := "Said after watching a bad movie."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "mierda"), ("diagnostic", "contextResolved")] }
 
@@ -271,7 +271,7 @@ def ex62a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grupo"), ("reading", "descriptive"), ("elided", "first"), ("agreement", "singular"), ("codaNumber", "plural")] }
 
@@ -286,7 +286,7 @@ def ex62b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grupo"), ("reading", "quantificational"), ("elided", "first"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
@@ -299,7 +299,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("reading", "descriptive"), ("elided", "first"), ("agreement", "singular"), ("codaNumber", "plural")] }
 
@@ -312,7 +312,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "montón"), ("reading", "quantificational"), ("elided", "first"), ("agreement", "plural"), ("codaNumber", "plural")] }
 

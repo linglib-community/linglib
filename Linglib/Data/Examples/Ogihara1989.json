@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Uttered when the speaker is driving down the freeway.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no past time at which I turn off the stove", "judgment": "unacceptable"},
       {"name": "some past time at which I do not turn off the stove", "judgment": "unacceptable"},
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Sam got drunk at the time of Sheila's party", "judgment": "acceptable"}
     ],
@@ -59,7 +59,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John saw Mary at some time within the contextually relevant interval", "judgment": "acceptable"},
       {"name": "John saw Mary at some past time", "judgment": "unacceptable"}
@@ -81,7 +81,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "acceptable"}
@@ -105,7 +105,7 @@
     "translation": "John said that Mary had been ill.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "unacceptable"}
@@ -129,7 +129,7 @@
     "translation": "John said that Mary was ill.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "shifted", "judgment": "unacceptable"}
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -206,7 +206,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "acceptable"},
@@ -227,7 +227,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "acceptable"},
@@ -248,7 +248,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before the speech time", "judgment": "acceptable"}
     ],
@@ -267,7 +267,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before the speech time", "judgment": "unacceptable"},
       {"name": "after the speech time", "judgment": "acceptable"}
@@ -287,7 +287,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -306,7 +306,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "after the speech time", "judgment": "acceptable"}
@@ -330,7 +330,7 @@
     "translation": "John met a man who was laughing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "subsequent", "judgment": "acceptable"},
@@ -355,7 +355,7 @@
     "translation": "John met a man who was laughing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "subsequent", "judgment": "acceptable"}
@@ -375,7 +375,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -394,7 +394,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "pp. 131-132: the winning follows the claiming, and the adjective earlier triggers tense deletion.",
@@ -411,7 +411,7 @@
     "translation": "",
     "context": "On the intended reading, the winning follows the speech time.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 132.",
@@ -428,7 +428,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
@@ -447,7 +447,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -466,7 +466,7 @@
     "translation": "",
     "context": "On the reading on which your having is simultaneous with your saying.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
@@ -485,7 +485,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -504,7 +504,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
@@ -523,7 +523,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after the speech time", "judgment": "acceptable"}
     ],
@@ -542,7 +542,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "shifted", "judgment": "acceptable"}
@@ -562,7 +562,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -581,7 +581,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -601,7 +601,7 @@
     "context": "At 10 A.M. John and Bill are peeping into a room where Sue is. John, near-sighted, says Mary is in the room. Bill denies it. One minute later Sue is still in the room and Bill reports this to Kent, adding: But that's not true. The one that is in the room is Sue.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 287: true though Mary is in the room neither at the saying nor at the report, against Hypothesis 1.",
@@ -618,7 +618,7 @@
     "translation": "",
     "context": "On June 20th John says Mary is pregnant, and she is. On December 20th Bill verifies that she is still pregnant.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 293.",
@@ -635,7 +635,7 @@
     "translation": "",
     "context": "On June 20th John says Mary is pregnant, and she is. On December 20th Bill learns that she has had a miscarriage.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 293: John's attitude is the same as in Case 1, against Hypothesis 2.",
@@ -652,7 +652,7 @@
     "translation": "",
     "context": "As in (17), except that Sue leaves the room before Kent joins them.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 295.",
@@ -669,7 +669,7 @@
     "translation": "",
     "context": "As in (27), except that Mary comes in just before Sue leaves.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 296: infelicitous though Mary is in the room now.",
@@ -686,7 +686,7 @@
     "translation": "",
     "context": "As in (17), except that Bill convinces John that it is Sue. One minute later Sue is still in the room.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 300, against Hypothesis 3; two consultants disagree (p. 299).",
@@ -703,7 +703,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 300, against Hypothesis 3. The source gives no scenario for the state.",
@@ -720,7 +720,7 @@
     "translation": "",
     "context": "As in (27) on the first day. On the following day Sue, who went home for the night, is inside the room again.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 307: two temporally discontinuous states of Sue's standing in the room.",

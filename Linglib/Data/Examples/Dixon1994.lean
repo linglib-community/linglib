@@ -26,7 +26,7 @@ def ex_1_2_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "S")] }
 
@@ -41,7 +41,7 @@ def ex_1_2_7 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "AO")] }
 
@@ -56,7 +56,7 @@ def ex_1_2_12 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")] }
 
@@ -71,7 +71,7 @@ def ex_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "AO")] }
 
@@ -84,7 +84,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "S"), ("derivation", "none")] }
 
@@ -97,7 +97,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "none")] }
 
@@ -110,7 +110,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "none")] }
 
@@ -123,7 +123,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "S"), ("derivation", "none")] }
 
@@ -136,7 +136,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "none")] }
 
@@ -149,7 +149,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "none")] }
 
@@ -164,7 +164,7 @@ def ex_32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")] }
 
@@ -179,7 +179,7 @@ def ex_33 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")] }
 
@@ -192,7 +192,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -205,7 +205,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -218,7 +218,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -231,7 +231,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "antipassive")] }
 
@@ -244,7 +244,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "antipassive")] }
 
@@ -259,7 +259,7 @@ def ex_46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "ngurra")] }
 
@@ -272,7 +272,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -287,7 +287,7 @@ def ex_56 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "S"), ("second", "O"), ("derivation", "none")] }
 
@@ -302,7 +302,7 @@ def ex_57 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -317,7 +317,7 @@ def ex_59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "O"), ("second", "O"), ("derivation", "none")] }
 
@@ -332,7 +332,7 @@ def ex_60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -347,7 +347,7 @@ def ex_61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "O"), ("second", "S"), ("derivation", "none")] }
 
@@ -362,7 +362,7 @@ def ex_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "A"), ("second", "S"), ("derivation", "none")] }
 
@@ -377,7 +377,7 @@ def ex_63 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")] }
 
@@ -392,7 +392,7 @@ def ex_66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "instrumentive"), ("function", "O")] }
 
@@ -407,7 +407,7 @@ def ex_68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "O"), ("second", "O"), ("derivation", "instrumentive")] }
 
@@ -420,7 +420,7 @@ def en_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "S"), ("derivation", "none")] }
 
@@ -433,7 +433,7 @@ def en_b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "passive")] }
 
@@ -446,7 +446,7 @@ def en_c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "A"), ("derivation", "none")] }
 
@@ -459,7 +459,7 @@ def en_d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "S"), ("derivation", "passive")] }
 
@@ -472,7 +472,7 @@ def en_e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "none")] }
 
@@ -485,7 +485,7 @@ def en_f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Tom kicked and Bob punched Bill.", .acceptable)]
+    contrasts := [("Tom kicked and Bob punched Bill.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "passive")] }
 
@@ -498,7 +498,7 @@ def en_g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "none")] }
 
@@ -511,7 +511,7 @@ def en_h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "passive")] }
 
@@ -524,7 +524,7 @@ def en_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "passive")] }
 
@@ -537,7 +537,7 @@ def en_j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Fred punched Bill and kicked him.", .acceptable)]
+    contrasts := [("Fred punched Bill and kicked him.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "none")] }
 
@@ -550,7 +550,7 @@ def en_k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Fred punched and was kicked by Bill.", .acceptable)]
+    contrasts := [("Fred punched and was kicked by Bill.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "passive")] }
 

@@ -38,7 +38,7 @@
     "translation": "The woman is happy that the children arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "’Aayat hi-llooy-ca-∅ ma-may’ac hi-pa-paay-n-∅.",
         "judgment": "ungrammatical"
@@ -105,7 +105,7 @@
     "translation": "I’m surprised that he/she will arrive very late at night.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "pro cicwaay-ca-∅ pro kuleewit-nix hi-paay-no’.",
         "judgment": "ungrammatical"
@@ -168,7 +168,7 @@
     "translation": "He’s sad that I’m going to leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -226,7 +226,7 @@
     "translation": "The woman remembers that they arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -284,7 +284,7 @@
     "translation": "She’s joyful/bothered/worried that they arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -342,7 +342,7 @@
     "translation": "She’s joyful/bothered/worried that they arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -400,7 +400,7 @@
     "translation": "She’s joyful/bothered/worried that they arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -446,7 +446,7 @@
     "translation": "Someone is joyful about the old man.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -488,7 +488,7 @@
     "translation": "S/he is joyful about a story.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -542,7 +542,7 @@
     "translation": "Thank you for informing me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -584,7 +584,7 @@
     "translation": "Thank you for the food.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Qe’ciyeew’yew’ tamtaayn.",
         "judgment": "ungrammatical"
@@ -635,7 +635,7 @@
     "translation": "I told my friend it is going to rain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "pro ’a-w-caa-qa ’in-lawtiwaa-na yox̂ ke hi-weeqi-yu’.",
         "judgment": "ungrammatical"
@@ -690,7 +690,7 @@
     "translation": "I told my friend about the news.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -736,7 +736,7 @@
     "translation": "She thinks it was raining yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "pro hi-neki-se-∅ yox̂ ke hi-waaqi-sa-qa watiisx.",
         "judgment": "ungrammatical"
@@ -807,7 +807,7 @@
     "translation": "I’m thinking about the latest news. It’s not good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -853,7 +853,7 @@
     "translation": "She said it rained yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "pro hi-i-caa-qa yox̂ ke watiisx hi-weeqi-∅-ye.",
         "judgment": "ungrammatical"
@@ -908,7 +908,7 @@
     "translation": "Now she knows it’s raining.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -971,7 +971,7 @@
     "translation": "She doesn’t know it was raining yesterday.",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1033,7 +1033,7 @@
     "translation": "My husband isn’t happy that Fido went back.",
     "context": "Asked whether the dog went back, the consultant answers yes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1107,7 +1107,7 @@
     "translation": "My husband isn’t worried that the new dog howls.",
     "context": "Asked whether the dog is a howler, the consultant answers that it is.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1169,7 +1169,7 @@
     "translation": "S/he doesn’t think it’s going to rain tomorrow.",
     "context": "Asked whether it was going to rain the next day, the consultant answers no.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1235,7 +1235,7 @@
     "translation": "Does Angel think the students went to Lewiston?",
     "context": "Asked about the students, the consultant does not know whether they went.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1313,7 +1313,7 @@
     "translation": "If the teacher knows that I am sick, she won’t call me.",
     "context": "Asked whether that person was ill, the consultant answers that they would think so.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

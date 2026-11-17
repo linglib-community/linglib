@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "present")] }
 
@@ -52,7 +52,7 @@ def ex_3 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past")] }
 
@@ -67,7 +67,7 @@ def ex_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "present")] }
 
@@ -82,7 +82,7 @@ def ex_5 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past")] }
 
@@ -97,7 +97,7 @@ def ex_6 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "present")] }
 
@@ -110,7 +110,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("back-shifted", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "past")] }
 
@@ -125,7 +125,7 @@ def ex_8a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "present")] }
 
@@ -140,7 +140,7 @@ def ex_8b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("back-shifted", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "past")] }
 
@@ -155,7 +155,7 @@ def ex_9a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "present")] }
 
@@ -170,7 +170,7 @@ def ex_9b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("back-shifted", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "past")] }
 
@@ -183,7 +183,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("double access", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "present")] }
 
@@ -196,7 +196,7 @@ def ex_50b_did : Datum :=
     glossedTokens := []
     context := "John's leaving and Sally's arrival are independent of each other."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past"), ("clauseTime", "before speech")] }
 
@@ -209,7 +209,7 @@ def ex_50b_will : Datum :=
     glossedTokens := []
     context := "John's leaving and Sally's arrival are independent of each other."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past"), ("clauseTime", "after speech")] }
 
@@ -224,7 +224,7 @@ def ex_51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "present"), ("clauseTime", "after speech")] }
 
@@ -239,7 +239,7 @@ def ex_103 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("O Janis efige prin na efige i Maria.", .ungrammatical), ("O Janis efige prin efevge i Maria.", .ungrammatical), ("O Janis efige prin na efevge i Maria.", .ungrammatical)]
+    contrasts := [("O Janis efige prin na efige i Maria.", .ungrammatical), ("O Janis efige prin efevge i Maria.", .ungrammatical), ("O Janis efige prin na efevge i Maria.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "before"), ("embedded", "past")] }
 
@@ -254,7 +254,7 @@ def ex_104 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("construction", "attitude"), ("embedded", "past")] }
 

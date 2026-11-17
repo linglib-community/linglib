@@ -24,7 +24,7 @@ def ex6b_wonder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wonder"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -37,7 +37,7 @@ def ex7b_claim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "claim"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -50,7 +50,7 @@ def ex8_whisper : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "whispered")] }
 
@@ -63,7 +63,7 @@ def ex10_shout : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "shout"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "loud")] }
 
@@ -76,7 +76,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := "Ayka is talking to Bertrand about a conversation she had with Polina."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -89,7 +89,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "neutral")] }
 
@@ -102,7 +102,7 @@ def ex37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")] }
 
@@ -115,7 +115,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "none"), ("volume", "neutral")] }
 
@@ -128,7 +128,7 @@ def ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -141,7 +141,7 @@ def ex49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")] }
 
@@ -154,7 +154,7 @@ def ex69a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")] }
 
@@ -167,7 +167,7 @@ def ex69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")] }
 
@@ -180,7 +180,7 @@ def ex70a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")] }
 
@@ -193,7 +193,7 @@ def ex70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")] }
 
@@ -206,7 +206,7 @@ def ex74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -219,7 +219,7 @@ def ex75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "loud")] }
 
@@ -232,7 +232,7 @@ def ex78a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "assert"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
@@ -245,7 +245,7 @@ def ex82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 

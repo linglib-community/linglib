@@ -8,7 +8,7 @@
     "translation": "M is more intelligent than C is, but he is much nicer.",
     "context": "Dario: Dimmi cosa pensi di Maria e Carlo. 'Tell me what you think of M and C.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -33,7 +33,7 @@
     "translation": "M is more intelligent than C is, but he is much nicer.",
     "context": "Dario: Dimmi cosa pensi di Maria e Carlo. 'Tell me what you think of M and C.'",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -58,7 +58,7 @@
     "translation": "But you're wrong! M is more intelligent than C is, and she could beat him with little effort.",
     "context": "Dario: Carlo è così intelligente che dubito che Maria possa vincerlo a scacchi. 'C is so intelligent that I doubt that M can beat him at chess.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -83,7 +83,7 @@
     "translation": "But you're wrong! M is more intelligent than C isn't, and she could beat him with little effort.",
     "context": "Dario: Carlo è così intelligente che dubito che Maria possa vincerlo a scacchi. 'C is so intelligent that I doubt that M can beat him at chess.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -108,7 +108,7 @@
     "translation": "But you're wrong! I know M very well and she's more intelligent than you think.",
     "context": "Dario: Maria ha continuato a dire sciocchezze. È proprio cretina, sai? 'M continued to say stupid things. She's really an idiot, you know?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -133,7 +133,7 @@
     "translation": "But you're wrong! I know M very well and she's more intelligent than you think.",
     "context": "Dario: Maria ha continuato a dire sciocchezze. È proprio cretina, sai? 'M continued to say stupid things. She's really an idiot, you know?'",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -158,7 +158,7 @@
     "translation": "As I see it, you're making a mistake; you should ask her. M is more intelligent than you believe.",
     "context": "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -184,7 +184,7 @@
     "translation": "As I see it, you're making a mistake; you should ask her. M is more intelligent than you (wouldn't) believe.",
     "context": "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -209,7 +209,7 @@
     "translation": "Is she more intelligent than C is?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -233,7 +233,7 @@
     "translation": "Is she more intelligent than C is?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -257,7 +257,7 @@
     "translation": "Isn't she more intelligent than C is?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -281,7 +281,7 @@
     "translation": "Isn't she more intelligent than C is?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -305,7 +305,7 @@
     "translation": "Is he more intelligent than you think?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -329,7 +329,7 @@
     "translation": "Is he more intelligent than you think?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -353,7 +353,7 @@
     "translation": "Is she more intelligent than you thought?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -377,7 +377,7 @@
     "translation": "Is she more intelligent than you thought?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -401,7 +401,7 @@
     "translation": "Is she more intelligent than he believes?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -425,7 +425,7 @@
     "translation": "Is she more intelligent than he believes?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "interrogative"],
@@ -449,7 +449,7 @@
     "translation": "M is not more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -473,7 +473,7 @@
     "translation": "M is not more intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -497,7 +497,7 @@
     "translation": "M is not more intelligent than D thinks.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -521,7 +521,7 @@
     "translation": "I've been abroad more days than M has not gone to work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -545,7 +545,7 @@
     "translation": "I've been abroad more days than M's gone to work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -569,7 +569,7 @@
     "translation": "M is not more intelligent than C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -593,7 +593,7 @@
     "translation": "M is not more intelligent than you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -617,7 +617,7 @@
     "translation": "M is not more intelligent than D thinks.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -641,7 +641,7 @@
     "translation": "I haven't been abroad more days than M hasn't gone to work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -665,7 +665,7 @@
     "translation": "I haven't been abroad more days than M has gone to work.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -689,7 +689,7 @@
     "translation": "M isn't more intelligent than C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -713,7 +713,7 @@
     "translation": "M isn't more intelligent than you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -737,7 +737,7 @@
     "translation": "M isn't more intelligent than D thinks.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -761,7 +761,7 @@
     "translation": "M is as intelligent as C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -785,7 +785,7 @@
     "translation": "M is as intelligent as C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -809,7 +809,7 @@
     "translation": "M is as intelligent as you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -833,7 +833,7 @@
     "translation": "M is as intelligent as you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -857,7 +857,7 @@
     "translation": "M isn't as intelligent as you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -881,7 +881,7 @@
     "translation": "M isn't as intelligent as you don't think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -905,7 +905,7 @@
     "translation": "M is less intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -929,7 +929,7 @@
     "translation": "M is less intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -953,7 +953,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -977,7 +977,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1001,7 +1001,7 @@
     "translation": "M is as intelligent as C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1025,7 +1025,7 @@
     "translation": "M is as intelligent as you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1049,7 +1049,7 @@
     "translation": "You're right. I noticed her answers in math class today—and she's just as intelligent as you think.",
     "context": "Dario: Maria è bravissima! È forse la più intelligente ragazza che conosco. 'M is really smart! She's possibly the smartest girl I know.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1074,7 +1074,7 @@
     "translation": "Yes, she's as intelligent as you think.",
     "context": "Dario: Maria ha fatto bene oggi a scuola per la quarta volta. 'M did well at school today for the fourth time.'",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1099,7 +1099,7 @@
     "translation": "M is much more intelligent than C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1124,7 +1124,7 @@
     "translation": "M is much more intelligent than you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1149,7 +1149,7 @@
     "translation": "M is two meters taller than C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1174,7 +1174,7 @@
     "translation": "M is two meters taller than you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1199,7 +1199,7 @@
     "translation": "M is more intelligent than you believe with certainty.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1224,7 +1224,7 @@
     "translation": "Your wife is less faithful than, realizing the importance of fidelity in marriage for you, you are ready to imagine.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1249,7 +1249,7 @@
     "translation": "Your wife is less faithful than, realizing the importance of fidelity in marriage for you, you are ready to imagine.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1274,7 +1274,7 @@
     "translation": "Your wife is less faithful than you are ready to imagine, realizing the importance of fidelity in marriage for you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1299,7 +1299,7 @@
     "translation": "Your wife is less faithful than you are ready to imagine, realizing the importance of fidelity in marriage for you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1324,7 +1324,7 @@
     "translation": "L loves a logic problem more than I love a math problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "specific", "judgment": "acceptable"},
       {"name": "nonspecific", "judgment": "acceptable"}
@@ -1351,7 +1351,7 @@
     "translation": "L loves a logic problem more than I love a math problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "specific", "judgment": "ungrammatical"},
       {"name": "nonspecific", "judgment": "acceptable"}
@@ -1378,7 +1378,7 @@
     "translation": "The situation in Africa is worse than one can imagine, even with all the fantasy in the world.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1403,7 +1403,7 @@
     "translation": "The situation in Africa is worse than one can imagine, even with all the fantasy in the world.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1428,7 +1428,7 @@
     "translation": "M is more intelligent than you are convinced, and G isn't convinced of it either.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1453,7 +1453,7 @@
     "translation": "M is more intelligent than you are convinced, and G isn't convinced of it either.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1478,7 +1478,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1502,7 +1502,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1526,7 +1526,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1550,7 +1550,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1575,7 +1575,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1599,7 +1599,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1623,7 +1623,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1647,7 +1647,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1672,7 +1672,7 @@
     "translation": "L loves a logic problem more than I love a math problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "specific", "judgment": "ungrammatical"},
       {"name": "nonspecific", "judgment": "acceptable"}
@@ -1699,7 +1699,7 @@
     "translation": "The situation in Africa is worse than one may possibly imagine, even with all the fantasy in the world.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1725,7 +1725,7 @@
     "translation": "M is more intelligent than you may be convinced, and G isn't convinced of it either.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1751,7 +1751,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1776,7 +1776,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1801,7 +1801,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1825,7 +1825,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1849,7 +1849,7 @@
     "translation": "M is more intelligent than her brother was at that age.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1873,7 +1873,7 @@
     "translation": "M is more intelligent than her brother was at that age.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1897,7 +1897,7 @@
     "translation": "M is more intelligent than you believed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1921,7 +1921,7 @@
     "translation": "M is more intelligent than you believed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1945,7 +1945,7 @@
     "translation": "M is more intelligent than her brother is.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1969,7 +1969,7 @@
     "translation": "M is more intelligent than her brother was at that age.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -1994,7 +1994,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2018,7 +2018,7 @@
     "translation": "M is more intelligent than you believed.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2043,7 +2043,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2067,7 +2067,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2091,7 +2091,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2115,7 +2115,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2139,7 +2139,7 @@
     "translation": "M's more intelligent than C is intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2164,7 +2164,7 @@
     "translation": "M's more intelligent than C is intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2189,7 +2189,7 @@
     "translation": "M's more intelligent than C is (that).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2214,7 +2214,7 @@
     "translation": "M's more intelligent than C is (that).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2239,7 +2239,7 @@
     "translation": "M's more intelligent than C is (that).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2264,7 +2264,7 @@
     "translation": "M's more intelligent than C is intelligent.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2289,7 +2289,7 @@
     "translation": "M is more intelligent than C is sly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2314,7 +2314,7 @@
     "translation": "M is more intelligent than C is sly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2339,7 +2339,7 @@
     "translation": "M is more intelligent than C is sly.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2364,7 +2364,7 @@
     "translation": "I'm not sure if I should see him Monday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2388,7 +2388,7 @@
     "translation": "I'm not sure if I shouldn't see him Monday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2412,7 +2412,7 @@
     "translation": "Who knows if it's worth the trouble to buy it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2435,7 +2435,7 @@
     "translation": "Who knows if it's not worth the trouble to buy it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2458,7 +2458,7 @@
     "translation": "Who knows if it isn't worth the trouble to buy it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],
@@ -2481,7 +2481,7 @@
     "translation": "M is taller than you don't believe at all.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["force", "declarative"],

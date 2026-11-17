@@ -24,7 +24,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("surface scope", .acceptable), ("inverse scope", .acceptable)]
     paperFeatures := [("section", "2.3")] }
 
@@ -37,7 +37,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -50,7 +50,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -63,7 +63,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -76,7 +76,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -89,7 +89,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -102,7 +102,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("short by the standard of men", .acceptable)]
     paperFeatures := [("section", "3.3")] }
 
@@ -115,7 +115,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4")] }
 
@@ -128,7 +128,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("local to John", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
@@ -141,7 +141,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("local to each fan", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
@@ -154,7 +154,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5")] }
 
@@ -167,7 +167,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("local to each person", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
@@ -183,7 +183,7 @@ def ex_64_long : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -199,7 +199,7 @@ def ex_64_short : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -215,7 +215,7 @@ def ex_65a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -231,7 +231,7 @@ def ex_65b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -244,7 +244,7 @@ def ex_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("dances beautifully", .acceptable), ("Olga is beautiful", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
@@ -257,7 +257,7 @@ def ex_83 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Olga is beautiful", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
@@ -272,7 +272,7 @@ def ex_92a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("speaker committed to the person's youth", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
@@ -287,7 +287,7 @@ def ex_92b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("youth part of the allegation", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
@@ -300,7 +300,7 @@ def ex_93 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inherently visible", .acceptable), ("visible on the occasion", .acceptable)]
     paperFeatures := [("section", "4.5")] }
 
@@ -313,7 +313,7 @@ def ex_94 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inherently visible", .unacceptable), ("visible on the occasion", .acceptable)]
     paperFeatures := [("section", "4.5")] }
 
@@ -326,7 +326,7 @@ def ex_101 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.6")] }
 
@@ -339,7 +339,7 @@ def ex_105 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("cardboard brown small excellent box", .questionable)]
+    contrasts := [("cardboard brown small excellent box", .questionable)]
     readings := []
     paperFeatures := [("section", "5")] }
 

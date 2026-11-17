@@ -26,7 +26,7 @@ def german_case_match : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Er will jemandem schmeicheln, aber sie wissen nicht, wen.", .ungrammatical)]
+    contrasts := [("Er will jemandem schmeicheln, aber sie wissen nicht, wen.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("whPhraseCase", "dative"), ("innerAntecedentCase", "dative")] }
 

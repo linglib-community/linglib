@@ -24,7 +24,7 @@ def ex_27_empty : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", ""), ("grammar", "26"), ("member", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_27_L : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "L"), ("grammar", "26"), ("member", "yes")] }
 
@@ -50,7 +50,7 @@ def ex_27_H : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "H"), ("grammar", "26"), ("member", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_27_F : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "F"), ("grammar", "26"), ("member", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_27_LL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_27_LH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LH"), ("grammar", "26"), ("member", "yes")] }
 
@@ -102,7 +102,7 @@ def ex_27_LF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LF"), ("grammar", "26"), ("member", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_27_HL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -128,7 +128,7 @@ def ex_27_FH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "FH"), ("grammar", "26"), ("member", "yes")] }
 
@@ -141,7 +141,7 @@ def ex_27_FF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "FF"), ("grammar", "26"), ("member", "yes")] }
 
@@ -154,7 +154,7 @@ def ex_27_LLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -167,7 +167,7 @@ def ex_27_LLH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLH"), ("grammar", "26"), ("member", "yes")] }
 
@@ -180,7 +180,7 @@ def ex_27_LLF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLF"), ("grammar", "26"), ("member", "yes")] }
 
@@ -193,7 +193,7 @@ def ex_27_LHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LHL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -206,7 +206,7 @@ def ex_27_LFL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LFL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -219,7 +219,7 @@ def ex_27_LFF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LFF"), ("grammar", "26"), ("member", "yes")] }
 
@@ -232,7 +232,7 @@ def ex_27_HLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLL"), ("grammar", "26"), ("member", "yes")] }
 
@@ -245,7 +245,7 @@ def ex_27_HLH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLH"), ("grammar", "26"), ("member", "yes")] }
 
@@ -258,7 +258,7 @@ def ex_27_HLF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLF"), ("grammar", "26"), ("member", "yes")] }
 
@@ -271,7 +271,7 @@ def ex_26_HH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HH"), ("grammar", "26"), ("member", "no")] }
 
@@ -284,7 +284,7 @@ def ex_26_HF : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HF"), ("grammar", "26"), ("member", "no")] }
 
@@ -297,7 +297,7 @@ def ex_32_empty : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", ""), ("grammar", "33"), ("member", "yes")] }
 
@@ -310,7 +310,7 @@ def ex_32_L : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "L"), ("grammar", "33"), ("member", "yes")] }
 
@@ -323,7 +323,7 @@ def ex_32_H : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "H"), ("grammar", "33"), ("member", "yes")] }
 
@@ -336,7 +336,7 @@ def ex_32_LL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -349,7 +349,7 @@ def ex_32_LH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -362,7 +362,7 @@ def ex_32_HL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -375,7 +375,7 @@ def ex_32_HH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -388,7 +388,7 @@ def ex_32_LLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -401,7 +401,7 @@ def ex_32_LLH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -414,7 +414,7 @@ def ex_32_LHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -427,7 +427,7 @@ def ex_32_LHH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -440,7 +440,7 @@ def ex_32_HLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -453,7 +453,7 @@ def ex_32_HHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -466,7 +466,7 @@ def ex_32_HHH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -479,7 +479,7 @@ def ex_32_LLLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -492,7 +492,7 @@ def ex_32_LLLH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLLH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -505,7 +505,7 @@ def ex_32_LLHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLHL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -518,7 +518,7 @@ def ex_32_LLHH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLHH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -531,7 +531,7 @@ def ex_32_LHLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -544,7 +544,7 @@ def ex_32_LHHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHHL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -557,7 +557,7 @@ def ex_32_LHHH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHHH"), ("grammar", "33"), ("member", "yes")] }
 
@@ -570,7 +570,7 @@ def ex_32_HLLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HLLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -583,7 +583,7 @@ def ex_32_HHLL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHLL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -596,7 +596,7 @@ def ex_32_HHHL : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHHL"), ("grammar", "33"), ("member", "yes")] }
 
@@ -609,7 +609,7 @@ def ex_32_HHHH : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHHH"), ("grammar", "33"), ("member", "yes")] }
 

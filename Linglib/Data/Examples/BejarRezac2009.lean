@@ -26,7 +26,7 @@ def br2009_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
@@ -41,7 +41,7 @@ def br2009_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
@@ -56,7 +56,7 @@ def br2009_2c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
@@ -71,7 +71,7 @@ def br2009_2d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("context", "direct")] }
 
@@ -86,7 +86,7 @@ def br2009_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("diagnostic", "case and binding unaffected")] }
 
@@ -101,7 +101,7 @@ def br2009_15 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("constraint", "Person Case Constraint")] }
 
@@ -116,7 +116,7 @@ def br2009_15_ni : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("constraint", "Person Case Constraint")] }
 
@@ -131,7 +131,7 @@ def br2009_t9_3_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("repair", "added probe (INV)")] }
 
@@ -146,7 +146,7 @@ def br2009_t9_1_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("repair", "added probe (INV)")] }
 
@@ -161,7 +161,7 @@ def br2009_t9_1_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("context", "direct")] }
 
@@ -176,7 +176,7 @@ def br2009_t9_2_1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("repair", "added probe (INV)")] }
 
@@ -191,7 +191,7 @@ def br2009_t9_2_1pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("repair", "added probe (INV)")] }
 
@@ -206,7 +206,7 @@ def br2009_t9_2_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "3"), ("context", "direct")] }
 
@@ -221,7 +221,7 @@ def br2009_t9_1pl_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("repair", "added probe (INV)")] }
 
@@ -236,7 +236,7 @@ def br2009_t9_1pl_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("context", "direct")] }
 
@@ -251,7 +251,7 @@ def br2009_t9_3_2 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "2"), ("repair", "added probe (INV)")] }
 
@@ -266,7 +266,7 @@ def br2009_t9_3_1pl : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("repair", "added probe (INV)")] }
 
@@ -281,7 +281,7 @@ def br2009_t9_3_3 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "3")] }
 
@@ -296,7 +296,7 @@ def br2009_10 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("probe", "flat [u-3]"), ("agreement", "object and subject independent")] }
 
@@ -311,7 +311,7 @@ def br2009_17a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
@@ -326,7 +326,7 @@ def br2009_17b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "2"), ("context", "direct")] }
 
@@ -341,7 +341,7 @@ def br2009_17c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
@@ -356,7 +356,7 @@ def br2009_17d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
@@ -371,7 +371,7 @@ def br2009_18a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("morphology", "first-cycle m-")] }
 
@@ -386,7 +386,7 @@ def br2009_18b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("morphology", "second-cycle v-")] }
 
@@ -401,7 +401,7 @@ def br2009_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("context", "direct")] }
 
@@ -416,7 +416,7 @@ def br2009_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("context", "inverse"), ("repair", "R-Case")] }
 
@@ -431,7 +431,7 @@ def br2009_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "2"), ("context", "inverse"), ("repair", "R-Case")] }
 
@@ -446,7 +446,7 @@ def br2009_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "passivization"), ("result", "R-Case disappears")] }
 
@@ -461,7 +461,7 @@ def br2009_31a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("context", "inverse"), ("repair", "R-Case")] }
 

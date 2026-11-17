@@ -11,7 +11,7 @@
     "translation": "Peter worked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-k"],
@@ -34,7 +34,7 @@
     "translation": "Peter worked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-n"],
@@ -57,7 +57,7 @@
     "translation": "Peter worked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-zü"],
@@ -79,7 +79,7 @@
     "translation": "Peter worked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "matrix"]
@@ -99,7 +99,7 @@
     "translation": "I ran (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-au"],
@@ -122,7 +122,7 @@
     "translation": "I ran (said to a father)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-o"],
@@ -145,7 +145,7 @@
     "translation": "I ran (said to a teacher)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-ain"],
@@ -168,7 +168,7 @@
     "translation": "Santee ran (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-au"],
@@ -191,7 +191,7 @@
     "translation": "Grandfather ran (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-thu(n)"],
@@ -214,7 +214,7 @@
     "translation": "Santee ran (said to a teacher)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-ain"],
@@ -237,7 +237,7 @@
     "translation": "The priest ran (said to a teacher)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-thi(n)"],
@@ -260,7 +260,7 @@
     "translation": "I bought Jangri",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-ŋgæ"],
@@ -283,7 +283,7 @@
     "translation": "Inho did his best",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "supnita"],
@@ -308,7 +308,7 @@
     "translation": "Inho did his best",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "eyo"],
@@ -333,7 +333,7 @@
     "translation": "Inho did his best",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ney"],
@@ -356,7 +356,7 @@
     "translation": "Inho did his best",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "e"],
@@ -381,7 +381,7 @@
     "translation": "I forgot that he is here",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "vos"],
@@ -404,7 +404,7 @@
     "translation": "The girl that is here",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "che"],
@@ -426,7 +426,7 @@
     "translation": "I bought you some boots / I bought some boots",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "che"],
@@ -447,7 +447,7 @@
     "translation": "You (formal) worked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Lan egin dü-k", "judgment": "acceptable"},
       {"form": "Lan egin dü-n", "judgment": "acceptable"}
     ],
@@ -472,7 +472,7 @@
     "translation": "I don't want it to happen to him",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "embedded"],
@@ -495,7 +495,7 @@
     "translation": "Inho told the teacher that he did his best",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "supnita"],
@@ -518,7 +518,7 @@
     "translation": "Taro said that Hanako will come",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-mas-"],
@@ -541,7 +541,7 @@
     "translation": "Taro believes that Hanako will come",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Taroo-wa Hanako-ga ku-ru to sinzitei-ru",
         "judgment": "acceptable"
@@ -569,7 +569,7 @@
     "translation": "Because Hanako will come, please be at home",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-mas-"],
@@ -592,7 +592,7 @@
     "translation": "I saw that Santee ran away (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-au"],
@@ -616,7 +616,7 @@
     "translation": "The boy who is standing there is my brother (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-au"],
@@ -640,7 +640,7 @@
     "translation": "The rumor that Santee won the prize was true (said to a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-au"],
@@ -664,7 +664,7 @@
     "translation": "I don't know who saw it",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "che"],
@@ -686,7 +686,7 @@
     "translation": "Santee wants to go (said to a friend)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Santee-aa jaayel chahl-i-au",
         "judgment": "acceptable"
@@ -715,7 +715,7 @@
     "translation": "I avoided seeing him (said to a friend)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ham okaraa dhekhe-se bachl-i-au",
         "judgment": "acceptable"
@@ -743,7 +743,7 @@
     "translation": "Have you eaten?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-ŋgæ"],
@@ -766,7 +766,7 @@
     "translation": "Maya said that she would win the contest",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-ŋgæ"],
@@ -790,7 +790,7 @@
     "translation": "Einstein had to study a lot",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "che"],
@@ -814,7 +814,7 @@
     "translation": "I know that I gave you trouble",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-mas-"],
@@ -837,7 +837,7 @@
     "translation": "The doctor asked the patient to take medicine",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "-mas-"],
@@ -860,7 +860,7 @@
     "translation": "Taroo believes that Hanako will come",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Taroo-wa Hanako-ga ku-ru to sinzitei-ru", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -885,7 +885,7 @@
     "translation": "The nurses will bring you a glass of water",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "nh"],
@@ -907,7 +907,7 @@
     "translation": "The nurses will bring you a glass of water",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "h"],
@@ -928,7 +928,7 @@
     "translation": "Santee saw you (= friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "nh"],
@@ -949,7 +949,7 @@
     "translation": "Santee saw you (= teacher)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "hh"],
@@ -971,7 +971,7 @@
     "translation": "Ram returned your book to you",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "hh"],
@@ -994,7 +994,7 @@
     "translation": "Ram returned the book to you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ram apne-ke kitaab lauTal-au",
         "judgment": "ungrammatical"
@@ -1023,7 +1023,7 @@
     "translation": "Ram returned the book to you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ram toraa kitaab lauTal-ain",
         "judgment": "ungrammatical"
@@ -1051,7 +1051,7 @@
     "translation": "Santee saw him (= a friend)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun3", "nh"],
@@ -1072,7 +1072,7 @@
     "translation": "Santee saw him (= a teacher)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun3", "h"],
@@ -1094,7 +1094,7 @@
     "translation": "You (my teacher) gave his (my brother's) book to him (my father)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun2", "hh"],
@@ -1117,7 +1117,7 @@
     "translation": "Pankaj came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjectHon", "h"],
@@ -1139,7 +1139,7 @@
     "translation": "Pankaj came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjectHon", "nh"],
@@ -1161,7 +1161,7 @@
     "translation": "The boys came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjectHon", "nh"],

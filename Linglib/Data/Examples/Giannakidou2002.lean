@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -63,7 +63,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -76,7 +76,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -89,7 +89,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -102,7 +102,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
@@ -115,7 +115,7 @@ def ex61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
@@ -128,7 +128,7 @@ def ex61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
 
@@ -143,7 +143,7 @@ def ex32 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -158,7 +158,7 @@ def ex33 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
@@ -173,7 +173,7 @@ def ex34 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -188,7 +188,7 @@ def ex35 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -203,7 +203,7 @@ def ex36 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -218,7 +218,7 @@ def ex36pos : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -233,7 +233,7 @@ def ex37 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -248,7 +248,7 @@ def ex38 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
@@ -261,7 +261,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "without"), ("test", "plain")] }
 
@@ -274,7 +274,7 @@ def ex41pm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "doubt"), ("test", "plain")] }
 
@@ -287,7 +287,7 @@ def ex41mx : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "doubt"), ("test", "plain")] }
 
@@ -300,7 +300,7 @@ def ex42pm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "question"), ("test", "plain")] }
 
@@ -313,7 +313,7 @@ def ex42mx : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "question"), ("test", "plain")] }
 
@@ -328,7 +328,7 @@ def ex48 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The princess was in a state of not-sleeping until midnight.", .acceptable), ("It is not true that the princess slept until midnight. (She woke up earlier than that.)", .acceptable)]
     paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -343,7 +343,7 @@ def ex49 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -358,7 +358,7 @@ def ex51 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
@@ -373,7 +373,7 @@ def ex53 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
 
@@ -388,7 +388,7 @@ def ex57 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
@@ -401,7 +401,7 @@ def ex72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "prin"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
@@ -414,7 +414,7 @@ def ex77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "prin"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -429,7 +429,7 @@ def ex43 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
@@ -444,7 +444,7 @@ def ex44 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -459,7 +459,7 @@ def ex45 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -474,7 +474,7 @@ def ex46 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -489,7 +489,7 @@ def ex46pos : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -504,7 +504,7 @@ def ex47a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
@@ -519,7 +519,7 @@ def ex47a2 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -532,7 +532,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "pas"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
@@ -547,7 +547,7 @@ def ex67a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
@@ -562,7 +562,7 @@ def ex67b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -577,7 +577,7 @@ def ex67c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -592,7 +592,7 @@ def ex68a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
@@ -607,7 +607,7 @@ def ex68b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -622,7 +622,7 @@ def ex68c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -637,7 +637,7 @@ def ex69 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
@@ -650,7 +650,7 @@ def ex70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -663,7 +663,7 @@ def ex70c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
@@ -676,7 +676,7 @@ def ex71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
@@ -689,7 +689,7 @@ def ex71b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none")] }
 
@@ -702,7 +702,7 @@ def ex71c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 

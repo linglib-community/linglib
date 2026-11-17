@@ -10,7 +10,7 @@
     "translation": "",
     "context": "A room with one book, on a table, and no other books or tables.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "(1′) The book in this room is on the table.", "judgment": "acceptable"}
     ],
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "location"],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The funniest book ever written is on the table.", "judgment": "unacceptable"}
     ],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The book on structuralism I read in graduate school is on the table.", "judgment": "unacceptable"}
     ],
@@ -98,7 +98,7 @@
     "translation": "",
     "context": "Three books on a table, differing in genre, author, year, and cover colour; no other books in the room. The speaker aims to talk about the blue things in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The blue book in this room is on the table.", "judgment": "unacceptable"}
     ],
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "A room with three books, on a table.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "(3′) Every book in this room is on the table.", "judgment": "acceptable"}
     ],
@@ -143,7 +143,7 @@
     "translation": "",
     "context": "Three books on a table and several stacks of books on the floor; the books on the table are all the hardcover books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every hardcover book in this room is on the table.", "judgment": "unacceptable"}
     ],
@@ -165,7 +165,7 @@
     "translation": "",
     "context": "Three books on a table and several stacks on the floor; the books on the table are all the depressing books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every depressing book in this room is on the table.", "judgment": "unacceptable"}
     ],
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "Three books on a table and several stacks on the floor; the books on the table are all the coffee-stained books in the room.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every coffee-stained book in this room is on the table.", "judgment": "unacceptable"}
     ],
@@ -209,7 +209,7 @@
     "translation": "",
     "context": "A room with three books, on a table.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every book is on the table right now.", "judgment": "acceptable"}
     ],
@@ -232,7 +232,7 @@
     "translation": "",
     "context": "A room with three books, on a table.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every book is on the table tomorrow.", "judgment": "unacceptable"}
     ],
@@ -255,7 +255,7 @@
     "translation": "",
     "context": "Asked to describe what the room will look like tomorrow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Every book is on the table tomorrow.", "judgment": "acceptable"}
     ],
@@ -278,7 +278,7 @@
     "translation": "",
     "context": "A and B work in a department store and must create a display of blue merchandise; A asks: Where are the blue things? There are three books on the table.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The blue book in this room is on the table.", "judgment": "acceptable"}
     ],
@@ -300,7 +300,7 @@
     "translation": "",
     "context": "Question under discussion: What is the way things are at Civil Coffee on Figueroa today?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "(8) The front door of Civil Coffee on Figueroa is locked.", "judgment": "acceptable"}
     ],
@@ -323,7 +323,7 @@
     "translation": "",
     "context": "Question under discussion: What is the way things are at Civil Coffee today? The tables are mostly square, with one round and one rectangular table.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "(9′) The round table at Civil Coffee on Figueroa is wobbly and has three laptops on it.", "judgment": "unacceptable"}
     ],
@@ -345,7 +345,7 @@
     "translation": "",
     "context": "Leto and Duncan are discussing potential co-conspirators.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "(11) Leto, Duncan, Amir, Jessica, and Yueh are here.", "judgment": "acceptable"}
     ],
@@ -367,7 +367,7 @@
     "translation": "",
     "context": "A room with green books visible on the shelves; it is common knowledge that numerous books in the room are hidden from view.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "availability"],
@@ -388,7 +388,7 @@
     "translation": "",
     "context": "A room with green books visible on the shelves; it is common knowledge that numerous books in the room are hidden from view.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "availability"],
@@ -409,7 +409,7 @@
     "translation": "",
     "context": "An enclosed room; the plants within arm’s reach are blooming but some plants near the door are not.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "salience"],
@@ -430,7 +430,7 @@
     "translation": "",
     "context": "An enclosed room; every plant in the room is blooming but some plants visible through a window are not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "location"],
@@ -451,7 +451,7 @@
     "translation": "",
     "context": "A large open meadow; the plants near the conversationalists are blooming but some at the meadow’s edges are not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "salience"],
@@ -472,7 +472,7 @@
     "translation": "",
     "context": "A backyard on a winter night after a snowfall: the lawn furniture, potted plants, and garden gnomes are covered, the clouds, the moon, and the trees in the near distance are not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "manipulability"],
@@ -493,7 +493,7 @@
     "translation": "",
     "context": "Entering a room with bare hands.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "smaller objects and some furniture", "judgment": "acceptable"}
     ],
@@ -516,7 +516,7 @@
     "translation": "",
     "context": "Entering the same room armed with sledgehammers.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the sheetrock walls included", "judgment": "acceptable"}
     ],
@@ -539,7 +539,7 @@
     "translation": "",
     "context": "A: The blue merchandise belongs in the display by the door. The items may be in another room or a warehouse across town.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "color"],
@@ -559,7 +559,7 @@
     "translation": "",
     "context": "A: Bring the blue merchandise to the display by the door.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "color"],
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "Arman and Bea planned to see a newly acquired Cy Twombly painting and meet in the room where it hangs with many other paintings, some more salient.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "plan"],
@@ -599,7 +599,7 @@
     "translation": "",
     "context": "Two parents have the aim of collecting all the library books their children checked out, from under couches, the car, and backpacks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["restriction", "plan"],
@@ -619,7 +619,7 @@
     "translation": "",
     "context": "Discourse-initial, at a cafe; common knowledge that Carl works in the UCLA linguistics department.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "everyone in the UCLA linguistics department", "judgment": "acceptable"}
     ],
@@ -642,7 +642,7 @@
     "translation": "",
     "context": "On the phone with Dan, who reports on the state of his kitchen, while shopping for his party.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "everything in Dan’s kitchen", "judgment": "acceptable"}
     ],

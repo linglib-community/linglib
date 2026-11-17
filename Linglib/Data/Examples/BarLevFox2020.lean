@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary is allowed to eat ice cream", .acceptable), ("Mary is allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "◇(a ∨ b)"), ("inference", "free choice")] }
 
@@ -37,7 +37,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John is allowed to eat neither", .acceptable)]
     paperFeatures := [("form", "¬◇(a ∨ b)")] }
 
@@ -50,7 +50,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary is allowed to eat ice cream and allowed to eat cake", .acceptable), ("John isn't allowed to eat ice cream and he isn't allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
@@ -63,7 +63,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary solved some but not all of the problems", .acceptable), ("John didn't solve any of the problems", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
@@ -76,7 +76,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary didn't eat both ice cream and cake", .acceptable)]
     paperFeatures := [("form", "a ∨ b"), ("alternatives", "{a ∨ b, a, b, a ∧ b}")] }
 
@@ -89,7 +89,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary is allowed to eat ice cream and allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "◇(a ∨ b)"), ("alternatives", "{◇(a ∨ b), ◇a, ◇b, ◇(a ∧ b)}")] }
 
@@ -102,7 +102,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("We are allowed to eat ice cream", .acceptable), ("We are allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "only"), ("inference", "presupposition")] }
 
@@ -115,7 +115,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("We are allowed to eat ice cream", .acceptable), ("We are allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "only"), ("construction", "polar question")] }
 
@@ -128,7 +128,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("We are allowed to eat ice cream", .unacceptable), ("We are allowed to eat cake", .unacceptable)]
     paperFeatures := [("construction", "polar question")] }
 
@@ -141,7 +141,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every boy is allowed to eat ice cream", .acceptable), ("Every boy is allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "∀x ◇(Px ∨ Qx)"), ("inference", "universal free choice")] }
 
@@ -154,7 +154,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("No student is required to solve problem A", .acceptable), ("No student is required to solve problem B", .acceptable)]
     paperFeatures := [("form", "¬∃x □(Px ∧ Qx)"), ("inference", "universal free choice")] }
 
@@ -167,7 +167,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every girl is allowed to eat ice cream and allowed to eat cake on her birthday", .acceptable), ("No boy is allowed to eat ice cream and no boy is allowed to eat cake on his birthday", .acceptable), ("No boy is both allowed to eat ice cream and allowed to eat cake on his birthday", .unacceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
@@ -180,7 +180,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("At least one of these people is singing", .acceptable), ("At least one of these people is dancing", .acceptable)]
     paperFeatures := [("form", "∀x(Px ∨ Qx)"), ("inference", "distributive")] }
 
@@ -193,7 +193,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("You are not required to solve problem A", .acceptable), ("You are not required to solve problem B", .acceptable)]
     paperFeatures := [("form", "□(p ∨ q)")] }
 
@@ -206,7 +206,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The teacher is OK with every student talking to Mary", .acceptable), ("The teacher is OK with every student talking to Sue", .acceptable)]
     paperFeatures := [("form", "◇∀x(Px ∨ Qx)")] }
 
@@ -219,7 +219,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Every kid ate ice cream", .unacceptable), ("Every kid ate cake", .unacceptable)]
     paperFeatures := [("form", "∀x(Px ∨ Qx)")] }
 
@@ -232,7 +232,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Betty can balance a fishing rod on her nose", .acceptable), ("Betty can balance a fishing rod on her chin", .acceptable)]
     paperFeatures := [("form", "∃p ∀w∈p (Pw ∨ Qw)"), ("modal", "ability")] }
 
@@ -245,7 +245,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("If you eat ice cream, you will feel guilty", .acceptable), ("If you eat cake, you will feel guilty", .acceptable)]
     paperFeatures := [("form", "(p ∨ q) □→ r"), ("inference", "simplification of disjunctive antecedents")] }
 
@@ -258,7 +258,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("If you eat an apple you will be healthy", .acceptable), ("If you eat an orange you will be healthy", .acceptable), ("If you eat a pear you will be healthy", .acceptable)]
     paperFeatures := [("form", "(p ∨ q ∨ r) □→ s")] }
 
@@ -271,7 +271,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Everyone will feel guilty if they eat ice cream", .acceptable), ("Everyone will feel guilty if they eat cake", .acceptable)]
     paperFeatures := [("form", "∀x((Px ∨ Qx) □→ Rx)")] }
 
@@ -284,7 +284,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("It's not true that you will feel guilty if you eat ice cream", .acceptable), ("It's not true that you will feel guilty if you eat cake", .acceptable)]
     paperFeatures := [("form", "¬((p ∨ q) □→ r)")] }
 
@@ -297,7 +297,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("If Spain had fought with the Axis it would have been with the Axis", .acceptable), ("If Spain had fought with the Allies it would have been with the Axis", .unacceptable)]
     paperFeatures := [("form", "(p ∨ q) □→ p")] }
 
@@ -310,7 +310,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("If Spain had fought with the Axis, Hitler would have been pleased", .acceptable), ("If Spain had fought with the Allies, Hitler would have been pleased", .unacceptable)]
     paperFeatures := [("form", "(p ∨ q) □→ r")] }
 
@@ -323,7 +323,7 @@ def ex_76 : Datum :=
     glossedTokens := []
     context := "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "(p̄ ∨ q̄) □→ r")] }
 
@@ -336,7 +336,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "(¬(p ∧ q)) □→ r")] }
 
@@ -349,7 +349,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "(Exh(p̄ ∨ q̄) ∨ (p̄ ∧ q̄)) □→ r")] }
 
@@ -362,7 +362,7 @@ def ex_85 : Datum :=
     glossedTokens := []
     context := "35 of the 40 linguistics students and 2 of the 30 philosophy students took Advanced Syntax; no student is in both."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Most students in linguistics took Advanced Syntax", .acceptable), ("Most students in philosophy took Advanced Syntax", .acceptable)]
     paperFeatures := [("form", "Most(P ∪ Q)(R)")] }
 
@@ -375,7 +375,7 @@ def ex_91 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some boys are both allowed to eat ice cream and allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "∃x ◇(Px ∨ Qx)")] }
 
@@ -388,7 +388,7 @@ def ex_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Not every student is required to solve problem A", .acceptable), ("Not every student is required to solve problem B", .acceptable), ("Some student is allowed to avoid solving problem A and allowed to avoid solving problem B", .unacceptable)]
     paperFeatures := [("form", "¬∀x □(Px ∧ Qx)")] }
 
@@ -401,7 +401,7 @@ def ex_93 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some girls are both allowed to eat ice cream and allowed to eat cake on their birthday", .acceptable), ("No boys are allowed to eat ice cream and no boys are allowed to eat cake on their birthday", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 

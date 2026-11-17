@@ -25,7 +25,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "2"), ("accusative", "3"), ("cell", "2>3")] }
 
@@ -39,7 +39,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3"), ("cell", "3>3")] }
 
@@ -53,7 +53,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2")] }
 
@@ -67,7 +67,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3"), ("cell", "3>3"), ("host", "infinitive enclisis")] }
 
@@ -81,7 +81,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2"), ("host", "infinitive enclisis")] }
 
@@ -95,7 +95,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2 stressed"), ("repair", "stressed pronoun")] }
 
@@ -109,7 +109,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3 PP"), ("accusative", "2"), ("repair", "prepositional dative")] }
 
@@ -123,7 +123,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "1 or 2"), ("accusative", "2 or 1"), ("cell", "1>2 / 2>1")] }
 
@@ -137,7 +137,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Lei sei qui.", .ungrammatical)]
+    contrasts := [("Lei sei qui.", .ungrammatical)]
     readings := []
     paperFeatures := [("subject", "LEI"), ("agreement", "3SG")] }
 
@@ -151,7 +151,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("(Lei) ti vede.", .unacceptable)]
+    contrasts := [("(Lei) ti vede.", .unacceptable)]
     readings := []
     paperFeatures := [("subject", "LEI"), ("reflexive", "3 si")] }
 
@@ -165,7 +165,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("La ci hanno portata.", .ungrammatical)]
+    contrasts := [("La ci hanno portata.", .ungrammatical)]
     readings := []
     paperFeatures := [("accusative", "LEI"), ("order", "LOC > LEI")] }
 
@@ -179,7 +179,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := "Addressed to Dottor Biagi."
     judgment := .acceptable
-    alternatives := [("La ho vist-o ieri in TV.", .ungrammatical)]
+    contrasts := [("La ho vist-o ieri in TV.", .ungrammatical)]
     readings := []
     paperFeatures := [("accusative", "LEI"), ("participle agreement", "F.SG obligatory")] }
 
@@ -193,7 +193,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "LEI or 3"), ("accusative", "3"), ("cell", "LEI>3")] }
 
@@ -207,7 +207,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
@@ -221,7 +221,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := "Oh avvocato, come sta? Non sa quanto mi è dispiaciuto che il mio medico L'abbia trattata male. Quello lì è proprio un cretino, sa?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
@@ -235,7 +235,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "LEI"), ("accusative", "3"), ("cell", "LEI>3")] }
 
@@ -249,7 +249,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
@@ -263,7 +263,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "LEI or 3"), ("accusative", "3"), ("host", "infinitive enclisis")] }
 
@@ -277,7 +277,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("host", "infinitive enclisis")] }
 
@@ -291,7 +291,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI stressed"), ("repair", "stressed pronoun")] }
 
@@ -305,7 +305,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3 PP"), ("accusative", "LEI"), ("repair", "prepositional dative")] }
 
@@ -319,7 +319,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Micol ti fa pettinare a Carlo.", .ungrammatical)]
+    contrasts := [("Micol ti fa pettinare a Carlo.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "3")] }
 
@@ -333,7 +333,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "LEI")] }
 
@@ -347,7 +347,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "LEI stressed")] }
 
@@ -361,7 +361,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3 resuming camouflage nominal"), ("cell", "3>imposter")] }
 
@@ -375,7 +375,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3 resuming imposter"), ("cell", "3>imposter")] }
 
@@ -389,7 +389,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Lei e l'ambasciatore di Svezia si incontreranno domani.", .ungrammatical)]
+    contrasts := [("Lei e l'ambasciatore di Svezia si incontreranno domani.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "LEI + 3"), ("resolved", "2PL")] }
 
@@ -403,7 +403,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Vostro Onore e l'ambasciatore di Svezia vi incontrerete domani.", .ungrammatical)]
+    contrasts := [("Vostro Onore e l'ambasciatore di Svezia vi incontrerete domani.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "camouflage + 3"), ("resolved", "3PL")] }
 
@@ -417,7 +417,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Il signor Duca e l'ambasciatore di Svezia vi incontrerete domani.", .ungrammatical)]
+    contrasts := [("Il signor Duca e l'ambasciatore di Svezia vi incontrerete domani.", .ungrammatical)]
     readings := []
     paperFeatures := [("conjuncts", "imposter + 3"), ("resolved", "3PL")] }
 
@@ -431,7 +431,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3 attitude holder")] }
 
@@ -445,7 +445,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "2"), ("accusative", "3 attitude holder")] }
 
@@ -459,7 +459,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "LEI"), ("accusative", "3 attitude holder")] }
 
@@ -473,7 +473,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("accusative", "USTED"), ("clitic", "3SG la")] }
 
@@ -487,7 +487,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accusative 3SG.F", .acceptable), ("accusative USTED", .ungrammatical)]
     paperFeatures := [("dative", "3 (spurious se)"), ("accusative", "3 or USTED")] }
 
@@ -501,7 +501,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "USTED or 3"), ("accusative", "3"), ("cell", "USTED>3")] }
 
@@ -515,7 +515,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "USTED"), ("cell", "3>USTED")] }
 
@@ -529,7 +529,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sie bist nett.", .ungrammatical)]
+    contrasts := [("Sie bist nett.", .ungrammatical)]
     readings := []
     paperFeatures := [("subject", "SIE"), ("agreement", "3PL")] }
 
@@ -543,7 +543,7 @@ def ex_46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2"), ("position", "Wackernagel cluster before subject")] }
 
@@ -557,7 +557,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3PL"), ("cell", "3>3")] }
 
@@ -571,7 +571,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE"), ("alsoJudged", "ungrammatical")] }
 
@@ -585,7 +585,7 @@ def ex_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "2SG"), ("DP2", "3SG")] }
 
@@ -599,7 +599,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "2SG")] }
 
@@ -613,7 +613,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "3SG")] }
 
@@ -627,7 +627,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "3PL")] }
 
@@ -641,7 +641,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Die Zwillinge sind ihr.", .ungrammatical)]
+    contrasts := [("Die Zwillinge sind ihr.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "3PL")] }
 
@@ -655,7 +655,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "SIE")] }
 
@@ -669,7 +669,7 @@ def fn27i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "SIE")] }
 
@@ -683,7 +683,7 @@ def ex_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "1"), ("accusative", "3"), ("cell", "1>3")] }
 
@@ -697,7 +697,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := "Addressed to Dottor Biagi."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dative", "1"), ("accusative", "LEI"), ("cell", "1>LEI")] }
 

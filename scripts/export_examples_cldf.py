@@ -18,7 +18,7 @@ specification 1.3):
   at least one word is segmented. `Grammaticality_Judgement` is the mark the paper prints
   (empty, `?`, `??`, `#`, `*`). `Source` is `bibkey[locator]` for `source` and `reportedIn`.
   The linglib-specific fields are custom columns: `Context`, and JSON-valued
-  `Discourse_Segments`, `Alternatives`, `Readings`, `Paper_Features`.
+  `Discourse_Segments`, `Contrasts`, `Readings`, `Paper_Features`.
 - `languages.csv` (LanguageTable): the rows of `Linglib/Data/Examples/languages.csv`, plus one
   item with no Glottocode for the constructed strings (formal-language patterns) whose
   `language` is empty, and, for each language with a judged example (a non-empty
@@ -93,7 +93,7 @@ CUSTOM_COLUMNS = [
                        "context, where the task is truth rather than acceptability."},
     {"name": "Discourse_Segments", "datatype": "json",
      "dc:description": "The utterances of a discourse example, in order."},
-    {"name": "Alternatives", "datatype": "json",
+    {"name": "Contrasts", "datatype": "json",
      "dc:description": "Other forms the paper judges in the same frame, with their marks."},
     {"name": "Readings", "datatype": "json",
      "dc:description": "The readings the paper distinguishes, with their marks."},
@@ -169,8 +169,8 @@ def example_row(paper, row):
         "Context": row.get("context") or None,
         "Verdict": row.get("verdict"),
         "Discourse_Segments": row.get("discourseSegments") or None,
-        "Alternatives": [{"form": a["form"], "mark": MARK[a["judgment"]]}
-                         for a in row.get("alternatives", [])] or None,
+        "Contrasts": [{"form": a["form"], "mark": MARK[a["judgment"]]}
+                         for a in row.get("contrasts", [])] or None,
         "Readings": [{"name": r["name"], "mark": MARK[r["judgment"]]}
                      for r in row.get("readings", [])] or None,
         "Paper_Features": features(row) or None,

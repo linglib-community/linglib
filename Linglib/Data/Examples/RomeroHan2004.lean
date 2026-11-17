@@ -24,7 +24,7 @@ def doesnt_john_drink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -37,7 +37,7 @@ def does_john_not_drink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -50,7 +50,7 @@ def does_john_drink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "none"), ("bias", "none")] }
 
@@ -63,7 +63,7 @@ def does_john_really_drink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "none"), ("form", "really"), ("bias", "negative")] }
 
@@ -76,7 +76,7 @@ def isnt_jane_coming : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -89,7 +89,7 @@ def isnt_jane_coming_too : Datum :=
     glossedTokens := []
     context := "A: Ok, now that Stephan has come, we are all here. Let's go!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("form", "pi"), ("item", "too"), ("bias", "positive")] }
 
@@ -102,7 +102,7 @@ def isnt_jane_coming_either : Datum :=
     glossedTokens := []
     context := "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. A: Pat is not coming. So we don't have any phonologists in the program."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("form", "ni"), ("item", "either"), ("bias", "positive")] }
 
@@ -115,7 +115,7 @@ def is_jane_really_coming_too : Datum :=
     glossedTokens := []
     context := "A: Pat already came, but we still have to wait for Jane."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "really"), ("item", "too")] }
 
@@ -128,7 +128,7 @@ def is_jane_really_coming_either : Datum :=
     glossedTokens := []
     context := "A: Pat is not coming. And we don't need to wait for Jane either."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "really"), ("item", "either")] }
 
@@ -141,7 +141,7 @@ def is_jane_not_coming_too : Datum :=
     glossedTokens := []
     context := "A: Pat already came, but we still have to wait for Jane."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "notFocus"), ("item", "too")] }
 
@@ -154,7 +154,7 @@ def is_jane_not_coming_either : Datum :=
     glossedTokens := []
     context := "A: Pat is not coming. And we don't need to wait for Jane ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "notFocus"), ("item", "either")] }
 
@@ -169,7 +169,7 @@ def greek_preposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -184,7 +184,7 @@ def greek_nonpreposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -199,7 +199,7 @@ def spanish_preposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -214,7 +214,7 @@ def spanish_nonpreposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -229,7 +229,7 @@ def bulgarian_preposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -244,7 +244,7 @@ def bulgarian_nonpreposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -259,7 +259,7 @@ def german_preposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -274,7 +274,7 @@ def german_nonpreposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -289,7 +289,7 @@ def korean_preposed : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
@@ -304,7 +304,7 @@ def korean_nonpreposed_short : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
@@ -319,7 +319,7 @@ def korean_nonpreposed_long : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 

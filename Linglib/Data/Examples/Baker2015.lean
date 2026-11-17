@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM")] }
 
@@ -41,7 +41,7 @@ def ex_1b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC")] }
 
@@ -56,7 +56,7 @@ def ex_1c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC")] }
 
@@ -71,7 +71,7 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked")] }
 
@@ -86,7 +86,7 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "unmarked")] }
 
@@ -101,7 +101,7 @@ def ex_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("genitiveForm", "Jose-kan")] }
 
@@ -116,7 +116,7 @@ def ex_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("genitiveForm", "nokon")] }
 
@@ -131,7 +131,7 @@ def ex_30a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM")] }
 
@@ -146,7 +146,7 @@ def ex_30b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ACC")] }
 
@@ -161,7 +161,7 @@ def ex_21a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "ABS")] }
 
@@ -176,7 +176,7 @@ def ex_21b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ABS")] }
 
@@ -191,7 +191,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "unmarked"), ("subjectAgreement", "yes")] }
 
@@ -206,7 +206,7 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("subjectAgreement", "yes")] }
 
@@ -221,7 +221,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "ABS"), ("subjectAgreement", "yes")] }
 
@@ -236,7 +236,7 @@ def ex_23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ABS"), ("subjectAgreement", "yes"), ("objectAgreement", "yes")] }
 
@@ -251,7 +251,7 @@ def ex_25a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM"), ("subjectAgreement", "yes")] }
 
@@ -266,7 +266,7 @@ def ex_25b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "NOM"), ("subjectAgreement", "no"), ("objectAgreement", "yes")] }
 

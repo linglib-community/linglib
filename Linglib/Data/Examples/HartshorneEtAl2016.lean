@@ -24,7 +24,7 @@ def fear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "fearType"), ("verbType", "fear"), ("subject", "experiencer")] }
 
@@ -37,7 +37,7 @@ def frighten : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("subject", "stimulus")] }
 
@@ -50,7 +50,7 @@ def episode : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The bats swooped out of the cave and Agnes feared them.", .ungrammatical)]
+    contrasts := [("The bats swooped out of the cave and Agnes feared them.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
@@ -63,7 +63,7 @@ def stageLevel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Agnes feared Bartholomew yesterday in the kitchen.", .ungrammatical)]
+    contrasts := [("Agnes feared Bartholomew yesterday in the kitchen.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
@@ -76,7 +76,7 @@ def exp1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("phenomenon", "durationRating"), ("experiment", "1")] }
 
@@ -89,7 +89,7 @@ def exp2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.1"), ("phenomenon", "causationJudgment"), ("experiment", "2")] }
 
@@ -104,7 +104,7 @@ def ex_2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "fearType"), ("verbType", "fear")] }
 
@@ -119,7 +119,7 @@ def ex_2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("causativeAffix", "sase")] }
 
@@ -133,7 +133,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "fear")] }
 
@@ -147,7 +147,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "frighten")] }
 
@@ -161,7 +161,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "attitude")] }
 
@@ -175,7 +175,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "episode")] }
 
@@ -188,7 +188,7 @@ def exp9q : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9")] }
 
@@ -201,7 +201,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.3"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 

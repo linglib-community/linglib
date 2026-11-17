@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Nominal measure construction with an extensive measure function.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "extensive"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "A container used as an extensive measure function.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "extensive"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "Nominal measure construction with a non-extensive measure function.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "Nominal measure construction with a non-extensive measure function.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "A measure phrase applied to a predicate that is already quantized; contrast (12a) hundred grams of wool and (12b) five hundred meters of wool.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "extensive"]
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "An interval adverbial with a non-quantized but temporally atomic predicate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "in"]
@@ -124,7 +124,7 @@
     "translation": "",
     "context": "A non-quantized object that nevertheless yields a telic predicate; the paper gives the indefinite wide scope over the adverbial.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "in"]
@@ -143,7 +143,7 @@
     "translation": "",
     "context": "A non-quantized, cumulative object that nevertheless yields a telic predicate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "in"]
@@ -162,7 +162,7 @@
     "translation": "",
     "context": "A non-quantized, cumulative object that nevertheless yields a telic predicate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "in"]
@@ -181,7 +181,7 @@
     "translation": "Juan drank a glass of wine last night before going to bed",
     "context": "The reflexive clitic se with a telic predicate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic", "se"]
@@ -200,7 +200,7 @@
     "translation": "Juan drank wine last night before going to bed",
     "context": "The reflexive clitic se with an atelic predicate; without se the sentence is fine.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clitic", "se"]
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "A movement with a specified source and goal; telic, so it takes in an hour.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["path", "sourceGoal"]
@@ -238,7 +238,7 @@
     "translation": "",
     "context": "A movement with a specified source and direction, read as an initial part of a movement to the goal; not telic.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["path", "sourceDirection"]
@@ -257,7 +257,7 @@
     "translation": "",
     "context": "An interval adverbial with a directed but goalless movement.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["path", "sourceDirection"],
@@ -277,7 +277,7 @@
     "translation": "",
     "context": "A change on the scale of doneness with an explicitly specified goal.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
@@ -297,7 +297,7 @@
     "translation": "",
     "context": "A change on the scale of doneness with an explicitly specified goal.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
@@ -317,7 +317,7 @@
     "translation": "",
     "context": "A resultative adjective specifying the goal of the change.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
@@ -337,7 +337,7 @@
     "translation": "",
     "context": "A resultative adjective specifying the goal of the change.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
@@ -357,7 +357,7 @@
     "translation": "",
     "context": "Ambiguous between a change to the natural end state, which takes in an hour, and the bare process, which takes for an hour.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "goal reached (in an hour)", "judgment": "acceptable"},
       {"name": "process only (for an hour)", "judgment": "acceptable"}
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "An achievement, read as the minimal final part of a movement to London.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["path", "goal"]

@@ -26,7 +26,7 @@ def ex_3_4 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "ye"), ("focus", "Zhangsan")] }
 
@@ -41,7 +41,7 @@ def ex_3_39 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "Lisi")] }
 
@@ -56,7 +56,7 @@ def ex_3_40 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "xuexiao")] }
 
@@ -71,7 +71,7 @@ def ex_4_35a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome")] }
 
@@ -86,7 +86,7 @@ def ex_4_35b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "above disjunction")] }
 
@@ -101,7 +101,7 @@ def ex_4_35c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "below disjunction")] }
 
@@ -116,7 +116,7 @@ def ex_4_36 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Who went skiing? Did Zhangsan go?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "positive evidence"), ("trigger", "ye omitted")] }
 
@@ -131,7 +131,7 @@ def ex_4_42 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Who went skiing? Did Zhangsan go?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "positive evidence"), ("focus", "yexu")] }
 
@@ -146,7 +146,7 @@ def ex_4_45 : Datum :=
     lgrConformance := some .wordAligned
     context := "A: Did Zhangsan often go on business trips?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "buzai"), ("context", "positive evidence"), ("contrast", "polarity and time")] }
 

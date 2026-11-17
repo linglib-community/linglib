@@ -26,7 +26,7 @@ def ex14_15 : Datum :=
     context := "The pitchers sit in a line, each alongside the next, as depicted in (15)."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +39,7 @@ def ex83b : Datum :=
     glossedTokens := []
     context := "Three forks. Each one is jointly supported by the other two, but not by any single other fork."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective", .acceptable)]
     paperFeatures := [] }
 
@@ -52,7 +52,7 @@ def ex99 : Datum :=
     glossedTokens := []
     context := "Susanne proposes taking Amy, Bertha, Celia and Dave backpacking and says this of them. Ed replies: You're kidding! Bertha can't stand Dave!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Strong Reciprocity", .acceptable)]
     paperFeatures := [] }
 
@@ -66,7 +66,7 @@ def ex105a : Datum :=
     context := "The professors are a, b, c and d. a introduced exactly one student to b and vice versa; c introduced exactly one student to d and vice versa."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -79,7 +79,7 @@ def ex119 : Datum :=
     glossedTokens := []
     context := "There is only one pair of pants."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -92,7 +92,7 @@ def ex128a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(128b)", .acceptable)]
     paperFeatures := [] }
 
@@ -106,7 +106,7 @@ def ex135_136 : Datum :=
     context := "Pirate 1 stares at 2, 2 at 3, 3 at 4, 4 at 5, 5 at 1, and 6 at 1, as depicted in (136)."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -120,7 +120,7 @@ def ex135_141 : Datum :=
     context := "Pirate 1 stares at 2, 2 at 3, 3 at 4, 4 at 5 and 5 at 1; pirate 6 is completely uninvolved, as depicted in (141)."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -133,7 +133,7 @@ def ex135_142 : Datum :=
     glossedTokens := []
     context := "Pirates 2, 3, 4, 5 and 6 stare at 1, and 1 stares at 6, as depicted in (142)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -147,7 +147,7 @@ def ex143_141 : Datum :=
     context := "Pirate 1 stares at 2, 2 at 3, 3 at 4, 4 at 5 and 5 at 1; pirate 6 is completely uninvolved, as depicted in (141)."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -161,7 +161,7 @@ def ex153 : Datum :=
     context := "The girls are standing in a circle. There is one gap between the girls that is too large."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -174,7 +174,7 @@ def ex188a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(188d)", .unacceptable)]
     paperFeatures := [] }
 
@@ -187,7 +187,7 @@ def ex220 : Datum :=
     glossedTokens := []
     context := "Four out of the five members of the group know the fifth, a semanticist famous from TV, who doesn't know the other four; those four are complete strangers to each other."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -200,7 +200,7 @@ def fn16i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -213,7 +213,7 @@ def fn16ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -226,7 +226,7 @@ def fn16iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

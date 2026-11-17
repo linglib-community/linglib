@@ -26,7 +26,7 @@ def ex_4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic_site", "default"), ("focus", "sigma")] }
 
@@ -41,7 +41,7 @@ def ex_5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic_site", "subject"), ("focus", "subject")] }
 
@@ -56,7 +56,7 @@ def ex_6a : Datum :=
     lgrConformance := some .wordAligned
     context := "Answer to (5)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "negative particle"), ("complete", "no")] }
 
@@ -71,7 +71,7 @@ def ex_6b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to (5)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "negative particle with continuation"), ("complete", "yes")] }
 
@@ -86,7 +86,7 @@ def ex_14 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic_site", "below diye"), ("matrix", "declarative")] }
 
@@ -101,7 +101,7 @@ def ex_18 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic_site", "above diye"), ("matrix", "question")] }
 
@@ -116,7 +116,7 @@ def ex_35a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to (22) at a world where Ali had to sleep and did sleep."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "positive"), ("complete", "yes")] }
 
@@ -131,7 +131,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Answer to (22) at a world where Ali had to sleep and did sleep."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "modal conjunction"), ("complete", "over-informative")] }
 
@@ -146,7 +146,7 @@ def ex_41 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "(39): Ali injured himself and went to the doctor for instructions; his partner tells us he slept for several hours after the appointment; we ask (22)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "modal"), ("complete", "no")] }
 

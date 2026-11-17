@@ -26,7 +26,7 @@ def ex1 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Declarative with a possessed theme, Oxchuc Tseltal."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative")] }
 
@@ -41,7 +41,7 @@ def ex2a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Pied-piping: the question is about a particular child whose existence is presupposed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
@@ -56,7 +56,7 @@ def ex2b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Stranding: no child is presupposed to exist."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative"), ("table4", "T-none-unaccusative")] }
 
@@ -71,7 +71,7 @@ def ex4 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "A group of men planning a community work project ask how they will get to the site; no particular car is presupposed, and 'nobody' is a felicitous answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("table4", "T-none-unaccusative")] }
 
@@ -86,7 +86,7 @@ def ex5 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "In a kitchen where meat that was obviously not purchased is being cooked; the cow is contextually salient and a 'nobody' answer is nonsensical."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -101,7 +101,7 @@ def ex20a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ch'ol possessive S_O."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none")] }
 
@@ -116,7 +116,7 @@ def ex20b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ch'ol possessive S_O, stranded."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("table4", "T-none-unaccusative")] }
 
@@ -131,7 +131,7 @@ def ex22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ch'ol possessive O in a monotransitive clause."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -146,7 +146,7 @@ def ex22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ch'ol possessive O, stranded."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
@@ -161,7 +161,7 @@ def ex26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ch'ol ditransitive applicative with the possessor as applied object."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
@@ -176,7 +176,7 @@ def ex23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Possessive O in a monotransitive clause."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -191,7 +191,7 @@ def ex23b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Possessive O, stranded."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
@@ -206,7 +206,7 @@ def ex24 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Text description of a visit to the Empire State Building; nothing in the context implies the existence of pictures."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 
@@ -221,7 +221,7 @@ def ex25 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Stranding from a non-specific possessive O."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
@@ -236,7 +236,7 @@ def ex27 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The applicative suffix makes (25) grammatical."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
@@ -251,7 +251,7 @@ def ex28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tenango Tseltal applicative."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
@@ -266,7 +266,7 @@ def ex28c : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tenango Tseltal monotransitive."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
@@ -281,7 +281,7 @@ def ex30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ditransitive with a first-person thematic applied object filling Spec,ApplP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveThematic"), ("intervener", "goal"), ("probe", "Appl"), ("table4", "Appl-goal-ditransitive")] }
 
@@ -296,7 +296,7 @@ def ex31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tenango Tseltal ditransitive with a thematic applied object."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveThematic"), ("intervener", "goal"), ("probe", "Appl"), ("table4", "Appl-goal-ditransitive")] }
 
@@ -311,7 +311,7 @@ def ex32 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Text: initial mention of the picture; Spec,ApplP is filled by the first-person goal."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "ditransitiveThematic"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 
@@ -326,7 +326,7 @@ def ex35 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Predicative possession on the existential construction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
@@ -341,7 +341,7 @@ def ex36 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Experiential collocation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
@@ -356,7 +356,7 @@ def ex37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Lexical unaccusative with a non-specific possessive S_O."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "nonSpecific")] }
 
@@ -371,7 +371,7 @@ def ex43 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Predicative possession under negation: the possessum takes narrow scope."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession"), ("possessum", "nonSpecific")] }
 
@@ -386,7 +386,7 @@ def ex45a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Preferred order: the locative separates possessum and possessor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
@@ -401,7 +401,7 @@ def ex45b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Locative after the possessor."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
@@ -416,7 +416,7 @@ def ex46 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The whole possessive follows the PP and is definite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "locativeCopula"), ("possessum", "specific")] }
 
@@ -431,7 +431,7 @@ def ex47 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Coordinated existentials with one sentence-final possessor and no prosodic break."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
@@ -446,7 +446,7 @@ def ex48a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Predicative possession."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession"), ("table4", "T-none-unaccusative")] }
 
@@ -461,7 +461,7 @@ def ex48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Predicative possession, pied-piped."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession")] }
 
@@ -476,7 +476,7 @@ def ex49a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tenejapa Tseltal predicative possession."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession"), ("table4", "T-none-unaccusative")] }
 
@@ -491,7 +491,7 @@ def ex49b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Tenejapa Tseltal, pied-piped."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession")] }
 
@@ -506,7 +506,7 @@ def ex50a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Experiential collocation kap -jol."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
@@ -521,7 +521,7 @@ def ex51 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Experiencer indexed on the verb."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
@@ -536,7 +536,7 @@ def ex55a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Experiential collocation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation"), ("table4", "T-none-unaccusative")] }
 
@@ -551,7 +551,7 @@ def ex55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Experiential collocation, pied-piped."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation")] }
 
@@ -566,7 +566,7 @@ def ex57b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "yul -ch'ulel is ambiguous between the idiom 'x awakes' and the literal 'x's soul arrives'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("x woke up", .acceptable), ("x's soul arrived", .unacceptable)]
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation"), ("table4", "T-none-unaccusative")] }
 
@@ -581,7 +581,7 @@ def ex58b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The same string with pied-piping."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("whose soul arrived", .acceptable), ("who woke up", .unacceptable)]
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
@@ -596,7 +596,7 @@ def ex59 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ambiguous between a definite and a non-specific possessum; intransitive under both."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Maria's money was lost", .acceptable), ("Maria lost some money", .acceptable)]
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative")] }
 
@@ -611,7 +611,7 @@ def ex60 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The whole possessive follows the adverb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "specific")] }
 
@@ -626,7 +626,7 @@ def ex61 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The adverb separates possessum and possessor."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "nonSpecific")] }
 
@@ -641,7 +641,7 @@ def ex62a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "About some specific money known to have been lost."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
@@ -656,7 +656,7 @@ def ex62b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Who lost some non-specific money."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative"), ("table4", "T-none-unaccusative")] }
 
@@ -671,7 +671,7 @@ def ex65 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Psr-OP pied-piped with the PP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "OP"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -686,7 +686,7 @@ def ex66 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Petalcingo Tseltal unergative with a locative PP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "OP"), ("possessum", "specific"), ("clause", "unergative"), ("intervener", "none")] }
 
@@ -701,7 +701,7 @@ def ex67 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Transitive clause with a specific external argument."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive-OP")] }
 
@@ -716,7 +716,7 @@ def ex68 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Unergative with a specific (second-person) S_A."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unergative"), ("intervener", "S_A"), ("table4", "T-SA-unergative")] }
 
@@ -731,7 +731,7 @@ def ex69 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Unergative with a non-specific S_A."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unergative"), ("intervener", "none"), ("table4", "T-SA-unergative")] }
 
@@ -746,7 +746,7 @@ def ex70 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Ambiguous transitive question."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("who killed Juan", .acceptable), ("who did Juan kill", .acceptable)]
     paperFeatures := [("clause", "transitive")] }
 
@@ -761,7 +761,7 @@ def ex74 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Path verb with a non-specific theme and a locative PP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "pathVerb")] }
 
@@ -776,7 +776,7 @@ def ex75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Path verb, non-specific theme."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "pathVerb"), ("table4", "T-SO-unaccusative")] }
 
@@ -791,7 +791,7 @@ def ex75b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Path verb, specific (second-person) theme."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "pathVerb"), ("table4", "T-SO-unaccusative")] }
 
@@ -806,7 +806,7 @@ def ex77b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Locative existential with a non-specific theme."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "locativeExistential"), ("table4", "T-none-locativeExistential")] }
 
@@ -821,7 +821,7 @@ def ex78a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Locative copula with a specific theme, Petalcingo Tseltal."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "locativeCopula"), ("table4", "T-SO-locativeCopula")] }
 
@@ -836,7 +836,7 @@ def ex78b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Locative copula with a specific theme."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "locativeCopula"), ("table4", "T-SO-locativeCopula")] }
 
@@ -851,7 +851,7 @@ def ex81 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two-argument experiential collocation with a specific (second-person) theme."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "twoArgExperiential"), ("table4", "T-none-experiential")] }
 
@@ -866,7 +866,7 @@ def ex82 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Two-argument experiential collocation yul ta -jol."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "twoArgExperiential"), ("table4", "T-none-experiential")] }
 
@@ -881,7 +881,7 @@ def ex85a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Possessive A."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "A"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -896,7 +896,7 @@ def ex85b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Possessive A, stranded; the A is specific."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "A"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -911,7 +911,7 @@ def ex86 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Transitive with a non-specific possessive A whose possessor is a plausible ψ-subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "A"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "none")] }
 
@@ -926,7 +926,7 @@ def ex87 : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Possessor and possessum separated by an adverb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 

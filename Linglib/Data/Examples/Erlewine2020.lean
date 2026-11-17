@@ -24,7 +24,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := "Long-distance subject extraction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "none")] }
 
@@ -37,7 +37,7 @@ def ex6a_that : Datum :=
     glossedTokens := []
     context := "Long-distance subject extraction across that."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -50,7 +50,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := "Long-distance object extraction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "none")] }
 
@@ -63,7 +63,7 @@ def ex6b_that : Datum :=
     glossedTokens := []
     context := "Long-distance object extraction across that."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -76,7 +76,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := "The subject extracted from Spec,TP across that."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -89,7 +89,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := "The subject extracted from the small clause, there in Spec,TP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -102,7 +102,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "A high adverb between that and the subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -115,7 +115,7 @@ def ex13a_noadverb : Datum :=
     glossedTokens := []
     context := "No adverb between that and the subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -128,7 +128,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := "A high adverb above TP."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -141,7 +141,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := "A low adverb below TP."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -154,7 +154,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := "The locative of locative inversion extracted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "none")] }
 
@@ -167,7 +167,7 @@ def ex18a_that : Datum :=
     glossedTokens := []
     context := "The locative of locative inversion extracted across that."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 
@@ -180,7 +180,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := "The locative extracted without locative inversion."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "none")] }
 
@@ -193,7 +193,7 @@ def ex18b_that : Datum :=
     glossedTokens := []
     context := "The locative extracted across that without locative inversion."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complementizer", "that")] }
 

@@ -26,7 +26,7 @@ def ex11a : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
@@ -41,7 +41,7 @@ def ex11b : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
@@ -56,7 +56,7 @@ def ex11c : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
@@ -71,7 +71,7 @@ def ex11c_neg : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
@@ -86,7 +86,7 @@ def ex12a : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
@@ -101,7 +101,7 @@ def ex12b : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
@@ -116,7 +116,7 @@ def ex12c : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
@@ -131,7 +131,7 @@ def ex12c_neg : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
@@ -146,7 +146,7 @@ def ex16a : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
@@ -161,7 +161,7 @@ def ex16b : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
@@ -176,7 +176,7 @@ def ex16c : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
@@ -191,7 +191,7 @@ def ex16d : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
@@ -206,7 +206,7 @@ def ex17a : Datum :=
     lgrConformance := some .wordAligned
     context := "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
@@ -221,7 +221,7 @@ def ex17b : Datum :=
     lgrConformance := some .wordAligned
     context := "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
@@ -236,7 +236,7 @@ def ex17c : Datum :=
     lgrConformance := some .wordAligned
     context := "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
@@ -251,7 +251,7 @@ def ex17d : Datum :=
     lgrConformance := some .wordAligned
     context := "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
@@ -266,7 +266,7 @@ def ex18a : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:"
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
@@ -281,7 +281,7 @@ def ex18b : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
@@ -296,7 +296,7 @@ def ex18c : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
@@ -311,7 +311,7 @@ def ex18d : Datum :=
     lgrConformance := some .wordAligned
     context := "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
@@ -326,7 +326,7 @@ def ex25a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
@@ -339,7 +339,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
@@ -352,7 +352,7 @@ def ex25c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -365,7 +365,7 @@ def ex25c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -380,7 +380,7 @@ def ex26a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
@@ -393,7 +393,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
@@ -406,7 +406,7 @@ def ex26c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -419,7 +419,7 @@ def ex26c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -434,7 +434,7 @@ def ex27a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
@@ -447,7 +447,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
@@ -460,7 +460,7 @@ def ex27c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -473,7 +473,7 @@ def ex27c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -488,7 +488,7 @@ def ex28a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ"), ("particle", "ali")] }
 
@@ -503,7 +503,7 @@ def ex28b : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ"), ("particle", "ali")] }
 
@@ -516,7 +516,7 @@ def ex28c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -529,7 +529,7 @@ def ex28c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -544,7 +544,7 @@ def ex29a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "cyPPQ"), ("particle", "čy")] }
 
@@ -557,7 +557,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "cyPPQ"), ("particle", "čy")] }
 
@@ -570,7 +570,7 @@ def ex29c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "cyNPQ"), ("particle", "čy")] }
 
@@ -583,7 +583,7 @@ def ex29d : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "cyNPQ"), ("particle", "čy")] }
 
@@ -596,7 +596,7 @@ def ex29e : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -609,7 +609,7 @@ def ex29e_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -624,7 +624,7 @@ def ex30a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "czyPPQ"), ("particle", "czy")] }
 
@@ -639,7 +639,7 @@ def ex30b : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "czyNPQ"), ("particle", "czy")] }
 
@@ -652,7 +652,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -665,7 +665,7 @@ def ex30c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -678,7 +678,7 @@ def ex30d : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "V1PQ")] }
 
@@ -691,7 +691,7 @@ def ex30d_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "V1PQ")] }
 
@@ -706,7 +706,7 @@ def ex31a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "da+liPPQ"), ("particle", "da li")] }
 
@@ -721,7 +721,7 @@ def ex31b : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "je+liPPQ"), ("particle", "je li")] }
 
@@ -736,7 +736,7 @@ def ex31c : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "HighNPQ"), ("particle", "li")] }
 
@@ -749,7 +749,7 @@ def ex31d : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "LowNPQ"), ("particle", "je li")] }
 
@@ -762,7 +762,7 @@ def ex31e : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -775,7 +775,7 @@ def ex31e_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -790,7 +790,7 @@ def ex32a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "daliPQ"), ("particle", "dali")] }
 
@@ -805,7 +805,7 @@ def ex32a_neg : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "daliPQ"), ("particle", "dali")] }
 
@@ -820,7 +820,7 @@ def ex32b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPQ"), ("particle", "li")] }
 
@@ -833,7 +833,7 @@ def ex32b_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liPQ"), ("particle", "li")] }
 
@@ -846,7 +846,7 @@ def ex32c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "v1PQ")] }
 
@@ -859,7 +859,7 @@ def ex32c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "v1PQ")] }
 
@@ -874,7 +874,7 @@ def ex33a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPPQ"), ("particle", "li")] }
 
@@ -887,7 +887,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liNPQ"), ("particle", "li")] }
 
@@ -900,7 +900,7 @@ def ex33c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
@@ -913,7 +913,7 @@ def ex33c_neg : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
@@ -928,7 +928,7 @@ def ex34a : Datum :=
     lgrConformance := some .wordAligned
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPPQ"), ("particle", "li")] }
 
@@ -941,7 +941,7 @@ def ex34b : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liNPQ"), ("particle", "li")] }
 
@@ -954,7 +954,7 @@ def ex34c : Datum :=
     glossedTokens := []
     context := "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "intonation"), ("polarity", "positive"), ("label", "IntonPQ")] }
 
@@ -969,7 +969,7 @@ def ex43c_ppi : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "false"), ("indefinite", "ppi")] }
 
@@ -984,7 +984,7 @@ def ex43c_nci : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "false"), ("indefinite", "nci")] }
 
@@ -999,7 +999,7 @@ def ex43d_ppi : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "true"), ("indefinite", "ppi")] }
 
@@ -1014,7 +1014,7 @@ def ex43d_nci : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "true"), ("indefinite", "nci")] }
 
@@ -1029,7 +1029,7 @@ def ex43e : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("nahodou", "true"), ("indefinite", "ppi")] }
 

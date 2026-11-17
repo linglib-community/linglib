@@ -26,7 +26,7 @@ def ex_4a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -41,7 +41,7 @@ def ex_4b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -56,7 +56,7 @@ def ex_4c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -71,7 +71,7 @@ def ex_7a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "way"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -86,7 +86,7 @@ def ex_7c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'ey"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -101,7 +101,7 @@ def ex_10a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chel"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -116,7 +116,7 @@ def ex_10c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -131,7 +131,7 @@ def ex_11b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "tz'ib'")] }
 
@@ -146,7 +146,7 @@ def ex_14a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stative"), ("rootForm", "chot")] }
 
@@ -161,7 +161,7 @@ def ex_19a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "at'is"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -176,7 +176,7 @@ def ex_19b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "patan"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -191,7 +191,7 @@ def ex_22a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "kot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -206,7 +206,7 @@ def ex_23a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -221,7 +221,7 @@ def ex_26a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -236,7 +236,7 @@ def ex_26b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -251,7 +251,7 @@ def ex_28a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -266,7 +266,7 @@ def ex_28b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -281,7 +281,7 @@ def ex_28c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -296,7 +296,7 @@ def ex_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "kal"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -311,7 +311,7 @@ def ex_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "il"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -326,7 +326,7 @@ def ex_30 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -341,7 +341,7 @@ def ex_31 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "opacity"), ("rootForm", "man")] }
 
@@ -356,7 +356,7 @@ def ex_34b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "way")] }
 
@@ -371,7 +371,7 @@ def ex_35b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "tzil")] }
 
@@ -386,7 +386,7 @@ def ex_36b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adjacency"), ("rootForm", "chonh")] }
 
@@ -401,7 +401,7 @@ def ex_37 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -416,7 +416,7 @@ def ex_38 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -431,7 +431,7 @@ def ex_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -446,7 +446,7 @@ def ex_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -461,7 +461,7 @@ def ex_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -476,7 +476,7 @@ def ex_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -491,7 +491,7 @@ def ex_47a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'at"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -506,7 +506,7 @@ def ex_47b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'at"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
@@ -521,7 +521,7 @@ def ex_48a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "ul"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -536,7 +536,7 @@ def ex_48b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "ul"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -551,7 +551,7 @@ def ex_54a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -566,7 +566,7 @@ def ex_54b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Ix-in-jax-w-i.", .ungrammatical)]
+    contrasts := [("Ix-in-jax-w-i.", .ungrammatical)]
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -581,7 +581,7 @@ def ex_55b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "mak'"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
@@ -596,7 +596,7 @@ def ex_55c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
@@ -611,7 +611,7 @@ def ex_57b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "derivedIntransitive"), ("rootForm", "el")] }
 
@@ -626,7 +626,7 @@ def ex_59a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "j"), ("internal", "dp"), ("aj", "no")] }
 
@@ -641,7 +641,7 @@ def ex_60a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "yam"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
@@ -656,7 +656,7 @@ def ex_62 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
@@ -671,7 +671,7 @@ def ex_63a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "ch"), ("diagnostic", "agentAdverb")] }
 
@@ -686,7 +686,7 @@ def ex_63b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "ch"), ("diagnostic", "purposeClause")] }
 
@@ -701,7 +701,7 @@ def ex_65a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
@@ -716,7 +716,7 @@ def ex_66a : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The man built the house with his own two hands."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
@@ -731,7 +731,7 @@ def ex_66b : Datum :=
     lgrConformance := some .morphemeAligned
     context := "The man purchased the materials and paid a carpenter to build the house, but did not himself do any building."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
@@ -746,7 +746,7 @@ def ex_67a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "j"), ("diagnostic", "agentAdverb")] }
 
@@ -761,7 +761,7 @@ def ex_67b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "j"), ("diagnostic", "purposeClause")] }
 
@@ -776,7 +776,7 @@ def ex_70a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "causer"), ("rootForm", "mak"), ("head", "transitive")] }
 
@@ -791,7 +791,7 @@ def ex_70b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "mak"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
@@ -806,7 +806,7 @@ def ex_71 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "isolated"), ("head", "j")] }
 
@@ -821,7 +821,7 @@ def ex_72a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "tek'"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
@@ -836,7 +836,7 @@ def ex_72b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "tek'"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
@@ -851,7 +851,7 @@ def ex_73a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
@@ -866,7 +866,7 @@ def ex_73b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
@@ -881,7 +881,7 @@ def ex_74a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
@@ -896,7 +896,7 @@ def ex_75a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
@@ -911,7 +911,7 @@ def ex_79a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
@@ -926,7 +926,7 @@ def ex_79b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
@@ -941,7 +941,7 @@ def ex_79c : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "j"), ("internal", "dp"), ("aj", "no")] }
 
@@ -956,7 +956,7 @@ def ex_79d : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
@@ -971,7 +971,7 @@ def ex_79e : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
@@ -986,7 +986,7 @@ def ex_51a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "unaccusative")] }
 
@@ -1001,7 +1001,7 @@ def ex_51b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "agentiveIntransitive")] }
 
@@ -1016,7 +1016,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "lightVerb")] }
 
@@ -1031,7 +1031,7 @@ def ex_53b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "lightVerb")] }
 

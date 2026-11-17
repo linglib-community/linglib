@@ -26,7 +26,7 @@ def m1991_1a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "I"), ("subject", "NOM")] }
 
@@ -41,7 +41,7 @@ def m1991_1b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "II"), ("subject", "ERG")] }
 
@@ -56,7 +56,7 @@ def m1991_1c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "I"), ("subject", "NOM"), ("object", "DAT")] }
 
@@ -71,7 +71,7 @@ def m1991_1d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "II"), ("subject", "ERG"), ("object", "NOM")] }
 
@@ -86,7 +86,7 @@ def m1991_2a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "I"), ("subject", "NOM")] }
 
@@ -101,7 +101,7 @@ def m1991_2b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "II"), ("subject", "NOM")] }
 
@@ -116,7 +116,7 @@ def m1991_3a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "I"), ("subject", "DAT"), ("object", "NOM")] }
 
@@ -131,7 +131,7 @@ def m1991_3b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "II"), ("subject", "DAT"), ("object", "NOM")] }
 
@@ -146,7 +146,7 @@ def m1991_4a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "NOM")] }
 
@@ -161,7 +161,7 @@ def m1991_4a_erg : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "ERG")] }
 
@@ -176,7 +176,7 @@ def m1991_4b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "NOM")] }
 
@@ -191,7 +191,7 @@ def m1991_4c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "ERG")] }
 
@@ -206,7 +206,7 @@ def m1991_4d : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "perfect"), ("subject", "ERG"), ("object", "NOM")] }
 
@@ -221,7 +221,7 @@ def m1991_5a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("subject", "ABS")] }
 
@@ -236,7 +236,7 @@ def m1991_5b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("subject", "ERG")] }
 
@@ -251,7 +251,7 @@ def m1991_5c : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("subject", "ERG"), ("object", "ABS")] }
 

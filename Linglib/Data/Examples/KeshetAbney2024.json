@@ -13,7 +13,7 @@
     "translation": "",
     "context": "Everyone is (atypically) sharing a huge cheeseburger.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Everyone is eating a cheeseburger. They are very large!", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -38,7 +38,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Andrea might be eating a cheeseburger. They are very large!", "judgment": "unacceptable"}
     ],
     "readings": [
@@ -65,7 +65,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the various cheeseburgers Andrea might be eating are all on the counter", "judgment": "unacceptable"}
     ],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "Exactly five well-known candidates have run, no write-ins; late on election night the speaker has not checked the news, and may even have one candidate in mind as the possible winner.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "There might already be a winner in the mayoral election. They are women.", "judgment": "unacceptable"}
     ],
     "readings": [
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "The teachers of a particular school; the speaker has no particular teacher in mind.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "… He is working late.", "judgment": "unacceptable"},
       {"form": "… They are working late.", "judgment": "unacceptable"}
     ],
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "must"],
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "House, Season 5, Episode 9 (corpus attestation).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "must"],
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jerry doesn't own a car—they are too much of a hassle!", "judgment": "acceptable"}
     ],
     "readings": [
@@ -215,7 +215,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "none"],
@@ -238,7 +238,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "none"],
@@ -258,7 +258,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "every"],
@@ -281,7 +281,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "most of the donkeys that are owned and beaten are otherwise treated well", "judgment": "acceptable"}
     ],
@@ -304,7 +304,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "must"],
@@ -328,7 +328,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "might"],
@@ -352,7 +352,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "none"],
@@ -375,7 +375,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "most"],
@@ -398,7 +398,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "'it' refers to the papers written by the few forgetful girls", "judgment": "acceptable"}
     ],
@@ -423,7 +423,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "none"],
@@ -446,7 +446,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "might"],
@@ -469,7 +469,7 @@
     "translation": "",
     "context": "A known set of real-life candidates, no write-ins; late on election night the tabulation might be over.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the likely/possible/potential winner is a woman", "judgment": "unacceptable"}
     ],
@@ -492,7 +492,7 @@
     "translation": "",
     "context": "A town with an outbreak of witch mania.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "think"],
@@ -512,7 +512,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Either John doesn't own a donkey, or he keeps it very quiet.", "judgment": "acceptable"}
     ],
     "readings": [],

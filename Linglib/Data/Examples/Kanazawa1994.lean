@@ -24,7 +24,7 @@ def strong_dominant : Datum :=
     glossedTokens := []
     context := "Out of the blue"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable)]
     paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "left downward")] }
 
