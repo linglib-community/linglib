@@ -62,7 +62,7 @@ abbrev Word := Footing Syllable.Weight
 /-! ### The prosodic-word size restrictor constraints -/
 
 /-- FOOT-BINARITY: one violation per foot that is not bimoraic. -/
-def ftBin : Constraint Word := λ fc => (fc.nonBimoraicFeet id).length
+def ftBin : Constraint Word := λ fc => (fc.feet.filter fun f ↦ f.moraCount id ≠ 2).length
 
 /-- PARSE(µ): one violation per mora parsed into no foot. -/
 def parseMora : Constraint Word := λ fc => fc.strays.sum
@@ -81,7 +81,7 @@ def IsPerfect (fc : Word) : Prop :=
 instance (fc : Word) : Decidable (IsPerfect fc) := by unfold IsPerfect; infer_instance
 
 theorem IsPerfect.ftBin {fc : Word} (h : IsPerfect fc) : ftBin fc = 0 := by
-  simp only [UchiharaMendozaRuiz2021.ftBin, Footing.nonBimoraicFeet, List.length_eq_zero_iff,
+  simp only [UchiharaMendozaRuiz2021.ftBin, List.length_eq_zero_iff,
     List.filter_eq_nil_iff, decide_eq_true_eq, not_not]
   exact h.2.2
 
@@ -114,7 +114,7 @@ theorem isPerfect_iff {fc : Word} (hpos : ∀ s ∈ fc.strays, s ≠ 0) :
       · have h1 := hpos s (hstr ▸ List.mem_cons_self)
         have h2 : parseMora fc = s + rest.sum := by simp [parseMora, hstr]
         exact absurd (Nat.eq_zero_of_add_eq_zero_right (h2 ▸ hp)) h1
-    simp only [ftBin, Footing.nonBimoraicFeet, List.length_eq_zero_iff, List.filter_eq_nil_iff,
+    simp only [ftBin, List.length_eq_zero_iff, List.filter_eq_nil_iff,
       decide_eq_true_eq, not_not] at hb
     refine ⟨hs, ?_, hb⟩
     rcases fc with _ | ⟨x, _ | ⟨y, fc⟩⟩
@@ -191,7 +191,7 @@ theorem parseMora_cons_inr (s : Syllable.Weight) (fc : Word) :
 /-- FOOT-BINARITY is categorical in each foot: a single foot violates it at most once, however
 far from binary it is. -/
 theorem ftBin_singleton_le (f : Foot Syllable.Weight) : ftBin [.inl f] ≤ 1 := by
-  simp only [ftBin, Footing.nonBimoraicFeet, Footing.feet, List.filterMap_cons, Sum.getLeft?,
+  simp only [ftBin, Footing.feet, List.filterMap_cons, Sum.getLeft?,
     List.filterMap_nil]
   exact List.length_filter_le _ _
 

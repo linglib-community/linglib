@@ -444,14 +444,15 @@ On a non-recursive headed word the column over the head terminal is the peak of 
 as [hayes-1995] §3.4.2 (C) observes of the Continuous Column Constraint. -/
 
 private theorem height_word_child_le {ch : MetricalTree}
-    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) : ch.height ≤ 2 := by
+    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = []))
+    (hn : ch.value.level = .ft → ∀ d ∈ ch.children, d.value.level ≠ .ft) : ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     rw [RoseTree.height_node]
     have : (chcs.map RoseTree.height).foldr max 0 ≤ 1 :=
       List.max_le_of_forall_le _ _ fun x hx => by
         obtain ⟨⟨cl, ccs⟩, hc, rfl⟩ := List.mem_map.mp hx
-        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc
+        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc (hn hfoot.1 _ hc)
         simp only [RoseTree.children_node] at hcs
         subst hcs
         exact le_of_eq rfl
@@ -513,7 +514,8 @@ theorem col_le_two_or_head {t : MetricalTree} (hw : IsWord t) (hr : noRec t = 0)
   rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
-  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)))
+  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)
+      (nonrecursivity_eq_zero_iff.1 (noRec_eq_zero_iff.1 hr _) ch (.of_mem_children hch))))
   · refine .inr ?_
     rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩

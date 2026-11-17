@@ -25,8 +25,7 @@ prosodic tree [is a well-formed foot](##Prosody.Foot.isFoot_toProsTree) whose σ
   (the prosodic tree, its metrical grid, and its head-flag row).
 * `footMorae` — mora count of a `Tree`-extracted weight-list foot; the flat metrical parse is
   `Prosody.Footing`.
-* `Footing.footOffsets` / `Footing.nonBimoraicFeet` — each foot's left-edge position and
-  the feet failing bimoraicity: what the alignment and binarity constraints count.
+* `Footing.footOffsets` — each foot's left-edge position, what the alignment constraints count.
 
 ## References
 
@@ -47,20 +46,25 @@ namespace Prosody
 /-! ### The well-formed foot -/
 
 /-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
-    non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core
-    ([selkirk-1980]; [hayes-1995]). Foot binarity (FtBin) and the contested recursive,
-    internally layered feet of [martinez-paricio-kager-2015] are violable and deferred;
-    these are flat feet, the sibling of `IsWord`'s Layeredness. -/
+non-empty list of syllables and feet, the inviolable Layeredness and σ-Headedness core
+([selkirk-1980]; [hayes-1995]). A foot under a foot is the internally layered foot of
+[martinez-paricio-kager-2015]; foot binarity and Nonrecursivity are violable and not part of
+it. -/
 abbrev IsFoot {M : Type*} : RoseTree (Constituent Level M) → Prop := IsConstituent .ft
 
+/-- A daughter of a foot that is not itself a foot is a syllable. -/
 theorem IsFoot.syl_leaf {M : Type*} {t c : RoseTree (Constituent Level M)} (h : IsFoot t)
-    (hc : c ∈ t.children) : c.value.level = .syl ∧ c.children = [] := by
+    (hc : c ∈ t.children) (hn : c.value.level ≠ .ft) :
+    c.value.level = .syl ∧ c.children = [] := by
   rcases t with ⟨a, cs⟩
   obtain ⟨hft, hl⟩ := h
   have hR := (RoseTree.licensed_node_iff.mp hl).1
   rw [Constituent.Licenses, show a.level = .ft from hft] at hR
-  have hsyl : c.value.level = .syl :=
+  have hle : c.value.level ≤ .ft :=
     hR.2 _ (List.mem_map.2 ⟨c.value, List.mem_map_of_mem hc, rfl⟩)
+  have hsyl : c.value.level = .syl := by
+    cases hlv : c.value.level <;>
+      first | rfl | exact absurd hlv hn | exact absurd (hlv ▸ hle) (by decide)
   refine ⟨hsyl, ?_⟩
   rcases c with ⟨cl, ccs⟩
   have hc' := (RoseTree.licensed_node_iff.mp (hl.of_mem hc)).1
@@ -196,7 +200,8 @@ theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
   have hpos : 0 < f.syllables.length := f.head.pos
   refine ⟨rfl, RoseTree.licensed_node_iff.mpr ⟨⟨?_, ?_⟩, ?_⟩⟩
   · simpa [List.finRange_eq_nil_iff] using hpos.ne'
-  · simp
+  · simp only [List.map_map, List.forall_mem_map]
+    exact fun _ _ ↦ show Level.syl ≤ Level.ft by decide
   · simp [Constituent.Licenses, Level.Licenses]
 
 end Foot
@@ -241,18 +246,17 @@ def strayMarks : List Nat := fc.flatMap (Sum.elim (List.replicate ·.length 0) (
 
 The structural readings the metrical alignment and binarity constraints count
 ([kager-2007]): ALL-FT-LEFT is `footOffsets.sum`, ALL-FT-RIGHT the same on the reversed
-footing, FT-BIN(μ) the length of `nonBimoraicFeet`, and PARSE-SYL the length of `strays`. -/
+footing, and PARSE-SYL the length of `strays`. ALL-FT here is gradient, a violation for each
+syllable between a foot and the edge ([mccarthy-prince-1993b]); a categorical version, one for
+each foot off the edge, is a different constraint. Foot binarity is read off
+`feet.map (·.moraCount w)`: fewer than two morae for a degenerate foot, other than two for
+binarity in both directions. -/
 
 /-- The left-edge position of each foot, in syllables from the left edge of the footing. -/
 def footOffsets : List ℕ :=
   (fc.foldl (fun (acc : List ℕ × ℕ) x =>
     Sum.elim (fun f => (acc.1 ++ [acc.2], acc.2 + f.length)) (fun _ => (acc.1, acc.2 + 1)) x)
     ([], 0)).1
-
-/-- The feet that are not bimoraic under the weight reading `w` (for the syllabic reading,
-read every syllable as one mora). -/
-def nonBimoraicFeet (w : S → ℕ) (fc : Footing S) : List (Foot S) :=
-  fc.feet.filter fun f => f.moraCount w ≠ 2
 
 end Footing
 
