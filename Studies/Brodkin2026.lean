@@ -23,7 +23,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 ## Main definitions
 
 * `vocabulary`: the Vocabulary Items of the heads of (44), with (57a).
-* `Constituency`, `candidates`, `tableau`: the syntax of the head and the next word, GEN over the
+* `Constituency`, `candidates`, `optimal`: the syntax of the head and the next word, GEN over the
   allomorphs and the phrasings, and the ranking of (26c), (63), (64) and (80) over MAX-XP (23a),
   SUBCAT (29b), Positional Minimality (26a), PRIORITY (60a), Match(ω, X⁰) (75a) and
   Match(φ, XP) (23b).
@@ -317,10 +317,10 @@ def matchPhi : Constraint Candidate := fun c ↦
     ((x.phrases k).map (·.span) ++
       if x.sameMax then [⟨(0, k + x.next), Nat.zero_le _⟩] else []) (c.tree x)
 
-/-- The tableau of an input: MAX-XP and SUBCAT over Positional Minimality over PRIORITY over the
-Match constraints, as in (26c), (63), (64) and (80). -/
-def tableau : Tableau Candidate 6 :=
-  Tableau.ofList (candidates v x)
+/-- The optimal candidates of an input: MAX-XP and SUBCAT over Positional Minimality over
+PRIORITY over the Match constraints, as in (26c), (63), (64) and (80). -/
+def optimal : Finset Candidate :=
+  Constraint.eval (candidates v x)
     [maxXP x, subcat x, positionalMinimality x, priority v x, matchOmega x, matchPhi x]
 
 end Tableau
@@ -360,7 +360,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- **The grammar derives the examples**: in each the optimal candidates insert the attested
 allomorph. -/
 theorem rows_optimal :
-    ∀ d ∈ rows, (tableau vocabulary d.input).optimal.image (·.item.exponent) = {d.form} := by
+    ∀ d ∈ rows, (optimal vocabulary d.input).image (·.item.exponent) = {d.form} := by
   decide
 
 /-! ### Suppletion and its suspension -/
@@ -369,7 +369,7 @@ theorem rows_optimal :
 phrase or is a hosted second-position element ((24)–(26), (29)). -/
 theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
-      ∀ c ∈ (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal,
+      ∀ c ∈ optimal vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩,
         c.phrasing = .joined ↔ (s = .complement ∨ s = .host) := by
   decide +revert +kernel
 
@@ -377,7 +377,7 @@ theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
 unavailable (88). -/
 theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
-      (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal.image
+      (optimal vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).image
         (·.item.exponent) = {if (s == .sisters || s == .adjunct) && (footed || !sameMax)
           then h.long else h.short} := by
   decide +revert +kernel
@@ -399,15 +399,8 @@ theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
   have hlt : priority vocabulary x ⟨{Feature.head h} ⟷ h.short, .joined⟩ <
       priority vocabulary x ⟨{Feature.head h} ⟷ h.long, .separate⟩ := by
     cases h <;> cases footed <;> decide
-  rw [← Tableau.optimal_ofList]
-  refine Tableau.notMem_optimal_of_lt (c := ⟨{Feature.head h} ⟷ h.short, .joined⟩)
-    (by rw [Tableau.ofList_candidates]; cases h <;> cases footed <;> decide)
-    (Pi.toLex_strictMono ?_)
-  obtain ⟨p, hp⟩ := List.get_of_mem hp
-  refine Pi.lt_def.2 ⟨fun q ↦ hle _ (hFs _ (List.get_mem _ _)), p, ?_⟩
-  show Fs.get p _ < Fs.get p _
-  rw [hp]
-  exact hlt
+  exact Constraint.notMem_eval_of_forall_le
+    (by cases h <;> cases footed <;> decide) (fun F hF ↦ hle F (hFs F hF)) ⟨_, hp, hlt⟩
 
 section Priority
 
@@ -479,14 +472,14 @@ it (§3.3). -/
 theorem optimal_item_eq_of_two_le
     (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
     (hi : (v.applicable x.neighborhood).head? = some i) (hk : 2 ≤ syllables i.exponent)
-    (hc : c ∈ (tableau v x).optimal) : c.item = i := by
+    (hc : c ∈ optimal v x) : c.item = i := by
   obtain ⟨p, hp, h₁, h₂, h₃⟩ := exists_phrasing_eq_zero hs hk
   have hd : (⟨i, p⟩ : Candidate) ∈ candidates v x :=
     mem_candidates.2 ⟨List.mem_of_mem_head? hi, fun h ↦ absurd h hp⟩
   have z {s : Finset Candidate} {F : Constraint Candidate} (hs : (⟨i, p⟩ : Candidate) ∈ s)
       (h0 : F ⟨i, p⟩ = 0) : (⟨i, p⟩ : Candidate) ∈ s.argmin F :=
     Finset.mem_argmin.2 ⟨hs, fun _ _ ↦ h0.trans_le (Nat.zero_le _)⟩
-  rw [tableau, Tableau.optimal_ofList, Constraint.eval_cons, Constraint.eval_cons,
+  rw [optimal, Constraint.eval_cons, Constraint.eval_cons,
     Constraint.eval_cons, Constraint.eval_cons] at hc
   obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Constraint.eval_subset hc)
   exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1

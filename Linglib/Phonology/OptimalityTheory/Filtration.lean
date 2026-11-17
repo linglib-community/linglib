@@ -130,6 +130,24 @@ theorem filtration_eq_singleton_iff :
     refine Finset.eq_singleton_iff_unique_mem.2 ⟨hc', fun d hd ↦ by_contra fun hne ↦ ?_⟩
     exact ((mem_filtration.1 hd).2 c hc).not_gt (h d (filtration_subset hd) hne)
 
+/-- A candidate that violates each constraint of the list at least as often as a competitor,
+and one of them more often, does not survive: it is harmonically bounded. -/
+theorem notMem_filtration_of_forall_le (hc : c ∈ s) (hle : ∀ k ∈ l, v c k ≤ v d k)
+    (hlt : ∃ k ∈ l, v c k < v d k) : d ∉ filtration v s l := by
+  induction l generalizing s with
+  | nil => simp at hlt
+  | cons k l ih =>
+    rw [filtration_cons]
+    intro hd
+    have hdk := Finset.mem_argmin.1 (filtration_subset hd)
+    have hck : v c k = v d k := le_antisymm (hle k List.mem_cons_self) (hdk.2 c hc)
+    refine ih (Finset.mem_argmin.2 ⟨hc, fun b hb ↦ hck ▸ hdk.2 b hb⟩)
+      (fun j hj ↦ hle j (List.mem_cons_of_mem _ hj)) ?_ hd
+    obtain ⟨j, hj, hjlt⟩ := hlt
+    rcases List.mem_cons.1 hj with rfl | hj
+    · exact absurd hjlt hck.not_lt
+    · exact ⟨j, hj, hjlt⟩
+
 /-- No Dead Man Walking ([merchant-prince-2022]): a candidate that survives filtration along
 a list `l`, such as a whole ranking, and also along a list `l₁`, survives along `l₁` followed
 by the constraints of `l` that are not in `l₁`. A possible optimum that passes a prefix is
@@ -218,6 +236,12 @@ theorem Constraint.eq_zero_of_mem_eval_append (hc : c ∈ Constraint.eval s (Fs 
       ⟨Nat.le_zero.1 (hF ▸ (Finset.mem_argmin.1 (eval_subset hc)).2 d hd), ih hc ?_
         fun F' hF' ↦ h0 F' (List.mem_cons_of_mem _ hF')⟩
     exact Finset.mem_argmin.2 ⟨hd, fun _ _ ↦ hF ▸ Nat.zero_le _⟩
+
+/-- A candidate that violates each constraint at least as often as a competitor, and one of
+them more often, is not optimal. -/
+theorem Constraint.notMem_eval_of_forall_le (hc : c ∈ s) (hle : ∀ F ∈ Fs, F c ≤ F d)
+    (hlt : ∃ F ∈ Fs, F c < F d) : d ∉ Constraint.eval s Fs :=
+  notMem_filtration_of_forall_le hc hle hlt
 
 theorem Constraint.eval_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
     Constraint.eval s (F.antifaithful :: Fs) = Constraint.eval (s.filter (0 < F ·)) Fs := by

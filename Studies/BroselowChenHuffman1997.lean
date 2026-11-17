@@ -139,17 +139,17 @@ inductive Con
   | moraFaith
   deriving DecidableEq, Fintype, Repr
 
-/-- The constraint set, on pairs of an input and an output form. -/
-def con : ConstraintSet (MoraicForm Slot × MoraicForm Slot) Con
-  | .noSharedMora => noSharedMora.comap Prod.snd
-  | .syllBin => syllBin.comap Prod.snd
-  | .noCMora => noCMora
-  | .moraFaith => moraFaith
+/-- The marks of an output form for an input form. -/
+def marks (i o : MoraicForm Slot) : Con → ℕ
+  | .noSharedMora => noSharedMora o
+  | .syllBin => syllBin o
+  | .noCMora => noCMora (i, o)
+  | .moraFaith => moraFaith (i, o)
 
 /-- The constraint system of the four inputs. -/
 def system : ConstraintSystem Input (MoraicForm Slot) Con where
   gen := gen
-  marks i o k := con k (input i, o)
+  marks i := marks (input i)
 
 /-! ### The typology -/
 
@@ -254,10 +254,9 @@ def moraicOnset : MoraicForm Slot :=
 leaving the syllable before it light ((33)), while a single consonant stays a bare onset ((34)):
 faithfulness counts the morae of a segment, not whether they are shared. -/
 theorem malayalam_geminate :
-    (Tableau.ofRanking (con.comap (geminate, ·)) malayalamRanking
-      {sharedOnset, plainOnset, moraicOnset}).optimal = {sharedOnset} ∧
-    (Tableau.ofRanking (con.comap (single, ·)) malayalamRanking
-      {sharedOnset, plainOnset}).optimal = {plainOnset} := by
+    malayalamRanking.optimal (marks geminate) {sharedOnset, plainOnset, moraicOnset} =
+        {sharedOnset} ∧
+      malayalamRanking.optimal (marks single) {sharedOnset, plainOnset} = {plainOnset} := by
   decide
 
 /-! ### Weight by Position -/

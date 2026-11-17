@@ -4,7 +4,7 @@ public import Linglib.Data.Statistics.Jacobs2026
 public import Linglib.Data.Wordlist.Jacobs2026
 public import Linglib.Fragments.Latin.Phonology
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.SearchCopy
 public import Studies.Belth2026
 
@@ -346,10 +346,10 @@ def identBase (c : Candidate base.length) : ℕ :=
 /-- (18b): the suffix liquid changes from the [+lateral] of the input -alis. -/
 def identSuffix (c : Candidate base.length) : ℕ := if c.2 then 0 else 1
 
-/-- The tableau of (19) and (20) for a stem: *LINGUAL[+LAT]–LINGUAL[+LAT] ≫ IDENT-IO-[LAT]/BASE ≫
-IDENT-IO-[LAT]/SUFFIX over every candidate. -/
-def tableau : Tableau (Candidate base.length) 3 :=
-  .ofList Finset.univ [ocp base, identBase base, identSuffix base]
+/-- The optimal candidates of (19) and (20) for a stem: *LINGUAL[+LAT]–LINGUAL[+LAT] ≫
+IDENT-IO-[LAT]/BASE ≫ IDENT-IO-[LAT]/SUFFIX over every candidate. -/
+def optimal : Finset (Candidate base.length) :=
+  Constraint.eval Finset.univ [ocp base, identBase base, identSuffix base]
 
 variable {base}
 
@@ -379,7 +379,7 @@ private theorem runFrom_suffix (st : Option Segment) :
 
 /-- The ranking of (18) selects the output of dissimilation on the LINGUAL tier, for every stem. -/
 theorem optimal_image_output (hL : L ∉ base) :
-    (tableau base).optimal.image (output base) =
+    (optimal base).image (output base) =
       {(dissimilate OnLingualTier).apply (base ++ [Latin.a, L, Latin.i, Latin.s])} := by
   set b := decide (lastLateral base ≠ some true) with hb
   let d : Candidate base.length := (fun _ ↦ false, b)
@@ -423,8 +423,8 @@ theorem optimal_image_output (hL : L ∉ base) :
       · rintro ⟨hc0, hcb⟩
         refine ⟨⟨(hocp c hc0).2 (by simp [hl]), hc0⟩, fun _ _ ↦ ?_⟩
         simp [identSuffix, hcb, hb']
-  rw [tableau, Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons,
-    Tableau.optimal_ofList_cons, Tableau.optimal_ofList_nil, h1, h2, apply_append hL,
+  rw [optimal, Constraint.eval_cons, Constraint.eval_cons,
+    Constraint.eval_cons, Constraint.eval_nil, h1, h2, apply_append hL,
     runFrom_suffix]
   have hout (c : Candidate base.length) (hc : identBase base c = 0 ∧ c.2 = b) :
       output base c = base ++ [Latin.a, if lastLateral base = some true then Latin.r else Latin.l,
