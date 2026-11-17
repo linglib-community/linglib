@@ -195,13 +195,31 @@ theorem isSelfConnected_iff_isSum [PartialOrder α] [StronglySupplemented α] {C
   simp only [IsSelfConnected, isSum_iff_forall_overlap, or_and_right, exists_or,
     exists_eq_left]
 
-/-- In a Boolean algebra, an individual is self-connected iff any two non-null individuals that
+section SupIsSum
+
+variable [SemilatticeSup α] [StronglySupplemented α] [SupIsSum α] {C : α → α → Prop} {x y : α}
+
+/-- Where joins are sums, an individual is self-connected iff any two non-null individuals that
 join to it are connected. -/
-theorem isSelfConnected_iff [GeneralizedBooleanAlgebra α] {C : α → α → Prop} {x : α} :
-    IsSelfConnected C x ↔ ∀ y z, y ≠ ⊥ → z ≠ ⊥ → y ⊔ z = x → C y z := by
-  simp only [isSelfConnected_iff_isSum, isBot_iff_eq_bot, isSum_iff_isLUB]
+theorem isSelfConnected_iff_sup :
+    IsSelfConnected C x ↔ ∀ y z, ¬ IsBot y → ¬ IsBot z → y ⊔ z = x → C y z := by
+  rw [isSelfConnected_iff_isSum]
   exact forall₄_congr fun y z _ _ ↦
-    ⟨fun h e ↦ h (e ▸ isLUB_pair), fun h hl ↦ h (isLUB_pair.unique hl)⟩
+    ⟨fun h e ↦ h (e ▸ isSum_sup y z), fun h hs ↦ h ((isSum_sup y z).unique hs)⟩
+
+/-- Two non-null individuals whose join is self-connected are connected. -/
+theorem IsSelfConnected.of_sup (h : IsSelfConnected C (x ⊔ y)) (hx : ¬ IsBot x)
+    (hy : ¬ IsBot y) : C x y :=
+  isSelfConnected_iff_sup.1 h x y hx hy rfl
+
+/-- The join of two non-null self-connected individuals is self-connected iff they are
+connected. -/
+theorem isSelfConnected_sup_iff [HasProducts α] (hC : IsConnection C)
+    (hx : IsSelfConnected C x) (hy : IsSelfConnected C y) (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y) :
+    IsSelfConnected C (x ⊔ y) ↔ C x y :=
+  ⟨fun h ↦ h.of_sup hx0 hy0, hx.sup hC hy⟩
+
+end SupIsSum
 
 /-! ### Clusters -/
 

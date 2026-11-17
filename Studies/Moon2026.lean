@@ -18,11 +18,11 @@ liquid, self-connected in the mereotopological sense of Casati and Varzi and of 
 connection relation `C` (`ConnectedLiquid`, `Mereology.IsSelfConnected`). The denotation
 `mixedDrinkDen` packages Moon's final formula as the existence of a `MixedDrinkWitness`.
 
-Two consequences carry the countability argument. The sum of two spatially separate drinks is not a
-connected liquid, so the denotation is not cumulative
-(`not_mixedDrinkDen_of_not_isSelfConnected`), a mereotopological route to non-cumulativity that a
-bare semilattice lacks, where it comes only from quantization (`connectivity_breaks_cum`). And a
-mixed drink has proper parts, so it is not a
+Two consequences carry the countability argument. Two portions that are not connected do not
+sum to a connected liquid (`not_mixedDrinkDen_sup_of_not_connected`), so shots of the ingredients
+are no margarita and the denotation is not cumulative, a mereotopological route to
+non-cumulativity that a bare semilattice lacks, where it comes only from quantization
+(`connectivity_breaks_cum`). And a mixed drink has proper parts, so it is not a
 mereological atom (`mixedDrink_not_atom`), and the atomicity on which count theories found
 countability excludes it (`atomsOf_excludes_mixed_drinks`), while half a drink with its ratios
 preserved is still a drink, so the denotation is not quantized either (`mixedDrink_not_qua`). Mixed
@@ -41,8 +41,11 @@ portions, and measured parts.
 ## Implementation notes
 
 Self-connection is Moon's (20b), stated with the library's overlap, which unlike (20a) relates
-non-null parts only; connected liquid (23) is read with this notion rather than the touch-based
-self-connection of (22), and without its temporal parameter.
+non-null parts only. The touch-based self-connection of (22) is (20b) under the connection
+relation of overlapping or touching (`isSelfConnected_overlap_or_iff`), touch being a parameter,
+so connected liquid (23) is stated with (20b), without its temporal parameter. The results on
+sums assume that the part structure is strongly supplemented and that its joins are sums, as
+in the classical mereology the paper works in.
 
 ## References
 
@@ -80,16 +83,24 @@ theorem ConnectedLiquid.isSelfConnected [PartialOrder α] {C : α → α → Pro
     {x : α} (h : ConnectedLiquid C phase x) : IsSelfConnected C x :=
   h.1
 
-variable [SemilatticeSup α] {C : α → α → Prop} {P : α → Prop}
+variable [SemilatticeSup α] [StronglySupplemented α] [SupIsSum α] {C : α → α → Prop}
+  {P : α → Prop}
+
+/-- Krifka's self-connection (22), on which any two non-overlapping individuals that join to `x`
+touch, is self-connection (20b) under the connection relation of overlapping or touching. -/
+theorem isSelfConnected_overlap_or_iff {T : α → α → Prop} {x : α} :
+    IsSelfConnected (fun y z ↦ Overlap y z ∨ T y z) x ↔
+      ∀ y z, ¬ IsBot y → ¬ IsBot z → y ⊔ z = x → ¬ Overlap y z → T y z := by
+  simp only [isSelfConnected_iff_sup, or_iff_not_imp_left]
 
 theorem connectivity_breaks_cum (hConn : ∀ x, P x → IsSelfConnected C x) {x y : α} (hx : P x)
-    (hy : P y) (hDisc : ¬ IsSelfConnected C (x ⊔ y)) : ¬ CUM P :=
-  fun hCum ↦ hDisc (hConn _ (hCum hx hy))
+    (hy : P y) (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y) (hDisc : ¬ C x y) : ¬ CUM P :=
+  fun hCum ↦ hDisc ((hConn _ (hCum hx hy)).of_sup hx0 hy0)
 
 theorem connectivity_middle_ground (hConn : ∀ x, P x → IsSelfConnected C x) {a b : α}
-    (ha : P a) (hb : P b) (hDisc : ¬ IsSelfConnected C (a ⊔ b)) {x y : α} (hx : P x) (hy : P y)
-    (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
-  ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
+    (ha : P a) (hb : P b) (ha0 : ¬ IsBot a) (hb0 : ¬ IsBot b) (hDisc : ¬ C a b) {x y : α}
+    (hx : P x) (hy : P y) (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
+  ⟨connectivity_breaks_cum hConn ha hb ha0 hb0 hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
 
 end Mereotopology
 
@@ -143,9 +154,18 @@ theorem isSelfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe �
     IsSelfConnected C x :=
   hx.some.connected.isSelfConnected
 
-theorem not_mixedDrinkDen_of_not_isSelfConnected {x : α} (hDisc : ¬ IsSelfConnected C x) :
-    ¬ mixedDrinkDen C recipe μ phase x :=
-  fun hx ↦ hDisc (isSelfConnected_of_mixedDrinkDen hx)
+theorem not_isBot_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe μ phase x) :
+    ¬ IsBot x :=
+  let ⟨w⟩ := hx
+  let ⟨_, ho⟩ := w.covers x le_rfl
+  ho.not_isBot_left
+
+/-- Two non-null portions that are not connected do not make a mixed drink, as shots of the
+ingredients drunk one after another do not make a margarita. -/
+theorem not_mixedDrinkDen_sup_of_not_connected [StronglySupplemented α] [SupIsSum α] {y z : α}
+    (hy : ¬ IsBot y) (hz : ¬ IsBot z) (hDisc : ¬ C y z) :
+    ¬ mixedDrinkDen C recipe μ phase (y ⊔ z) :=
+  fun h ↦ hDisc ((isSelfConnected_of_mixedDrinkDen h).of_sup hy hz)
 
 theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (i : Fin (n + 2))
     (hExcl : ∀ j ≠ i, ∀ z ≤ y, ¬ recipe.ingredients j z) :
@@ -171,11 +191,16 @@ theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
     ¬ QUA (mixedDrinkDen C recipe μ phase) :=
   fun hQ ↦ hQ hy hx hlt.ne hlt.le
 
-theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen C recipe μ phase a)
-    (hb : mixedDrinkDen C recipe μ phase b) (hDisc : ¬ IsSelfConnected C (a ⊔ b)) {x y : α}
-    (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
+/-- Two drinks that are not connected, as in two glasses, do not sum to a drink, so the
+denotation is not cumulative; with a drink that has a smaller drink as a part it is not
+quantized either. -/
+theorem mixedDrink_middle_ground [StronglySupplemented α] [SupIsSum α] {a b : α}
+    (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)
+    (hDisc : ¬ C a b) {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
+    (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
-  connectivity_middle_ground (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
+  connectivity_middle_ground (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb
+    (not_isBot_of_mixedDrinkDen ha) (not_isBot_of_mixedDrinkDen hb) hDisc hx hy hlt
 
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
@@ -185,16 +210,18 @@ theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β
   obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
-theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] {drinkTheme : SetRel α β}
-    (h : SINC drinkTheme) (hU : UP drinkTheme) (hs : SUM drinkTheme) {a b : α} {e_a e_b : β}
-    (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)
-    (hθ_a : a ~[drinkTheme] e_a) (hθ_b : b ~[drinkTheme] e_b)
-    (hSum : ¬ mixedDrinkDen C recipe μ phase (a ⊔ b)) {x y : α} {e_x : β}
+theorem mixedDrink_VP_propagation_gap [StronglySupplemented α] [SupIsSum α] {β : Type*}
+    [SemilatticeSup β] {drinkTheme : SetRel α β} (h : SINC drinkTheme) (hU : UP drinkTheme)
+    (hs : SUM drinkTheme) {a b : α} {e_a e_b : β} (ha : mixedDrinkDen C recipe μ phase a)
+    (hb : mixedDrinkDen C recipe μ phase b) (hθ_a : a ~[drinkTheme] e_a)
+    (hθ_b : b ~[drinkTheme] e_b) (hDisc : ¬ C a b) {x y : α} {e_x : β}
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x)
     (hθ_x : x ~[drinkTheme] e_x) :
     ¬ CUM (VP drinkTheme (mixedDrinkDen C recipe μ phase)) ∧
       ¬ QUA (VP drinkTheme (mixedDrinkDen C recipe μ phase)) :=
-  middle_ground_stable h hU hs ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
+  middle_ground_stable h hU hs ha hb hθ_a hθ_b
+    (not_mixedDrinkDen_sup_of_not_connected (not_isBot_of_mixedDrinkDen ha)
+      (not_isBot_of_mixedDrinkDen hb) hDisc) hx hy hlt hθ_x
 
 /-! ### Modifying the ratios -/
 
