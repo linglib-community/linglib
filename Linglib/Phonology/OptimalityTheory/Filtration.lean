@@ -209,6 +209,18 @@ theorem Constraint.eval_cons_eq_singleton (hc : c ∈ s) (h : ∀ d ∈ s, d ≠
     Constraint.eval s (F :: Fs) = {c} := by
   rw [eval_cons, Finset.argmin_eq_singleton_iff.2 ⟨hc, h⟩, eval_singleton]
 
+/-- A candidate is optimal under the constraints iff its violations along the list are
+lexicographically at most every candidate's. -/
+theorem Constraint.mem_eval :
+    c ∈ Constraint.eval s Fs ↔ c ∈ s ∧ ∀ d ∈ s, Fs.map (· c) ≤ Fs.map (· d) :=
+  mem_filtration
+
+/-- A candidate is the sole winner iff its violations along the list are lexicographically
+strictly below every other candidate's. -/
+theorem Constraint.eval_eq_singleton_iff :
+    Constraint.eval s Fs = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c → Fs.map (· c) < Fs.map (· d) :=
+  filtration_eq_singleton_iff
+
 theorem Constraint.eval_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     Constraint.eval s (F :: Fs) = Constraint.eval s Fs := by
   rw [eval_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]

@@ -31,7 +31,7 @@ suffix](##outputs_isChain_ne).
   every adjacent pair either rises in the template or is an override one of them licenses. The
   evaluation, a candidate winning at the first rank by which it is licensed, is the
   lexicographic minimization of the profile whose `k`-th entry says whether the top `k + 1`
-  licensors fail to license the candidate, so it is a substrate `Tableau`.
+  licensors fail to license the candidate, evaluated by the substrate's `Constraint.eval`.
 * A pair in the template's order needs no licensor of its own, only its two suffixes do: in the
   paper's tableaux *mang-an-its-il-an-* succeeds by MIRROR (R, C) and the conjunction with
   TEMPLATE ranked below both.
@@ -232,15 +232,15 @@ def candidates (ls : List Licensor) (i : Input) : Finset Candidate :=
         List.sections (List.replicate (i.dedup.length + 1) i.dedup)).filter fun c ↦
       (∀ x ∈ i, x ∈ c) ∧ ∀ x ∈ i, 1 < c.count x → ∃ l ∈ ls, l.doubles i c x).toFinset
 
-/-- The constraint at rank `k` of a ranking of licensors: violated by a candidate the top
-`k + 1` licensors do not license. -/
-def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate (Fin order.length) :=
-  fun k ↦ Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c
+/-- The constraints of a ranking of licensors, most dominant first: the constraint at rank `k`
+is violated by a candidate the top `k + 1` licensors do not license. -/
+def constraints (i : Input) (order : List Licensor) : List (Constraint Candidate) :=
+  (List.range order.length).map fun k ↦ .binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c
 
 /-- Hyman's evaluation under a ranking. A candidate succeeds at the first licensor down the
 ranking by which it is licensed, the lexicographic minimum of the cumulative profile. -/
-def tableau (i : Input) (order : List Licensor) : Tableau Candidate order.length :=
-  ⟨candidates order i, constraints i order⟩
+def optimal (i : Input) (order : List Licensor) : Finset Candidate :=
+  Constraint.eval (candidates order i) (constraints i order)
 
 /-- A grammar, licensors under a partial order ([anttila-1997]'s partially ordered
 constraints) evaluated under each linear extension. Free ranking is the discrete order. -/
@@ -270,7 +270,7 @@ def ranked (σ : Ranking.Enumeration (Fin G.n) G.n) : List Licensor :=
 
 /-- The outputs of an input, the winners under some linear extension. -/
 def outputs (i : Input) : Finset Candidate :=
-  G.rankings.biUnion fun σ ↦ (tableau i (G.ranked σ)).optimal
+  G.rankings.biUnion fun σ ↦ optimal i (G.ranked σ)
 
 /-- A grammar of freely ranked licensors. -/
 def free {n : ℕ} (licensor : Fin n → Licensor) : Grammar :=
@@ -353,41 +353,40 @@ theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := b
   have hrank : chimwiini.rankings = {1} := by decide
   have hord : chimwiini.ranked 1 = [.template] := by decide
   rw [Grammar.outputs, hrank, Finset.singleton_biUnion, hord]
-  refine Tableau.optimal_eq_singleton_iff.2 ⟨templatic_mem_candidates _ i, fun c hc hne ↦ ?_⟩
+  refine Constraint.eval_cons_eq_singleton (templatic_mem_candidates _ i) fun c hc hne ↦ ?_
   have hcl : ¬ LicensedBy i [.template] c := fun h ↦ hne ((licensedBy_iff_templatic hc).mp h)
-  show toLex (constraints i [.template] · (templatic i)) < toLex (constraints i [.template] · c)
-  have : Unique (Fin [Licensor.template].length) := inferInstanceAs (Unique (Fin 1))
-  rw [Pi.Lex.lt_iff_of_unique]
-  simp [constraints, hcl, licensedBy_template_templatic]
+  simp [hcl, licensedBy_template_templatic]
 
 /-! ### General properties of outputs -/
 
 theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
-    (hT : .template ∈ order) {c : Candidate} (hc : c ∈ (tableau i order).optimal) :
+    (hT : .template ∈ order) {c : Candidate} (hc : c ∈ optimal i order) :
     LicensedBy i order c := by
   by_contra h
   obtain ⟨k, hk, hkT⟩ := List.mem_iff_getElem.mp hT
-  have hc' : ∀ j : Fin order.length, constraints i order j c = 1 := fun j ↦ by
+  have hmem : (Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c) ∈
+      constraints i order :=
+    List.mem_map.2 ⟨k, List.mem_range.2 hk, rfl⟩
+  have hc' : ∀ F ∈ constraints i order, F c = 1 := by
+    simp only [constraints, List.mem_map, List.mem_range]
+    rintro F ⟨j, hj, rfl⟩
     have : ¬ LicensedBy i (order.take (j + 1)) c :=
       fun h' ↦ h (h'.mono (List.take_subset _ _))
-    simp [constraints, this]
-  have hTk : constraints i order ⟨k, hk⟩ (templatic i) = 0 := by
+    simp [this]
+  have hT0 : (Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c)
+      (templatic i) = 0 := by
     have : LicensedBy i (order.take (k + 1)) (templatic i) :=
       (licensedBy_template_templatic i).mono fun l hl ↦ by
         rw [List.mem_singleton] at hl
         subst hl
         exact List.mem_iff_getElem.mpr ⟨k, by simp; omega, by simp [List.getElem_take, hkT]⟩
-    simp [constraints, this]
-  refine Tableau.notMem_optimal_of_lt (templatic_mem_candidates _ i) ?_ hc
-  show Pi.Lex (· < ·) (· < ·) (fun j ↦ constraints i order j (templatic i))
-    (fun j ↦ constraints i order j c)
-  refine Pi.lex_lt_of_lt wellFounded_lt (lt_of_le_of_ne (fun j ↦ ?_) fun heq ↦ ?_)
-  · rw [hc']
-    simp only [constraints, Constraint.binary_apply]
-    split_ifs <;> omega
-  · have := congrFun heq ⟨k, hk⟩
-    rw [hTk, hc'] at this
-    exact absurd this (by decide)
+    simp [this]
+  refine absurd hc (Constraint.notMem_eval_of_forall_le (templatic_mem_candidates _ i)
+    (fun F hF ↦ ?_) ⟨_, hmem, by rw [hT0, hc' _ hmem]; omega⟩)
+  rw [hc' F hF]
+  obtain ⟨j, hj, rfl⟩ := List.mem_map.1 hF
+  simp only [Constraint.binary_apply]
+  split_ifs <;> omega
 
 theorem Grammar.template_mem_ranked {G : Grammar} (hT : ∃ p, G.licensor p = .template)
     (σ : Ranking.Enumeration (Fin G.n) G.n) : Licensor.template ∈ G.ranked σ := by
@@ -406,7 +405,7 @@ theorem doubling_licensed {G : Grammar} {i : Input} {c : Candidate} (hc : c ∈ 
     {x : Ext} (hx : 1 < c.count x) :
     ∃ y, (∃ p, G.licensor p = .mirrorTemplate x y) ∧ i.Inside x y := by
   obtain ⟨σ, -, hσ⟩ := Finset.mem_biUnion.mp hc
-  rcases mem_candidates.mp (Tableau.optimal_subset hσ) with rfl | ⟨⟨-, hsub⟩, -, hd⟩
+  rcases mem_candidates.mp (Constraint.eval_subset hσ) with rfl | ⟨⟨-, hsub⟩, -, hd⟩
   · exact absurd hx (by simpa using
       List.nodup_iff_count_le_one.mp (templatic_sortedLT i).nodup x)
   · obtain ⟨l, hl, hlic⟩ := hd x (hsub x (List.count_pos_iff.mp (by omega))) hx
@@ -470,15 +469,15 @@ under each ranking of TEMPLATE, the conjunction for (R, A) and MIRROR (R, C). Th
 MIRROR (R, C) over TEMPLATE over the conjunction, has the paper's three winners and the starred
 *-an-its-il-*. -/
 theorem tableaux_49 :
-    (tableau [.R, .A, .C] [.template, .mirrorTemplate .R .A, .mirror .R .C]).optimal =
+    optimal [.R, .A, .C] [.template, .mirrorTemplate .R .A, .mirror .R .C] =
       {[.C, .A, .R]} ∧
-    (tableau [.R, .A, .C] [.mirrorTemplate .R .A, .template, .mirror .R .C]).optimal =
+    optimal [.R, .A, .C] [.mirrorTemplate .R .A, .template, .mirror .R .C] =
       {[.C, .A, .R], [.C, .R, .A, .R]} ∧
-    (tableau [.R, .A, .C] [.mirrorTemplate .R .A, .mirror .R .C, .template]).optimal =
+    optimal [.R, .A, .C] [.mirrorTemplate .R .A, .mirror .R .C, .template] =
       {[.R, .A, .R, .C], [.R, .C, .A, .R]} ∧
-    (tableau [.R, .A, .C] [.mirror .R .C, .mirrorTemplate .R .A, .template]).optimal =
+    optimal [.R, .A, .C] [.mirror .R .C, .mirrorTemplate .R .A, .template] =
       {[.R, .A, .R, .C], [.R, .C, .A, .R]} ∧
-    (tableau [.R, .A, .C] [.mirror .R .C, .template, .mirrorTemplate .R .A]).optimal =
+    optimal [.R, .A, .C] [.mirror .R .C, .template, .mirrorTemplate .R .A] =
       {[.A, .R, .C], [.C, .A, .R], [.R, .C, .A, .R], [.R, .C, .A]} := by
   decide +kernel
 
