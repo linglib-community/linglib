@@ -4,6 +4,7 @@ public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
+public import Studies.Borer2005
 public import Studies.IoninMatushansky2006
 public import Linglib.Fragments.Mayan.Chol.Classifiers
 public import Linglib.Fragments.Shan.Classifiers
@@ -30,9 +31,11 @@ classifier semantics such as Chierchia's, then follow from the lexical types.
 Pluralities are `Finset α`, so μ# is `Finset.card` at type `⟨e,n⟩`, and its strict monotonicity
 is all that quantization needs (`qua_dogs_card_eq`). The strategies part at zero, where the
 partition numeral holds of the empty sum that the noun excludes. Prediction 2 of §4, nouns that
-need no classifier, rests on Vietnamese rather than Ch'ol or Shan data and is not formalized, nor
-is the paper's remark on plural marking: Ch'ol classifiers co-occur with the plural, against Borer's
-complementarity, which the paper keeps for classifier-for-noun languages such as Shan.
+need no classifier, rests on Vietnamese rather than Ch'ol or Shan data and is not formalized. The
+remark on plural marking is stated over the range assignment of `Studies/Borer2005.lean`: a
+classifier that is a head of the nominal spine assigns range to Borer's dividing value, as plural
+inflection does, and a classifier inside the numeral's phrase assigns none. The Mi'gmaq examples
+of that section are not recorded.
 
 ## References
 
@@ -194,6 +197,47 @@ noun ((48)–(49)). -/
 theorem meanings_shanNumClf :
     meanings dog (.bin (.leaf .song) (.leaf (.shanClf Shan.Classifiers.«to»))) = [] :=
   rfl
+
+/-! ### Plural marking, §3.4
+
+For [borer-2005] a classifier and plural inflection both assign range to the dividing value of
+the nominal spine, and so exclude each other. That holds of a classifier for the noun, a head of
+the spine, and not of a classifier for the numeral, which sits inside the numeral's phrase. -/
+
+open Borer2005 (Assigner WellFormed)
+
+/-- The range a dependent of the nominal spine assigns under Borer's analysis: a classifier head
+divides, a numeral counts, and a numeral with its classifier counts as the numeral does. -/
+def assigner : Tree Unit Word → Option Assigner
+  | .leaf (.cholClf _) | .leaf (.shanClf _) => some ⟨{.Q}, .unspecified⟩
+  | .leaf .cha | .leaf .song | .bin (.leaf .cha) (.leaf (.cholClf _)) => some (.pure (.cardinal 2))
+  | .leaf .ocho => some (.pure (.cardinal 8))
+  | _ => none
+
+/-- The range assigners of a nominal, from the noun up: at each node the left daughter is a
+dependent of the spine and the right daughter continues it. -/
+def spine : Tree Unit Word → List Assigner
+  | .bin d t => spine t ++ (assigner d).toList
+  | _ => []
+
+-- A classifier for the noun divides, and is in complementary distribution with plural inflection.
+theorem wellFormed_spine_shanTree :
+    WellFormed (spine shanTree) ∧ ¬ WellFormed (.div :: spine shanTree) := by
+  decide
+
+/-- (30): a classifier for the numeral co-occurs with plural inflection, as in *cha'-tyikil
+wiñik-ob* 'two men'. -/
+theorem wellFormed_div_spine_cholTree : WellFormed (.div :: spine cholTree) := by decide
+
+-- The structure (23b) for Ch'ol would exclude the plural of (30).
+theorem not_wellFormed_div_spine_chol_23b :
+    ¬ WellFormed (.div :: spine
+      (.bin (.leaf .cha) (.bin (.leaf (.cholClf Chol.Classifiers.kojty)) (.leaf .tsi)))) := by
+  decide
+
+-- Without the plural, which is optional, nothing assigns range to the dividing value in (23a):
+-- Borer's stems are stuff until divided, where the count noun of (6) comes with its atoms.
+theorem not_wellFormed_spine_cholTree : ¬ WellFormed (spine cholTree) := by decide
 
 /-! ### One denotation for *two dogs* -/
 
