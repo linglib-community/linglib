@@ -32,7 +32,7 @@ of the team, since a translation inspects only the points below its point of eva
 ## TODO
 
 The fixed-point logic $\mu$MIL, the Boolean negation and dependence atoms of the further team
-logics, the converse of `isClosed_regularClosure_den` (Anttila and Knudstorp's expressive
+logics, the converse of `isRegular_den` (Anttila and Knudstorp's expressive
 completeness), and the K3 variant whose map is the analogue of Birkhoff's.
 
 ## References
@@ -594,11 +594,11 @@ theorem supClosed_ordConnected_den (φ : Formula Atom) :
       (upperClosure _).upper.ordConnected⟩, ih.2⟩
 
 -- footnote 11: the support sets of BSL are regular propositions in Fine's sense
-theorem isClosed_regularClosure_den [DecidableEq Atom] (φ : Formula Atom) :
+theorem isRegular_den [DecidableEq Atom] (φ : Formula Atom) :
     letI : CompleteLattice (Finset (Atom → Bool)) := Fintype.toCompleteLattice _
-    Truthmaker.regularClosure.IsClosed φ.den.pro :=
+    Truthmaker.IsRegular φ.den.pro :=
   letI : CompleteLattice (Finset (Atom → Bool)) := Fintype.toCompleteLattice _
-  Truthmaker.isClosed_regularClosure_iff_of_finite.2 (supClosed_ordConnected_den φ).1
+  Truthmaker.isRegular_iff_of_finite.2 (supClosed_ordConnected_den φ).1
 
 end Closure
 
