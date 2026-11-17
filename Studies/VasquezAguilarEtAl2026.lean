@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Shiwilu.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Evaluation
-public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Phonology.OptimalityTheory.Candidate
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Studies.BroselowChenHuffman1997
 public import Studies.Hayes1989
@@ -66,23 +66,6 @@ theorem naturalClass_interior : naturalClass interior Shiwilu.inventory = {«ɘ�
 
 /-! ### Candidates and constraints -/
 
-/-- A candidate: the correspondence of the output with the input, and the prosodic structure of
-the output. -/
-structure Candidate where
-  /-- The input–output correspondence. -/
-  io : Correspondence.Coindexation BinaryRole Segment
-  /-- The prosodic structure of the output. -/
-  form : MoraicForm Segment
-
-/-- The candidate with correspondence `io` whose output form, over the output string of `io`, has
-the given lines. -/
-def Candidate.ofIO (io : Correspondence.Coindexation BinaryRole Segment)
-    (wordSyllable : Finset (ℕ × ℕ) := ∅) (syllableMora : Finset (ℕ × Mora) := ∅)
-    (wordSegment : Finset (ℕ × ℕ) := ∅) (syllableSegment : Finset (ℕ × ℕ) := ∅)
-    (moraSegment : Finset (Mora × ℕ) := ∅) : Candidate :=
-  ⟨io, .ofLines (io.string .rhs) wordSyllable syllableMora wordSegment syllableSegment
-    moraSegment⟩
-
 section Classes
 
 variable (X : MoraicForm Segment)
@@ -103,33 +86,29 @@ instance (P : Segment → Prop) [DecidablePred P] (m : Mora) : Decidable (BearsO
 end Classes
 
 /-- HEADEDNESS-σ (12): a violation for each syllable without a mora. -/
-def headedness : Constraint Candidate := fun c ↦
-  (c.form.syllables.filter (c.form.weight · = 0)).card
+def headedness : Constraint (Candidate Segment) := fun c ↦
+  (c.output.form.syllables.filter (c.output.form.weight · = 0)).card
 
 /-- *μ/x (13), (14): a violation for each mora linked to a single segment of the class `P`. -/
-def starMu (P : Segment → Prop) [DecidablePred P] : Constraint Candidate := fun c ↦
-  (c.form.morae.filter (BearsOnly c.form P)).card
+def starMu (P : Segment → Prop) [DecidablePred P] : Constraint (Candidate Segment) := fun c ↦
+  (c.output.form.morae.filter (BearsOnly c.output.form P)).card
 
 /-- NOSHAREDMORA, from [broselow-chen-huffman-1997]: a violation for each mora linked to more
 than one segment. -/
-def noSharedMora : Constraint Candidate := BroselowChenHuffman1997.noSharedMora.comap (·.form)
-
-/-- ONSET: a violation for each syllable without an onset. -/
-def onset : Constraint Candidate := fun c ↦
-  (c.form.syllables.filter (c.form.onset · = ∅)).card
+def noSharedMora : Constraint (Candidate Segment) := BroselowChenHuffman1997.noSharedMora.comap (·.output.form)
 
 /-- *GEMTAP (20): a violation for each tap with two association lines. -/
-def gemTap : Constraint Candidate := fun c ↦
-  (c.form.slots.filter fun i ↦
-    HasAt c.form (· .tap = true) i ∧ 2 ≤ c.form.lineCount i).card
+def gemTap : Constraint (Candidate Segment) := fun c ↦
+  (c.output.form.slots.filter fun i ↦
+    HasAt c.output.form (· .tap = true) i ∧ 2 ≤ c.output.form.lineCount i).card
 
 /-- CRISPEDGE(PRWD) (18): a violation for each consonant that two prosodic words dominate. -/
-def crispEdge : Constraint Candidate := fun c ↦
-  (c.form.slots.filter fun i ↦ HasAt c.form Segment.IsConsonant i ∧
-    1 < (c.form.words.filter (i ∈ c.form.wordYield ·)).card).card
+def crispEdge : Constraint (Candidate Segment) := fun c ↦
+  (c.output.form.slots.filter fun i ↦ HasAt c.output.form Segment.IsConsonant i ∧
+    1 < (c.output.form.words.filter (i ∈ c.output.form.wordYield ·)).card).card
 
 /-- MAX-IO(INTV): a violation for each interior vowel of the input without a correspondent. -/
-def maxIntV : Constraint Candidate := fun c ↦
+def maxIntV : Constraint (Candidate Segment) := fun c ↦
   c.io.maxViolAt (fun i ↦ ∃ x ∈ (c.io.string .lhs)[i]?, interior ≤ x) .lhs .rhs
 
 /-- The constraints of the analysis. -/
@@ -145,14 +124,14 @@ inductive Con
   deriving DecidableEq, Fintype, Repr
 
 /-- The marks of a candidate. -/
-def marks (c : Candidate) : Con → ℕ
+def marks (c : Candidate Segment) : Con → ℕ
   | .gemTap => gemTap c
   | .starMuIntV => starMu (interior ≤ ·) c
   | .headedness => headedness c
   | .noSharedMora => noSharedMora c
   | .crispEdge => crispEdge c
   | .maxIntV => maxIntV c
-  | .onset => onset c
+  | .onset => c.output.onsetViol
   | .starMuC => starMu Segment.IsConsonant c
 
 /-- The solid arrows of Figure 5, each from a dominating constraint to a dominated one. -/
@@ -175,7 +154,7 @@ inductive C15 | a | b | c | d
 
 /-- The candidates of (15): the coda bears the mora (a), the interior vowel bears it (b), the
 syllable has none (c), and the vowel and coda share it (d). -/
-def cand15 : C15 → Candidate
+def cand15 : C15 → Candidate Segment
   | .a => .ofIO (.identity input15) (syllableMora := {(1, .of 2)})
     (syllableSegment := {(1, 0), (1, 1)}) (moraSegment := {(.of 2, 2)})
   | .b => .ofIO (.identity input15) (syllableMora := {(1, .of 1)})
@@ -193,7 +172,7 @@ inductive C16 | a | b | c
 
 /-- The candidates of (16): the medial /k/ geminates (a), the first syllable has no mora (b),
 and the interior vowel bears it (c). -/
-def cand16 : C16 → Candidate
+def cand16 : C16 → Candidate Segment
   | .a => .ofIO (.identity input16) (syllableMora := {(1, .of 2), (3, .of 3)})
     (syllableSegment := {(1, 0), (1, 1), (3, 2)}) (moraSegment := {(.of 2, 2), (.of 3, 3)})
   | .b => .ofIO (.identity input16) (syllableMora := {(3, .of 3)})
@@ -209,7 +188,7 @@ inductive C17 | a | b
   deriving DecidableEq, Fintype, Repr
 
 /-- The candidates of (17): no gemination after the peripheral vowel (a), and gemination (b). -/
-def cand17 : C17 → Candidate
+def cand17 : C17 → Candidate Segment
   | .a => .ofIO (.identity input17) (syllableMora := {(1, .of 1), (3, .of 3)})
     (syllableSegment := {(1, 0), (3, 2)}) (moraSegment := {(.of 1, 1), (.of 3, 3)})
   | .b => .ofIO (.identity input17) (syllableMora := {(1, .of 1), (1, .of 2), (3, .of 3)})
@@ -224,7 +203,7 @@ inductive C19 | a | b
 
 /-- The candidates of (19): the interior vowel deletes (a), and the following word's first
 consonant geminates to close its syllable (b). -/
-def cand19 : C19 → Candidate
+def cand19 : C19 → Candidate Segment
   | .a => .ofIO (.eraseIdx input19 ⟨3, by decide⟩) (wordSyllable := {(1, 1), (4, 4)})
     (syllableMora := {(1, .of 1), (4, .of 4)}) (syllableSegment := {(1, 0), (1, 2), (4, 3)})
     (moraSegment := {(.of 1, 1), (.of 4, 4)})
@@ -242,7 +221,7 @@ inductive C21 | a | b | c | d
 
 /-- The candidates of (21): the tap is a moraic coda (a), an onset after a moraic interior vowel
 (b), an onset after a moraless syllable (c), and a geminate (d). -/
-def cand21 : C21 → Candidate
+def cand21 : C21 → Candidate Segment
   | .a => .ofIO (.identity input21) (syllableMora := {(1, .of 2), (3, .of 3), (5, .of 6)})
     (syllableSegment := {(1, 0), (1, 1), (5, 4), (5, 5)})
     (moraSegment := {(.of 2, 2), (.of 3, 3), (.of 6, 6)})
@@ -258,11 +237,11 @@ def cand21 : C21 → Candidate
 
 -- The candidates are well formed and free of crossing lines.
 theorem wellFormed_noCrossing_cand :
-    (∀ x, (cand15 x).form.WellFormed ∧ (cand15 x).form.NoCrossing) ∧
-    (∀ x, (cand16 x).form.WellFormed ∧ (cand16 x).form.NoCrossing) ∧
-    (∀ x, (cand17 x).form.WellFormed ∧ (cand17 x).form.NoCrossing) ∧
-    (∀ x, (cand19 x).form.WellFormed ∧ (cand19 x).form.NoCrossing) ∧
-    (∀ x, (cand21 x).form.WellFormed ∧ (cand21 x).form.NoCrossing) := by
+    (∀ x, (cand15 x).output.form.WellFormed ∧ (cand15 x).output.form.NoCrossing) ∧
+    (∀ x, (cand16 x).output.form.WellFormed ∧ (cand16 x).output.form.NoCrossing) ∧
+    (∀ x, (cand17 x).output.form.WellFormed ∧ (cand17 x).output.form.NoCrossing) ∧
+    (∀ x, (cand19 x).output.form.WellFormed ∧ (cand19 x).output.form.NoCrossing) ∧
+    (∀ x, (cand21 x).output.form.WellFormed ∧ (cand21 x).output.form.NoCrossing) := by
   decide
 
 /-! ### Figure 5 derives the tableaux -/
@@ -383,10 +362,10 @@ theorem gemination_iff (r : Ranking Con) :
 -- The input of (16), syllabified as [hayes-1989] syllabifies it, every vowel bearing its mora
 -- and no coda one, is the candidate with the moraic interior vowel.
 theorem syllabify_input16 :
-    Hayes1989.Underlying.syllabify (input16.zip [0, 1, 0, 1]) false = (cand16 .c).form := by
+    Hayes1989.Underlying.syllabify (input16.zip [0, 1, 0, 1]) false = (cand16 .c).output.form := by
   decide
 
 -- The geminate of (16a) is a geminate of [hayes-1989], one consonant with two lines.
-theorem lineCount_geminate : (cand16 .a).form.lineCount 2 = 2 := by decide
+theorem lineCount_geminate : (cand16 .a).output.form.lineCount 2 = 2 := by decide
 
 end VasquezAguilarEtAl2026

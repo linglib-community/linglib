@@ -1,0 +1,160 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+module
+
+public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Phonology.Prosody.Hierarchy
+public import Linglib.Phonology.Prosody.Grid
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
+public import Mathlib.Data.Finset.Sort
+
+/-!
+# Candidates
+
+A candidate pairs an input with an output, each a *parse*: a moraic form over its own string
+([hayes-1989]), prosodic structure above the syllable as trees whose syllable leaves name the
+form's syllables, and a metrical grid giving each syllable its stress. The two strings correspond
+by a `Coindexation`, and the morae correspond independently of their segments
+([broselow-chen-huffman-1997]). The input is parsed like the output, so faithfulness compares
+prosody with prosody: identity of corresponding slots under any reading of a parse is the one
+counter [`Candidate.identViol`](##OptimalityTheory.Candidate.identViol), read at the morae of a
+slot for length and at the stress of its syllable for stress, and
+[MAX-μ](##OptimalityTheory.Candidate.maxMoraViol) and
+[DEP-μ](##OptimalityTheory.Candidate.depMoraViol) count the morae left without correspondents.
+
+## Implementation notes
+
+* A parse adds to the moraic form only what lies above the syllable: the trees' syllable leaves
+  are marked with the form's syllable names, and the grid lists the stress of each syllable in
+  nucleus order. Words appear both as the form's word tier and as `.om` nodes of a tree; a study
+  uses one of the two.
+* The input and output strings live in the coindexation, and each parse's melody repeats its
+  side's string; a study's constructor builds the parses over `io.string`, as
+  `Candidate.ofIO` does.
+* The mora correspondence is a field of its own, and `Candidate.headMoraCorr` is the one the
+  segments induce, for candidates printed without one.
+* Segmental faithfulness is read off `io` by the `Coindexation` counters; this file adds only
+  the counters that need a parse or the mora correspondence.
+
+## References
+
+* [prince-smolensky-1993]
+* [hayes-1989]
+* [mccarthy-prince-1995]
+* [broselow-chen-huffman-1997]
+-/
+
+@[expose] public section
+
+namespace OptimalityTheory
+
+open Prosody Finset
+
+/-- The syllable leaves of a prosodic tree, by mark. -/
+def _root_.Prosody.syllableLeaves {M : Type*} (t : RoseTree (Constituent Level M)) : List M :=
+  t.subtrees.filterMap fun s ↦ if s.value.level = .syl then some s.value.mark else none
+
+/-- A parse: a moraic form, prosodic structure above the syllable as trees whose syllable
+leaves name the form's syllables, and a metrical grid over the syllables in nucleus order. -/
+structure Parse (α : Type*) where
+  /-- The moraic form, up to the syllable. -/
+  form : MoraicForm α := {}
+  /-- The prosodic structure above the syllable. -/
+  above : List (RoseTree (Constituent Level ℕ)) := []
+  /-- The stress of each syllable, in nucleus order. -/
+  grid : Grid := []
+
+namespace Parse
+
+variable {α : Type*} (P : Parse α)
+
+/-- The syllables in nucleus order. -/
+def syllableList : List ℕ := P.form.syllables.sort (· ≤ ·)
+
+/-- The stress of the syllable named `s`, its column of the grid. -/
+def stress (s : ℕ) : ℕ := P.grid.getD (P.syllableList.idxOf s) 0
+
+/-- The stress at a slot: the greatest stress of a syllable that contains it, and `0` for a slot
+in no syllable. -/
+def stressAt (i : ℕ) : ℕ := (P.form.syllables.filter (i ∈ P.form.yield ·)).sup P.stress
+
+/-- The number of morae at a slot. -/
+def weightAt (i : ℕ) : ℕ := #(P.form.moraeAt i)
+
+/-- The feet of the structure above the syllable. -/
+def feet : List (RoseTree (Constituent Level ℕ)) :=
+  P.above.flatMap fun t ↦ t.subtrees.filter fun s ↦ s.value.level = .ft
+
+/-- FT-BIN over the weight of the form's syllables: a violation for each foot whose syllables
+carry other than two morae together. -/
+def ftBinViol : ℕ := P.feet.countP fun t ↦ ((syllableLeaves t).map P.form.weight).sum ≠ 2
+
+/-- ONSET: a violation for each syllable without an onset. -/
+def onsetViol : ℕ := #(P.form.syllables.filter fun s ↦ P.form.onset s = ∅)
+
+/-- *COMPLEXCODA: a violation for each syllable with more than one coda segment. -/
+def complexCodaViol : ℕ := #(P.form.syllables.filter fun s ↦ 2 ≤ #(P.form.coda s))
+
+end Parse
+
+/-- An input–output candidate: the correspondence of the two strings, a parse of each, and an
+independent correspondence of their morae. -/
+structure Candidate (α : Type*) where
+  /-- The input–output correspondence of the segments. -/
+  io : Correspondence.Coindexation BinaryRole α
+  /-- The parse of the input. -/
+  input : Parse α := {}
+  /-- The parse of the output. -/
+  output : Parse α := {}
+  /-- The correspondence of the morae, independent of their segments. -/
+  moraCorr : Finset (Mora × Mora) := ∅
+
+namespace Candidate
+
+variable {α : Type*} (c : Candidate α)
+
+/-- The candidate of a correspondence whose input is the bare input string and whose output
+form, over the output string, has the given lines. -/
+def ofIO (io : Correspondence.Coindexation BinaryRole α)
+    (wordSyllable : Finset (ℕ × ℕ) := ∅) (syllableMora : Finset (ℕ × Mora) := ∅)
+    (wordSegment : Finset (ℕ × ℕ) := ∅) (syllableSegment : Finset (ℕ × ℕ) := ∅)
+    (moraSegment : Finset (Mora × ℕ) := ∅) : Candidate α :=
+  { io := io
+    input := { form := { melody := io.string .lhs } }
+    output := { form := (MoraicForm.ofLines (io.string .rhs) wordSyllable syllableMora
+      wordSegment syllableSegment moraSegment) } }
+
+/-- The corresponding slot pairs: each input position with the positions of its
+correspondents. -/
+def pairs : List (ℕ × ℕ) :=
+  (c.io.form .lhs).zipIdx.flatMap fun x ↦ (x.1.2 .rhs).map fun o ↦ (x.2, o)
+
+/-- The correspondence of morae that the segments induce: a mora of the input and a mora of the
+output correspond when their heads do and they are the same mora of their head. -/
+def headMoraCorr : Finset (Mora × Mora) :=
+  (c.input.form.morae ×ˢ c.output.form.morae).filter fun p ↦
+    (p.1.slot, p.2.slot) ∈ c.pairs ∧ p.1.idx = p.2.idx
+
+/-- The candidate with the mora correspondence its segments induce. -/
+def withHeadMoraCorr : Candidate α := { c with moraCorr := c.headMoraCorr }
+
+/-- IDENT under a reading `g` of a parse at a slot: a violation for each corresponding pair
+whose readings differ. Reading a feature of the melody is [mccarthy-prince-1995]'s IDENT(F);
+reading `Parse.weightAt` is identity of length, and `Parse.stressAt` identity of stress. -/
+def identViol (g : Parse α → ℕ → ℕ) : ℕ :=
+  c.pairs.countP fun p ↦ g c.input p.1 ≠ g c.output p.2
+
+/-- MAX-μ: a violation for each mora of the input without a correspondent. -/
+def maxMoraViol : ℕ :=
+  #(c.input.form.morae.filter fun m ↦ ∀ m' ∈ c.output.form.morae, (m, m') ∉ c.moraCorr)
+
+/-- DEP-μ: a violation for each mora of the output without a correspondent. -/
+def depMoraViol : ℕ :=
+  #(c.output.form.morae.filter fun m' ↦ ∀ m ∈ c.input.form.morae, (m, m') ∉ c.moraCorr)
+
+end Candidate
+
+end OptimalityTheory
