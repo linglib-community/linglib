@@ -34,9 +34,14 @@ every principle holds of every entity.
 
 ## Implementation notes
 
-As in Richter's syntax, a relation symbol applies to variables only. `Models` evaluates each
-principle at `u` under the constant assignment `fun _ ↦ u`, which makes it decidable on a finite
-universe and is immaterial for closed principles.
+Negation, implication and universal quantification are the primitive connectives, and
+conjunction, disjunction and existential quantification are defined from them, as in mathlib's
+`FirstOrder.Language.BoundedFormula`, so that an induction on formulae has six cases; the
+`satisfiesOn_and`, `satisfiesOn_or` and `satisfiesOn_ex` lemmas give the clauses of
+[richter-2024] for the defined ones. As in Richter's syntax, a relation symbol applies to
+variables only. `Models` evaluates each principle at `u` under the constant assignment
+`fun _ ↦ u`, which makes it decidable on a finite universe and is immaterial for closed
+principles.
 
 ## References
 
@@ -64,15 +69,8 @@ inductive Desc (Sig : Signature Srt) where
   | rel (ρ : Sig.Rel) (xs : Fin (Sig.arity ρ) → ℕ)
   /-- Negation. -/
   | neg (d : Desc Sig)
-  /-- Conjunction. -/
-  | and (d e : Desc Sig)
-  /-- Disjunction. -/
-  | or (d e : Desc Sig)
   /-- Classical implication. -/
   | imp (d e : Desc Sig)
-  /-- The formula `ex x d` says that `d` holds when `x` is some component of the described
-  entity. -/
-  | ex (x : ℕ) (d : Desc Sig)
   /-- The formula `all x d` says that `d` holds when `x` is any component of the described
   entity. -/
   | all (x : ℕ) (d : Desc Sig)
@@ -80,6 +78,16 @@ inductive Desc (Sig : Signature Srt) where
 variable {Sig : Signature Srt} {U : Type v}
 
 namespace Desc
+
+/-- Conjunction. -/
+protected def and (d e : Desc Sig) : Desc Sig := (d.imp e.neg).neg
+
+/-- Disjunction. -/
+protected def or (d e : Desc Sig) : Desc Sig := d.neg.imp e
+
+/-- The formula `ex x d` says that `d` holds when `x` is some component of the described
+entity. -/
+def ex (x : ℕ) (d : Desc Sig) : Desc Sig := (all x d.neg).neg
 
 /-- The biconditional of two formulae. -/
 protected def iff (d e : Desc Sig) : Desc Sig := (d.imp e).and (e.imp d)
@@ -92,10 +100,10 @@ def top : Desc Sig := .all 0 (.pathEq (.var 0) (.var 0))
 def bot : Desc Sig := top.neg
 
 /-- The conjunction of a list of formulae. -/
-def conj (ds : List (Desc Sig)) : Desc Sig := ds.foldr and top
+def conj (ds : List (Desc Sig)) : Desc Sig := ds.foldr Desc.and top
 
 /-- The disjunction of a list of formulae. -/
-def disj (ds : List (Desc Sig)) : Desc Sig := ds.foldr or bot
+def disj (ds : List (Desc Sig)) : Desc Sig := ds.foldr Desc.or bot
 
 /-- The variables that occur free in a formula ([richter-2024], Definition 5). -/
 def freeVars : Desc Sig → Finset ℕ
@@ -103,8 +111,14 @@ def freeVars : Desc Sig → Finset ℕ
   | pathEq t₁ t₂ => t₁.freeVars ∪ t₂.freeVars
   | rel _ xs => Finset.univ.image xs
   | neg d => d.freeVars
-  | and d e | or d e | imp d e => d.freeVars ∪ e.freeVars
-  | ex x d | all x d => d.freeVars.erase x
+  | imp d e => d.freeVars ∪ e.freeVars
+  | all x d => d.freeVars.erase x
+
+@[simp] theorem freeVars_and (d e : Desc Sig) : (d.and e).freeVars = d.freeVars ∪ e.freeVars := rfl
+
+@[simp] theorem freeVars_or (d e : Desc Sig) : (d.or e).freeVars = d.freeVars ∪ e.freeVars := rfl
+
+@[simp] theorem freeVars_ex (x : ℕ) (d : Desc Sig) : (ex x d).freeVars = d.freeVars.erase x := rfl
 
 @[simp] theorem freeVars_iff (d e : Desc Sig) : (d.iff e).freeVars = d.freeVars ∪ e.freeVars := by
   simp [Desc.iff, freeVars, Finset.union_comm]
@@ -114,8 +128,8 @@ def IsColonFree : Desc Sig → Prop
   | sortAssign t _ => t.IsColonFree
   | pathEq t₁ t₂ => t₁.IsColonFree ∧ t₂.IsColonFree
   | rel _ _ => True
-  | neg d | ex _ d | all _ d => d.IsColonFree
-  | and d e | or d e | imp d e => d.IsColonFree ∧ e.IsColonFree
+  | neg d | all _ d => d.IsColonFree
+  | imp d e => d.IsColonFree ∧ e.IsColonFree
 
 instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
   | sortAssign t _ => Term.decidableIsColonFree t
@@ -124,8 +138,8 @@ instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
     have := Term.decidableIsColonFree t₂
     inferInstanceAs (Decidable (t₁.IsColonFree ∧ t₂.IsColonFree))
   | rel .. => isTrue trivial
-  | neg d | ex _ d | all _ d => decidableIsColonFree d
-  | and d e | or d e | imp d e =>
+  | neg d | all _ d => decidableIsColonFree d
+  | imp d e =>
     have := decidableIsColonFree d
     have := decidableIsColonFree e
     inferInstanceAs (Decidable (d.IsColonFree ∧ e.IsColonFree))
@@ -145,10 +159,7 @@ def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Desc Sig → Prop
   | .pathEq t₁ t₂ => ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u
   | .rel ρ xs => (fun i ↦ g (xs i)) ∈ I.R ρ
   | .neg d => ¬ SatisfiesOn D g u d
-  | .and d e => SatisfiesOn D g u d ∧ SatisfiesOn D g u e
-  | .or d e => SatisfiesOn D g u d ∨ SatisfiesOn D g u e
   | .imp d e => SatisfiesOn D g u d → SatisfiesOn D g u e
-  | .ex x d => ∃ w ∈ D, SatisfiesOn D (Function.update g x w) u d
   | .all x d => ∀ w ∈ D, SatisfiesOn D (Function.update g x w) u d
 
 /-- The entity `u` satisfies a formula under the assignment `g` when the quantifiers range over
@@ -165,11 +176,11 @@ instance decidableSatisfiesOn [Fintype U] [DecidableEq U] [DecidableLE Srt] (D :
   | .neg d => by
     have := decidableSatisfiesOn D g u d
     unfold SatisfiesOn; infer_instance
-  | .and d e | .or d e | .imp d e => by
+  | .imp d e => by
     have := decidableSatisfiesOn D g u d
     have := decidableSatisfiesOn D g u e
     unfold SatisfiesOn; infer_instance
-  | .ex x d | .all x d => by
+  | .all x d => by
     have (w : U) := decidableSatisfiesOn D (Function.update g x w) u d
     unfold SatisfiesOn; infer_instance
 
@@ -192,26 +203,28 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
 
 @[simp] theorem satisfiesOn_neg : I.SatisfiesOn D g u d.neg ↔ ¬ I.SatisfiesOn D g u d := Iff.rfl
 
-@[simp] theorem satisfiesOn_and :
-    I.SatisfiesOn D g u (d.and e) ↔ I.SatisfiesOn D g u d ∧ I.SatisfiesOn D g u e := Iff.rfl
-
-@[simp] theorem satisfiesOn_or :
-    I.SatisfiesOn D g u (d.or e) ↔ I.SatisfiesOn D g u d ∨ I.SatisfiesOn D g u e := Iff.rfl
-
 @[simp] theorem satisfiesOn_imp :
     I.SatisfiesOn D g u (d.imp e) ↔ (I.SatisfiesOn D g u d → I.SatisfiesOn D g u e) := Iff.rfl
 
+@[simp] theorem satisfiesOn_and :
+    I.SatisfiesOn D g u (d.and e) ↔ I.SatisfiesOn D g u d ∧ I.SatisfiesOn D g u e :=
+  Classical.not_imp.trans (and_congr_right fun _ ↦ not_not)
+
+@[simp] theorem satisfiesOn_or :
+    I.SatisfiesOn D g u (d.or e) ↔ I.SatisfiesOn D g u d ∨ I.SatisfiesOn D g u e :=
+  or_iff_not_imp_left.symm
+
 @[simp] theorem satisfiesOn_iff :
     I.SatisfiesOn D g u (d.iff e) ↔ (I.SatisfiesOn D g u d ↔ I.SatisfiesOn D g u e) :=
-  iff_def.symm
-
-@[simp] theorem satisfiesOn_ex {x : ℕ} :
-    I.SatisfiesOn D g u (.ex x d) ↔ ∃ w ∈ D, I.SatisfiesOn D (Function.update g x w) u d :=
-  Iff.rfl
+  satisfiesOn_and.trans iff_def.symm
 
 @[simp] theorem satisfiesOn_all {x : ℕ} :
     I.SatisfiesOn D g u (.all x d) ↔ ∀ w ∈ D, I.SatisfiesOn D (Function.update g x w) u d :=
   Iff.rfl
+
+@[simp] theorem satisfiesOn_ex {x : ℕ} :
+    I.SatisfiesOn D g u (.ex x d) ↔ ∃ w ∈ D, I.SatisfiesOn D (Function.update g x w) u d := by
+  simp only [Desc.ex, satisfiesOn_neg, satisfiesOn_all, not_forall, not_not, exists_prop]
 
 @[simp] theorem satisfiesOn_top : I.SatisfiesOn D g u .top := fun _ _ ↦ ⟨_, rfl, rfl⟩
 
@@ -238,22 +251,28 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
 @[simp] theorem satisfies_neg : I.Satisfies g u d.neg ↔ ¬ I.Satisfies g u d := Iff.rfl
 
 @[simp] theorem satisfies_and :
-    I.Satisfies g u (d.and e) ↔ I.Satisfies g u d ∧ I.Satisfies g u e := Iff.rfl
+    I.Satisfies g u (d.and e) ↔ I.Satisfies g u d ∧ I.Satisfies g u e := satisfiesOn_and
 
 @[simp] theorem satisfies_or :
-    I.Satisfies g u (d.or e) ↔ I.Satisfies g u d ∨ I.Satisfies g u e := Iff.rfl
+    I.Satisfies g u (d.or e) ↔ I.Satisfies g u d ∨ I.Satisfies g u e := satisfiesOn_or
 
 @[simp] theorem satisfies_imp :
     I.Satisfies g u (d.imp e) ↔ I.Satisfies g u d → I.Satisfies g u e := Iff.rfl
 
 @[simp] theorem satisfies_iff :
-    I.Satisfies g u (d.iff e) ↔ (I.Satisfies g u d ↔ I.Satisfies g u e) := iff_def.symm
+    I.Satisfies g u (d.iff e) ↔ (I.Satisfies g u d ↔ I.Satisfies g u e) := satisfiesOn_iff
 
 @[simp] theorem satisfies_ex {x : ℕ} : I.Satisfies g u (.ex x d) ↔
-    ∃ w, I.IsComponentOf u w ∧ I.Satisfies (Function.update g x w) u d := Iff.rfl
+    ∃ w, I.IsComponentOf u w ∧ I.Satisfies (Function.update g x w) u d := satisfiesOn_ex
 
 @[simp] theorem satisfies_all {x : ℕ} : I.Satisfies g u (.all x d) ↔
     ∀ w, I.IsComponentOf u w → I.Satisfies (Function.update g x w) u d := Iff.rfl
+
+theorem SatisfiesOn.and_left (h : I.SatisfiesOn D g u (d.and e)) : I.SatisfiesOn D g u d :=
+  (satisfiesOn_and.1 h).1
+
+theorem SatisfiesOn.and_right (h : I.SatisfiesOn D g u (d.and e)) : I.SatisfiesOn D g u e :=
+  (satisfiesOn_and.1 h).2
 
 theorem SatisfiesOn.sortAssign_mono {t : Term Sig} {σ τ : Srt} (hστ : σ ≤ τ)
     (h : I.SatisfiesOn D g u (.sortAssign t σ)) : I.SatisfiesOn D g u (.sortAssign t τ) :=
@@ -283,17 +302,9 @@ theorem satisfiesOn_congr : ∀ {g g' : ℕ → U},
       funext fun i ↦ h _ (Finset.mem_image_of_mem xs (Finset.mem_univ i))
     rw [satisfiesOn_rel, this]; rfl
   | neg d ih => exact fun h ↦ not_congr (ih h)
-  | and d e ihd ihe =>
-    exact fun h ↦ and_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
-      (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
-  | or d e ihd ihe =>
-    exact fun h ↦ or_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
-      (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
   | imp d e ihd ihe =>
     exact fun h ↦ imp_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
       (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
-  | ex x d ih =>
-    exact fun h ↦ exists_congr fun w ↦ and_congr_right fun _ ↦ ih (update_congr h w)
   | all x d ih =>
     exact fun h ↦ forall_congr' fun w ↦ imp_congr_right fun _ ↦ ih (update_congr h w)
 
@@ -317,10 +328,7 @@ theorem satisfiesOn_iff_of_isColonFree (hd : d.IsColonFree) :
       termDenot_of_isColonFree hd.2 u u']
   | rel => exact Iff.rfl
   | neg d ih => exact not_congr (ih hd)
-  | and d e ihd ihe => exact and_congr (ihd hd.1) (ihe hd.2)
-  | or d e ihd ihe => exact or_congr (ihd hd.1) (ihe hd.2)
   | imp d e ihd ihe => exact imp_congr (ihd hd.1) (ihe hd.2)
-  | ex x d ih => exact exists_congr fun w ↦ and_congr_right fun _ ↦ ih hd
   | all x d ih => exact forall_congr' fun w ↦ imp_congr_right fun _ ↦ ih hd
 
 end Interpretation
@@ -381,11 +389,7 @@ theorem satisfiesOn_image :
       simp [f.injective.eq_iff, eq_comm]
   | rel ρ xs => exact f.map_R (xs := fun i ↦ g (xs i))
   | neg d ih => exact not_congr ih
-  | and d e ihd ihe => exact and_congr ihd ihe
-  | or d e ihd ihe => exact or_congr ihd ihe
   | imp d e ihd ihe => exact imp_congr ihd ihe
-  | ex x d ih =>
-    simp only [satisfiesOn_ex, Set.exists_mem_image, ← ih, Function.comp_update]
   | all x d ih =>
     simp only [satisfiesOn_all, Set.forall_mem_image, ← ih, Function.comp_update]
 

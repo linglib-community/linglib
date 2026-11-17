@@ -366,8 +366,9 @@ daughter has one gap. -/
 theorem satisfies_mtrGap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHeadCxt) (σ : Srt) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) σ) ↔
       I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) σ) := by
-  obtain ⟨-, -, -, -, v, hv, hv'⟩ :=
-    satisfies_body hI (c := fillerHeadPrinciple) (by simp [constraints]) hu
+  have h := satisfies_body hI (c := fillerHeadPrinciple) (by simp [constraints]) hu
+  simp only [fillerHeadPrinciple, Interpretation.satisfies_and] at h
+  obtain ⟨-, -, -, -, v, hv, hv'⟩ := h
   simp only [Interpretation.satisfies_sortAssign]
   constructor <;> rintro ⟨w, hw, hle⟩
   · obtain rfl : w = v := Option.mem_unique hw hv
