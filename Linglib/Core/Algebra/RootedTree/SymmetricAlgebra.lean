@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
+public import Mathlib.RingTheory.Bialgebra.Equiv
 public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 /-!
@@ -14,16 +15,10 @@ public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 A basis of a module `M` indexed by `T` gives an
 [isomorphism](##SymmetricAlgebra.equivConnesKreimer) from the symmetric algebra on `M` to
 `ConnesKreimer R T`, sending each basis vector to its tree, as `SymmetricAlgebra.equivMvPolynomial`
-does for polynomials. It carries the bialgebra structure of the symmetric algebra, in which every
-generator is primitive, to the
-[primitive coproduct](##ConnesKreimer.comulPrim_comp_equivConnesKreimer) and the
-[counit](##ConnesKreimer.counit_comp_equivConnesKreimer) of the forests.
-
-## Implementation notes
-
-`ConnesKreimer R T` stays a type of its own. On trees it carries the admissible-cut `Bialgebra`,
-so the primitive coproduct is an algebra homomorphism and not an instance, and the isomorphism is
-stated to preserve it as an equation of algebra homomorphisms and not as a `BialgEquiv`.
+does for polynomials. It carries the comultiplication of the symmetric algebra, in which every
+generator is primitive, to the primitive coproduct of the forests, and the counit to the counit.
+On trees, where the primitive coproduct is the bialgebra structure of `WithCuts R emptyCuts`, it
+is a [bialgebra isomorphism](##SymmetricAlgebra.bialgEquivConnesKreimer).
 
 ## References
 
@@ -67,15 +62,11 @@ namespace ConnesKreimer
 
 open SymmetricAlgebra
 
-/-- The isomorphism with the symmetric algebra carries its counit to the coefficient of the empty
-forest. -/
 theorem counit_comp_equivConnesKreimer (b : Module.Basis T R M) :
     (counit (R := R)).comp (equivConnesKreimer b).toAlgHom =
       Bialgebra.counitAlgHom R (SymmetricAlgebra R M) :=
   SymmetricAlgebra.algHom_ext <| b.ext fun t ↦ by simp [algebraMapInv_ι]
 
-/-- The isomorphism with the symmetric algebra carries its comultiplication, in which every
-generator is primitive, to the primitive coproduct (Example 1.3.14 of [grinberg-reiner-2020]). -/
 theorem comulPrim_comp_equivConnesKreimer (b : Module.Basis T R M) :
     (comulPrim (R := R)).comp (equivConnesKreimer b).toAlgHom =
       (Algebra.TensorProduct.map (equivConnesKreimer b).toAlgHom
@@ -83,3 +74,21 @@ theorem comulPrim_comp_equivConnesKreimer (b : Module.Basis T R M) :
   SymmetricAlgebra.algHom_ext <| b.ext fun t ↦ by simp
 
 end ConnesKreimer
+
+namespace SymmetricAlgebra
+
+variable {α : Type*}
+
+/-- On trees the isomorphism with the symmetric algebra is one of bialgebras, the forests carrying
+the coproduct in which every tree is primitive (Example 1.3.14 of [grinberg-reiner-2020]). -/
+noncomputable def bialgEquivConnesKreimer (b : Module.Basis (UnorderedTree α) R M) :
+    SymmetricAlgebra R M ≃ₐc[R] WithCuts R (emptyCuts (α := α)) :=
+  .ofAlgEquiv (equivConnesKreimer b) (counit_comp_equivConnesKreimer b)
+    (WithCuts.comulAlgHom_emptyCuts (R := R) ▸ (comulPrim_comp_equivConnesKreimer b).symm)
+
+@[simp]
+theorem bialgEquivConnesKreimer_apply (b : Module.Basis (UnorderedTree α) R M)
+    (x : SymmetricAlgebra R M) : bialgEquivConnesKreimer b x = equivConnesKreimer b x :=
+  rfl
+
+end SymmetricAlgebra

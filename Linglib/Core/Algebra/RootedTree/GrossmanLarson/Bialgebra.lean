@@ -62,17 +62,13 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 /-! ### The coalgebra -/
 
 noncomputable instance instCoalgebra : Coalgebra R (GrossmanLarson R α) :=
-  letI : Coalgebra R (ConnesKreimer R (UnorderedTree α)) :=
-    { comul := comulPrim.toLinearMap
-      counit := ConnesKreimer.counit.toLinearMap
-      coassoc := congr(($comulPrim_coassoc).toLinearMap)
-      rTensor_counit_comp_comul := congr(($rTensor_counit_comp_comulPrim).toLinearMap)
-      lTensor_counit_comp_comul := congr(($lTensor_counit_comp_comulPrim).toLinearMap) }
-  linearEquiv.coalgebra R
+  LinearEquiv.coalgebra R (B := WithCuts R (emptyCuts (α := α))) linearEquiv
 
 theorem comul_apply (x : GrossmanLarson R α) :
     comul (R := R) x = TensorProduct.map linearEquiv.symm.toLinearMap linearEquiv.symm.toLinearMap
-      (comulPrim x.toConnesKreimer) := rfl
+      (comulPrim x.toConnesKreimer) :=
+  congr(TensorProduct.map linearEquiv.symm.toLinearMap linearEquiv.symm.toLinearMap
+    ($(WithCuts.comulAlgHom_emptyCuts (R := R) (α := α)) x.toConnesKreimer))
 
 @[simp] theorem counit_apply (x : GrossmanLarson R α) :
     counit (R := R) x = ConnesKreimer.counit x.toConnesKreimer := rfl
@@ -85,11 +81,8 @@ theorem comul_of (F : Forest (UnorderedTree α)) :
   rw [comul_apply, toConnesKreimer_of, comulPrim_of', map_multiset_sum, Multiset.map_map]
   rfl
 
-instance instIsCocomm : IsCocomm R (GrossmanLarson R α) where
-  comm_comp_comul := lhom_ext fun F ↦ by
-    rw [LinearMap.comp_apply, LinearEquiv.coe_coe, comul_of, map_multiset_sum, Multiset.map_map]
-    conv_rhs => rw [← Multiset.map_swap_antidiagonal, Multiset.map_map]
-    rfl
+instance instIsCocomm : IsCocomm R (GrossmanLarson R α) :=
+  LinearEquiv.coalgebraIsCocomm R (B := WithCuts R (emptyCuts (α := α))) linearEquiv
 
 /-! ### The bialgebra -/
 
