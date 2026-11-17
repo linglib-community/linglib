@@ -5,6 +5,10 @@ public import Linglib.Semantics.Focus.Polarity
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Data.Examples.BarLevBassi2026
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Bar-Lev and Bassi (2026): Infelicity with homogeneity
@@ -32,9 +36,10 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
   F-marked.
 * The atoms are an independent family: every set of them is the set of those satisfying the
   predicate at some world.
-* A row is read through its quantified counterpart: the stress the paper prints there shows the
-  background question, on the paper's method of taking the stress of the overt quantifier as the
-  guide to the question.
+* A row is read through its quantified counterpart, which the paper pairs it with. The word
+  printed in capitals there shows the background question, by which fragment entry it is: a
+  quantifier or an auxiliary. This is the paper's method of taking the stress of the overt
+  quantifier as the guide to the question.
 
 ## TODO
 
@@ -280,12 +285,20 @@ A plural definite is odd where its quantified counterpart needs stress on the qu
 stress on the counterpart shows the background question, and the plural definite is acceptable
 when the head that question asks to be F-marked is pronounced. -/
 
-/-- The background question that the stress of a quantified sentence shows: quantificational
-when the quantifier must bear it, polar when the polarity head does. -/
-def background? : Examples.Stress → Option Background
-  | .quantifier => some .quantificational
-  | .polarity => some .polar
-  | .lexical => none
+/-- The word a row prints in capitals, the bearer of its focal stress. -/
+def stressed? (e : Datum) : Option (List Char) :=
+  (((Gloss.split [' '] e.primaryText.toList).map Gloss.trim).find? fun t ↦
+    2 ≤ t.length ∧ ∀ c ∈ t, c.isUpper).map (·.map Gloss.toLower)
+
+open English in
+/-- The background question that the stressed word of a quantified sentence shows:
+quantificational when a quantifier or the polarity item *any* bears the stress, polar when an
+auxiliary does. -/
+def background? (w : List Char) : Option Background :=
+  if w ∈ Determiners.allQuantifiers.map (·.form.toList) ∨ w = PolarityItems.any.form.toList then
+    some .quantificational
+  else if w ∈ Auxiliaries.allAuxiliaries.map (·.form.toList) then some .polar
+  else none
 
 /-- The quantified counterpart of a row with a plural definite. -/
 def counterpart? (e : Datum) : Option Datum :=
@@ -296,9 +309,9 @@ shows a background question is acceptable exactly when the head that question as
 F-marked is pronounced. It is odd in (3a), (9a), (11), (13), (15) and (38a), where *ALL* or *ANY*
 bears the stress, and fine in (16) and (37), where *DID* does. -/
 theorem judgments :
-    ∀ e ∈ Examples.all, ∀ c ∈ counterpart? e, ∀ s ∈ Examples.stress c, ∀ q ∈ background? s,
+    ∀ e ∈ Examples.all, ∀ c ∈ counterpart? e, ∀ s ∈ stressed? c, ∀ q ∈ background? s,
       (e.judgment = .acceptable ↔ q.head.Overt) := by
-  decide
+  decide +kernel
 
 /-! ### The presupposition of the question (§6)
 

@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Schema
-public import Linglib.Data.Examples.Readers
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BarLevBassi2026` — typed example data
@@ -41,7 +39,7 @@ def ex_3b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "quantifier")] }
+    paperFeatures := [] }
 
 def ex_9a : Datum :=
   { id := "barlevbassi2026_9a"
@@ -67,7 +65,7 @@ def ex_9b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "quantifier")] }
+    paperFeatures := [] }
 
 def ex_11b : Datum :=
   { id := "barlevbassi2026_11b"
@@ -132,7 +130,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity"), ("counterpart", "barlevbassi2026_23Bprime")] }
+    paperFeatures := [("counterpart", "barlevbassi2026_23Bprime")] }
 
 def ex_17B : Datum :=
   { id := "barlevbassi2026_17B"
@@ -145,7 +143,7 @@ def ex_17B : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity")] }
+    paperFeatures := [] }
 
 def ex_17Bprime : Datum :=
   { id := "barlevbassi2026_17Bprime"
@@ -158,7 +156,7 @@ def ex_17Bprime : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity")] }
+    paperFeatures := [] }
 
 def ex_21b_ii : Datum :=
   { id := "barlevbassi2026_21b_ii"
@@ -171,7 +169,7 @@ def ex_21b_ii : Datum :=
     judgment := .acceptable
     alternatives := [("Ann read all the books.", .unacceptable)]
     readings := []
-    paperFeatures := [("stress", "quantifier")] }
+    paperFeatures := [] }
 
 def ex_22b : Datum :=
   { id := "barlevbassi2026_22b"
@@ -184,7 +182,7 @@ def ex_22b : Datum :=
     judgment := .acceptable
     alternatives := [("Today she read all the newspapers.", .unacceptable)]
     readings := []
-    paperFeatures := [("stress", "quantifier")] }
+    paperFeatures := [] }
 
 def ex_23Bprime : Datum :=
   { id := "barlevbassi2026_23Bprime"
@@ -197,7 +195,7 @@ def ex_23Bprime : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity")] }
+    paperFeatures := [] }
 
 def ex_37 : Datum :=
   { id := "barlevbassi2026_37"
@@ -210,7 +208,7 @@ def ex_37 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity"), ("counterpart", "barlevbassi2026_37_all")] }
+    paperFeatures := [("counterpart", "barlevbassi2026_37_all")] }
 
 def ex_37_all : Datum :=
   { id := "barlevbassi2026_37_all"
@@ -223,7 +221,7 @@ def ex_37_all : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity")] }
+    paperFeatures := [] }
 
 def ex_38a : Datum :=
   { id := "barlevbassi2026_38a"
@@ -249,7 +247,7 @@ def ex_38b : Datum :=
     judgment := .acceptable
     alternatives := [("he worked on all of his phonology papers today.", .unacceptable)]
     readings := []
-    paperFeatures := [("stress", "quantifier")] }
+    paperFeatures := [] }
 
 def ex_39a : Datum :=
   { id := "barlevbassi2026_39a"
@@ -262,7 +260,7 @@ def ex_39a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "lexical"), ("counterpart", "barlevbassi2026_39b")] }
+    paperFeatures := [("counterpart", "barlevbassi2026_39b")] }
 
 def ex_39b : Datum :=
   { id := "barlevbassi2026_39b"
@@ -275,7 +273,7 @@ def ex_39b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "lexical")] }
+    paperFeatures := [] }
 
 def ex_41a : Datum :=
   { id := "barlevbassi2026_41a"
@@ -353,7 +351,7 @@ def ex_45a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "lexical")] }
+    paperFeatures := [] }
 
 def fn18_i : Datum :=
   { id := "barlevbassi2026_fn18_i"
@@ -366,22 +364,8 @@ def fn18_i : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "polarity")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_3a, ex_3b, ex_9a, ex_9b, ex_11b, ex_13b_i, ex_13b_ii, ex_15, ex_16, ex_17B, ex_17Bprime, ex_21b_ii, ex_22b, ex_23Bprime, ex_37, ex_37_all, ex_38a, ex_38b, ex_39a, ex_39b, ex_41a, ex_41b, ex_42a, ex_42b, ex_44b, ex_45a, fn18_i]
-
-/-- The constituent bearing the focal stress the paper prints in capitals. -/
-inductive Stress where
-  /-- quantifier: an overt quantifier, *ALL*, *ANY* -/
-  | quantifier
-  /-- polarity: the auxiliary or negation realizing the polarity head, *DID*, *NOT* -/
-  | polarity
-  /-- lexical: another overt word, *PHONOLOGY*, *MARRIED* -/
-  | lexical
-  deriving DecidableEq, Repr, Fintype
-
-/-- The value a row records under `stress`. -/
-def stress (e : Datum) : Option Stress :=
-  e.parse? "stress" [("quantifier", .quantifier), ("polarity", .polarity), ("lexical", .lexical)]
 
 end BarLevBassi2026.Examples

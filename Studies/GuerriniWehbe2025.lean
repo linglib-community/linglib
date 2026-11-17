@@ -5,6 +5,11 @@ public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Data.Examples.GuerriniWehbe2025
 public import Studies.DelPinalBassiSauerland2024
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.English.Pronouns
 
 /-!
 # Guerrini and Wehbe (2025): Homogeneity as presuppositional exhaustification
@@ -35,9 +40,12 @@ thus a presupposition, and a plural definite is odd
 * The higher `pex` over a negated plural does not change its truth conditions and is not
   modelled, and local accommodation below negation is the positive case for the negated
   predicate.
-* The rows of §3 are read through four columns: the noun phrase, the polarity, whether the
-  predicate is the context's or its antonym, and what the context establishes. Worlds record
-  which of two atoms satisfy the context's predicate.
+* A row of §3 is linked to the fragment entries its sentence shows: the article, possessive,
+  quantifier or polarity item of its noun phrase and its negative auxiliary, each
+  [attested among its words](##links_attested). Whether it is quantified and whether it is
+  negative are read off the entries. What its context establishes is stated here from the paper's
+  description of the context, as is that *lose* is the antonym of *win*, which the fragment does
+  not relate. Worlds record which of two atoms satisfy the context's predicate.
 
 ## TODO
 
@@ -284,10 +292,20 @@ candidates who won, the students who smiled. -/
 
 section Judgments
 
-open Finset Examples
+open Finset Examples English
 
-/-- What a context establishes about a world. -/
-def _root_.GuerriniWehbe2025.Examples.Known.Holds : Known → Finset (Fin 2) → Prop
+/-- What a context establishes about how many of the plurality satisfy the predicate: that some
+do, (10a); that not all do, (10b), (23) and the monogamy that makes it "common knowledge that John
+isn't married to all of his teammates", (12); or that at most one can, the election of (13), where
+"at most one candidate can win". -/
+inductive Known
+  | some
+  | notAll
+  | atMostOne
+  deriving DecidableEq, Repr
+
+/-- What a context establishes, of a world. -/
+def Known.Holds : Known → Finset (Fin 2) → Prop
   | .some, w => w.Nonempty
   | .notAll, w => w ≠ univ
   | .atMostOne, w => w.card ≤ 1
@@ -295,66 +313,147 @@ def _root_.GuerriniWehbe2025.Examples.Known.Holds : Known → Finset (Fin 2) →
 instance (k : Known) : DecidablePred k.Holds := fun w ↦ by
   cases k <;> unfold Known.Holds <;> infer_instance
 
-/-- A row's predicate, the context's or its antonym, of an atom at a world. -/
-def _root_.GuerriniWehbe2025.Examples.Predicate.holds : Predicate → Fin 2 → Finset (Fin 2) → Prop
-  | .base, a, w => a ∈ w
-  | .antonym, a, w => a ∉ w
+/-- The quantifier with which a context sentence states what it establishes, *at least some of*
+and *not all of*. -/
+def Known.determiner : Known → Option QuantificationalDeterminer
+  | .some => Option.some Determiners.some_
+  | .notAll => Option.some Determiners.all
+  | .atMostOne => none
 
-instance (P : Predicate) (a : Fin 2) (w : Finset (Fin 2)) : Decidable (P.holds a w) := by
-  cases P <;> unfold Predicate.holds <;> infer_instance
+/-- The noun phrase the predicate applies to: a plural with the definite article or a possessive,
+or its counterpart with a quantifier or a polarity item. -/
+inductive NounPhrase
+  | definite (d : Article)
+  | possessed (p : PersonalPronoun)
+  | quantified (q : QuantificationalDeterminer)
+  | polarityItem (i : PolarityItem)
+
+namespace NounPhrase
+
+/-- The word that marks the noun phrase. -/
+def form : NounPhrase → String
+  | definite d => d.form
+  | possessed p => p.form
+  | quantified q => q.form
+  | polarityItem i => i.form
+
+/-- The noun phrase has an overt quantifier. -/
+def Quantified : NounPhrase → Prop
+  | quantified _ | polarityItem _ => True
+  | definite _ | possessed _ => False
+
+instance : DecidablePred Quantified := fun n ↦ by cases n <;> unfold Quantified <;> infer_instance
+
+/-- The noun phrase is a negative quantifier, as *none of* is. -/
+def Negative : NounPhrase → Prop
+  | quantified q => .no ∈ q.readings
+  | _ => False
+
+instance : DecidablePred Negative := fun n ↦ by cases n <;> unfold Negative <;> infer_instance
+
+end NounPhrase
+
+/-- The context's predicate, or its antonym, of an atom at a world. -/
+def predicate (antonym : Bool) (a : Fin 2) (w : Finset (Fin 2)) : Prop := a ∈ w ↔ antonym = false
+
+instance (b : Bool) (a : Fin 2) (w : Finset (Fin 2)) : Decidable (predicate b a w) :=
+  inferInstanceAs (Decidable (_ ↔ _))
+
+private theorem separating_predicate (b : Bool) :
+    Separating (univ ∩ univ) (atom (predicate b)) := by
+  cases b <;> exact ⟨by decide, by decide⟩
+
+/-- A row's link to the fragment and to its context. -/
+structure Link where
+  /-- The noun phrase the predicate applies to. -/
+  np : NounPhrase
+  /-- The negative auxiliary of the sentence. -/
+  aux : Option Auxiliary := none
+  /-- The predicate is the antonym of the one the context is stated with, *lose* for *win*. -/
+  antonym : Bool := false
+  /-- What the context establishes. -/
+  known : Known
+
+namespace Link
+
+/-- The sentence is negative: it has a negative auxiliary or a negative quantifier. -/
+def Negative (l : Link) : Prop := (∃ a ∈ l.aux, a.features .polarity = some .Neg) ∨ l.np.Negative
+
+instance : DecidablePred Negative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The predicate of the sentence, of an atom at a world. -/
+abbrev holds (l : Link) : Fin 2 → Finset (Fin 2) → Prop := predicate l.antonym
+
+/-- The linked forms occur among the words of the sentence, and the quantifier a context states
+its content with among the words of the context. -/
+def Attested (l : Link) (e : Datum) : Prop :=
+  l.np.form.toList ∈ Gloss.tokens e.primaryText ∧
+    (∀ a ∈ l.aux, a.form.toList ∈ Gloss.tokens e.primaryText) ∧
+    ∀ q ∈ l.known.determiner, e.context = "" ∨ q.form.toList ∈ Gloss.tokens e.context
+
+instance (l : Link) (e : Datum) : Decidable (l.Attested e) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+end Link
+
+/-- The rows of §3 with the entries their sentences show. -/
+def links : List (Datum × Link) :=
+  [(ex_10a, ⟨.definite Determiners.the, none, false, .some⟩),
+    (ex_10b, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .notAll⟩),
+    (ex_12a, ⟨.polarityItem PolarityItems.any, some Auxiliaries.isnt, false, .notAll⟩),
+    (ex_12b, ⟨.possessed Pronouns.his, some Auxiliaries.isnt, false, .notAll⟩),
+    (ex_13a, ⟨.quantified Determiners.none_, none, false, .atMostOne⟩),
+    (ex_13b, ⟨.quantified Determiners.all, none, true, .atMostOne⟩),
+    (ex_13c, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .atMostOne⟩),
+    (ex_13d, ⟨.definite Determiners.the, none, true, .atMostOne⟩),
+    (ex_23, ⟨.definite Determiners.the, some Auxiliaries.didnt, false, .notAll⟩)]
+
+theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
 
 /-- The sentence of a row: a plural definite is a plural predication under `pex`, negated in a
 negative sentence, and its quantified counterpart says that all or that none of the atoms satisfy
 the predicate. -/
-noncomputable def sentence : Nominal → Examples.Polarity → Predicate → Finset (Fin 2) → Trivalent
-  | .definitePlural, .positive, P =>
-    pexPlural univ univ P.holds (supClosure (Set.range (atom P.holds)))
-  | .definitePlural, .negative, P =>
-    (pexPlural univ univ P.holds (supClosure (Set.range (atom P.holds))))ᶜ
-  | .quantifier, .positive, P => fun w ↦ .ofProp (∀ a, P.holds a w)
-  | .quantifier, .negative, P => fun w ↦ .ofProp (∀ a, ¬ P.holds a w)
-
-private theorem separating_predicate (P : Predicate) :
-    Separating (univ ∩ univ) (atom P.holds) := by
-  cases P <;> exact ⟨by decide, by decide⟩
+noncomputable def sentence (l : Link) : Finset (Fin 2) → Trivalent :=
+  if l.np.Quantified then
+    if l.Negative then fun w ↦ .ofProp (∀ a, ¬ l.holds a w) else fun w ↦ .ofProp (∀ a, l.holds a w)
+  else
+    if l.Negative then (pexPlural univ univ l.holds (supClosure (Set.range (atom l.holds))))ᶜ
+    else pexPlural univ univ l.holds (supClosure (Set.range (atom l.holds)))
 
 /-- Where the sentence of a row is false: a plural definite where no atom satisfies the
 predicate, its negation where all do, and a quantified sentence where its quantifier fails. -/
-def IsFalse : Nominal → Examples.Polarity → Predicate → Finset (Fin 2) → Prop
-  | .definitePlural, .positive, P, w => ∀ a, ¬ P.holds a w
-  | .definitePlural, .negative, P, w => ∀ a, P.holds a w
-  | .quantifier, .positive, P, w => ¬ ∀ a, P.holds a w
-  | .quantifier, .negative, P, w => ¬ ∀ a, ¬ P.holds a w
+def IsFalse (l : Link) (w : Finset (Fin 2)) : Prop :=
+  if l.np.Quantified then
+    if l.Negative then ¬ ∀ a, ¬ l.holds a w else ¬ ∀ a, l.holds a w
+  else
+    if l.Negative then ∀ a, l.holds a w else ∀ a, ¬ l.holds a w
 
-instance (n : Nominal) (p : Examples.Polarity) (P : Predicate) : DecidablePred (IsFalse n p P) :=
-  fun w ↦ by cases n <;> cases p <;> unfold IsFalse <;> infer_instance
+instance (l : Link) : DecidablePred (IsFalse l) := fun w ↦ by
+  unfold IsFalse; infer_instance
 
-theorem sentence_eq_false_iff (n : Nominal) (p : Examples.Polarity) (P : Predicate)
-    (w : Finset (Fin 2)) : sentence n p P w = .false ↔ IsFalse n p P w := by
-  cases n <;> cases p
-  · simp [sentence, IsFalse, pexPlural_eq_false_iff]
-  · simp [sentence, IsFalse, Trivalent.compl_eq_false_iff,
-      pexPlural_eq_true_iff (separating_predicate P) (by decide)
+theorem sentence_eq_false_iff (l : Link) (w : Finset (Fin 2)) :
+    sentence l w = .false ↔ IsFalse l w := by
+  unfold sentence IsFalse
+  split_ifs
+  · exact Trivalent.ofProp_eq_false_iff
+  · exact Trivalent.ofProp_eq_false_iff
+  · simp [Trivalent.compl_eq_false_iff,
+      pexPlural_eq_true_iff (separating_predicate l.antonym) (by decide)
         fun a _ ↦ subset_supClosure (Set.mem_range_self a)]
-  · simp [sentence, IsFalse, Trivalent.ofProp]
-  · simp [sentence, IsFalse, Trivalent.ofProp]
+  · simp [pexPlural_eq_false_iff]
 
--- Four nested readers of a row exceed the default size of an instance search.
-set_option synthInstance.maxSize 1024 in
 private theorem judgments_aux :
-    ∀ e ∈ all, ∀ k ∈ known e, ∀ n ∈ nominal e, ∀ p ∈ polarity e, ∀ P ∈ predicate e,
-      (e.judgment = .acceptable ↔ ∃ w, k.Holds w ∧ IsFalse n p P w) := by
+    ∀ p ∈ links, (p.1.judgment = .acceptable ↔ ∃ w, p.2.known.Holds w ∧ IsFalse p.2 w) := by
   decide
 
 /-- A sentence of §3 is acceptable exactly when it is informative once its presupposition is
 accommodated, false somewhere in what its context establishes: the plural definites of (10),
 (12b), (13c), (13d) and (23) are not, where the quantified (12a), (13a) and (13b) are. -/
 theorem judgments :
-    ∀ e ∈ all, ∀ k ∈ known e, ∀ n ∈ nominal e, ∀ p ∈ polarity e, ∀ P ∈ predicate e,
-      (e.judgment = .acceptable ↔
-        ({w | k.Holds w} ∩ Trivalent.negExt (sentence n p P)).Nonempty) := by
-  intro e he k hk n hn p hp P hP
-  rw [judgments_aux e he k hk n hn p hp P hP]
+    ∀ p ∈ links, (p.1.judgment = .acceptable ↔
+      ({w | p.2.known.Holds w} ∩ Trivalent.negExt (sentence p.2)).Nonempty) := by
+  intro p hp
+  rw [judgments_aux p hp]
   simp only [Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Trivalent.mem_negExt,
     sentence_eq_false_iff]
 

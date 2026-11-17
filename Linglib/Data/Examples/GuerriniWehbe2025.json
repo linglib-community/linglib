@@ -1,538 +1,369 @@
-{
-  "features": [
-    {
-      "key": "nominal",
-      "lean": "nominal",
-      "type": "Nominal",
-      "doc": "The noun phrase the predicate applies to.",
-      "multiple": false,
-      "levels": [
-        {
-          "name": "definitePlural",
-          "label": "definite plural",
-          "doc": "a plural definite, *the books*"
-        },
-        {
-          "name": "quantifier",
-          "label": "quantifier",
-          "doc": "its counterpart with an overt quantifier, *all of*, *none of*, *any of*"
-        }
-      ]
-    },
-    {
-      "key": "polarity",
-      "lean": "polarity",
-      "type": "Polarity",
-      "doc": "Whether the sentence is negated.",
-      "multiple": false,
-      "levels": [
-        {
-          "name": "positive",
-          "label": "positive",
-          "doc": "an affirmative sentence"
-        },
-        {
-          "name": "negative",
-          "label": "negative",
-          "doc": "a sentence with negation or a negative quantifier"
-        }
-      ]
-    },
-    {
-      "key": "predicate",
-      "lean": "predicate",
-      "type": "Predicate",
-      "doc": "The predicate, as against the one the context is stated with.",
-      "multiple": false,
-      "levels": [
-        {
-          "name": "base",
-          "label": "base",
-          "doc": "the predicate of the context, *read*, *win*"
-        },
-        {
-          "name": "antonym",
-          "label": "antonym",
-          "doc": "its antonym, *lose* for *win*"
-        }
-      ]
-    },
-    {
-      "key": "known",
-      "lean": "known",
-      "type": "Known",
-      "doc": "What the context establishes about how many of the plurality satisfy the predicate.",
-      "multiple": false,
-      "levels": [
-        {
-          "name": "some",
-          "label": "some",
-          "doc": "at least one does"
-        },
-        {
-          "name": "notAll",
-          "label": "not all",
-          "doc": "not all do"
-        },
-        {
-          "name": "atMostOne",
-          "label": "at most one",
-          "doc": "at most one can"
-        }
-      ]
-    }
-  ],
-  "examples": [
-    {
-      "id": "guerriniwehbe2025_9a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9a)"},
-      "language": "stan1293",
-      "primaryText": "I knew that all of John's kids are adopted but today I discovered something amazing. All 10 of John's kids are adopted!",
-      "discourseSegments": [
-        "I knew that all of John's kids are adopted but today I discovered something amazing.",
-        "All 10 of John's kids are adopted!"
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["presupposition", "John has 10 kids"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_9b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9b)"},
-      "language": "stan1293",
-      "primaryText": "I knew that all of John's kids are adopted but today I discovered something amazing. John has 10 adopted kids!",
-      "discourseSegments": [
-        "I knew that all of John's kids are adopted but today I discovered something amazing.",
-        "John has 10 adopted kids!"
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_10a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(10a)"},
-      "language": "stan1293",
-      "primaryText": "I knew that Mary read at least some of the books, but today I learned something interesting. She read the books.",
-      "discourseSegments": [
-        "I knew that Mary read at least some of the books, but today I learned something interesting.",
-        "She read the books."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "positive"],
-        ["nominal", "definite plural"],
-        ["known", "some"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_10b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(10b)"},
-      "language": "stan1293",
-      "primaryText": "I knew that Mary didn't read all of the books, but today I learned something interesting. She didn't read the books.",
-      "discourseSegments": [
-        "I knew that Mary didn't read all of the books, but today I learned something interesting.",
-        "She didn't read the books."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "definite plural"],
-        ["known", "not all"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_12a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12a)"},
-      "language": "stan1293",
-      "primaryText": "John isn't married to any of his teammates.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "quantifier"],
-        ["known", "not all"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_12b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12b)"},
-      "language": "stan1293",
-      "primaryText": "John isn't married to his teammates.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "definite plural"],
-        ["known", "not all"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_13a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13a)"},
-      "language": "stan1293",
-      "primaryText": "None of the candidates won.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "quantifier"],
-        ["known", "at most one"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_13b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13b)"},
-      "language": "stan1293",
-      "primaryText": "All of the candidates lost.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "positive"],
-        ["nominal", "quantifier"],
-        ["known", "at most one"],
-        ["predicate", "antonym"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_13c",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13c)"},
-      "language": "stan1293",
-      "primaryText": "The candidates didn't win.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "definite plural"],
-        ["known", "at most one"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_13d",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13d)"},
-      "language": "stan1293",
-      "primaryText": "The candidates lost.",
-      "glossedTokens": [],
-      "translation": "",
-      "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "positive"],
-        ["nominal", "definite plural"],
-        ["known", "at most one"],
-        ["predicate", "antonym"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_23",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(23)"},
-      "language": "stan1293",
-      "primaryText": "I knew that not all of the students smiled, but today I learned something interesting. The students didn't smile.",
-      "discourseSegments": [
-        "I knew that not all of the students smiled, but today I learned something interesting.",
-        "The students didn't smile."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["polarity", "negative"],
-        ["nominal", "definite plural"],
-        ["known", "not all"],
-        ["predicate", "base"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_fn3_ia",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-a)"},
-      "language": "stan1293",
-      "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married his teammates.",
-      "discourseSegments": [
-        "It's crazy, I didn't realize this was possible. Somehow..",
-        "John married his teammates."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_fn3_ib",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-b)"},
-      "language": "stan1293",
-      "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married all of his teammates.",
-      "discourseSegments": [
-        "It's crazy, I didn't realize this was possible. Somehow..",
-        "John married all of his teammates."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_42",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(42)"},
-      "language": "stan1293",
-      "primaryText": "I knew that Mary can eat cake, but today I learned something interesting. She can eat cake or candy.",
-      "discourseSegments": [
-        "I knew that Mary can eat cake, but today I learned something interesting.",
-        "She can eat cake or candy."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "free choice"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_43a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(43a)"},
-      "language": "stan1293",
-      "primaryText": "It is not the case that Mary can read any book. She can only read War and Peace.",
-      "discourseSegments": [
-        "It is not the case that Mary can read any book.",
-        "She can only read War and Peace."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "free choice"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_43b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(43b)"},
-      "language": "stan1293",
-      "primaryText": "It is not the case that Mary read the books. She only read War and Peace.",
-      "discourseSegments": [
-        "It is not the case that Mary read the books.",
-        "She only read War and Peace."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_44a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44a)"},
-      "language": "stan1293",
-      "primaryText": "I already knew that Mary sometimes goes to the gym on Tuesdays, but today I learned something interesting. Mary goes to the gym on Tuesdays.",
-      "discourseSegments": [
-        "I already knew that Mary sometimes goes to the gym on Tuesdays, but today I learned something interesting.",
-        "Mary goes to the gym on Tuesdays."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "habitual"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_44b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44b)"},
-      "language": "stan1293",
-      "primaryText": "I knew that lions sometimes hunt, but today I learned something interesting. Lions hunt.",
-      "discourseSegments": [
-        "I knew that lions sometimes hunt, but today I learned something interesting.",
-        "Lions hunt."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "generic"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_44c",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44c)"},
-      "language": "stan1293",
-      "primaryText": "I already knew that some birds are migrating right now, but today I learned something interesting. Birds are migrating right now.",
-      "discourseSegments": [
-        "I already knew that some birds are migrating right now, but today I learned something interesting.",
-        "Birds are migrating right now."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "episodic universal bare plural"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_44d",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44d)"},
-      "language": "stan1293",
-      "primaryText": "I already knew that the wall was partly red, but today I learned something interesting. The wall is red.",
-      "discourseSegments": [
-        "I already knew that the wall was partly red, but today I learned something interesting.",
-        "The wall is red."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "predicate homogeneity"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_44e",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44e)"},
-      "language": "stan1293",
-      "primaryText": "I already knew that sometimes, if you hit the brakes, the car stops, but today I learned something interesting. If you hit the brakes, the car stops.",
-      "discourseSegments": [
-        "I already knew that sometimes, if you hit the brakes, the car stops, but today I learned something interesting.",
-        "If you hit the brakes, the car stops."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "unacceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "conditional"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_47a",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(47a)"},
-      "language": "stan1293",
-      "primaryText": "I knew that Mary is allowed to read this book, but today I learned something interesting. She should read this book.",
-      "discourseSegments": [
-        "I knew that Mary is allowed to read this book, but today I learned something interesting.",
-        "She should read this book."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "neg-raising"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_47b",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(47b)"},
-      "language": "stan1293",
-      "primaryText": "I knew that Mary is allowed not to read this book, but today I learned something interesting. She shouldn't read this book.",
-      "discourseSegments": [
-        "I knew that Mary is allowed not to read this book, but today I learned something interesting.",
-        "She shouldn't read this book."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "neg-raising"]
-      ],
-      "verified": "page-image"
-    },
-    {
-      "id": "guerriniwehbe2025_fn20_i",
-      "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 20 (i)"},
-      "language": "stan1293",
-      "primaryText": "It is not the case that Mary should read this book. She is allowed to, but it's also fine if she doesn't read it.",
-      "discourseSegments": [
-        "It is not the case that Mary should read this book.",
-        "She is allowed to, but it's also fine if she doesn't read it."
-      ],
-      "glossedTokens": [],
-      "translation": "",
-      "context": "",
-      "judgment": "acceptable",
-      "readings": [],
-      "paperFeatures": [
-        ["phenomenon", "neg-raising"]
-      ],
-      "verified": "page-image"
-    }
-  ]
-}
+[
+  {
+    "id": "guerriniwehbe2025_9a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9a)"},
+    "language": "stan1293",
+    "primaryText": "All 10 of John's kids are adopted!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that all of John's kids are adopted but today I discovered something amazing.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["presupposition", "John has 10 kids"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_9b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(9b)"},
+    "language": "stan1293",
+    "primaryText": "John has 10 adopted kids!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that all of John's kids are adopted but today I discovered something amazing.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_10a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "She read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Mary read at least some of the books, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_10b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "She didn't read the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Mary didn't read all of the books, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_12a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "John isn't married to any of his teammates.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_12b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "John isn't married to his teammates.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13a)"},
+    "language": "stan1293",
+    "primaryText": "None of the candidates won.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13b)"},
+    "language": "stan1293",
+    "primaryText": "All of the candidates lost.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13c",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13c)"},
+    "language": "stan1293",
+    "primaryText": "The candidates didn't win.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13d",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(13d)"},
+    "language": "stan1293",
+    "primaryText": "The candidates lost.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_23",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "The students didn't smile.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that not all of the students smiled, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_fn3_ia",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-a)"},
+    "language": "stan1293",
+    "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married his teammates.",
+    "discourseSegments": [
+      "It's crazy, I didn't realize this was possible. Somehow..",
+      "John married his teammates."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_fn3_ib",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 3 (i-b)"},
+    "language": "stan1293",
+    "primaryText": "It's crazy, I didn't realize this was possible. Somehow.. John married all of his teammates.",
+    "discourseSegments": [
+      "It's crazy, I didn't realize this was possible. Somehow..",
+      "John married all of his teammates."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_42",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(42)"},
+    "language": "stan1293",
+    "primaryText": "She can eat cake or candy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Mary can eat cake, but today I learned something interesting.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "free choice"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_43a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "It is not the case that Mary can read any book. She can only read War and Peace.",
+    "discourseSegments": [
+      "It is not the case that Mary can read any book.",
+      "She can only read War and Peace."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "free choice"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_43b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(43b)"},
+    "language": "stan1293",
+    "primaryText": "It is not the case that Mary read the books. She only read War and Peace.",
+    "discourseSegments": [
+      "It is not the case that Mary read the books.",
+      "She only read War and Peace."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_44a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44a)"},
+    "language": "stan1293",
+    "primaryText": "Mary goes to the gym on Tuesdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I already knew that Mary sometimes goes to the gym on Tuesdays, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "habitual"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_44b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44b)"},
+    "language": "stan1293",
+    "primaryText": "Lions hunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that lions sometimes hunt, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "generic"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_44c",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44c)"},
+    "language": "stan1293",
+    "primaryText": "Birds are migrating right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I already knew that some birds are migrating right now, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "episodic universal bare plural"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_44d",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44d)"},
+    "language": "stan1293",
+    "primaryText": "The wall is red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I already knew that the wall was partly red, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "predicate homogeneity"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_44e",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(44e)"},
+    "language": "stan1293",
+    "primaryText": "If you hit the brakes, the car stops.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I already knew that sometimes, if you hit the brakes, the car stops, but today I learned something interesting.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "conditional"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_47a",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(47a)"},
+    "language": "stan1293",
+    "primaryText": "She should read this book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Mary is allowed to read this book, but today I learned something interesting.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "neg-raising"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_47b",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "(47b)"},
+    "language": "stan1293",
+    "primaryText": "She shouldn't read this book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I knew that Mary is allowed not to read this book, but today I learned something interesting.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "neg-raising"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_fn20_i",
+    "source": {"bibkey": "guerrini-wehbe-2025", "paperLabel": "fn. 20 (i)"},
+    "language": "stan1293",
+    "primaryText": "It is not the case that Mary should read this book. She is allowed to, but it's also fine if she doesn't read it.",
+    "discourseSegments": [
+      "It is not the case that Mary should read this book.",
+      "She is allowed to, but it's also fine if she doesn't read it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "neg-raising"]
+    ],
+    "verified": "page-image"
+  }
+]
