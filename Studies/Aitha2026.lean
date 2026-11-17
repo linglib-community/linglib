@@ -48,10 +48,11 @@ every row of the paper's table of strong nouns, which gives entries for two of i
 
 The Word- and Phrase-level rankings are the paper's Hasse diagrams, given by their edges, and a
 tableau is evaluated under every total ranking that extends its stratum's diagram. The
-Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below *DIST-0 as well: the winner of the quantifier tableau is optimal under a ranking only if *DIST-0
-dominates ONSET (`onset_dominated`). A stratum is also a grammar in the sense of
-`OptimalityTheory.Grammar`, the rankings under which the winners of its tableaux are optimal, and
-the diagram's grammar lies below it.
+Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below *DIST-0 as well:
+the winner of the quantifier tableau is optimal under a ranking only if *DIST-0 dominates ONSET
+(`onset_dominated`). A stratum is also a grammar in the sense of `OptimalityTheory.Grammar`, the
+rankings under which the winners of its tableaux are optimal, and the diagram's grammar lies
+below it.
 
 A candidate is written as the paper prints it and read against the segments of its input, which
 gives the positions it deletes and the vowels it lengthens, and every mark is computed from that
