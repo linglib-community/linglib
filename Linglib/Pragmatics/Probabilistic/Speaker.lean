@@ -181,7 +181,7 @@ theorem speaker_apply_singleton_ne_zero (hα : 0 ≤ α) (h : ∀ w, b o {w} ≠
     (ENNReal.rpow_mul_ofReal_exp_ne_zero hα (Measure.geomMean_ne_zero h) _)
     fun _ ↦ geomMean_weight_ne_top hα _
 
-/-- Row preference of the speaker compares the weights; the normalization cancels. -/
+/-- Of two utterances the speaker prefers the one of greater weight; the normalization cancels. -/
 theorem speaker_real_singleton_lt_iff (hα : 0 ≤ α) {u u' : U} :
     (speaker α C L b o).real {u} < (speaker α C L b o).real {u'} ↔
       (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
@@ -202,7 +202,8 @@ theorem speaker_real_singleton_div (hα : 0 ≤ α) (h : ∀ w, b o {w} ≠ 0 �
   have hZ : (0 : ℝ) < ∑ v, ((b o).geomMean (fun w ↦ L v {w}) ^ α *
       ENNReal.ofReal (Real.exp (-(α * C v)))).toReal :=
     Finset.sum_pos' (fun _ _ ↦ ENNReal.toReal_nonneg) ⟨u, Finset.mem_univ u,
-      ENNReal.toReal_pos (ENNReal.rpow_mul_ofReal_exp_ne_zero hα hu _) (geomMean_weight_ne_top hα _)⟩
+      ENNReal.toReal_pos (ENNReal.rpow_mul_ofReal_exp_ne_zero hα hu _)
+        (geomMean_weight_ne_top hα _)⟩
   rw [speaker_eq_ofWeights,
     Kernel.ofWeights_real_singleton _ _ (fun _ ↦ geomMean_weight_ne_top hα _),
     Kernel.ofWeights_real_singleton _ _ (fun _ ↦ geomMean_weight_ne_top hα _),
@@ -308,7 +309,8 @@ theorem speaker_dirac_apply_singleton_eq_one [IsFiniteKernel L] (hα : 0 < α) (
   rw [speaker_dirac_apply_singleton, Finset.sum_eq_single u
     (fun u' _ hu' ↦ by rw [hother u' hu', ENNReal.zero_rpow_of_pos hα, zero_mul])
     (fun hu ↦ absurd (Finset.mem_univ u) hu)]
-  exact ENNReal.div_self (ENNReal.rpow_mul_ofReal_exp_ne_zero hα.le h _) (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _)
+  exact ENNReal.div_self (ENNReal.rpow_mul_ofReal_exp_ne_zero hα.le h _)
+    (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _)
 
 theorem speaker_dirac_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u : U) :
     (speaker α C L Measure.dirac w).real {u}
@@ -324,7 +326,7 @@ theorem speaker_dirac_zero_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u
   rw [speaker_dirac_real_singleton hα]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, mul_one]
 
-/-- Row-preference of the speaker reduces to comparing the weighted listener values; the
+/-- Of two utterances the speaker who knows the state prefers the one of greater weight; the
 normalization cancels. -/
 theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) {u u' : U} :
     (speaker α C L Measure.dirac w).real {u} < (speaker α C L Measure.dirac w).real {u'} ↔
@@ -339,7 +341,8 @@ theorem speaker_dirac_real_singleton_div [IsFiniteKernel L] (hα : 0 ≤ α) (h 
     (speaker α C L Measure.dirac w).real {u'} / (speaker α C L Measure.dirac w).real {u} =
       ((L u' {w}).toReal / (L u {w}).toReal) ^ α * Real.exp (-(α * (C u' - C u))) := by
   simpa only [Measure.geomMean_dirac] using speaker_real_singleton_div (C := C) (L := L)
-    (b := Measure.dirac) (o := w) hα (fun _ hw' ↦ Measure.eq_of_dirac_apply_singleton_ne_zero hw' ▸ h) u'
+    (b := Measure.dirac) (o := w) hα
+    (fun _ hw' ↦ Measure.eq_of_dirac_apply_singleton_ne_zero hw' ▸ h) u'
 
 /-- Of two utterances with listener mass at the state, the speaker prefers the one of greater
 utility, the log of the listener's mass less the cost. -/
@@ -350,7 +353,8 @@ theorem speaker_dirac_real_singleton_lt_iff_log [IsFiniteKernel L] (hα : 0 < α
   rw [speaker_dirac_real_singleton_lt_iff hα.le,
     ← ENNReal.toReal_lt_toReal (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _)
       (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _),
-    ENNReal.toReal_rpow_mul_ofReal_exp hu (measure_ne_top _ _), ENNReal.toReal_rpow_mul_ofReal_exp hu' (measure_ne_top _ _),
+    ENNReal.toReal_rpow_mul_ofReal_exp hu (measure_ne_top _ _),
+    ENNReal.toReal_rpow_mul_ofReal_exp hu' (measure_ne_top _ _),
     Real.exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
 
 theorem speaker_dirac_real_singleton_of_pair [IsFiniteKernel L] (hα : 0 < α) {u' : U}
@@ -361,7 +365,8 @@ theorem speaker_dirac_real_singleton_of_pair [IsFiniteKernel L] (hα : 0 < α) {
   rw [speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair w huu'
       (fun v ↦ ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _)
       (fun v hv ↦ hsupp v fun h ↦ hv (by rw [h, ENNReal.zero_rpow_of_pos hα, zero_mul])),
-    ENNReal.toReal_rpow_mul_ofReal_exp hu (measure_ne_top _ _), ENNReal.toReal_rpow_mul_ofReal_exp hu' (measure_ne_top _ _),
+    ENNReal.toReal_rpow_mul_ofReal_exp hu (measure_ne_top _ _),
+    ENNReal.toReal_rpow_mul_ofReal_exp hu' (measure_ne_top _ _),
     Real.exp_div_add_exp_eq_sigmoid, ← mul_sub]
 omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
 private theorem exp_utility_dirac (C : U → ℝ) (L : U → Measure W) (w : W) (u : U) :

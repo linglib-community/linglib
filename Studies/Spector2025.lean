@@ -246,7 +246,7 @@ variable {μ : Measure W} {α : ℝ} {C : U → ℝ} {parse : ι → U → Set W
 -- (28)
 theorem speaker_eq_ofWeights : speaker μ α C parse = Kernel.ofWeights fun w σ ↦
     (⨅ i, literalListener μ (parse i) σ {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C σ))) := by
-  simp [speaker, maximinSpeaker, essInf_prod_dirac_parseListener]
+  simp [speaker, maximinSpeaker_eq_ofWeights, essInf_prod_dirac_parseListener]
 
 theorem speaker_eq_maximinSpeaker (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0) :
     speaker μ α C parse = maximinSpeaker α C (parseListener fun i ↦ literalListener μ (parse i))

@@ -6,9 +6,11 @@ public import Mathlib.MeasureTheory.Function.EssSup
 /-!
 # The MaxiMin speaker
 
-A speaker who weighs an utterance by the least mass its listener gives a state she entertains,
-where the speaker of the Rational Speech Act model takes the geometric mean: the
-[MaxiMin speaker](##RSA.maximinSpeaker).
+The [MaxiMin speaker](##RSA.maximinSpeaker) is the softmax of the
+[least utility](##RSA.maximinUtility) of an utterance over the states she entertains, where the
+speaker of the Rational Speech Act model takes the expected utility. Written without logarithms,
+[her weight for an utterance](##RSA.maximinSpeaker_eq_ofWeights) is the least mass its listener
+gives such a state, where that speaker's is the geometric mean.
 
 ## References
 
@@ -29,9 +31,10 @@ variable {W U O : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSpac
 /-! #### The MaxiMin speaker
 
 A speaker who is maximally averse to the risk of being misread values an utterance by its least
-utility over the states she entertains, the MaxiMin rule, instead of by its expected utility. Her
-weight puts the essential infimum of the listener's mass over her belief where the expected-utility
-speaker puts its geometric mean. She produces the utterances that speaker produces, and is that
+utility over the states she entertains, the MaxiMin rule, instead of by its expected utility: the
+essential infimum of the log of the listener's mass under her belief, less the cost. Her weight
+puts the essential infimum of the listener's mass where the expected-utility speaker puts its
+geometric mean. She produces the utterances that speaker produces, and is that
 speaker when her belief is a point mass, but she depends on her belief only through the states
 it entertains, not through their probabilities. -/
 
@@ -58,22 +61,48 @@ section MaxiMin
 
 variable [Fintype U] [Countable O] [MeasurableSingletonClass O]
 
-/-- The MaxiMin speaker at rationality `α` and cost `C` addresses the listener `L` and at `o`
-believes `b o`. Her weight for an utterance is the essential infimum of its listener's mass over
-her belief, to the power `α`, times the cost weight. -/
+omit [MeasurableSpace U] [Fintype U] in
+/-- The MaxiMin utility of an utterance to a speaker who believes `β` is the least log of its
+listener's mass over the states `β` entertains, less its cost: the least value of the utility of
+[spector-2025]'s (28) over those states, the cost being the same at each. -/
+noncomputable def maximinUtility (C : U → ℝ) (L : U → Measure W) (β : Measure W) (u : U) : EReal :=
+  essInf (fun w ↦ ENNReal.log (L u {w})) β - (C u : EReal)
+
+/-- The MaxiMin speaker at rationality `α` soft-maximizes her MaxiMin utility against the
+listener `L`, believing `b o` at `o`. -/
 noncomputable def maximinSpeaker (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
     Kernel O U :=
-  Kernel.ofWeights fun o u ↦
-    essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+  Kernel.softmax fun o u ↦ α * maximinUtility C L (b o) u
+
+/-- Her weight for an utterance is the essential infimum of its listener's mass over her belief,
+to the power `α`, times the cost weight. -/
+theorem maximinSpeaker_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    maximinSpeaker α C L b = Kernel.ofWeights fun o u ↦
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
+  have h (o : O) (u : U) : ENNReal.log (essInf (fun w ↦ L u {w}) (b o)) =
+      essInf (fun w ↦ ENNReal.log (L u {w})) (b o) := ENNReal.logOrderIso.essInf_apply _ _
+  rw [Kernel.ofWeights_rpow_mul_eq_softmax]
+  simp_rw [maximinSpeaker, maximinUtility, ← h, EReal.coe_mul_sub_coe, sub_eq_add_neg,
+    EReal.coe_neg]
 
 instance (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
     IsFiniteKernel (maximinSpeaker α C L b) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+
+instance (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) (o : O) :
+    IsZeroOrProbabilityMeasure (maximinSpeaker α C L b o) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.softmax _ o))
+
+omit [MeasurableSpace U] [Fintype U] in
+theorem maximinUtility_dirac [Fintype W] [MeasurableSingletonClass W] (C : U → ℝ)
+    (L : U → Measure W) (w : W) (u : U) :
+    maximinUtility C L (Measure.dirac w) u = utility C L (Measure.dirac w) u := by
+  rw [maximinUtility, essInf_dirac, utility_dirac]
 
 /-- The MaxiMin speaker who knows the state is the speaker who knows it. -/
 theorem maximinSpeaker_dirac [Fintype W] [MeasurableSingletonClass W] (α : ℝ) (C : U → ℝ)
     (L : U → Measure W) : maximinSpeaker α C L Measure.dirac = speaker α C L Measure.dirac := by
-  simp only [maximinSpeaker, speaker_eq_ofWeights, essInf_dirac, Measure.geomMean_dirac]
+  simp only [maximinSpeaker, speaker, maximinUtility_dirac]
 
 variable [MeasurableSingletonClass U] {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W}
   {o : O} {u : U}
@@ -81,8 +110,9 @@ variable [MeasurableSingletonClass U] {α : ℝ} {C : U → ℝ} {L : U → Meas
 theorem maximinSpeaker_apply_singleton (u : U) :
     maximinSpeaker α C L b o {u} =
       essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
-        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_apply_singleton _ o u
+        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) := by
+  rw [maximinSpeaker_eq_ofWeights]
+  exact Kernel.ofWeights_apply_singleton _ o u
 
 /-- The MaxiMin speaker depends on her belief only through its null sets. -/
 theorem maximinSpeaker_congr_belief {b' : O → Measure W} (h : ae (b o) = ae (b' o)) :
@@ -106,12 +136,13 @@ theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o
     (hb : ∃ w, b o {w} ≠ 0) : maximinSpeaker α C L b o {u} = 0 ↔ speaker α C L b o {u} = 0 := by
   rw [maximinSpeaker_apply_singleton_eq_zero_iff hα hb, speaker_apply_singleton_eq_zero_iff hα]
 
-/-- Row preference of the MaxiMin speaker compares the weights; the normalization cancels. -/
+/-- Of two utterances the MaxiMin speaker prefers the one of greater weight; the normalization
+cancels. -/
 theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {w} ≠ 0) {u u' : U} :
     (maximinSpeaker α C L b o).real {u} < (maximinSpeaker α C L b o).real {u'} ↔
       essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
         essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_real_singleton_lt_iff o
+  maximinSpeaker_eq_ofWeights α C L b ▸ Kernel.ofWeights_real_singleton_lt_iff o
     fun _ ↦ ENNReal.rpow_mul_ofReal_exp_ne_top hα (essInf_ne_top hb) _
 
 end MaxiMin

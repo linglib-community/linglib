@@ -6,13 +6,10 @@ public import Mathlib.Order.Filter.Ker
 /-!
 # The almost-everywhere filter
 
-The kernel of the almost-everywhere filter of a measure is the set of points of positive mass,
-and the almost-everywhere filter of a sum of measures is the join of theirs.
-
-## Main statements
-
-* `MeasureTheory.ker_ae`: `(ae μ).ker = {x | μ {x} ≠ 0}`.
-* `MeasureTheory.ae_add_measure_eq`: `ae (μ + ν) = ae μ ⊔ ae ν`.
+The [kernel](##MeasureTheory.ker_ae) of the almost-everywhere filter of a measure is the set of
+points of positive mass, and the almost-everywhere filter of a
+[sum of two measures](##MeasureTheory.ae_add_measure_eq) is the join of theirs, the binary case
+of mathlib's `MeasureTheory.Measure.ae_sum_eq`.
 -/
 
 public section
@@ -25,7 +22,7 @@ variable {α : Type*} [MeasurableSpace α]
 
 theorem ker_ae (μ : Measure α) : (ae μ).ker = {x | μ {x} ≠ 0} := by
   ext x
-  simp only [mem_ker, mem_ae_iff, mem_setOf_eq]
+  simp only [mem_ker, mem_ae_iff, mem_ofPred_eq]
   exact ⟨fun h h0 ↦ h {x}ᶜ (by rwa [compl_compl]) rfl,
     fun h s hs ↦ by_contra fun hx ↦ h (measure_mono_null (singleton_subset_iff.2 hx) hs)⟩
 
