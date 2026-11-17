@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Semantics.Mereology.Atomic
 public import Linglib.Semantics.Plurality.Number
 
 /-!
@@ -20,14 +20,13 @@ individuals, `*` reduces to distribution over members.
 * `Mereology.D P x`: Link's 1987 distributive operator.
 * `Mereology.Materialization E M`: a `SupHom E M`, with `Mereology.mPart` and
   `Mereology.mEquiv` the preorder and equivalence it induces on `E`.
-* `Mereology.AtomJoinPrime E`: an atom below a sum lies below a summand.
 * `Mereology.Individual α`: Link's model, the nonempty sets of atoms under union.
 
 ## Main results
 
 * `Mereology.algClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
-* `Mereology.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, for
-  join-prime atoms.
+* `Mereology.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, where joins
+  are sums.
 * `Mereology.IsDistr.properPlural_sup`, `Mereology.cum_properPlural`: the sum
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
@@ -44,7 +43,7 @@ individuals, `*` reduces to distribution over members.
 Link's model is a complete join semilattice with atoms and without a bottom; only `SemilatticeSup E`
 and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClosure P`, mathlib's
 `supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
-is a stronger assumption, which enters only through `AtomJoinPrime`. Schwarzschild's set-based
+is a stronger assumption, which enters only through `Mereology.SupIsSum`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
 own model of nonempty sets of atoms has no bottom (`Individual`). Where the carrier has one,
 `*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
@@ -151,18 +150,13 @@ theorem cum_properPlural : CUM (properPlural P) := by
     exact hy' h
   · exact hx' ((h.eq le_sup_left hx0) ▸ h)
 
-/-- Atoms are join-prime when an atom below a sum lies below one of the summands, as in a
-Boolean algebra. -/
-def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
-  ∀ (a : E), Atom a → ∀ (x y : E), a ≤ x ⊔ y → a ≤ x ∨ a ≤ y
-
-/-- If atoms are join-prime, every atomic part of an element of `*P` satisfies a distributive
+/-- Where joins are sums, every atomic part of an element of `*P` satisfies a distributive
 `P`. -/
-theorem IsDistr.of_algClosure_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E)
-    (h : AlgClosure P x) (hy : Atom y) (hle : y ≤ x) : P y := by
+theorem IsDistr.of_algClosure_of_atom_le [SupIsSum E] (hP : IsDistr P) (h : AlgClosure P x)
+    (hy : Atom y) (hle : y ≤ x) : P y := by
   induction h using AlgClosure.induction with
   | base hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
-  | @sum a b _ _ iha ihb => exact (hJP y hy a b hle).elim iha ihb
+  | @sum a b _ _ iha ihb => exact (hy.le_sup_iff.1 hle).elim iha ihb
 
 /-! ### Sets of individuals
 

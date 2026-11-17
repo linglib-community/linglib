@@ -37,6 +37,11 @@ namespace Mereology
 
 variable {α : Type*}
 
+/-- Without a null individual, two elements overlap iff they share a part. -/
+theorem overlap_iff_exists_le [PartialOrder α] [NoBotOrder α] {x y : α} :
+    Overlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
+  ⟨fun ⟨z, _, hzx, hzy⟩ ↦ ⟨z, hzx, hzy⟩, fun ⟨z, hzx, hzy⟩ ↦ ⟨z, not_isBot z, hzx, hzy⟩⟩
+
 /-! ### Sums -/
 
 section Sum

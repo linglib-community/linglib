@@ -89,7 +89,7 @@ theorem IsSum.atomsBelow_eq_of_forall_atom {S : Set α} {t : α} (h : IsSum (· 
       (Set.singleton_subset_iff.2 ha))
     fun a ha ↦ Set.mem_iUnion₂.2 ⟨a, ha, hS a ha, le_rfl⟩
 
-/-- An atom is part of a join iff it is part of one of the two. -/
+/-- The atoms of a join are the atoms of the two. -/
 theorem atomsBelow_sup {α : Type*} [SemilatticeSup α] [SupIsSum α] (x y : α) :
     atomsBelow (x ⊔ y) = atomsBelow x ∪ atomsBelow y := by
   rw [(isSum_sup x y).atomsBelow_eq]
@@ -124,5 +124,12 @@ def atomsBelowEmbedding : α ↪o Set α :=
 theorem atomsBelowEmbedding_apply (x : α) : atomsBelowEmbedding α x = atomsBelow x := rfl
 
 end PartialOrder
+
+/-- An atom is part of a join iff it is part of one of the two, as *Ann* is part of the sum of
+some girls only by being one of them. -/
+theorem Atom.le_sup_iff [SemilatticeSup α] [SupIsSum α] {a x y : α} (ha : Atom a) :
+    a ≤ x ⊔ y ↔ a ≤ x ∨ a ≤ y := by
+  have h := congrArg (a ∈ ·) (atomsBelow_sup x y)
+  simpa [atomsBelow, ha] using h
 
 end Mereology
