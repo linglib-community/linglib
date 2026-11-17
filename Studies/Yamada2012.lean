@@ -97,21 +97,21 @@ def concede : Model W P I where
 variable {M i j k X Y}
 
 theorem committed_assert_self :
-    committed (M.assert i X).acc (i, k) Y = committed M.acc (i, k) (Xᶜ ∪ Y) := by
+    ((i, k) ⊢[(M.assert i X).acc] Y) = ((i, k) ⊢[M.acc] (Xᶜ ∪ Y)) := by
   cases k
   · rw [assert, committed_perform_of_ne (by simp), committed_perform]
   · rw [assert, committed_perform, committed_perform_of_ne (by simp)]
 
 theorem committed_assert_of_ne (h : j ≠ i) :
-    committed (M.assert i X).acc (j, k) Y = committed M.acc (j, k) Y := by
+    ((j, k) ⊢[(M.assert i X).acc] Y) = ((j, k) ⊢[M.acc] Y) := by
   rw [assert, committed_perform_of_ne (by simp [h]), committed_perform_of_ne (by simp [h])]
 
 theorem committed_concede_self :
-    committed (M.concede i X).acc (i, .conceded) Y = committed M.acc (i, .conceded) (Xᶜ ∪ Y) :=
+    ((i, .conceded) ⊢[(M.concede i X).acc] Y) = ((i, .conceded) ⊢[M.acc] (Xᶜ ∪ Y)) :=
   committed_perform
 
 theorem committed_concede_of_ne (h : (j, k) ≠ (i, Kind.conceded)) :
-    committed (M.concede i X).acc (j, k) Y = committed M.acc (j, k) Y :=
+    ((j, k) ⊢[(M.concede i X).acc] Y) = ((j, k) ⊢[M.acc] Y) :=
   committed_perform_of_ne h
 
 end Model
@@ -125,7 +125,7 @@ def realize : Formula P I → Model W P I → Set W
   | atom p, M => M.val p
   | neg φ, M => (φ.realize M)ᶜ
   | and φ ψ, M => φ.realize M ∩ ψ.realize M
-  | cmt k i φ, M => committed M.acc (i, k) (φ.realize M)
+  | cmt k i φ, M => ((i, k) ⊢[M.acc] (φ.realize M))
   | afterAssert i χ φ, M => φ.realize (M.assert i (χ.realize M))
   | afterConcede i χ φ, M => φ.realize (M.concede i (χ.realize M))
 
@@ -210,13 +210,13 @@ kinds (Proposition 2). -/
 theorem realize_afterAssert_cmt_of_iFree (h : φ.IFree i) :
     (afterAssert i φ (cmt k i φ)).realize M = Set.univ := by
   simp only [realize, committed_assert_self, realize_assert_of_iFree h, Set.compl_union_self,
-    committed_univ]
+    SetRel.core_univ]
 
 -- Proposition 2
 theorem realize_afterConcede_cmt_of_iFree (h : φ.IFree i) :
     (afterConcede i φ (cmt .conceded i φ)).realize M = Set.univ := by
   simp only [realize, committed_concede_self, realize_concede_of_iFree h, Set.compl_union_self,
-    committed_univ]
+    SetRel.core_univ]
 
 /-- When `i` asserts `φ` and then another agent `j` asserts its negation, `i` is committed to
 `φ` and `j` to its negation, with no contradiction. -/
@@ -225,7 +225,7 @@ theorem realize_afterAssert_afterAssert_neg (hij : i ≠ j) (hi : φ.IFree i) (h
       (and (cmt .asserted i φ) (cmt .asserted j (neg φ))))).realize M = Set.univ := by
   simp only [realize, committed_assert_self, committed_assert_of_ne hij,
     realize_assert_of_iFree hi, realize_assert_of_iFree hj, compl_compl, Set.compl_union_self,
-    Set.union_compl_self, committed_univ, Set.inter_self]
+    Set.union_compl_self, SetRel.core_univ, Set.inter_self]
 
 /-- An assertion need not commit its author to its content: asserting "`p`, and I am not
 committed to `p`" leaves the author uncommitted to it. -/
@@ -237,13 +237,13 @@ theorem exists_not_mem_realize_afterAssert_cmt :
   have hX : φ.realize M = {true} :=
     Set.ext fun w ↦ ⟨And.left, fun hw ↦ ⟨hw, fun hc ↦ Bool.false_ne_true (@hc false trivial)⟩⟩
   refine ⟨M, φ, fun h ↦ ?_⟩
-  have h₁ : true ∈ committed M.acc ((), .asserted)
-      ((φ.realize M)ᶜ ∪ φ.realize (M.assert () (φ.realize M))) := committed_assert_self ▸ h
+  have h₁ : true ∈ (((), .asserted) ⊢[M.acc]
+      ((φ.realize M)ᶜ ∪ φ.realize (M.assert () (φ.realize M)))) := committed_assert_self ▸ h
   rw [hX] at h₁
   have h₂ : true ∈ φ.realize (M.assert () {true}) :=
     (@h₁ true trivial).resolve_left fun hn ↦ hn rfl
-  have h₃ : true ∈ committed (M.assert () {true}).acc ((), .asserted) {true} := by
-    rw [committed_assert_self, Set.compl_union_self, committed_univ]
+  have h₃ : true ∈ (((), .asserted) ⊢[(M.assert () {true}).acc] {true}) := by
+    rw [committed_assert_self, Set.compl_union_self, SetRel.core_univ]
     trivial
   exact h₂.2 h₃
 

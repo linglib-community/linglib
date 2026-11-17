@@ -12,7 +12,7 @@ each agent, which is KD45, and a commitment accessibility `O_{a,b}` for each ord
 agents, which is K45. Commitment is transitive and Euclidean but not serial, so that an agent may
 be committed to a contradiction. Belief `B_a π` and commitment `C_{a,b} π` are `ModalLogic.Box`
 along these relations, `C_{a,b} π` holds exactly on the commitment proposition
-`Commitment.committed`, and the update of the thesis is the performative update
+`k ⊢[O] φ`, and the update of the thesis is the performative update
 `Commitment.perform`. What `a` is committed to towards `b` at a world is a commitment state of
 `Commitment.Basic`.
 
@@ -140,7 +140,7 @@ def Believes : Prop :=
 def Committed : Prop :=
   □[c.commitment (a, b)] (· ∈ π) w
 
-theorem setOf_committed : {w | c.Committed a b π w} = committed c.commitment (a, b) π := rfl
+theorem setOf_committed : {w | c.Committed a b π w} = ((a, b) ⊢[c.commitment] π) := rfl
 
 /-- The performative update commits `a` towards `b` to `π`, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`
 ([van-der-leer-2026] Theorem 25 at the level of states). -/

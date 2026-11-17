@@ -134,7 +134,7 @@ the authority of an assertion or a question is exactly the participant whose com
 update of the space of all states projects. -/
 theorem authority_eq_some_iff
     (hO : Function.Injective fun x : SpeechAct.Role × Bool ↦
-      committed O x.1 (bif x.2 then φ else φᶜ))
+      (x.1 ⊢[O] (bif x.2 then φ else φᶜ)))
     {f : Force} {D : Commitment.Space (Set (Set W))}
     (hD : D ∈ f.commitmentUpdate (.Ici ∅) O φ) (r : SpeechAct.Role) :
     f.authority = some r ↔ (Commitment.Space.Ici ∅).ProjectsCommitment O r φ D := by
@@ -152,8 +152,8 @@ theorem authority_eq_some_iff
 /-- In the canonical model, where each participant's commitments leave open a set of facts, the
 participants' commitments to a fact and to its negation are four distinct propositions. -/
 private theorem injective_committed_index : Function.Injective fun x : SpeechAct.Role × Bool ↦
-    committed (Index.access (F := Bool)) x.1
-      (bif x.2 then Index.fact ⁻¹' {true} else (Index.fact ⁻¹' {true})ᶜ) := by
+    (x.1 ⊢[Index.access (F := Bool)]
+      (bif x.2 then Index.fact ⁻¹' {true} else (Index.fact ⁻¹' {true})ᶜ)) := by
   have hX (b : Bool) : (bif b then Index.fact ⁻¹' {true} else (Index.fact ⁻¹' {true})ᶜ :
       Set (Index SpeechAct.Role Bool)) = Index.fact ⁻¹' {b} := by
     cases b <;> ext <;> simp

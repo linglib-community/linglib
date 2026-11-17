@@ -38,7 +38,7 @@ derivation for disjunction; against the bare proposition `φ` the secondary impl
 *A or B* would not be blocked.
 
 `Kφ` and the primary implicatures are the hearer's inferences about the speaker's beliefs, not
-public commitments in the sense of `Commitment.committed`. The two meet at Quality, where Sincerity
+public commitments in the sense of `Commitment.perform`. The two meet at Quality, where Sincerity
 turns the speaker's commitment to the asserted `φ` into the belief `Kφ`.
 
 ## References

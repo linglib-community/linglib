@@ -12,9 +12,9 @@ commitment states of `Commitment.Frame`, with belief $B_a$ and commitment $C_{a,
 operators. A proposition is given by its truth set in each state, since the truth of
 $C_{a,b}\pi$ changes when the commitments do, and it is $C_{a,b}$-free when that set does not
 depend on $O_{a,b}$. An assertion is Krifka's performative update:
-[it commits the speaker to a $C_{a,b}$-free content](##committed_assert), a commitment that
+[it commits the speaker to a $C_{a,b}$-free content](##commits_assert), a commitment that
 [Sincerity passes on to belief](##committed_believes_of_sincere) and that
-[survives every later act](##committed_update) when the content mentions no commitment. The
+[survives every later act](##commits_update) when the content mentions no commitment. The
 acts transform a commitment space in the sense of Cohen and Krifka, a root state with its
 cooperative continuations, and of the thesis's three levels of discourse expectation
 [a cooperative act is admissible](##admissible_of_cooperative) and every act possible, but
@@ -27,13 +27,13 @@ cooperative continuations, and of the thesis's three levels of discourse expecta
 * The basic language is embedded by its semantics: a proposition is a function from states to
   world-sets, an atom a constant one, and negation and conjunction the pointwise complement and
   meet. `IsFree a b π` holds of every formula in which $C_{a,b}$ does not occur, by
-  `isFree_const`, `IsFree.compl`, `IsFree.inf`, `IsFree.believes` and `IsFree.committed`.
+  `isFree_const`, `IsFree.compl`, `IsFree.inf`, `IsFree.believes` and `IsFree.commits`.
 * The $\models_{SAL}$ claims, for every space $C$, member $c$ and world, are stated at the root,
   $C_c$ (Definition 13) being again a space with root $c$. Theorem 32, possibility, is the
   totality of `update`.
 * Theorem 30 is stated for a content free of every commitment operator, since
   [an act may change a commitment the content
-  mentions](##exists_isFree_committed_not_committed_update). Theorems 29, 31 and 35 carry the
+  mentions](##exists_isFree_commits_not_commits_update). Theorems 29, 31 and 35 carry the
   freeness that Definition 10 uses, whose confirmation is evaluated at the new root.
 * A state is a model of Yamada's logic of propositional commitments, in which
   [the update is the act of asserting](##toModel_restrictCommitment) and
@@ -189,7 +189,7 @@ variable (a b : A) (π τ : Frame W A → Set W)
 def believes : Frame W A → Set W := fun c ↦ {w | c.Believes a (π c) w}
 
 /-- `C_{a,b} π`, by its truth set in each state (Definition 3). -/
-def committed : Frame W A → Set W := fun c ↦ {w | c.Committed a b (π c) w}
+def commits : Frame W A → Set W := fun c ↦ {w | c.Committed a b (π c) w}
 
 /-- `π` is `C_{a,b}`-free when its truth set does not depend on `O_{a,b}`. -/
 def IsFree : Prop :=
@@ -209,9 +209,9 @@ theorem IsFree.inf (h : IsFree a b π) (h' : IsFree a b τ) : IsFree a b (π ⊓
 theorem IsFree.believes (h : IsFree a b π) (x : A) : IsFree a b (believes x π) :=
   fun c c' hb hc ↦ by simp only [VanDerLeer2026.believes, Frame.Believes, hb, h hb hc]
 
-theorem IsFree.committed (h : IsFree a b π) {x y : A} (hxy : (x, y) ≠ (a, b)) :
-    IsFree a b (committed x y π) :=
-  fun c c' hb hc ↦ by simp only [VanDerLeer2026.committed, Frame.Committed, hc _ hxy, h hb hc]
+theorem IsFree.commits (h : IsFree a b π) {x y : A} (hxy : (x, y) ≠ (a, b)) :
+    IsFree a b (commits x y π) :=
+  fun c c' hb hc ↦ by simp only [VanDerLeer2026.commits, Frame.Committed, hc _ hxy, h hb hc]
 
 theorem IsFree.apply_restrictCommitment (h : IsFree a b π) (c : Frame W A) (σ : Set W) :
     π (c.restrictCommitment a b σ) = π c :=
@@ -394,56 +394,56 @@ theorem apply_root_update (hπ : ∀ x y, IsFree x y π) : π (update α C).root
 
 /-- A commitment to a proposition free of every commitment operator survives every speech act
 (Theorem 30). -/
-theorem committed_update (hπ : ∀ x y, IsFree x y π) (h : w ∈ committed a b π C.root) :
-    w ∈ committed a b π (update α C).root := by
-  simp only [committed, Set.mem_ofPred_eq, apply_root_update C α hπ] at h ⊢
+theorem commits_update (hπ : ∀ x y, IsFree x y π) (h : w ∈ commits a b π C.root) :
+    w ∈ commits a b π (update α C).root := by
+  simp only [commits, Set.mem_ofPred_eq, apply_root_update C α hπ] at h ⊢
   exact box_restrict _ (root_update_commitment_le C α (a, b)) w h
 
 -- Theorem 30 for a `C_{a,b}`-free proposition that mentions another commitment: at the state
 -- where every world is accessible, `a` is committed to `¬C_{b,b} {true}` until `b` asserts `{true}`
-theorem exists_isFree_committed_not_committed_update :
+theorem exists_isFree_commits_not_commits_update :
     ∃ (C : Space (Frame Bool Bool)) (a b : Bool) (π : Frame Bool Bool → Set Bool)
       (α : SpeechAct Bool Bool) (w : Bool),
-      IsFree a b π ∧ w ∈ committed a b π C.root ∧ w ∉ committed a b π (update α C).root := by
-  refine ⟨{default}, false, false, (committed true true fun _ ↦ {true})ᶜ,
+      IsFree a b π ∧ w ∈ commits a b π C.root ∧ w ∉ commits a b π (update α C).root := by
+  refine ⟨{default}, false, false, (commits true true fun _ ↦ {true})ᶜ,
     .assert true true fun _ ↦ {true}, true,
-    ((isFree_const _).committed (by decide)).compl,
+    ((isFree_const _).commits (by decide)).compl,
     fun _ _ h ↦ Bool.false_ne_true (h false trivial),
     fun h ↦ ?_⟩
   exact h true ⟨trivial, fun e ↦ absurd (Prod.mk.inj e).1 (by decide)⟩ fun _ hv ↦ hv.2 rfl
 
 /-- After `assert_{a,b}(π)`, `a` is committed towards `b` to `π` at every world, for `π` free of
 `C_{a,b}` (Theorem 25). -/
-theorem committed_assert (hπ : IsFree a b π) :
-    committed a b π (update (.assert a b π) C).root = Set.univ :=
+theorem commits_assert (hπ : IsFree a b π) :
+    commits a b π (update (.assert a b π) C).root = Set.univ :=
   Set.eq_univ_of_forall fun w ↦ by
-    simp only [committed, update_assert, root_assert, hπ.apply_restrictCommitment]
+    simp only [commits, update_assert, root_assert, hπ.apply_restrictCommitment]
     exact C.root.committed_restrictCommitment a b _ w
 
 -- Theorem 25 without freeness: after `assert_{a,b}(p ∧ ¬C_{a,b} p)` the speaker is committed to
 -- `p`, so to no proposition entailing `¬C_{a,b} p`
-theorem exists_committed_assert_eq_empty :
+theorem exists_commits_assert_eq_empty :
     ∃ (C : Space (Frame Bool Unit)) (π : Frame Bool Unit → Set Bool),
-      committed () () π (update (.assert () () π) C).root = ∅ := by
-  refine ⟨{default}, (fun _ ↦ {true}) ⊓ (committed () () fun _ ↦ {true})ᶜ,
+      commits () () π (update (.assert () () π) C).root = ∅ := by
+  refine ⟨{default}, (fun _ ↦ {true}) ⊓ (commits () () fun _ ↦ {true})ᶜ,
     Set.eq_empty_of_forall_notMem fun w h ↦ ?_⟩
-  have hπ : ((fun _ ↦ {true}) ⊓ (committed () () fun _ ↦ {true})ᶜ)
+  have hπ : ((fun _ ↦ {true}) ⊓ (commits () () fun _ ↦ {true})ᶜ)
       (default : Frame Bool Unit) = {true} :=
     Set.ext fun v ↦ ⟨And.left, fun hv ↦ ⟨hv, fun h ↦ Bool.false_ne_true (h false trivial)⟩⟩
   simp only [update_assert, root_assert, Space.root_singleton, hπ] at h
   exact (h true ⟨trivial, fun _ ↦ rfl⟩).2 fun _ hv ↦ hv.2 rfl
 
 -- p. 29: the commitment an assertion creates is mutually believed
-theorem mutuallyBelieved_committed_assert (hπ : IsFree a b π) :
+theorem mutuallyBelieved_commits_assert (hπ : IsFree a b π) :
     MutuallyBelieved (update (.assert a b π) C).root
-      (committed a b π (update (.assert a b π) C).root) w := by
-  rw [committed_assert C a b hπ]
+      (commits a b π (update (.assert a b π) C).root) w := by
+  rw [commits_assert C a b hπ]
   exact fun _ _ ↦ trivial
 
-theorem mutuallyCommitted_committed_assert (hπ : IsFree a b π) :
+theorem mutuallyCommitted_commits_assert (hπ : IsFree a b π) :
     MutuallyCommitted (update (.assert a b π) C).root
-      (committed a b π (update (.assert a b π) C).root) w := by
-  rw [committed_assert C a b hπ]
+      (commits a b π (update (.assert a b π) C).root) w := by
+  rw [commits_assert C a b hπ]
   exact fun _ _ ↦ trivial
 
 -- Theorem 29
@@ -532,12 +532,12 @@ projected in `C` and `b` was not yet committed to `π` (Theorem 31(1)), and `a �
 the confirmation is redundant. -/
 theorem cooperative_assert_of_not_committed [Nonempty W] (hπ : IsFree a b π) (hab : a ≠ b)
     (hmem : (C.root.restrictCommitment a b (π C.root)).restrictCommitment b a (π C.root) ∈ C)
-    (h : committed b a π C.root = ∅) :
+    (h : commits b a π C.root = ∅) :
     Cooperative (update (.assert a b π) C) (.assert b a π) := by
   obtain ⟨w⟩ := ‹Nonempty W›
   have hπ' := hπ.apply_restrictCommitment C.root (π C.root)
-  have h' : w ∉ committed b a π C.root := h ▸ Set.notMem_empty w
-  simp only [committed, Set.mem_ofPred_eq, Frame.Committed, ModalLogic.Box, not_forall] at h'
+  have h' : w ∉ commits b a π C.root := h ▸ Set.notMem_empty w
+  simp only [commits, Set.mem_ofPred_eq, Frame.Committed, ModalLogic.Box, not_forall] at h'
   obtain ⟨v, hwv, hvπ⟩ := h'
   have h₁ : w ~[(C.root.restrictCommitment a b (π C.root)).commitment (b, a)] v := by
     rwa [C.root.restrictCommitment_other a b (π C.root) fun e ↦ hab (Prod.mk.inj e).2]
@@ -634,7 +634,7 @@ theorem exists_cooperative_assert_question_self :
     ∃ (C : Space (Frame Bool Bool)) (a b : Bool) (π : Frame Bool Bool → Set Bool),
       C.root.restrictCommitment b a (π C.root) ∈ C ∧
         C.root.restrictCommitment b a (π C.root)ᶜ ∈ C ∧
-        committed a b π C.root = ∅ ∧ committed a b πᶜ C.root = ∅ ∧
+        commits a b π C.root = ∅ ∧ commits a b πᶜ C.root = ∅ ∧
         Cooperative (update (.question a b π) C) (.assert a b π) := by
   let D : Frame Bool Bool := default
   have h₁ : D < D.restrictCommitment true false {true} :=
@@ -700,7 +700,7 @@ theorem isFree_realize {φ : Formula P (A × A)} (h : φ.IFree (a, b)) :
   | cmt k j φ ih =>
     simp only [Formula.realize, toModel] at ih ⊢
     rw [ih h.2]
-    simp only [Commitment.committed, hc j h.1]
+    simp only [hc j h.1]
   | afterAssert | afterConcede => exact h.elim
 
 end Yamada

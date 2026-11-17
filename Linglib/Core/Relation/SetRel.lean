@@ -46,6 +46,12 @@ theorem core_iUnion {ι : Sort*} (R : ι → SetRel α β) (t : Set β) :
     core (⋃ i, R i) t = ⋂ i, (R i).core t := by
   ext; simp only [mem_core, Set.mem_iUnion, Set.mem_iInter]; grind
 
+theorem core_iInter {ι : Sort*} (R : SetRel α β) (t : ι → Set β) :
+    R.core (⋂ i, t i) = ⋂ i, R.core (t i) :=
+  Set.ext fun _ ↦ by
+    simp only [mem_core, Set.mem_iInter]
+    exact ⟨fun h i _ hb ↦ h hb i, fun h _ hb i ↦ h i hb⟩
+
 @[gcongr]
 theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t :=
   fun _ ha _ hb ↦ ha (h hb)
