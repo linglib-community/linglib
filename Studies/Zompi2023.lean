@@ -209,8 +209,8 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : Bundle} {r : Cand 
       · exact absurd (hsmin r hrv) (not_le_of_gt hlt)
       · exact htail
 
-/-- The Eval competition is the substrate's: its survivors are the optimal candidates of `v`
-under the ranked constraints read as violation counters. -/
+-- the Eval competition is the substrate's: its survivors are the optimal candidates of `v`
+-- under the ranked constraints read as violation counters
 theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
     {c : Bundle} {r : Cand F} :
     r ∈ eval rk v c ↔ r ∈ Constraint.eval v.toFinset (rk.map (viol · c)) := by
