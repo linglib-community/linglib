@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Basic.Sign.Basic
@@ -26,7 +25,7 @@ exactly when the ranking satisfies its ERC against every competitor.
   constraints of an ERC.
 * `ERC.IsTrivial`, `ERC.IsContradictory`, `ERC.IsSimple`: an ERC with no `L`, one with an `L`
   and no `W`, and one with exactly one `W` and one `L`.
-* `ercOfProfiles`, `tableauERC`, `simpleERC`: the ERC of a winner and a loser given by their
+* `ercOfProfiles`, `simpleERC`: the ERC of a winner and a loser given by their
   violation vectors, of two candidates of a tableau, and of a single domination `i ≫ j`.
 
 ## Main statements
@@ -46,7 +45,7 @@ exactly when the ranking satisfies its ERC against every competitor.
 * `satisfiedBy_ercOfProfiles_iff_le`: a ranking satisfies the ERC of a winner and a loser iff
   the winner's violations, read in the order of the ranking, are lexicographically at most the
   loser's.
-* `Tableau.ofRanking_mem_optimal_iff_satisfiedBy`: a candidate is optimal under a ranking iff
+* `Ranking.Enumeration.mem_optimal_iff_satisfiedBy`: a candidate is optimal under a ranking iff
   the ranking satisfies its ERC against every competitor.
 
 ## Implementation notes
@@ -65,10 +64,9 @@ exactly when the ranking satisfies its ERC against every competitor.
 
 ## TODO
 
-Prince's fusion calculus. The fusion of two ERCs is computed coordinatewise, with `L`
-absorbing, `e` the identity, and each value idempotent. Its main results, in terms of
+Prince's fusion calculus has its first result here, that a ranking satisfying two ERCs satisfies
+their fusion (`ERC.SatisfiedBy.fuse`). Its other main results, in terms of
 `ERC.linearExtensions`:
-* a set of ERCs entails its fusion;
 * a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`;
 * a set entails an ERC iff the fusion of some subset entails it.
 
@@ -148,7 +146,7 @@ private theorem ERCVal.eq_W_of_le {x : ERCVal} (h : .W ≤ x) : x = .W := by
 
 namespace ERC
 
-variable (r : Ranking ι n) (α : ERC ι)
+variable (r : Ranking.Enumeration ι n) (α : ERC ι)
 
 /-- A ranking `r` *satisfies* the ERC `α` when the sign vector of `α`, read in the order of `r`,
 is lexicographically nonnegative. -/
@@ -167,7 +165,96 @@ theorem satisfiedBy_iff_dominance :
     α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
   rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
     Pi.toLex_comp_le_iff_forall_exists]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
+  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
+
+/-- An ERC *holds* of a relation on the constraints when every loser-preferring constraint is
+below some winner-preferring one, the `∀∃` form of an elementary ranking condition in
+[prince-2002]. Of the dominance of a ranking it is satisfaction, and of a partial order it is
+satisfaction by every ranking that extends the order. -/
+def Holds (R : ι → ι → Prop) (α : ERC ι) : Prop := ∀ j, α j = .L → ∃ i, α i = .W ∧ R i j
+
+instance [Fintype ι] (R : ι → ι → Prop) [DecidableRel R] : Decidable (α.Holds R) :=
+  inferInstanceAs (Decidable (∀ _, _ → ∃ _, _))
+
+theorem Holds.mono {R S : ι → ι → Prop} {α : ERC ι} (h : α.Holds R) (hRS : R ≤ S) :
+    α.Holds S :=
+  fun j hj ↦ (h j hj).imp fun i hi ↦ ⟨hi.1, hRS i j hi.2⟩
+
+/-- A ranking satisfies an ERC iff the ERC holds of its dominance. -/
+theorem satisfiedBy_iff_holds : α.SatisfiedBy r ↔ α.Holds r.Dominates :=
+  satisfiedBy_iff_dominance r α
+
+/-- A satisfied ERC whose only winner-preferring constraint is `i` puts `i` above each of its
+loser-preferring constraints: a ranking argument. -/
+theorem SatisfiedBy.dominates {r : Ranking.Enumeration ι n} {α : ERC ι} {i j : ι}
+    (h : α.SatisfiedBy r) (hi : ∀ k, α k = .W → k = i) (hj : α j = .L) : r.Dominates i j := by
+  obtain ⟨w, hw, hd⟩ := (satisfiedBy_iff_holds r α).1 h j hj
+  exact hi w hw ▸ hd
+
+/-- The ERC with the winner-preferring constraints `W` and the loser-preferring constraints `L`,
+the `⟨W, L⟩` of [prince-2002]. A constraint listed in both is loser-preferring. -/
+def ofWL [DecidableEq ι] (W L : List ι) : ERC ι :=
+  fun k ↦ if k ∈ L then .L else if k ∈ W then .W else .e
+
+/-! ### Fusion -/
+
+/-- The fusion of two ERC values ([prince-2002]): `L` absorbs, `e` is the identity, and each
+value is idempotent. -/
+def _root_.OptimalityTheory.ERCVal.fuse : ERCVal → ERCVal → ERCVal
+  | .L, _ | _, .L => .L
+  | .W, _ | _, .W => .W
+  | .e, .e => .e
+
+/-- The fusion of two ERCs, coordinatewise. -/
+def fuse (α β : ERC ι) : ERC ι := fun k ↦ (α k).fuse (β k)
+
+variable {r α} {β : ERC ι} {k : ι}
+
+theorem fuse_eq_L_iff : α.fuse β k = .L ↔ α k = .L ∨ β k = .L := by
+  unfold fuse
+  cases α k <;> cases β k <;> decide
+
+theorem fuse_eq_W_iff :
+    α.fuse β k = .W ↔ (α k = .W ∨ β k = .W) ∧ α k ≠ .L ∧ β k ≠ .L := by
+  unfold fuse
+  cases α k <;> cases β k <;> decide
+
+/-- A ranking that satisfies two ERCs satisfies their fusion. -/
+theorem SatisfiedBy.fuse (hα : α.SatisfiedBy r) (hβ : β.SatisfiedBy r) :
+    (α.fuse β).SatisfiedBy r := by
+  rw [satisfiedBy_iff_holds] at hα hβ ⊢
+  intro j hj
+  -- some constraint preferring a winner dominates `j`
+  obtain ⟨i₀, hi₀, hi₀j⟩ : ∃ i, (α i = .W ∨ β i = .W) ∧ r.Dominates i j := by
+    rcases fuse_eq_L_iff.1 hj with h | h
+    · exact (hα j h).imp fun i hi ↦ ⟨Or.inl hi.1, hi.2⟩
+    · exact (hβ j h).imp fun i hi ↦ ⟨Or.inr hi.1, hi.2⟩
+  -- take the most dominant such constraint
+  let P : Finset (Fin n) := {p | α (r p) = .W ∨ β (r p) = .W}
+  have hP : P.Nonempty := ⟨r.symm i₀, by simpa [P] using hi₀⟩
+  have hmem := P.min'_mem hP
+  have hmin : ∀ i, (α i = .W ∨ β i = .W) → P.min' hP ≤ r.symm i := fun i hi ↦
+    P.min'_le _ (by simpa [P] using hi)
+  refine ⟨r (P.min' hP), fuse_eq_W_iff.2 ⟨by simpa [P] using hmem, fun h ↦ ?_, fun h ↦ ?_⟩, ?_⟩
+  · obtain ⟨i, hi, hd⟩ := hα _ h
+    exact absurd (hmin i (Or.inl hi)) (not_le.2 (by simpa [Ranking.Enumeration.Dominates] using hd))
+  · obtain ⟨i, hi, hd⟩ := hβ _ h
+    exact absurd (hmin i (Or.inr hi)) (not_le.2 (by simpa [Ranking.Enumeration.Dominates] using hd))
+  · exact lt_of_le_of_lt (by simpa using hmin i₀ hi₀) hi₀j
+
+/-- No ranking satisfies an ERC with an `L` and no `W`. -/
+theorem IsContradictory.not_satisfiedBy (h : α.IsContradictory) : ¬ α.SatisfiedBy r :=
+  fun hs ↦ by
+    obtain ⟨k, hk⟩ := h.2
+    obtain ⟨i, hi, -⟩ := (satisfiedBy_iff_holds r α).1 hs k hk
+    exact h.1 i hi
+
+/-- Two ERCs whose fusion has an `L` and no `W` are satisfied by no ranking together. -/
+theorem not_satisfiedBy_of_isContradictory_fuse (h : (α.fuse β).IsContradictory)
+    (hα : α.SatisfiedBy r) : ¬ β.SatisfiedBy r :=
+  fun hβ ↦ h.not_satisfiedBy (hα.fuse hβ)
+
+variable (r α)
 
 instance : Decidable (α.SatisfiedBy r) :=
   inferInstanceAs (Decidable (toLex 0 ≤ toLex (α ∘ r)))
@@ -178,15 +265,16 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
   rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
     Pi.toLex_comp_le_iff_exists_forall]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
+  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
 
-theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι n) :
+theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking.Enumeration ι n) :
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
 
 /-- W-extension and L-retraction, Prince's Proposition 1.1(a): raising coordinates in the order
 `L ≤ e ≤ W` weakens an ERC, so that a ranking satisfying `α` satisfies every `β ≥ α`. -/
-theorem SatisfiedBy.mono {α β : ERC ι} {r : Ranking ι n} (h : α.SatisfiedBy r) (hαβ : α ≤ β) :
+theorem SatisfiedBy.mono {α β : ERC ι} {r : Ranking.Enumeration ι n} (h : α.SatisfiedBy r)
+    (hαβ : α ≤ β) :
     β.SatisfiedBy r := by
   rw [satisfiedBy_iff_dominance] at h ⊢
   intro c hc
@@ -242,7 +330,7 @@ rankings. -/
 
 section Earliest
 
-variable [Fintype ι] {α : ERC ι} {r : Ranking ι n}
+variable [Fintype ι] {α : ERC ι} {r : Ranking.Enumeration ι n}
 
 /-- A ranking satisfies an ERC with a non-neutral constraint iff its earliest non-neutral
 constraint is winner-preferring. -/
@@ -293,7 +381,8 @@ open Finset in
 of non-neutral constraints is the number of rankings times the number of winner-preferring
 ones. -/
 theorem card_filter_satisfiedBy_mul_card [DecidableEq ι] (α : ERC ι) :
-    #{σ : Ranking ι n | α.SatisfiedBy σ} * #α.support = Fintype.card (Ranking ι n) * #α.W := by
+    #{σ : Ranking.Enumeration ι n | α.SatisfiedBy σ} * #α.support = Fintype.card
+        (Ranking.Enumeration ι n) * #α.W := by
   rcases α.support.eq_empty_or_nonempty with hs | ⟨k, hk⟩
   · have hW : α.W = ∅ := subset_empty.1 (hs ▸ W_subset_support)
     rw [hs, hW, card_empty, mul_zero, mul_zero]
@@ -315,8 +404,9 @@ when some ranking satisfies it, that is, when `ERC.linearExtensions E` is nonemp
 *entails* `E'` when `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`. -/
 
 /-- The rankings of `n` constraints number `n!`. -/
-theorem Ranking.card_eq_factorial [Fintype ι] [DecidableEq ι] (hn : Fintype.card ι = n) :
-    Fintype.card (Ranking ι n) = n.factorial := by
+theorem Ranking.Enumeration.card_eq_factorial [Fintype ι] [DecidableEq ι] (hn : Fintype.card ι =
+    n) :
+    Fintype.card (Ranking.Enumeration ι n) = n.factorial := by
   rw [Fintype.card_equiv (Fintype.equivFinOfCardEq hn).symm, Fintype.card_fin]
 
 namespace ERC
@@ -325,10 +415,10 @@ variable [Fintype ι] [DecidableEq ι]
 
 /-- The rankings satisfying every member of a finite set of ERCs, which Merchant and Riggle call
 its *linear extensions*. -/
-def linearExtensions (E : Finset (ERC ι)) : Finset (Ranking ι n) :=
+def linearExtensions (E : Finset (ERC ι)) : Finset (Ranking.Enumeration ι n) :=
   Finset.univ.filter fun r => ∀ α ∈ E, ERC.SatisfiedBy r α
 
-@[simp] theorem mem_linearExtensions {E : Finset (ERC ι)} {r : Ranking ι n} :
+@[simp] theorem mem_linearExtensions {E : Finset (ERC ι)} {r : Ranking.Enumeration ι n} :
     r ∈ linearExtensions E ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
   simp [linearExtensions]
 
@@ -338,10 +428,10 @@ def linearExtensions (E : Finset (ERC ι)) : Finset (Ranking ι n) :=
 
 /-- Some ranking puts `p` first and `q` second. -/
 private theorem exists_ranking_first_second (hn : Fintype.card ι = n) (p q : ι) :
-    ∃ r : Ranking ι n, (∀ c, c ≠ p → r.Dominates p c) ∧
+    ∃ r : Ranking.Enumeration ι n, (∀ c, c ≠ p → r.Dominates p c) ∧
       ∀ c, c ≠ p → c ≠ q → r.Dominates q c := by
   let k : ι → ℕ := fun c ↦ if c = p then 0 else if c = q then 1 else 2
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff
+  obtain ⟨r, hr⟩ := Ranking.Enumeration.exists_dominates_iff
     (fun c ↦ toLex (k c, Fintype.equivFinOfCardEq hn c))
     (fun c d hcd ↦ (Fintype.equivFinOfCardEq hn).injective
       (Prod.ext_iff.mp (toLex.injective hcd)).2) hn
@@ -365,10 +455,10 @@ theorem linearExtensions_singleton_subset_iff {α β : ERC ι} (hα : ∃ k, α 
     (hβ : ∃ k, β k = .L) (hn : Fintype.card ι = n := by simp) :
     linearExtensions (n := n) {α} ⊆ linearExtensions {β} ↔ α ≤ β := by
   refine ⟨fun hsub i ↦ le_of_not_gt fun hlt ↦ ?_, linearExtensions_singleton_subset_of_le⟩
-  have h' (r : Ranking ι n) (hr : α.SatisfiedBy r) : β.SatisfiedBy r := by
+  have h' (r : Ranking.Enumeration ι n) (hr : α.SatisfiedBy r) : β.SatisfiedBy r := by
     have hmem : r ∈ linearExtensions {α} := by simpa using hr
     simpa using hsub hmem
-  have first {r : Ranking ι n} {p : ι} (hp : ∀ c, c ≠ p → r.Dominates p c) (x : ι) :
+  have first {r : Ranking.Enumeration ι n} {p : ι} (hp : ∀ c, c ≠ p → r.Dominates p c) (x : ι) :
       ¬ r.Dominates x p := fun hx ↦ by
     by_cases hxp : x = p
     · subst hxp
@@ -434,7 +524,7 @@ theorem simpleERC_apply_L (hij : i ≠ j) : simpleERC i j j = .L :=
 theorem simpleERC_self_isTrivial (i : ι) : (simpleERC i i).IsTrivial := fun k => by
   simp only [simpleERC]; split_ifs <;> decide
 
-theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking ι n) :
+theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking.Enumeration ι n) :
     (simpleERC i j).SatisfiedBy r ↔ r.Dominates i j := by
   rw [ERC.satisfiedBy_iff_dominance]
   constructor
@@ -445,7 +535,7 @@ theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking ι n) :
     rw [(simpleERC_eq_L_iff hij l).mp hl]
     exact ⟨i, simpleERC_apply_W, hdom⟩
 
-theorem simpleERC_satisfiedBy_toRel_iff (i j : ι) (r : Ranking ι n) :
+theorem simpleERC_satisfiedBy_toRel_iff (i j : ι) (r : Ranking.Enumeration ι n) :
     (simpleERC i j).SatisfiedBy r ↔ r.toRel i j := by
   rcases eq_or_ne i j with rfl | hij
   · exact iff_of_true (ERC.trivial_satisfiedBy (simpleERC_self_isTrivial i) r) (le_refl _)
@@ -453,7 +543,7 @@ theorem simpleERC_satisfiedBy_toRel_iff (i j : ι) (r : Ranking ι n) :
 
 theorem simpleERC_consistent [Fintype ι] (hij : i ≠ j) (hn : Fintype.card ι = n := by simp) :
     (ERC.linearExtensions (n := n) {simpleERC i j}).Nonempty :=
-  have ⟨r, hr⟩ := Ranking.exists_dominates hij hn
+  have ⟨r, hr⟩ := Ranking.Enumeration.exists_dominates hij hn
   ⟨r, by simp [(simpleERC_satisfiedBy_iff hij r).mpr hr]⟩
 
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=
@@ -521,71 +611,57 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
 
 /-- A ranking satisfies the ERC of a winner and a loser iff the winner's violations, read in the
 order of the ranking, are lexicographically at most the loser's. -/
-theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking ι n) (w l : ι → ℕ) :
+theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking.Enumeration ι n) (w l : ι → ℕ) :
     (ercOfProfiles w l).SatisfiedBy r ↔ toLex (w ∘ r) ≤ toLex (l ∘ r) :=
   lex_nonneg_ercOfProfiles_iff (toLex (w ∘ r)) (toLex (l ∘ r))
 
 /-- The sign vector of the ERC of a winner and a loser is lexicographically positive in the order
 of a ranking iff the winner's violations, read in that order, are strictly below the loser's. -/
-theorem lex_pos_ercOfProfiles_iff_lt (r : Ranking ι n) (w l : ι → ℕ) :
+theorem lex_pos_ercOfProfiles_iff_lt (r : Ranking.Enumeration ι n) (w l : ι → ℕ) :
     toLex 0 < toLex (ercOfProfiles w l ∘ r) ↔ toLex (w ∘ r) < toLex (l ∘ r) := by
   rw [lt_iff_le_and_ne, lt_iff_le_and_ne]
   refine and_congr (satisfiedBy_ercOfProfiles_iff_le r w l) (not_congr ?_)
   simp only [toLex_inj, funext_iff]
   exact forall_congr' fun p ↦ eq_comm.trans (ercOfProfiles_eq_e_iff w l (r p))
 
-/-- The ERC of a winner `w` against a loser `l` in the tableau `t`: the ranking requirements for
-`w` to beat `l`. -/
-def tableauERC {C : Type*} (t : Tableau C n) (w l : C) : ERC (Fin n) :=
-  ercOfProfiles (t.constraints · w) (t.constraints · l)
+/-- A candidate is optimal under a ranking iff the ranking satisfies its ERC against every
+competitor. -/
+theorem Ranking.Enumeration.mem_optimal_iff_satisfiedBy {C : Type*} (σ : Ranking.Enumeration ι n)
+    (v : C → ι → ℕ) (s : Finset C) (w : C) :
+    w ∈ σ.optimal v s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (v w) (v l)).SatisfiedBy σ :=
+  Ranking.Enumeration.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
+    (satisfiedBy_ercOfProfiles_iff_le σ (v w) (v l)).symm
 
-/-- A ranking satisfies the ERC of `w` against `l` iff, under that ranking, the profile of `w`
-is at most the profile of `l`. -/
-theorem tableauERC_satisfiedBy_iff {C : Type*} (t : Tableau C n) (r : Ranking (Fin n) n)
-    (w l : C) : (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
-  satisfiedBy_ercOfProfiles_iff_le r (t.constraints · w) (t.constraints · l)
+/-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
+competitor `d` is dominated by some constraint preferring `c`. -/
+theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+    {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {j : ι}
+    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
+    (hj : v d j < v c j) : ∃ i, v c i < v d i ∧ σ.Dominates i j :=
+  ((ERC.satisfiedBy_iff_dominance σ _).1
+    (((σ.mem_optimal_iff_satisfiedBy v s c).1 h).2 d hd) j
+    ((ercOfProfiles_eq_L_iff _ _ j).2 hj)).imp fun _ hw ↦
+      ⟨(ercOfProfiles_eq_W_iff _ _ _).1 hw.1, hw.2⟩
 
-theorem tableauERC_satisfiedBy_id_iff {C : Type*} (t : Tableau C n) (w l : C) :
-    (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) ↔ t.profile w ≤ t.profile l := by
-  rw [tableauERC_satisfiedBy_iff]; exact Iff.rfl
-
-theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} (t : Tableau C n) (w : C) :
-    w ∈ t.optimal ↔
-      w ∈ t.candidates ∧
-        ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) :=
-  Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
-    forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
-
-/-- A candidate `w` is optimal in `Tableau.ofRanking con r` iff `r` satisfies the ERC of `w`
-against every competitor. -/
-theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : ConstraintSet C ι)
-    (r : Ranking ι n) (candidates : Finset C) (w : C) :
-    w ∈ (Tableau.ofRanking con r candidates).optimal ↔
-      w ∈ candidates ∧ ∀ l ∈ candidates, (ercOfProfiles (con · w) (con · l)).SatisfiedBy r :=
-  Tableau.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
-    (satisfiedBy_ercOfProfiles_iff_le r (con · w) (con · l)).symm
-
-/-- A ranking argument: when `c` is optimal under a ranking and `i` is the only constraint
-preferring it to a competitor `d`, `i` dominates every constraint preferring `d`. -/
-theorem Tableau.dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
-    {r : Ranking ι n} {candidates : Finset C} {c d : C} {i j : ι}
-    (h : c ∈ (Tableau.ofRanking con r candidates).optimal) (hd : d ∈ candidates)
-    (hi : ∀ k, con k c < con k d → k = i) (hj : con j d < con j c) : r.Dominates i j := by
-  obtain ⟨w, hw, hdom⟩ := (ERC.satisfiedBy_iff_dominance r _).1
-    (((Tableau.ofRanking_mem_optimal_iff_satisfiedBy con r candidates c).1 h).2 d hd) j
-    ((ercOfProfiles_eq_L_iff _ _ j).2 hj)
-  exact hi w ((ercOfProfiles_eq_W_iff _ _ w).1 hw) ▸ hdom
+/-- When `i` is the only constraint preferring an optimal candidate `c` to a competitor `d`, `i`
+dominates every constraint preferring `d`. -/
+theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+    {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {i j : ι}
+    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
+    (hi : ∀ k, v c k < v d k → k = i) (hj : v d j < v c j) : σ.Dominates i j := by
+  obtain ⟨w, hw, hdom⟩ := Ranking.Enumeration.exists_dominates_of_mem_optimal h hd hj
+  exact hi w hw ▸ hdom
 
 /-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/
 def ConstraintSystem.ercs {I O : Type*} (S : ConstraintSystem I O ι) (i : I) (o : O) :
     Set (ERC ι) :=
-  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.con · (i, o)) (S.con · (i, o')) = α}
+  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.marks i o) (S.marks i o') = α}
 
 /-- A ranking picks a candidate whose violations differ from every rival's iff it satisfies the
 candidate's ERC against each rival ([prince-2002]). -/
 theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy {I O : Type*}
-    {S : ConstraintSystem I O ι} {σ : Ranking ι n} {i : I} {o : O} (ho : o ∈ S.gen i)
-    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
+    {S : ConstraintSystem I O ι} {σ : Ranking.Enumeration ι n} {i : I} {o : O} (ho : o ∈ S.gen i)
+    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.marks i o) ≠ (S.marks i o')) :
     S.PicksAt σ i o ↔ ∀ α ∈ S.ercs i o, α.SatisfiedBy σ := by
   refine ⟨fun h α hα ↦ ?_, fun h ↦ ConstraintSystem.picksAt_iff.2 ⟨ho, fun o' ho' hne ↦ ?_⟩⟩
   · obtain ⟨o', ho', hne, rfl⟩ := hα
@@ -597,30 +673,31 @@ theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy {I O : Type*}
 
 /-- The *ERC grammar* of the language of a ranking: the ERC of each winner of each input against
 every candidate of that input ([merchant-prince-2022]). -/
-def ConstraintSystem.ercGrammar {I O : Type*} (S : ConstraintSystem I O ι) (r : Ranking ι n) :
+def ConstraintSystem.ercGrammar {I O : Type*} (S : ConstraintSystem I O ι)
+    (r : Ranking.Enumeration ι n) :
     Set (ERC ι) :=
   {α | ∃ i, ∃ w ∈ S.language r i, ∃ o ∈ S.gen i,
-    ercOfProfiles (S.con · (i, w)) (S.con · (i, o)) = α}
+    ercOfProfiles (S.marks i w) (S.marks i o) = α}
 
 /-- The rankings that satisfy the ERC grammar of a language are exactly those with that
 language, so the ERC grammar characterizes the ranking grammar ([merchant-prince-2022]). -/
 theorem ConstraintSystem.forall_ercGrammar_satisfiedBy_iff {I O : Type*}
-    {S : ConstraintSystem I O ι} {r r' : Ranking ι n} :
+    {S : ConstraintSystem I O ι} {r r' : Ranking.Enumeration ι n} :
     (∀ α ∈ S.ercGrammar r, α.SatisfiedBy r') ↔ S.language r' = S.language r := by
   refine ⟨fun h ↦ funext fun i ↦ ?_, fun h α hα ↦ ?_⟩
   · rcases (S.gen i).eq_empty_or_nonempty with he | hne
-    · have h0 (ρ : Ranking ι n) : S.language ρ i = ∅ :=
+    · have h0 (ρ : Ranking.Enumeration ι n) : S.language ρ i = ∅ :=
         Finset.eq_empty_of_forall_notMem fun o ho ↦
-          Finset.notMem_empty o (he ▸ (Tableau.optimal_subset ho : o ∈ S.gen i))
+          Finset.notMem_empty o (he ▸ ConstraintSystem.language_subset ho)
       rw [h0, h0]
     · obtain ⟨w, hw⟩ := ConstraintSystem.language_nonempty (r := r) hne
       have hw' : w ∈ S.language r' i :=
-        (Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).2
-          ⟨Tableau.optimal_subset hw, fun o ho ↦ h _ ⟨i, w, hw, o, ho, rfl⟩⟩
+        (r'.mem_optimal_iff_satisfiedBy (S.marks i) (S.gen i) w).2
+          ⟨ConstraintSystem.language_subset hw, fun o ho ↦ h _ ⟨i, w, hw, o, ho, rfl⟩⟩
       ext o
       rw [ConstraintSystem.mem_language_iff_of_mem hw', ConstraintSystem.mem_language_iff_of_mem hw]
   · obtain ⟨i, w, hw, o, ho, rfl⟩ := hα
-    exact ((Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).1
+    exact ((r'.mem_optimal_iff_satisfiedBy (S.marks i) (S.gen i) w).1
       (by rw [h]; exact hw : w ∈ S.language r' i)).2 o ho
 
 end OptimalityTheory

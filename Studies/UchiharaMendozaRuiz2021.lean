@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Data.Wordlist.UchiharaMendozaRuiz2021
 
 /-!
@@ -72,7 +72,7 @@ intervenes. -/
 def allFeetRight : Constraint Word := λ fc => (Footing.feet fc.dropLast).length
 
 /-- The three prosodic-word size restrictor constraints. -/
-def restrictors : ConstraintSet Word (Fin 3) := ![ftBin, parseMora, allFeetRight]
+def restrictors (fc : Word) : Fin 3 → ℕ := ![ftBin fc, parseMora fc, allFeetRight fc]
 
 /-- The perfect prosodic word: a single bimoraic foot and nothing else. -/
 def IsPerfect (fc : Word) : Prop :=
@@ -128,24 +128,25 @@ theorem isPerfect_iff {fc : Word} (hpos : ∀ s ∈ fc.strays, s ≠ 0) :
       · simp [Footing.strays] at hs
 
 theorem IsPerfect.restrictors_eq_zero {fc : Word} (h : IsPerfect fc) :
-    ∀ i, restrictors i fc = 0
+    ∀ i, restrictors fc i = 0
   | 0 => h.ftBin
   | 1 => h.parseMora
   | 2 => h.allFeetRight
 
 /-- A perfect candidate is optimal under every ranking of the restrictors. -/
 theorem isPerfect_mem_optimal {cands : Finset Word} {fc : Word} (hc : fc ∈ cands)
-    (h : IsPerfect fc) (r : Ranking (Fin 3) 3) :
-    fc ∈ (Tableau.ofRanking restrictors r cands).optimal :=
-  Tableau.ofRanking_zero_mem_optimal hc h.restrictors_eq_zero
+    (h : IsPerfect fc) (r : Ranking (Fin 3)) :
+    fc ∈ r.optimal restrictors cands :=
+  Ranking.Enumeration.zero_mem_optimal hc (funext h.restrictors_eq_zero)
 
 /-- When some candidate is perfect, only perfect candidates are optimal under the restrictors,
 whatever their ranking. -/
 theorem isPerfect_of_mem_optimal {cands : Finset Word} {fc₀ fc : Word} (hc₀ : fc₀ ∈ cands)
     (h₀ : IsPerfect fc₀) (hfc : fc ≠ []) (hpos : ∀ s ∈ fc.strays, s ≠ 0)
-    (r : Ranking (Fin 3) 3) (hc : fc ∈ (Tableau.ofRanking restrictors r cands).optimal) :
+    (r : Ranking (Fin 3)) (hc : fc ∈ r.optimal restrictors cands) :
     IsPerfect fc := by
-  have hzero := Tableau.ofRanking_eq_zero_of_mem_optimal hc hc₀ h₀.restrictors_eq_zero
+  have hzero := congrFun <|
+    Ranking.Enumeration.eq_zero_of_mem_optimal hc hc₀ (funext h₀.restrictors_eq_zero)
   exact (isPerfect_iff hpos).2 ⟨hfc, hzero 0, hzero 1, hzero 2⟩
 
 /-! ### Lengthening and truncation -/
@@ -163,7 +164,7 @@ def lengtheningCandidates : Finset Word :=
 
 /-- (15): the lengthened bimoraic foot is the sole optimum. -/
 theorem lengthening :
-    (Tableau.ofRanking restrictors (Equiv.refl _) lengtheningCandidates).optimal =
+    filtration restrictors lengtheningCandidates [0, 1, 2] =
       {[.inl (Foot.monosyllable heavy)]} := by
   decide +kernel
 
@@ -176,7 +177,7 @@ def truncationCandidates : Finset Word :=
 
 /-- (45): the truncated bimoraic foot is the sole optimum. -/
 theorem truncation :
-    (Tableau.ofRanking restrictors (Equiv.refl _) truncationCandidates).optimal =
+    filtration restrictors truncationCandidates [0, 1, 2] =
       {[.inl (Foot.trochee light light)]} := by
   decide +kernel
 
@@ -214,7 +215,7 @@ def typologyCandidates : Finset Word :=
 
 /-- The optima for an input of `n` moras under the ranking `r` of the four constraints. -/
 def typologyOptimal (n : ℕ) (r : List (Fin 4)) : Finset Word :=
-  (Tableau.ofList typologyCandidates (r.map (constraintsF n))).optimal
+  Constraint.eval typologyCandidates (r.map (constraintsF n))
 
 /-- The rankings of the four constraints. -/
 def rankings : List (List (Fin 4)) := ([0, 1, 2, 3] : List (Fin 4)).permutations'

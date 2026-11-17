@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
@@ -265,11 +265,11 @@ def partitions : List ℕ → List (List (List ℕ))
 def gen (input : List Seg) : List Cand :=
   (outputs input).flatMap fun o ↦ (partitions (consonants input)).map fun P ↦ coindex o P
 
-/-- The tableau of an input under a ranking, over GEN, each candidate evaluated as its
-correspondence to the input. -/
-def tableau (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg)))
-    (input : List Seg) :=
-  Tableau.ofList (gen input).toFinset (ranking.map (·.comap (Cand.correspondence input)))
+/-- The optimal candidates of an input under a ranking, over GEN, each candidate evaluated as
+its correspondence to the input. -/
+def optimal (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg)))
+    (input : List Seg) : Finset Cand :=
+  Constraint.evalOn (Cand.correspondence input) (gen input).toFinset ranking
 
 /-! ### The typology of the cut -/
 
@@ -284,7 +284,7 @@ def cut (k : Fin 4) : List (Constraint (Correspondence.Coindexation BinaryRole S
 exactly when the pair is at least as similar as the cut below which IDENT-OI(nasal) sits;
 otherwise the input surfaces faithfully with no correspondence. -/
 theorem winner_eq (k : Fin 4) (p : Place) (b : Seg) (hb : b.IsConsonant) (hn : ¬ b.IsNasal) :
-    (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
+    optimal (cut k) (pair (.stop p .nasal) b) =
       {if AtLeast k (.stop p .nasal) b then coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]
         else coindex (pair (.stop p .nasal) b) []} := by
   revert k p b; decide +kernel
@@ -293,9 +293,9 @@ theorem winner_eq (k : Fin 4) (p : Place) (b : Seg) (hb : b.IsConsonant) (hn : �
 at every lower cut. -/
 theorem agree_of_le {k k' : Fin 4} (hk : k ≤ k') (p : Place) (b : Seg) (hb : b.IsConsonant)
     (hn : ¬ b.IsNasal)
-    (h : (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
+    (h : optimal (cut k) (pair (.stop p .nasal) b) =
       {coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]}) :
-    (tableau (cut k') (pair (.stop p .nasal) b)).optimal =
+    optimal (cut k') (pair (.stop p .nasal) b) =
       {coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]} := by
   rw [winner_eq k p b hb hn] at h
   rw [winner_eq k' p b hb hn]
@@ -337,11 +337,11 @@ def parse : List Char → List Seg
 input as its output. -/
 def IsFixedPoint (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg)))
     (w : List Seg) : Prop :=
-  ∃ c ∈ (tableau ranking w).optimal, c.map (·.seg) = w
+  ∃ c ∈ optimal ranking w, c.map (·.seg) = w
 
 instance (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg))) (w : List Seg) :
     Decidable (IsFixedPoint ranking w) :=
-  inferInstanceAs (Decidable (∃ c ∈ (tableau ranking w).optimal, c.map (·.seg) = w))
+  inferInstanceAs (Decidable (∃ c ∈ optimal ranking w, c.map (·.seg) = w))
 
 /-- The Ngbaka words of the rows, with their judgments. -/
 def ngbakaData : List (List Seg × Judgment) :=
@@ -349,8 +349,8 @@ def ngbakaData : List (List Seg × Judgment) :=
     (parse r.primaryText.toList, r.judgment)
 
 theorem ngbaka_tableaux :
-    (tableau ngbaka (parse "naⁿdɛ".toList)).optimal = {coindex (parse "nanɛ".toList) [[0, 2]]} ∧
-      (tableau ngbaka (parse "maᵑga".toList)).optimal = {coindex (parse "maᵑga".toList) []} := by
+    optimal ngbaka (parse "naⁿdɛ".toList) = {coindex (parse "nanɛ".toList) [[0, 2]]} ∧
+      optimal ngbaka (parse "maᵑga".toList) = {coindex (parse "maᵑga".toList) []} := by
   decide +kernel
 
 /-- The morpheme structure constraint: a word of the rows is well formed exactly when it is a
@@ -393,19 +393,19 @@ instance (w : List Seg) : Decidable (NoCluster w) := inferInstanceAs (Decidable 
 consonants, some optimal candidate of the Kikongo ranking has the map's output. -/
 theorem kikongo_grammar :
     ∀ d ∈ kikongoData, (consonants d.1).length ≤ 4 → NoCluster d.1 →
-      ∃ c ∈ (tableau kikongo d.1).optimal, c.map (·.seg) = harmonize d.1 := by
+      ∃ c ∈ optimal kikongo d.1, c.map (·.seg) = harmonize d.1 := by
   decide +kernel
 
 /-- *tum-idi*: the suffix consonant nasalizes and corresponds with the nasal. -/
 theorem tumidi :
-    (tableau kikongo (parse "tum-idi".toList)).optimal =
+    optimal kikongo (parse "tum-idi".toList) =
       {coindex (parse "tum-ini".toList) [[2, 4]]} := by
   decide +kernel
 
 /-- *nik-ulu*: the voiceless stop is neutral, agreeing with nothing and corresponding with
 nothing, while the approximant nasalizes. -/
 theorem nikulu :
-    (tableau kikongo (parse "nik-ulu".toList)).optimal =
+    optimal kikongo (parse "nik-ulu".toList) =
       {coindex (parse "nik-unu".toList) [[0, 4]]} := by
   decide +kernel
 
@@ -430,8 +430,8 @@ def kudumukila : List Cand :=
 it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
 stays oral. -/
 theorem kudumukila_winner :
-    (Tableau.ofList kudumukila.toFinset
-      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList))))).optimal =
+    Constraint.eval kudumukila.toFinset
+      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList)))) =
       {kudumukila[0]} := by
   decide +kernel
 

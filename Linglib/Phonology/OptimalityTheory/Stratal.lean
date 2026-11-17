@@ -9,7 +9,7 @@ Stratal OT evaluates phonology cyclically, at successive levels of morphological
 word, phrase), the output of each level being the input to the next. Each level, or stratum, has
 its own ranking of the constraints, given as analyses print it: a relation on the constraints,
 the Hasse diagram of the stratum, whose total rankings are its linear extensions
-(`Ranking.IsLinearExtension`). Two constraints are [reranked](##Reranked)
+(`Ranking.Enumeration.IsLinearExtension`). Two constraints are [reranked](##Reranked)
 between two strata when the strata order them in opposite ways, and then
 [no total ranking serves both](##Reranked.not_isLinearExtension): the
 strata are different grammars.
@@ -50,7 +50,7 @@ theorem mono {s₁ s₂ : ι → ι → Prop} (h : Reranked r₁ r₂ a b) (h₁
   ⟨h.ne, h₁ a b h.fst, h₂ b a h.snd⟩
 
 /-- Strata that rerank two constraints share no total ranking. -/
-theorem not_isLinearExtension (h : Reranked r₁ r₂ a b) (σ : Ranking ι n) :
+theorem not_isLinearExtension (h : Reranked r₁ r₂ a b) (σ : Ranking.Enumeration ι n) :
     ¬ (σ.IsLinearExtension r₁ ∧ σ.IsLinearExtension r₂) :=
   fun ⟨h₁, h₂⟩ ↦ h.ne (h₁.eq_of_rel_of_rel h₂ h.fst h.snd)
 

@@ -4,7 +4,7 @@ public import Linglib.Fragments.Mwaghavul.Basic
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.OCP
 public import Linglib.Core.Data.List.Forall2
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Data.Examples.AkinboFwangwar2026
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
@@ -178,13 +178,13 @@ def anchor (e : Edge) (t : TRN) : Constraint (Candidate u) := fun c ↦
   let distance (h : Morpheme) := (e.orient (u.lowerOfMorpheme h)).findIdx? (BearsTone c t ·)
   ((roots u).filterMap distance).min?.getD (u.word .lower).length
 
-/-- The constraint set, MAX-Tone counting the deleted tones. -/
-def con : ConstraintSet (Candidate u) Con
-  | .lAnchorM => anchor .left .M
-  | .rAnchorH => anchor .right .H
-  | .rAnchorM => anchor .right .M
-  | .lAnchorH => anchor .left .H
-  | .maxTone => fun c ↦ c.deleted.card
+/-- The marks of a candidate, MAX-Tone counting the deleted tones. -/
+def marks (c : Candidate u) : Con → ℕ
+  | .lAnchorM => anchor .left .M c
+  | .rAnchorH => anchor .right .H c
+  | .rAnchorM => anchor .right .M c
+  | .lAnchorH => anchor .left .H c
+  | .maxTone => c.deleted.card
 
 /-- The tones on the syllables of a candidate, left to right. -/
 def surface (c : Candidate u) : List TRN :=
@@ -227,18 +227,18 @@ def candE : Candidate input := cand.delete 0 |>.insertLink 1 0 |>.insertLink 1 1
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE]
 
 -- (24)
-private theorem marks :
-    candidates.map (fun c ↦ columns.map (con · c)) =
+private theorem marks_eq :
+    candidates.map (fun c ↦ columns.map (marks c)) =
       [[2, 2, 2, 2, 0], [2, 2, 2, 2, 1], [1, 2, 0, 2, 0], [0, 2, 1, 2, 0], [0, 2, 0, 2, 1]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
+theorem optimal_iff (r : Ranking Con) :
+    r.optimal marks candidates.toFinset = {candE} ↔
       r.Dominates .lAnchorM .maxTone ∧ r.Dominates .rAnchorM .maxTone := by
-  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  rw [Ranking.Enumeration.optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau24
@@ -275,20 +275,20 @@ def candG : Candidate input :=
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
 -- (25)
-private theorem marks :
-    candidates.map (fun c ↦ columns.map (con · c)) =
+private theorem marks_eq :
+    candidates.map (fun c ↦ columns.map (marks c)) =
       [[3, 3, 3, 3, 2], [0, 3, 1, 3, 1], [3, 0, 3, 0, 2], [0, 3, 0, 3, 2], [0, 0, 1, 2, 1],
         [0, 0, 2, 1, 1], [0, 0, 2, 2, 0]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
+theorem optimal_iff (r : Ranking Con) :
+    r.optimal marks candidates.toFinset = {candE} ↔
       r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
         r.Dominates .rAnchorM .maxTone := by
-  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  rw [Ranking.Enumeration.optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau25
@@ -328,21 +328,21 @@ def candG : Candidate input :=
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
 -- (26)
-private theorem marks :
-    candidates.map (fun c ↦ columns.map (con · c)) =
+private theorem marks_eq :
+    candidates.map (fun c ↦ columns.map (marks c)) =
       [[4, 4, 4, 4, 0], [1, 0, 0, 1, 0], [0, 1, 1, 0, 0], [0, 0, 0, 0, 2], [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 2], [0, 0, 1, 1, 1]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofRanking con r candidates.toFinset).optimal = {candD} ↔
+theorem optimal_iff (r : Ranking Con) :
+    r.optimal marks candidates.toFinset = {candD} ↔
       (r.Dominates .lAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) ∧
         (r.Dominates .rAnchorH .maxTone ∨ r.Dominates .rAnchorM .maxTone) ∧
         (r.Dominates .rAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) := by
-  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  rw [Ranking.Enumeration.optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau26
@@ -351,32 +351,32 @@ end Tableau26
 
 /-- A ranking selects the printed verbs: the spreading of M over the root in the first tableau,
 M then H in the second, and M on the reduplicant with H on the base in the third. -/
-def SelectsWinners (r : Ranking Con 5) : Prop :=
-  (Tableau.ofRanking con r Tableau24.candidates.toFinset).optimal = {Tableau24.candE} ∧
-    (Tableau.ofRanking con r Tableau25.candidates.toFinset).optimal = {Tableau25.candE} ∧
-    (Tableau.ofRanking con r Tableau26.candidates.toFinset).optimal = {Tableau26.candD}
+def SelectsWinners (r : Ranking Con) : Prop :=
+  r.optimal marks Tableau24.candidates.toFinset = {Tableau24.candE} ∧
+    r.optimal marks Tableau25.candidates.toFinset = {Tableau25.candE} ∧
+    r.optimal marks Tableau26.candidates.toFinset = {Tableau26.candD}
 
 /-- The tableaux select the printed verbs exactly under the rankings with
 R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and MAX-Tone below both M anchors. -/
-theorem selectsWinners_iff (r : Ranking Con 5) :
+theorem selectsWinners_iff (r : Ranking Con) :
     SelectsWinners r ↔ r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
       r.Dominates .rAnchorM .maxTone ∧ r.Dominates .lAnchorM .maxTone := by
   rw [SelectsWinners, Tableau24.optimal_iff, Tableau25.optimal_iff, Tableau26.optimal_iff]
-  simp only [Ranking.Dominates, Fin.lt_def]
+  simp only [Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 /-- Neither L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ nor L-ANCH-Hᵥ ≫ MAX-Tone, both of which the paper states, is
 needed: the ranking R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Mᵥ ≫ MAX-Tone ≫ L-ANCH-Hᵥ reverses both and
 selects the printed verbs. -/
 theorem exists_selectsWinners_rAnchorM_lAnchorM :
-    ∃ r : Ranking Con 5, SelectsWinners r ∧ r.Dominates .rAnchorM .lAnchorM ∧
+    ∃ r : Ranking Con, SelectsWinners r ∧ r.Dominates .rAnchorM .lAnchorM ∧
       r.Dominates .maxTone .lAnchorH := by
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := 5)
+  obtain ⟨r, hr⟩ := Ranking.Enumeration.exists_dominates_iff (n := 5)
     (fun | .rAnchorH => 0 | .rAnchorM => 1 | .lAnchorM => 2 | .maxTone => 3 | .lAnchorH => 4 :
       Con → ℕ) (by decide) rfl
   refine ⟨r, (selectsWinners_iff r).2 ?_, ?_⟩ <;> simp [hr]
 
-theorem selectsWinners_of_dominates {r : Ranking Con 5}
+theorem selectsWinners_of_dominates {r : Ranking Con}
     (h₁ : r.Dominates .lAnchorM .rAnchorM) (h₂ : r.Dominates .rAnchorH .rAnchorM)
     (h₃ : r.Dominates .rAnchorM .lAnchorH) (h₄ : r.Dominates .lAnchorH .maxTone) :
     SelectsWinners r :=

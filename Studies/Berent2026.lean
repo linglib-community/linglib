@@ -189,8 +189,8 @@ and nonsigners dispreferred them (p. 12). A doubled sign and its control have th
 in any lexicon of ASL signs, so the winner of the doubling grammar, at the signers' morphological
 level or the nonsigners' phonological one, is no function of the pair counts. -/
 theorem doubling_not_factorsThrough (hx : ∀ w ∈ L, x ∉ w) (h : x ≠ y) (l : Level)
-    (r : Ranking (Fin 2) 2) :
-    ¬ Function.FactorsThrough (fun w ↦ ∃ p ∈ (tableau x y l r).optimal, p.surface = w)
+    (r : Ranking (Fin 2)) :
+    ¬ Function.FactorsThrough (fun w ↦ ∃ p ∈ optimal x y l r, p.surface = w)
         (pairCounts L) := by
   intro hf
   have := @hf [x, x] [x, y] (by simp [pairCounts, List.consecutivePairs, pairCount_eq_zero hx])
@@ -212,9 +212,9 @@ reported p. 15). The licensing of [berent-bat-el-brentari-dupuis-vaknin-nusbaum-
 the contrast for every spoken language without plural morphology, over constituents of any
 type, signed or spoken. -/
 theorem plural_transfer (l : SpokenLanguage Meaning) (hl : .plural ∉ l.marked) (h : x ≠ y)
-    (r : Ranking (Fin 2) 2) :
-    (∃ p ∈ (tableau x y (english.level .plural) r).optimal, p.surface = [x, x]) ∧
-      ¬ ∃ p ∈ (tableau x y (l.level .plural) r).optimal, p.surface = [x, x] := by
+    (r : Ranking (Fin 2)) :
+    (∃ p ∈ optimal x y (english.level .plural) r, p.surface = [x, x]) ∧
+      ¬ ∃ p ∈ optimal x y (l.level .plural) r, p.surface = [x, x] := by
   rw [exists_optimal_surface_iff _ _ h, exists_optimal_surface_iff _ _ h, english_licenses_iff]
   exact ⟨rfl, fun hp ↦ hl hp.1⟩
 

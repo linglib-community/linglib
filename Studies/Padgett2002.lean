@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Wordlist.Padgett2002
 public import Linglib.Fragments.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Data.List.Iterate
 
 /-!
@@ -21,7 +21,7 @@ a Color node carries both features or neither.
 
 * `Node`, `node`: the geometry (3); `laryngeal`, `oral`, `vplace`, `height`, `color`: (25).
 * `Tier`, `Tier.spread`: the autosegments of one feature over a word, and SPREAD (26).
-* `tableau`: the Turkish grammar of (17)–(22), over every fully specified candidate.
+* `ranking`: the Turkish grammar of (17)–(22), over every fully specified candidate.
 
 ## Implementation notes
 
@@ -220,22 +220,22 @@ def ident (c : Candidate n) : ℕ :=
 
 /-- IDENT_Rt ≫ *[+rnd, −hi] ≫ SPREAD(COLOR) ≫ IDENT, the ranking of (17)–(22), over every
 candidate. -/
-def tableau : Tableau (Candidate n) 4 :=
-  .ofList Finset.univ [identRoot x r, noRoundNonhigh x, spreadColor, ident x]
+def ranking : List (Constraint (Candidate n)) :=
+  [identRoot x r, noRoundNonhigh x, spreadColor, ident x]
 
 /-- The reverse ranking of SPREAD(COLOR) and *[+rnd, −hi], total class spreading as in Kirghiz
 (p. 93). -/
-def tableauTotal : Tableau (Candidate n) 4 :=
-  .ofList Finset.univ [identRoot x r, spreadColor, noRoundNonhigh x, ident x]
+def rankingTotal : List (Constraint (Candidate n)) :=
+  [identRoot x r, spreadColor, noRoundNonhigh x, ident x]
 
 /-- The outputs of the winners of the grammar for the segments `w`, the first `r` of the root. -/
 def predict (w : List Segment) (r : ℕ) : Finset (List Segment) :=
-  (tableau (fun j : Fin w.length ↦ w[j]) r).optimal.image fun c ↦
+  (Constraint.eval Finset.univ (ranking (fun j : Fin w.length ↦ w[j]) r)).image fun c ↦
     List.ofFn (surface (fun j : Fin w.length ↦ w[j]) c)
 
 /-- The outputs of the winners under the reverse ranking. -/
 def predictTotal (w : List Segment) (r : ℕ) : Finset (List Segment) :=
-  (tableauTotal (fun j : Fin w.length ↦ w[j]) r).optimal.image fun c ↦
+  (Constraint.eval Finset.univ (rankingTotal (fun j : Fin w.length ↦ w[j]) r)).image fun c ↦
     List.ofFn (surface (fun j : Fin w.length ↦ w[j]) c)
 
 /-! ### Inputs and forms -/
@@ -287,14 +287,14 @@ def cand14d : Candidate 2 :=
 
 -- (14), (17a,b), (14b), (14d)
 theorem profile_14 :
-    ofLex ((tableau sonlAr 1).profile cand14a) = ![0, 2, 0, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14b) = ![0, 1, 2, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14c) = ![0, 2, 2, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14d) = ![0, 1, 4, 2] := by
+    (ranking sonlAr 1).map (· cand14a) = [0, 2, 0, 2] ∧
+      (ranking sonlAr 1).map (· cand14b) = [0, 1, 2, 2] ∧
+      (ranking sonlAr 1).map (· cand14c) = [0, 2, 2, 2] ∧
+      (ranking sonlAr 1).map (· cand14d) = [0, 1, 4, 2] := by
   decide
 
 -- (14b)
-theorem optimal_sonlAr : (tableau sonlAr 1).optimal = {cand14b} := by
+theorem optimal_sonlAr : Constraint.eval Finset.univ (ranking sonlAr 1) = {cand14b} := by
   decide +kernel
 
 /-- /pul-lAr-In/ of (20). -/
@@ -312,8 +312,8 @@ def cand20c : Candidate 3 :=
 
 -- (20), (20c)
 theorem profile_20 :
-    ofLex ((tableau pullArIn 1).profile cand20b) = ![0, 0, 3, 4] ∧
-      ofLex ((tableau pullArIn 1).profile cand20c) = ![0, 0, 6, 4] := by
+    (ranking pullArIn 1).map (· cand20b) = [0, 0, 3, 4] ∧
+      (ranking pullArIn 1).map (· cand20c) = [0, 0, 6, 4] := by
   decide
 
 /-- /(petr)olʸ-I/ of (22), the lateral sharing the vowel's [+round]. -/
@@ -341,14 +341,14 @@ def cand22d : Candidate 3 :=
 
 -- (22), (22b), (22c)
 theorem profile_22 :
-    ofLex ((tableau petrolI 2).profile cand22a) = ![0, 1, 3, 2] ∧
-      ofLex ((tableau petrolI 2).profile cand22b) = ![1, 1, 0, 3] ∧
-      ofLex ((tableau petrolI 2).profile cand22c) = ![1, 1, 0, 3] ∧
-      ofLex ((tableau petrolI 2).profile cand22d) = ![0, 1, 6, 2] := by
+    (ranking petrolI 2).map (· cand22a) = [0, 1, 3, 2] ∧
+      (ranking petrolI 2).map (· cand22b) = [1, 1, 0, 3] ∧
+      (ranking petrolI 2).map (· cand22c) = [1, 1, 0, 3] ∧
+      (ranking petrolI 2).map (· cand22d) = [0, 1, 6, 2] := by
   decide
 
 -- (22a)
-theorem optimal_petrolI : (tableau petrolI 2).optimal = {cand22a} := by
+theorem optimal_petrolI : Constraint.eval Finset.univ (ranking petrolI 2) = {cand22a} := by
   decide +kernel
 
 /-! ### The forms -/

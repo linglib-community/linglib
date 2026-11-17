@@ -137,7 +137,8 @@ def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
 /-- The t/d deletion system lets both outputs compete in every context, under the constraint
 set (11). -/
-def tdDeletion : ConstraintSystem Context Output (Fin 4) := ⟨fun _ ↦ univ, con⟩
+def tdDeletion : ConstraintSystem Context Output (Fin 4) :=
+  ⟨fun _ ↦ univ, fun i o k ↦ con k (i, o)⟩
 
 theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain} := by
   cases ctx <;> decide
@@ -145,21 +146,25 @@ theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain}
 /-! ### Categorical systems (12) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := tdDeletion.PicksAt σ ctx .delete
+def Deletes (σ : Ranking.Enumeration (Fin 4) 4)
+    (ctx : Context) : Prop := tdDeletion.PicksAt σ ctx .delete
 
-instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
+instance (σ : Ranking.Enumeration (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
   inferInstanceAs (Decidable (tdDeletion.PicksAt σ ctx .delete))
 
-theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
+theorem deletes_preC_iff : ∀ σ : Ranking.Enumeration (Fin 4) 4, Deletes σ .preC ↔
+    σ.Dominates 0 1 := by decide
 
 theorem deletes_preV_iff :
-    ∀ σ : Ranking (Fin 4) 4, Deletes σ .preV ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 2 := by decide
+    ∀ σ : Ranking.Enumeration (Fin 4) 4, Deletes σ .preV ↔ σ.Dominates 0 1 ∧
+        σ.Dominates 0 2 := by decide
 
 theorem deletes_pause_iff :
-    ∀ σ : Ranking (Fin 4) 4, Deletes σ .pause ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 3 := by decide
+    ∀ σ : Ranking.Enumeration (Fin 4) 4, Deletes σ .pause ↔ σ.Dominates 0 1 ∧
+        σ.Dominates 0 3 := by decide
 
 /-- The categorical system of `σ` is the set of contexts in which it deletes. -/
-def system (σ : Ranking (Fin 4) 4) : Finset Context := univ.filter (Deletes σ)
+def system (σ : Ranking.Enumeration (Fin 4) 4) : Finset Context := univ.filter (Deletes σ)
 
 -- (12)
 theorem image_system :
@@ -198,15 +203,15 @@ def conditions : ImposedRanking → Finset (ERC (Fin 4))
   | .starCTOverMaxFinal => {simpleERC 0 3}
 
 /-- The grammar of a row of (13), the one its ranking conditions present. -/
-def grammar (g : ImposedRanking) : Grammar (Fin 4) 4 := .ofERCs ↑(conditions g)
+def grammar (g : ImposedRanking) : Grammar.Enumeration (Fin 4) 4 := .ofERCs ↑(conditions g)
 
 /-- The rankings of a grammar of (13) as a finite set, for counting. -/
-def extensions (g : ImposedRanking) : Finset (Ranking (Fin 4) 4) :=
+def extensions (g : ImposedRanking) : Finset (Ranking.Enumeration (Fin 4) 4) :=
   ERC.linearExtensions (conditions g)
 
 theorem coe_extensions (g : ImposedRanking) :
-    (extensions g : Set (Ranking (Fin 4) 4)) = (grammar g).extent :=
-  Grammar.coe_linearExtensions _
+    (extensions g : Set (Ranking.Enumeration (Fin 4) 4)) = (grammar g).extent :=
+  Grammar.Enumeration.coe_linearExtensions _
 
 /-- The probability that a grammar of (13) deletes in `ctx`, the share of its rankings that
 delete (9). -/
@@ -284,8 +289,8 @@ def stratum : ImposedRanking → Fin 4 → Fin 2
   | .starCTOverMaxFinal => fun c ↦ if c = 3 then 1 else 0
 
 /-- The rankings of the two-stratum grammar of a row of (13). -/
-def strata (g : ImposedRanking) : Finset (Ranking (Fin 4) 4) :=
-  Ranking.linearExtensions (stratified (stratum g) (· = ·))
+def strata (g : ImposedRanking) : Finset (Ranking.Enumeration (Fin 4) 4) :=
+  Ranking.Enumeration.linearExtensions (stratified (stratum g) (· = ·))
 
 -- (13)
 theorem card_strata_filter_mul (g : ImposedRanking) (ctx : Context) :
@@ -295,10 +300,10 @@ theorem card_strata_filter_mul (g : ImposedRanking) (ctx : Context) :
 
 -- (13): every printed cell is the deletion rate of the row's two-stratum grammar
 theorem uniformOn_strata_eq_pocRates (g : ImposedRanking) (ctx : Context) :
-    (uniformOn (strata g : Set (Ranking (Fin 4) 4))).real {σ | Deletes σ ctx} =
+    (uniformOn (strata g : Set (Ranking.Enumeration (Fin 4) 4))).real {σ | Deletes σ ctx} =
       (pocRates g ctx).rankings / (pocRates g ctx).total := by
   rw [uniformOn_finset_real_setOf, div_eq_div_iff
-    (by exact_mod_cast (Ranking.linearExtensions_nonempty _).card_pos.ne')
+    (by exact_mod_cast (Ranking.Enumeration.linearExtensions_nonempty _).card_pos.ne')
     (by cases g <;> cases ctx <;> norm_num [pocRates])]
   exact_mod_cast (card_strata_filter_mul g ctx).trans (Nat.mul_comm _ _)
 
@@ -313,18 +318,21 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
     {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
-    (h : (uniformOn (Ranking.linearExtensions (n := n) r : Set (Ranking (Fin n) n))).real
+    (h : (uniformOn (Ranking.Enumeration.linearExtensions (n := n) r : Set (Ranking.Enumeration
+        (Fin n) n))).real
       {σ | S.PicksAt σ i o} = 1/100) : 5 ≤ n := by
   rw [uniformOn_finset_real_setOf] at h
-  have ht : (Ranking.linearExtensions (n := n) r).card ≤ n.factorial :=
+  have ht : (Ranking.Enumeration.linearExtensions (n := n) r).card ≤ n.factorial :=
     (card_le_univ _).trans_eq (by
-    rw [show Fintype.card (Ranking (Fin n) n) = Fintype.card (Equiv.Perm (Fin n)) from rfl,
+    rw [show Fintype.card (Ranking.Enumeration (Fin n) n) = Fintype.card (Equiv.Perm
+        (Fin n)) from rfl,
       Fintype.card_perm, Fintype.card_fin])
-  have h0 : (Ranking.linearExtensions (n := n) r).card ≠ 0 := by
+  have h0 : (Ranking.Enumeration.linearExtensions (n := n) r).card ≠ 0 := by
     rintro h0; rw [h0, Nat.cast_zero, div_zero] at h; norm_num at h
   rw [div_eq_div_iff (by exact_mod_cast h0) (by norm_num)] at h
-  generalize ((Ranking.linearExtensions (n := n) r).filter (S.PicksAt · i o)).card = k at h
-  generalize (Ranking.linearExtensions (n := n) r).card = t at h ht h0
+  generalize ((Ranking.Enumeration.linearExtensions (n := n) r).filter (S.PicksAt · i o)).card =
+      k at h
+  generalize (Ranking.Enumeration.linearExtensions (n := n) r).card = t at h ht h0
   have hkt : 100 * k = t := by exact_mod_cast (by linarith : (100 * k : ℝ) = t)
   by_contra hn
   have := Nat.factorial_le (show n ≤ 4 by omega)
@@ -333,12 +341,12 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
 
 theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Output]
     (S : ConstraintSystem Input Output (Fin 5)) (i : Input) (o : Output) :
-    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | S.PicksAt σ i o} ≠
+    (uniformOn (Set.univ : Set (Ranking.Enumeration (Fin 5) 5))).real {σ | S.PicksAt σ i o} ≠
       1/100 := by
   rw [← coe_univ, uniformOn_finset_real_setOf, card_univ, Fintype.card_perm, Fintype.card_fin]
   intro h
   rw [div_eq_div_iff (by positivity) (by norm_num)] at h
-  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ S.PicksAt σ i o).card = k at h
+  generalize (univ.filter fun σ : Ranking.Enumeration (Fin 5) 5 ↦ S.PicksAt σ i o).card = k at h
   norm_num [Nat.factorial] at h
   have : k * 100 = 120 := by exact_mod_cast h
   omega
@@ -346,7 +354,8 @@ theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Outpu
 /-! ### The restriction shared by POC and stochastic OT (§3.2, §4.4) -/
 
 -- (12)
-theorem deletes_preC_of_deletes {σ : Ranking (Fin 4) 4} {ctx : Context} (h : Deletes σ ctx) :
+theorem deletes_preC_of_deletes {σ : Ranking.Enumeration (Fin 4) 4} {ctx : Context}
+    (h : Deletes σ ctx) :
     Deletes σ .preC := by
   cases ctx
   · exact (deletes_preC_iff σ).mpr ((deletes_preV_iff σ).mp h).1
@@ -354,11 +363,11 @@ theorem deletes_preC_of_deletes {σ : Ranking (Fin 4) 4} {ctx : Context} (h : De
   · exact h
 
 -- p. 11, p. 21
-theorem measure_deletes_le_preC (μ : Measure (Ranking (Fin 4) 4)) (ctx : Context) :
+theorem measure_deletes_le_preC (μ : Measure (Ranking.Enumeration (Fin 4) 4)) (ctx : Context) :
     μ {σ | Deletes σ ctx} ≤ μ {σ | Deletes σ .preC} :=
   measure_mono fun _ ↦ deletes_preC_of_deletes
 
-theorem not_forall_real_deletes_eq_tejanoPrime (μ : Measure (Ranking (Fin 4) 4))
+theorem not_forall_real_deletes_eq_tejanoPrime (μ : Measure (Ranking.Enumeration (Fin 4) 4))
     [IsFiniteMeasure μ] : ¬ ∀ ctx, μ.real {σ | Deletes σ ctx} = tejanoPrime ctx / 100 := by
   intro h
   have : μ.real {σ | Deletes σ .preV} ≤ μ.real {σ | Deletes σ .preC} :=
@@ -542,7 +551,7 @@ def voicedGeminate : Constraint (Loan × Voicing) :=
 def loanwordDevoicing : RealizationProblem Loan Voicing (Fin 3) where
   inputs := univ
   gen _ := univ
-  con := ![identVoice, ocpVoice, voicedGeminate]
+  marks l v := ![identVoice (l, v), ocpVoice (l, v), voicedGeminate (l, v)]
   target
     | .guddo => .devoiced
     | _ => .voiced
@@ -553,13 +562,13 @@ theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨mem_univ _, fun o _ hne ↦ ?_⟩
   cases i <;> cases o <;>
-    simp [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three, identVoice, ocpVoice,
-      voicedGeminate] at hne ⊢ <;> norm_num
+    simp [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct, Fin.sum_univ_three,
+      identVoice, ocpVoice, voicedGeminate] at hne ⊢ <;> norm_num
 
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
 
 /-- Ranking `σ` devoices loanword `l`. -/
-def Devoices (σ : Ranking (Fin 3) 3) (l : Loan) : Prop :=
+def Devoices (σ : Ranking.Enumeration (Fin 3) 3) (l : Loan) : Prop :=
   loanwordDevoicing.toConstraintSystem.PicksAt σ l .devoiced
 
 -- p. 18
@@ -571,7 +580,7 @@ theorem setOf_devoices_guddo :
   decide
 
 -- (21), p. 18
-theorem measure_devoices_guddo_le (μ : Measure (Ranking (Fin 3) 3)) :
+theorem measure_devoices_guddo_le (μ : Measure (Ranking.Enumeration (Fin 3) 3)) :
     μ {σ | Devoices σ .guddo} ≤ μ {σ | Devoices σ .bobu} + μ {σ | Devoices σ .webbu} := by
   rw [setOf_devoices_guddo]
   exact measure_union_le _ _
@@ -587,15 +596,16 @@ example : (devoicingRates .bobu).learningData.toRat + (devoicingRates .webbu).le
 -- p. 18
 theorem weightNoiseChoiceProb_guddo (w : Fin 3 → ℝ) (hw : w 0 = w 1 + w 2) (v : ℝ≥0)
     (hv : v ≠ 0) :
-    weightNoiseChoiceProb (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w v .devoiced =
+    weightNoiseChoiceProb (fun k o ↦ loanwordDevoicing.marks .guddo o k) w v .devoiced =
       2⁻¹ := by
   rw [weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv (b := .voiced)
     (fun c hc ↦ by cases c <;> simp_all) (by decide) fun h ↦ by
-      simpa [ConstraintSet.violationDiff, loanwordDevoicing, identVoice] using congrFun h 0]
-  have : harmonyScore (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w .devoiced -
-      harmonyScore (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w .voiced = 0 := by
-    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, identVoice, ocpVoice,
-      voicedGeminate, hw]
+      simpa [ConstraintSet.violationDiff, loanwordDevoicing, ConstraintSystem.con, identVoice]
+        using congrFun h 0]
+  have : harmonyScore (fun k o ↦ loanwordDevoicing.marks .guddo o k) w .devoiced -
+      harmonyScore (fun k o ↦ loanwordDevoicing.marks .guddo o k) w .voiced = 0 := by
+    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, ConstraintSystem.con,
+      identVoice, ocpVoice, voicedGeminate, hw]
   rw [this, zero_div, normalCDF_zero, ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
 
 /-- The Noisy HG grammar of (21) weighs IDENT-VOICE as OCP-VOICE and \*VOICED-GEMINATE
@@ -610,8 +620,8 @@ theorem guddo_maxEnt_half (o : Voicing) :
   have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
       fun _ ↦ (-2 : ℝ) := by
     funext o
-    cases o <;> norm_num [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three,
-      identVoice, ocpVoice, voicedGeminate]
+    cases o <;> norm_num [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct,
+      Fin.sum_univ_three, identVoice, ocpVoice, voicedGeminate]
   rw [maxEnt_real_singleton, harmony_violations, h]
   simp [show Fintype.card Voicing = 2 from rfl]
 

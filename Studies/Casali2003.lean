@@ -8,6 +8,7 @@ module
 public import Linglib.Fragments.Akan.Phonology
 public import Linglib.Fragments.Yoruba.Phonology
 public import Linglib.Phonology.OptimalityTheory.Typology
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -26,7 +27,7 @@ demands agreement. The rankings of these four constraints under which
 ranking does [the unspecified value override a specified root](##neutralizes_of_picksAt) unless
 the contrast is lost, so that [a 4Ht(M) language with [+ATR] dominance](##yorubaPlus) is not
 generated. A ban on [+ATR] low vowels above MAX([ATR]) gives
-[indirect [−ATR] dominance](##reversal_optimal) before a low-vowel suffix.
+[indirect [−ATR] dominance](##reversal_eq) before a low-vowel suffix.
 
 ## Implementation notes
 
@@ -184,18 +185,18 @@ variable (s : Bool)
 pair, its candidates the four fully valued pairs. -/
 def system : ConstraintSystem Word Word Con where
   gen _ := Finset.univ
-  con
-    | .harmony => .binary fun p ↦ p.2.root ≠ p.2.affix
-    | .maxRoot => .binary fun p ↦ p.1.root = s ∧ p.2.root ≠ s
-    | .starAtr => fun p ↦ (if p.2.root = s then 1 else 0) + if p.2.affix = s then 1 else 0
-    | .maxAtr => fun p ↦ (if p.1.root = s ∧ p.2.root ≠ s then 1 else 0) +
-        if p.1.affix = s ∧ p.2.affix ≠ s then 1 else 0
+  marks i o
+    | .harmony => if o.root ≠ o.affix then 1 else 0
+    | .maxRoot => if i.root = s ∧ o.root ≠ s then 1 else 0
+    | .starAtr => (if o.root = s then 1 else 0) + if o.affix = s then 1 else 0
+    | .maxAtr => (if i.root = s ∧ o.root ≠ s then 1 else 0) +
+        if i.affix = s ∧ o.affix ≠ s then 1 else 0
 
-variable {s} {r : Ranking Con 4}
+variable {s} {r : Ranking Con}
 
 private theorem picksAt_iff {w o : Word} : (system s).PicksAt r w o ↔ ∀ o', o' ≠ o →
-    ∃ c, (system s).con c (w, o) < (system s).con c (w, o') ∧
-      ∀ c', (system s).con c' (w, o') < (system s).con c' (w, o) → r.Dominates c c' := by
+    ∃ c, (system s).marks w o c < (system s).marks w o' c ∧
+      ∀ c', (system s).marks w o' c' < (system s).marks w o c' → r.Dominates c c' := by
   simp [ConstraintSystem.picksAt_iff_exists_dominates, system]
 
 /-- Affixes take the root's value, whatever the inputs, exactly under the rankings with HARMONY
@@ -234,7 +235,7 @@ theorem rootControl_iff :
             cases c' <;> first | exact absurd hc' (by decide) | assumption⟩
 
 /-- The ranking of tableaux (21) and (22). -/
-def rootControl : Ranking Con 4 := .ofList [.harmony, .maxRoot, .starAtr, .maxAtr]
+def rootControl : Ranking Con := .ofList [.harmony, .maxRoot, .starAtr, .maxAtr]
 
 -- (21): /du-tI/ surfaces as [duti].
 example : (system true).PicksAt rootControl ⟨true, false⟩ ⟨true, true⟩ := by decide
@@ -312,9 +313,9 @@ variable (s) in
 bear on its value. -/
 def affixSystem : ConstraintSystem Bool Bool Con where
   gen _ := Finset.univ
-  con
-    | .starAtr => .binary fun p ↦ p.2 = s
-    | .maxAtr => .binary fun p ↦ p.1 = s ∧ p.2 ≠ s
+  marks i o
+    | .starAtr => if o = s then 1 else 0
+    | .maxAtr => if i = s ∧ o ≠ s then 1 else 0
     | _ => 0
 
 -- With *[ATR] above MAX([ATR]) the affix loses its specification and surfaces with the value
@@ -376,8 +377,8 @@ structure LowSuffixCand extends Word where
 /-- Tableau (23) ranks *[+ATR, +low] and the preservation of [+low] above HARMONY above
 MAX([ATR]), the last two those of a 5Ht system at the input, over [tola], [tɔla], [tolæ] and
 [tole]. -/
-def reversal : Tableau LowSuffixCand 4 :=
-  Tableau.ofList
+def reversal : Finset LowSuffixCand :=
+  Constraint.eval
     {⟨⟨true, false⟩, true⟩, ⟨⟨false, false⟩, true⟩, ⟨⟨true, true⟩, true⟩, ⟨⟨true, true⟩, false⟩}
     [.binary fun c ↦ c.affix ∧ c.low, .binary fun c ↦ ¬ c.low,
       ((system InventoryType.fiveHeight.specifiedValue).conAt ⟨true, false⟩ .harmony).comap
@@ -387,6 +388,6 @@ def reversal : Tableau LowSuffixCand 4 :=
 
 /-- Indirect [−ATR] dominance: before the low-vowel suffix the [+ATR] root gives up its
 specification, [tɔla]. -/
-theorem reversal_optimal : reversal.optimal = {⟨⟨false, false⟩, true⟩} := by decide
+theorem reversal_eq : reversal = {⟨⟨false, false⟩, true⟩} := by decide
 
 end Casali2003

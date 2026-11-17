@@ -161,29 +161,29 @@ inductive Con where
 /-- The candidates of each context under the constraints. -/
 def system : ConstraintSystem Context Candidate Con where
   gen := candidates
-  con
-    | .noHiatus => fun (c, k) ↦ Hiatus.count (output c k)
-    | .noCluster => fun (c, k) ↦ Constraint.forbidPairs
+  marks c k
+    | .noHiatus => Hiatus.count (output c k)
+    | .noCluster => Constraint.forbidPairs
         (fun a b : Segment ↦ a .syllabic = false ∧ b .syllabic = false) (output c k)
-    | .specify => fun (c, k) ↦ (output c k).count node₀
-    | .noShare => fun (c, k) ↦ Constraint.forbidPairs
+    | .specify => (output c k).count node₀
+    | .noShare => Constraint.forbidPairs
         (fun a b : Segment ↦ a .back = false ∧ b .back = false ∧ a ∈ input c) (output c k)
-    | .depBack => fun (c, k) ↦ dep c .back true k
-    | .depNonhigh => fun (c, k) ↦ dep c .high false k
-    | .depHigh => fun (c, k) ↦ dep c .high true k
-    | .maxNode => fun (c, k) ↦ (corr c k).maxViol .lhs .rhs
+    | .depBack => dep c .back true k
+    | .depNonhigh => dep c .high false k
+    | .depHigh => dep c .high true k
+    | .maxNode => (corr c k).maxViol .lhs .rhs
 
 /-- The constraints on the well-formedness of a string, against hiatus, clusters and empty nodes. -/
 def wellFormedness : Finset Con := {.noHiatus, .noCluster, .specify}
 
 -- [u] is the one well-formed candidate before /-je-/, where a following [v] forms a cluster.
 theorem wellFormed_je_iff (s : Wordlist.Root) (k : Candidate) (hk : k ∈ candidates ⟨s, .je⟩) :
-    (∀ i ∈ wellFormedness, system.con i (⟨s, .je⟩, k) = 0) ↔ k = .u := by
+    (∀ i ∈ wellFormedness, system.marks (⟨s, .je⟩) k i = 0) ↔ k = .u := by
   revert s k; decide
 
 -- The filled candidates are the well-formed ones before /-a-/, where [u] forms a hiatus.
 theorem wellFormed_a_iff (s : Wordlist.Root) (k : Candidate) (hk : k ∈ candidates ⟨s, .a⟩) :
-    (∀ i ∈ wellFormedness, system.con i (⟨s, .a⟩, k) = 0) ↔ ∃ b h, k = .fill b h := by
+    (∀ i ∈ wellFormedness, system.marks (⟨s, .a⟩) k i = 0) ↔ ∃ b h, k = .fill b h := by
   revert s k; decide
 
 /-! ### The winner under a ranking -/
@@ -197,12 +197,12 @@ def ofHigh (h : Bool) : Con := cond h .depHigh .depNonhigh
 variable {n : ℕ}
 
 /-- `form r c` is the winner under the ranking `r` in the context `c`. -/
-def form (r : Ranking Con n) : Context → Candidate
+def form (r : Ranking.Enumeration Con n) : Context → Candidate
   | ⟨_, .je⟩ => .u
   | ⟨s, .a⟩ =>
     .fill (s = .plain ∨ r.Dominates .noShare .depBack) (r.Dominates .depNonhigh .depHigh)
 
-variable {r : Ranking Con n}
+variable {r : Ranking.Enumeration Con n}
 
 private theorem mem_candidates_fill (s : Wordlist.Root) (t : Theme) (b h : Bool) :
     Candidate.fill b h ∈ candidates ⟨s, t⟩ ↔ s = .palatal ∨ b = true := by
@@ -216,49 +216,49 @@ private theorem dominates_not_decide {x y : Con} (hxy : x ≠ y) {f : Bool → C
   · simpa [h, hf, ht] using ((trichotomous_of r.Dominates x y).resolve_left h).resolve_left hxy
 
 private theorem con_fill_high (c : Context) (b h : Bool) :
-    system.con (ofHigh !h) (c, .fill b h) < system.con (ofHigh !h) (c, .fill b !h) ∧
-      ∀ j, system.con j (c, .fill b !h) < system.con j (c, .fill b h) → j = ofHigh h := by
+    system.marks c (.fill b h) (ofHigh !h) < system.marks c (.fill b !h) (ofHigh !h) ∧
+      ∀ j, system.marks c (.fill b !h) j < system.marks c (.fill b h) j → j = ofHigh h := by
   obtain ⟨_ | _, _ | _⟩ := c <;> revert b h <;> decide
 
 private theorem con_fill_back (t : Theme) (b h : Bool) :
-    system.con (ofBack !b) (⟨.palatal, t⟩, .fill b h) <
-        system.con (ofBack !b) (⟨.palatal, t⟩, .fill (!b) h) ∧
-      ∀ j, system.con j (⟨.palatal, t⟩, .fill (!b) h) < system.con j (⟨.palatal, t⟩, .fill b h) →
+    system.marks ⟨.palatal, t⟩ (.fill b h) (ofBack !b) <
+        system.marks ⟨.palatal, t⟩ (.fill (!b) h) (ofBack !b) ∧
+      ∀ j, system.marks ⟨.palatal, t⟩ (.fill (!b) h) j < system.marks ⟨.palatal, t⟩ (.fill b h) j →
         j = ofBack b := by
   cases t <;> revert b h <;> decide
 
 private theorem profile_lt {c : Context} {k k' : Candidate} {x y : Con}
-    (hx : system.con x (c, k) < system.con x (c, k'))
-    (hy : ∀ j, system.con j (c, k') < system.con j (c, k) → j = y) (hd : r.Dominates x y) :
-    (system.tableau r c).profile k < (system.tableau r c).profile k' :=
-  Tableau.ofRanking_profile_lt_iff_exists_dominates.2 ⟨x, hx, fun j hj ↦ hy j hj ▸ hd⟩
+    (hx : system.marks c k x < system.marks c k' x)
+    (hy : ∀ j, system.marks c k' j < system.marks c k j → j = y) (hd : r.Dominates x y) :
+    r.profile (system.marks c) k < r.profile (system.marks c) k' :=
+  Ranking.Enumeration.profile_lt_iff_exists_dominates.2 ⟨x, hx, fun j hj ↦ hy j hj ▸ hd⟩
 
 /-- Under a ranking that leaves well-formedness undominated, the winner is [u] before /-je-/, and
 before /-a-/ a vowel with [v] that is high iff DEP[−high] dominates DEP[+high] and, after a palatal,
 back iff \*SHARE[−back] dominates DEP[+back]. -/
 theorem language_eq (hr : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r.Dominates i j)
     (c : Context) : system.language r c = {form r c} := by
-  have hlt {k k' : Candidate} (hk : ∀ i ∈ wellFormedness, system.con i (c, k) = 0)
-      (hk' : ¬∀ i ∈ wellFormedness, system.con i (c, k') = 0) :
-      (system.tableau r c).profile k < (system.tableau r c).profile k' := by
+  have hlt {k k' : Candidate} (hk : ∀ i ∈ wellFormedness, system.marks c k i = 0)
+      (hk' : ¬∀ i ∈ wellFormedness, system.marks c k' i = 0) :
+      r.profile (system.marks c) k < r.profile (system.marks c) k' := by
     push Not at hk'
     obtain ⟨i, hi, hi'⟩ := hk'
-    exact Tableau.ofRanking_profile_lt_of_forall_dominates (U := ↑wellFormedness) hr hk hi hi'
+    exact Ranking.Enumeration.profile_lt_of_forall_dominates (U := ↑wellFormedness) hr hk hi hi'
   obtain ⟨s, _ | _⟩ := c
   · set H := decide (r.Dominates .depNonhigh .depHigh)
     set B := decide (s = .plain ∨ r.Dominates .noShare .depBack) with hB
     have hm : Candidate.fill B H ∈ candidates ⟨s, .a⟩ :=
       (mem_candidates_fill ..).2 (by cases s <;> simp [hB])
-    have hhigh (b : Bool) : (system.tableau r ⟨s, .a⟩).profile (.fill b H) <
-        (system.tableau r ⟨s, .a⟩).profile (.fill b !H) :=
+    have hhigh (b : Bool) : r.profile (system.marks ⟨s, .a⟩) (.fill b H) <
+        r.profile (system.marks ⟨s, .a⟩) (.fill b !H) :=
       profile_lt (con_fill_high _ b H).1 (con_fill_high _ b H).2
         (dominates_not_decide (by decide) rfl rfl)
-    refine Tableau.optimal_eq_singleton_iff.2 ⟨hm, fun k hk hne ↦ ?_⟩
-    by_cases hk0 : ∀ i ∈ wellFormedness, system.con i (⟨s, .a⟩, k) = 0
+    refine ConstraintSystem.language_eq_singleton_iff.2 ⟨hm, fun k hk hne ↦ ?_⟩
+    by_cases hk0 : ∀ i ∈ wellFormedness, system.marks (⟨s, .a⟩) k i = 0
     · obtain ⟨b, h, rfl⟩ := (wellFormed_a_iff s k hk).1 hk0
       have hback (hb : Candidate.fill (!B) h ∈ candidates ⟨s, .a⟩) (h' : Bool) :
-          (system.tableau r ⟨s, .a⟩).profile (.fill B h') <
-            (system.tableau r ⟨s, .a⟩).profile (.fill (!B) h') := by
+          r.profile (system.marks ⟨s, .a⟩) (.fill B h') <
+            r.profile (system.marks ⟨s, .a⟩) (.fill (!B) h') := by
         obtain rfl | rfl := s
         · simpa [hB] using (mem_candidates_fill ..).1 hb
         · refine profile_lt (con_fill_back _ B h').1 (con_fill_back _ B h').2 ?_
@@ -271,11 +271,11 @@ theorem language_eq (hr : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r.
       · exact (hback ((mem_candidates_fill ..).2 ((mem_candidates_fill ..).1 hk)) H).trans (hhigh _)
     · exact hlt ((wellFormed_a_iff s _ hm).2 ⟨B, H, rfl⟩) hk0
   · have hm : Candidate.u ∈ candidates ⟨s, .je⟩ := by cases s <;> decide
-    exact Tableau.optimal_eq_singleton_iff.2 ⟨hm, fun k hk hne ↦ hlt
+    exact ConstraintSystem.language_eq_singleton_iff.2 ⟨hm, fun k hk hne ↦ hlt
       ((wellFormed_je_iff s _ hm).2 rfl) (mt (wellFormed_je_iff s k hk).1 hne)⟩
 
 -- The two comparisons of `language_eq` are all that a ranking's language depends on.
-theorem typology_iff {r' : Ranking Con n}
+theorem typology_iff {r' : Ranking.Enumeration Con n}
     (hr : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r.Dominates i j)
     (hr' : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r'.Dominates i j) :
     system.typology r r' ↔ (r.Dominates .noShare .depBack ↔ r'.Dominates .noShare .depBack) ∧
@@ -318,7 +318,7 @@ inductive Group where
   deriving DecidableEq, Fintype, Repr
 
 /-- The hierarchies (17), (21) and (29) of the three groups. -/
-def Group.ranking : Group → Ranking Con 8
+def Group.ranking : Group → Ranking Con
   | .ov => .ofList (hierarchy .noShare .depNonhigh .depBack)
   | .ovEv => .ofList (hierarchy .depBack .depNonhigh .noShare)
   | .uv => .ofList (hierarchy .depNonhigh .noShare .depBack)
@@ -334,7 +334,7 @@ abbrev PaperCon := {i : Con // i ≠ .noCluster ∧ i ≠ .depHigh}
 
 /-- The candidates of each context under the constraints `e i` alone. -/
 def restrict {ι : Type*} (e : ι → Con) : ConstraintSystem Context Candidate ι :=
-  ⟨candidates, fun i ↦ system.con (e i)⟩
+  ⟨candidates, fun c k i ↦ system.marks c k (e i)⟩
 
 /-- The candidates of each context under the paper's constraints alone. -/
 abbrev paperSystem : ConstraintSystem Context Candidate PaperCon := restrict Subtype.val
@@ -347,52 +347,54 @@ private theorem con_high_lt_con_mid (c : Context) (b : Bool) :
 /-- No ranking of the paper's constraints gives a mid vowel, since a high vowel with the same
 backness violates each of them at most as often and DEP[−high] less often. So (31a)–(31d) do not
 follow from them. -/
-theorem fill_false_notMem_language (r : Ranking PaperCon n) (c : Context) (b : Bool) :
+theorem fill_false_notMem_language (r : Ranking.Enumeration PaperCon n) (c : Context) (b : Bool) :
     Candidate.fill b false ∉ paperSystem.language r c := fun h ↦ by
-  have hm := Tableau.optimal_subset h
+  have hm := ConstraintSystem.language_subset h
   have hc : Candidate.fill b true ∈ candidates c := by
     obtain ⟨s, t⟩ := c
     exact (mem_candidates_fill ..).2 ((mem_candidates_fill ..).1 hm)
-  exact Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 (con_high_lt_con_mid c b)) h
+  exact Ranking.Enumeration.notMem_optimal_of_lt hc (Pi.lt_def.2 (con_high_lt_con_mid c b)) h
 
 -- (11): with MAX last, [v] wins before /-a-/ and ties with [u] before /-je-/.
-theorem language_of_max_last {r : Ranking PaperCon (n + 1)} (hr : (r (Fin.last n)).1 = .maxNode)
+theorem language_of_max_last {r : Ranking.Enumeration PaperCon (n + 1)} (hr : (r
+    (Fin.last n)).1 = .maxNode)
     (s : Wordlist.Root) :
     paperSystem.language r ⟨s, .a⟩ = {.v} ∧ paperSystem.language r ⟨s, .je⟩ = {.u, .v} := by
   have hm : r (Fin.last n) = ⟨.maxNode, by decide⟩ := Subtype.ext hr
   constructor <;>
-  · refine (Tableau.ofRanking_optimal_eq_argmin_filter ⟨.v, by cases s <;> decide, ?_⟩).trans ?_ <;>
-      rw [hm] <;> cases s <;> decide
+  · refine (Ranking.Enumeration.optimal_eq_argmin_filter
+      ⟨.v, by cases s <;> decide, ?_⟩).trans ?_ <;> rw [hm] <;> cases s <;> decide
 
 private theorem con_a_eq_con_je (s : Wordlist.Root) (i : Con) (hi : i ≠ .noCluster) :
-    system.con i (⟨s, .a⟩, .v) = system.con i (⟨s, .je⟩, .u) ∧
-      ∀ b h, system.con i (⟨s, .a⟩, .fill b h) = system.con i (⟨s, .je⟩, .fill b h) := by
+    system.marks (⟨s, .a⟩) .v i = system.marks (⟨s, .je⟩) .u i ∧
+      ∀ b h, system.marks (⟨s, .a⟩) (.fill b h) i = system.marks (⟨s, .je⟩) (.fill b h) i := by
   revert s i; decide
 
 /-- No ranking of constraints without \*CC gives [u] before /-je-/ and a vowel with [v] before
 /-a-/, since [v] before /-a-/ violates them as [u] does before /-je-/, and a filled candidate
 violates them alike in both contexts. -/
-theorem not_alternation {ι : Type*} {e : ι → Con} (he : ∀ i, e i ≠ .noCluster) (r : Ranking ι n)
+theorem not_alternation {ι : Type*} {e : ι → Con} (he : ∀ i, e i ≠ .noCluster)
+    (r : Ranking.Enumeration ι n)
     (s : Wordlist.Root) (b h : Bool) :
     ¬((restrict e).language r ⟨s, .a⟩ = {.fill b h} ∧ (restrict e).language r ⟨s, .je⟩ = {.u}) := by
   rintro ⟨ha, hj⟩
-  obtain ⟨hm, ha⟩ := Tableau.optimal_eq_singleton_iff.1 ha
-  obtain ⟨-, hj⟩ := Tableau.optimal_eq_singleton_iff.1 hj
+  obtain ⟨hm, ha⟩ := ConstraintSystem.language_eq_singleton_iff.1 ha
+  obtain ⟨-, hj⟩ := ConstraintSystem.language_eq_singleton_iff.1 hj
   have hv : Candidate.v ∈ candidates ⟨s, .a⟩ := by cases s <;> decide
   have hlt := ha .v hv nofun
   have hlt' := hj (.fill b h) ((mem_candidates_fill ..).2 ((mem_candidates_fill ..).1 hm)) nofun
-  have e₁ : ((restrict e).tableau r ⟨s, .a⟩).profile .v =
-      ((restrict e).tableau r ⟨s, .je⟩).profile .u :=
+  have e₁ : r.profile ((restrict e).marks ⟨s, .a⟩) .v =
+      r.profile ((restrict e).marks ⟨s, .je⟩) .u :=
     congrArg toLex (funext fun p ↦ (con_a_eq_con_je s _ (he (r p))).1)
-  have e₂ : ((restrict e).tableau r ⟨s, .a⟩).profile (.fill b h) =
-      ((restrict e).tableau r ⟨s, .je⟩).profile (.fill b h) :=
+  have e₂ : r.profile ((restrict e).marks ⟨s, .a⟩) (.fill b h) =
+      r.profile ((restrict e).marks ⟨s, .je⟩) (.fill b h) :=
     congrArg toLex (funext fun p ↦ (con_a_eq_con_je s _ (he (r p))).2 b h)
   rw [e₁, e₂] at hlt
   exact lt_asymm hlt hlt'
 
 -- (12): [ov] is not harmonically bounded by [u], which violates MAX where [ov] does not.
 theorem u_not_bounds_ov (s : Wordlist.Root) :
-    ¬(paperSystem.conAt ⟨s, .je⟩ · .u) < (paperSystem.conAt ⟨s, .je⟩ · (.fill true false)) :=
+    ¬paperSystem.marks ⟨s, .je⟩ .u < paperSystem.marks ⟨s, .je⟩ (.fill true false) :=
   fun h ↦ absurd (h.le ⟨.maxNode, by decide⟩) (by cases s <;> decide)
 
 /-! ### The forms of Tables 1 and 2 -/

@@ -1,6 +1,7 @@
 module
 
 public import Studies.Casali1997
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Fragments.Hungarian.Phonology
 public import Linglib.Data.Wordlist.Vago2017
 
@@ -108,10 +109,6 @@ def marks (D : Finset ElidedVowel) : Con → ℕ
   | .starVV => Hiatus.count (resolve c D)
   | .maxMI => maxAt (c.Protects .morphemeInitial) (deleted c D)
 
-/-- The tableau of the four candidates under a constraint order, most dominant first. -/
-abbrev tableau (order : List Con) : Tableau (Finset ElidedVowel) order.length :=
-  Tableau.ofOrder order (marks c long)
-
 /-- The constraint order of the hierarchy a suffix is indexed to, most dominant first: the
 regular hierarchy (8a), MAX LEX ≫ \*VV ≫ MAX MI, below MAX on long vowels and on morphs of one
 segment; the reranking (8b) that deletes the first vowel, \*VV ≫ MAX MI ≫ MAX LEX; and the
@@ -162,9 +159,10 @@ private theorem regular_lt {D D' : Finset ElidedVowel} (k : ℕ)
       marks c long D' (Wordlist.Hierarchy.regular.order.get ⟨j, by omega⟩))
     (hi : marks c long D (Wordlist.Hierarchy.regular.order.get ⟨k, hk⟩) <
       marks c long D' (Wordlist.Hierarchy.regular.order.get ⟨k, hk⟩)) :
-    (tableau c long Wordlist.Hierarchy.regular.order).profile D <
-      (tableau c long Wordlist.Hierarchy.regular.order).profile D' :=
-  ⟨⟨k, hk⟩, fun j hj ↦ h j.1 hj, hi⟩
+    Wordlist.Hierarchy.regular.order.map (marks c long D) <
+      Wordlist.Hierarchy.regular.order.map (marks c long D') :=
+  List.lt_iff_exists.2 <| Or.inr ⟨k, by simpa using hk, by simpa using hk,
+    fun j hj ↦ by simpa using h j hj, by simpa using hi⟩
 
 private theorem finset_cases (D : Finset ElidedVowel) :
     D = ∅ ∨ D = {.first} ∨ D = {.second} ∨ D = {.first, .second} := by
@@ -186,7 +184,7 @@ otherwise. This holds when the second vowel is short and not alone in its morph,
 has a vowel sequence of its own. -/
 theorem optimal_regular (hl : c.leftKind ≠ .root) (hr : c.rightKind ≠ .root) (hv₂ : c.v2Idx ∉ long)
     (hs : c.rightBody ≠ []) (hfl : Free c.left) (hfr : Free c.right) :
-    (tableau c long Wordlist.Hierarchy.regular.order).optimal =
+    filtration (marks c long) Finset.univ Wordlist.Hierarchy.regular.order =
       {if c.v1Idx ∈ long ∨ c.leftBody = [] then {.second} else {.first}} := by
   have hne := v1Idx_ne_v2Idx (c := c)
   have hl := (free_iff_count_eq_zero _).1 hfl
@@ -196,7 +194,7 @@ theorem optimal_regular (hl : c.leftKind ≠ .root) (hr : c.rightKind ≠ .root)
   have h₂ : Hiatus.count (resolve c {.second}) = 0 := by
     rw [resolve_second, c.count_elideV2, hl, hr']
   have h₃ := (free_iff_count_eq_zero _).1 (free_resolve_pair hfl hfr)
-  refine Tableau.optimal_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun D _ hD ↦ ?_⟩
+  refine filtration_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun D _ hD ↦ ?_⟩
   split_ifs at hD ⊢ with hlong
   · rcases finset_cases D with rfl | rfl | rfl | rfl
     · regular_beats 3
@@ -253,48 +251,44 @@ def example? (a : Wordlist.Analysis) : Option Example := do
 attested deletion, and the form it gives, after the morph before it, spells the attested form. -/
 theorem tableaux :
     ∀ a ∈ Wordlist.analyses, ∃ x ∈ example? a,
-      (tableau x.context x.long x.hierarchy.order).optimal = {x.deletion} ∧
+      filtration (marks x.context x.long) Finset.univ x.hierarchy.order = {x.deletion} ∧
         some (x.before ++ resolve x.context x.deletion) = Hungarian.transcribe? a.form.form := by
   decide +kernel
 
 /-! ### The ranking that deletes the first vowel -/
 
-/-- Vago's constraints on the candidates of an example. -/
-def con (x : Example) : ConstraintSet (Finset ElidedVowel) Con :=
-  fun i D ↦ marks x.context x.long D i
-
 /-- The example erdő-ész of Table 2. -/
 def erdesz : Example := (example? Wordlist.erdesz.analysis).get (by decide +kernel)
 
-private theorem con_erdesz_lt_iff (i : Con) :
-    con erdesz i {.first} < con erdesz i ∅ ↔ i = .starVV := by
+private theorem marks_erdesz_lt_iff (i : Con) :
+    marks erdesz.context erdesz.long {.first} i < marks erdesz.context erdesz.long ∅ i ↔
+      i = .starVV := by
   revert i; decide +kernel
 
 /-- A ranking of Vago's constraints under which erdő-ész deletes its first vowel ranks \*VV above
 MAX on long vowels and above MAX LEX, since that vowel is long and in a root. -/
-theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
-    (h : {.first} ∈
-      (Tableau.ofRanking (con erdesz) r {∅, {.first}, {.second}, {.first, .second}}).optimal) :
+theorem starVV_dominates_of_erdesz {r : Ranking Con}
+    (h : {.first} ∈ r.optimal (marks erdesz.context erdesz.long)
+      {∅, {.first}, {.second}, {.first, .second}}) :
     r.Dominates .starVV .maxLong ∧ r.Dominates .starVV .maxLex := by
-  have hle := Tableau.le_of_mem_optimal h (d := (∅ : Finset ElidedVowel)) (by simp)
+  have hle := (Ranking.Enumeration.mem_optimal_iff.1 h).2 (∅ : Finset ElidedVowel) (by simp)
   have hlt := hle.lt_of_ne fun heq ↦ by
     have := congrArg (· (r.symm .starVV)) heq
-    simp only [Tableau.profile_apply, Tableau.ofRanking_constraints, Function.comp_apply,
-      Equiv.apply_symm_apply] at this
-    exact (con_erdesz_lt_iff .starVV).2 rfl |>.ne this
-  obtain ⟨i, hi, hr⟩ := Tableau.ofRanking_profile_lt_iff_exists_dominates.1 hlt
-  obtain rfl := (con_erdesz_lt_iff i).1 hi
+    simp only [Ranking.Enumeration.profile_apply, Equiv.apply_symm_apply] at this
+    exact (marks_erdesz_lt_iff .starVV).2 rfl |>.ne this
+  obtain ⟨i, hi, hr⟩ := Ranking.Enumeration.profile_lt_iff_exists_dominates.1 hlt
+  obtain rfl := (marks_erdesz_lt_iff i).1 hi
   exact ⟨hr _ (by decide +kernel), hr _ (by decide +kernel)⟩
 
 /-- The reranking (8b) as a ranking of all five constraints, with the two that Table 2 does not
 print placed below it. -/
-def v1Deletion : Ranking Con 5 :=
+def v1Deletion : Ranking Con :=
   .ofList (Wordlist.Hierarchy.v1Deletion.order ++ [.maxLong, .maxMS])
 
 -- The premise of `starVV_dominates_of_erdesz` holds of the reranking (8b).
 theorem erdesz_v1Deletion :
-    (Tableau.ofRanking (con erdesz) v1Deletion
-      {∅, {.first}, {.second}, {.first, .second}}).optimal = {{.first}} := by
+    v1Deletion.optimal (marks erdesz.context erdesz.long)
+      {∅, {.first}, {.second}, {.first, .second}} = {{.first}} := by
   decide +kernel
 
 end Vago2017

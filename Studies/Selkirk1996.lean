@@ -8,7 +8,7 @@ module
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 
 /-!
 # Selkirk (1996): The prosodic structure of function words
@@ -94,15 +94,15 @@ inductive Con
 /-- The span of the lexical word, the second of two syllables. -/
 def lexSpans : List (NonemptyInterval ℕ) := [⟨(1, 2), by decide⟩]
 
-/-- The constraints on a prosodic tree over a function word and a lexical word. -/
-def con : ConstraintSet Tree Con
-  | .headedness => headedness
-  | .nonRec => nonrecursivity .om
-  | .exh => exhaustivity .ph
-  | .wdConL => Constraint.alignLeft.comap fun t ↦ (lexSpans, levelSpans .om t)
-  | .wdConR => Constraint.alignRight.comap fun t ↦ (lexSpans, levelSpans .om t)
-  | .pwdConL => Constraint.alignLeft.comap fun t ↦ (levelSpans .om t, lexSpans)
-  | .pwdConR => Constraint.alignRight.comap fun t ↦ (levelSpans .om t, lexSpans)
+/-- The marks of a prosodic tree over a function word and a lexical word. -/
+def marks (t : Tree) : Con → ℕ
+  | .headedness => headedness t
+  | .nonRec => nonrecursivity .om t
+  | .exh => exhaustivity .ph t
+  | .wdConL => Constraint.alignLeft (lexSpans, levelSpans .om t)
+  | .wdConR => Constraint.alignRight (lexSpans, levelSpans .om t)
+  | .pwdConL => Constraint.alignLeft (levelSpans .om t, lexSpans)
+  | .pwdConR => Constraint.alignRight (levelSpans .om t, lexSpans)
 
 /-- **The violations of the four structures**, (25): the free clitic violates only Exhaustivity
 at the phrase, the affixal clitic Nonrecursivity at the word and the alignment of the left edge
@@ -110,10 +110,10 @@ of a prosodic word, the internal clitic the alignment of the left edges both way
 function word as a prosodic word Headedness and the alignment of both edges of a prosodic
 word. -/
 theorem violations (c : Con) :
-    (con c Parse.free.tree ≠ 0 ↔ c = .exh) ∧
-    (con c Parse.affixal.tree ≠ 0 ↔ c = .nonRec ∨ c = .pwdConL) ∧
-    (con c Parse.internal.tree ≠ 0 ↔ c = .wdConL ∨ c = .pwdConL) ∧
-    (con c Parse.word.tree ≠ 0 ↔ c = .headedness ∨ c = .pwdConL ∨ c = .pwdConR) := by
+    (marks Parse.free.tree c ≠ 0 ↔ c = .exh) ∧
+    (marks Parse.affixal.tree c ≠ 0 ↔ c = .nonRec ∨ c = .pwdConL) ∧
+    (marks Parse.internal.tree c ≠ 0 ↔ c = .wdConL ∨ c = .pwdConL) ∧
+    (marks Parse.word.tree c ≠ 0 ↔ c = .headedness ∨ c = .pwdConL ∨ c = .pwdConR) := by
   revert c; decide
 
 -- (14): a function word in isolation is footed, and its structure is strictly layered.
@@ -130,15 +130,15 @@ def Requires (hi lo : List Con) (i j : Con) : Prop :=
 instance (hi lo : List Con) : DecidableRel (Requires hi lo) := fun _ _ ↦
   inferInstanceAs (Decidable (_ ∨ _))
 
-variable {r : Ranking Con 7}
+variable {r : Ranking Con}
 
 /-- **A stressless function word is not a prosodic word**: under every ranking with Headedness
 undominated, the structure in which the function word is a prosodic word loses to the free
 clitic. -/
 theorem word_notMem_optimal (hr : ∀ j, j ≠ .headedness → r.Dominates .headedness j) :
-    Parse.word ∉ (Tableau.ofRanking (con.comap Parse.tree) r Finset.univ).optimal :=
-  Tableau.notMem_optimal_of_lt (c := Parse.free) (Finset.mem_univ _) <|
-    Tableau.ofRanking_profile_lt_iff_exists_dominates.2 ⟨.headedness, by decide,
+    Parse.word ∉ r.optimal (marks ∘ Parse.tree) Finset.univ := fun h ↦
+  ((Ranking.Enumeration.mem_optimal_iff.1 h).2 .free (Finset.mem_univ _)).not_gt <|
+    Ranking.Enumeration.profile_lt_iff_exists_dominates.2 ⟨.headedness, by decide,
       fun j hj ↦ hr j (by rintro rfl; revert hj; decide)⟩
 
 /-- **English nonfinal function words are free clitics**: under every ranking with the
@@ -146,8 +146,8 @@ alignment of lexical words and Nonrecursivity at the word over the alignment of 
 and Exhaustivity at the phrase, the free clitic is optimal. -/
 theorem english_free
     (hr : Requires [.wdConL, .wdConR, .nonRec] [.pwdConL, .pwdConR, .exh] ≤ r.Dominates) :
-    (Tableau.ofRanking (con.comap Parse.tree) r Finset.univ).optimal = {.free} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide)
+    r.optimal (marks ∘ Parse.tree) Finset.univ = {.free} :=
+  Ranking.Enumeration.optimal_eq_singleton_of_rel hr (by simp) (by decide)
 
 /-- **Three rankings, three clitics**, (47): with Nonrecursivity and Exhaustivity over the
 alignment constraints the internal clitic is optimal; with Exhaustivity under the others, the
@@ -155,14 +155,14 @@ free clitic; and with the alignment of lexical words and Exhaustivity over Nonre
 the alignment of prosodic words, the affixal clitic. -/
 theorem serboCroatian :
     (Requires [.nonRec, .exh] [.wdConL, .wdConR, .pwdConL, .pwdConR] ≤ r.Dominates →
-      (Tableau.ofRanking (con.comap Parse.tree) r Finset.univ).optimal = {.internal}) ∧
+      r.optimal (marks ∘ Parse.tree) Finset.univ = {.internal}) ∧
     (Requires [.wdConL, .wdConR, .pwdConL, .pwdConR, .nonRec] [.exh] ≤ r.Dominates →
-      (Tableau.ofRanking (con.comap Parse.tree) r Finset.univ).optimal = {.free}) ∧
+      r.optimal (marks ∘ Parse.tree) Finset.univ = {.free}) ∧
     (Requires [.wdConL, .wdConR, .exh] [.nonRec, .pwdConL, .pwdConR] ≤ r.Dominates →
-      (Tableau.ofRanking (con.comap Parse.tree) r Finset.univ).optimal = {.affixal}) :=
-  ⟨fun hr ↦ Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide),
-    fun hr ↦ Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide),
-    fun hr ↦ Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide)⟩
+      r.optimal (marks ∘ Parse.tree) Finset.univ = {.affixal}) :=
+  ⟨fun hr ↦ Ranking.Enumeration.optimal_eq_singleton_of_rel hr (by simp) (by decide),
+    fun hr ↦ Ranking.Enumeration.optimal_eq_singleton_of_rel hr (by simp) (by decide),
+    fun hr ↦ Ranking.Enumeration.optimal_eq_singleton_of_rel hr (by simp) (by decide)⟩
 
 /-! ### The hierarchies of the paper
 
@@ -172,19 +172,19 @@ quantifies over. -/
 
 /-- A ranking of the English hierarchy in its revised form (42), the alignment of lexical words
 over Nonrecursivity over the alignment of prosodic words and Exhaustivity. -/
-def english : Ranking Con 7 :=
+def english : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .nonRec, .pwdConL, .pwdConR, .exh]
 
 /-- A ranking of the first Serbo-Croatian dialect of (47). -/
-def ns1 : Ranking Con 7 :=
+def ns1 : Ranking Con :=
   .ofList [.headedness, .nonRec, .exh, .wdConL, .wdConR, .pwdConL, .pwdConR]
 
 /-- A ranking of the second Serbo-Croatian dialect of (47). -/
-def ns2 : Ranking Con 7 :=
+def ns2 : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .pwdConL, .pwdConR, .nonRec, .exh]
 
 /-- A ranking of the third Serbo-Croatian dialect of (47). -/
-def ns3 : Ranking Con 7 :=
+def ns3 : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .exh, .nonRec, .pwdConL, .pwdConR]
 
 -- (36), (42)
@@ -208,17 +208,17 @@ theorem ns3_respects :
   fun i j h ↦ by revert i j; decide
 
 -- English: the free clitic.
-example : (Tableau.ofRanking (con.comap Parse.tree) english Finset.univ).optimal = {.free} :=
+example : english.optimal (marks ∘ Parse.tree) Finset.univ = {.free} :=
   english_free english_respects
 
 -- The three dialects: the internal, the free and the affixal clitic.
-example : (Tableau.ofRanking (con.comap Parse.tree) ns1 Finset.univ).optimal = {.internal} :=
+example : ns1.optimal (marks ∘ Parse.tree) Finset.univ = {.internal} :=
   serboCroatian.1 ns1_respects
 
-example : (Tableau.ofRanking (con.comap Parse.tree) ns2 Finset.univ).optimal = {.free} :=
+example : ns2.optimal (marks ∘ Parse.tree) Finset.univ = {.free} :=
   serboCroatian.2.1 ns2_respects
 
-example : (Tableau.ofRanking (con.comap Parse.tree) ns3 Finset.univ).optimal = {.affixal} :=
+example : ns3.optimal (marks ∘ Parse.tree) Finset.univ = {.affixal} :=
   serboCroatian.2.2 ns3_respects
 
 end Selkirk1996

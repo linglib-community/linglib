@@ -233,7 +233,7 @@ theorem recessive (host : List (TBU S)) (tier : C → Fin host.length → TRN) {
       simp [obmomx, culmin, absentViol_eq_zero_iff, hdt, hhost]
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, obmomx,
     culmin, absentViol_eq_zero_iff] at h0
-  have hT := hpriv c (Tableau.optimal_subset hc)
+  have hT := hpriv c (Cophonology.optimal_subset hc)
   have hH := hdt ▸ hpriv d hd
   -- Every unit bearing `t` in the target bears it in the winner, and the winner bears it once.
   have hsub : Finset.univ.filter (tonalTier host · = t) ⊆ Finset.univ.filter (tier c · = t) :=

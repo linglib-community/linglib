@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 
 /-!
 # Transderivational correspondence
@@ -29,9 +29,9 @@ evaluates the derived word.
 
 ## Main statements
 
-* `Transderivational.optimal_ofLabels_recursive`: under recursive evaluation the winners are the
+* `Transderivational.evalOn_recursive`: under recursive evaluation the winners are the
   derived word's winners among the subparadigms whose base wins.
-* `Transderivational.eq_zero_of_mem_optimal_ofLabels_nonrecursive`: under summed evaluation, a
+* `Transderivational.eq_zero_of_mem_evalOn_nonrecursive`: under summed evaluation, a
   candidate satisfying the top constraints in both words forces every winner to.
 
 ## Implementation notes
@@ -136,19 +136,19 @@ variable {cand : L → Correspondence.Coindexation Role α} {labels : Finset L}
 
 /-- Base priority is ranking priority: the winners of recursive evaluation are the derived word's
 winners among the subparadigms whose base wins its own copy of the hierarchy. -/
-theorem optimal_ofLabels_recursive :
-    (Tableau.ofLabels cand labels (recursive ranking r)).optimal =
-      (Tableau.ofLabels cand (Tableau.ofLabels cand labels (baseRecursion ranking r)).optimal
-        (derivedRecursion ranking r)).optimal :=
-  Tableau.optimal_ofLabels_append
+theorem evalOn_recursive :
+    Constraint.evalOn cand labels (recursive ranking r) =
+      Constraint.evalOn cand (Constraint.evalOn cand labels (baseRecursion ranking r))
+        (derivedRecursion ranking r) :=
+  Constraint.evalOn_append
 
 /-- When the candidates share their base, recursive evaluation is evaluation of the derived
 word. -/
-theorem optimal_ofLabels_recursive_of_forall_eq
+theorem evalOn_recursive_of_forall_eq
     (h : ∀ k ∈ ranking, ∀ x ∈ labels, ∀ y ∈ labels, (k r).atBase (cand x) = (k r).atBase (cand y)) :
-    (Tableau.ofLabels cand labels (recursive ranking r)).optimal =
-      (Tableau.ofList labels (ranking.map fun k ↦ (k r).atDerived ∘ cand)).optimal := by
-  rw [Tableau.ofLabels, recursive, List.map_append, Tableau.optimal_ofList_append_of_forall_eq]
+    Constraint.evalOn cand labels (recursive ranking r) =
+      Constraint.eval labels (ranking.map fun k ↦ (k r).atDerived ∘ cand) := by
+  rw [Constraint.evalOn, recursive, List.map_append, Constraint.eval_append_of_forall_eq]
   · rw [derivedRecursion, List.map_map]
     rfl
   · simp only [baseRecursion, List.map_map, List.mem_map, Function.comp_apply]
@@ -158,12 +158,12 @@ theorem optimal_ofLabels_recursive_of_forall_eq
 /-- Without recursion underapplication is never optimal: under summed evaluation, if some
 subparadigm satisfies the top constraints in both words, as overapplication satisfies OO-Identity
 and the markedness constraint driving the process, so does every winner. -/
-theorem eq_zero_of_mem_optimal_ofLabels_nonrecursive {top rest : List (ρ → ParadigmConstraint α)}
-    {x y : L} (hy : y ∈ (Tableau.ofLabels cand labels (nonrecursive (top ++ rest) r)).optimal)
+theorem eq_zero_of_mem_evalOn_nonrecursive {top rest : List (ρ → ParadigmConstraint α)} {x y : L}
+    (hy : y ∈ Constraint.evalOn cand labels (nonrecursive (top ++ rest) r))
     (hx : x ∈ labels) (h0 : ∀ k ∈ top, (k r).atBase (cand x) = 0 ∧ (k r).atDerived (cand x) = 0) :
     ∀ k ∈ top, (k r).atBase (cand y) = 0 ∧ (k r).atDerived (cand y) = 0 := by
-  rw [Tableau.ofLabels, nonrecursive, List.map_append, List.map_append] at hy
-  have := Tableau.eq_zero_of_mem_optimal_ofList_append hy hx (by
+  rw [Constraint.evalOn, nonrecursive, List.map_append, List.map_append] at hy
+  have := Constraint.eq_zero_of_mem_eval_append hy hx (by
     simp only [List.map_map, List.mem_map, Function.comp_apply]
     rintro _ ⟨k, hk, rfl⟩
     simp [Constraint.comap, h0 k hk])

@@ -139,17 +139,17 @@ inductive Con
   | moraFaith
   deriving DecidableEq, Fintype, Repr
 
-/-- The constraint set, on pairs of an input and an output form. -/
-def con : ConstraintSet (MoraicForm Slot × MoraicForm Slot) Con
-  | .noSharedMora => noSharedMora.comap Prod.snd
-  | .syllBin => syllBin.comap Prod.snd
-  | .noCMora => noCMora
-  | .moraFaith => moraFaith
+/-- The marks of an output form for an input form. -/
+def marks (i o : MoraicForm Slot) : Con → ℕ
+  | .noSharedMora => noSharedMora o
+  | .syllBin => syllBin o
+  | .noCMora => noCMora (i, o)
+  | .moraFaith => moraFaith (i, o)
 
 /-- The constraint system of the four inputs. -/
 def system : ConstraintSystem Input (MoraicForm Slot) Con where
   gen := gen
-  con := con.comap fun p ↦ (input p.1, p.2)
+  marks i := marks (input i)
 
 /-! ### The typology -/
 
@@ -182,16 +182,16 @@ def antiEgyptian : Input → Finset (MoraicForm Slot)
   | .cv => {openShort} | .cvv => {openLong} | .cvc => {closedShared} | .cvvc => {closedMoraic}
 
 /-- The ranking of (29). -/
-def hindiRanking : Ranking Con 4 := .ofList [.noSharedMora, .moraFaith, .syllBin, .noCMora]
+def hindiRanking : Ranking Con := .ofList [.noSharedMora, .moraFaith, .syllBin, .noCMora]
 
 /-- The ranking of (30). -/
-def malayalamRanking : Ranking Con 4 := .ofList [.noCMora, .moraFaith, .syllBin, .noSharedMora]
+def malayalamRanking : Ranking Con := .ofList [.noCMora, .moraFaith, .syllBin, .noSharedMora]
 
 /-- The ranking of (31). -/
-def levantineRanking : Ranking Con 4 := .ofList [.syllBin, .moraFaith, .noSharedMora, .noCMora]
+def levantineRanking : Ranking Con := .ofList [.syllBin, .moraFaith, .noSharedMora, .noCMora]
 
 /-- The ranking of (32). -/
-def egyptianRanking : Ranking Con 4 := .ofList [.syllBin, .noSharedMora, .moraFaith, .noCMora]
+def egyptianRanking : Ranking Con := .ofList [.syllBin, .noSharedMora, .moraFaith, .noCMora]
 
 -- (29)–(32): each ranking selects its language's outputs.
 theorem language_rankings :
@@ -204,7 +204,7 @@ theorem language_rankings :
 Hindi, Malayalam, Levantine Arabic and Egyptian Arabic (35). -/
 theorem range_language :
     Set.range (system.language (n := 4)) = {hindi, malayalam, levantine, egyptian} := by
-  have h : ∀ r : Ranking Con 4, system.language r = hindi ∨ system.language r = malayalam ∨
+  have h : ∀ r : Ranking Con, system.language r = hindi ∨ system.language r = malayalam ∨
       system.language r = levantine ∨ system.language r = egyptian := by
     decide
   ext L
@@ -254,10 +254,9 @@ def moraicOnset : MoraicForm Slot :=
 leaving the syllable before it light ((33)), while a single consonant stays a bare onset ((34)):
 faithfulness counts the morae of a segment, not whether they are shared. -/
 theorem malayalam_geminate :
-    (Tableau.ofRanking (con.comap (geminate, ·)) malayalamRanking
-      {sharedOnset, plainOnset, moraicOnset}).optimal = {sharedOnset} ∧
-    (Tableau.ofRanking (con.comap (single, ·)) malayalamRanking
-      {sharedOnset, plainOnset}).optimal = {plainOnset} := by
+    malayalamRanking.optimal (marks geminate) {sharedOnset, plainOnset, moraicOnset} =
+        {sharedOnset} ∧
+      malayalamRanking.optimal (marks single) {sharedOnset, plainOnset} = {plainOnset} := by
   decide
 
 /-! ### Weight by Position -/

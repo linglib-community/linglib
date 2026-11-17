@@ -154,20 +154,20 @@ variable {c₁ c₂ c₃ cInitial vInitial} {labels : Finset Cand}
 -- Where the phonotactics leave the two paradigms that differ in the bare stem, the winner is
 -- the one whose bare stem sides with the more numerous suffixes.
 theorem optimal_of_lt
-    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+    (h : Constraint.evalOn (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics =
       {.a, .b}) (hlt : vInitial.length < cInitial.length) :
-    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.a} := by
-  rw [ranking, Tableau.optimal_ofLabels_append, h]
-  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+    Constraint.evalOn (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking = {.a} := by
+  rw [ranking, Constraint.evalOn_append, h]
+  refine Constraint.evalOn_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
   obtain rfl : l = .b := by simpa [hne] using hl
   exact (majority_rules c₁ c₂ c₃ cInitial vInitial).2 hlt
 
 theorem optimal_of_gt
-    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+    (h : Constraint.evalOn (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics =
       {.a, .b}) (hlt : cInitial.length < vInitial.length) :
-    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.b} := by
-  rw [ranking, Tableau.optimal_ofLabels_append, h]
-  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+    Constraint.evalOn (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking = {.b} := by
+  rw [ranking, Constraint.evalOn_append, h]
+  refine Constraint.evalOn_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
   obtain rfl : l = .a := by simpa [hne] using hl
   rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
     Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
@@ -176,7 +176,7 @@ theorem optimal_of_gt
 /-- In the Moroccan verb the bare stem is CCəC against sonority, as in tableau (9): the
 phonotactics leave the two paradigms that differ in the bare stem, and four C-initial suffixes
 outnumber two V-initial ones. -/
-theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} :=
+theorem moroccan_verb : Constraint.evalOn moroccan {.a, .b, .c, .d} ranking = {.a} :=
   optimal_of_lt (by decide +kernel) (by decide)
 
 /-- The attested Moroccan paradigm, with four C-initial and two V-initial suffixes, draws 20
@@ -191,7 +191,7 @@ theorem opMaxV_counts :
 
 -- (11)
 theorem moroccan_noun :
-    (Tableau.ofLabels (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
+    Constraint.evalOn (paradigms .sh .r .b [] []) {.a, .b} ranking = {.b} := by
   decide +kernel
 
 /-! ### Judeo-Tripolitanian Arabic verbs and nouns (§3.1) -/
@@ -203,7 +203,7 @@ def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
 -- Table 2
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
+      Constraint.evalOn (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking = {.a} := by
   simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
   exact ⟨optimal_of_lt (by decide +kernel) (by decide),
     optimal_of_lt (by decide +kernel) (by decide), optimal_of_lt (by decide +kernel) (by decide)⟩
@@ -217,9 +217,9 @@ def nouns : List (Seg × Seg × Seg) × List (Seg × Seg × Seg) :=
 -- (12)
 theorem jta_nouns :
     (∀ r ∈ nouns.1,
-      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
+      Constraint.evalOn (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking = {.b}) ∧
     ∀ r ∈ nouns.2,
-      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
+      Constraint.evalOn (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking = {.a} := by
   decide +kernel
 
 /-! ### The challenge from adjectives (§3.2–3.3)
@@ -240,15 +240,15 @@ def adjectives : List (Seg × Seg × Seg) :=
 CCəC (14). -/
 theorem adjective_paradigm :
     ∀ r ∈ adjectives,
-      (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
-  have h : ∀ r ∈ adjectives, (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b}
-      phonotactics).optimal = {.a, .b} := by decide +kernel
+      Constraint.evalOn (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking = {.b} := by
+  have h : ∀ r ∈ adjectives, Constraint.evalOn (adjective r.1 r.2.1 r.2.2) {.a, .b}
+      phonotactics = {.a, .b} := by decide +kernel
   exact fun r hr ↦ optimal_of_gt (h r hr) (by decide)
 
 -- (15)
 theorem adjective_bare :
     ∀ r ∈ adjectives,
-      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
+      Constraint.evalOn (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking = {.b} := by
   decide +kernel
 
 /-! ### Category-specific templates (§3.3) -/
@@ -271,21 +271,21 @@ def templateRanking (cat : Category) : List (Constraint (Paradigm Seg (List Seg)
 /-- A template for verbs and adjectives ranked above SONCON derives the adjectives' CCəC (18). -/
 theorem template_adjective :
     ∀ r ∈ adjectives,
-      (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
+      Constraint.evalOn (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective) =
         {.a} := by
   decide +kernel
 
 -- Table 2, (12)
 theorem template_verb_noun :
     (∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)).optimal
+      Constraint.evalOn (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)
         = {.a}) ∧
     (∀ r ∈ nouns.1,
-      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
-        (templateRanking .noun)).optimal = {.b}) ∧
+      Constraint.evalOn (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
+        (templateRanking .noun) = {.b}) ∧
     ∀ r ∈ nouns.2,
-      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
-        (templateRanking .noun)).optimal = {.a} := by
+      Constraint.evalOn (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
+        (templateRanking .noun) = {.a} := by
   decide +kernel
 
 end MarcoRasin2026

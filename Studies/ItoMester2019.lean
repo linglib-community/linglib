@@ -184,34 +184,28 @@ immediately dominating no node of its own level or the level below, as a φ over
 does. -/
 def correspondence : ConstraintSystem Input Candidate Con where
   gen := candidates
-  con
-    | .initFaith => Constraint.alignLeft.comap fun xc ↦
-        ((xc.2.spans xc.1 .om).filter fun w ↦ ∃ l ∈ xc.1.lex, Corresponds xc.1.lex l w,
-          xc.1.lex.map (·.span))
-    | .headedness => fun xc ↦ (xc.2.tree xc.1).subtrees.countP fun s ↦
+  marks x c
+    | .initFaith => Constraint.alignLeft
+        ((c.spans x .om).filter fun w ↦ ∃ l ∈ x.lex, Corresponds x.lex l w, x.lex.map (·.span))
+    | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
-    | .phrase => fun xc ↦
-        Constraint.deficiency (Corresponds xc.1.phrases) (xc.1.phrases, xc.2.spans xc.1 .ph)
-    | .alignR => Constraint.alignRight.comap fun xc ↦
-        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
-    | .priority => fun xc ↦
-        if xc.1.clitic ∧ (xc.2.form = .strong ∨ xc.2.form = .weak) then 1 else 0
-    | .word => fun xc ↦ Constraint.align (fun w l ↦ Corresponds xc.1.lex l w)
-        (xc.2.spans xc.1 .om, xc.1.lex)
+    | .phrase => Constraint.deficiency (Corresponds x.phrases) (x.phrases, c.spans x .ph)
+    | .alignR => Constraint.alignRight (x.phrases.map (·.span), c.spans x .ph)
+    | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0
+    | .word => Constraint.align (fun w l ↦ Corresponds x.lex l w) (c.spans x .om, x.lex)
 
 /-- Standard Match Theory: MATCH-PHRASE, each phrase the span of a φ, fills the phrase slot, and
 MATCH-ω, each ω the span of a lexical word, the word slot. -/
 def matchTheory : ConstraintSystem Input Candidate Con where
   gen := candidates
-  con
-    | .phrase => (Constraint.align Eq).comap fun xc ↦
-        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
-    | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.span))
-    | i => correspondence.con i
+  marks x c
+    | .phrase => Constraint.align Eq (x.phrases.map (·.span), c.spans x .ph)
+    | .word => Constraint.align Eq (c.spans x .om, x.lex.map (·.span))
+    | i => correspondence.marks x c i
 
 theorem phrase_le (x : Input) (c : Candidate) :
-    correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
+    correspondence.marks x c .phrase ≤ matchTheory.marks x c .phrase := by
   have hx : (x.phrases.map (·.span)).Nodup ∧
       ∀ a ∈ x.phrases, a.head ∈ Set.Ico a.span.fst a.span.snd := by
     obtain ⟨_ | _, _ | _, _ | _, _ | _⟩ := x <;> decide
@@ -220,12 +214,12 @@ theorem phrase_le (x : Input) (c : Candidate) :
 /-! ### English -/
 
 /-- English with Align-R over PRIORITY, (41a) and (42a). -/
-def alignFirst : Ranking Con 6 :=
-  Ranking.ofList [.initFaith, .headedness, .phrase, .alignR, .priority, .word]
+def alignFirst : Ranking Con :=
+  Ranking.Enumeration.ofList [.initFaith, .headedness, .phrase, .alignR, .priority, .word]
 
 /-- English with PRIORITY over Align-R, (41b) and (42b). -/
-def priorityFirst : Ranking Con 6 :=
-  Ranking.ofList [.initFaith, .headedness, .phrase, .priority, .alignR, .word]
+def priorityFirst : Ranking Con :=
+  Ranking.Enumeration.ofList [.initFaith, .headedness, .phrase, .priority, .alignR, .word]
 
 /-- A phrase-final function word takes its strong form, and an object pronoun inside the verb its
 weak form ((18), (25)). -/
@@ -259,29 +253,29 @@ theorem language_kimIs :
 
 private theorem final_le_medial :
     ∀ c ∈ candidates kimIsLeaving, c.form = .enclitic → ∃ d ∈ candidates kimIs, d.form = .enclitic ∧
-      ∀ i, matchTheory.con i (kimIs, d) ≤ matchTheory.con i (kimIsLeaving, c) := by
+      ∀ i, matchTheory.marks kimIs d i ≤ matchTheory.marks kimIsLeaving c i := by
   decide +kernel
 
 private theorem medial_le_final :
     ∀ d ∈ candidates kimIs, ∃ c ∈ candidates kimIsLeaving,
-      ∀ i, matchTheory.con i (kimIsLeaving, c) ≤ matchTheory.con i (kimIs, d) := by
+      ∀ i, matchTheory.marks kimIsLeaving c i ≤ matchTheory.marks kimIs d i := by
   decide +kernel
 
 /-- Under every ranking of standard Match Theory, enclisis in *Kim 's leaving* implies enclisis in
 *Kim 's* ((43)–(46)). -/
-theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
+theorem matchTheory_enclitic_final_of_medial (r : Ranking Con)
     (h : Form.enclitic ∈ (matchTheory.language r kimIsLeaving).image (·.form)) :
     Form.enclitic ∈ (matchTheory.language r kimIs).image (·.form) := by
   obtain ⟨c, hc, hce⟩ := Finset.mem_image.1 h
   obtain ⟨d, hd, hde, hdc⟩ :=
-    final_le_medial c (Tableau.optimal_subset hc) hce
-  exact Finset.mem_image.2 ⟨d, Tableau.ofRanking_mem_optimal_of_forall_le hc hd hdc
+    final_le_medial c (ConstraintSystem.language_subset hc) hce
+  exact Finset.mem_image.2 ⟨d, Ranking.Enumeration.mem_optimal_of_forall_le hc hd hdc
     medial_le_final, hde⟩
 
 /-- Existential correspondence draws the line: under `priorityFirst` an enclitic wins in
 *Kim 's leaving* and none in *Kim 's*, against the implication exact Match obeys. -/
 theorem correspondence_not_enclitic_final_of_medial :
-    ¬ ∀ r : Ranking Con 6,
+    ¬ ∀ r : Ranking Con,
       Form.enclitic ∈ (correspondence.language r kimIsLeaving).image (·.form) →
         Form.enclitic ∈ (correspondence.language r kimIs).image (·.form) := fun h ↦ by
   simpa [language_kimIs priorityFirst (by simp)] using

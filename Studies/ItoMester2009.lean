@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.Prosody.Match
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 
 /-!
 # Itô and Mester (2009): The Extended Prosodic Word
@@ -24,8 +24,9 @@ evidence of Section 3 supports for English and German, selects the recursive wor
   substrate's `Prosody.noRec` and Parse-into-ω its `Prosody.parseInto`; FtBin at the word level
   is defined here, and Lex-to-ω(L) is the substrate's Align-L of the lexical word's span to the
   ω spans.
-* The tableau engine is `OptimalityTheory.Tableau.ofList`; the winning recursive structure
-  is a legal prosodic word of the substrate, No-Recursion being violable.
+* A ranking is the list of its constraints, most dominant first, evaluated by
+  `Constraint.eval`. The winning recursive structure is a legal prosodic word of the substrate,
+  No-Recursion being violable.
 
 ## References
 
@@ -92,29 +93,29 @@ theorem one_violation_each :
 /-! ### The factorial typology and the ranking for English and German -/
 
 theorem fullOmega_optimum :
-    (Tableau.ofList candidates [lexToOmega, parseInto .om, noRec, subminimalOmega]).optimal
-      = {fullOmega} := by
+    Constraint.eval candidates [lexToOmega, parseInto .om, noRec, subminimalOmega] =
+      {fullOmega} := by
   decide
 
 theorem amalgamated_optimum :
-    (Tableau.ofList candidates [subminimalOmega, parseInto .om, noRec, lexToOmega]).optimal
-      = {amalgamated} := by
+    Constraint.eval candidates [subminimalOmega, parseInto .om, noRec, lexToOmega] =
+      {amalgamated} := by
   decide
 
 theorem phiAttached_optimum :
-    (Tableau.ofList candidates [subminimalOmega, lexToOmega, noRec, parseInto .om]).optimal
-      = {phiAttached} := by
+    Constraint.eval candidates [subminimalOmega, lexToOmega, noRec, parseInto .om] =
+      {phiAttached} := by
   decide
 
 -- (33), (34)
 theorem adjoined_attached_tie :
-    (Tableau.ofList candidates [subminimalOmega, lexToOmega]).optimal
-      = {omegaAdjoined, phiAttached} := by
+    Constraint.eval candidates [subminimalOmega, lexToOmega] =
+      {omegaAdjoined, phiAttached} := by
   decide
 
 theorem omegaAdjunction_optimum :
-    (Tableau.ofList candidates [subminimalOmega, lexToOmega, parseInto .om, noRec]).optimal
-      = {omegaAdjoined} := by
+    Constraint.eval candidates [subminimalOmega, lexToOmega, parseInto .om, noRec] =
+      {omegaAdjoined} := by
   decide
 
 theorem winner_recursive_isWord : noRec omegaAdjoined = 1 ∧ IsWord omegaAdjoined := by decide

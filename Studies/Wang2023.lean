@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Data.Examples.Wang2023
 
@@ -88,32 +88,25 @@ theorem mp_lt (ha : a ∈ s) (h : p a ⊂ p b) : mp s p a < mp s p b := by
     exact Finset.mem_filter.2 ⟨hds, hda.trans h⟩
   · exact (Finset.mem_filter.1 (hsub (Finset.mem_filter.2 ⟨ha, h⟩))).2.ne rfl
 
-theorem optimal_ofList_singleton (Fs : List (Constraint C)) :
-    (Tableau.ofList {c} Fs).optimal = {c} :=
-  Finset.Subset.antisymm Tableau.optimal_subset <| Finset.singleton_subset_iff.2 <| by
-    obtain ⟨d, hd⟩ := Tableau.optimal_nonempty (t := Tableau.ofList {c} Fs)
-      (Finset.singleton_nonempty c)
-    exact Finset.mem_singleton.1 (Tableau.optimal_subset hd) ▸ hd
-
 /-- The strong taboo on top of any ranking selects the weakest form alone from a candidate set that
 contains it: the emergence of the semantically unmarked. -/
 theorem sToD_top [DecidableEq C] (hc : c ∈ s) (h : ∀ d ∈ s, d ≠ c → p d ⊂ p c)
     (Fs : List (Constraint C)) :
-    (Tableau.ofList s (sToD s p :: Fs)).optimal = {c} := by
-  rw [Tableau.optimal_ofList_cons, Finset.argmin_eq_singleton_iff.2
-    ⟨hc, fun d hd hne ↦ sToD_lt hc (h d hd hne)⟩, optimal_ofList_singleton]
+    Constraint.eval s (sToD s p :: Fs) = {c} := by
+  rw [Constraint.eval_cons, Finset.argmin_eq_singleton_iff.2
+    ⟨hc, fun d hd hne ↦ sToD_lt hc (h d hd hne)⟩, Constraint.eval_singleton]
 
 theorem mp_top [DecidableEq C] (hc : c ∈ s) (h : ∀ d ∈ s, d ≠ c → p c ⊂ p d)
     (Fs : List (Constraint C)) :
-    (Tableau.ofList s (mp s p :: Fs)).optimal = {c} := by
-  rw [Tableau.optimal_ofList_cons, Finset.argmin_eq_singleton_iff.2
-    ⟨hc, fun d hd hne ↦ mp_lt hc (h d hd hne)⟩, optimal_ofList_singleton]
+    Constraint.eval s (mp s p :: Fs) = {c} := by
+  rw [Constraint.eval_cons, Finset.argmin_eq_singleton_iff.2
+    ⟨hc, fun d hd hne ↦ mp_lt hc (h d hd hne)⟩, Constraint.eval_singleton]
 
 -- (28): under the strong taboo a form with a weaker competitor is never recruited
 theorem notMem_optimal_of_sToD_top (hb : b ∈ s) (h : p a ⊂ p b) (Fs : List (Constraint C)) :
-    a ∉ (Tableau.ofList s (sToD s p :: Fs)).optimal := fun ha ↦ by
-  rw [Tableau.optimal_ofList_cons] at ha
-  exact absurd (Finset.mem_argmin.1 (Tableau.optimal_subset ha)).2 fun hle ↦
+    a ∉ Constraint.eval s (sToD s p :: Fs) := fun ha ↦ by
+  rw [Constraint.eval_cons] at ha
+  exact absurd (Finset.mem_argmin.1 (Constraint.eval_subset ha)).2 fun hle ↦
     (sToD_lt hb h).not_ge (hle b hb)
 
 section Chain
@@ -144,19 +137,19 @@ theorem argmin_wToD :
 
 -- over a chain the weak taboo above MP! selects the middle form
 theorem wToD_mp (Fs : List (Constraint C)) :
-    (Tableau.ofList {a, b, c} (wToD {a, b, c} p :: mp {a, b, c} p :: Fs)).optimal = {b} := by
+    Constraint.eval {a, b, c} (wToD {a, b, c} p :: mp {a, b, c} p :: Fs) = {b} := by
   have hmin : ({b, c} : Finset C).argmin (mp {a, b, c} p) = {b} := by
     refine Finset.argmin_eq_singleton_iff.2 ⟨by simp, fun d hd hne ↦ ?_⟩
     rcases Finset.mem_insert.1 hd with h | h
     · exact absurd h hne
     · obtain rfl := Finset.mem_singleton.1 h
       exact mp_lt (by simp) hbc
-  rw [Tableau.optimal_ofList_cons, argmin_wToD hab hbc, Tableau.optimal_ofList_cons, hmin,
-    optimal_ofList_singleton]
+  rw [Constraint.eval_cons, argmin_wToD hab hbc, Constraint.eval_cons, hmin,
+    Constraint.eval_singleton]
 
 theorem wToD_alone :
-    (Tableau.ofList {a, b, c} [wToD {a, b, c} p]).optimal = {b, c} := by
-  rw [Tableau.optimal_ofList_cons, argmin_wToD hab hbc, Tableau.optimal_ofList_nil]
+    Constraint.eval {a, b, c} [wToD {a, b, c} p] = {b, c} := by
+  rw [Constraint.eval_cons, argmin_wToD hab hbc, Constraint.eval_nil]
 
 end Chain
 
@@ -215,8 +208,8 @@ include ha hb hab hy
 
 /-- Strong taboo » MP! » weak taboo recruits the plural only, as in Slovenian (83b). -/
 theorem stod_mp_wtod :
-    (Tableau.ofList number [sToD number (presup (E := E)), mp number (presup (E := E)),
-      wToD number (presup (E := E))]).optimal = {.plural} := by
+    Constraint.eval number [sToD number (presup (E := E)), mp number (presup (E := E)),
+      wToD number (presup (E := E))] = {.plural} := by
   refine sToD_top (by decide) ?_ _
   intro d hd hne
   obtain rfl | rfl | rfl := by simpa [number] using hd
@@ -226,19 +219,19 @@ theorem stod_mp_wtod :
 
 /-- Weak taboo » MP! » strong taboo recruits the dual only, as in Mwotlap and Kharia (83a). -/
 theorem wtod_mp_stod :
-    (Tableau.ofList number [wToD number (presup (E := E)), mp number (presup (E := E)),
-      sToD number (presup (E := E))]).optimal = {.dual} :=
+    Constraint.eval number [wToD number (presup (E := E)), mp number (presup (E := E)),
+      sToD number (presup (E := E))] = {.dual} :=
   wToD_mp (presup_singular_ssubset_dual ha hb hab) (presup_dual_ssubset_plural hy) _
 
 /-- The weak taboo alone leaves dual and plural, the non-escalating system of Imere (83d). -/
 theorem wtod_alone :
-    (Tableau.ofList number [wToD number (presup (E := E))]).optimal = {.dual, .plural} :=
+    Constraint.eval number [wToD number (presup (E := E))] = {.dual, .plural} :=
   wToD_alone (presup_singular_ssubset_dual ha hb hab) (presup_dual_ssubset_plural hy)
 
 -- with MP! on top the strongest form wins, the absence of honorification
 theorem mp_stod_wtod :
-    (Tableau.ofList number [mp number (presup (E := E)), sToD number (presup (E := E)),
-      wToD number (presup (E := E))]).optimal = {.singular} := by
+    Constraint.eval number [mp number (presup (E := E)), sToD number (presup (E := E)),
+      wToD number (presup (E := E))] = {.singular} := by
   refine mp_top (by decide) ?_ _
   intro d hd hne
   obtain rfl | rfl | rfl := by simpa [number] using hd
@@ -248,7 +241,7 @@ theorem mp_stod_wtod :
 
 -- (28): no ranking with the strong taboo on top recruits the singular
 theorem singular_notMem_optimal_of_sToD_top (Fs : List (Constraint Number)) :
-    Number.singular ∉ (Tableau.ofList number (sToD number (presup (E := E)) :: Fs)).optimal :=
+    Number.singular ∉ Constraint.eval number (sToD number (presup (E := E)) :: Fs) :=
   notMem_optimal_of_sToD_top (b := .plural) (by decide)
     ((presup_singular_ssubset_dual ha hb hab).trans (presup_dual_ssubset_plural hy)) Fs
 

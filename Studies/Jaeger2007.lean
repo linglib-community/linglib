@@ -165,9 +165,10 @@ def con : ConstraintSet (Syl × Syl) (Fin 5) :=
 
 /-- The syllabification system offers every syllable type as a candidate output for every
 input, under the five constraints. -/
-def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
+def syllabification : ConstraintSystem Syl Syl (Fin 5) :=
+  ⟨fun _ ↦ univ, fun i o k ↦ con k (i, o)⟩
 
-theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
+theorem faithful_iff (σ : Ranking (Fin 5)) (i : Syl) :
     syllabification.PicksAt σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
 
@@ -175,7 +176,7 @@ theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
 FAITH, namely those violating no other markedness constraint. -/
 def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, con k (i, i) = 1 → k ∈ S
 
-theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
+theorem mem_produced_iff (σ : Ranking (Fin 5)) (i : Syl) :
     i ∈ produced (univ.filter (σ.Dominates 0)) ↔ syllabification.PicksAt σ i i := by
   simp [produced, faithful_iff]
 
