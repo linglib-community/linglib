@@ -7,36 +7,24 @@ public import Linglib.Logic.Consequence
 /-!
 # Domain semantics
 
-Domain semantics evaluates a sentence at an index pairing a world with an information state, a
-set of worlds over which epistemic modals quantify: *might φ* is true when `φ` holds at some world
-of the state and *must φ* when it holds at every one, whatever the world of evaluation. A state
-accepts a sentence when the sentence is true, relative to the state, at each of its worlds. A
-nonepistemic sentence is accepted by the states that entail it, *must φ* by the states that
-accept `φ`, and *might φ* by the states with a world verifying `φ` and by the absurd state.
+Domain semantics evaluates a sentence at an index, an information state paired with a world; the
+state is the set of worlds over which epistemic modals quantify. *Might $\varphi$* is true when
+$\varphi$ holds at some world of the state and *must $\varphi$* when it holds at every one,
+whatever the world of evaluation. A state accepts a sentence when the sentence is true, relative
+to the state, at each of its worlds: [*must $\varphi$* is accepted exactly where $\varphi$
+is](##Sentence.acceptedIn_must_iff), and *might $\varphi$* [by the states with a world verifying
+$\varphi$ and by the absurd state](##Sentence.acceptedIn_might_iff).
 
-Consequence preserves truth at every index (standard), truth at the diagonal indices, those whose
-world lies in the state (diagonal), or acceptance (informational): three notions of satisfaction
-for one language, each giving the consequence relation `Consequence.Entails` of its models.
-
-## Main definitions
-
-* `DomainSemantics.Sentence W`: sentences, a Boolean algebra pointwise.
-* `Sentence.ofProp`, `Sentence.might`, `Sentence.must`: nonepistemic sentences and the modals.
-* `Sentence.AcceptedIn`: acceptance in an information state.
-* `StandardConsequence`, `DiagonalConsequence`, `InformationalConsequence`.
-
-## Main statements
-
-* `Sentence.acceptedIn_must_iff`: *must φ* is accepted exactly where `φ` is.
-* `Sentence.acceptedIn_might_iff`: *might φ* is accepted by the absurd state and by the states
-  with a world verifying `φ`.
-* `informationalConsequence_singleton_iff`: informational consequence from one premise is
-  inclusion of the accepting states.
+The language has three consequence relations, one for each notion of satisfaction:
+[standard](##StandardConsequence) consequence preserves truth at every index,
+[diagonal](##DiagonalConsequence) consequence truth at the indices whose world lies in their
+state, and [informational](##InformationalConsequence) consequence acceptance. Standard
+consequence [is diagonal](##StandardConsequence.diagonalConsequence).
 
 ## Implementation notes
 
 The context of an index is fixed, so a sentence is a function of the information state and the
-world.
+world. Each consequence relation is `Consequence.Entails` for its own models.
 
 ## References
 
@@ -94,15 +82,31 @@ theorem acceptedIn_might_iff : φ.might.AcceptedIn s ↔ s = ∅ ∨ ∃ w ∈ s
 
 end Sentence
 
-/-- Standard consequence preserves truth at every index, an information state paired with a
-world. -/
-def StandardConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
-  Γ ⊨[fun (i : Set W × W) ψ ↦ ψ i.1 i.2] φ
+/-- An index pairs an information state with a world of evaluation. -/
+structure Index (W : Type*) where
+  /-- The information state, over which epistemic modals quantify. -/
+  state : Set W
+  /-- The world of evaluation. -/
+  world : W
 
-/-- Diagonal consequence preserves truth at the diagonal indices, an information state paired
-with one of its worlds. -/
+namespace Index
+
+/-- An index satisfies a sentence when the sentence is true at its world relative to its
+state. -/
+def Satisfies (i : Index W) (φ : Sentence W) : Prop := φ i.state i.world
+
+/-- An index is diagonal when its world lies in its information state. -/
+def IsDiagonal (i : Index W) : Prop := i.world ∈ i.state
+
+end Index
+
+/-- Standard consequence preserves truth at every index. -/
+def StandardConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
+  Γ ⊨[Index.Satisfies] φ
+
+/-- Diagonal consequence preserves truth at the diagonal indices. -/
 def DiagonalConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
-  Γ ⊨[fun (i : (s : Set W) × s) ψ ↦ ψ i.1 i.2] φ
+  Γ ⊨[fun i : {i : Index W // i.IsDiagonal} ↦ i.val.Satisfies] φ
 
 /-- Informational consequence preserves acceptance in an information state. -/
 def InformationalConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
@@ -112,11 +116,11 @@ variable {Γ : Set (Sentence W)} {φ ψ : Sentence W}
 
 theorem standardConsequence_iff :
     StandardConsequence Γ φ ↔ ∀ s w, (∀ γ ∈ Γ, γ s w) → φ s w :=
-  ⟨fun h s w ↦ h (s, w), fun h i ↦ h i.1 i.2⟩
+  ⟨fun h s w ↦ h ⟨s, w⟩, fun h i ↦ h i.state i.world⟩
 
 theorem diagonalConsequence_iff :
     DiagonalConsequence Γ φ ↔ ∀ s, ∀ w ∈ s, (∀ γ ∈ Γ, γ s w) → φ s w :=
-  ⟨fun h s w hw ↦ h ⟨s, w, hw⟩, fun h i ↦ h i.1 i.2 i.2.2⟩
+  ⟨fun h s w hw ↦ h ⟨⟨s, w⟩, hw⟩, fun h i ↦ h i.val.state i.val.world i.property⟩
 
 theorem informationalConsequence_iff :
     InformationalConsequence Γ φ ↔ ∀ s, (∀ γ ∈ Γ, γ.AcceptedIn s) → φ.AcceptedIn s :=
@@ -125,7 +129,7 @@ theorem informationalConsequence_iff :
 /-- The diagonal indices are among the indices, so standard consequence is diagonal. -/
 theorem StandardConsequence.diagonalConsequence (h : StandardConsequence Γ φ) :
     DiagonalConsequence Γ φ :=
-  h.comap (fun i ↦ (i.1, i.2)) fun _ _ ↦ .rfl
+  h.comap Subtype.val fun _ _ ↦ .rfl
 
 theorem informationalConsequence_singleton_iff :
     InformationalConsequence {φ} ψ ↔ ∀ s, φ.AcceptedIn s → ψ.AcceptedIn s := by

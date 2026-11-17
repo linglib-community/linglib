@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Consequence
 
 /-!
 # Bilateral state-based modal logic
@@ -43,6 +44,8 @@ open scoped SetFamily
 namespace BSML
 
 open ModalLogic (KripkeModel PointedTeam)
+open Consequence (Entails)
+open scoped Consequence
 open Team (TeamProperty)
 open scoped Bilattice
 
@@ -205,7 +208,7 @@ sets neither restriction changes the relation: what is a consequence here is der
 [aloni-anttila-yang-2024] Definition 4.33 by their Theorem 4.34, `cut` and necessitation
 directly), and the universe is immaterial (`BSML.support_of_consequence`). -/
 def Consequence (Γ : Finset (Formula Atom)) (φ : Formula Atom) : Prop :=
-  ∀ p : PointedTeam.{0} Atom, (∀ γ ∈ Γ, support p.model γ p.team) → support p.model φ p.team
+  (Γ : Set (Formula Atom)) ⊨[fun (p : PointedTeam.{0} Atom) ψ ↦ support p.model ψ p.team] φ
 
 @[inherit_doc] scoped infix:50 " ⊨ " => Consequence
 

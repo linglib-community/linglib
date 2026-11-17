@@ -10,48 +10,41 @@ public import Mathlib.Order.Concept
 /-!
 # Consequence
 
-A notion of satisfaction is a relation between models and formulas. A formula `φ` is a
-[consequence](##Consequence.Entails) of a set `Γ` when every model satisfying all of `Γ` satisfies
-`φ`; the consequences of `Γ` are [its closure](##Consequence.entails_iff_mem_intentClosure) under
-the closure operator of the satisfaction relation, as [tarski-1956] requires. A sequent `Γ ⇒ Δ`
-between sets of formulas is a [mixed consequence](##Consequence.MixedConsequence) for two notions
-`p` and `q` when every model that `p`-satisfies all of `Γ` `q`-satisfies some member of `Δ`
-([cobreros-etal-2012]): [no model is a counterexample](##Consequence.mixedConsequence_iff_disjoint).
+The semantics of a logic is a relation of satisfaction between models and formulas. A formula
+$\varphi$ is a [consequence](##Entails) of a set $\Gamma$ of formulas when every model satisfying
+$\Gamma$ satisfies $\varphi$, and taking consequences is [a closure
+operator](##entails_iff_mem_intentClosure) on sets of formulas. With two notions of satisfaction
+$p$ and $q$, a sequent $\Gamma \Rightarrow \Delta$ is a [mixed consequence](##MixedConsequence)
+when every model that $p$-satisfies all of $\Gamma$ $q$-satisfies some member of $\Delta$, that
+is, when [it has no countermodel](##mixedConsequence_iff_disjoint).
 
-Mixed consequence is [monotone](##Consequence.monotone_uncurry_mixedConsequence) in both sides,
-[reflexive exactly when `p ≤ q`](##Consequence.stdRefl_mixedConsequence_iff), and
-[transitive](##Consequence.isTransitive_mixedConsequence) when `q ≤ p`. Conversely these rules
-characterize it: a relation between sets of formulas is monotone iff it is [a mixed
-consequence](##Consequence.monotone_iff_exists_mixedConsequence), reflexive as well iff [one with
-`p ≤ q`](##Consequence.stdRefl_and_monotone_iff_exists_mixedConsequence), transitive as well iff
-[one with `q ≤ p`](##Consequence.monotone_and_isTransitive_iff_exists_mixedConsequence)
-([chemla-egre-2019]), and all three iff it is [the consequence relation of one notion of
-satisfaction](##Consequence.stdRefl_and_monotone_and_isTransitive_iff_exists_mixedConsequence)
-([scott-1974], [shoesmith-smiley-1978]).
+Mixed consequence is always monotone. It is [reflexive exactly when $p \le
+q$](##stdRefl_mixedConsequence_iff) and [admits cut when $q \le
+p$](##isTransitive_mixedConsequence). These rules characterize it: [every monotone relation
+between sets of formulas is a mixed consequence](##monotone_iff_exists_mixedConsequence), and one
+that is also reflexive and transitive is [the consequence relation of a single notion of
+satisfaction](##stdRefl_and_monotone_and_isTransitive_iff_exists_mixedConsequence).
 
 ## Implementation notes
 
-Satisfaction notions are relations `Model → Formula → Prop`, ordered pointwise, so `p ≤ q` says
-that whatever a model `p`-satisfies it also `q`-satisfies. The models of a set of formulas and the
-theory of a class of models are the polars `lowerPolar p Γ` and `upperPolar p K` of
-`Mathlib.Order.Concept`, and are not given names of their own. Premises and conclusions are sets,
-as theories are in `Mathlib.ModelTheory`; a finite sequent is a set built with `insert`.
-
-Of the three structural rules of [scott-1974], monotonicity of a relation `r` between sets of
-formulas is `Monotone (Function.uncurry r)` and reflexivity is `Std.Refl fun φ ψ ↦ r {φ} {ψ}`,
-which under monotonicity gives `r Γ Δ` whenever `Γ` and `Δ` overlap. Transitivity is the cut for
-sets of [shoesmith-smiley-1978], which quantifies over the partitions of a set of cut formulas;
-a partition of `Z` is given by its first block `Z₁ ⊆ Z`, the second being `Z \ Z₁`.
+* A notion of satisfaction is a relation `Model → Formula → Prop`, and notions are ordered
+  pointwise: `p ≤ q` says that whatever a model `p`-satisfies it also `q`-satisfies.
+* The models of a set of formulas and the theory of a class of models are the polars
+  `lowerPolar p Γ` and `upperPolar p K` of `Mathlib.Order.Concept`, without names of their own.
+* Premises and conclusions are sets, as theories are in `Mathlib.ModelTheory`; a finite sequent
+  is a set built with `insert`.
+* For a relation `r` between sets of formulas, monotonicity is `Monotone (Function.uncurry r)`
+  and reflexivity is `Std.Refl fun φ ψ ↦ r {φ} {ψ}`. Transitivity is cut for sets, which
+  quantifies over the partitions of a set `Z` of cut formulas; a partition is given by its first
+  block `Z₁ ⊆ Z`, the second being `Z \ Z₁`.
 
 ## References
 
-* [P. Cobreros, P. Égré, D. Ripley and R. van Rooij, *Tolerant, Classical, Strict*
-  (2012)][cobreros-etal-2012]
-* [E. Chemla and P. Égré, *Suszko's problem: mixed consequence and compositionality*
-  (2019)][chemla-egre-2019]
-* [D. Scott, *Completeness and axiomatizability in many-valued logic* (1974)][scott-1974]
-* [D. J. Shoesmith and T. J. Smiley, *Multiple-Conclusion Logic* (1978)][shoesmith-smiley-1978]
-* [A. Tarski, *Logic, Semantics, Metamathematics* (1956)][tarski-1956]
+* [cobreros-etal-2012]
+* [chemla-egre-2019]
+* [scott-1974]
+* [shoesmith-smiley-1978]
+* [tarski-1956]
 -/
 
 @[expose] public section
@@ -280,21 +273,21 @@ theorem isTransitive_mixedConsequence (hqp : q ≤ p) : IsTransitive (MixedConse
   · exact hn ⟨hZ, hqp M δ hq⟩
   · exact hΔ ⟨δ, hδ, hq⟩
 
-/-- A monotone relation is the mixed consequence of any class of its non-instances that every
-non-instance extends to, read as models that satisfy a premise in their first component and a
-conclusion outside their second. -/
-private theorem eq_mixedConsequence (hm : Monotone (Function.uncurry r))
-    (I : Set (Set Formula × Set Formula)) (hI : ∀ x ∈ I, ¬ r x.1 x.2)
-    (hc : ∀ Γ Δ, ¬ r Γ Δ → ∃ x ∈ I, Γ ⊆ x.1 ∧ Δ ⊆ x.2) :
-    r = MixedConsequence (fun (M : I) φ ↦ φ ∈ M.1.1) fun M φ ↦ φ ∉ M.1.2 := by
+/-- A monotone relation is the mixed consequence of any family of its non-instances `T i ⇏ U i`
+that every non-instance extends to, with `i` satisfying a premise in `T i` and a conclusion
+outside `U i`. -/
+private theorem eq_mixedConsequence (hm : Monotone (Function.uncurry r)) {ι : Type u}
+    (T U : ι → Set Formula) (hI : ∀ i, ¬ r (T i) (U i))
+    (hc : ∀ Γ Δ, ¬ r Γ Δ → ∃ i, Γ ⊆ T i ∧ Δ ⊆ U i) :
+    r = MixedConsequence (fun i φ ↦ φ ∈ T i) fun i φ ↦ φ ∉ U i := by
   ext Γ Δ
-  refine ⟨fun h M hΓ ↦ ?_, fun h ↦ ?_⟩
+  refine ⟨fun h i hΓ ↦ ?_, fun h ↦ ?_⟩
   · by_contra hΔ
-    exact hI M.1 M.2 (hm (show (Γ, Δ) ≤ M.1 from
+    exact hI i (hm (show (Γ, Δ) ≤ (T i, U i) from
       ⟨fun γ hγ ↦ hΓ γ hγ, fun δ hδ ↦ by_contra fun hn ↦ hΔ ⟨δ, hδ, hn⟩⟩) h)
   · by_contra hn
-    obtain ⟨x, hx, hΓ, hΔ⟩ := hc Γ Δ hn
-    obtain ⟨δ, hδ, hq⟩ := h ⟨x, hx⟩ fun γ hγ ↦ hΓ hγ
+    obtain ⟨i, hΓ, hΔ⟩ := hc Γ Δ hn
+    obtain ⟨δ, hδ, hq⟩ := h i fun γ hγ ↦ hΓ hγ
     exact hq (hΔ hδ)
 
 /-- A relation between sets of formulas is monotone exactly when it is the mixed consequence of
@@ -302,8 +295,9 @@ two notions of satisfaction ([chemla-egre-2019], §3). -/
 theorem monotone_iff_exists_mixedConsequence :
     Monotone (Function.uncurry r) ↔
       ∃ (Model : Type u) (p q : Model → Formula → Prop), r = MixedConsequence p q := by
-  refine ⟨fun hm ↦ ⟨_, _, _, eq_mixedConsequence hm {x | ¬ r x.1 x.2} (fun _ h ↦ h)
-    fun Γ Δ h ↦ ⟨(Γ, Δ), h, subset_rfl, subset_rfl⟩⟩, ?_⟩
+  refine ⟨fun hm ↦ ⟨_, _, _, eq_mixedConsequence hm
+    (ι := {x : Set Formula × Set Formula // ¬ r x.1 x.2}) (fun x ↦ x.1.1) (fun x ↦ x.1.2)
+    (fun x ↦ x.2) fun Γ Δ h ↦ ⟨⟨(Γ, Δ), h⟩, subset_rfl, subset_rfl⟩⟩, ?_⟩
   rintro ⟨_, p, q, rfl⟩
   exact monotone_uncurry_mixedConsequence
 
@@ -328,12 +322,13 @@ theorem monotone_and_isTransitive_iff_exists_mixedConsequence :
       ∃ (Model : Type u) (p q : Model → Formula → Prop), q ≤ p ∧ r = MixedConsequence p q := by
   constructor
   · rintro ⟨hm, ht⟩
-    refine ⟨_, _, _, ?_, eq_mixedConsequence hm {x | ¬ r x.1 x.2 ∧ x.1 ∪ x.2 = Set.univ}
-      (fun _ h ↦ h.1) fun Γ Δ h ↦ ?_⟩
-    · intro M φ hq
-      exact (Set.eq_univ_iff_forall.1 M.2.2 φ).resolve_right hq
+    refine ⟨_, _, _, ?_, eq_mixedConsequence hm
+      (ι := {x : Set Formula × Set Formula // ¬ r x.1 x.2 ∧ x.1 ∪ x.2 = Set.univ})
+      (fun x ↦ x.1.1) (fun x ↦ x.1.2) (fun x ↦ x.2.1) fun Γ Δ h ↦ ?_⟩
+    · intro x φ hq
+      exact (Set.eq_univ_iff_forall.1 x.2.2 φ).resolve_right hq
     · obtain ⟨Z₁, -, hZ⟩ := not_forall₂.1 (mt (ht (Γ := Γ) (Δ := Δ) Set.univ) h)
-      exact ⟨(Γ ∪ Z₁, Set.univ \ Z₁ ∪ Δ), ⟨hZ, Set.eq_univ_of_forall fun φ ↦ by
+      exact ⟨⟨(Γ ∪ Z₁, Set.univ \ Z₁ ∪ Δ), hZ, Set.eq_univ_of_forall fun φ ↦ by
         by_cases h : φ ∈ Z₁ <;> simp [h]⟩, Set.subset_union_left, Set.subset_union_right⟩
   · rintro ⟨_, p, q, hqp, rfl⟩
     exact ⟨monotone_uncurry_mixedConsequence, isTransitive_mixedConsequence hqp⟩

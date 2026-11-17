@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Epistemic.Basic
 public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Ortholattice.ProperFilter
+public import Linglib.Logic.Consequence
 
 /-!
 # Frame semantics and completeness for the epistemic orthologic
@@ -31,7 +32,7 @@ representation of `Core/Order/Ortholattice/ProperFilter.lean`.
 
 @[expose] public section
 
-open Order Concept SetRel
+open Order Concept SetRel Consequence
 
 universe u
 
@@ -75,6 +76,29 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (R : SetRel S S) [IsRReg
 
 /-! ### Consequence over epistemic compatibility frames -/
 
+/-- A model on an epistemic compatibility frame, an R-regular, reflexive frame with
+Knowability, with a distinguished possibility. -/
+structure PointedModel (Var : Type u) where
+  /-- The possibilities of the frame. -/
+  Possibility : Type u
+  /-- The compatibility frame. -/
+  frame : Compatibility Possibility
+  /-- The accessibility relation. -/
+  access : SetRel Possibility Possibility
+  [isRRegular : IsRRegular frame access]
+  [isRefl : access.IsRefl]
+  [isKnowable : IsKnowable frame access]
+  /-- The valuation, into the regular propositions of the frame. -/
+  val : Var → frame.Regular
+  /-- The possibility at which formulas are evaluated. -/
+  point : Possibility
+
+attribute [instance] PointedModel.isRRegular PointedModel.isRefl PointedModel.isKnowable
+
+/-- A pointed model supports a formula when its distinguished possibility does. -/
+def PointedModel.Supports (M : PointedModel Var) (φ : ModalFormula Var) : Prop :=
+  Support M.frame M.access M.val M.point φ
+
 variable {φ ψ : ModalFormula Var}
 
 variable (φ ψ) in
@@ -82,13 +106,20 @@ variable (φ ψ) in
 frames with Knowability, when in every model on such a frame every possibility supporting `φ`
 supports `ψ` ([holliday-mandelkern-2024] Definition 4.36 for the class of Definition 4.26). -/
 def FrameConsequence : Prop :=
-  ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S) [IsRRegular F R] [R.IsRefl]
-    [IsKnowable F R] (V : Var → F.Regular) (s : S), Support F R V s φ → Support F R V s ψ
+  {φ} ⊨[PointedModel.Supports] ψ
+
+theorem frameConsequence_iff :
+    FrameConsequence φ ψ ↔ ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S)
+      [IsRRegular F R] [R.IsRefl] [IsKnowable F R] (V : Var → F.Regular) (s : S),
+        Support F R V s φ → Support F R V s ψ :=
+  ⟨fun h _ F R _ _ _ V s hs ↦ h ⟨_, F, R, V, s⟩ (Set.forall_mem_singleton.2 hs),
+    fun h M hM ↦ h M.frame M.access M.val M.point (hM φ rfl)⟩
 
 theorem frameConsequence_iff_eval :
     FrameConsequence φ ψ ↔ ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S)
       [IsRRegular F R] [R.IsRefl] [IsKnowable F R] (V : Var → F.Regular),
         eval (F.necHom R) V φ ≤ eval (F.necHom R) V ψ := by
+  rw [frameConsequence_iff]
   refine ⟨fun h S F R _ _ _ V ↦ ?_, fun h S F R _ _ _ V s hs ↦ ?_⟩
   · rw [← SetLike.coe_subset_coe, ← support_setOf_eq_coe_eval, ← support_setOf_eq_coe_eval]
     exact fun s hs ↦ h F R V s hs
