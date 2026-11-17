@@ -16,7 +16,8 @@ $\Gamma$ satisfies $\varphi$. Taking consequences is [a closure
 operator](##entails_iff_mem_intentClosure) on sets of formulas: a set [entails its
 members](##Entails.of_mem), consequences [survive added premises](##Entails.weaken), and what
 follows from consequences of $\Gamma$ [follows from $\Gamma$](##Entails.trans). Consequence
-[transfers along a map of models](##Entails.comap) that preserves and reflects satisfaction.
+[transfers along a map of models](##Entails.comap) that preserves and reflects satisfaction, so
+it [survives restriction](##Entails.restrict) to a class of admissible models.
 
 ## Implementation notes
 
@@ -25,7 +26,10 @@ follows from consequences of $\Gamma$ [follows from $\Gamma$](##Entails.trans). 
   quantifies over bundled into the model type.
 * The models of a set of formulas and the theory of a class of models are the polars
   `lowerPolar p Γ` and `upperPolar p K` of `Mathlib.Order.Concept`, without names of their own.
-* Premises are sets, as theories are in `Mathlib.ModelTheory`.
+* Premises are sets, as theories are in `Mathlib.ModelTheory`, so the order and multiplicity of
+  premises play no role and consequence is monotone in them. The order-sensitive consequence
+  relations of update semantics take lists of updates and are in
+  `Semantics/Dynamic/Consequence.lean`.
 
 ## References
 
@@ -67,6 +71,10 @@ theorem trans (h₁ : ∀ θ ∈ Θ, Γ ⊨[p] θ) (h₂ : Θ ⊨[p] φ) : Γ �
 theorem comap {Model' : Type*} {p' : Model' → Formula → Prop} (f : Model' → Model)
     (hf : ∀ M ψ, p' M ψ ↔ p (f M) ψ) (h : Γ ⊨[p] φ) : Γ ⊨[p'] φ := fun M hM ↦
   (hf M φ).2 (h (f M) fun γ hγ ↦ (hf M γ).1 (hM γ hγ))
+
+/-- Consequence over all models holds over any class of them. -/
+theorem restrict (K : Model → Prop) (h : Γ ⊨[p] φ) : Γ ⊨[fun M : {M // K M} ↦ p M] φ :=
+  h.comap Subtype.val fun _ _ ↦ .rfl
 
 end Entails
 

@@ -129,7 +129,7 @@ theorem informationalConsequence_iff :
 /-- The diagonal indices are among the indices, so standard consequence is diagonal. -/
 theorem StandardConsequence.diagonalConsequence (h : StandardConsequence Γ φ) :
     DiagonalConsequence Γ φ :=
-  h.comap Subtype.val fun _ _ ↦ .rfl
+  h.restrict Index.IsDiagonal
 
 theorem informationalConsequence_singleton_iff :
     InformationalConsequence {φ} ψ ↔ ∀ s, φ.AcceptedIn s → ψ.AcceptedIn s := by
