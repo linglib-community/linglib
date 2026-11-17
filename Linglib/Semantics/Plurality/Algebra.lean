@@ -47,7 +47,7 @@ and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClo
 is a stronger assumption, which enters only through `Mereology.SupIsSum`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
 own model of nonempty sets of atoms (`Individual`) is a classical mereology. Where the carrier has
-one, `*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
+a bottom, `*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
 
 ## References
 
