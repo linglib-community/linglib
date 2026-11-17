@@ -133,8 +133,8 @@ def Grammar.Enumeration.ofWinner (v : C → ι → ℕ) (candidates : Finset C)
 theorem Grammar.Enumeration.mem_extent_ofWinner (hw : w ∈ candidates) :
     σ ∈ (Grammar.Enumeration.ofWinner v candidates w).extent ↔
       w ∈ filtration v candidates (List.ofFn σ) := by
-  rw [← Tableau.optimal_ofRanking_eq_filtration fun k c ↦ v c k,
-    Tableau.ofRanking_mem_optimal_iff_satisfiedBy, and_iff_right hw]
+  rw [← Ranking.Enumeration.optimal_eq_filtration, σ.mem_optimal_iff_satisfiedBy,
+    and_iff_right hw]
   exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
 
 /-- The comparative tableau of a winner: its ERC against each of the listed competitors, the
@@ -164,12 +164,12 @@ theorem filtration_eq_singleton_of_comparative [DecidableEq C] {l : List C}
     (hw : w ∈ filtration v l.toFinset (List.ofFn σ))
     (h : ∀ α ∈ comparative v w (l.filter (· ≠ w)), ∃ k, α k ≠ .e) :
     filtration v l.toFinset (List.ofFn σ) = {w} := by
-  rw [← Tableau.optimal_ofRanking_eq_filtration fun k c ↦ v c k] at hw ⊢
-  refine (Tableau.ofRanking_optimal_eq_singleton_iff_of_mem hw).2 fun d hd he ↦ ?_
+  rw [← Ranking.Enumeration.optimal_eq_filtration] at hw ⊢
+  refine (Ranking.Enumeration.optimal_eq_singleton_iff_of_mem hw).2 fun d hd he ↦ ?_
   by_contra hne
   obtain ⟨k, hk⟩ := h _ (List.mem_map.2
     ⟨d, List.mem_filter.2 ⟨List.mem_toFinset.1 hd, by simpa using hne⟩, rfl⟩)
-  exact hk ((ercOfProfiles_eq_e_iff _ _ k).2 (he k).symm)
+  exact hk ((ercOfProfiles_eq_e_iff _ _ k).2 (congrFun he k).symm)
 
 /-- Two winners are optimal together under no ranking when an ERC of the one and an ERC of the
 other fuse to an ERC with an `L` and no `W`. -/

@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Statistics.Krifka2007
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Semantics.Degree.Granularity
 public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Mathlib.Probability.UniformOn

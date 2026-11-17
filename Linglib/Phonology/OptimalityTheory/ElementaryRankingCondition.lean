@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Basic.Sign.Basic
@@ -26,7 +25,7 @@ exactly when the ranking satisfies its ERC against every competitor.
   constraints of an ERC.
 * `ERC.IsTrivial`, `ERC.IsContradictory`, `ERC.IsSimple`: an ERC with no `L`, one with an `L`
   and no `W`, and one with exactly one `W` and one `L`.
-* `ercOfProfiles`, `tableauERC`, `simpleERC`: the ERC of a winner and a loser given by their
+* `ercOfProfiles`, `simpleERC`: the ERC of a winner and a loser given by their
   violation vectors, of two candidates of a tableau, and of a single domination `i ≫ j`.
 
 ## Main statements
@@ -46,7 +45,7 @@ exactly when the ranking satisfies its ERC against every competitor.
 * `satisfiedBy_ercOfProfiles_iff_le`: a ranking satisfies the ERC of a winner and a loser iff
   the winner's violations, read in the order of the ranking, are lexicographically at most the
   loser's.
-* `Tableau.ofRanking_mem_optimal_iff_satisfiedBy`: a candidate is optimal under a ranking iff
+* `Ranking.Enumeration.mem_optimal_iff_satisfiedBy`: a candidate is optimal under a ranking iff
   the ranking satisfies its ERC against every competitor.
 
 ## Implementation notes
@@ -625,63 +624,32 @@ theorem lex_pos_ercOfProfiles_iff_lt (r : Ranking.Enumeration ι n) (w l : ι �
   simp only [toLex_inj, funext_iff]
   exact forall_congr' fun p ↦ eq_comm.trans (ercOfProfiles_eq_e_iff w l (r p))
 
-/-- The ERC of a winner `w` against a loser `l` in the tableau `t`: the ranking requirements for
-`w` to beat `l`. -/
-def tableauERC {C : Type*} (t : Tableau C n) (w l : C) : ERC (Fin n) :=
-  ercOfProfiles (t.constraints · w) (t.constraints · l)
-
-/-- A ranking satisfies the ERC of `w` against `l` iff, under that ranking, the profile of `w`
-is at most the profile of `l`. -/
-theorem tableauERC_satisfiedBy_iff {C : Type*} (t : Tableau C n) (r : Ranking.Enumeration (Fin n) n)
-    (w l : C) : (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
-  satisfiedBy_ercOfProfiles_iff_le r (t.constraints · w) (t.constraints · l)
-
-theorem tableauERC_satisfiedBy_id_iff {C : Type*} (t : Tableau C n) (w l : C) :
-    (tableauERC t w l).SatisfiedBy (1 : Ranking.Enumeration (Fin n) n) ↔ t.profile w ≤
-        t.profile l := by
-  rw [tableauERC_satisfiedBy_iff]; exact Iff.rfl
-
-theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} (t : Tableau C n) (w : C) :
-    w ∈ t.optimal ↔
-      w ∈ t.candidates ∧
-        ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (1 : Ranking.Enumeration (Fin n) n) :=
-  Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
-    forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
-
-/-- A candidate `w` is optimal in `Tableau.ofRanking con r` iff `r` satisfies the ERC of `w`
-against every competitor. -/
-theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : ConstraintSet C ι)
-    (r : Ranking.Enumeration ι n) (candidates : Finset C) (w : C) :
-    w ∈ (Tableau.ofRanking con r candidates).optimal ↔
-      w ∈ candidates ∧ ∀ l ∈ candidates, (ercOfProfiles (con · w) (con · l)).SatisfiedBy r :=
-  Tableau.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
-    (satisfiedBy_ercOfProfiles_iff_le r (con · w) (con · l)).symm
-
 /-- A candidate is optimal under a ranking iff the ranking satisfies its ERC against every
 competitor. -/
 theorem Ranking.Enumeration.mem_optimal_iff_satisfiedBy {C : Type*} (σ : Ranking.Enumeration ι n)
     (v : C → ι → ℕ) (s : Finset C) (w : C) :
     w ∈ σ.optimal v s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (v w) (v l)).SatisfiedBy σ :=
-  Tableau.ofRanking_mem_optimal_iff_satisfiedBy (fun k c ↦ v c k) σ s w
+  Ranking.Enumeration.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
+    (satisfiedBy_ercOfProfiles_iff_le σ (v w) (v l)).symm
 
 /-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
 competitor `d` is dominated by some constraint preferring `c`. -/
-theorem Tableau.exists_dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
-    {r : Ranking.Enumeration ι n} {candidates : Finset C} {c d : C} {j : ι}
-    (h : c ∈ (Tableau.ofRanking con r candidates).optimal) (hd : d ∈ candidates)
-    (hj : con j d < con j c) : ∃ i, con i c < con i d ∧ r.Dominates i j :=
-  ((ERC.satisfiedBy_iff_dominance r _).1
-    (((Tableau.ofRanking_mem_optimal_iff_satisfiedBy con r candidates c).1 h).2 d hd) j
+theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+    {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {j : ι}
+    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
+    (hj : v d j < v c j) : ∃ i, v c i < v d i ∧ σ.Dominates i j :=
+  ((ERC.satisfiedBy_iff_dominance σ _).1
+    (((σ.mem_optimal_iff_satisfiedBy v s c).1 h).2 d hd) j
     ((ercOfProfiles_eq_L_iff _ _ j).2 hj)).imp fun _ hw ↦
       ⟨(ercOfProfiles_eq_W_iff _ _ _).1 hw.1, hw.2⟩
 
 /-- When `i` is the only constraint preferring an optimal candidate `c` to a competitor `d`, `i`
 dominates every constraint preferring `d`. -/
-theorem Tableau.dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
-    {r : Ranking.Enumeration ι n} {candidates : Finset C} {c d : C} {i j : ι}
-    (h : c ∈ (Tableau.ofRanking con r candidates).optimal) (hd : d ∈ candidates)
-    (hi : ∀ k, con k c < con k d → k = i) (hj : con j d < con j c) : r.Dominates i j := by
-  obtain ⟨w, hw, hdom⟩ := Tableau.exists_dominates_of_mem_ofRanking_optimal h hd hj
+theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+    {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {i j : ι}
+    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
+    (hi : ∀ k, v c k < v d k → k = i) (hj : v d j < v c j) : σ.Dominates i j := by
+  obtain ⟨w, hw, hdom⟩ := Ranking.Enumeration.exists_dominates_of_mem_optimal h hd hj
   exact hi w hw ▸ hdom
 
 /-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/

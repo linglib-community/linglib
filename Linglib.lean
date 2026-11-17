@@ -669,7 +669,6 @@ import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Ranking
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora

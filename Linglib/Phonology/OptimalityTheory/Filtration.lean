@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Core.Order.Argmax
+public import Linglib.Core.Order.PiLex
 
 /-!
 # Filtration
@@ -12,7 +14,7 @@ constraints is defined for any list, so it evaluates the prefix of a ranking, a 
 the constraints, or a whole ranking alike. Its survivors are
 [the candidates whose violations along the list are lexicographically
 least](##OptimalityTheory.mem_filtration), and along a whole ranking they are
-[the winners of the tableau](##OptimalityTheory.Tableau.optimal_ofRanking_eq_filtration).
+[the optimal candidates](##OptimalityTheory.Ranking.Enumeration.optimal_eq_filtration).
 Filtration never empties a non-empty candidate set, a longer list keeps a subset of what its
 prefix keeps, and the survivors agree on every constraint of the list. A candidate that some
 ranking selects and that survives a prefix
@@ -160,20 +162,6 @@ theorem mem_filtration_append_filter [DecidableEq ι] (hl : c ∈ filtration v s
     apply_eq_of_mem_filtration hl₁ hd (not_not.1 hk)]
   exact (mem_filtration.1 hl).2 d (filtration_subset hd)
 
-variable {n : ℕ}
-
-/-- The winners of a tableau under a ranking are the survivors of filtration along the
-ranking. -/
-theorem Tableau.optimal_ofRanking_eq_filtration (con : ConstraintSet C ι)
-    (r : Ranking.Enumeration ι n)
-    (s : Finset C) :
-    (Tableau.ofRanking con r s).optimal = filtration (fun c k ↦ con k c) s (List.ofFn r) := by
-  ext c
-  rw [Tableau.mem_optimal_iff, mem_filtration]
-  refine and_congr_right fun _ ↦ forall₂_congr fun d _ ↦ ?_
-  rw [List.map_ofFn, List.map_ofFn, List.ofFn_le_ofFn_iff]
-  rfl
-
 /-! ### Evaluation along a list of constraints -/
 
 section Eval
@@ -255,6 +243,18 @@ theorem Constraint.notMem_eval_of_forall_le (hc : c ∈ s) (hle : ∀ F ∈ Fs, 
     (hlt : ∃ F ∈ Fs, F c < F d) : d ∉ Constraint.eval s Fs :=
   notMem_filtration_of_forall_le hc hle hlt
 
+theorem Constraint.argmin_antifaithful {F : Constraint C} (h : ∃ c ∈ s, 0 < F c) :
+    s.argmin F.antifaithful = s.filter (0 < F ·) := by
+  obtain ⟨d, hd, hFd⟩ := h
+  ext c
+  simp only [Finset.mem_argmin, Finset.mem_filter]
+  refine ⟨fun ⟨hc, hmin⟩ ↦ ⟨hc, ?_⟩, fun ⟨hc, hFc⟩ ↦ ⟨hc, fun _ _ ↦ ?_⟩⟩
+  · have := hmin d hd
+    rw [(Constraint.antifaithful_eq_zero_iff F d).2 hFd, Nat.le_zero] at this
+    exact (Constraint.antifaithful_eq_zero_iff F c).1 this
+  · rw [(Constraint.antifaithful_eq_zero_iff F c).2 hFc]
+    exact Nat.zero_le _
+
 theorem Constraint.eval_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
     Constraint.eval s (F.antifaithful :: Fs) = Constraint.eval (s.filter (0 < F ·)) Fs := by
   rw [eval_cons, Constraint.argmin_antifaithful h]
@@ -264,13 +264,6 @@ it at all. -/
 theorem Constraint.eval_antifaithful (h : ∃ c ∈ s, 0 < F c) :
     Constraint.eval s [F.antifaithful, F] = (s.filter (0 < F ·)).argmin F := by
   rw [eval_antifaithful_cons h, eval_cons, eval_nil]
-
-/-- The winners of the tableau of a list of constraints are the candidates Eval keeps. -/
-theorem Tableau.optimal_ofList (s : Finset C) (Fs : List (Constraint C)) :
-    (Tableau.ofList s Fs).optimal = Constraint.eval s Fs := by
-  induction Fs generalizing s with
-  | nil => exact Tableau.optimal_ofList_nil
-  | cons F Fs ih => rw [Tableau.optimal_ofList_cons, ih, Constraint.eval_cons]
 
 /-! ### Candidates named by labels -/
 
@@ -291,10 +284,6 @@ theorem Constraint.evalOn_cons_eq_singleton (hx : x ∈ labels)
     (h : ∀ y ∈ labels, y ≠ x → F (cand x) < F (cand y)) :
     Constraint.evalOn cand labels (F :: Fs) = {x} :=
   eval_cons_eq_singleton hx h
-
-theorem Tableau.optimal_ofLabels (cand : L → C) (labels : Finset L) (Fs : List (Constraint C)) :
-    (Tableau.ofLabels cand labels Fs).optimal = Constraint.evalOn cand labels Fs :=
-  Tableau.optimal_ofList _ _
 
 end Eval
 

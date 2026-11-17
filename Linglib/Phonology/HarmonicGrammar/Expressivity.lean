@@ -3,7 +3,6 @@ module
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.Realization
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Core.Algebra.Order.BigOperators.Ring.Finset
 
@@ -155,13 +154,10 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
 
 /-! ### HG–OT agreement -/
 
-/-- With exponentially separated weights bounding every violation, a tableau's OT winners are
-its HG winners: the candidates of lexicographically least profile are those of greatest
-harmony. -/
-theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type*} {n M : ℕ}
-    {w : Fin n → ℝ} (t : Tableau C n) (hw : ExponentiallySeparated w M)
-    (hM : ∀ c ∈ t.candidates, ∀ p, t.constraints p c ≤ M) :
-    t.optimal = t.candidates.argmax (harmonyScore t.constraints w) :=
+private theorem argmin_profile_eq_argmax {C : Type*} {n M : ℕ} {w : Fin n → ℝ}
+    (hw : ExponentiallySeparated w M) (u : C → Fin n → ℕ) (s : Finset C)
+    (hM : ∀ c ∈ s, ∀ p, u c p ≤ M) :
+    s.argmin (fun c ↦ toLex (u c)) = s.argmax (harmonyScore (fun p c ↦ u c p) w) :=
   Finset.argmin_eq_argmax_of_le_iff fun a ha b hb ↦ by
     rw [harmonyScore, harmonyScore, neg_le_neg_iff]
     exact ((Pi.strictMonoOn_sum_mul hw).le_iff_le (hM a ha) (hM b hb)).symm
@@ -173,17 +169,27 @@ theorem _root_.OptimalityTheory.Ranking.Enumeration.optimal_eq_argmax_harmonySco
     (σ : Ranking.Enumeration ι n) (v : C → ι → ℕ) (s : Finset C)
     (hw : ExponentiallySeparated w M) (hM : ∀ c ∈ s, ∀ k, v c k ≤ M) :
     σ.optimal v s = s.argmax (harmonyScore (fun k c ↦ v c k) (w ∘ σ.symm)) := by
-  rw [Ranking.Enumeration.optimal_eq_tableau,
-    Tableau.optimal_eq_argmax_harmonyScore _ hw fun c hc p ↦ hM c hc (σ p)]
+  rw [show σ.optimal v s = s.argmin (fun c ↦ toLex fun p ↦ v c (σ p)) from rfl,
+    argmin_profile_eq_argmax hw (fun c p ↦ v c (σ p)) s fun c hc p ↦ hM c hc (σ p)]
   congr 1
   funext c
   simp only [harmonyScore, comp_equiv_symm_dotProduct]
   rfl
 
+/-- With exponentially separated weights bounding every violation, Eval along a list of
+constraints keeps exactly the HG winners under those weights. -/
+theorem _root_.OptimalityTheory.Constraint.eval_eq_argmax_harmonyScore {C : Type*} {M : ℕ}
+    {s : Finset C} {Fs : List (Constraint C)} {w : Fin Fs.length → ℝ}
+    (hw : ExponentiallySeparated w M) (hM : ∀ c ∈ s, ∀ F ∈ Fs, F c ≤ M) :
+    OptimalityTheory.Constraint.eval s Fs = s.argmax (harmonyScore Fs.get w) := by
+  rw [OptimalityTheory.Constraint.eval_eq_argmin_ofList]
+  exact argmin_profile_eq_argmax hw (fun c p ↦ Fs.get p c) s
+    fun c hc p ↦ hM c hc _ (Fs.get_mem p)
+
 /-! ### MaxEnt → OT limit -/
 
 /-- Scaling exponentially separated weights concentrates MaxEnt on the sole OT winner, which is the
-sole HG winner (`Tableau.optimal_eq_argmax_harmonyScore`). -/
+sole HG winner (`Constraint.eval_eq_argmax_harmonyScore`). -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
@@ -193,10 +199,8 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableS
         {c_opt}) atTop (𝓝 1) := by
   refine tendsto_maxEnt_smul_atTop (T := ConstraintSet.violations ranking.get)
     (w := expWeights ranking.length M) ?_
-  rw [harmony_violations, ← hopt, ← Tableau.optimal_ofList,
-    Tableau.optimal_eq_argmax_harmonyScore _
-      (expWeights_separated _ M hM) fun c _ p ↦ hbound c _ (List.get_mem ranking p)]
-  rfl
+  rw [harmony_violations, ← hopt, Constraint.eval_eq_argmax_harmonyScore
+    (expWeights_separated _ M hM) fun c _ F hF ↦ hbound c F hF]
 
 /-! ## Realizability
 
