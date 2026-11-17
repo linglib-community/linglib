@@ -14,7 +14,9 @@ the constraints, or a whole ranking alike. Its survivors are
 least](##OptimalityTheory.mem_filtration), and along a whole ranking they are
 [the winners of the tableau](##OptimalityTheory.Tableau.optimal_ofRanking_eq_filtration).
 Filtration never empties a non-empty candidate set, a longer list keeps a subset of what its
-prefix keeps, and the survivors agree on every constraint of the list.
+prefix keeps, and the survivors agree on every constraint of the list. A candidate that some
+ranking selects and that survives a prefix
+[is selected by a completion of the prefix](##OptimalityTheory.mem_filtration_append_filter).
 
 ## References
 
@@ -94,6 +96,34 @@ theorem apply_eq_of_mem_filtration (hc : c ∈ filtration v s l) (hd : d ∈ fil
 theorem filtration_cons_of_forall_eq (h : ∀ a ∈ s, ∀ b ∈ s, v a k = v b k) :
     filtration v s (k :: l) = filtration v s l := by
   rw [filtration_cons, Finset.argmin_eq_self_of_forall_le fun a ha b hb ↦ (h a ha b hb).le]
+
+/-- Dropping the constraints on which two candidates agree does not change which of them does
+better along a list. -/
+theorem map_filter_le_map_filter_iff {p : ι → Prop} [DecidablePred p]
+    (h : ∀ k ∈ l, ¬ p k → v c k = v d k) :
+    (l.filter p).map (v c) ≤ (l.filter p).map (v d) ↔ l.map (v c) ≤ l.map (v d) := by
+  induction l with
+  | nil => rfl
+  | cons k l ih =>
+    have ih := ih fun k hk ↦ h k (List.mem_cons_of_mem _ hk)
+    by_cases hk : p k
+    · rw [List.filter_cons_of_pos (by simp [hk])]
+      simp only [List.map_cons, List.cons_le_cons_iff', ih]
+    · have he := h k List.mem_cons_self hk
+      rw [List.filter_cons_of_neg (by simp [hk])]
+      simp only [List.map_cons, List.cons_le_cons_iff', ih, he, lt_irrefl, true_and, false_or]
+
+/-- No Dead Man Walking ([merchant-prince-2022]): a candidate that survives filtration along
+a list `l`, such as a whole ranking, and also along a list `l₁`, survives along `l₁` followed
+by the constraints of `l` that are not in `l₁`. A possible optimum that passes a prefix is
+selected by some completion of the prefix. -/
+theorem mem_filtration_append_filter [DecidableEq ι] (hl : c ∈ filtration v s l)
+    (hl₁ : c ∈ filtration v s l₁) : c ∈ filtration v s (l₁ ++ l.filter (· ∉ l₁)) := by
+  rw [filtration_append, mem_filtration]
+  refine ⟨hl₁, fun d hd ↦ ?_⟩
+  rw [map_filter_le_map_filter_iff fun k _ hk ↦
+    apply_eq_of_mem_filtration hl₁ hd (not_not.1 hk)]
+  exact (mem_filtration.1 hl).2 d (filtration_subset hd)
 
 variable {n : ℕ}
 
