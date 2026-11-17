@@ -46,11 +46,6 @@ def Value.ofReferentGender : ReferentGender → Value
   | .male => .masc
   | .female => .fem
 
-/-- A noun's gender is natural when it is the one its referents' gender is assigned. -/
-abbrev IsNatural (n : GenderedNoun Value) : Prop :=
-  _root_.Gender.IsNatural (Option.map Value.ofReferentGender) GenderedNoun.referentGender
-    GenderedNoun.gender n
-
 /-- The suffixes that fix the gender of every noun they end. -/
 inductive Suffix where
   | heit
@@ -83,7 +78,7 @@ def Suffix.noun (s : Suffix) (form gloss : String) (g : Option ReferentGender :=
   { form, gloss, gender := s.gender, referentGender := g }
 
 theorem Suffix.isNatural_noun_iff (s : Suffix) (form gloss : String) (x : ReferentGender) :
-    IsNatural (s.noun form gloss x) ↔ Value.ofReferentGender x = s.gender := by
+    (s.noun form gloss x).IsNatural Value.ofReferentGender ↔ Value.ofReferentGender x = s.gender := by
   simp [noun, _root_.Gender.IsNatural]
 
 /-! ### Nouns -/
@@ -110,7 +105,8 @@ def fraeulein : GenderedNoun Value := Suffix.lein.noun "Fräulein" "young lady" 
 def buebchen : GenderedNoun Value := Suffix.chen.noun "Bübchen" "little boy" (some .male)
 
 theorem not_isNatural_diminutive :
-    ¬ IsNatural maedchen ∧ ¬ IsNatural fraeulein ∧ ¬ IsNatural buebchen := by
+    ¬ maedchen.IsNatural Value.ofReferentGender ∧ ¬ fraeulein.IsNatural Value.ofReferentGender ∧
+      ¬ buebchen.IsNatural Value.ofReferentGender := by
   decide
 
 end German.Gender

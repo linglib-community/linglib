@@ -103,13 +103,13 @@ def Noun.article (n : Noun) (num : numberSystem) : Article :=
   n.gender.article (if n.reduplicatedPlural then ⟨.singular, by decide⟩ else num)
 
 /-- The noun *ìnan* 'boy'. -/
-def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, some .male⟩, "inammá", false⟩
+def inan : Noun := ⟨⟨⟨"ìnan", "boy", some .male⟩, .masc⟩, "inammá", false⟩
 
 /-- The noun *inán* 'girl'. -/
-def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, some .female⟩, "ináma", false⟩
+def inan' : Noun := ⟨⟨⟨"inán", "girl", some .female⟩, .fem⟩, "ináma", false⟩
 
 /-- The noun *nin* 'man', whose plural *niman* is reduplicated. -/
-def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, some .male⟩, "niman", true⟩
+def nin : Noun := ⟨⟨⟨"nin", "man", some .male⟩, .masc⟩, "niman", true⟩
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [inan, inan', nin]

@@ -4,6 +4,7 @@ public import Mathlib.Order.Interval.Set.Defs
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Person.Features
@@ -293,17 +294,6 @@ end Number
 
 /-! ### Gender -/
 
-/-- A gendered entity domain has disjoint sets of referents gendered masculine and gendered
-feminine, as socially constituted. Grammatical gender presupposes it, and a referent may be
-gendered neither way. -/
-class Gendered (E : Type*) where
-  /-- The referents gendered masculine. -/
-  masculine : Set E
-  /-- The referents gendered feminine. -/
-  feminine : Set E
-  /-- No referent is gendered both ways. -/
-  disjoint : Disjoint masculine feminine
-
 namespace Gender
 
 variable {E : Type*} [Gendered E] (x : E)
@@ -337,5 +327,50 @@ the decomposition as a fact about referents. -/
 theorem dom_neuter_subset_dom_feminine :
     dom (E := E) (some .Neut) ⊆ dom (some .Fem) :=
   Finset.inf_mono (by decide : Features.feminine ⊆ Features.neuter)
+
+/-- The alternatives of a gender under Maximize Presupposition: a value competes with the
+masculine, the feminine and the neuter, and an absent value with nothing. -/
+def alts : Option UD.Gender → Set (Option UD.Gender)
+  | none => ∅
+  | some _ => {some .Masc, some .Fem, some .Neut}
+
+/-- The gender a word restricts its referents to, realized on a pronoun, is defined of every
+referent the word admits: a pronoun agreeing with *mother* or *father* presupposes nothing the
+noun does not already require. -/
+theorem referents_subset_dom (g : ReferentGender) :
+    g.referents ⊆ dom (E := E) (some g.toUD) := by
+  cases g
+  · simp [ReferentGender.toUD]
+  · exact fun x hx ↦ (mem_dom_feminine x).2 (Gendered.disjoint.notMem_of_mem_right hx)
+
+/-- Strengthened against the other genders, a pronoun's gender is defined of exactly the referents
+a word of that referent gender admits, where there are any: *he* and *she* convey by competition
+what *father* and *mother* require. -/
+theorem strengthen_toUD {g : ReferentGender} (h : (g.referents (E := E)).Nonempty) :
+    Presupposition.strengthen alts dom (some g.toUD) = g.referents (E := E) := by
+  obtain ⟨y, hy⟩ := h
+  ext x
+  rw [Presupposition.mem_strengthen_iff]
+  cases g
+  · refine ⟨fun ⟨_, h₂⟩ ↦ by_contra fun hx ↦ ?_, fun hx ↦ ⟨by simp [ReferentGender.toUD], ?_⟩⟩
+    · refine h₂ (some .Fem) (by simp [alts]) ((mem_dom_feminine x).2 hx) ⟨?_, fun hsub ↦ ?_⟩
+      · simp [ReferentGender.toUD]
+      · exact (mem_dom_feminine y).1 (hsub (by simp [ReferentGender.toUD])) hy
+    · rintro ψ (rfl | rfl | rfl) hψ hss
+      · exact hss.ne rfl
+      · exact (mem_dom_feminine x).1 hψ hx
+      · exact ((mem_dom_neuter x).1 hψ).1 hx
+  · have hnot {z : E} (hz : z ∈ Gendered.feminine) : z ∉ Gendered.masculine :=
+      Gendered.disjoint.notMem_of_mem_right hz
+    refine ⟨fun ⟨h₁, h₂⟩ ↦ by_contra fun hx ↦ ?_,
+      fun hx ↦ ⟨(mem_dom_feminine x).2 (hnot hx), ?_⟩⟩
+    · refine h₂ (some .Neut) (by simp [alts])
+        ((mem_dom_neuter x).2 ⟨(mem_dom_feminine x).1 h₁, hx⟩)
+        ⟨dom_neuter_subset_dom_feminine, fun hsub ↦ ?_⟩
+      exact ((mem_dom_neuter y).1 (hsub ((mem_dom_feminine y).2 (hnot hy)))).2 hy
+    · rintro ψ (rfl | rfl | rfl) hψ hss
+      · exact hss.2 (by simp)
+      · exact hss.ne rfl
+      · exact ((mem_dom_neuter x).1 hψ).2 hx
 
 end Gender

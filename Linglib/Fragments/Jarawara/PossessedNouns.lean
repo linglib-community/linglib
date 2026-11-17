@@ -112,17 +112,17 @@ def maho : PossessedNoun := ⟨"mahi", "maho", "smell", none⟩
 def tati : PossessedNoun := ⟨"tati", "tati", "head", none⟩
 
 /-- *hawi/hawine* 'path', used freely as *hawi* 'path'. -/
-def hawi : PossessedNoun := ⟨"hawi", "hawine", "path", some ⟨⟨"hawi", "path"⟩, .fem, none⟩⟩
+def hawi : PossessedNoun := ⟨"hawi", "hawine", "path", some ⟨⟨"hawi", "path", none⟩, .fem⟩⟩
 
 /-- *ame/emene* 'blood', used freely as *ama* 'blood'. -/
-def ame : PossessedNoun := ⟨"ame", "emene", "blood", some ⟨⟨"ama", "blood"⟩, .fem, none⟩⟩
+def ame : PossessedNoun := ⟨"ame", "emene", "blood", some ⟨⟨"ama", "blood", none⟩, .fem⟩⟩
 
 /-- *fehe/fehene* 'liquid, juice, sap, water', used freely as *faha* 'water'. -/
 def fehe : PossessedNoun :=
-  ⟨"fehe", "fehene", "liquid, juice, sap, water", some ⟨⟨"faha", "water"⟩, .fem, none⟩⟩
+  ⟨"fehe", "fehene", "liquid, juice, sap, water", some ⟨⟨"faha", "water", none⟩, .fem⟩⟩
 
 /-- *atine* 'thorn', used freely as the masculine *atiwa* 'thorn'. -/
-def atine : PossessedNoun := ⟨"atine", "atine", "thorn", some ⟨⟨"atiwa", "thorn"⟩, .masc, none⟩⟩
+def atine : PossessedNoun := ⟨"atine", "atine", "thorn", some ⟨⟨"atiwa", "thorn", none⟩, .masc⟩⟩
 
 /-- The possessed nouns. -/
 def possessedNouns : List PossessedNoun := [mano, bako, maho, tati, hawi, ame, fehe, atine]

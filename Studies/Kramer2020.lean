@@ -132,7 +132,7 @@ def tamil : Remainder Tamil.Gender.Value := ⟨{.masc, .fem}, {.neut}⟩
 /-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
 Fragment records. -/
 def spanish : Remainder Value :=
-  ofNouns allNouns (·.IsNatural) (·.gender)
+  ofNouns allNouns (·.IsNatural Value.ofReferentGender) (·.gender)
 
 /-- The two genders of Blackfoot. -/
 inductive BlackfootGender where
@@ -186,7 +186,7 @@ theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gende
 
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
-      ¬ n.IsNatural → n.gender = .feminine → n.EndsInAa := by
+      ¬ n.IsNatural Hausa.Gender.Value.ofReferentGender → n.gender = .feminine → n.EndsInAa := by
   decide
 
 /-! ### Lexical gender assignment (§3.2) -/
@@ -233,7 +233,7 @@ def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
 
 theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = n.gender := by
-  obtain ⟨⟨_, g, b⟩, _⟩ := n
+  obtain ⟨⟨⟨_, _, b⟩, g⟩, _⟩ := n
   cases g <;> rcases b with _ | l <;> (try cases l) <;>
     simp_all [IsHybrid, lexicalEntry, LexicalEntry.humanGender, LexicalEntry.gender,
       Value.ofReferentGender]
@@ -268,7 +268,7 @@ def nHead (n : Spanish.Gender.Noun) : Categorizer :=
   | _, _ => .n_plain
 
 theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHeads := by
-  obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
+  obtain ⟨⟨⟨_, _, b⟩, g⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     simp [nHead, spanishHeads]
 
 -- (14a)
@@ -305,14 +305,14 @@ theorem determiner_iFem_eq_uFem :
 
 theorem structural_faithful (n : Spanish.Gender.Noun) :
     determiner (nHead n) = some (n.gender.definiteArticle ⟨.singular, by decide⟩) := by
-  obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
+  obtain ⟨⟨⟨_, _, b⟩, g⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     dsimp only [nHead] <;> decide
 
 -- §3.3
 theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = .fem ↔ determiner (nHead n) = some "la" := by
   rw [lexical_faithful n h, structural_faithful]
-  obtain ⟨⟨_, g, _⟩, _⟩ := n
+  obtain ⟨⟨_, g⟩, _⟩ := n
   cases g <;> dsimp only <;> decide
 
 /-! ### Hybrid nouns (§3.3.2) -/

@@ -81,136 +81,136 @@ abbrev Noun := GenderedNoun NounClass
 /-! ### The e-class -/
 
 /-- *iaa* 'mum'. -/
-def iaa : Noun := ⟨⟨"iaa", "mum"⟩, .e, some .female⟩
+def iaa : Noun := ⟨⟨"iaa", "mum", some .female⟩, .e⟩
 
 /-- *tetee* 'dad'. -/
-def tetee : Noun := ⟨⟨"tetee", "dad"⟩, .e, some .male⟩
+def tetee : Noun := ⟨⟨"tetee", "dad", some .male⟩, .e⟩
 
 /-- *sina* 'mother', which takes a possessor. -/
-def sina : Noun := ⟨⟨"sina", "mother"⟩, .e, some .female⟩
+def sina : Noun := ⟨⟨"sina", "mother", some .female⟩, .e⟩
 
 /-- *maagee* 'friend'. -/
-def maagee : Noun := ⟨⟨"maagee", "friend"⟩, .e, none⟩
+def maagee : Noun := ⟨⟨"maagee", "friend", none⟩, .e⟩
 
 /-- *siisia* 'teacher'. -/
-def siisia : Noun := ⟨⟨"siisia", "teacher"⟩, .e, none⟩
+def siisia : Noun := ⟨⟨"siisia", "teacher", none⟩, .e⟩
 
 /-- *magaru* 'earthquake'. -/
-def magaru : Noun := ⟨⟨"magaru", "earthquake"⟩, .e, none⟩
+def magaru : Noun := ⟨⟨"magaru", "earthquake", none⟩, .e⟩
 
 /-- *guu* 'pig'. -/
-def guu : Noun := ⟨⟨"guu", "pig"⟩, .e, none⟩
+def guu : Noun := ⟨⟨"guu", "pig", none⟩, .e⟩
 
 /-! ### The a-class -/
 
 /-- *moon* 'woman'. -/
-def moon : Noun := ⟨⟨"moon", "woman"⟩, .a, some .female⟩
+def moon : Noun := ⟨⟨"moon", "woman", some .female⟩, .a⟩
 
 /-- *otei* 'man'. -/
-def otei : Noun := ⟨⟨"otei", "man"⟩, .a, some .male⟩
+def otei : Noun := ⟨⟨"otei", "man", some .male⟩, .a⟩
 
 /-- *beikoo* 'child'. -/
-def beikoo : Noun := ⟨⟨"beikoo", "child"⟩, .a, none⟩
+def beikoo : Noun := ⟨⟨"beikoo", "child", none⟩, .a⟩
 
 /-- *keusu* 'rat'. -/
-def keusu : Noun := ⟨⟨"keusu", "rat"⟩, .a, none⟩
+def keusu : Noun := ⟨⟨"keusu", "rat", none⟩, .a⟩
 
 /-- *naovana* 'bird'. -/
-def naovana : Noun := ⟨⟨"naovana", "bird"⟩, .a, none⟩
+def naovana : Noun := ⟨⟨"naovana", "bird", none⟩, .a⟩
 
 /-- *overe* 'coconut', the fruit. -/
-def overe : Noun := ⟨⟨"overe", "coconut"⟩, .a, none⟩
+def overe : Noun := ⟨⟨"overe", "coconut", none⟩, .a⟩
 
 /-- *pauna* 'banana', the fruit. -/
-def pauna : Noun := ⟨⟨"pauna", "banana"⟩, .a, none⟩
+def pauna : Noun := ⟨⟨"pauna", "banana", none⟩, .a⟩
 
 /-- *kepaa* 'clay pot'. -/
-def kepaa : Noun := ⟨⟨"kepaa", "clay pot"⟩, .a, none⟩
+def kepaa : Noun := ⟨⟨"kepaa", "clay pot", none⟩, .a⟩
 
 /-- *anoo* 'peeler', made from pearl shell. -/
-def anoo : Noun := ⟨⟨"anoo", "peeler"⟩, .a, none⟩
+def anoo : Noun := ⟨⟨"anoo", "peeler", none⟩, .a⟩
 
 /-- *taba'ani* 'food'. -/
-def taba'ani : Noun := ⟨⟨"taba'ani", "food"⟩, .a, none⟩
+def taba'ani : Noun := ⟨⟨"taba'ani", "food", none⟩, .a⟩
 
 /-- *tahii* 'sea'. -/
-def tahii : Noun := ⟨⟨"tahii", "sea"⟩, .a, none⟩
+def tahii : Noun := ⟨⟨"tahii", "sea", none⟩, .a⟩
 
 /-- *huan* 'rain'. -/
-def huan : Noun := ⟨⟨"huan", "rain"⟩, .a, none⟩
+def huan : Noun := ⟨⟨"huan", "rain", none⟩, .a⟩
 
 /-- *uruuru* 'love'. -/
-def uruuru : Noun := ⟨⟨"uruuru", "love"⟩, .a, none⟩
+def uruuru : Noun := ⟨⟨"uruuru", "love", none⟩, .a⟩
 
 /-- *inu* 'house'. -/
-def inu : Noun := ⟨⟨"inu", "house"⟩, .a, none⟩
+def inu : Noun := ⟨⟨"inu", "house", none⟩, .a⟩
 
 /-! ### The o-class -/
 
 /-- *overe* 'coconut palm', the plant. -/
-def overePalm : Noun := ⟨⟨"overe", "coconut palm"⟩, .o, none⟩
+def overePalm : Noun := ⟨⟨"overe", "coconut palm", none⟩, .o⟩
 
 /-- *pauna* 'banana tree', the plant. -/
-def paunaTree : Noun := ⟨⟨"pauna", "banana tree"⟩, .o, none⟩
+def paunaTree : Noun := ⟨⟨"pauna", "banana tree", none⟩, .o⟩
 
 /-- *paka* 'leaf'. -/
-def paka : Noun := ⟨⟨"paka", "leaf"⟩, .o, none⟩
+def paka : Noun := ⟨⟨"paka", "leaf", none⟩, .o⟩
 
 /-- *pus* 'stump'. -/
-def pus : Noun := ⟨⟨"pus", "stump"⟩, .o, none⟩
+def pus : Noun := ⟨⟨"pus", "stump", none⟩, .o⟩
 
 /-- *hinahoo* 'taro planting stick'. -/
-def hinahoo : Noun := ⟨⟨"hinahoo", "taro planting stick"⟩, .o, none⟩
+def hinahoo : Noun := ⟨⟨"hinahoo", "taro planting stick", none⟩, .o⟩
 
 /-- *sinivi* 'canoe'. -/
-def sinivi : Noun := ⟨⟨"sinivi", "canoe"⟩, .o, none⟩
+def sinivi : Noun := ⟨⟨"sinivi", "canoe", none⟩, .o⟩
 
 /-- *hoi* 'basket'. -/
-def hoi : Noun := ⟨⟨"hoi", "basket"⟩, .o, none⟩
+def hoi : Noun := ⟨⟨"hoi", "basket", none⟩, .o⟩
 
 /-- *kurita* 'octopus'. -/
-def kurita : Noun := ⟨⟨"kurita", "octopus"⟩, .o, none⟩
+def kurita : Noun := ⟨⟨"kurita", "octopus", none⟩, .o⟩
 
 /-- *demdem* 'snail'. -/
-def demdem : Noun := ⟨⟨"demdem", "snail"⟩, .o, none⟩
+def demdem : Noun := ⟨⟨"demdem", "snail", none⟩, .o⟩
 
 /-- *paku* 'feast'. -/
-def paku : Noun := ⟨⟨"paku", "feast"⟩, .o, none⟩
+def paku : Noun := ⟨⟨"paku", "feast", none⟩, .o⟩
 
 /-- *suraa* 'fire'. -/
-def suraa : Noun := ⟨⟨"suraa", "fire"⟩, .o, none⟩
+def suraa : Noun := ⟨⟨"suraa", "fire", none⟩, .o⟩
 
 /-- *giigii* 'shooting star'. -/
-def giigii : Noun := ⟨⟨"giigii", "shooting star"⟩, .o, none⟩
+def giigii : Noun := ⟨⟨"giigii", "shooting star", none⟩, .o⟩
 
 /-- *koara* 'language'. -/
-def koara : Noun := ⟨⟨"koara", "language"⟩, .o, none⟩
+def koara : Noun := ⟨⟨"koara", "language", none⟩, .o⟩
 
 /-! ### Body-part terms -/
 
 /-- *bina* 'spleen'. -/
-def bina : Noun := ⟨⟨"bina", "spleen"⟩, .o, none⟩
+def bina : Noun := ⟨⟨"bina", "spleen", none⟩, .o⟩
 
 /-- *vuha* 'heart'. -/
-def vuha : Noun := ⟨⟨"vuha", "heart"⟩, .o, none⟩
+def vuha : Noun := ⟨⟨"vuha", "heart", none⟩, .o⟩
 
 /-- *kuri* 'hand', *kuri-na* without a possessor. -/
-def kuri : Noun := ⟨⟨"kuri", "hand"⟩, .o, none⟩
+def kuri : Noun := ⟨⟨"kuri", "hand", none⟩, .o⟩
 
 /-- *iru* 'back of the head'. -/
-def iru : Noun := ⟨⟨"iru", "back of the head"⟩, .o, none⟩
+def iru : Noun := ⟨⟨"iru", "back of the head", none⟩, .o⟩
 
 /-- *ihu* 'nose', *ihu-na* without a possessor. -/
-def ihu : Noun := ⟨⟨"ihu", "nose"⟩, .o, none⟩
+def ihu : Noun := ⟨⟨"ihu", "nose", none⟩, .o⟩
 
 /-- *revasin* 'blood'. -/
-def revasin : Noun := ⟨⟨"revasin", "blood"⟩, .o, none⟩
+def revasin : Noun := ⟨⟨"revasin", "blood", none⟩, .o⟩
 
 /-- *hena* 'name'. -/
-def hena : Noun := ⟨⟨"hena", "name"⟩, .o, none⟩
+def hena : Noun := ⟨⟨"hena", "name", none⟩, .o⟩
 
 /-- *moo* 'leg', *moo-na* without a possessor outside a compound. -/
-def moo : Noun := ⟨⟨"moo", "leg"⟩, .o, none⟩
+def moo : Noun := ⟨⟨"moo", "leg", none⟩, .o⟩
 
 /-- The body-part terms. -/
 def bodyPartTerms : List Noun := [bina, vuha, kuri, iru, ihu, revasin, hena, moo]

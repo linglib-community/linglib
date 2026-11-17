@@ -51,11 +51,6 @@ abbrev Noun := GenderedNoun Gender.Value
 
 namespace Noun
 
-/-- A noun's gender is natural when it is the one its referents' gender is assigned. -/
-abbrev IsNatural (n : Noun) : Prop :=
-  _root_.Gender.IsNatural (Option.map Gender.Value.ofReferentGender) GenderedNoun.referentGender
-    GenderedNoun.gender n
-
 /-- The noun ends in *-ā*, whatever its final tone: the long vowel is one of the last two
 characters, the second being a tone mark. -/
 abbrev EndsInAa (n : Noun) : Prop :=
@@ -64,41 +59,41 @@ abbrev EndsInAa (n : Noun) : Prop :=
 end Noun
 
 /-- *yārinyā̀* 'girl'. -/
-def yarinya : Noun := ⟨⟨"yārinyā̀", "girl"⟩, .feminine, some .female⟩
+def yarinya : Noun := ⟨⟨"yārinyā̀", "girl", some .female⟩, .feminine⟩
 
 /-- *màcè* 'woman', a basic feminine word not in *-ā*, perhaps once a derived form meaning
 'female'. -/
-def mace : Noun := ⟨⟨"màcè", "woman"⟩, .feminine, some .female⟩
+def mace : Noun := ⟨⟨"màcè", "woman", some .female⟩, .feminine⟩
 
 /-- *kā̀zā* 'hen', opposite *zàkarā̀* 'cock'. -/
-def kaza : Noun := ⟨⟨"kā̀zā", "hen"⟩, .feminine, some .female⟩
+def kaza : Noun := ⟨⟨"kā̀zā", "hen", some .female⟩, .feminine⟩
 
 /-- *rìgā* 'gown'. -/
-def riga : Noun := ⟨⟨"rìgā", "gown"⟩, .feminine, none⟩
+def riga : Noun := ⟨⟨"rìgā", "gown", none⟩, .feminine⟩
 
 /-- *yārò* 'boy'. -/
-def yaro : Noun := ⟨⟨"yārò", "boy"⟩, .masculine, some .male⟩
+def yaro : Noun := ⟨⟨"yārò", "boy", some .male⟩, .masculine⟩
 
 /-- *mùtûm* 'man'. -/
-def mutum : Noun := ⟨⟨"mùtûm", "man"⟩, .masculine, some .male⟩
+def mutum : Noun := ⟨⟨"mùtûm", "man", some .male⟩, .masculine⟩
 
 /-- *turmī* 'mortar'. -/
-def turmi : Noun := ⟨⟨"turmī", "mortar"⟩, .masculine, none⟩
+def turmi : Noun := ⟨⟨"turmī", "mortar", none⟩, .masculine⟩
 
 /-- *gidā* 'house', a masculine in *-ā* that was once a plural. -/
-def gida : Noun := ⟨⟨"gidā", "house"⟩, .masculine, none⟩
+def gida : Noun := ⟨⟨"gidā", "house", none⟩, .masculine⟩
 
 /-- *wuƙā* 'knife'. -/
-def wuka : Noun := ⟨⟨"wuƙā", "knife"⟩, .feminine, none⟩
+def wuka : Noun := ⟨⟨"wuƙā", "knife", none⟩, .feminine⟩
 
 /-- *rānā* 'sun'. -/
-def rana : Noun := ⟨⟨"rānā", "sun"⟩, .feminine, none⟩
+def rana : Noun := ⟨⟨"rānā", "sun", none⟩, .feminine⟩
 
 /-- *kadā̀* 'crocodile', a native masculine in *-ā*. -/
-def kada : Noun := ⟨⟨"kadā̀", "crocodile"⟩, .masculine, none⟩
+def kada : Noun := ⟨⟨"kadā̀", "crocodile", none⟩, .masculine⟩
 
 /-- *ùbā* 'father', a native masculine in *-ā*. -/
-def uba : Noun := ⟨⟨"ùbā", "father"⟩, .masculine, some .male⟩
+def uba : Noun := ⟨⟨"ùbā", "father", some .male⟩, .masculine⟩
 
 /-- The nouns. -/
 def allNouns : List Noun :=
