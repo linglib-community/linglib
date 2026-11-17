@@ -389,7 +389,7 @@ is judged acceptable exactly when it shows a participle its auxiliary admits, *s
 *har* and both *utsparka* and *sparka ut* after *vart*. -/
 theorem rows_participle :
     ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, placementOf r ≠ some .outer →
-      ∀ s ∈ (r.primaryText, r.judgment) :: r.alternatives,
+      ∀ s ∈ (r.primaryText, r.judgment) :: r.contrasts,
         (s.2 = .acceptable ↔ ∃ f, (participleContext (voiceOf r)).Admits f ∧
           (v.participle f).toList <:+: s.1.toList) := by
   decide +kernel

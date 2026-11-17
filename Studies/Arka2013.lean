@@ -205,9 +205,9 @@ and after *bahwa* and *agar*, and not in the controlled complements of *ingin*, 
 (34) to (36), (40)). -/
 theorem particle_iff_projectsI :
     (∀ x ∈ withParticle, x.1.judgment.band = .ofProp x.2.ProjectsI ∧
-      ∀ alt ∈ x.1.alternatives, alt.2.band = .ofProp x.2.ProjectsI) ∧
-      ∀ x ∈ withoutParticle, x.1.alternatives ≠ [] ∧
-        ∀ alt ∈ x.1.alternatives, alt.2.band = .ofProp x.2.ProjectsI := by
+      ∀ alt ∈ x.1.contrasts, alt.2.band = .ofProp x.2.ProjectsI) ∧
+      ∀ x ∈ withoutParticle, x.1.contrasts ≠ [] ∧
+        ∀ alt ∈ x.1.contrasts, alt.2.band = .ofProp x.2.ProjectsI := by
   decide +kernel
 
 /-! ### Nominalisation in *=nya* -/
@@ -291,8 +291,8 @@ nominalisation in *=nya* or a clause in a nominal slot, and not a verb, nor besi
 *katanya* ((44) to (46), (52)). -/
 theorem adalah_iff :
     (∀ x ∈ copular, x.1.judgment.band = .ofProp (∃ p ∈ x.2, p.IsNominal)) ∧
-      ∀ x ∈ copularAlternatives, x.1.alternatives ≠ [] ∧
-        ∀ alt ∈ x.1.alternatives, alt.2.band = .ofProp (∃ p ∈ x.2, p.IsNominal) := by
+      ∀ x ∈ copularAlternatives, x.1.contrasts ≠ [] ∧
+        ∀ alt ∈ x.1.contrasts, alt.2.band = .ofProp (∃ p ∈ x.2, p.IsNominal) := by
   decide +kernel
 
 /-- The sentences negated by *bukan*, whose alternatives have *tidak*. -/
@@ -302,8 +302,8 @@ def negated : List (Datum × Predicate) :=
 /-- *Bukan* negates a nominal predicate and *tidak* one headed by a verb, so the *tidur* of
 (48b), a verb heading a clause in a nominal slot, takes either ((47), (48)). -/
 theorem negation :
-    ∀ x ∈ negated, x.1.judgment.band = .ofProp x.2.IsNominal ∧ x.1.alternatives ≠ [] ∧
-      ∀ alt ∈ x.1.alternatives, alt.2.band = .ofProp x.2.IsVerbal := by
+    ∀ x ∈ negated, x.1.judgment.band = .ofProp x.2.IsNominal ∧ x.1.contrasts ≠ [] ∧
+      ∀ alt ∈ x.1.contrasts, alt.2.band = .ofProp x.2.IsVerbal := by
   decide +kernel
 
 end Arka2013

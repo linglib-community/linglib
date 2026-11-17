@@ -164,7 +164,7 @@ theorem deto_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "detoSelection" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
         (row.judgment = .acceptable ↔ DetoComplement v) ∧
-          ∀ a ∈ row.alternatives, a.2 = .acceptable := by
+          ∀ a ∈ row.contrasts, a.2 = .acceptable := by
   decide
 
 -- (59)
@@ -172,7 +172,7 @@ theorem zaPhrase_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
         (row.judgment = .acceptable ↔ ∃ fr ∈ v.valency.frames, fr.HasAdpositional) ∧
-          ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
+          ∀ a ∈ row.contrasts, a.2 = .ungrammatical := by
   decide
 
 -- (57a–b)
@@ -186,7 +186,7 @@ theorem krapova_projection_rows :
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        ((∃ a ∈ row.alternatives, a.2 = .ungrammatical) ↔ v.IsFactive) := by
+        ((∃ a ∈ row.contrasts, a.2 = .ungrammatical) ↔ v.IsFactive) := by
   decide
 
 /-- English N complementation, *the fact that S*, is V D N CP without an Ā-dependency, the DP
