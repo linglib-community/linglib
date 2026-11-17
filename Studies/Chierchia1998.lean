@@ -61,7 +61,7 @@ property with no instance in some situation (the first `example` of the kind-for
 (pp. 359–360), Id sending an individual to its parts, `Set.Iic`. (17b) is stated under its own
 hypothesis, that ∩P is defined, read as ∩P having a value wherever P has instances, for a property
 closed downward (`Kind.up_down`); over the paper's complete semilattice a property closed under
-sum meets it whatever the size of its extension (`Kind.up_down_of_sSup_mem`). In (17c), AT_P,
+sum meets it whatever the size of its extension (`Kind.up_down_of_sumClosed`). In (17c), AT_P,
 "the set that generates P under PL", is read as the atoms beneath members of P
 (`Kind.up_down_of_forall_atom`): read as the singular property itself, (17c) fails at a situation
 with exactly one instance, where the plural has no member. Carlson's instance relation is
@@ -172,14 +172,7 @@ hold of the atom. -/
 example {P : Unit → Set (Individual Bool)}
     (hP : ∀ x, x ∈ P () ↔ x ≠ .atom true ∧ ∀ y ≤ x, Atom y → y = .atom true) :
     Kind.up (Kind.down P) () ≠ P () ∪ {.atom true} := by
-  have hf : Atom (Individual.atom false) := by
-    refine ⟨fun h ↦ absurd (h (.atom true) (Set.mem_singleton false)) (by simp [Individual.atom]),
-      fun y _ hyf ↦ ?_⟩
-    obtain ⟨b, hb⟩ := y.2
-    obtain rfl : b = false := hyf hb
-    intro a ha
-    rw [Set.mem_singleton_iff.1 ha]
-    exact hb
+  have hf : Atom (Individual.atom false) := Individual.atom_atom false
   have h0 : ∀ x, x ∉ P () := fun x hx ↦ by
     obtain ⟨hne, hat⟩ := (hP x).1 hx
     by_cases hx0 : false ∈ x.1
