@@ -23,6 +23,11 @@ instance and capture the `≤` and `<` notation. This is mathlib's idiom for ord
 data, as in `extend_partialOrder`. A permutation `g` of the constraints is an automorphism of `r`
 when `g ⁻¹'o r = r`, and acts on a ranking `σ` by `σ.trans g`.
 
+A stratified relation is used here through its linear extensions, each a total ranking, as
+[anttila-1997] uses a partial ranking. [tesar-smolensky-1995] evaluate a stratified hierarchy
+by pooling the marks of a stratum, a property of evaluation rather than of the relation, which
+is not formalized here.
+
 ## References
 
 * [A. Anttila, *Deriving Variation from Grammar* (1997)][anttila-1997]
@@ -150,8 +155,9 @@ end Ranking.Enumeration
 /-! ### Stratified grammars
 
 In a stratified grammar every constraint of an earlier stratum dominates every constraint of a
-later one, and an inner order applies within each stratum. With the discrete inner order this is
-the stratified domination hierarchy of [tesar-smolensky-1995], whose strata are freely ranked. -/
+later one, and an inner order applies within each stratum. With the discrete inner order the
+linear extensions rank each stratum's constraints freely, as [anttila-1997] ranks a partial
+order's. -/
 
 section Stratified
 
