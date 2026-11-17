@@ -13,33 +13,13 @@ public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
 
 A PCFG is a multitype Galton–Watson process whose types are the symbols: a terminal has no
 offspring, and a nonterminal's offspring is the right-hand side of a rule at it chosen with its
-weight. The law of the family tree is the law of the derivation tree, and the product of rule
-weights `PCFG.derivProb` is the Galton–Watson weight of the tree, so it is derived from the
-generation process rather than stipulated. Total mass one at the start symbol is tightness in the
-sense of [booth-thompson-1973] and [chi-1999], consistency in older terminology: the grammar
-almost surely produces a finite derivation. A grammar estimated by relative frequency from a
-treebank is tight in this sense ([chi-geman-1998]).
-
-## Main definitions
-
-* `PCFG.galtonWatson`: the offspring kernel of a PCFG.
-* `PCFG.derivationMeasure`: the law of the derivation tree at each symbol, as a kernel.
-
-## Main results
-
-* `PCFG.galtonWatson_weight`: the Galton–Watson weight of a tree is `derivProb`.
-* `PCFG.isMarkovKernel_galtonWatson`: when every nonterminal has a rule, the offspring kernel is
-  Markov.
-* `PCFG.derivationMeasure_singleton`: a tree rooted at `s` has probability `derivProb` under the
-  derivation measure at `s`, and trees rooted elsewhere have probability `0`.
-* `PCFG.derivationMeasure_apply_univ_le_one`: the derivation measure is a sub-probability
-  kernel, a probability measure at a symbol exactly when the grammar is tight there.
-* `PCFG.derivationMeasure_nonterminal_univ`: the termination probabilities satisfy the
-  first-step equations of the grammar.
-* `PCFG.sum_mul_lintegral_offspring_ofCounts`: relative frequencies match the moments of the
-  counts they are estimated from.
-* `PCFG.isProbabilityMeasure_derivationMeasure_relFreq`: the relative-frequency estimate from a
-  corpus of licensed trees is tight at the root symbol of every tree of the corpus.
+weight. The law of its family tree is the derivation measure, under which a tree has
+[the product of its rule weights](##PCFG.derivationMeasure_singleton). It is
+[a sub-probability kernel](##PCFG.derivationMeasure_apply_univ_le_one), and total mass one is
+tightness in the sense of [booth-thompson-1973] and [chi-1999]: the grammar almost surely produces
+a finite derivation. The relative-frequency estimate from a corpus of licensed trees is
+[tight](##PCFG.isProbabilityMeasure_derivationMeasure_relFreq) at the root of every tree of the
+corpus ([chi-geman-1998]).
 
 ## TODO
 
@@ -59,19 +39,22 @@ for a grammar with no null and no unit productions. Estimation from yields is no
 open MeasureTheory ProbabilityTheory RoseTree
 open scoped ENNReal
 
-instance {T N : Type*} : MeasurableSpace (ContextFreeRule T N) := ⊤
-instance {T N : Type*} : MeasurableSpace (Symbol T N) := ⊤
-
 namespace PCFG
+
+/-- Rules carry the discrete σ-algebra. -/
+scoped instance {T N : Type*} : MeasurableSpace (ContextFreeRule T N) := ⊤
+
+/-- Symbols carry the discrete σ-algebra. -/
+scoped instance {T N : Type*} : MeasurableSpace (Symbol T N) := ⊤
 
 variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
 /-- The rule distribution at nonterminal `A`, as a measure on rules. -/
 noncomputable def ruleMeasure (A : G.NT) : Measure (ContextFreeRule T G.NT) :=
-  ∑ r ∈ G.rules.filter (·.input = A), W.weight r • Measure.dirac r
+  ∑ r ∈ G.rulesWithInput A, W.weight r • Measure.dirac r
 
 theorem ruleMeasure_apply (A : G.NT) (s : Set (ContextFreeRule T G.NT)) :
-    W.ruleMeasure A s = ∑ r ∈ G.rules.filter (·.input = A), W.weight r * s.indicator 1 r := by
+    W.ruleMeasure A s = ∑ r ∈ G.rulesWithInput A, W.weight r * s.indicator 1 r := by
   simp [ruleMeasure, Measure.finsetSum_apply, Measure.dirac_apply' _ .of_discrete]
 
 /-- The offspring of a symbol: none at a terminal, and at a nonterminal the right-hand side of a
@@ -94,8 +77,8 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
           if r = ⟨A, syms⟩ then W.weight r else 0 from ?_, Finset.sum_ite_eq']
     · split_ifs with h
       · rfl
-      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (Finset.mem_filter.mpr ⟨h', rfl⟩)]
-    · obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
+      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (ContextFreeGrammar.mem_rulesWithInput.mpr ⟨h', rfl⟩)]
+    · obtain ⟨-, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
       by_cases hs : r.output = syms
       · rw [Set.indicator_of_mem (by simpa using hs), ite_eq_left (by cases r; simp_all)]
         simp
@@ -104,7 +87,7 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
         simp
 
 theorem offspring_nonterminal_univ (A : G.NT) :
-    W.offspring (.nonterminal A) Set.univ = ∑ r ∈ G.rules.filter (·.input = A), W.weight r := by
+    W.offspring (.nonterminal A) Set.univ = ∑ r ∈ G.rulesWithInput A, W.weight r := by
   rw [offspring, Measure.map_apply .of_discrete .univ, Set.preimage_univ, ruleMeasure_apply]
   simp
 
@@ -122,7 +105,7 @@ noncomputable def galtonWatson : Kernel (Symbol T G.NT) (List (Symbol T G.NT)) :
 @[simp] theorem galtonWatson_apply (s : Symbol T G.NT) : W.galtonWatson s = W.offspring s := rfl
 
 /-- A grammar with a rule at every nonterminal has a Markov offspring kernel. -/
-theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.rules.image (·.input)) :
+theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.inputs) :
     IsMarkovKernel W.galtonWatson :=
   ⟨fun s ↦ ⟨by
     cases s with
@@ -169,7 +152,7 @@ instance : IsFiniteKernel W.derivationMeasure :=
 omit [Countable T] [Countable G.NT] in
 theorem lintegral_offspring_nonterminal (A : G.NT) (F : List (Symbol T G.NT) → ℝ≥0∞) :
     ∫⁻ l, F l ∂W.offspring (.nonterminal A) =
-      ∑ r ∈ G.rules.filter (·.input = A), W.weight r * F r.output := by
+      ∑ r ∈ G.rulesWithInput A, W.weight r * F r.output := by
   rw [offspring, lintegral_map .of_discrete .of_discrete, ruleMeasure,
     lintegral_finsetSum_measure]
   simp only [lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
@@ -178,7 +161,7 @@ theorem lintegral_offspring_nonterminal (A : G.NT) (F : List (Symbol T G.NT) →
 all of whose symbols found terminating derivations. -/
 theorem derivationMeasure_nonterminal_univ (A : G.NT) :
     W.derivationMeasure (.nonterminal A) Set.univ =
-      ∑ r ∈ G.rules.filter (·.input = A),
+      ∑ r ∈ G.rulesWithInput A,
         W.weight r * (r.output.map fun s ↦ W.derivationMeasure s Set.univ).prod :=
   (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson W.offspring_univ_le_one _).trans
     (W.lintegral_offspring_nonterminal A _)
@@ -197,31 +180,28 @@ theorem sum_mul_lintegral_offspring_ofCounts (x : ContextFreeRule T G.NT → ℕ
     (F : List (Symbol T G.NT) → ℝ≥0∞) :
     ∑ r ∈ G.rules, (x r : ℝ≥0∞) * ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal r.input) =
       ∑ r ∈ G.rules, (x r : ℝ≥0∞) * F r.output := by
-  rw [← Finset.sum_fiberwise_of_maps_to (g := ContextFreeRule.input) fun r hr ↦
-      Finset.mem_image_of_mem _ hr,
-    ← Finset.sum_fiberwise_of_maps_to (s := G.rules) (g := ContextFreeRule.input)
-      (f := fun r ↦ (x r : ℝ≥0∞) * F r.output) fun r hr ↦ Finset.mem_image_of_mem _ hr]
+  rw [← G.sum_inputs_sum_rulesWithInput, ← G.sum_inputs_sum_rulesWithInput]
   refine Finset.sum_congr rfl fun A _ ↦ ?_
-  by_cases hn : ∑ r ∈ G.rules.filter (·.input = A), x r = 0
-  · have hx : ∀ r ∈ G.rules.filter (·.input = A), x r = 0 := fun r hr ↦
+  by_cases hn : ∑ r ∈ G.rulesWithInput A, x r = 0
+  · have hx : ∀ r ∈ G.rulesWithInput A, x r = 0 := fun r hr ↦
       Nat.eq_zero_of_le_zero <|
         (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr).trans_eq hn
     rw [Finset.sum_eq_zero fun r hr ↦ by rw [hx r hr, Nat.cast_zero, zero_mul],
       Finset.sum_eq_zero fun r hr ↦ by rw [hx r hr, Nat.cast_zero, zero_mul]]
-  have hn0 : ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) ≠ 0 := by
+  have hn0 : ∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞) ≠ 0 := by
     rw [← Nat.cast_sum]; exact_mod_cast hn
-  have hntop : ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) ≠ ⊤ := by
+  have hntop : ∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞) ≠ ⊤ := by
     rw [← Nat.cast_sum]; exact ENNReal.natCast_ne_top _
-  calc ∑ r ∈ G.rules.filter (·.input = A),
+  calc ∑ r ∈ G.rulesWithInput A,
         (x r : ℝ≥0∞) * ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal r.input)
-      = (∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞)) *
+      = (∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞)) *
           ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal A) := by
         rw [Finset.sum_mul]
-        exact Finset.sum_congr rfl fun r hr ↦ by rw [(Finset.mem_filter.mp hr).2]
-    _ = ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) * F r.output := by
+        exact Finset.sum_congr rfl fun r hr ↦ by rw [(ContextFreeGrammar.mem_rulesWithInput.mp hr).2]
+    _ = ∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞) * F r.output := by
         rw [lintegral_offspring_nonterminal, Finset.mul_sum]
         refine Finset.sum_congr rfl fun r hr ↦ ?_
-        obtain ⟨hmem, rfl⟩ := Finset.mem_filter.mp hr
+        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
         rw [ofCounts_weight hmem hn, ← mul_assoc, ENNReal.mul_div_cancel hn0 hntop]
 
 variable {D : Multiset (RoseTree (Symbol T G.NT))}
@@ -257,7 +237,7 @@ theorem isProbabilityMeasure_derivationMeasure_relFreq (hD : ∀ t ∈ D, t.Lice
     | terminal a => simp [offspring]
     | nonterminal A =>
       exact ((relFreq D).offspring_nonterminal_univ A).trans
-        ((relFreq D).sum_weight A (Finset.mem_image.mpr ⟨_, hlic, rfl⟩))
+        ((relFreq D).sum_weight A (ContextFreeGrammar.mem_inputs.mpr ⟨_, hlic, rfl⟩))
   have h : Measure.dirac t.value + GaltonWatson.mean (relFreq D).galtonWatson ∘ₘ ν ≤ ν := by
     refine Measure.le_iff.mpr fun S hS ↦ ?_
     rw [← lintegral_indicator_one hS, ← lintegral_indicator_one hS, lintegral_add_measure,

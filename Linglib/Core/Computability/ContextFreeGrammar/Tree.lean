@@ -224,12 +224,12 @@ theorem Licensed.exists_mem_output_of_isSubtree {g : ContextFreeGrammar T}
 
 theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeGrammar T}
     [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (A : g.NT) :
-    ∑ r ∈ g.rules.filter (·.input = A), ruleCount r t = t.values.count (.nonterminal A) := by
+    ∑ r ∈ g.rulesWithInput A, ruleCount r t = t.values.count (.nonterminal A) := by
   induction ht using Licensed.grammar_induction with
   | terminal a => simp [leaf, ruleCount_node_terminal]
   | nonterminal B cs hrule hcs ih =>
     have hsum (cs' : List (RoseTree (Symbol T g.NT))) (hcs' : ∀ c ∈ cs', c ∈ cs) :
-        ∑ r ∈ g.rules.filter (·.input = A), (cs'.map (ruleCount r)).sum =
+        ∑ r ∈ g.rulesWithInput A, (cs'.map (ruleCount r)).sum =
           (cs'.map fun c ↦ c.values.count (.nonterminal A)).sum := by
       induction cs' with
       | nil => simp
@@ -239,7 +239,7 @@ theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeG
           ihc fun c' hc' ↦ hcs' c' (List.mem_cons_of_mem _ hc')]
     simp only [ruleCount_node_nonterminal, Finset.sum_add_distrib, hsum cs fun _ h ↦ h,
       values_node, List.count_cons, List.count_flatten, List.map_map, Function.comp_def,
-      Finset.sum_ite_eq', Finset.mem_filter, beq_iff_eq, Symbol.nonterminal.injEq]
+      Finset.sum_ite_eq', beq_iff_eq, Symbol.nonterminal.injEq]
     by_cases hB : B = A
     · subst hB
       simp [hrule, add_comm]
