@@ -22,6 +22,8 @@ mathlib's symmetric part `SetRel.symmetrize`.
   inclusion of `f a` (`SetRel.mem_core_ofSuccessors`) and whose image is the union of the values
   (`SetRel.image_ofSuccessors`).
 * `SetRel.asymmetrize`: the pairs a relation relates in one direction only.
+* `SetRel.restrictRange`: the pairs of a relation that end in a set, the greatest such relation
+  inside it (`SetRel.subset_restrictRange_iff`).
 * `SetRel.transGen`: the transitive closure of `R : SetRel α α`, `Relation.TransGen` of its
   pointwise relation.
 -/
@@ -177,5 +179,43 @@ theorem core_transGen : R.transGen.core s = ⋂ n, R.core^[n + 1] s := by
       obtain ⟨n, hn⟩ := ih
       exact ⟨n + 1, fun t ht ↦ hn (R.core t)
         (by rwa [Function.iterate_succ_apply] at ht) hbc⟩
+
+/-! ### Restriction of the range -/
+
+section RestrictRange
+
+variable {α β : Type*} {R S : SetRel α β} {t u : Set β}
+
+/-- `R.restrictRange t` keeps the pairs of `R` that end in `t`: the composition of `R` with the
+test of `t`. -/
+def restrictRange (R : SetRel α β) (t : Set β) : SetRel α β := {p | p ∈ R ∧ p.2 ∈ t}
+
+@[simp] theorem mem_restrictRange {p : α × β} : p ∈ R.restrictRange t ↔ p ∈ R ∧ p.2 ∈ t := .rfl
+
+theorem restrictRange_subset : R.restrictRange t ⊆ R := fun _ h ↦ h.1
+
+theorem restrictRange_mono (h : t ⊆ u) : R.restrictRange t ⊆ R.restrictRange u :=
+  fun _ hp ↦ ⟨hp.1, h hp.2⟩
+
+theorem restrictRange_restrictRange :
+    (R.restrictRange t).restrictRange u = R.restrictRange (t ∩ u) :=
+  Set.ext fun _ ↦ and_assoc
+
+/-- The restriction is the greatest relation inside `R` all of whose pairs end in `t`. -/
+theorem subset_restrictRange_iff : S ⊆ R.restrictRange t ↔ S ⊆ R ∧ S.core t = Set.univ :=
+  ⟨fun h ↦ ⟨fun _ hp ↦ (h hp).1, Set.eq_univ_of_forall fun _ _ hb ↦ (h hb).2⟩,
+    fun h p hp ↦ ⟨h.1 hp, Set.eq_univ_iff_forall.1 h.2 p.1 hp⟩⟩
+
+theorem restrictRange_eq_self : R.restrictRange t = R ↔ R.core t = Set.univ :=
+  ⟨fun h ↦ (subset_restrictRange_iff.1 h.ge).2,
+    fun h ↦ restrictRange_subset.antisymm (subset_restrictRange_iff.2 ⟨subset_rfl, h⟩)⟩
+
+/-- Every successor along the restriction to `t` lies in `u` iff every successor along `R` that
+lies in `t` lies in `u`. -/
+theorem core_restrictRange : (R.restrictRange t).core u = R.core (tᶜ ∪ u) :=
+  Set.ext fun _ ↦ ⟨fun h _ hb ↦ or_iff_not_imp_left.2 fun ht ↦ h ⟨hb, not_not.1 ht⟩,
+    fun h _ hb ↦ (h hb.1).resolve_left (not_not.2 hb.2)⟩
+
+end RestrictRange
 
 end SetRel
