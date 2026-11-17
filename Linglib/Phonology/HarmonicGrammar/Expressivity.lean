@@ -248,7 +248,7 @@ theorem hg_strictly_contains_ot :
   refine ⟨Fin 3, Bool, 3,
     { inputs := Finset.univ
       gen := fun _ ↦ Finset.univ
-      con := fun k x ↦ if x.2 then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] x.1 k else ![1, 0, 0] k
+      marks := fun i o k ↦ if o then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] i k else ![1, 0, 0] k
       target := ![true, true, false]
       target_mem := fun _ _ ↦ Finset.mem_univ _ },
     ⟨![3, 2, 2], fun k ↦ by fin_cases k <;> norm_num, ?_⟩, ?_⟩
@@ -257,7 +257,7 @@ theorem hg_strictly_contains_ot :
     fin_cases i <;> cases o <;>
       first
       | (exfalso; exact hne rfl)
-      | norm_num [Matrix.cons_val_two, Matrix.tail_cons]
+      | norm_num [Matrix.cons_val_two, Matrix.tail_cons, ConstraintSystem.con]
   · rintro ⟨σ, hσ⟩
     rw [RealizationProblem.realizedByRanking_iff_satisfiedBy (by decide)] at hσ
     have h₁ : σ.toRel 0 1 := (simpleERC_satisfiedBy_toRel_iff 0 1 σ).mp

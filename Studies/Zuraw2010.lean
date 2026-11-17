@@ -141,7 +141,8 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) : starAssoc (c, s) = starInitAl
 
 /-- The nasal-substitution system makes both decisions available for every stem, under the six
 constraints. -/
-def nasalSubstitution : ConstraintSystem StemC SubSt (Fin 6) := ⟨fun _ ↦ Finset.univ, con⟩
+def nasalSubstitution : ConstraintSystem StemC SubSt (Fin 6) :=
+  ⟨fun _ ↦ Finset.univ, fun i o k ↦ con k (i, o)⟩
 
 private theorem nasalSubstitution_gen (c : StemC) :
     nasalSubstitution.gen c = {SubSt.yes, SubSt.no} := by

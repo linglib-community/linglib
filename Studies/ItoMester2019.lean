@@ -184,31 +184,25 @@ immediately dominating no node of its own level or the level below, as a φ over
 does. -/
 def correspondence : ConstraintSystem Input Candidate Con where
   gen := candidates
-  con
-    | .initFaith => Constraint.alignLeft.comap fun xc ↦
-        ((xc.2.spans xc.1 .om).filter fun w ↦ ∃ l ∈ xc.1.lex, Corresponds xc.1.lex l w,
-          xc.1.lex.map (·.span))
-    | .headedness => fun xc ↦ (xc.2.tree xc.1).subtrees.countP fun s ↦
+  marks x c
+    | .initFaith => Constraint.alignLeft
+        ((c.spans x .om).filter fun w ↦ ∃ l ∈ x.lex, Corresponds x.lex l w, x.lex.map (·.span))
+    | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
-    | .phrase => fun xc ↦
-        Constraint.deficiency (Corresponds xc.1.phrases) (xc.1.phrases, xc.2.spans xc.1 .ph)
-    | .alignR => Constraint.alignRight.comap fun xc ↦
-        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
-    | .priority => fun xc ↦
-        if xc.1.clitic ∧ (xc.2.form = .strong ∨ xc.2.form = .weak) then 1 else 0
-    | .word => fun xc ↦ Constraint.align (fun w l ↦ Corresponds xc.1.lex l w)
-        (xc.2.spans xc.1 .om, xc.1.lex)
+    | .phrase => Constraint.deficiency (Corresponds x.phrases) (x.phrases, c.spans x .ph)
+    | .alignR => Constraint.alignRight (x.phrases.map (·.span), c.spans x .ph)
+    | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0
+    | .word => Constraint.align (fun w l ↦ Corresponds x.lex l w) (c.spans x .om, x.lex)
 
 /-- Standard Match Theory: MATCH-PHRASE, each phrase the span of a φ, fills the phrase slot, and
 MATCH-ω, each ω the span of a lexical word, the word slot. -/
 def matchTheory : ConstraintSystem Input Candidate Con where
   gen := candidates
-  con
-    | .phrase => (Constraint.align Eq).comap fun xc ↦
-        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
-    | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.span))
-    | i => correspondence.con i
+  marks x c
+    | .phrase => Constraint.align Eq (x.phrases.map (·.span), c.spans x .ph)
+    | .word => Constraint.align Eq (c.spans x .om, x.lex.map (·.span))
+    | i => correspondence.marks x c i
 
 theorem phrase_le (x : Input) (c : Candidate) :
     correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by

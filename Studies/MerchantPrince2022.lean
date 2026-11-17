@@ -397,7 +397,7 @@ variable [Fintype ι] [DecidableEq ι]
 /-- An instantiated GMOAT is a typology (Theorem (288)). -/
 theorem isTypology_of_instantiates (hf : ∀ c, Instantiates π c (f c)) : IsTypology π := by
   let S : ConstraintSystem PUnit.{u + 1}
-      (Ranking.Enumeration ι n) ι := ⟨fun _ ↦ Finset.univ, fun c x ↦ f c x.2⟩
+      (Ranking.Enumeration ι n) ι := ⟨fun _ ↦ Finset.univ, fun _ μ c ↦ f c μ⟩
   have hrow : ∀ {μ ν : Ranking.Enumeration ι n}, π μ ν → ∀ c, f c μ = f c ν := fun h c ↦
     Setoid.ker_def.1 ((hf c).1 (le_gepoRel h))
   have hmem : ∀ r μ, μ ∈ S.language r PUnit.unit ↔ π r μ := by
@@ -479,7 +479,7 @@ inductive Row
 /-- In the violation tableau (166), `GB` violates `Y` once and `GO` violates `X` once. -/
 def uvt166 : ConstraintSystem Unit Row Con where
   gen _ := Finset.univ
-  con c x := match c, x.2 with
+  marks _ x c := match c, x with
     | .X, .go => 1
     | .Y, .gb => 1
     | _, _ => 0

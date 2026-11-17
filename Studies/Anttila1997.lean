@@ -280,7 +280,7 @@ def rankings : Finset (Ranking (Fin 20)) := Ranking.Enumeration.linearExtensions
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
-  ∀ σ ∈ rankings, ConstraintSystem.PicksAt ⟨Shape.cands, tableauCon⟩ σ s cand
+  ∀ σ ∈ rankings, ConstraintSystem.PicksAt ⟨Shape.cands, fun i o k ↦ tableauCon k (i, o)⟩ σ s cand
 
 -- (32), (33)
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
@@ -350,7 +350,8 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
 
 /-- The rankings under which variant `v` wins motif `m`. -/
 def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20)) :=
-  rankings.filter fun σ ↦ ConstraintSystem.PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
+  rankings.filter fun σ ↦
+    ConstraintSystem.PicksAt ⟨fun _ ↦ Finset.univ, fun i o k ↦ con k (i, o)⟩ σ m v
 
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)

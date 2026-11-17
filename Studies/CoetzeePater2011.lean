@@ -137,7 +137,8 @@ def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
 /-- The t/d deletion system lets both outputs compete in every context, under the constraint
 set (11). -/
-def tdDeletion : ConstraintSystem Context Output (Fin 4) := ⟨fun _ ↦ univ, con⟩
+def tdDeletion : ConstraintSystem Context Output (Fin 4) :=
+  ⟨fun _ ↦ univ, fun i o k ↦ con k (i, o)⟩
 
 theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain} := by
   cases ctx <;> decide
@@ -550,7 +551,7 @@ def voicedGeminate : Constraint (Loan × Voicing) :=
 def loanwordDevoicing : RealizationProblem Loan Voicing (Fin 3) where
   inputs := univ
   gen _ := univ
-  con := ![identVoice, ocpVoice, voicedGeminate]
+  marks l v := ![identVoice (l, v), ocpVoice (l, v), voicedGeminate (l, v)]
   target
     | .guddo => .devoiced
     | _ => .voiced
@@ -561,8 +562,8 @@ theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨mem_univ _, fun o _ hne ↦ ?_⟩
   cases i <;> cases o <;>
-    simp [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three, identVoice, ocpVoice,
-      voicedGeminate] at hne ⊢ <;> norm_num
+    simp [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct, Fin.sum_univ_three,
+      identVoice, ocpVoice, voicedGeminate] at hne ⊢ <;> norm_num
 
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
 
@@ -599,11 +600,12 @@ theorem weightNoiseChoiceProb_guddo (w : Fin 3 → ℝ) (hw : w 0 = w 1 + w 2) (
       2⁻¹ := by
   rw [weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv (b := .voiced)
     (fun c hc ↦ by cases c <;> simp_all) (by decide) fun h ↦ by
-      simpa [ConstraintSet.violationDiff, loanwordDevoicing, identVoice] using congrFun h 0]
+      simpa [ConstraintSet.violationDiff, loanwordDevoicing, ConstraintSystem.con, identVoice]
+        using congrFun h 0]
   have : harmonyScore (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w .devoiced -
       harmonyScore (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w .voiced = 0 := by
-    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, identVoice, ocpVoice,
-      voicedGeminate, hw]
+    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, ConstraintSystem.con,
+      identVoice, ocpVoice, voicedGeminate, hw]
   rw [this, zero_div, normalCDF_zero, ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
 
 /-- The Noisy HG grammar of (21) weighs IDENT-VOICE as OCP-VOICE and \*VOICED-GEMINATE
@@ -618,8 +620,8 @@ theorem guddo_maxEnt_half (o : Voicing) :
   have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
       fun _ ↦ (-2 : ℝ) := by
     funext o
-    cases o <;> norm_num [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three,
-      identVoice, ocpVoice, voicedGeminate]
+    cases o <;> norm_num [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct,
+      Fin.sum_univ_three, identVoice, ocpVoice, voicedGeminate]
   rw [maxEnt_real_singleton, harmony_violations, h]
   simp [show Fintype.card Voicing = 2 from rfl]
 

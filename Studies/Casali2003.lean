@@ -185,12 +185,12 @@ variable (s : Bool)
 pair, its candidates the four fully valued pairs. -/
 def system : ConstraintSystem Word Word Con where
   gen _ := Finset.univ
-  con
-    | .harmony => .binary fun p ↦ p.2.root ≠ p.2.affix
-    | .maxRoot => .binary fun p ↦ p.1.root = s ∧ p.2.root ≠ s
-    | .starAtr => fun p ↦ (if p.2.root = s then 1 else 0) + if p.2.affix = s then 1 else 0
-    | .maxAtr => fun p ↦ (if p.1.root = s ∧ p.2.root ≠ s then 1 else 0) +
-        if p.1.affix = s ∧ p.2.affix ≠ s then 1 else 0
+  marks i o
+    | .harmony => if o.root ≠ o.affix then 1 else 0
+    | .maxRoot => if i.root = s ∧ o.root ≠ s then 1 else 0
+    | .starAtr => (if o.root = s then 1 else 0) + if o.affix = s then 1 else 0
+    | .maxAtr => (if i.root = s ∧ o.root ≠ s then 1 else 0) +
+        if i.affix = s ∧ o.affix ≠ s then 1 else 0
 
 variable {s} {r : Ranking Con}
 
@@ -313,9 +313,9 @@ variable (s) in
 bear on its value. -/
 def affixSystem : ConstraintSystem Bool Bool Con where
   gen _ := Finset.univ
-  con
-    | .starAtr => .binary fun p ↦ p.2 = s
-    | .maxAtr => .binary fun p ↦ p.1 = s ∧ p.2 ≠ s
+  marks i o
+    | .starAtr => if o = s then 1 else 0
+    | .maxAtr => if i = s ∧ o ≠ s then 1 else 0
     | _ => 0
 
 -- With *[ATR] above MAX([ATR]) the affix loses its specification and surfaces with the value

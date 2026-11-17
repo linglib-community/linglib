@@ -165,7 +165,8 @@ def con : ConstraintSet (Syl × Syl) (Fin 5) :=
 
 /-- The syllabification system offers every syllable type as a candidate output for every
 input, under the five constraints. -/
-def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
+def syllabification : ConstraintSystem Syl Syl (Fin 5) :=
+  ⟨fun _ ↦ univ, fun i o k ↦ con k (i, o)⟩
 
 theorem faithful_iff (σ : Ranking (Fin 5)) (i : Syl) :
     syllabification.PicksAt σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by

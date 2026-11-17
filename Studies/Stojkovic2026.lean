@@ -161,17 +161,17 @@ inductive Con where
 /-- The candidates of each context under the constraints. -/
 def system : ConstraintSystem Context Candidate Con where
   gen := candidates
-  con
-    | .noHiatus => fun (c, k) ↦ Hiatus.count (output c k)
-    | .noCluster => fun (c, k) ↦ Constraint.forbidPairs
+  marks c k
+    | .noHiatus => Hiatus.count (output c k)
+    | .noCluster => Constraint.forbidPairs
         (fun a b : Segment ↦ a .syllabic = false ∧ b .syllabic = false) (output c k)
-    | .specify => fun (c, k) ↦ (output c k).count node₀
-    | .noShare => fun (c, k) ↦ Constraint.forbidPairs
+    | .specify => (output c k).count node₀
+    | .noShare => Constraint.forbidPairs
         (fun a b : Segment ↦ a .back = false ∧ b .back = false ∧ a ∈ input c) (output c k)
-    | .depBack => fun (c, k) ↦ dep c .back true k
-    | .depNonhigh => fun (c, k) ↦ dep c .high false k
-    | .depHigh => fun (c, k) ↦ dep c .high true k
-    | .maxNode => fun (c, k) ↦ (corr c k).maxViol .lhs .rhs
+    | .depBack => dep c .back true k
+    | .depNonhigh => dep c .high false k
+    | .depHigh => dep c .high true k
+    | .maxNode => (corr c k).maxViol .lhs .rhs
 
 /-- The constraints on the well-formedness of a string, against hiatus, clusters and empty nodes. -/
 def wellFormedness : Finset Con := {.noHiatus, .noCluster, .specify}
@@ -334,7 +334,7 @@ abbrev PaperCon := {i : Con // i ≠ .noCluster ∧ i ≠ .depHigh}
 
 /-- The candidates of each context under the constraints `e i` alone. -/
 def restrict {ι : Type*} (e : ι → Con) : ConstraintSystem Context Candidate ι :=
-  ⟨candidates, fun i ↦ system.con (e i)⟩
+  ⟨candidates, fun c k i ↦ system.marks c k (e i)⟩
 
 /-- The candidates of each context under the paper's constraints alone. -/
 abbrev paperSystem : ConstraintSystem Context Candidate PaperCon := restrict Subtype.val

@@ -149,7 +149,7 @@ def con : ConstraintSet (MoraicForm Slot × MoraicForm Slot) Con
 /-- The constraint system of the four inputs. -/
 def system : ConstraintSystem Input (MoraicForm Slot) Con where
   gen := gen
-  con := con.comap fun p ↦ (input p.1, p.2)
+  marks i o k := con k (input i, o)
 
 /-! ### The typology -/
 
