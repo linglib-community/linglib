@@ -174,12 +174,74 @@ theorem Constraint.eval_cons_eq_singleton (hc : c ∈ s) (h : ∀ d ∈ s, d ≠
     Constraint.eval s (F :: Fs) = {c} := by
   rw [eval_cons, Finset.argmin_eq_singleton_iff.2 ⟨hc, h⟩, eval_singleton]
 
+theorem Constraint.eval_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
+    Constraint.eval s (F :: Fs) = Constraint.eval s Fs := by
+  rw [eval_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
+
+/-- Constraints that rate every candidate alike, ranked above the others, do not change the
+winners. -/
+theorem Constraint.eval_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
+    Constraint.eval s (Fs ++ Gs) = Constraint.eval s Gs := by
+  induction Fs with
+  | nil => rfl
+  | cons F Fs ih =>
+    rw [List.cons_append, eval_cons_of_forall_eq (h F List.mem_cons_self),
+      ih fun F' hF' ↦ h F' (List.mem_cons_of_mem _ hF')]
+
+/-- If some candidate satisfies every constraint ranked above the others, so does every
+winner. -/
+theorem Constraint.eq_zero_of_mem_eval_append (hc : c ∈ Constraint.eval s (Fs ++ Gs))
+    (hd : d ∈ s) (h0 : ∀ F ∈ Fs, F d = 0) : ∀ F ∈ Fs, F c = 0 := by
+  induction Fs generalizing s with
+  | nil => simp
+  | cons F Fs ih =>
+    rw [List.cons_append, eval_cons] at hc
+    have hF : F d = 0 := h0 F List.mem_cons_self
+    refine List.forall_mem_cons.2
+      ⟨Nat.le_zero.1 (hF ▸ (Finset.mem_argmin.1 (eval_subset hc)).2 d hd), ih hc ?_
+        fun F' hF' ↦ h0 F' (List.mem_cons_of_mem _ hF')⟩
+    exact Finset.mem_argmin.2 ⟨hd, fun _ _ ↦ hF ▸ Nat.zero_le _⟩
+
+theorem Constraint.eval_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
+    Constraint.eval s (F.antifaithful :: Fs) = Constraint.eval (s.filter (0 < F ·)) Fs := by
+  rw [eval_cons, Constraint.argmin_antifaithful h]
+
+/-- Under `¬F ≫ F`, the winners are the candidates that violate `F` least among those violating
+it at all. -/
+theorem Constraint.eval_antifaithful (h : ∃ c ∈ s, 0 < F c) :
+    Constraint.eval s [F.antifaithful, F] = (s.filter (0 < F ·)).argmin F := by
+  rw [eval_antifaithful_cons h, eval_cons, eval_nil]
+
 /-- The winners of the tableau of a list of constraints are the candidates Eval keeps. -/
 theorem Tableau.optimal_ofList (s : Finset C) (Fs : List (Constraint C)) :
     (Tableau.ofList s Fs).optimal = Constraint.eval s Fs := by
   induction Fs generalizing s with
   | nil => exact Tableau.optimal_ofList_nil
   | cons F Fs ih => rw [Tableau.optimal_ofList_cons, ih, Constraint.eval_cons]
+
+/-! ### Candidates named by labels -/
+
+variable {L : Type*} {cand : L → C} {labels : Finset L} {x : L}
+
+/-- Eval over candidates named by labels: the labels in `labels` whose candidates, `cand l` for
+the label `l`, are optimal under the constraints `Fs`. -/
+def Constraint.evalOn (cand : L → C) (labels : Finset L) (Fs : List (Constraint C)) : Finset L :=
+  Constraint.eval labels (Fs.map (Constraint.comap cand))
+
+theorem Constraint.evalOn_append :
+    Constraint.evalOn cand labels (Fs ++ Gs) =
+      Constraint.evalOn cand (Constraint.evalOn cand labels Fs) Gs := by
+  rw [evalOn, List.map_append, eval_append]
+  rfl
+
+theorem Constraint.evalOn_cons_eq_singleton (hx : x ∈ labels)
+    (h : ∀ y ∈ labels, y ≠ x → F (cand x) < F (cand y)) :
+    Constraint.evalOn cand labels (F :: Fs) = {x} :=
+  eval_cons_eq_singleton hx h
+
+theorem Tableau.optimal_ofLabels (cand : L → C) (labels : Finset L) (Fs : List (Constraint C)) :
+    (Tableau.ofLabels cand labels Fs).optimal = Constraint.evalOn cand labels Fs :=
+  Tableau.optimal_ofList _ _
 
 end Eval
 

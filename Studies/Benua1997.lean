@@ -110,11 +110,11 @@ def cand : Cand4 → Correspondence.Coindexation Role Seg
 /-- The neutralisation underapplies in *L[æ]rry ~ L[æ]r* ((16), (29)): the overapplying
 *L[a]rry ~ L[a]r*, which satisfies OO-Identity and `*ær]σ`, loses in the base's recursion. -/
 theorem underapplication :
-    (Tableau.ofLabels cand {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
+    Constraint.evalOn cand {.a, .b, .c, .d} (recursive ranking ()) = {.d} := by decide
 
 -- p. 35
 theorem overapplication_nonrecursive :
-    (Tableau.ofLabels cand {.a, .b, .c, .d} (nonrecursive ranking ())).optimal = {.a} := by decide
+    Constraint.evalOn cand {.a, .b, .c, .d} (nonrecursive ranking ()) = {.a} := by decide
 
 end English
 
@@ -173,10 +173,10 @@ def word : Cand4 → List Seg
 
 -- (43)
 theorem allophony : ∀ input ∈ inputs,
-    (Tableau.ofList {.a, .b, .c, .d}
+    Constraint.eval {.a, .b, .c, .d}
       [Constraint.comap word nvOral, Constraint.comap word vNas,
        fun w ↦ (Correspondence.Coindexation.parallel input (word w)).identViolFeature nasal
-         .lhs .rhs]).optimal =
+         .lhs .rhs] =
       {Cand4.d} := by
   decide
 
@@ -202,7 +202,7 @@ def plural : Cand4 → Correspondence.Coindexation Role Seg
 
 -- (48)
 theorem overapplication :
-    (Tableau.ofLabels plural {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
+    Constraint.evalOn plural {.a, .b, .c, .d} (recursive ranking ()) = {.d} := by decide
 
 /-- The correspondence of `/ũm + dəhəs/` with *d-um-əhəs*. -/
 def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5), (6, 6)]
@@ -226,7 +226,7 @@ where
 
 -- (51)
 theorem normalApplication :
-    (Tableau.ofLabels approach {.a, .b, .c, .d} (recursive ranking ())).optimal = {.c} := by decide
+    Constraint.evalOn approach {.a, .b, .c, .d} (recursive ranking ()) = {.c} := by decide
 
 /-- The paradigms of (52) and (53) set the base *də̃hə̃s*, which would overapply to restore
 identity, against the canonical *dəhəs*. -/
@@ -239,11 +239,11 @@ def baseChoice : Cand2 → Correspondence.Coindexation Role Seg
 harmony to restore identity, loses in the base's recursion, though summed evaluation selects it
 (53). -/
 theorem base_priority :
-    (Tableau.ofLabels baseChoice {.a, .b} (recursive ranking ())).optimal = {.b} := by decide
+    Constraint.evalOn baseChoice {.a, .b} (recursive ranking ()) = {.b} := by decide
 
 -- (53)
 theorem base_overapplies_nonrecursive :
-    (Tableau.ofLabels baseChoice {.a, .b} (nonrecursive ranking ())).optimal = {.a} := by decide
+    Constraint.evalOn baseChoice {.a, .b} (nonrecursive ranking ()) = {.a} := by decide
 
 end Sundanese
 
@@ -366,12 +366,12 @@ where
 
 -- (82)
 theorem epenthesis_underapplies :
-    (Tableau.ofLabels captive {.a, .b, .c, .d} (recursive epenthesis .jussive)).optimal = {.d} := by
+    Constraint.evalOn captive {.a, .b, .c, .d} (recursive epenthesis .jussive) = {.d} := by
   decide
 
 -- (83)
 theorem epenthesis_overapplies_nonrecursive :
-    (Tableau.ofLabels captive {.a, .d} (nonrecursive epenthesis .jussive)).optimal = {.a} := by
+    Constraint.evalOn captive {.a, .d} (nonrecursive epenthesis .jussive) = {.a} := by
   decide
 
 /-- The paradigms of (87), from `/ya-glē/`, pair the base *yi.ɣə.lē* or *yiɣ.lē* with the
@@ -391,7 +391,7 @@ where
 underapplication would leave rises in sonority and SON-CON outranks OOJ-DEP, while the
 overapplying base *yi.ɣə.lē* loses in the base's recursion. -/
 theorem tetru :
-    (Tableau.ofLabels uncover {.a, .b, .c} (recursive epenthesis .jussive)).optimal = {.b} := by
+    Constraint.evalOn uncover {.a, .b, .c} (recursive epenthesis .jussive) = {.b} := by
   decide
 
 /-- The 2fs paradigms of (114), from `/šamaʕ-tī/` and its truncation, have a stop or a spirant
@@ -414,12 +414,12 @@ where
 
 -- (114)
 theorem spirantization_underapplies :
-    (Tableau.ofLabels heard {.a, .b, .c} (recursive spirantization .jussive)).optimal = {.c} := by
+    Constraint.evalOn heard {.a, .b, .c} (recursive spirantization .jussive) = {.c} := by
   decide
 
 -- (115)
 theorem spirantization_overapplies_nonrecursive :
-    (Tableau.ofLabels heard {.a, .c} (nonrecursive spirantization .jussive)).optimal = {.a} := by
+    Constraint.evalOn heard {.a, .c} (nonrecursive spirantization .jussive) = {.a} := by
   decide
 
 /-- The imperative paradigms of (134), from `/ya-ktōb/`, pair the base *yikθōβ* or *yixtōβ* with
@@ -441,7 +441,7 @@ where
 normally in the imperative *yixtōβ ~ kəθōβ* (134), whose OO relation's identity constraint
 ranks below the spirantization constraints (§4.6.3). -/
 theorem imperative_normalApplication :
-    (Tableau.ofLabels write {.a, .b, .c} (recursive spirantization .imperative)).optimal =
+    Constraint.evalOn write {.a, .b, .c} (recursive spirantization .imperative) =
       {.c} := by
   decide
 
@@ -462,7 +462,7 @@ where
 
 -- (135)
 theorem imperative_initialStop :
-    (Tableau.ofLabels know {.a, .b} (recursive spirantization .imperative)).optimal = {.b} := by
+    Constraint.evalOn know {.a, .b} (recursive spirantization .imperative) = {.b} := by
   decide
 
 end Hebrew

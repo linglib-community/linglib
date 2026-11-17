@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Indices
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
 public import Linglib.Core.Data.List.OffDiag
@@ -306,7 +306,7 @@ where
 
 -- (12)
 theorem shortening_overapplies :
-    (Tableau.ofLabels long {.a, .b, .c, .d} ranking).optimal = {.a} := by
+    Constraint.evalOn long {.a, .b, .c, .d} ranking = {.a} := by
   decide +kernel
 
 /-- The paradigms of /faʕl/ in (13): epenthesis throughout, the cluster kept throughout with
@@ -324,7 +324,7 @@ where
 
 -- (13)
 theorem epenthesis_overapplies :
-    (Tableau.ofLabels cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
+    Constraint.evalOn cluster {.a, .b, .c, .d} ranking = {.a} := by
   decide +kernel
 
 /-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
@@ -337,7 +337,7 @@ where
   syncopated : List (Correspondence.Segment Seg) := faithful.eraseIdx 3
 
 -- (17)
-theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide +kernel
+theorem no_syncope : Constraint.evalOn syncope {.a, .b} ranking = {.a} := by decide +kernel
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
 def noun : Cand → Paradigm Seg Cell
@@ -349,7 +349,7 @@ where
   faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
 
 -- (24)
-theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by
+theorem noun_epenthesis : Constraint.evalOn noun {.a, .b} ranking = {.a} := by
   decide +kernel
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
@@ -379,7 +379,7 @@ where
 
 -- (25)
 theorem attraction_to_the_unmarked :
-    (Tableau.ofLabels eighth {.a, .b, .c} ranking).optimal = {.a} := by decide +kernel
+    Constraint.evalOn eighth {.a, .b, .c} ranking = {.a} := by decide +kernel
 
 /-- The paradigms of /stafʕaːl/ in (27), the candidates obeying the undominated constraints:
 levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
@@ -409,7 +409,7 @@ where
       List (Correspondence.Segment Seg) := s.insertIdx 1 (.ofIndex .i 7)
 
 -- (27), (21)
-theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
+theorem two_attractors : Constraint.evalOn tenth {.a, .b, .c, .d, .e} ranking = {.a} := by
   decide +kernel
 
 /-! ### Domination of OP faithfulness (§8.4.4)
@@ -436,8 +436,8 @@ where
 
 -- (29)
 theorem geminate_alternation :
-    (Tableau.ofLabels geminate {.a, .b}
-      (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
+    Constraint.evalOn geminate {.a, .b}
+      (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking) = {.a} := by
   decide +kernel
 
 /-! ### Moroccan Arabic majority rules (§8.5.1)
@@ -536,7 +536,7 @@ where
 
 -- (32)
 theorem majority_rules :
-    (Tableau.ofLabels drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
+    Constraint.evalOn drink {.a, .b, .c, .d} moroccanRanking = {.a} := by
   decide +kernel
 
 end Arabic
@@ -582,18 +582,18 @@ where
       List (Correspondence.Segment Seg) := s.insertIdx 3 (.ofIndex .vowel 5)
 
 -- (33)
-theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
+theorem cry : Constraint.evalOn (jussive .spirant .stop) {.a, .b, .c} ranking = {.a} := by
   decide +kernel
 
 -- fn. 34
 theorem uncover :
-    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by
+    Constraint.evalOn (jussive .spirant .liquid) {.a, .b, .c} ranking = {.c} := by
   decide +kernel
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
 [benua-1997] winners, (82) and (87). -/
 example :
-    (Tableau.ofLabels (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
+    Constraint.evalOn (jussive .sibilant .stop) {.a, .b, .c} ranking = {.a} ∧
     (jussive .sibilant .stop .a).members.map (·.stem.map (·.seg)) =
       [(Benua1997.Hebrew.captive .d).string .base,
         (Benua1997.Hebrew.captive .d).string .derivative] ∧
