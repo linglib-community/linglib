@@ -20,7 +20,8 @@ trees, the closure properties and the weighted grammars share. `[UPSTREAM]` cand
 * `Symbol.terminal?`, `Symbol.IsNonterminal`, `Symbol.mapNonterminal`: the terminal at a symbol,
   the nonterminal predicate, and relabelling of nonterminals.
 * `ContextFreeRule.NonterminalPos`: the positions of a right-hand side holding a nonterminal.
-* `ContextFreeGrammar.RulesWithLHS`: the rules of a grammar with a given left-hand side.
+* `ContextFreeGrammar.inputs`, `ContextFreeGrammar.rulesWithInput`: the nonterminals a grammar has
+  a rule for, and its rules at a nonterminal.
 
 ## Main results
 
@@ -146,17 +147,43 @@ namespace ContextFreeGrammar
 
 variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-- The rules of `g` with left-hand side `a`. -/
-abbrev RulesWithLHS (g : ContextFreeGrammar T) [DecidableEq g.NT] (a : g.NT) :=
-  {r : ContextFreeRule T g.NT // r ∈ g.rules.filter (·.input = a)}
+section RulesWithInput
 
-theorem nonempty_rulesWithLHS_iff [DecidableEq g.NT] {a : g.NT} :
-    Nonempty (g.RulesWithLHS a) ↔ a ∈ g.rules.image (·.input) := by
-  simp [Finset.mem_image]
+variable [DecidableEq g.NT] {a : g.NT} {r : ContextFreeRule T g.NT}
 
-theorem card_filter_input_ne_zero [DecidableEq g.NT] {a : g.NT} (ha : a ∈ g.rules.image (·.input)) :
-    (g.rules.filter (·.input = a)).card ≠ 0 :=
-  Finset.card_ne_zero.mpr (Finset.nonempty_coe_sort.mp (nonempty_rulesWithLHS_iff.mpr ha))
+/-- The nonterminals `g` has a rule for, the inputs of its rules. -/
+def inputs (g : ContextFreeGrammar T) [DecidableEq g.NT] : Finset g.NT :=
+  g.rules.image (·.input)
+
+/-- The rules of `g` with input `a`. -/
+def rulesWithInput (g : ContextFreeGrammar T) [DecidableEq g.NT] (a : g.NT) :
+    Finset (ContextFreeRule T g.NT) :=
+  g.rules.filter (·.input = a)
+
+theorem mem_inputs : a ∈ g.inputs ↔ ∃ r ∈ g.rules, r.input = a :=
+  Finset.mem_image
+
+@[simp]
+theorem mem_rulesWithInput : r ∈ g.rulesWithInput a ↔ r ∈ g.rules ∧ r.input = a :=
+  Finset.mem_filter
+
+theorem coe_rulesWithInput :
+    (g.rulesWithInput a : Set (ContextFreeRule T g.NT)) = {r | r ∈ g.rules ∧ r.input = a} :=
+  Set.ext fun _ ↦ mem_rulesWithInput
+
+theorem input_mem_inputs (hr : r ∈ g.rules) : r.input ∈ g.inputs :=
+  Finset.mem_image_of_mem _ hr
+
+theorem mem_rulesWithInput_input (hr : r ∈ g.rules) : r ∈ g.rulesWithInput r.input :=
+  mem_rulesWithInput.mpr ⟨hr, rfl⟩
+
+theorem rulesWithInput_nonempty_iff : (g.rulesWithInput a).Nonempty ↔ a ∈ g.inputs := by
+  simp [Finset.Nonempty, mem_inputs]
+
+theorem rulesWithInput_eq_empty_iff : g.rulesWithInput a = ∅ ↔ a ∉ g.inputs := by
+  rw [← rulesWithInput_nonempty_iff, Finset.not_nonempty_iff_eq_empty]
+
+end RulesWithInput
 
 /-- A production from a concatenation `u₁ ++ u₂` happens entirely in `u₁` or entirely in
 `u₂`. -/

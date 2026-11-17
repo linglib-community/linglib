@@ -27,7 +27,7 @@ times the one after it (section 6.1), and the subject and object relative asymme
 along a sentence (`disconfirmed_mono`) and word-level surprisals telescope to the negative log of
 the sentence's prefix mass (`totalSurprisal_nil_eq`). The consistency the first level assumes
 holds of any grammar whose weights are relative frequencies in a treebank
-(`PCFG.isProbabilityMeasure_derivationMeasure_relFreq`), by the theorem of [chi-geman-1998].
+(`PCFG.isProbabilityMeasure_derivationMeasure_ofCounts`), by the theorem of [chi-geman-1998].
 
 ## Implementation notes
 
