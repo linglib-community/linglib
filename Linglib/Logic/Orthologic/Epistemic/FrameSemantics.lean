@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Epistemic.Basic
 public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Ortholattice.ProperFilter
-public import Linglib.Logic.Consequence
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Frame semantics and completeness for the epistemic orthologic

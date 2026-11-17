@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Bilattice.Representation
 public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Trivalent.Basic
-public import Linglib.Logic.Consequence
+public import Linglib.Logic.Consequence.Mixed
 
 /-!
 # Fitting (2021): The strict/tolerant idea and bilattices

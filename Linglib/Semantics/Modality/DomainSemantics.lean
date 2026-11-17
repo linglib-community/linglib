@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Order.Heyting.Basic
-public import Linglib.Logic.Consequence
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Domain semantics

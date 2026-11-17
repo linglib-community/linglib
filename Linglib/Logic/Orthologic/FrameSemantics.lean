@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Basic
 public import Linglib.Logic.Orthologic.Compatibility
 public import Linglib.Core.Order.Ortholattice.Representation
-public import Linglib.Logic.Consequence
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Frame semantics and completeness for orthologic
