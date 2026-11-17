@@ -185,6 +185,18 @@ theorem Holds.mono {R S : ι → ι → Prop} {α : ERC ι} (h : α.Holds R) (hR
 theorem satisfiedBy_iff_holds : α.SatisfiedBy r ↔ α.Holds r.Dominates :=
   satisfiedBy_iff_dominance r α
 
+/-- A satisfied ERC whose only winner-preferring constraint is `i` puts `i` above each of its
+loser-preferring constraints: a ranking argument. -/
+theorem SatisfiedBy.dominates {r : Ranking.Enumeration ι n} {α : ERC ι} {i j : ι}
+    (h : α.SatisfiedBy r) (hi : ∀ k, α k = .W → k = i) (hj : α j = .L) : r.Dominates i j := by
+  obtain ⟨w, hw, hd⟩ := (satisfiedBy_iff_holds r α).1 h j hj
+  exact hi w hw ▸ hd
+
+/-- The ERC with the winner-preferring constraints `W` and the loser-preferring constraints `L`,
+the `⟨W, L⟩` of [prince-2002]. A constraint listed in both is loser-preferring. -/
+def ofWL [DecidableEq ι] (W L : List ι) : ERC ι :=
+  fun k ↦ if k ∈ L then .L else if k ∈ W then .W else .e
+
 /-! ### Fusion -/
 
 /-- The fusion of two ERC values ([prince-2002]): `L` absorbs, `e` is the identity, and each

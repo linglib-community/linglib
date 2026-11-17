@@ -82,6 +82,13 @@ theorem extent_bot [Nonempty ι] : (⊥ : Grammar ι n).extent = ∅ := by
 theorem eq_bot_iff_extent [Nonempty ι] : G = ⊥ ↔ G.extent = ∅ :=
   ⟨fun h ↦ h ▸ extent_bot, fun h ↦ Concept.ext (h.trans extent_bot.symm)⟩
 
+/-- Two grammars share no ranking when an ERC of the one and an ERC of the other fuse to an ERC
+with an `L` and no `W`. -/
+theorem ofERCs_inf_ofERCs_eq_bot [Nonempty ι] {α β : ERC ι} (hα : α ∈ E) (hβ : β ∈ E')
+    (h : (α.fuse β).IsContradictory) : (ofERCs E ⊓ ofERCs E' : Grammar ι n) = ⊥ :=
+  eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun _ ⟨h₁, h₂⟩ ↦
+    ERC.not_satisfiedBy_of_isContradictory_fuse h (h₁ hα) (h₂ hβ)
+
 /-! ### The antimatroid of a grammar -/
 
 /-- The antimatroid of a grammar with a ranking: the antimatroid of its conditions, whose feasible
@@ -121,6 +128,38 @@ theorem Grammar.mem_extent_ofWinner (hw : w ∈ candidates) :
   rw [Tableau.ofRanking_mem_optimal_iff_satisfiedBy, and_iff_right hw]
   exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
 
+/-- The comparative tableau of a winner: its ERC against each of the listed competitors, the
+rows of `W`, `L` and `e` of [prince-2002]. -/
+def comparative (con : ConstraintSet C ι) (w : C) (losers : List C) : List (ERC ι) :=
+  losers.map fun d ↦ ercOfProfiles (con · w) (con · d)
+
+/-- The grammar of a winner is the grammar its comparative tableau presents. -/
+theorem Grammar.ofERCs_comparative [DecidableEq C] (l : List C) :
+    (Grammar.ofERCs {α | α ∈ comparative con w (l.filter (· ≠ w))} : Grammar ι n) =
+      Grammar.ofWinner con l.toFinset w := by
+  refine Concept.ext (Set.ext fun σ ↦ ⟨fun h ↦ ?_, fun h α hα ↦ ?_⟩)
+  · rintro _ ⟨d, hd, rfl⟩
+    by_cases hdw : d = w
+    · subst hdw
+      exact ERC.trivial_satisfiedBy
+        (fun k hk ↦ lt_irrefl _ ((ercOfProfiles_eq_L_iff _ _ k).1 hk)) σ
+    · exact h (List.mem_map.2 ⟨d, List.mem_filter.2 ⟨List.mem_toFinset.1 hd, by simpa using hdw⟩,
+        rfl⟩)
+  · obtain ⟨d, hd, rfl⟩ := List.mem_map.1 hα
+    exact h ⟨d, Finset.mem_coe.2 (List.mem_toFinset.2 (List.mem_filter.1 hd).1), rfl⟩
+
+/-- A winner is the sole winner when no row of its comparative tableau is neutral
+throughout. -/
+theorem Tableau.ofRanking_optimal_eq_singleton_of_comparative [DecidableEq C] {l : List C}
+    (hw : w ∈ (Tableau.ofRanking con σ l.toFinset).optimal)
+    (h : ∀ α ∈ comparative con w (l.filter (· ≠ w)), ∃ k, α k ≠ .e) :
+    (Tableau.ofRanking con σ l.toFinset).optimal = {w} :=
+  (Tableau.ofRanking_optimal_eq_singleton_iff_of_mem hw).2 fun d hd he ↦ by
+    by_contra hne
+    obtain ⟨k, hk⟩ := h _ (List.mem_map.2
+      ⟨d, List.mem_filter.2 ⟨List.mem_toFinset.1 hd, by simpa using hne⟩, rfl⟩)
+    exact hk ((ercOfProfiles_eq_e_iff _ _ k).2 (he k).symm)
+
 /-- Two winners are optimal together under no ranking when an ERC of the one and an ERC of the
 other fuse to an ERC with an `L` and no `W`. -/
 theorem Grammar.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
@@ -130,9 +169,7 @@ theorem Grammar.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
       (ercOfProfiles (con' · w') (con' · d'))).IsContradictory) :
     (Grammar.ofWinner con candidates w ⊓ Grammar.ofWinner con' candidates' w' : Grammar ι n) =
       ⊥ :=
-  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun _ ⟨h₁, h₂⟩ ↦
-    ERC.not_satisfiedBy_of_isContradictory_fuse h (h₁ ⟨d, Finset.mem_coe.2 hd, rfl⟩)
-      (h₂ ⟨d', Finset.mem_coe.2 hd', rfl⟩)
+  Grammar.ofERCs_inf_ofERCs_eq_bot ⟨d, Finset.mem_coe.2 hd, rfl⟩ ⟨d', Finset.mem_coe.2 hd', rfl⟩ h
 
 end Winner
 
@@ -286,6 +323,15 @@ theorem transGen_of_mem_below [Fintype ι] {R : ι → ι → Prop} [DecidableRe
         exact (hS b hb).tail (by simpa using hbc)
   exact key _ _ (fun c hc ↦ .single (by simpa using hc)) b h
 
+/-- If each ERC of a set holds of the constraints the edges of a diagram put below one another,
+the grammar of the diagram lies below the grammar the set presents. -/
+theorem Grammar.ofRel_le_ofERCs_of_holds_below [Fintype ι] [DecidableRel r] {E : Set (ERC ι)}
+    (h : ∀ α ∈ E, α.Holds fun a b ↦ b ∈ below r a) :
+    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofERCs E :=
+  Concept.extent_subset_extent_iff.1 fun _ hσ α hα ↦
+    ((h α hα).mono fun _ _ ↦ transGen_of_mem_below).satisfiedBy
+      (Grammar.mem_extent_ofRel.1 hσ).transGen
+
 /-- If each ERC of a winner holds of the constraints the edges of a diagram put below one
 another, the grammar of the diagram lies below the grammar of the winner: the winner is optimal
 under every ranking that extends the diagram. -/
@@ -293,10 +339,7 @@ theorem Grammar.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r] {
     {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
     (h : ∀ d ∈ candidates, (ercOfProfiles (con · w) (con · d)).Holds fun a b ↦ b ∈ below r a) :
     (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofWinner con candidates w :=
-  Concept.extent_subset_extent_iff.1 fun σ hσ ↦ by
-    rintro _ ⟨d, hd, rfl⟩
-    exact ((h d hd).mono fun _ _ ↦ transGen_of_mem_below).satisfiedBy
-      (Grammar.mem_extent_ofRel.1 hσ).transGen
+  Grammar.ofRel_le_ofERCs_of_holds_below (by rintro _ ⟨d, hd, rfl⟩; exact h d hd)
 
 theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
     (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.Enumeration.linearExtensions

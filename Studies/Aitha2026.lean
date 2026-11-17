@@ -54,6 +54,10 @@ the winner of the quantifier tableau is optimal under a ranking only if *DIST-0 
 rankings under which the winners of its tableaux are optimal, and the diagram's grammar lies
 below it.
 
+Each tableau is proved to have a comparative tableau, a row for each losing candidate with the
+constraints that prefer the winner and those that prefer the loser, and what is said of the
+rankings is read off those rows.
+
 A candidate is written as the paper prints it and read against the segments of its input, which
 gives the positions it deletes and the vowels it lengthens, and every mark is computed from that
 by the paper's definitions of the constraints; the Phrase-level input of the quantified form is
@@ -543,8 +547,13 @@ def marks : ConstraintSet String Con :=
 def tableau (σ : Ranking Con) : Tableau String 9 :=
   .ofRanking t.marks σ t.candidates.toFinset
 
-/-- The grammar of the tableau: the rankings under which its winner is optimal. -/
-def grammar : Grammar Con 9 := .ofWinner t.marks t.candidates.toFinset t.winner
+/-- The comparative tableau: the ERC of the winner against each other candidate. -/
+def comparative : List (ERC Con) :=
+  OptimalityTheory.comparative t.marks t.winner (t.candidates.filter (· ≠ t.winner))
+
+/-- The grammar of the tableau: the rankings that satisfy its comparative tableau, those under
+which its winner is optimal. -/
+def grammar : Grammar Con 9 := .ofERCs {α | α ∈ t.comparative}
 
 /-- The segments of the winner. -/
 def output : List Segment := (read t.segs t.winner).output
@@ -552,36 +561,17 @@ def output : List Segment := (read t.segs t.winner).output
 variable {t} {R : Con → Con → Prop}
 
 theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
-    σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal :=
-  Grammar.mem_extent_ofWinner (List.mem_toFinset.2 h)
+    σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal := by
+  rw [grammar, comparative, Grammar.ofERCs_comparative]
+  exact Grammar.mem_extent_ofWinner (List.mem_toFinset.2 h)
 
-/-- The ERCs of the winner against the candidates hold of a diagram: against each candidate,
-every constraint preferring it is below one preferring the winner. -/
-def Holds (t : Evaluation) (R : Con → Con → Prop) [DecidableRel R] : Prop :=
-  ∀ d ∈ t.candidates, (ercOfProfiles (t.marks · t.winner) (t.marks · d)).Holds (Above R)
-
-instance (t : Evaluation) (R : Con → Con → Prop) [DecidableRel R] : Decidable (t.Holds R) :=
-  inferInstanceAs (Decidable (∀ d ∈ t.candidates, _))
-
-variable [DecidableRel R]
-
--- the winner is optimal under every total ranking extending a diagram of which its ERCs hold
-theorem Holds.ofRel_le (h : t.Holds R) : .ofRel R ≤ t.grammar :=
-  Grammar.ofRel_le_ofWinner_of_holds_below fun d hd ↦ h d (List.mem_toFinset.1 hd)
-
-/-- The winner is a candidate, and no other candidate has its marks. -/
-def Unique (t : Evaluation) : Prop :=
-  t.winner ∈ t.candidates ∧
-    ∀ d ∈ t.candidates, (∀ k, t.marks k d = t.marks k t.winner) → d = t.winner
-
-instance (t : Evaluation) : Decidable t.Unique := inferInstanceAs (Decidable (_ ∧ _))
-
--- the winner is the sole optimal candidate under every total ranking extending the order
-theorem Holds.optimal_eq (h : t.Holds R) (hu : t.Unique)
-    (hσ : σ.IsLinearExtension R) : (t.tableau σ).optimal = {t.winner} :=
-  (Tableau.ofRanking_optimal_eq_singleton_iff_of_mem <| (mem_extent_grammar hu.1).1 <|
-    Concept.extent_subset_extent_iff.2 h.ofRel_le (Grammar.mem_extent_ofRel.2 hσ)).2
-      fun d hd ↦ hu.2 d (List.mem_toFinset.1 hd)
+-- a winner whose comparative tableau holds of a diagram and has no neutral row is the sole
+-- optimal candidate under every total ranking extending the diagram
+theorem optimal_eq (hw : t.winner ∈ t.candidates) (hle : .ofRel R ≤ t.grammar)
+    (hne : ∀ α ∈ t.comparative, ∃ k, α k ≠ .e) (hσ : σ.IsLinearExtension R) :
+    (t.tableau σ).optimal = {t.winner} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_comparative ((mem_extent_grammar hw).1 <|
+    Concept.extent_subset_extent_iff.2 hle (Grammar.mem_extent_ofRel.2 hσ)) hne
 
 end Evaluation
 
@@ -632,39 +622,87 @@ def quantifiedPhrase : Evaluation where
       "(ˈsa.mu).(ˌdrā).(ˌman).(ˌta.ṭi).ni", "(ˈsa.mu).(ˌdra).(ˌman).(ˌta.ṭi).ni"]
   winner := "(ˈsa.mu).dra.(ˌman).(ˌta.ṭi).ni"
 
-/-- The Word-level tableaux (59), (62) and (63). -/
-def wordTableaux : List Evaluation := [dativeWord, nominativeWord, quantifiedWord]
+/-! ### The comparative tableaux
 
-/-- The Phrase-level tableaux (66) and (67). -/
-def phraseTableaux : List Evaluation := [postpositional, quantifiedPhrase]
+Each tableau as its comparative tableau: a row for each losing candidate, with the constraints
+that prefer the winner and those that prefer the loser. Everything said of the rankings below is
+read off these rows. -/
 
--- (64) suffices for the Word level: the ERCs of the winners of (59), (62) and (63) hold of it
-theorem holds_word : ∀ t ∈ wordTableaux, t.Holds word := by
+-- (59)
+theorem comparative_dativeWord : dativeWord.comparative =
+    [.ofWL [.distZero] [.max, .identLength],
+      .ofWL [.alignR, .identStress, .maxMora] [.identLength],
+      .ofWL [.identStress, .maxMora] [.identLength],
+      .ofWL [.alignR] []] := by
   decide +kernel
 
--- (68) suffices for (66) and (67)
-theorem holds_phrase : ∀ t ∈ phraseTableaux, t.Holds phrase := by
+-- (62)
+theorem comparative_nominativeWord : nominativeWord.comparative =
+    [.ofWL [.distZero, .identStress] [.maxMora, .max],
+      .ofWL [.distZero, .ftBin] [.maxMora, .max],
+      .ofWL [.alignR, .complexCoda] [.max],
+      .ofWL [.alignR] []] := by
   decide +kernel
 
--- no other candidate of a tableau has its winner's marks
-theorem unique : ∀ t ∈ wordTableaux ++ phraseTableaux, t.Unique := by
+-- (63)
+theorem comparative_quantifiedWord : quantifiedWord.comparative =
+    [.ofWL [.distZero, .identStress] [.maxMora, .max],
+      .ofWL [.distZero, .ftBin] [.maxMora, .max],
+      .ofWL [.distZero] [.max, .onset],
+      .ofWL [.alignR] [],
+      .ofWL [.identStress, .maxMora] [.onset]] := by
   decide +kernel
 
--- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
-theorem optimal_word (hσ : σ.IsLinearExtension word) :
-    ∀ t ∈ wordTableaux, (t.tableau σ).optimal = {t.winner} :=
-  fun t ht ↦ (holds_word t ht).optimal_eq (unique t (List.mem_append_left _ ht)) hσ
+-- (66)
+theorem comparative_postpositional : postpositional.comparative =
+    [.ofWL [.max, .identLength] [.distZero],
+      .ofWL [.identStress, .maxMora, .max] [.distZero],
+      .ofWL [.max, .onset] [.distZero]] := by
+  decide +kernel
 
--- (66), (67): the winners are the sole optimal candidates under every ranking of (68)
-theorem optimal_phrase (hσ : σ.IsLinearExtension phrase) :
-    ∀ t ∈ phraseTableaux, (t.tableau σ).optimal = {t.winner} :=
-  fun t ht ↦ (holds_phrase t ht).optimal_eq (unique t (List.mem_append_right _ ht)) hσ
+-- (67)
+theorem comparative_quantifiedPhrase : quantifiedPhrase.comparative =
+    [.ofWL [.onset] [.alignR, .identStress, .maxMora],
+      .ofWL [.identLength] [.identStress, .maxMora],
+      .ofWL [.ftBin] [.identStress]] := by
+  decide +kernel
+
+/-- The rows of the Word-level tableaux (59), (62) and (63). -/
+def wordRows : List (ERC Con) :=
+  dativeWord.comparative ++ nominativeWord.comparative ++ quantifiedWord.comparative
+
+/-- The rows of the Phrase-level tableaux (66) and (67). -/
+def phraseRows : List (ERC Con) := postpositional.comparative ++ quantifiedPhrase.comparative
+
+-- (64) suffices for the Word level: every row holds of it
+theorem holds_word : ∀ α ∈ wordRows, α.Holds (Above word) := by
+  rw [wordRows, comparative_dativeWord, comparative_nominativeWord, comparative_quantifiedWord]
+  simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, forall_eq, or_imp,
+    forall_and]
+  decide +kernel
+
+-- (68) suffices for the Phrase level
+theorem holds_phrase : ∀ α ∈ phraseRows, α.Holds (Above phrase) := by
+  rw [phraseRows, comparative_postpositional, comparative_quantifiedPhrase]
+  simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, forall_eq, or_imp,
+    forall_and]
+  decide +kernel
+
+-- no losing candidate ties a winner: no row is neutral throughout
+theorem exists_ne_e : ∀ α ∈ wordRows ++ phraseRows, ∃ k, α k ≠ .e := by
+  rw [wordRows, phraseRows, comparative_dativeWord, comparative_nominativeWord,
+    comparative_quantifiedWord, comparative_postpositional, comparative_quantifiedPhrase]
+  simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, forall_eq, or_imp,
+    forall_and]
+  decide +kernel
 
 -- any ranking under which the winner of (63) is optimal has *DIST-0 above ONSET
 theorem onset_dominated (h : quantifiedWord.winner ∈ (quantifiedWord.tableau σ).optimal) :
     σ.Dominates .distZero .onset :=
-  Tableau.dominates_of_mem_ofRanking_optimal h (d := "(ˈsa.mu).(ˌdram).(ˌnan).(ˌta.ṭi).ni")
-    (by decide +kernel) (by decide +kernel) (by decide +kernel)
+  ERC.SatisfiedBy.dominates (α := .ofWL [.distZero] [.max, .onset])
+    ((quantifiedWord.mem_extent_grammar (by decide)).2 h
+      (show _ ∈ quantifiedWord.comparative by rw [comparative_quantifiedWord]; decide +kernel))
+    (by decide) (by decide)
 
 /-- The morphs of the noun of a row, without the null ones. -/
 def surface? (e : Datum) : Option (List Char) :=
@@ -766,11 +804,43 @@ def phraseGrammar : Grammar Con 9 := postpositional.grammar ⊓ quantifiedPhrase
 
 -- the grammars of the diagrams lie below the grammars of the strata
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
-  le_inf (le_inf (holds_word _ (by decide)).ofRel_le (holds_word _ (by decide)).ofRel_le)
-    (holds_word _ (by decide)).ofRel_le
+  le_inf (le_inf
+    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+      holds_word α (List.mem_append_left _ (List.mem_append_left _ hα)))
+    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+      holds_word α (List.mem_append_left _ (List.mem_append_right _ hα))))
+    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+      holds_word α (List.mem_append_right _ hα))
 
 theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
-  le_inf (holds_phrase _ (by decide +kernel)).ofRel_le (holds_phrase _ (by decide +kernel)).ofRel_le
+  le_inf
+    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+      holds_phrase α (List.mem_append_left _ hα))
+    (Grammar.ofRel_le_ofERCs_of_holds_below fun α hα ↦
+      holds_phrase α (List.mem_append_right _ hα))
+
+-- (59), (62), (63): the winners are the sole optimal candidates under every ranking of (64)
+theorem optimal_word (hσ : σ.IsLinearExtension word) :
+    (dativeWord.tableau σ).optimal = {dativeWord.winner} ∧
+      (nominativeWord.tableau σ).optimal = {nominativeWord.winner} ∧
+      (quantifiedWord.tableau σ).optimal = {quantifiedWord.winner} :=
+  ⟨Evaluation.optimal_eq (by decide) (ofRel_word_le.trans (inf_le_left.trans inf_le_left))
+      (fun α hα ↦ exists_ne_e α (List.mem_append_left _ (List.mem_append_left _
+        (List.mem_append_left _ hα)))) hσ,
+    Evaluation.optimal_eq (by decide) (ofRel_word_le.trans (inf_le_left.trans inf_le_right))
+      (fun α hα ↦ exists_ne_e α (List.mem_append_left _ (List.mem_append_left _
+        (List.mem_append_right _ hα)))) hσ,
+    Evaluation.optimal_eq (by decide) (ofRel_word_le.trans inf_le_right)
+      (fun α hα ↦ exists_ne_e α (List.mem_append_left _ (List.mem_append_right _ hα))) hσ⟩
+
+-- (66), (67): the winners are the sole optimal candidates under every ranking of (68)
+theorem optimal_phrase (hσ : σ.IsLinearExtension phrase) :
+    (postpositional.tableau σ).optimal = {postpositional.winner} ∧
+      (quantifiedPhrase.tableau σ).optimal = {quantifiedPhrase.winner} :=
+  ⟨Evaluation.optimal_eq (by decide) (ofRel_phrase_le.trans inf_le_left)
+      (fun α hα ↦ exists_ne_e α (List.mem_append_right _ (List.mem_append_left _ hα))) hσ,
+    Evaluation.optimal_eq (by decide) (ofRel_phrase_le.trans inf_le_right)
+      (fun α hα ↦ exists_ne_e α (List.mem_append_right _ (List.mem_append_right _ hα))) hσ⟩
 
 /-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
 def alignRLast : Ranking Con :=
@@ -778,24 +848,33 @@ def alignRLast : Ranking Con :=
     .alignR]
 
 -- the three tableaux do not fix the place of ALIGN-RIGHT, which the diagram puts above MAX(μ):
--- their winners are optimal with it ranked last
+-- every row is satisfied with it ranked last
+theorem satisfiedBy_alignRLast : ∀ α ∈ wordRows, α.SatisfiedBy alignRLast := by
+  rw [wordRows, comparative_dativeWord, comparative_nominativeWord, comparative_quantifiedWord]
+  simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, forall_eq, or_imp,
+    forall_and]
+  decide +kernel
+
 theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
   have hmem : alignRLast ∈ wordGrammar.extent :=
-    ⟨⟨(dativeWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel),
-      (nominativeWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel)⟩,
-      (quantifiedWord.mem_extent_grammar (by decide +kernel)).2 (by decide +kernel)⟩
+    ⟨⟨fun α hα ↦ satisfiedBy_alignRLast α (List.mem_append_left _ (List.mem_append_left _ hα)),
+      fun α hα ↦ satisfiedBy_alignRLast α (List.mem_append_left _ (List.mem_append_right _ hα))⟩,
+      fun α hα ↦ satisfiedBy_alignRLast α (List.mem_append_right _ hα)⟩
   have hext : alignRLast.IsLinearExtension word :=
     Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
-  exact absurd hext (by decide +kernel)
+  exact absurd hext (by decide)
 
 instance : Nonempty Con := ⟨.max⟩
 
 -- (59), (66): the dative winner needs *DIST-0 above MAX and IDENT-length, the postpositional
--- winner one of them above *DIST-0, and the two conditions fuse to one with no winner-preferring
+-- winner one of them above *DIST-0, and the two rows fuse to one with no winner-preferring
 -- constraint
 theorem dativeWord_inf_postpositional : dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
-  Grammar.ofWinner_inf_ofWinner_eq_bot (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)")
-    (d' := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)") (by decide) (by decide) (by decide +kernel)
+  Grammar.ofERCs_inf_ofERCs_eq_bot (α := .ofWL [.distZero] [.max, .identLength])
+    (β := .ofWL [.max, .identLength] [.distZero])
+    (show _ ∈ dativeWord.comparative by rw [comparative_dativeWord]; decide +kernel)
+    (show _ ∈ postpositional.comparative by rw [comparative_postpositional]; decide +kernel)
+    (by decide +kernel)
 
 /-- The strata are different grammars: no ranking of the constraints makes the winners of the
 Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
