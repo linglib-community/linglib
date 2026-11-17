@@ -15,8 +15,8 @@ every relation symbol. A term then denotes a partial function on entities, and t
 entities that some path reaches from it. A homomorphism of interpretations preserves sorts,
 commutes with the attributes and preserves the relations. Since attributes are functions, a
 homomorphism [maps the components of an entity onto the components of its
-image](##HPSG.RSRL.Interpretation.Hom.image_isComponentOf), and it
-[commutes with term denotation](##HPSG.RSRL.Interpretation.Hom.termDenot_comp).
+image](##HPSG.RSRL.Interpretation.HomClass.image_isComponentOf), and it
+[commutes with term denotation](##HPSG.RSRL.Interpretation.HomClass.termDenot_comp).
 
 ## Implementation notes
 
@@ -26,8 +26,9 @@ builds into an interpretation are separate predicates, since a worked example of
 only the part of a feature structure that a principle mentions: `IsSortResolved` and
 `IsTotallyWellTyped`, named as in [carpenter-1992], for the conditions on sorts and attributes,
 and `IsFull` for the restriction of relation tuples to the components of one entity. Chains are
-not formalized, so a relation tuple holds entities only. `Hom` and `Embedding` follow
-`FirstOrder.Language.Hom` and `FirstOrder.Language.Embedding`.
+not formalized, so a relation tuple holds entities only. `Hom`, `Embedding` and `HomClass`
+follow their namesakes in `FirstOrder.Language`, so a fact about homomorphisms is stated once
+and applies to embeddings.
 
 ## References
 
@@ -232,45 +233,24 @@ structure Embedding (I : Interpretation Sig U) (J : Interpretation Sig V) extend
 
 variable {J : Interpretation Sig V} {K : Interpretation Sig W}
 
-namespace Hom
+/-- `HomClass F I J` states that `F` is a type of homomorphisms from `I` to `J`. -/
+class HomClass (F : Type*) {Srt : outParam (Type u)} [outParam (PartialOrder Srt)]
+    {Sig : outParam (Signature Srt)} {U : outParam (Type v)} {V : outParam (Type w)}
+    (I : outParam (Interpretation Sig U)) (J : outParam (Interpretation Sig V))
+    [FunLike F U V] : Prop where
+  /-- An entity and its image have the same sort. -/
+  map_S (f : F) (u : U) : J.S (f u) = I.S u
+  /-- An attribute is defined on the image of an entity exactly when it is defined on the
+  entity, with the image of its value as value. -/
+  map_A (f : F) (α : Sig.Attr) (u : U) : J.A α (f u) = (I.A α u).map f
+  /-- The image of a relation tuple is a relation tuple. -/
+  map_R (f : F) {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → U} : xs ∈ I.R ρ → f ∘ xs ∈ J.R ρ
 
-instance : FunLike (Hom I J) U V where
-  coe := toFun
-  coe_injective f g h := by cases f; cases g; congr
+attribute [simp] HomClass.map_S HomClass.map_A
 
-variable (f : Hom I J)
+namespace HomClass
 
-@[simp] theorem toFun_eq_coe : f.toFun = f := rfl
-
-@[ext] theorem ext {f g : Hom I J} (h : ∀ u, f u = g u) : f = g := DFunLike.ext f g h
-
-@[simp] theorem map_S (u : U) : J.S (f u) = I.S u := f.map_S' u
-
-@[simp] theorem map_A (α : Sig.Attr) (u : U) : J.A α (f u) = (I.A α u).map f := f.map_A' α u
-
-theorem map_R {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → U} (h : xs ∈ I.R ρ) : f ∘ xs ∈ J.R ρ :=
-  f.map_R' ρ xs h
-
-variable (I) in
-/-- The identity homomorphism. -/
-@[simps] protected def id : Hom I I where
-  toFun := id
-  map_S' _ := rfl
-  map_A' _ _ := Option.map_id'.symm
-  map_R' _ _ h := h
-
-/-- The composition of two homomorphisms. -/
-def comp (f' : Hom J K) (f : Hom I J) : Hom I K where
-  toFun := f' ∘ f
-  map_S' u := (f'.map_S _).trans (f.map_S u)
-  map_A' α u := by simp [Option.map_map]
-  map_R' _ _ h := f'.map_R (f.map_R h)
-
-@[simp] theorem comp_apply (f' : Hom J K) (u : U) : f'.comp f u = f' (f u) := rfl
-
-@[simp] theorem comp_id : f.comp (.id I) = f := rfl
-
-@[simp] theorem id_comp : (Hom.id J).comp f = f := rfl
+variable {F : Type*} [FunLike F U V] [HomClass F I J] (f : F)
 
 /-- A homomorphism commutes with term denotation. -/
 theorem termDenot_comp (g : ℕ → U) (t : Term Sig) (u : U) :
@@ -283,11 +263,11 @@ theorem termDenot_comp (g : ℕ → U) (t : Term Sig) (u : U) :
     cases I.termDenot g t u <;> simp
 
 theorem attrSucc (h : I.attrSucc u v) : J.attrSucc (f u) (f v) :=
-  let ⟨α, hα⟩ := h; ⟨α, by rw [f.map_A, hα]; rfl⟩
+  let ⟨α, hα⟩ := h; ⟨α, by rw [map_A f, hα]; rfl⟩
 
 /-- A homomorphism maps the components of an entity to components of its image. -/
 theorem isComponentOf (h : I.IsComponentOf u v) : J.IsComponentOf (f u) (f v) :=
-  h.lift f fun _ _ ↦ f.attrSucc
+  h.lift f fun _ _ ↦ attrSucc f
 
 /-- Every component of the image of an entity is the image of one of its components. -/
 theorem exists_isComponentOf_of_isComponentOf {w : V} (h : J.IsComponentOf (f u) w) :
@@ -297,26 +277,66 @@ theorem exists_isComponentOf_of_isComponentOf {w : V} (h : J.IsComponentOf (f u)
   | tail _ hα ih =>
     obtain ⟨v, hv, rfl⟩ := ih
     obtain ⟨α, hα⟩ := hα
-    obtain ⟨v', hv', rfl⟩ := Option.map_eq_some_iff.1 ((f.map_A α v).symm.trans hα)
+    obtain ⟨v', hv', rfl⟩ := Option.map_eq_some_iff.1 ((map_A f α v).symm.trans hα)
     exact ⟨v', hv.tail ⟨α, hv'⟩, rfl⟩
 
 /-- The components of the image of an entity are the images of its components. -/
 theorem image_isComponentOf (u : U) :
     f '' {v | I.IsComponentOf u v} = {w | J.IsComponentOf (f u) w} :=
-  Set.ext fun _ ↦ ⟨fun ⟨_, hv, hw⟩ ↦ hw ▸ f.isComponentOf hv,
-    fun h ↦ f.exists_isComponentOf_of_isComponentOf h⟩
+  Set.ext fun _ ↦ ⟨fun ⟨_, hv, hw⟩ ↦ hw ▸ isComponentOf f hv,
+    fun h ↦ exists_isComponentOf_of_isComponentOf f h⟩
 
 /-- Sort resolution passes from the target of a homomorphism to its source. -/
-theorem isSortResolved (f : Hom I J) (hJ : J.IsSortResolved) : I.IsSortResolved :=
-  fun u ↦ f.map_S u ▸ hJ (f u)
+theorem isSortResolved (f : F) (hJ : J.IsSortResolved) : I.IsSortResolved :=
+  fun u ↦ map_S f u ▸ hJ (f u)
 
 /-- Well-typedness passes from the target of a homomorphism to its source. -/
-theorem isWellTyped (f : Hom I J) (hJ : J.IsWellTyped) : I.IsWellTyped := fun α u v h ↦ by
-  simpa using hJ α (f u) (f v) (by rw [f.map_A, h]; rfl)
+theorem isWellTyped (f : F) (hJ : J.IsWellTyped) : I.IsWellTyped := fun α u v h ↦ by
+  simpa using hJ α (f u) (f v) (by rw [map_A f, h]; rfl)
 
 /-- Total well-typedness passes from the target of a homomorphism to its source. -/
-theorem isTotallyWellTyped (f : Hom I J) (hJ : J.IsTotallyWellTyped) : I.IsTotallyWellTyped :=
-  ⟨f.isWellTyped hJ.isWellTyped, fun α u h ↦ by simpa using hJ.total α (f u) (by simpa using h)⟩
+theorem isTotallyWellTyped (f : F) (hJ : J.IsTotallyWellTyped) : I.IsTotallyWellTyped :=
+  ⟨isWellTyped f hJ.isWellTyped, fun α u h ↦ by simpa using hJ.total α (f u) (by simpa using h)⟩
+
+end HomClass
+
+namespace Hom
+
+instance : FunLike (Hom I J) U V where
+  coe := toFun
+  coe_injective f g h := by cases f; cases g; congr
+
+instance : HomClass (Hom I J) I J where
+  map_S f := f.map_S'
+  map_A f := f.map_A'
+  map_R f := f.map_R' _ _
+
+variable (f : Hom I J)
+
+@[simp] theorem toFun_eq_coe : f.toFun = f := rfl
+
+@[ext] theorem ext {f g : Hom I J} (h : ∀ u, f u = g u) : f = g := DFunLike.ext f g h
+
+variable (I) in
+/-- The identity homomorphism. -/
+@[simps] protected def id : Hom I I where
+  toFun := id
+  map_S' _ := rfl
+  map_A' _ _ := Option.map_id'.symm
+  map_R' _ _ h := h
+
+/-- The composition of two homomorphisms. -/
+def comp (f' : Hom J K) (f : Hom I J) : Hom I K where
+  toFun := f' ∘ f
+  map_S' u := (HomClass.map_S f' _).trans (HomClass.map_S f u)
+  map_A' α u := by simp [Option.map_map]
+  map_R' _ _ h := HomClass.map_R f' (HomClass.map_R f h)
+
+@[simp] theorem comp_apply (f' : Hom J K) (u : U) : f'.comp f u = f' (f u) := rfl
+
+@[simp] theorem comp_id : f.comp (.id I) = f := rfl
+
+@[simp] theorem id_comp : (Hom.id J).comp f = f := rfl
 
 end Hom
 
@@ -332,14 +352,19 @@ instance : FunLike (Embedding I J) U V where
 instance : EmbeddingLike (Embedding I J) U V where
   injective' f := f.toEmbedding.injective
 
+instance : HomClass (Embedding I J) I J where
+  map_S f := f.map_S'
+  map_A f := f.map_A'
+  map_R f := (f.map_R' _ _).2
+
 variable (f : Embedding I J)
 
 /-- An embedding is a homomorphism. -/
 def toHom : Hom I J where
   toFun := f
-  map_S' := f.map_S'
-  map_A' := f.map_A'
-  map_R' ρ xs := (f.map_R' ρ xs).2
+  map_S' := HomClass.map_S f
+  map_A' := HomClass.map_A f
+  map_R' _ _ := HomClass.map_R f
 
 @[simp] theorem coe_toHom : ⇑f.toHom = f := rfl
 
@@ -347,10 +372,7 @@ def toHom : Hom I J where
 
 theorem injective : Function.Injective f := f.toEmbedding.injective
 
-@[simp] theorem map_S (u : U) : J.S (f u) = I.S u := f.map_S' u
-
-@[simp] theorem map_A (α : Sig.Attr) (u : U) : J.A α (f u) = (I.A α u).map f := f.map_A' α u
-
+/-- A tuple is a relation tuple exactly when its image under an embedding is. -/
 @[simp] theorem map_R {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → U} : f ∘ xs ∈ J.R ρ ↔ xs ∈ I.R ρ :=
   f.map_R' ρ xs
 
@@ -365,10 +387,10 @@ variable (I) in
 /-- The composition of two embeddings. -/
 def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
   toEmbedding := f.toEmbedding.trans f'.toEmbedding
-  map_S' u := (f'.map_S (f u)).trans (f.map_S u)
+  map_S' u := (HomClass.map_S f' (f u)).trans (HomClass.map_S f u)
   map_A' α u := by
     change K.A α (f' (f u)) = _
-    rw [f'.map_A, f.map_A, Option.map_map]; rfl
+    rw [HomClass.map_A f', HomClass.map_A f, Option.map_map]; rfl
   map_R' _ xs := (f'.map_R (xs := f ∘ xs)).trans f.map_R
 
 @[simp] theorem comp_apply (f' : Embedding J K) (u : U) : f'.comp f u = f' (f u) := rfl

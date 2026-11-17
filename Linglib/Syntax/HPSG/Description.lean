@@ -372,11 +372,11 @@ theorem satisfiesOn_image :
     J.SatisfiesOn (f '' D) (f ∘ g) (f u) d ↔ I.SatisfiesOn D g u d := by
   induction d generalizing g with
   | sortAssign t σ =>
-    rw [satisfiesOn_sortAssign, satisfiesOn_sortAssign, ← coe_toHom, f.toHom.termDenot_comp]
+    rw [satisfiesOn_sortAssign, satisfiesOn_sortAssign, HomClass.termDenot_comp]
     cases I.termDenot g t u <;> simp
   | pathEq t₁ t₂ =>
-    rw [satisfiesOn_pathEq, satisfiesOn_pathEq, ← coe_toHom, f.toHom.termDenot_comp,
-      f.toHom.termDenot_comp]
+    rw [satisfiesOn_pathEq, satisfiesOn_pathEq, HomClass.termDenot_comp,
+      HomClass.termDenot_comp]
     rcases I.termDenot g t₁ u with _ | a <;> rcases I.termDenot g t₂ u with _ | b <;>
       simp [f.injective.eq_iff, eq_comm]
   | rel ρ xs => exact f.map_R (xs := fun i ↦ g (xs i))
@@ -392,8 +392,7 @@ theorem satisfiesOn_image :
 /-- Satisfaction is invariant under embeddings: an entity satisfies a formula exactly when its
 image does, since the components of the image are the images of the components. -/
 theorem satisfies : J.Satisfies (f ∘ g) (f u) d ↔ I.Satisfies g u d := by
-  rw [Satisfies, ← coe_toHom, ← f.toHom.image_isComponentOf, coe_toHom, satisfiesOn_image,
-    Satisfies]
+  rw [Satisfies, ← HomClass.image_isComponentOf, satisfiesOn_image, Satisfies]
 
 /-- An interpretation that embeds into a model of a grammar is a model of it. -/
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=

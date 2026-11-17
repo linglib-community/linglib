@@ -60,9 +60,9 @@ def generatedEmbedding : Embedding (I.generated r) I where
 
 theorem isComponentOf_generated :
     (I.generated r).IsComponentOf v w ↔ I.IsComponentOf v.1 w.1 :=
-  ⟨(I.generatedEmbedding r).toHom.isComponentOf, fun h ↦ by
+  ⟨HomClass.isComponentOf (I.generatedEmbedding r), fun h ↦ by
     obtain ⟨w', hw', hw⟩ :=
-      (I.generatedEmbedding r).toHom.exists_isComponentOf_of_isComponentOf (u := v) h
+      HomClass.exists_isComponentOf_of_isComponentOf (I.generatedEmbedding r) (u := v) h
     rwa [← Subtype.ext hw]⟩
 
 /-- A generated sub-interpretation is rooted at its generator. -/
@@ -94,6 +94,6 @@ theorem Models.generated {G : Grammar Sig} (hI : I.Models G) (r : U) :
   (I.generatedEmbedding r).models hI
 
 theorem IsWellTyped.generated (hI : I.IsWellTyped) (r : U) : (I.generated r).IsWellTyped :=
-  (I.generatedEmbedding r).toHom.isWellTyped hI
+  HomClass.isWellTyped (I.generatedEmbedding r) hI
 
 end HPSG.RSRL.Interpretation
