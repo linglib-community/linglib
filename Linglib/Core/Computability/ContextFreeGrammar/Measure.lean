@@ -77,7 +77,7 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
           if r = ⟨A, syms⟩ then W.weight r else 0 from ?_, Finset.sum_ite_eq']
     · split_ifs with h
       · rfl
-      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (ContextFreeGrammar.mem_rulesWithInput.mpr ⟨h', rfl⟩)]
+      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (G.mem_rulesWithInput_input h')]
     · obtain ⟨-, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
       by_cases hs : r.output = syms
       · rw [Set.indicator_of_mem (by simpa using hs), ite_eq_left (by cases r; simp_all)]
@@ -197,7 +197,8 @@ theorem sum_mul_lintegral_offspring_ofCounts (x : ContextFreeRule T G.NT → ℕ
       = (∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞)) *
           ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal A) := by
         rw [Finset.sum_mul]
-        exact Finset.sum_congr rfl fun r hr ↦ by rw [(ContextFreeGrammar.mem_rulesWithInput.mp hr).2]
+        exact Finset.sum_congr rfl fun r hr ↦ by
+          rw [(ContextFreeGrammar.mem_rulesWithInput.mp hr).2]
     _ = ∑ r ∈ G.rulesWithInput A, (x r : ℝ≥0∞) * F r.output := by
         rw [lintegral_offspring_nonterminal, Finset.mul_sum]
         refine Finset.sum_congr rfl fun r hr ↦ ?_

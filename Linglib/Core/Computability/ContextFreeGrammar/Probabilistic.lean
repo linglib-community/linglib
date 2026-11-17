@@ -15,7 +15,8 @@ trees that is [the product of the rule weights raised to their
 counts](##PCFG.corpusProb_eq_prod_pow_ruleCounts). Normalizing rule counts at each nonterminal
 gives the relative-frequency estimate, which is
 [the maximum-likelihood PCFG](##PCFG.corpusProb_le_corpusProb_relFreq) of a corpus of licensed
-trees ([chi-1999]).
+trees ([chi-1999]), and [the only one](##PCFG.corpusProb_eq_corpusProb_relFreq_iff) at the
+nonterminals the corpus applies a rule to.
 
 ## Implementation notes
 
@@ -104,6 +105,12 @@ theorem sum_weight_le_one (A : G.NT) : ∑ r ∈ G.rulesWithInput A, W.weight r 
   · exact (W.sum_weight A hA).le
   · simp [ContextFreeGrammar.rulesWithInput_eq_empty_iff.mpr hA]
 
+theorem weight_le_one (r : ContextFreeRule T G.NT) : W.weight r ≤ 1 := by
+  by_cases hr : r ∈ G.rules
+  · exact (Finset.single_le_sum (f := W.weight) (fun _ _ ↦ zero_le)
+      (G.mem_rulesWithInput_input hr)).trans (W.sum_weight_le_one r.input)
+  · simp [hr]
+
 section
 
 variable [DecidableEq T]
@@ -174,22 +181,76 @@ theorem ofCounts_weight (hr : r ∈ G.rules) (h : ∑ r' ∈ G.rulesWithInput r.
   normalize_weight hr (by exact_mod_cast h) (by simp [← Nat.cast_sum])
 
 theorem ofCounts_weight_lt_ofCounts_weight_iff (hr : r ∈ G.rulesWithInput a)
-    (hr' : r' ∈ G.rulesWithInput a) : (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
+    (hr' : r' ∈ G.rulesWithInput a) :
+    (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
   rw [ofCounts, normalize_weight_lt_normalize_weight_iff hr hr'
     (by simp [← Nat.cast_sum]), Nat.cast_lt]
 
-/-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
-theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
-    ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
-  rw [← G.prod_inputs_prod_rulesWithInput, ← G.prod_inputs_prod_rulesWithInput]
-  refine Finset.prod_le_prod fun a _ ↦
-    (ENNReal.prod_pow_le_prod_div_sum_pow (W.sum_weight_le_one a) x).trans_eq ?_
+private theorem prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) (a : G.NT) :
+    ∏ r ∈ G.rulesWithInput a, (ofCounts x).weight r ^ x r =
+      ∏ r ∈ G.rulesWithInput a,
+        ((x r : ℝ≥0∞) / ∑ r' ∈ G.rulesWithInput a, (x r' : ℝ≥0∞)) ^ x r := by
   refine Finset.prod_congr rfl fun r hr ↦ ?_
   obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
   rcases Nat.eq_zero_or_pos (x r) with h | h
   · simp [h]
   rw [ofCounts_weight hmem
     (h.trans_le (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr)).ne']
+
+private theorem prod_pow_le_prod_ofCounts_pow_aux (x : ContextFreeRule T G.NT → ℕ) (a : G.NT) :
+    ∏ r ∈ G.rulesWithInput a, W.weight r ^ x r ≤
+      ∏ r ∈ G.rulesWithInput a, (ofCounts x).weight r ^ x r :=
+  (ENNReal.prod_pow_le_prod_div_sum_pow (W.sum_weight_le_one a) x).trans_eq
+    (prod_ofCounts_pow x a).symm
+
+/-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
+theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
+  rw [← G.prod_inputs_prod_rulesWithInput, ← G.prod_inputs_prod_rulesWithInput]
+  exact Finset.prod_le_prod fun a _ ↦ W.prod_pow_le_prod_ofCounts_pow_aux x a
+
+private theorem _root_.ENNReal.prod_eq_prod_iff_of_le {ι : Type*} {s : Finset ι} {f g : ι → ℝ≥0∞}
+    (hle : ∀ i ∈ s, f i ≤ g i) (h0 : ∀ i ∈ s, g i ≠ 0) (htop : ∀ i ∈ s, g i ≠ ⊤) :
+    ∏ i ∈ s, f i = ∏ i ∈ s, g i ↔ ∀ i ∈ s, f i = g i := by
+  refine ⟨fun h i hi ↦ ?_, Finset.prod_congr rfl⟩
+  have key : (∏ j ∈ s, f j / g j) * ∏ j ∈ s, g j = ∏ j ∈ s, g j := by
+    rw [← Finset.prod_mul_distrib, ← h]
+    exact Finset.prod_congr rfl fun j hj ↦ ENNReal.div_mul_cancel (h0 j hj) (htop j hj)
+  rw [ENNReal.mul_eq_right (Finset.prod_ne_zero_iff.mpr h0) (ENNReal.prod_ne_top htop)] at key
+  exact (ENNReal.div_eq_one_iff (h0 i hi) (htop i hi)).mp <|
+    (Finset.prod_eq_one_iff_of_le_one fun j hj ↦
+      ENNReal.div_le_of_le_mul (by simpa using hle j hj)).mp key i hi
+
+/-- Rule counts attain their greatest likelihood only at their relative frequencies: a PCFG giving
+them that likelihood has the relative frequencies as its weights at every nonterminal with a
+counted rule. -/
+theorem prod_pow_eq_prod_ofCounts_pow_iff (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
+      ∀ r ∈ G.rules, ∑ r' ∈ G.rulesWithInput r.input, x r' ≠ 0 →
+        W.weight r = (ofCounts x).weight r := by
+  rw [← G.prod_inputs_prod_rulesWithInput, ← G.prod_inputs_prod_rulesWithInput,
+    ENNReal.prod_eq_prod_iff_of_le (fun a _ ↦ W.prod_pow_le_prod_ofCounts_pow_aux x a)
+      (fun a _ ↦ Finset.prod_ne_zero_iff.mpr fun r hr ↦ ?_)
+      fun a _ ↦ ENNReal.prod_ne_top fun r _ ↦
+        ENNReal.pow_ne_top (ne_top_of_le_ne_top ENNReal.one_ne_top ((ofCounts x).weight_le_one r))]
+  · refine ⟨fun h r hr hX ↦ ?_, fun h a _ ↦ ?_⟩
+    · have ha := h r.input (G.input_mem_inputs hr)
+      rw [prod_ofCounts_pow,
+        ENNReal.prod_pow_eq_prod_div_sum_pow_iff (W.sum_weight_le_one _) hX] at ha
+      rw [ha r (G.mem_rulesWithInput_input hr), ofCounts_weight hr hX]
+    · by_cases hX : ∑ r' ∈ G.rulesWithInput a, x r' = 0
+      · exact Finset.prod_congr rfl fun r hr ↦ by simp [Finset.sum_eq_zero_iff.mp hX r hr]
+      · rw [prod_ofCounts_pow, ENNReal.prod_pow_eq_prod_div_sum_pow_iff (W.sum_weight_le_one _) hX]
+        intro r hr
+        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+        rw [h r hmem hX, ofCounts_weight hmem hX]
+  · obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+    rcases Nat.eq_zero_or_pos (x r) with h | h
+    · simp [h]
+    · have hX := (h.trans_le (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr)).ne'
+      rw [ofCounts_weight hmem hX]
+      exact pow_ne_zero _ (ENNReal.div_ne_zero.mpr
+        ⟨by exact_mod_cast h.ne', by simp [← Nat.cast_sum]⟩)
 
 /-! ### Corpora -/
 
@@ -235,6 +296,17 @@ theorem corpusProb_le_corpusProb_relFreq {D : Multiset (RoseTree (Symbol T G.NT)
     (hD : ∀ t ∈ D, t.Licensed G.Licenses) : W.corpusProb D ≤ (relFreq D).corpusProb D := by
   rw [W.corpusProb_eq_prod_pow_ruleCounts D hD, (relFreq D).corpusProb_eq_prod_pow_ruleCounts D hD]
   exact W.prod_pow_le_prod_ofCounts_pow _
+
+/-- **The maximum-likelihood PCFG is unique**: a PCFG giving a corpus of licensed derivation trees
+the probability its relative-frequency estimate does has the weights of that estimate at every
+nonterminal the corpus applies a rule to. -/
+theorem corpusProb_eq_corpusProb_relFreq_iff {D : Multiset (RoseTree (Symbol T G.NT))}
+    (hD : ∀ t ∈ D, t.Licensed G.Licenses) :
+    W.corpusProb D = (relFreq D).corpusProb D ↔
+      ∀ r ∈ G.rules, ∑ r' ∈ G.rulesWithInput r.input, RoseTree.ruleCounts D r' ≠ 0 →
+        W.weight r = (relFreq D).weight r := by
+  rw [W.corpusProb_eq_prod_pow_ruleCounts D hD, (relFreq D).corpusProb_eq_prod_pow_ruleCounts D hD]
+  exact W.prod_pow_eq_prod_ofCounts_pow_iff _
 
 end
 
