@@ -28,7 +28,8 @@ nonempty subsets only for finite sums.
 
 ## References
 
-* [bylinina-nouwen-2018], [champollion-krifka-2016], [krifka-1989], [krifka-1998], [link-1983]
+* [bylinina-nouwen-2018], [champollion-krifka-2016], [krifka-1989], [krifka-1998],
+  [landman-2020], [link-1983]
 -/
 
 @[expose] public section
@@ -224,9 +225,16 @@ def atomsBelow (x : α) : Set α := {a | Atom a ∧ a ≤ x}
 theorem atomsBelow_of_atom (h : Atom x) : atomsBelow x = {x} :=
   Set.ext fun _ ↦ ⟨fun hy ↦ h.eq hy.2 hy.1.not_isBot, by rintro rfl; exact ⟨h, le_rfl⟩⟩
 
+/-- `count Z x` is the number of parts of `x` in `Z`, the cardinality of `x` relative to `Z`
+([landman-2020]). -/
+noncomputable def count (Z : Set α) (x : α) : ℕ := (Set.Iic x ∩ Z).ncard
+
 variable (α) in
 /-- `atomCount α x` is the number of atoms below `x` ([champollion-krifka-2016]). -/
-noncomputable def atomCount (x : α) : ℕ := (atomsBelow x).ncard
+noncomputable def atomCount (x : α) : ℕ := count {a | Atom a} x
+
+theorem atomCount_eq_ncard (x : α) : atomCount α x = (atomsBelow x).ncard :=
+  congrArg Set.ncard (Set.ext fun _ ↦ and_comm)
 
 /-- Two elements overlap ([krifka-1998]) if they share a non-null part. -/
 def Overlap (x y : α) : Prop := ∃ z, ¬ IsBot z ∧ z ≤ x ∧ z ≤ y
@@ -355,8 +363,8 @@ theorem atomsBelow_finset {β : Type*} (s : Finset β) :
 
 /-- A finite set has as many atomic parts as members. -/
 theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s = s.card := by
-  rw [atomCount, atomsBelow_finset, Set.ncard_image_of_injective _ Finset.singleton_injective,
-    Set.ncard_coe_finset]
+  rw [atomCount_eq_ncard, atomsBelow_finset,
+    Set.ncard_image_of_injective _ Finset.singleton_injective, Set.ncard_coe_finset]
 
 theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
   ⟨fun h _ hy ↦ h.2 (not_isBot _) hy, fun h ↦ ⟨not_isBot x, fun _ _ hy ↦ h hy⟩⟩

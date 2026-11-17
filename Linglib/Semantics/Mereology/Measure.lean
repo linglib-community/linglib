@@ -46,6 +46,7 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
   obtain ⟨a, ha, hax⟩ : ∃ a ∈ t, ¬ a ≤ x := by
     by_contra! hno
     exact hxy.not_ge (Finset.sup'_le ht id hno)
+  rw [atomCount_eq_ncard, atomCount_eq_ncard]
   exact Set.ncard_lt_ncard ((Set.ssubset_iff_of_subset hsub).2
     ⟨a, ⟨hP (hPt a ha), Finset.le_sup' id ha⟩, fun h ↦ hax h.2⟩) (Set.toFinite _)
 
