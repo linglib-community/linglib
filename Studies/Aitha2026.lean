@@ -32,8 +32,9 @@ insertion runs from the root outward, and
 [n is realized before anything outside it has an exponent](##light_notMem_contextAt). The
 alternation is the phonology of one underlying *-am-ni*,
 derived in Kiparsky's Stratal OT from prespecified stress on the singular suffix *-ni*. The
-strata are needed: the consonant that deletes inside the word is kept before a postposition, and
-[no ranking makes the outputs of both strata optimal](##wordGrammar_inf_phraseGrammar).
+two strata rank the constraints differently: the consonant that deletes inside the word is kept
+before a postposition, and
+[no ranking makes the winners of both strata's tableaux optimal](##wordGrammar_inf_phraseGrammar).
 
 ## Implementation notes
 
