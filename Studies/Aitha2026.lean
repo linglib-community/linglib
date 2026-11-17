@@ -764,8 +764,8 @@ def phraseGrammar : Grammar Con 9 := postpositional.grammar ⊓ quantifiedPhrase
 
 -- the grammars of the diagrams lie below the grammars of the strata
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
-  le_inf (le_inf (holds_word _ (by decide +kernel)).ofRel_le (holds_word _ (by decide +kernel)).ofRel_le)
-    (holds_word _ (by decide +kernel)).ofRel_le
+  le_inf (le_inf (holds_word _ (by decide)).ofRel_le (holds_word _ (by decide)).ofRel_le)
+    (holds_word _ (by decide)).ofRel_le
 
 theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
   le_inf (holds_phrase _ (by decide +kernel)).ofRel_le (holds_phrase _ (by decide +kernel)).ofRel_le
@@ -793,7 +793,7 @@ instance : Nonempty Con := ⟨.max⟩
 -- constraint
 theorem dativeWord_inf_postpositional : dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
   Grammar.ofWinner_inf_ofWinner_eq_bot (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)")
-    (d' := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)") (by decide +kernel) (by decide +kernel) (by decide +kernel)
+    (d' := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)") (by decide) (by decide) (by decide +kernel)
 
 /-- The strata are different grammars: no ranking of the constraints makes the winners of the
 Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
