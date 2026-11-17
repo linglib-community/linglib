@@ -256,9 +256,8 @@ theorem isCluster_iff {x : α} :
       fun z hz ↦ ⟨hP z hz, SimpleGraph.ConnectedComponent.sound (hR z hz z₀ hz₀)⟩, hx⟩
 
 /-- Maximal clusters do not overlap, since each would contain the other. -/
-theorem disjointPred_isMaxCluster : DisjointPred Overlap {x | IsMaxCluster C P x} := by
-  rintro ⟨x, hx, y, hy, hne, hov⟩
-  exact hne (le_antisymm (hy.2 x hx.1 hov) (hx.2 y hy.1 hov.symm))
+theorem disjointPred_isMaxCluster : DisjointPred {x | IsMaxCluster C P x} :=
+  fun x hx y hy hne hov ↦ hne (le_antisymm (hy.2 x hx.1 hov) (hx.2 y hy.1 hov.symm))
 
 end Cluster
 

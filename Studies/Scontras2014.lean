@@ -28,7 +28,7 @@ measure term by lexical reinterpretation as the class of containers of a unit qu
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
 self-connection ((74), `Mereology.IsSelfConnected`), and a partition returns such units ((75),
-(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred Overlap`) does not stop the water
+(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred`) does not stop the water
 in a glass from counting as two. Either way the members of a partition form an antichain, so
 each of them measures one relative atom under the relative-atom measure of (68)
 (`pAtomMeasure_eq_one`), which is what lets cardinal numerals count them.
@@ -155,8 +155,8 @@ theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k
 
 -- (66)
 theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
-    (h : DisjointPred Overlap {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
-  fun x hx y hy hxy hle ↦ h ⟨x, hx, y, hy, hxy, .of_le (not_isBot x) hle⟩
+    (h : DisjointPred {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
+  fun x hx _ hy hxy hle ↦ h hx hy hxy (.of_le (not_isBot x) hle)
 
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by
