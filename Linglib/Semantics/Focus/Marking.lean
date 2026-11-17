@@ -25,6 +25,8 @@ its base position or is fronted (`Focus.Strategy`).
 * `Focus.Mark`: F-marked or unfeatured, a two-element linear order.
 * `WithAlternatives.mark`: the meaning of a constituent bearing a mark.
 * `Focus.Strategy`: a focus realized in place or fronted.
+* `Focus.minimal_iff_of_iff_forall_focused`: the least marking that F-marks given constituents
+  F-marks only those.
 
 ## Main results
 
@@ -39,6 +41,7 @@ its base position or is fronted (`Focus.Strategy`).
 * [krifka-2008]
 * [rooth-1992]
 * [hartmann-zimmermann-2007]
+* [schwarzschild-1999]
 -/
 
 @[expose] public section
@@ -64,6 +67,31 @@ instance : BoundedOrder Mark where
 instance : IsSimpleOrder Mark where
   exists_pair_ne := ⟨.unfeatured, .focused, by decide⟩
   eq_bot_or_eq_top := by decide
+
+/-- Among the markings of the constituents `ι`, ordered by which are F-marked, the least that
+F-marks every constituent of `S` F-marks nothing else: [schwarzschild-1999]'s economy of
+F-marking, when what is required is F-marks on given constituents. -/
+theorem minimal_iff_of_iff_forall_focused {ι : Type*} {p : (ι → Mark) → Prop} {S : Set ι}
+    (hp : ∀ m, p m ↔ ∀ i ∈ S, m i = .focused) {m : ι → Mark} :
+    Minimal p m ↔ ∀ j, m j = .focused ↔ j ∈ S := by
+  have hlt : ¬ Mark.focused ≤ .unfeatured := by decide
+  classical
+  refine ⟨fun hm j ↦ ⟨fun hj ↦ by_contra fun hjS ↦ ?_, (hp m).1 hm.1 j⟩,
+    fun h ↦ ⟨(hp m).2 fun i hi ↦ (h i).2 hi, fun m' hm' _ j ↦ ?_⟩⟩
+  · have hle : (fun k ↦ if k ∈ S then Mark.focused else .unfeatured) ≤ m := fun k ↦ by
+      by_cases hk : k ∈ S
+      · simp [hk, (hp m).1 hm.1 k hk]
+      · simp only [hk, ↓reduceIte]; exact (bot_le : (⊥ : Mark) ≤ m k)
+    have := hm.2 ((hp _).2 fun i hi ↦ by simp [hi]) hle j
+    simp only [hj, hjS, ↓reduceIte] at this
+    exact hlt this
+  · by_cases hj : j ∈ S
+    · rw [(hp m').1 hm' j hj]; exact (le_top : m j ≤ (⊤ : Mark))
+    · have : m j = .unfeatured := by
+        cases hmj : m j
+        · rfl
+        · exact absurd ((h j).1 hmj) hj
+      rw [this]; exact (bot_le : (⊥ : Mark) ≤ m' j)
 
 /-- A focused constituent is realized in its base position or fronted to the left periphery of
 its clause. -/
