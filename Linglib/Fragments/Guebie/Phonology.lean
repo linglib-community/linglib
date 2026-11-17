@@ -59,7 +59,7 @@ def e : Segment := vowel .«e»
 /-- The advanced mid central vowel /ə/. PHOIBLE's /ə/ is [−tense], which the tongue-root reading
 makes [−ATR]; Guébie's /ə/ is [+ATR] in the feature table (5) of [sande-2022] (p. 5), and the
 plural suffix alternates between /ə/ and /a/ ((2) of [sande-clem-dabkowski-2026], p. 3). -/
-def schwa : Segment := vowel .«ə» (.ofSpecs [(.atr, true)])
+def schwa : Segment := vowel .«ə» [+atr]
 
 /-- The advanced mid back vowel /o/. -/
 def o : Segment := vowel .«o»
@@ -87,7 +87,7 @@ def vowels : Finset Segment :=
   ⟨↑[i, e, schwa, o, u, smallCapitalI, epsilon, a, openO, upsilon], by decide⟩
 
 /-- A segment's [ATR] value, `true` for [+ATR]. -/
-def atr (x : Segment) : Bool := decide (x.HasValue .atr true)
+def atr (x : Segment) : Bool := decide (x .atr = true)
 
 theorem atr_iff : ∀ x ∈ vowels, atr x = true ↔ x ∈ ({i, e, schwa, o, u} : Finset Segment) := by
   decide

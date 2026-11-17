@@ -159,15 +159,15 @@ instance : LinearOrder Sonority :=
 and [sonorant], the four features that cut the hierarchy. -/
 def toSegment : Sonority → Segment
   | .obstruent =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, false)]
+    [−syllabic, +consonantal, −approximant, −sonorant]
   | .nasal =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, true)]
+    [−syllabic, +consonantal, −approximant, +sonorant]
   | .liquid =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, true), (.sonorant, true)]
+    [−syllabic, +consonantal, +approximant, +sonorant]
   | .glide =>
-    .ofSpecs [(.syllabic, false), (.consonantal, false), (.approximant, true), (.sonorant, true)]
+    [−syllabic, −consonantal, +approximant, +sonorant]
   | .vowel =>
-    .ofSpecs [(.syllabic, true), (.consonantal, false), (.approximant, true), (.sonorant, true)]
+    [+syllabic, −consonantal, +approximant, +sonorant]
 
 /-- The features that define a class (Hayes p. 77): [−sonorant] for an obstruent, [−approximant,
 +sonorant] for a nasal, [+consonantal, +approximant] for a liquid, [−syllabic, −consonantal] for a
@@ -175,30 +175,30 @@ glide and [+syllabic, −consonantal] for a vowel. Hayes lists a vowel as [+syll
 complication of the syllabic consonants left to his next section, and his Table 4.1 has it
 [−consonantal]. -/
 def description : Sonority → Segment
-  | .obstruent => .ofSpecs [(.sonorant, false)]
-  | .nasal => .ofSpecs [(.approximant, false), (.sonorant, true)]
-  | .liquid => .ofSpecs [(.consonantal, true), (.approximant, true)]
-  | .glide => .ofSpecs [(.syllabic, false), (.consonantal, false)]
-  | .vowel => .ofSpecs [(.syllabic, true), (.consonantal, false)]
+  | .obstruent => [−sonorant]
+  | .nasal => [−approximant, +sonorant]
+  | .liquid => [+consonantal, +approximant]
+  | .glide => [−syllabic, −consonantal]
+  | .vowel => [+syllabic, −consonantal]
 
 /-- The sonority of a segment: an obstruent if [−sonorant], else a nasal if [−approximant], else
 a liquid if [+consonantal], else a vowel if [+syllabic], and otherwise a glide. A syllabic liquid
 or nasal keeps the sonority of its class. -/
 def ofSegment (s : Segment) : Sonority :=
-  if s.HasValue .sonorant false then .obstruent
-  else if s.HasValue .approximant false then .nasal
-  else if s.HasValue .consonantal true then .liquid
-  else if s.HasValue .syllabic true then .vowel
+  if s .sonorant = false then .obstruent
+  else if s .approximant = false then .nasal
+  else if s .consonantal = true then .liquid
+  else if s .syllabic = true then .vowel
   else .glide
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
 
 /-- [sonorant], [approximant], [consonantal] and [syllabic] cut the hierarchy (Table 4.1). -/
 theorem isCut_features :
-    IsCut id {c : Sonority | c.toSegment.HasValue .sonorant true} ∧
-      IsCut id {c : Sonority | c.toSegment.HasValue .approximant true} ∧
-      IsCut id {c : Sonority | c.toSegment.HasValue .consonantal false} ∧
-      IsCut id {c : Sonority | c.toSegment.HasValue .syllabic true} := by
+    IsCut id {c : Sonority | c.toSegment .sonorant = true} ∧
+      IsCut id {c : Sonority | c.toSegment .approximant = true} ∧
+      IsCut id {c : Sonority | c.toSegment .consonantal = false} ∧
+      IsCut id {c : Sonority | c.toSegment .syllabic = true} := by
   refine ⟨⟨.Ici nasal, ?_⟩, ⟨.Ici liquid, ?_⟩, ⟨.Ici glide, ?_⟩, ⟨.Ici vowel, ?_⟩⟩ <;>
   · ext c
     simp only [Set.mem_preimage, id, UpperSet.coe_Ici, Set.mem_Ici]
@@ -209,24 +209,25 @@ def features : Finset Feature := {.sonorant, .approximant, .consonantal, .syllab
 
 theorem ofSegment_congr {s s' : Segment} (h : ∀ f ∈ features, s f = s' f) :
     ofSegment s = ofSegment s' := by
-  simp only [ofSegment, Segment.HasValue, h _ (by decide : Feature.sonorant ∈ features),
+  simp only [ofSegment, h _ (by decide : Feature.sonorant ∈ features),
     h _ (by decide : Feature.approximant ∈ features),
     h _ (by decide : Feature.consonantal ∈ features),
     h _ (by decide : Feature.syllabic ∈ features)]
 
 theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (v : Bool) :
     ofSegment (s.setFeature f v) = ofSegment s :=
-  ofSegment_congr fun g hg ↦ Segment.setFeature_apply_of_ne (s := s) (by rintro rfl; exact hf hg) v
+  ofSegment_congr fun g hg ↦ Segment.setFeature_apply_of_ne (by rintro rfl; exact hf hg) s v
 
 @[simp] theorem ofSegment_toSegment (c : Sonority) : ofSegment c.toSegment = c := by
   cases c <;> decide
 
-theorem apply_eq_toSegment_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) {f : Feature}
-    (hf : f ∈ features) : s f = c.toSegment f := by
+theorem apply_eq_toSegment_of_le {c : Sonority} {s : Segment}
+    (h : c.toSegment ≤ s) {f : Feature} (hf : f ∈ features) :
+    s f = c.toSegment f := by
   have key : ∀ c : Sonority, ∀ f ∈ features, ∃ v, c.toSegment f = some v := by decide
   obtain ⟨v, hv⟩ := key c f hf
   rw [hv]
-  exact (Segment.le_iff_forall_hasValue s).1 h f v hv
+  exact h f v hv
 
 /-- A segment with the values of a column of Table 4.1 has that column's sonority. -/
 theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
@@ -237,16 +238,14 @@ theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) 
 holds. -/
 theorem description_le_iff {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
     c'.description ≤ s ↔ c' = c := by
-  have hsupp : ∀ c' : Sonority, ∀ f ∉ features, c'.description f = ⊥ := by decide
+  have hsupp : ∀ c' : Sonority, ∀ f v, c'.description f = some v → f ∈ features := by decide
   have key : ∀ c c' : Sonority, c'.description ≤ c.toSegment ↔ c' = c := by decide
   rw [← key c c']
-  refine forall_congr' fun f ↦ ?_
-  by_cases hf : f ∈ features
-  · rw [apply_eq_toSegment_of_le h hf]
-  · simp [hsupp c' f hf]
+  exact forall₂_congr fun f v ↦ imp_congr_right fun hv ↦ by
+    rw [apply_eq_toSegment_of_le h (hsupp c' f v hv)]
 
-theorem description_le_iff_ofSegment_eq {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
-    c'.description ≤ s ↔ ofSegment s = c' := by
+theorem description_le_iff_ofSegment_eq {c c' : Sonority} {s : Segment}
+    (h : c.toSegment ≤ s) : c'.description ≤ s ↔ ofSegment s = c' := by
   rw [description_le_iff h, ofSegment_eq_of_le h, eq_comm]
 
 /-- The sonority rise from `a` to `b` is positive when sonority rises, zero on a plateau,
@@ -273,28 +272,28 @@ theorem rise_add_rise (a b c : Sonority) : rise a b + rise b c = rise a c := by
 /-- [continuant] is not a sonority feature: its positive class is not contiguous on the hierarchy
 (p. 78). -/
 theorem not_contiguous_continuant :
-    ¬ Contiguous ofSegment {s : Segment | s.HasValue .continuant true} := by
+    ¬ Contiguous ofSegment {s : Segment | s .continuant = true} := by
   intro h
-  exact absurd (contiguous_iff.1 h (.ofSpecs [(.sonorant, false), (.continuant, true)]) (by decide)
-    (.ofSpecs [(.syllabic, true), (.sonorant, true), (.approximant, true), (.continuant, true)])
-    (by decide) (.ofSpecs [(.sonorant, true), (.approximant, false), (.continuant, false)])
+  exact absurd (contiguous_iff.1 h ([−sonorant, +continuant]) (by decide)
+    ([+syllabic, +sonorant, +approximant, +continuant])
+    (by decide) ([+sonorant, −approximant, −continuant])
     (by decide) (by decide)) (by decide)
 
 theorem naturalClass_description (c : Sonority) :
-    c.description.naturalClass (Finset.univ.image Sonority.toSegment) = {c.toSegment} := by
+    naturalClass c.description (Finset.univ.image Sonority.toSegment) = {c.toSegment} := by
   revert c
   decide +kernel
 
 /-- Among the columns of Table 4.1, the natural classes are the contiguous sets (p. 76). -/
-theorem isNaturalClass_image_iff {S : Finset Sonority} (hS : S.Nonempty) :
+theorem isNaturalClass_image_iff {S : Finset Sonority} :
     IsNaturalClass (Finset.univ.image Sonority.toSegment) (S.image Sonority.toSegment) ↔
       (S : Set Sonority).OrdConnected := by
   simp only [Set.ordConnected_iff, Finset.mem_coe, Set.subset_def, Set.mem_Icc]
-  have key : ∀ S : Finset Sonority, S.Nonempty →
+  have key : ∀ S : Finset Sonority,
       (IsNaturalClass (Finset.univ.image toSegment) (S.image toSegment) ↔
         ∀ a ∈ S, ∀ b ∈ S, a ≤ b → ∀ c, a ≤ c ∧ c ≤ b → c ∈ S) := by
     decide +kernel
-  exact key S hS
+  exact key S
 
 open Data.PHOIBLE.FeatureMatrix in
 /-- Chart segments fall into the sonority classes of their glyphs, the nasal by its
@@ -309,13 +308,13 @@ namespace Segment
 variable (s : Segment)
 
 theorem isVowel_iff_le : s.IsVowel ↔ Sonority.vowel.description ≤ s := by
-  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel, IsSyllabic]
+  simp [Sonority.description, IsVowel, IsSyllabic]
 
 theorem isObstruent_iff_le : s.IsObstruent ↔ Sonority.obstruent.description ≤ s := by
-  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
+  simp [Sonority.description, IsObstruent]
 
 theorem isNasal_iff_le : s.IsNasal ↔ Sonority.nasal.description ≤ s := by
-  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
+  simp [Sonority.description, IsNasal]
 
 end Segment
 

@@ -106,26 +106,29 @@ open Phonology
 /-- The segment of a feature matrix reads the matrix along `Feature.toPHOIBLE`, with [−round]
 where PHOIBLE marks [round] not applicable. -/
 def toSegment (m : FeatureMatrix) : Segment :=
-  Function.update (m ∘ Phonology.Feature.toPHOIBLE) .round ((m .round).unbotD false : Bool)
+  ⟨Function.update (fun f : Phonology.Feature ↦ (m f.toPHOIBLE : Option Bool)) .round
+    (some ((m .round).unbotD false))⟩
 
 theorem toSegment_apply_of_ne_round (m : FeatureMatrix) {f : Phonology.Feature}
-    (h : f ≠ .round) : m.toSegment f = m f.toPHOIBLE :=
-  Function.update_of_ne h ..
+    (h : f ≠ .round) : m.toSegment f = m f.toPHOIBLE := by
+  simp [toSegment, Function.update_of_ne h]
 
 @[simp] theorem toSegment_round (m : FeatureMatrix) :
-    m.toSegment .round = ((m .round).unbotD false : Bool) :=
-  Function.update_self ..
+    m.toSegment .round = some ((m .round).unbotD false) := by
+  simp [toSegment]
 
 /-- The segments of feature matrices are exactly those specified for [round], since each other
 feature of `Phonology.Feature` is a column of its own. -/
-theorem range_toSegment : Set.range toSegment = {s : Segment | s .round ≠ ⊥} := by
+theorem range_toSegment : Set.range toSegment = {s : Segment | s .round ≠ none} := by
   refine Set.ext fun s ↦ ⟨by rintro ⟨m, rfl⟩; simp, fun hs ↦ ?_⟩
-  refine ⟨Function.extend Phonology.Feature.toPHOIBLE s ⊥, funext fun f ↦ ?_⟩
-  have he := Phonology.Feature.toPHOIBLE_injective.extend_apply s ⊥ f
+  let s' : Phonology.Feature → Flat Bool := fun f ↦ s f
+  refine ⟨Function.extend Phonology.Feature.toPHOIBLE s' ⊥, Segment.ext' fun f ↦ ?_⟩
+  have he : Function.extend Phonology.Feature.toPHOIBLE s' ⊥ f.toPHOIBLE = s f :=
+    Phonology.Feature.toPHOIBLE_injective.extend_apply s' ⊥ f
   obtain rfl | hf := eq_or_ne f .round
-  · obtain ⟨b, hb⟩ := Flat.ne_bot_iff_exists.1 hs
+  · obtain ⟨b, hb⟩ := Option.ne_none_iff_exists'.1 hs
     simp only [Phonology.Feature.toPHOIBLE] at he
-    rw [toSegment_round, he, hb, Flat.unbotD_coe]
+    rw [toSegment_round, he, hb]; rfl
   · rw [toSegment_apply_of_ne_round _ hf, he]
 
 /-! ### The tongue-root reading -/
@@ -142,9 +145,10 @@ def tenseAsATR (m : FeatureMatrix) : FeatureMatrix :=
     Function.update_of_ne (by decide), Function.update_self]
 
 @[simp] theorem toSegment_tenseAsATR_tense (m : FeatureMatrix) :
-    m.tenseAsATR.toSegment .tense = ⊥ := by
+    m.tenseAsATR.toSegment .tense = none := by
   rw [toSegment_apply_of_ne_round _ (by decide), Phonology.Feature.toPHOIBLE, tenseAsATR,
     Function.update_self]
+  rfl
 
 theorem toSegment_tenseAsATR_of_ne (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
     (ht : f ≠ .tense) : m.tenseAsATR.toSegment f = m.toSegment f := by
@@ -158,11 +162,11 @@ theorem toSegment_tenseAsATR_of_ne (m : FeatureMatrix) {f : Phonology.Feature} (
 /-! ### Witnesses from the chart -/
 
 /-- An unrounded vowel is [−round] and a rounded one keeps its [+round]. -/
-example : «i».toSegment.HasValue .round false ∧ «u».toSegment.HasValue .round true := by decide
+example : «i».toSegment .round = false ∧ «u».toSegment .round = true := by decide
 
 /-- A velar stop is [−back], so the absence of a [back] value does not pick out
 consonants. -/
-example : «k».toSegment.HasValue .back false := by decide
+example : «k».toSegment .back = false := by decide
 
 /-- A long vowel differs from its short counterpart only in [long], which `Phonology.Feature`
 lacks, so the two have one segment. -/
@@ -170,9 +174,9 @@ example : «aː».toSegment = «a».toSegment ∧ «aː» ≠ «a» := by decide
 
 /-- The chart makes /i/ [−ATR]. Its tongue-root reading makes /i/ [+ATR] and /ɪ/ [−ATR], and
 leaves the low vowel, which has no [tense], at the chart's [−ATR]. -/
-example : «i».toSegment.HasValue .atr false ∧ «i».tenseAsATR.toSegment.HasValue .atr true ∧
-    «ɪ».tenseAsATR.toSegment.HasValue .atr false ∧
-    «a».tenseAsATR.toSegment.HasValue .atr false := by
+example : «i».toSegment .atr = false ∧ «i».tenseAsATR.toSegment .atr = true ∧
+    «ɪ».tenseAsATR.toSegment .atr = false ∧
+    «a».tenseAsATR.toSegment .atr = false := by
   decide
 
 end Data.PHOIBLE.FeatureMatrix
@@ -206,14 +210,14 @@ open Data.PHOIBLE
 those of `m` elsewhere, kept on the features in `contrastive`. -/
 def ofChart (m : FeatureMatrix) (departure : Segment := ⊥)
     (contrastive : Finset Feature := Finset.univ) : Segment :=
-  Segment.restrict contrastive fun f ↦ (departure f).or (m.toSegment f)
+  Segment.restrict contrastive (departure.or m.toSegment)
 
 theorem ofChart_apply {m : FeatureMatrix} {departure : Segment} {contrastive : Finset Feature}
-    {f : Feature} (hf : f ∈ contrastive) (hd : departure f = ⊥) :
+    {f : Feature} (hf : f ∈ contrastive) (hd : departure f = none) :
     ofChart m departure contrastive f = m.toSegment f := by
-  rw [ofChart, Segment.restrict, Finset.piecewise_eq_of_mem _ _ _ hf, hd, Flat.bot_or]
+  simp [ofChart, Segment.restrict_apply, hf, hd]
 
 @[simp] theorem ofChart_eq_toSegment (m : FeatureMatrix) : ofChart m = m.toSegment :=
-  funext fun f ↦ ofChart_apply (Finset.mem_univ f) rfl
+  Segment.ext' fun f ↦ ofChart_apply (Finset.mem_univ f) rfl
 
 end Phonology.Segment

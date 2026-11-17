@@ -112,11 +112,11 @@ theorem lateral_mem_featureClass_lingual : Feature.lateral ∈ featureClass node
 
 /-- §4, p. 134: Jacobs's underlying representation of a segment, with [lateral] only on a liquid,
 CORONAL never, and LABIAL and DORSAL where present. -/
-def underlying (s : Segment) : Segment
+def underlying (s : Segment) : Segment := ⟨fun
   | .lateral => if Sonority.ofSegment s = .liquid then s .lateral else none
-  | .labial => if s.HasValue .labial true then some true else none
-  | .dorsal => if s.HasValue .dorsal true then some true else none
-  | _ => none
+  | .labial => if s .labial = true then some true else none
+  | .dorsal => if s .dorsal = true then some true else none
+  | _ => none⟩
 
 /-- A segment bears a node when it specifies a feature of the node's class. -/
 def Bears (s : Segment) (a : Node) : Prop := ∃ f ∈ featureClass node a, (s f).isSome
@@ -125,14 +125,14 @@ instance (s : Segment) (a : Node) : Decidable (Bears s a) := by unfold Bears; in
 
 /-- The LINGUAL tier: the C-place segments whose underlying representation bears LINGUAL. -/
 def OnLingualTier (s : Segment) : Prop :=
-  s.HasValue .syllabic false ∧ Bears (underlying s) .lingual
+  s .syllabic = false ∧ Bears (underlying s) .lingual
 
 instance : DecidablePred OnLingualTier := fun s ↦ by unfold OnLingualTier; infer_instance
 
 /-- Steriade's tier: the C-place segments whose underlying representation specifies
 [lateral]. -/
 def OnLateralTier (s : Segment) : Prop :=
-  s.HasValue .syllabic false ∧ (underlying s .lateral).isSome
+  s .syllabic = false ∧ (underlying s .lateral).isSome
 
 instance : DecidablePred OnLateralTier := fun s ↦ by unfold OnLateralTier; infer_instance
 

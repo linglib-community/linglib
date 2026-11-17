@@ -47,7 +47,7 @@ each of them measures one relative atom under the relative-atom measure of (68)
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
   `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
-  agrees on carriers without a null individual (`IsClassicalMereology.overlap_iff`); on a carrier
+  agrees on carriers without a null individual (`Mereology.overlap_iff_exists_le`); on a carrier
   with one, the clause-free version holds of any two individuals and makes self-connection
   trivial. The maximality of (75) is mathlib's `Maximal`.
 

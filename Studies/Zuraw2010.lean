@@ -47,6 +47,7 @@ substitution on voiced velar *g* entails substitution on every stop (`g_implies_
 namespace Zuraw2010
 
 open OptimalityTheory Finset ProbabilityTheory
+open scoped Phonology
 
 /-! ### Stems and substitution decisions -/
 
@@ -72,9 +73,9 @@ def StemC.segment : StemC → Phonology.Segment
   | .b => Tagalog.b | .d => Tagalog.d | .g => Tagalog.g
 
 theorem mem_iff_segment (c : StemC) :
-    (c ∈ [StemC.p, .t, .k] ↔ Phonology.Segment.ofSpecs [(.voice, false)] ≤ c.segment) ∧
-      (c ∈ [StemC.k, .g] ↔ Phonology.Segment.ofSpecs [(.dorsal, true)] ≤ c.segment) ∧
-      (c ∈ [StemC.t, .d, .k, .g] ↔ Phonology.Segment.ofSpecs [(.labial, false)] ≤ c.segment) := by
+    (c ∈ [StemC.p, .t, .k] ↔ [−voice] ≤ c.segment) ∧
+      (c ∈ [StemC.k, .g] ↔ [+dorsal] ≤ c.segment) ∧
+      (c ∈ [StemC.t, .d, .k, .g] ↔ [−labial] ≤ c.segment) := by
   cases c <;> decide
 
 /-- `c.nasal` is the nasal at the place of the stop `c`. -/

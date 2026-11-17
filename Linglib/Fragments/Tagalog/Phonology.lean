@@ -126,7 +126,7 @@ theorem subset_tgl : consonants ∪ vowels ⊆ Inventories.Tagalog.tgl.segments 
 
 /-- The consonants that a preceding nasal assimilates to, which are those that are not nasals.
 The glides and `h` are not consonantal. -/
-def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
+def trigger : Segment := [+consonantal, −nasal]
 
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following non-nasal
 consonant. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Semantics.Mereology.Classical
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Basic.PEquiv
 
@@ -16,9 +16,10 @@ members, and ∪ its partial inverse, `Set.Iic`.
 
 [∩ undoes ∪](##Kind.down_up), and [∪ undoes ∩](##Kind.up_down) on a property closed downward
 wherever ∩ is defined, that is, wherever the property has instances its extension has a largest
-member. Closure under sums gives the largest member, not closure downward: over a complete
-semilattice ∩ is defined on a property closed under arbitrary sums, so ∪ undoes ∩ on one that is
-also closed downward (`Kind.up_down_of_sSup_mem`), and ∩ is defined on a finite property closed
+member. Closure under sums gives the largest member, not closure downward: in a classical
+mereology ∩ is defined on a property closed under arbitrary sums, where
+[its value is the sum of the instances](##Kind.sum_mem_down), so ∪ undoes ∩ on one that is also
+closed downward (`Kind.up_down_of_sumClosed`), and ∩ is defined on a finite property closed
 under binary sums (`Kind.down_dom_of_supClosed`). On the plural of a singular property, ∪∩
 restores the [atoms beneath the pluralities](##Kind.up_down_of_forall_atom). ∩ is
 [undefined for a singular property](##Kind.down_notMem_of_atom) when no kind is singular wherever
@@ -145,10 +146,27 @@ theorem down_dom_of_supClosed [SemilatticeSup E] (hcum : SupClosed (P s)) (hfin 
     (hne : (P s).Nonempty) : (down P s).Dom :=
   hcum.directedOn.iota_isGreatest_dom hfin hne
 
-theorem up_down_of_sSup_mem [CompleteSemilatticeSup E] (hP : ∀ s, IsLowerSet (P s))
-    (hsum : ∀ s, ∀ T ⊆ P s, T.Nonempty → sSup T ∈ P s) : up (down P) = P :=
-  up_down hP fun s hne ↦ down_dom.2
-    ⟨sSup (P s), hsum s _ subset_rfl hne, fun _ hx ↦ le_sSup hx⟩
+section Classical
+
+variable [PartialOrder E] [IsClassicalMereology E]
+
+/-- ∩ is defined on a property closed under sums wherever the property has instances, and its
+value there is the sum of the instances. -/
+theorem sum_mem_down (hsum : SumClosed (· ∈ P s)) (hne : (P s).Nonempty) :
+    IsClassicalMereology.sum (· ∈ P s) hne ∈ down P s :=
+  mem_down.2 (hsum.isGreatest_sum hne)
+
+theorem down_dom_of_sumClosed (hsum : SumClosed (· ∈ P s)) (hne : (P s).Nonempty) :
+    (down P s).Dom :=
+  Part.dom_iff_mem.2 ⟨_, sum_mem_down hsum hne⟩
+
+/-- ∪∩P = P for a property closed downward and under sums, whatever the size of its
+extension. -/
+theorem up_down_of_sumClosed (hP : ∀ s, IsLowerSet (P s))
+    (hsum : ∀ s, SumClosed (· ∈ P s)) : up (down P) = P :=
+  up_down hP fun s hne ↦ down_dom_of_sumClosed (hsum s) hne
+
+end Classical
 
 /-! ### Kinds as correlates of properties -/
 

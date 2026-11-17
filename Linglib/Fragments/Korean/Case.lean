@@ -67,7 +67,7 @@ open Phonology Morphology
 /-- The forms of a particle after a vowel and after a consonant, the slashed pairs of Sohn's table
 of case particles ([sohn-1999], pp. 213–214). -/
 def alternating (afterVowel afterConsonant : String) : RuleSet (SubsetRule Segment Morph) :=
-  [⟨.ofSpecs [(.syllabic, true)], .encl afterVowel⟩, ⟨⊥, .encl afterConsonant⟩]
+  [⟨[+syllabic], .encl afterVowel⟩, ⟨⊥, .encl afterConsonant⟩]
 
 /-- A particle with one form. -/
 def invariant (form : String) : RuleSet (SubsetRule Segment Morph) := [⟨⊥, .encl form⟩]

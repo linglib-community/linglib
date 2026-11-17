@@ -60,10 +60,10 @@ open Phonology Segment Order Concept
 /-! ### The lattice of representations -/
 
 /-- A representation bears a feature value. -/
-def Bears (x : Segment) (p : Feature × Bool) : Prop := x.HasValue p.1 p.2
+def Bears (x : Segment) (p : Feature × Bool) : Prop := x p.1 = p.2
 
 instance (x : Segment) (p : Feature × Bool) : Decidable (Bears x p) :=
-  inferInstanceAs (Decidable (x.HasValue p.1 p.2))
+  inferInstanceAs (Decidable (x p.1 = p.2))
 
 @[inherit_doc Bears]
 local notation "bears[" I "]" => fun x : (I : Finset Segment) ↦ Bears (x : Segment)
@@ -72,11 +72,11 @@ section Representations
 
 variable {I I' S : Finset Segment} {p q : Feature × Bool} {x d : Segment}
 
-theorem bears_iff_ofSpecs_le : Bears x p ↔ ofSpecs [p] ≤ x := hasValue_iff_ofSpecs_le x p.1 p.2
+theorem bears_iff_setFeature_bot_le : Bears x p ↔ (⊥ : Segment).setFeature p.1 p.2 ≤ x := by
+  rw [setFeature_le_iff (bot_apply _), and_iff_left bot_le, Bears]
 
 theorem le_iff_forall_bears : d ≤ x ↔ ∀ p, Bears d p → Bears x p :=
-  ⟨fun h p ↦ (le_iff_forall_hasValue x).1 h p.1 p.2,
-    fun h ↦ (le_iff_forall_hasValue x).2 fun f v ↦ h (f, v)⟩
+  le_def.trans (Prod.forall (p := fun p ↦ Bears d p → Bears x p)).symm
 
 /-- The lattice of representations of an inventory (§5.2.2, Stage 2): the formal concepts of the
 relation between its segments and the feature values they bear. The extent of a node is a class
@@ -85,7 +85,7 @@ abbrev Representations (I : Finset Segment) := Concept I (Feature × Bool) bears
 
 -- the class a description denotes is the extent of its feature values
 theorem lowerPolar_bears (d : Segment) (I : Finset Segment) :
-    lowerPolar bears[I] {p | Bears d p} = {x : I | ↑x ∈ d.naturalClass I} := by
+    lowerPolar bears[I] {p | Bears d p} = {x : I | ↑x ∈ naturalClass d I} := by
   ext x
   exact ⟨fun h ↦ mem_naturalClass.2 ⟨x.2, le_iff_forall_bears.2 fun p hp ↦ h hp⟩,
     fun h p hp ↦ le_iff_forall_bears.1 (mem_naturalClass.1 h).2 p hp⟩
@@ -98,27 +98,31 @@ theorem lowerPolar_univ (I : Finset Segment) :
   have h₂ : (x : Segment) .syllabic = some false := hx (b := (.syllabic, false)) trivial
   exact absurd (h₁.symm.trans h₂) (by decide)
 
--- what the members of a set of segments share is what their meet bears
-theorem upperPolar_bears (hS : S ⊆ I) (hne : S.Nonempty) :
-    upperPolar bears[I] {x : I | (x : Segment) ∈ S} =
-      {p | Bears (S.inf' hne id) p} := by
-  ext p
-  simp only [Set.mem_ofPred_eq, bears_iff_ofSpecs_le, Finset.le_inf'_iff, id]
-  exact ⟨fun h y hy ↦ bears_iff_ofSpecs_le.1 (h (a := ⟨y, hS hy⟩) hy),
-    fun h y hy ↦ bears_iff_ofSpecs_le.2 (h y hy)⟩
+-- the segments with a set of feature values are its lower polar
+theorem lowerPolar_bears_coe (A : Finset (Feature × Bool)) (I : Finset Segment) :
+    lowerPolar bears[I] ↑A = {x : I | ↑x ∈ extent A I} := by
+  ext x
+  exact ⟨fun h ↦ mem_extent.2 ⟨x.2, fun ⟨_, _⟩ hp ↦ mem_specs.2 (h (Finset.mem_coe.2 hp))⟩,
+    fun h ⟨_, _⟩ hp ↦ mem_specs.1 ((mem_extent.1 h).2 (Finset.mem_coe.1 hp))⟩
+
+-- what the members of a set of segments share is its upper polar
+theorem upperPolar_bears (hS : S ⊆ I) :
+    upperPolar bears[I] {x : I | (x : Segment) ∈ S} = ↑(sharedSpecs S) := by
+  ext ⟨f, v⟩
+  rw [Finset.mem_coe, mem_sharedSpecs]
+  exact ⟨fun h y hy ↦ h (a := ⟨y, hS hy⟩) hy, fun h y hy ↦ h y hy⟩
 
 theorem isExtent_iff (hS : S ⊆ I) :
-    IsExtent bears[I] {x : I | (x : Segment) ∈ S} ↔ S = ∅ ∨ IsNaturalClass I S := by
+    IsExtent bears[I] {x : I | (x : Segment) ∈ S} ↔ IsNaturalClass I S := by
   constructor
   · intro h
-    refine S.eq_empty_or_nonempty.imp_right fun hne ↦ isNaturalClass_iff.2 ⟨hne, ?_⟩
     have := h.eq
-    rw [upperPolar_bears hS hne, lowerPolar_bears] at this
-    exact Finset.ext fun x ↦ ⟨fun hx ↦ (Set.ext_iff.1 this ⟨x, (mem_naturalClass.1 hx).1⟩).1 hx,
-      fun hx ↦ (Set.ext_iff.1 this ⟨x, hS hx⟩).2 hx⟩
-  · rintro (rfl | ⟨-, d, rfl⟩)
-    · exact ⟨Set.univ, (lowerPolar_univ I).trans (Set.ext fun x ↦ by simp)⟩
-    · exact ⟨_, lowerPolar_bears d I⟩
+    rw [upperPolar_bears hS, lowerPolar_bears_coe] at this
+    exact isNaturalClass_iff.2 <| Finset.ext fun x ↦
+      ⟨fun hx ↦ (Set.ext_iff.1 this ⟨x, (mem_extent.1 hx).1⟩).1 hx,
+        fun hx ↦ (Set.ext_iff.1 this ⟨x, hS hx⟩).2 hx⟩
+  · rintro ⟨A, rfl⟩
+    exact ⟨_, lowerPolar_bears_coe A I⟩
 
 /-- The classes of an inventory: the extents of its lattice of representations. -/
 def classes (I : Finset Segment) : Finset (Finset Segment) :=
@@ -128,19 +132,16 @@ theorem mem_classes :
     S ∈ classes I ↔ S ⊆ I ∧ IsExtent bears[I] {x : I | (x : Segment) ∈ S} := by
   rw [classes, Finset.mem_filter, Finset.mem_powerset]
 
-/-- The classes of the lattice of representations are the natural classes of the inventory and
-the empty class, which an unsatisfiable description denotes. -/
-theorem mem_classes_iff : S ∈ classes I ↔ S = ∅ ∨ IsNaturalClass I S := by
+/-- The classes of the lattice of representations are the natural classes of the inventory,
+the empty class among them. -/
+theorem mem_classes_iff : S ∈ classes I ↔ IsNaturalClass I S := by
   rw [mem_classes]
-  refine ⟨fun h ↦ (isExtent_iff h.1).1 h.2, fun h ↦ ?_⟩
-  have hS : S ⊆ I := h.elim (fun h ↦ h ▸ Finset.empty_subset I) IsNaturalClass.subset
-  exact ⟨hS, (isExtent_iff hS).2 h⟩
+  exact ⟨fun h ↦ (isExtent_iff h.1).1 h.2, fun h ↦ ⟨h.subset, (isExtent_iff h.subset).2 h⟩⟩
 
-theorem classes_eq (I : Finset Segment) :
-    classes I = insert ∅ (I.powerset.filter (IsNaturalClass I)) := by
+theorem classes_eq (I : Finset Segment) : classes I = I.powerset.filter (IsNaturalClass I) := by
   ext S
-  simp only [mem_classes_iff, Finset.mem_insert, Finset.mem_filter, Finset.mem_powerset]
-  exact or_congr_right ⟨fun h ↦ ⟨h.subset, h⟩, And.right⟩
+  simp only [mem_classes_iff, Finset.mem_filter, Finset.mem_powerset]
+  exact ⟨fun h ↦ ⟨h.subset, h⟩, And.right⟩
 
 /-- The lattice of descriptions (5) is the lattice of denotations (6) with its nodes relabelled:
 the classes of an inventory under inclusion are its lattice of representations. -/
@@ -178,12 +179,12 @@ theorem disjoint_ofAttribute_iff :
 more similar segments join lower in the lattice. -/
 theorem extent_ofObject_sup_ofObject {y : Segment} (hx : x ∈ I) (hy : y ∈ I) :
     (ofObject bears[I] ⟨x, hx⟩ ⊔ ofObject bears[I] ⟨y, hy⟩).extent =
-      {z : I | (z : Segment) ∈ (x ⊓ y).naturalClass I} := by
+      {z : I | (z : Segment) ∈ naturalClass (x ⊓ y) I} := by
   rw [ofObjects_sup_ofObjects, extent_ofObjects, ← lowerPolar_bears]
   congr 1
   ext p
   simp only [upperPolar_union, Set.mem_inter_iff, mem_upperPolar_singleton, Set.mem_ofPred_eq,
-    bears_iff_ofSpecs_le, le_inf_iff]
+    bears_iff_setFeature_bot_le, le_inf_iff]
 
 /-- Removing segments from an inventory collapses its lattice of representations: a node goes to
 the node with the same feature values, whose class is what is left of its class. -/
@@ -344,11 +345,12 @@ variable {I S : Finset Segment}
 /-- The attribute extents of a segment inventory are, for each feature value, the members that
 have it. -/
 def attributeExtents (I : Finset Segment) : List (Finset Segment) :=
-  (Feature.allFeatures ×ˢ [true, false]).map fun p ↦ (ofSpecs [p]).naturalClass I
+  (Feature.allFeatures ×ˢ [true, false]).map fun p ↦
+    naturalClass ((⊥ : Segment).setFeature p.1 p.2) I
 
 private theorem foldr_inf_naturalClass (l : List (Feature × Bool)) :
-    (l.map fun p ↦ (ofSpecs [p]).naturalClass I).foldr (· ⊓ ·) I =
-      I.filter fun x ↦ ∀ p ∈ l, x.HasValue p.1 p.2 := by
+    (l.map fun p ↦ naturalClass ((⊥ : Segment).setFeature p.1 p.2) I).foldr (· ⊓ ·) I =
+      I.filter fun x ↦ ∀ p ∈ l, x p.1 = some p.2 := by
   induction l with
   | nil => simp
   | cons p l ih =>
@@ -356,39 +358,32 @@ private theorem foldr_inf_naturalClass (l : List (Feature × Bool)) :
     rw [List.map_cons, List.foldr_cons, ih]
     ext x
     simp only [Finset.inf_eq_inter, Finset.mem_inter, mem_naturalClass, Finset.mem_filter,
-      List.forall_mem_cons, ← hasValue_iff_ofSpecs_le]
+      List.forall_mem_cons, setFeature_le_iff (bot_apply _), and_iff_left bot_le]
     tauto
 
 theorem mem_naturalClasses_attributeExtents :
-    S ∈ naturalClasses I (attributeExtents I) ↔ S = ∅ ∨ IsNaturalClass I S := by
+    S ∈ naturalClasses I (attributeExtents I) ↔ IsNaturalClass I S := by
   rw [mem_naturalClasses]
   constructor
   · rintro ⟨sub, hsub, rfl⟩
-    refine (sub.foldr (· ⊓ ·) I).eq_empty_or_nonempty.imp_right fun hne ↦ ?_
     induction sub with
-    | nil => exact isNaturalClass_self hne
+    | nil => exact isNaturalClass_self I
     | cons a rest ih =>
       obtain ⟨p, -, rfl⟩ := List.mem_map.1 (hsub _ List.mem_cons_self)
-      exact (isNaturalClass_naturalClass (hne.mono inf_le_left)).inter
-        (ih (fun b hb ↦ hsub b (List.mem_cons_of_mem _ hb)) (hne.mono inf_le_right)) hne
-  · have hmem (f : Feature) (v : Bool) : (f, v) ∈ Feature.allFeatures ×ˢ [true, false] := by
-      revert f v; decide
-    rintro (rfl | ⟨-, d, rfl⟩)
-    · refine ⟨attributeExtents I, fun _ ↦ id, ?_⟩
-      rw [attributeExtents, foldr_inf_naturalClass, eq_comm, Finset.filter_eq_empty_iff]
-      intro x _ h
-      have h₁ : x .syllabic = some true := h _ (hmem .syllabic true)
-      have h₂ : x .syllabic = some false := h _ (hmem .syllabic false)
-      exact absurd (h₁.symm.trans h₂) (by decide)
-    · refine ⟨((Feature.allFeatures ×ˢ [true, false]).filter fun p ↦ d.HasValue p.1 p.2).map
-        fun p ↦ (ofSpecs [p]).naturalClass I, fun b hb ↦ ?_, ?_⟩
-      · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hb
-        exact List.mem_map.2 ⟨p, List.mem_of_mem_filter hp, rfl⟩
-      · rw [foldr_inf_naturalClass]
-        ext x
-        simp only [Finset.mem_filter, mem_naturalClass, le_iff_forall_hasValue, List.mem_filter,
-          decide_eq_true_eq, and_imp, Prod.forall]
-        exact and_congr_right fun _ ↦ ⟨fun h f v _ ↦ h f v, fun h f v hd ↦ h f v (hmem f v) hd⟩
+      exact (isNaturalClass_naturalClass _ I).inter
+        (ih fun b hb ↦ hsub b (List.mem_cons_of_mem _ hb))
+  · have hmem (p : Feature × Bool) : p ∈ Feature.allFeatures ×ˢ [true, false] := by
+      revert p; decide
+    rintro ⟨A, rfl⟩
+    refine ⟨((Feature.allFeatures ×ˢ [true, false]).filter (· ∈ A)).map
+      fun p ↦ naturalClass ((⊥ : Segment).setFeature p.1 p.2) I, fun b hb ↦ ?_, ?_⟩
+    · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hb
+      exact List.mem_map.2 ⟨p, List.mem_of_mem_filter hp, rfl⟩
+    · rw [foldr_inf_naturalClass]
+      ext x
+      simp only [Finset.mem_filter, mem_extent, subset_specs_iff, List.mem_filter,
+        decide_eq_true_eq, and_imp]
+      exact and_congr_right fun _ ↦ ⟨fun h p _ hp ↦ h p hp, fun h p hp ↦ h p (hmem p) hp⟩
 
 theorem toFinset_naturalClasses_attributeExtents (I : Finset Segment) :
     (naturalClasses I (attributeExtents I)).toFinset = classes I := by
@@ -400,16 +395,16 @@ theorem toFinset_naturalClasses_attributeExtents (I : Finset Segment) :
 namespace Quileute
 
 /-- /i/, [+high, −back]. -/
-def i : Segment := .ofSpecs [(.high, true), (.back, false)]
+def i : Segment := [+high, −back]
 
 /-- /a/, [−high, −back]. -/
-def a : Segment := .ofSpecs [(.high, false), (.back, false)]
+def a : Segment := [−high, −back]
 
 /-- /ɑ/, [−high, +back]. -/
-def «ɑ» : Segment := .ofSpecs [(.high, false), (.back, true)]
+def «ɑ» : Segment := [−high, +back]
 
 /-- /u/, [+high, +back]. -/
-def u : Segment := .ofSpecs [(.high, true), (.back, true)]
+def u : Segment := [+high, +back]
 
 /-- The four-vowel system of §5.2.2, exhaustively classified by [high] and [back]. -/
 def vowels : Finset Segment := {i, a, «ɑ», u}
@@ -476,9 +471,9 @@ theorem quileute_collapse_not_injective (h : vowels' ⊆ vowels) :
 join strictly below /i/ and /ɑ/, which share nothing, and the joins of /u/ with /ɑ/ and with /i/
 are unordered. -/
 theorem quileutePrime_similarity :
-    (i ⊓ u).naturalClass vowels' ⊂ (i ⊓ «ɑ»).naturalClass vowels' ∧
-      ¬(u ⊓ «ɑ»).naturalClass vowels' ⊆ (u ⊓ i).naturalClass vowels' ∧
-      ¬(u ⊓ i).naturalClass vowels' ⊆ (u ⊓ «ɑ»).naturalClass vowels' := by
+    naturalClass (i ⊓ u) vowels' ⊂ naturalClass (i ⊓ «ɑ») vowels' ∧
+      ¬naturalClass (u ⊓ «ɑ») vowels' ⊆ naturalClass (u ⊓ i) vowels' ∧
+      ¬naturalClass (u ⊓ i) vowels' ⊆ naturalClass (u ⊓ «ɑ») vowels' := by
   decide +kernel
 
 end Segment

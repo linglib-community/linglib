@@ -54,16 +54,16 @@ open Phonology OptimalityTheory CLDF.Wordlist
 def node₀ : Segment := ⊥
 
 /-- The second base node of the verbalizer, high and back but neither vowel nor consonant. -/
-def glide₀ : Segment := Segment.ofSpecs [(.high, true), (.back, true)]
+def glide₀ : Segment := [+high, +back]
 
 /-- The consonant [v], the second node as a consonant. -/
 def v : Segment :=
-  Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, true), (.back, true)]
+  [−syllabic, +consonantal, +high, +back]
 
 /-- `vowel back high` is the vowel with the given backness and height, one of [o], [u], [e]
 and [i]. -/
 def vowel (back high : Bool) : Segment :=
-  Segment.ofSpecs [(.syllabic, true), (.consonantal, false), (.back, back), (.high, high)]
+  (([+syllabic, −consonantal] : Segment).setFeature .back back).setFeature .high high
 
 /-! ### Contexts and candidates -/
 
@@ -78,15 +78,15 @@ inductive Theme where
 /-- The stem-final consonant before the verbalizer, plain or palatal by the root: a plain
 consonant has no backness, and a palatal is [−back]. -/
 def Wordlist.Root.segment : Wordlist.Root → Segment
-  | .plain => Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, false)]
+  | .plain => [−syllabic, +consonantal, −high]
   | .palatal =>
-    Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, true), (.back, false)]
+    [−syllabic, +consonantal, +high, −back]
 
 /-- The first segment of a theme, the vowel [a] or the glide [j]. -/
 def Theme.segment : Theme → Segment
-  | .a => Segment.ofSpecs [(.syllabic, true), (.consonantal, false), (.high, false), (.back, true)]
+  | .a => [+syllabic, −consonantal, −high, +back]
   | .je =>
-    Segment.ofSpecs [(.syllabic, false), (.consonantal, false), (.high, true), (.back, false)]
+    [−syllabic, −consonantal, +high, −back]
 
 /-- A context is the stem-final consonant before the verbalizer and the theme after it. -/
 structure Context where
@@ -135,7 +135,7 @@ def candidates : Finset Candidate :=
 /-- `dep c f val k` counts the corresponding pairs whose output has the value `val` of the feature
 `f` and whose input lacks it, the epenthesis of that value. -/
 def dep (f : Feature) (val : Bool) (k : Candidate) : ℕ :=
-  (corr c k).depViolFeature (·.HasValue f val) .lhs .rhs
+  (corr c k).depViolFeature (fun s : Segment ↦ s f = some val) .lhs .rhs
 
 /-- The constraints of the analysis, the paper's with \*CC and DEP[+high]. -/
 inductive Con where
@@ -164,10 +164,10 @@ def system : ConstraintSystem Context Candidate Con where
   con
     | .noHiatus => fun (c, k) ↦ Hiatus.count (output c k)
     | .noCluster => fun (c, k) ↦ Constraint.forbidPairs
-        (fun a b ↦ a.HasValue .syllabic false ∧ b.HasValue .syllabic false) (output c k)
+        (fun a b : Segment ↦ a .syllabic = false ∧ b .syllabic = false) (output c k)
     | .specify => fun (c, k) ↦ (output c k).count node₀
     | .noShare => fun (c, k) ↦ Constraint.forbidPairs
-        (fun a b ↦ a.HasValue .back false ∧ b.HasValue .back false ∧ a ∈ input c) (output c k)
+        (fun a b : Segment ↦ a .back = false ∧ b .back = false ∧ a ∈ input c) (output c k)
     | .depBack => fun (c, k) ↦ dep c .back true k
     | .depNonhigh => fun (c, k) ↦ dep c .high false k
     | .depHigh => fun (c, k) ↦ dep c .high true k

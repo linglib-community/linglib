@@ -204,11 +204,11 @@ def surface (c : Candidate n) (j : Fin n) : Segment :=
 /-- IDENT_Rt (16), summed over Color: a segment of the root, the first `r`, keeps the input
 value of each color feature. -/
 def identRoot (c : Candidate n) : ℕ :=
-  ∑ f, (Finset.univ.filter fun j : Fin n ↦ j.val < r ∧ ¬ (x j).HasValue f.1 ((c f).value j)).card
+  ∑ f, (Finset.univ.filter fun j : Fin n ↦ j.val < r ∧ ¬ x j f.1 = ((c f).value j)).card
 
 /-- *[+rnd, −hi]: a nonhigh segment is not round. -/
 def noRoundNonhigh (c : Candidate n) : ℕ :=
-  (Finset.univ.filter fun j ↦ (c round).value j = true ∧ (x j).HasValue .high false).card
+  (Finset.univ.filter fun j ↦ (c round).value j = true ∧ x j .high = false).card
 
 /-- SPREAD(COLOR) (10, 26), summed over the features of Color. -/
 def spreadColor (c : Candidate n) : ℕ := ∑ f, (c f).spread
@@ -216,7 +216,7 @@ def spreadColor (c : Candidate n) : ℕ := ∑ f, (c f).spread
 /-- IDENT (11), summed over Color: a segment keeps the input value of each color feature,
 unspecified counting as a value. -/
 def ident (c : Candidate n) : ℕ :=
-  ∑ f, (Finset.univ.filter fun j : Fin n ↦ ¬ (x j).HasValue f.1 ((c f).value j)).card
+  ∑ f, (Finset.univ.filter fun j : Fin n ↦ ¬ x j f.1 = ((c f).value j)).card
 
 /-- IDENT_Rt ≫ *[+rnd, −hi] ≫ SPREAD(COLOR) ≫ IDENT, the ranking of (17)–(22), over every
 candidate. -/
@@ -253,7 +253,7 @@ def harmonySegment (g : String) : Option Segment :=
 (footnote 6). -/
 def shareRound : List Segment → List Segment
   | [] => []
-  | v :: w => v :: w.map (Function.update · .round (v .round))
+  | v :: w => v :: w.map (Segment.piecewise {.round} v)
 
 /-- The suffix vowels of a cell, in the order of the suffixes: /A/ of the plural -lAr, then /I/ of
 the accusative -I or the genitive -In (§3.3). -/
@@ -317,7 +317,7 @@ theorem profile_20 :
   decide
 
 /-- /(petr)olʸ-I/ of (22), the lateral sharing the vowel's [+round]. -/
-def petrolI : Fin 3 → Segment := ![o, Function.update l' .round (some true), I]
+def petrolI : Fin 3 → Segment := ![o, l'.setFeature .round true, I]
 
 /-- (22a) {[o]+B[lʸ-ü]−B}+R, the attested form. -/
 def cand22a : Candidate 3 :=
@@ -401,7 +401,8 @@ theorem predictTotal_son_lAr : predictTotal [o, A'] 1 = {[o, o]} ∧
 /-! ### Class nodes -/
 
 /-- Spreading the Color node of (3) from `src` onto `tgt`. -/
-def colorSpreading (src tgt : Segment) : Segment := (featureClass node .color).piecewise src tgt
+def colorSpreading (src tgt : Segment) : Segment :=
+  Segment.piecewise (featureClass node .color) src tgt
 
 theorem eqOn_colorSpreading (src tgt : Segment) :
     Set.EqOn (colorSpreading src tgt) src ↑color :=

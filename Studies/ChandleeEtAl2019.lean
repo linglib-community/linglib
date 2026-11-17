@@ -174,6 +174,13 @@ theorem mem_language_abGrammar_twoLetterGrammar :
 
 /-! ### Sibilants -/
 
+/-- The labels of a segment in a feature-labelled model: the values it gives its features, so
+that a position never has two values of one feature and may have none. -/
+def featureValues (s : Segment) : Set (Feature × Bool) := ↑s.specs
+
+theorem featureValues_subset_iff {d x : Segment} : featureValues d ⊆ featureValues x ↔ d ≤ x := by
+  rw [featureValues, featureValues, Finset.coe_subset, Segment.le_iff_specs_subset]
+
 /-- The signature of feature-labelled models of segment words. -/
 abbrev featureLanguage : FirstOrder.Language := wordLanguage (Feature × Bool)
 
@@ -183,13 +190,13 @@ example (D : Set (List Segment)) :
   isAdequate_mostGeneral D
 
 /-- The class of the sibilants is [+strident]. -/
-def strident : Segment := .ofSpecs [(.strident, true)]
+def strident : Segment := [+strident]
 
 /-- The alveolar sibilants are [+strident, +anterior]. -/
-def alveolar : Segment := .ofSpecs [(.strident, true), (.anterior, true)]
+def alveolar : Segment := [+strident, +anterior]
 
 /-- The postalveolar sibilants are [+strident, −anterior]. -/
-def postalveolar : Segment := .ofSpecs [(.strident, true), (.anterior, false)]
+def postalveolar : Segment := [+strident, −anterior]
 
 /-- The forbidden subfactor of section 5.2 is an alveolar sibilant before a postalveolar one. -/
 def antPost : featureLanguage.Factor 2 := diagram featureValues [alveolar, postalveolar] le_rfl
@@ -198,17 +205,16 @@ def antPost : featureLanguage.Factor 2 := diagram featureValues [alveolar, posta
 def postAnt : featureLanguage.Factor 2 := diagram featureValues [postalveolar, alveolar] le_rfl
 
 theorem alveolar_le_iff (x : Segment) : alveolar ≤ x ↔ sibilantClass x = some true := by
-  rw [alveolar, Segment.ofSpecs_le_iff_forall_mem x (by decide), sibilantClass]
-  by_cases h : x.IsSibilant <;> simp_all [Segment.IsSibilant, Segment.HasValue]
+  by_cases h : x.IsSibilant <;> simp_all [alveolar, sibilantClass, Segment.IsSibilant]
 
 theorem postalveolar_le_iff (x : Segment) : postalveolar ≤ x ↔ sibilantClass x = some false := by
-  rw [postalveolar, Segment.ofSpecs_le_iff_forall_mem x (by decide), sibilantClass]
-  by_cases h : x.IsSibilant <;> simp_all [Segment.IsSibilant, Segment.HasValue]
+  by_cases h : x.IsSibilant <;> simp_all [postalveolar, sibilantClass, Segment.IsSibilant]
+
 
 theorem diagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
     (diagram featureValues [d, e] (k := 2) le_rfl).Occurs (WordModel featureValues w (· < ·)) ↔
       ∃ a b, [a, b] <+ w ∧ d ≤ a ∧ e ≤ b := by
-  simp [diagram_occurs_iff_forall₂_le, List.forall₂_cons_left_iff]
+  simp [diagram_occurs_iff_forall₂, featureValues_subset_iff, List.forall₂_cons_left_iff]
 
 theorem diagram_pair_le_iff (d e x y : Segment) :
     diagram featureValues [d, e] (k := 2) le_rfl ≤ diagram featureValues [x, y] le_rfl ↔
@@ -237,7 +243,7 @@ def t : Segment := .ofChart .«t»
 /-- [+anterior] before [−anterior]. -/
 def antNonant : featureLanguage.Factor 2 :=
   diagram featureValues
-    [Segment.ofSpecs [(.anterior, true)], Segment.ofSpecs [(.anterior, false)]] le_rfl
+    [[+anterior], [−anterior]] le_rfl
 
 /-- [+strident] before [+strident]. -/
 def stridents : featureLanguage.Factor 2 := diagram featureValues [strident, strident] le_rfl

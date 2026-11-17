@@ -97,7 +97,7 @@ def o : Segment := vowel .«o»
 /-- The low back vowel /ɒ/, orthographic ⟨a⟩, which departs from the chart in being phonologically
 unrounded: system (7) of [siptar-torkenczy-2000] puts short /a/ with the [+back, −round] vowels,
 its surface rounding being "a matter of phonetic implementation" (p. 54). -/
-def turnedScriptA : Segment := vowel .«ɒ» (Segment.ofSpecs [(.round, false)])
+def turnedScriptA : Segment := vowel .«ɒ» [−round]
 
 /-- The seven short vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, y, u, epsilon, ø, o, turnedScriptA], by decide⟩
@@ -254,14 +254,14 @@ def longPositions (w : String) : Finset ℕ :=
 
 /-- A vowel is neutral when it is front and unrounded. -/
 def IsNeutral (s : Segment) : Prop :=
-  s.HasValue .syllabic true ∧ s.HasValue .back false ∧ s.HasValue .round false
+  s .syllabic = true ∧ s .back = false ∧ s .round = false
 
 /-- A vowel is front harmonic when it is front and rounded. -/
 def IsFrontHarmonic (s : Segment) : Prop :=
-  s.HasValue .syllabic true ∧ s.HasValue .back false ∧ s.HasValue .round true
+  s .syllabic = true ∧ s .back = false ∧ s .round = true
 
 /-- Every back vowel is back harmonic. -/
-def IsBackHarmonic (s : Segment) : Prop := s.HasValue .syllabic true ∧ s.HasValue .back true
+def IsBackHarmonic (s : Segment) : Prop := s .syllabic = true ∧ s .back = true
 
 instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsFrontHarmonic := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -284,8 +284,8 @@ theorem isBackHarmonic_iff :
 suffix vowels unspecified for it, consonants and the neutral vowels being off the tier. -/
 def palatalHarmony : System Segment :=
   System.mk' (feature := .back)
-    (IsTarget := fun s ↦ s.HasValue .syllabic true ∧ s .back = none)
-    (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true ∨ IsNeutral s)
+    (IsTarget := fun s ↦ s .syllabic = true ∧ s .back = none)
+    (IsTransparent := fun s ↦ ¬ s .syllabic = true ∨ IsNeutral s)
     (direction := .rightward)
 
 /-- Rounding harmony spreads the rounding of the last stem vowel to the suffix vowels
@@ -293,8 +293,8 @@ unspecified for it, with no transparent vowels; it matters only for front stems,
 back stem takes the back alternant of a three-way suffix. -/
 def labialHarmony : System Segment :=
   System.mk' (feature := .round)
-    (IsTarget := fun s ↦ s.HasValue .syllabic true ∧ s .round = none)
-    (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true)
+    (IsTarget := fun s ↦ s .syllabic = true ∧ s .round = none)
+    (IsTransparent := fun s ↦ ¬ s .syllabic = true)
     (direction := .rightward)
 
 end Hungarian

@@ -719,15 +719,15 @@ def uncovered : List String := ["hexšiv", "histager", "namas", "hemes", "heʔed
 continuancy, as its fricative after a vowel and as its stop elsewhere; any other segment is
 itself. -/
 def fillContinuant (post : Bool) (s : Phonology.Segment) : Phonology.Segment :=
-  if s.Unspecified .continuant ∧ s.IsConsonant then
-    if s.HasValue .dorsal true then if post then Hebrew.Phonology.x else Hebrew.Phonology.k
-    else if s.HasValue .voice true then if post then Hebrew.Phonology.v else Hebrew.Phonology.b
+  if s .continuant = none ∧ s.IsConsonant then
+    if s .dorsal = true then if post then Hebrew.Phonology.x else Hebrew.Phonology.k
+    else if s .voice = true then if post then Hebrew.Phonology.v else Hebrew.Phonology.b
     else if post then Hebrew.Phonology.f else Hebrew.Phonology.p
   else s
 
 theorem naturalClass_fillContinuant (post : Bool) :
     ∀ a ∈ [Hebrew.Phonology.B, Hebrew.Phonology.K, Hebrew.Phonology.P],
-      (a.setFeature .continuant post).naturalClass Hebrew.Phonology.consonants =
+      Phonology.naturalClass (a.setFeature .continuant post) Hebrew.Phonology.consonants =
         {fillContinuant post a} := by
   obtain ⟨hb, hv, hk, hx, hp, hf⟩ := Hebrew.Phonology.naturalClass_setFeature_continuant
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
@@ -771,12 +771,12 @@ def segment : String → Phonology.Segment
 def surfaceSegment (x : String) : Phonology.Segment := fillContinuant false (segment x)
 
 theorem fillContinuant_eq_self {s : Phonology.Segment}
-    (h : ¬(s.Unspecified .continuant ∧ s.IsConsonant)) (post : Bool) :
+    (h : ¬(s .continuant = none ∧ s.IsConsonant)) (post : Bool) :
     fillContinuant post s = s := by
   simp [fillContinuant, h]
 
 theorem not_alternating_segment (x : String) (hp : x ≠ "p") (hb : x ≠ "b") (hk : x ≠ "k") :
-    ¬((segment x).Unspecified .continuant ∧ (segment x).IsConsonant) := by
+    ¬(segment x .continuant = none ∧ (segment x).IsConsonant) := by
   unfold segment
   split <;> first | contradiction | decide +kernel
 

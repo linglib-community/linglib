@@ -70,7 +70,7 @@ open Morphology (Morph)
 
 /-- [Pharyngeal Expansion], the feature Pater gives voiced obstruents and implosives and denies
 nasals and voiceless obstruents: here the [−sonorant, +voice] segments. -/
-def PharExp (s : Segment) : Prop := s.HasValue .sonorant false ∧ s.HasValue .voice true
+def PharExp (s : Segment) : Prop := s .sonorant = false ∧ s .voice = true
 
 instance : DecidablePred PharExp := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -87,18 +87,18 @@ abbrev Cand := Correspondence.Coindexation BinaryRole Segment
 
 /-- *NC̥: a nasal before a voiceless obstruent. -/
 def nc : Constraint Cand := fun c ↦
-  (pairs (c.string .rhs)).countP fun p ↦
-    p.1.HasValue .nasal true ∧ p.2.HasValue .sonorant false ∧ p.2.HasValue .voice false
+  (pairs (c.string .rhs)).countP fun p : Segment × Segment ↦
+    p.1 .nasal = true ∧ p.2 .sonorant = false ∧ p.2 .voice = false
 
 /-- NASASSIM (36): a nasal not homorganic with the consonant after it. -/
 def nasAssim : Constraint Cand := fun c ↦
-  (pairs (c.string .rhs)).countP fun p ↦
-    p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ p.1.Homorganic p.2
+  (pairs (c.string .rhs)).countP fun p : Segment × Segment ↦
+    p.1 .nasal = true ∧ p.2.IsConsonant ∧ ¬ p.1.Homorganic p.2
 
 /-- *PL/LAB², the self-conjunction of *PL/LAB (15): two labial consonants or glides in a
 word, the non-syllabic segments with labial place. -/
 def plab2 : Constraint Cand := fun c ↦
-  if 2 ≤ (c.string .rhs).countP (fun s ↦ s.HasValue .syllabic false ∧ s.HasValue .labial true)
+  if 2 ≤ (c.string .rhs).countP (fun s : Segment ↦ s .syllabic = false ∧ s .labial = true)
   then 1 else 0
 
 /-- MAX: an input segment with no output correspondent. -/
@@ -237,7 +237,7 @@ def u : Segment := .ofChart .«u»
 def m : Segment := .ofChart .«m»
 
 /-- The consonants a nasal fuses with, Hayes's [−syllabic] segments. -/
-def trigger : Segment := Segment.ofSpecs [(.syllabic, false)]
+def trigger : Segment := [−syllabic]
 
 /-- The output of each outcome of *-um-* before the root `x :: w`. -/
 def output (x : Segment) (w : List Segment) : UmOutcome → List Segment
