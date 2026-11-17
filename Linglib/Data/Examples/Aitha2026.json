@@ -1,1731 +1,1493 @@
-[
-  {
-    "id": "aitha2026_house_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
-    "language": "telu1262",
-    "primaryText": "illuø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["il-lu-ø", "house-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "lu"]
-    ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_house_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
-    "language": "telu1262",
-    "primaryText": "inṭini",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["in-ṭi-ni", "house-n-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "ni"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_house_gen",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
-    "language": "telu1262",
-    "primaryText": "inṭiø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["in-ṭi-ø", "house-n-GEN"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "gen"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_house_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
-    "language": "telu1262",
-    "primaryText": "inṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["in-ṭi-ki", "house-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_house_p",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
-    "language": "telu1262",
-    "primaryText": "inṭilō",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["in-ṭi-lō", "house-n-in"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "lō"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "heavy"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_town_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "ūru",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ūr-u", "town-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "ūru"],
-      ["root", "town"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "u"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_town_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "ūriki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ūr-i-ki", "town-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "ūru"],
-      ["root", "town"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "i"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_husband_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "moguḍu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["moguḍ-u", "husband-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "moguḍu"],
-      ["root", "husband"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "u"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_husband_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "moguḍiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["moguḍ-i-ki", "husband-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "moguḍu"],
-      ["root", "husband"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "i"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bow_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "villu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["vil-lu", "bow-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "villu"],
-      ["root", "bow"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "lu"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bow_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "vinṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["vin-ṭi-ki", "bow-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "villu"],
-      ["root", "bow"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_eye_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "kannu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["kan-nu", "eye-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "kannu"],
-      ["root", "eye"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "nu"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_eye_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "kanṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["kan-ṭi-ki", "eye-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "kannu"],
-      ["root", "eye"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_tooth_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "pannu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pan-nu", "tooth-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pannu"],
-      ["root", "tooth"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "nu"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_tooth_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "panṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pan-ṭi-ki", "tooth-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pannu"],
-      ["root", "tooth"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_nest_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "gūḍu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["gū-ḍu", "nest-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "gūḍu"],
-      ["root", "nest"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ḍu"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_nest_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "gūṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["gū-ṭi-ki", "nest-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "gūḍu"],
-      ["root", "nest"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_stream_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "ēru",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ē-ru", "stream-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "ēru"],
-      ["root", "stream"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ru"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_stream_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "ēṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ē-ṭi-ki", "stream-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "ēru"],
-      ["root", "stream"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_mouth_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nōru",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nō-ru", "mouth-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nōru"],
-      ["root", "mouth"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ru"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_mouth_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nōṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nō-ṭi-ki", "mouth-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nōru"],
-      ["root", "mouth"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_plough_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nāgali",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nāga-li", "plough-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nāgali"],
-      ["root", "plough"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "li"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_plough_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nāgaṭiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nāga-ṭi-ki", "plough-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nāgali"],
-      ["root", "plough"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ṭi"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ghee_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nēyi",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nē-yi", "ghee-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nēyi"],
-      ["root", "ghee"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "yi"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ghee_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nētiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nē-ti-ki", "ghee-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nēyi"],
-      ["root", "ghee"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ti"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_well_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nūyi",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nū-yi", "well-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nūyi"],
-      ["root", "well"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "yi"]
-    ],
-    "comment": "Strong noun, nominative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_well_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
-    "language": "telu1262",
-    "primaryText": "nūtiki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nū-ti-ki", "well-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "nūyi"],
-      ["root", "well"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ti"]
-    ],
-    "comment": "Strong noun, dative ((2)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
-    "language": "telu1262",
-    "primaryText": "samudramø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-ø", "ocean-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
-    "language": "telu1262",
-    "primaryText": "samudrānini",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-āni-ni", "ocean-n-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "ni"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_gen",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
-    "language": "telu1262",
-    "primaryText": "samudramø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-ø", "ocean-n-GEN"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "gen"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
-    "language": "telu1262",
-    "primaryText": "samudrāniki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-āni-ki", "ocean-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_p",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
-    "language": "telu1262",
-    "primaryText": "samudramlō",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-lō", "ocean-n-in"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "lō"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "heavy"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_1sg",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(13)"},
-    "language": "telu1262",
-    "primaryText": "samudrānini",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-āni-ni", "ocean-n-1SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ni"],
-      ["suffixKind", "agreement"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_2sg",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(14)"},
-    "language": "telu1262",
-    "primaryText": "samudrānivi",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-āni-vi", "ocean-n-2SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "vi"],
-      ["suffixKind", "agreement"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_3sg",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(15)"},
-    "language": "telu1262",
-    "primaryText": "samudramø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-ø", "ocean-n-3SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "agreement"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_picture_1sg_apc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(16)"},
-    "language": "telu1262",
-    "primaryText": "citrānini",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["citr-āni-ni", "picture-n-1SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "citram"],
-      ["root", "picture"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ni"],
-      ["suffixKind", "agreement"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "Adnominal pronoun construction: nominative subject with the long form.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_whole_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(17)"},
-    "language": "telu1262",
-    "primaryText": "samudramantaṭini",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-antaṭi-ni", "ocean-n-whole-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "antaṭi"],
-      ["suffixKind", "quantifier"],
-      ["prwd", "internal"],
-      ["weight", "heavy"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_about",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
-    "language": "telu1262",
-    "primaryText": "samudramgurinci",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-gurinci", "ocean-n-about"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "gurinci"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "light"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_infront",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
-    "language": "telu1262",
-    "primaryText": "samudrameduru",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-am-eduru", "ocean-n-in.front.of"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "eduru"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "light"],
-      ["n", "am"],
-      ["form", "short"]
-    ],
-    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_house_1sg",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "fn. 6"},
-    "language": "telu1262",
-    "primaryText": "illuni",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["il-lu-ni", "house-n-1SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "illu"],
-      ["root", "house"],
-      ["class", "strong"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ni"],
-      ["suffixKind", "agreement"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "lu"]
-    ],
-    "comment": "Strong noun with nominal agreement: no oblique.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_pl_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
-    "language": "telu1262",
-    "primaryText": "samudrāluø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-ā-lu-ø", "ocean-n-PL-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "pl"],
-      ["case", "nom"],
-      ["suffix", "lu"],
-      ["suffixKind", "number"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ā"]
-    ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_pl_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
-    "language": "telu1262",
-    "primaryText": "samudrālani",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-ā-la-ni", "ocean-n-PL-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "pl"],
-      ["case", "acc"],
-      ["suffix", "la"],
-      ["suffixKind", "number"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ā"]
-    ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_pl_gen",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
-    "language": "telu1262",
-    "primaryText": "samudrālaø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-ā-la-ø", "ocean-n-PL-GEN"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "pl"],
-      ["case", "gen"],
-      ["suffix", "la"],
-      ["suffixKind", "number"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ā"]
-    ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_pl_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
-    "language": "telu1262",
-    "primaryText": "samudrālaki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-ā-la-ki", "ocean-n-PL-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "pl"],
-      ["case", "dat"],
-      ["suffix", "la"],
-      ["suffixKind", "number"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ā"]
-    ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_pl_p",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
-    "language": "telu1262",
-    "primaryText": "samudrālalō",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["samudr-ā-la-lō", "ocean-n-PL-in"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "pl"],
-      ["case", "p"],
-      ["suffix", "la"],
-      ["suffixKind", "number"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ā"]
-    ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bet_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
-    "language": "telu1262",
-    "primaryText": "pand-em-ø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pand-em-ø", "bet-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pandem"],
-      ["root", "bet"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "em"],
-      ["form", "short"]
-    ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bet_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
-    "language": "telu1262",
-    "primaryText": "pand-ǣni-ni",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pand-ǣni-ni", "bet-n-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pandem"],
-      ["root", "bet"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "ni"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ǣni"],
-      ["form", "long"]
-    ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bet_gen",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
-    "language": "telu1262",
-    "primaryText": "pand-em-ø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pand-em-ø", "bet-n-GEN"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pandem"],
-      ["root", "bet"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "gen"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "em"],
-      ["form", "short"]
-    ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bet_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
-    "language": "telu1262",
-    "primaryText": "pand-ǣni-ki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pand-ǣni-ki", "bet-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pandem"],
-      ["root", "bet"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "ǣni"],
-      ["form", "long"]
-    ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_bet_p",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
-    "language": "telu1262",
-    "primaryText": "pand-em-lō",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["pand-em-lō", "bet-n-in"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "pandem"],
-      ["root", "bet"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "lō"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "heavy"],
-      ["n", "em"],
-      ["form", "short"]
-    ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_wife_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
-    "language": "telu1262",
-    "primaryText": "peḷḷ-ām-ø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["peḷḷ-ām-ø", "wife-n-NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "peḷḷām"],
-      ["root", "wife"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "nom"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ām"],
-      ["form", "short"]
-    ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_wife_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
-    "language": "telu1262",
-    "primaryText": "peḷḷ-āni-ni",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["peḷḷ-āni-ni", "wife-n-ACC"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "peḷḷām"],
-      ["root", "wife"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "ni"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_wife_gen",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
-    "language": "telu1262",
-    "primaryText": "peḷḷ-ām-ø",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["peḷḷ-ām-ø", "wife-n-GEN"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "peḷḷām"],
-      ["root", "wife"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "gen"],
-      ["suffix", "ø"],
-      ["suffixKind", "case"],
-      ["prwd", "none"],
-      ["weight", "none"],
-      ["n", "ām"],
-      ["form", "short"]
-    ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_wife_dat",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
-    "language": "telu1262",
-    "primaryText": "peḷḷ-āni-ki",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["peḷḷ-āni-ki", "wife-n-DAT"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "peḷḷām"],
-      ["root", "wife"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "dat"],
-      ["suffix", "ki"],
-      ["suffixKind", "case"],
-      ["prwd", "internal"],
-      ["weight", "light"],
-      ["n", "āni"],
-      ["form", "long"]
-    ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_wife_p",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
-    "language": "telu1262",
-    "primaryText": "peḷḷ-ām-lō",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["peḷḷ-ām-lō", "wife-n-in"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "peḷḷām"],
-      ["root", "wife"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "p"],
-      ["suffix", "lō"],
-      ["suffixKind", "postposition"],
-      ["prwd", "external"],
-      ["weight", "heavy"],
-      ["n", "ām"],
-      ["form", "short"]
-    ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_those_all_acc",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(33)"},
-    "method": "elicitation",
-    "language": "telu1262",
-    "primaryText": "nēnu vāṭ-anniṭi-ni cūs-ā-nu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nēnu", "1SG.NOM"], ["vāṭ-anniṭi-ni", "3PL.NONHUM.OBL-all-ACC"],
-      ["cūs-ā-nu", "see-PST-1SG"]
-    ],
-    "translation": "I saw them all.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "avi"],
-      ["class", "strong"],
-      ["number", "pl"],
-      ["case", "acc"],
-      ["stem", "obl"],
-      ["intervener", "quantifier"]
-    ],
-    "comment": "Elicited: the strong oblique is triggered across the intervening quantifier.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_ocean_whole_acc_sentence",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(34)"},
-    "method": "elicitation",
-    "language": "telu1262",
-    "primaryText": "nēnu samudram-antaṭi-ni cūs-ā-nu",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nēnu", "1SG.NOM"], ["samudram-antaṭi-ni", "ocean.NOM-whole-ACC"],
-      ["cūs-ā-nu", "see-PST-1SG"]
-    ],
-    "translation": "I saw all of the ocean.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "samudram"],
-      ["root", "ocean"],
-      ["class", "weak"],
-      ["number", "sg"],
-      ["case", "acc"],
-      ["suffix", "antaṭi"],
-      ["suffixKind", "quantifier"],
-      ["prwd", "internal"],
-      ["weight", "heavy"],
-      ["n", "am"],
-      ["form", "short"],
-      ["intervener", "quantifier"]
-    ],
-    "comment": "Elicited: the weak long form is not triggered across the quantifier; the heavy initial syllable of antaṭi conditions the short form.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_those_all_nom",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(35)"},
-    "method": "elicitation",
-    "language": "telu1262",
-    "primaryText": "av-anni bāgun-nā-yi",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["av-anni", "3PL.NONHUM-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
-    ],
-    "translation": "All of those are good.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "avi"],
-      ["class", "strong"],
-      ["number", "pl"],
-      ["case", "nom"],
-      ["stem", "nom"],
-      ["intervener", "quantifier"]
-    ],
-    "comment": "Elicited.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aitha2026_those_all_nom_obl",
-    "source": {"bibkey": "aitha-2026", "paperLabel": "(36)"},
-    "method": "elicitation",
-    "language": "telu1262",
-    "primaryText": "vāṭ-anni bāgun-nā-yi",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["vāṭ-anni", "3PL.NONHUM.OBL-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
-    ],
-    "translation": "All of those are good.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["noun", "avi"],
-      ["class", "strong"],
-      ["number", "pl"],
-      ["case", "nom"],
-      ["stem", "obl"],
-      ["intervener", "quantifier"]
-    ],
-    "comment": "Elicited: the oblique is not licensed when the overall case is nominative.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "class",
+      "lean": "nounClass",
+      "type": "NounClass",
+      "doc": "The two classes of alternating nouns.",
+      "levels": [
+        {
+          "name": "strong",
+          "label": "strong",
+          "doc": "strongly suppletive: the exponent of n differs between the nominative and every other case (§2)"
+        },
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "weakly suppletive: n is *-am* or *-āni* (§3)"
+        }
+      ]
+    },
+    {
+      "key": "alternation",
+      "lean": "alternation",
+      "type": "Alternation",
+      "doc": "The rows of (2): the nominative exponent of n that a strong noun takes.",
+      "levels": [
+        {
+          "name": "u",
+          "label": "u",
+          "doc": "*-u* ~ *-i*"
+        },
+        {
+          "name": "lu",
+          "label": "lu",
+          "doc": "*-lu* ~ *-ṭi*"
+        },
+        {
+          "name": "nu",
+          "label": "nu",
+          "doc": "*-nu* ~ *-ṭi*"
+        },
+        {
+          "name": "du",
+          "label": "du",
+          "doc": "*-ḍu* ~ *-ṭi*"
+        },
+        {
+          "name": "ru",
+          "label": "ru",
+          "doc": "*-ru* ~ *-ṭi*"
+        },
+        {
+          "name": "li",
+          "label": "li",
+          "doc": "*-li* ~ *-ṭi*"
+        },
+        {
+          "name": "yi",
+          "label": "yi",
+          "doc": "*-yi* ~ *-ti*"
+        }
+      ]
+    },
+    {
+      "key": "follower",
+      "lean": "follower",
+      "type": "Follower",
+      "doc": "The overt morpheme after the noun stem, where there is one.",
+      "levels": [
+        {
+          "name": "case",
+          "label": "case",
+          "doc": "a case suffix"
+        },
+        {
+          "name": "agreement",
+          "label": "agreement",
+          "doc": "a nominal agreement suffix (12)"
+        },
+        {
+          "name": "quantifier",
+          "label": "quantifier",
+          "doc": "a postposed quantifier"
+        },
+        {
+          "name": "postposition",
+          "label": "postposition",
+          "doc": "a postposition"
+        },
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "the plural suffix"
+        }
+      ]
+    },
+    {
+      "key": "weight",
+      "lean": "weight",
+      "type": "Weight",
+      "doc": "The weight of the first syllable of the morpheme after the noun stem.",
+      "levels": [
+        {
+          "name": "light",
+          "label": "light",
+          "doc": "a short vowel and no coda"
+        },
+        {
+          "name": "heavy",
+          "label": "heavy",
+          "doc": "a long vowel or a coda"
+        }
+      ]
+    },
+    {
+      "key": "alternant",
+      "lean": "alternant",
+      "type": "Alternant",
+      "doc": "The form of a singular weak noun.",
+      "levels": [
+        {
+          "name": "long",
+          "label": "long",
+          "doc": "the long form, *-āni*"
+        },
+        {
+          "name": "short",
+          "label": "short",
+          "doc": "the short form, *-am*"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "aitha2026_house_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "illuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["il-lu-ø", "house-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"]
+      ],
+      "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_house_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "inṭini",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in-ṭi-ni", "house-n-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_house_gen",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "inṭiø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in-ṭi-ø", "house-n-GEN"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"]
+      ],
+      "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_house_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "inṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in-ṭi-ki", "house-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_house_p",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "inṭilō",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in-ṭi-lō", "house-n-in"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"],
+        ["follower", "postposition"],
+        ["weight", "heavy"]
+      ],
+      "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_town_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "ūruø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ūr-u-ø", "town-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "u"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_town_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "ūriki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ūr-i-ki", "town-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "u"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_husband_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "moguḍuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["moguḍ-u-ø", "husband-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "u"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_husband_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "moguḍiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["moguḍ-i-ki", "husband-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "u"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bow_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "villuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vil-lu-ø", "bow-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bow_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "vinṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vin-ṭi-ki", "bow-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_eye_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "kannuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kan-nu-ø", "eye-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "nu"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_eye_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "kanṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kan-ṭi-ki", "eye-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "nu"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_tooth_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pannuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pan-nu-ø", "tooth-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "nu"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_tooth_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "panṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pan-ṭi-ki", "tooth-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "nu"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_nest_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "gūḍuø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["gū-ḍu-ø", "nest-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "du"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_nest_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "gūṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["gū-ṭi-ki", "nest-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "du"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_stream_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "ēruø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ē-ru-ø", "stream-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "ru"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_stream_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "ēṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ē-ṭi-ki", "stream-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "ru"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_mouth_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nōruø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nō-ru-ø", "mouth-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "ru"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_mouth_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nōṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nō-ṭi-ki", "mouth-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "ru"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_plough_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nāgaliø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nāga-li-ø", "plough-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "li"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_plough_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nāgaṭiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nāga-ṭi-ki", "plough-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "li"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ghee_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nēyiø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nē-yi-ø", "ghee-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "yi"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ghee_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nētiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nē-ti-ki", "ghee-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "yi"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_well_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nūyiø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nū-yi-ø", "well-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "yi"]
+      ],
+      "comment": "Strong noun, nominative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_well_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "nūtiki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nū-ti-ki", "well-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "yi"],
+        ["follower", "case"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun, dative ((2)). (2) prints the forms without a gloss line; glossed and segmented as (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "samudramø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-ø", "ocean-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "samudrānini",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-āni-ni", "ocean-n-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_gen",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "samudramø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-ø", "ocean-n-GEN"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "samudrāniki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-āni-ki", "ocean-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_p",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "samudramlō",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-lō", "ocean-n-in"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "postposition"],
+        ["weight", "heavy"],
+        ["alternant", "short"]
+      ],
+      "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_1sg",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(13)"},
+      "language": "telu1262",
+      "primaryText": "samudrānini",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-āni-ni", "ocean-n-1SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "agreement"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_2sg",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(14)"},
+      "language": "telu1262",
+      "primaryText": "samudrānivi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-āni-vi", "ocean-n-2SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "agreement"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_3sg",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(15)"},
+      "language": "telu1262",
+      "primaryText": "samudramø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-ø", "ocean-n-3SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_picture_1sg_apc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(16)"},
+      "language": "telu1262",
+      "primaryText": "citrānini",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["citr-āni-ni", "picture-n-1SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "agreement"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "Adnominal pronoun construction: nominative subject with the long form.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_whole_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(17)"},
+      "language": "telu1262",
+      "primaryText": "samudramantaṭini",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-antaṭi-ni", "ocean-n-whole-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "quantifier"],
+        ["weight", "heavy"],
+        ["alternant", "short"]
+      ],
+      "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_about",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
+      "language": "telu1262",
+      "primaryText": "samudramgurinci",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-gurinci", "ocean-n-about"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "postposition"],
+        ["weight", "light"],
+        ["alternant", "short"]
+      ],
+      "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_infront",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
+      "language": "telu1262",
+      "primaryText": "samudrameduru",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-am-eduru", "ocean-n-in.front.of"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "postposition"],
+        ["weight", "light"],
+        ["alternant", "short"]
+      ],
+      "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_house_1sg",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "fn. 6"},
+      "language": "telu1262",
+      "primaryText": "illuni",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["il-lu-ni", "house-n-1SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["alternation", "lu"],
+        ["follower", "agreement"],
+        ["weight", "light"]
+      ],
+      "comment": "Strong noun with nominal agreement: no oblique.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_pl_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+      "language": "telu1262",
+      "primaryText": "samudrāluø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-ā-lu-ø", "ocean-n-PL-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "plural"],
+        ["weight", "light"]
+      ],
+      "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_pl_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+      "language": "telu1262",
+      "primaryText": "samudrālani",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-ā-la-ni", "ocean-n-PL-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "plural"],
+        ["weight", "light"]
+      ],
+      "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_pl_gen",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+      "language": "telu1262",
+      "primaryText": "samudrālaø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-ā-la-ø", "ocean-n-PL-GEN"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "plural"],
+        ["weight", "light"]
+      ],
+      "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_pl_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+      "language": "telu1262",
+      "primaryText": "samudrālaki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-ā-la-ki", "ocean-n-PL-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "plural"],
+        ["weight", "light"]
+      ],
+      "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_pl_p",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+      "language": "telu1262",
+      "primaryText": "samudrālalō",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["samudr-ā-la-lō", "ocean-n-PL-in"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "plural"],
+        ["weight", "light"]
+      ],
+      "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bet_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pand-em-ø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pand-em-ø", "bet-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bet_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pand-ǣni-ni",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pand-ǣni-ni", "bet-n-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bet_gen",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pand-em-ø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pand-em-ø", "bet-n-GEN"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bet_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pand-ǣni-ki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pand-ǣni-ki", "bet-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_bet_p",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "pand-em-lō",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pand-em-lō", "bet-n-in"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "postposition"],
+        ["weight", "heavy"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_wife_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "peḷḷ-ām-ø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["peḷḷ-ām-ø", "wife-n-NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_wife_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "peḷḷ-āni-ni",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["peḷḷ-āni-ni", "wife-n-ACC"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_wife_gen",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "peḷḷ-ām-ø",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["peḷḷ-ām-ø", "wife-n-GEN"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_wife_dat",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "peḷḷ-āni-ki",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["peḷḷ-āni-ki", "wife-n-DAT"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "case"],
+        ["weight", "light"],
+        ["alternant", "long"]
+      ],
+      "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_wife_p",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+      "method": "description",
+      "language": "telu1262",
+      "primaryText": "peḷḷ-ām-lō",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["peḷḷ-ām-lō", "wife-n-in"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "postposition"],
+        ["weight", "heavy"],
+        ["alternant", "short"]
+      ],
+      "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_those_all_acc",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(33)"},
+      "method": "elicitation",
+      "language": "telu1262",
+      "primaryText": "nēnu vāṭ-anniṭi-ni cūs-ā-nu",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nēnu", "1SG.NOM"], ["vāṭ-anniṭi-ni", "3PL.NONHUM.OBL-all-ACC"],
+        ["cūs-ā-nu", "see-PST-1SG"]
+      ],
+      "translation": "I saw them all.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["follower", "quantifier"],
+        ["weight", "heavy"]
+      ],
+      "comment": "Elicited: the strong oblique is triggered across the intervening quantifier.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_ocean_whole_acc_sentence",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(34)"},
+      "method": "elicitation",
+      "language": "telu1262",
+      "primaryText": "nēnu samudram-antaṭi-ni cūs-ā-nu",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nēnu", "1SG.NOM"], ["samudram-antaṭi-ni", "ocean.NOM-whole-ACC"],
+        ["cūs-ā-nu", "see-PST-1SG"]
+      ],
+      "translation": "I saw all of the ocean.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "weak"],
+        ["follower", "quantifier"],
+        ["weight", "heavy"],
+        ["alternant", "short"]
+      ],
+      "comment": "Elicited: the weak long form is not triggered across the quantifier; the heavy initial syllable of antaṭi conditions the short form.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_those_all_nom",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(35)"},
+      "method": "elicitation",
+      "language": "telu1262",
+      "primaryText": "av-anni bāgun-nā-yi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["av-anni", "3PL.NONHUM-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
+      ],
+      "translation": "All of those are good.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["follower", "quantifier"],
+        ["weight", "heavy"]
+      ],
+      "comment": "Elicited.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aitha2026_those_all_nom_obl",
+      "source": {"bibkey": "aitha-2026", "paperLabel": "(36)"},
+      "method": "elicitation",
+      "language": "telu1262",
+      "primaryText": "vāṭ-anni bāgun-nā-yi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vāṭ-anni", "3PL.NONHUM.OBL-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
+      ],
+      "translation": "All of those are good.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["class", "strong"],
+        ["follower", "quantifier"],
+        ["weight", "heavy"]
+      ],
+      "comment": "Elicited: the oblique is not licensed when the overall case is nominative.",
+      "verified": "page-image"
+    }
+  ]
+}

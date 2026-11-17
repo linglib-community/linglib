@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Aitha2026` — typed example data
@@ -19,6 +21,7 @@ def house_nom : Datum :=
   { id := "aitha2026_house_nom"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "illuø"
     glossedTokens := [("il-lu-ø", "house-n-NOM")]
@@ -28,12 +31,13 @@ def house_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu")] }
 
 def house_acc : Datum :=
   { id := "aitha2026_house_acc"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "inṭini"
     glossedTokens := [("in-ṭi-ni", "house-n-ACC")]
@@ -43,12 +47,13 @@ def house_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu"), ("follower", "case"), ("weight", "light")] }
 
 def house_gen : Datum :=
   { id := "aitha2026_house_gen"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "inṭiø"
     glossedTokens := [("in-ṭi-ø", "house-n-GEN")]
@@ -58,12 +63,13 @@ def house_gen : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu")] }
 
 def house_dat : Datum :=
   { id := "aitha2026_house_dat"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "inṭiki"
     glossedTokens := [("in-ṭi-ki", "house-n-DAT")]
@@ -73,12 +79,13 @@ def house_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu"), ("follower", "case"), ("weight", "light")] }
 
 def house_p : Datum :=
   { id := "aitha2026_house_p"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "inṭilō"
     glossedTokens := [("in-ṭi-lō", "house-n-in")]
@@ -88,27 +95,29 @@ def house_p : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu"), ("follower", "postposition"), ("weight", "heavy")] }
 
 def town_nom : Datum :=
   { id := "aitha2026_town_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "ūru"
-    glossedTokens := [("ūr-u", "town-n-NOM")]
-    glossedWords := [⟨['ū', 'r', '-', 'u'], ['t', 'o', 'w', 'n', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "ūruø"
+    glossedTokens := [("ūr-u-ø", "town-n-NOM")]
+    glossedWords := [⟨['ū', 'r', '-', 'u', '-', 'ø'], ['t', 'o', 'w', 'n', '-', 'n', '-', 'N', 'O', 'M'], [⟨['ū', 'r'], ['t', 'o', 'w', 'n'], none⟩, ⟨['u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
+    paperFeatures := [("class", "strong"), ("alternation", "u")] }
 
 def town_dat : Datum :=
   { id := "aitha2026_town_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "ūriki"
     glossedTokens := [("ūr-i-ki", "town-n-DAT")]
@@ -118,27 +127,29 @@ def town_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
+    paperFeatures := [("class", "strong"), ("alternation", "u"), ("follower", "case"), ("weight", "light")] }
 
 def husband_nom : Datum :=
   { id := "aitha2026_husband_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "moguḍu"
-    glossedTokens := [("moguḍ-u", "husband-n-NOM")]
-    glossedWords := [⟨['m', 'o', 'g', 'u', 'ḍ', '-', 'u'], ['h', 'u', 's', 'b', 'a', 'n', 'd', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "moguḍuø"
+    glossedTokens := [("moguḍ-u-ø", "husband-n-NOM")]
+    glossedWords := [⟨['m', 'o', 'g', 'u', 'ḍ', '-', 'u', '-', 'ø'], ['h', 'u', 's', 'b', 'a', 'n', 'd', '-', 'n', '-', 'N', 'O', 'M'], [⟨['m', 'o', 'g', 'u', 'ḍ'], ['h', 'u', 's', 'b', 'a', 'n', 'd'], none⟩, ⟨['u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
+    paperFeatures := [("class", "strong"), ("alternation", "u")] }
 
 def husband_dat : Datum :=
   { id := "aitha2026_husband_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "moguḍiki"
     glossedTokens := [("moguḍ-i-ki", "husband-n-DAT")]
@@ -148,27 +159,29 @@ def husband_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
+    paperFeatures := [("class", "strong"), ("alternation", "u"), ("follower", "case"), ("weight", "light")] }
 
 def bow_nom : Datum :=
   { id := "aitha2026_bow_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "villu"
-    glossedTokens := [("vil-lu", "bow-n-NOM")]
-    glossedWords := [⟨['v', 'i', 'l', '-', 'l', 'u'], ['b', 'o', 'w', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "villuø"
+    glossedTokens := [("vil-lu-ø", "bow-n-NOM")]
+    glossedWords := [⟨['v', 'i', 'l', '-', 'l', 'u', '-', 'ø'], ['b', 'o', 'w', '-', 'n', '-', 'N', 'O', 'M'], [⟨['v', 'i', 'l'], ['b', 'o', 'w'], none⟩, ⟨['l', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu")] }
 
 def bow_dat : Datum :=
   { id := "aitha2026_bow_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "vinṭiki"
     glossedTokens := [("vin-ṭi-ki", "bow-n-DAT")]
@@ -178,27 +191,29 @@ def bow_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu"), ("follower", "case"), ("weight", "light")] }
 
 def eye_nom : Datum :=
   { id := "aitha2026_eye_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "kannu"
-    glossedTokens := [("kan-nu", "eye-n-NOM")]
-    glossedWords := [⟨['k', 'a', 'n', '-', 'n', 'u'], ['e', 'y', 'e', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "kannuø"
+    glossedTokens := [("kan-nu-ø", "eye-n-NOM")]
+    glossedWords := [⟨['k', 'a', 'n', '-', 'n', 'u', '-', 'ø'], ['e', 'y', 'e', '-', 'n', '-', 'N', 'O', 'M'], [⟨['k', 'a', 'n'], ['e', 'y', 'e'], none⟩, ⟨['n', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "nu")] }
 
 def eye_dat : Datum :=
   { id := "aitha2026_eye_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "kanṭiki"
     glossedTokens := [("kan-ṭi-ki", "eye-n-DAT")]
@@ -208,27 +223,29 @@ def eye_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "nu"), ("follower", "case"), ("weight", "light")] }
 
 def tooth_nom : Datum :=
   { id := "aitha2026_tooth_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "pannu"
-    glossedTokens := [("pan-nu", "tooth-n-NOM")]
-    glossedWords := [⟨['p', 'a', 'n', '-', 'n', 'u'], ['t', 'o', 'o', 't', 'h', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "pannuø"
+    glossedTokens := [("pan-nu-ø", "tooth-n-NOM")]
+    glossedWords := [⟨['p', 'a', 'n', '-', 'n', 'u', '-', 'ø'], ['t', 'o', 'o', 't', 'h', '-', 'n', '-', 'N', 'O', 'M'], [⟨['p', 'a', 'n'], ['t', 'o', 'o', 't', 'h'], none⟩, ⟨['n', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "nu")] }
 
 def tooth_dat : Datum :=
   { id := "aitha2026_tooth_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "panṭiki"
     glossedTokens := [("pan-ṭi-ki", "tooth-n-DAT")]
@@ -238,27 +255,29 @@ def tooth_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "nu"), ("follower", "case"), ("weight", "light")] }
 
 def nest_nom : Datum :=
   { id := "aitha2026_nest_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "gūḍu"
-    glossedTokens := [("gū-ḍu", "nest-n-NOM")]
-    glossedWords := [⟨['g', 'ū', '-', 'ḍ', 'u'], ['n', 'e', 's', 't', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "gūḍuø"
+    glossedTokens := [("gū-ḍu-ø", "nest-n-NOM")]
+    glossedWords := [⟨['g', 'ū', '-', 'ḍ', 'u', '-', 'ø'], ['n', 'e', 's', 't', '-', 'n', '-', 'N', 'O', 'M'], [⟨['g', 'ū'], ['n', 'e', 's', 't'], none⟩, ⟨['ḍ', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ḍu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "du")] }
 
 def nest_dat : Datum :=
   { id := "aitha2026_nest_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "gūṭiki"
     glossedTokens := [("gū-ṭi-ki", "nest-n-DAT")]
@@ -268,27 +287,29 @@ def nest_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "du"), ("follower", "case"), ("weight", "light")] }
 
 def stream_nom : Datum :=
   { id := "aitha2026_stream_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "ēru"
-    glossedTokens := [("ē-ru", "stream-n-NOM")]
-    glossedWords := [⟨['ē', '-', 'r', 'u'], ['s', 't', 'r', 'e', 'a', 'm', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "ēruø"
+    glossedTokens := [("ē-ru-ø", "stream-n-NOM")]
+    glossedWords := [⟨['ē', '-', 'r', 'u', '-', 'ø'], ['s', 't', 'r', 'e', 'a', 'm', '-', 'n', '-', 'N', 'O', 'M'], [⟨['ē'], ['s', 't', 'r', 'e', 'a', 'm'], none⟩, ⟨['r', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
+    paperFeatures := [("class", "strong"), ("alternation", "ru")] }
 
 def stream_dat : Datum :=
   { id := "aitha2026_stream_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "ēṭiki"
     glossedTokens := [("ē-ṭi-ki", "stream-n-DAT")]
@@ -298,27 +319,29 @@ def stream_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "ru"), ("follower", "case"), ("weight", "light")] }
 
 def mouth_nom : Datum :=
   { id := "aitha2026_mouth_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "nōru"
-    glossedTokens := [("nō-ru", "mouth-n-NOM")]
-    glossedWords := [⟨['n', 'ō', '-', 'r', 'u'], ['m', 'o', 'u', 't', 'h', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "nōruø"
+    glossedTokens := [("nō-ru-ø", "mouth-n-NOM")]
+    glossedWords := [⟨['n', 'ō', '-', 'r', 'u', '-', 'ø'], ['m', 'o', 'u', 't', 'h', '-', 'n', '-', 'N', 'O', 'M'], [⟨['n', 'ō'], ['m', 'o', 'u', 't', 'h'], none⟩, ⟨['r', 'u'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
+    paperFeatures := [("class", "strong"), ("alternation", "ru")] }
 
 def mouth_dat : Datum :=
   { id := "aitha2026_mouth_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "nōṭiki"
     glossedTokens := [("nō-ṭi-ki", "mouth-n-DAT")]
@@ -328,27 +351,29 @@ def mouth_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "ru"), ("follower", "case"), ("weight", "light")] }
 
 def plough_nom : Datum :=
   { id := "aitha2026_plough_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "nāgali"
-    glossedTokens := [("nāga-li", "plough-n-NOM")]
-    glossedWords := [⟨['n', 'ā', 'g', 'a', '-', 'l', 'i'], ['p', 'l', 'o', 'u', 'g', 'h', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "nāgaliø"
+    glossedTokens := [("nāga-li-ø", "plough-n-NOM")]
+    glossedWords := [⟨['n', 'ā', 'g', 'a', '-', 'l', 'i', '-', 'ø'], ['p', 'l', 'o', 'u', 'g', 'h', '-', 'n', '-', 'N', 'O', 'M'], [⟨['n', 'ā', 'g', 'a'], ['p', 'l', 'o', 'u', 'g', 'h'], none⟩, ⟨['l', 'i'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "li")] }
+    paperFeatures := [("class", "strong"), ("alternation", "li")] }
 
 def plough_dat : Datum :=
   { id := "aitha2026_plough_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "nāgaṭiki"
     glossedTokens := [("nāga-ṭi-ki", "plough-n-DAT")]
@@ -358,27 +383,29 @@ def plough_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "li"), ("follower", "case"), ("weight", "light")] }
 
 def ghee_nom : Datum :=
   { id := "aitha2026_ghee_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "nēyi"
-    glossedTokens := [("nē-yi", "ghee-n-NOM")]
-    glossedWords := [⟨['n', 'ē', '-', 'y', 'i'], ['g', 'h', 'e', 'e', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "nēyiø"
+    glossedTokens := [("nē-yi-ø", "ghee-n-NOM")]
+    glossedWords := [⟨['n', 'ē', '-', 'y', 'i', '-', 'ø'], ['g', 'h', 'e', 'e', '-', 'n', '-', 'N', 'O', 'M'], [⟨['n', 'ē'], ['g', 'h', 'e', 'e'], none⟩, ⟨['y', 'i'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "yi")] }
 
 def ghee_dat : Datum :=
   { id := "aitha2026_ghee_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "nētiki"
     glossedTokens := [("nē-ti-ki", "ghee-n-DAT")]
@@ -388,27 +415,29 @@ def ghee_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
+    paperFeatures := [("class", "strong"), ("alternation", "yi"), ("follower", "case"), ("weight", "light")] }
 
 def well_nom : Datum :=
   { id := "aitha2026_well_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
-    primaryText := "nūyi"
-    glossedTokens := [("nū-yi", "well-n-NOM")]
-    glossedWords := [⟨['n', 'ū', '-', 'y', 'i'], ['w', 'e', 'l', 'l', '-', 'n', '-', 'N', 'O', 'M'], []⟩]
-    lgrConformance := some .wordAligned
+    primaryText := "nūyiø"
+    glossedTokens := [("nū-yi-ø", "well-n-NOM")]
+    glossedWords := [⟨['n', 'ū', '-', 'y', 'i', '-', 'ø'], ['w', 'e', 'l', 'l', '-', 'n', '-', 'N', 'O', 'M'], [⟨['n', 'ū'], ['w', 'e', 'l', 'l'], none⟩, ⟨['y', 'i'], ['n'], some '-'⟩, ⟨['ø'], ['N', 'O', 'M'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
+    paperFeatures := [("class", "strong"), ("alternation", "yi")] }
 
 def well_dat : Datum :=
   { id := "aitha2026_well_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "nūtiki"
     glossedTokens := [("nū-ti-ki", "well-n-DAT")]
@@ -418,12 +447,13 @@ def well_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
+    paperFeatures := [("class", "strong"), ("alternation", "yi"), ("follower", "case"), ("weight", "light")] }
 
 def ocean_nom : Datum :=
   { id := "aitha2026_ocean_nom"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "samudramø"
     glossedTokens := [("samudr-am-ø", "ocean-n-NOM")]
@@ -433,12 +463,13 @@ def ocean_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def ocean_acc : Datum :=
   { id := "aitha2026_ocean_acc"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "samudrānini"
     glossedTokens := [("samudr-āni-ni", "ocean-n-ACC")]
@@ -448,12 +479,13 @@ def ocean_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def ocean_gen : Datum :=
   { id := "aitha2026_ocean_gen"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "samudramø"
     glossedTokens := [("samudr-am-ø", "ocean-n-GEN")]
@@ -463,12 +495,13 @@ def ocean_gen : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def ocean_dat : Datum :=
   { id := "aitha2026_ocean_dat"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "samudrāniki"
     glossedTokens := [("samudr-āni-ki", "ocean-n-DAT")]
@@ -478,12 +511,13 @@ def ocean_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def ocean_p : Datum :=
   { id := "aitha2026_ocean_p"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "samudramlō"
     glossedTokens := [("samudr-am-lō", "ocean-n-in")]
@@ -493,7 +527,7 @@ def ocean_p : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "postposition"), ("weight", "heavy"), ("alternant", "short")] }
 
 def ocean_1sg : Datum :=
   { id := "aitha2026_ocean_1sg"
@@ -508,7 +542,7 @@ def ocean_1sg : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "agreement"), ("weight", "light"), ("alternant", "long")] }
 
 def ocean_2sg : Datum :=
   { id := "aitha2026_ocean_2sg"
@@ -523,7 +557,7 @@ def ocean_2sg : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "vi"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "agreement"), ("weight", "light"), ("alternant", "long")] }
 
 def ocean_3sg : Datum :=
   { id := "aitha2026_ocean_3sg"
@@ -538,7 +572,7 @@ def ocean_3sg : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "agreement"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def picture_1sg_apc : Datum :=
   { id := "aitha2026_picture_1sg_apc"
@@ -553,7 +587,7 @@ def picture_1sg_apc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "citram"), ("root", "picture"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "agreement"), ("weight", "light"), ("alternant", "long")] }
 
 def ocean_whole_acc : Datum :=
   { id := "aitha2026_ocean_whole_acc"
@@ -568,7 +602,7 @@ def ocean_whole_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "quantifier"), ("weight", "heavy"), ("alternant", "short")] }
 
 def ocean_about : Datum :=
   { id := "aitha2026_ocean_about"
@@ -583,7 +617,7 @@ def ocean_about : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "gurinci"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "postposition"), ("weight", "light"), ("alternant", "short")] }
 
 def ocean_infront : Datum :=
   { id := "aitha2026_ocean_infront"
@@ -598,7 +632,7 @@ def ocean_infront : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "eduru"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "postposition"), ("weight", "light"), ("alternant", "short")] }
 
 def house_1sg : Datum :=
   { id := "aitha2026_house_1sg"
@@ -613,7 +647,7 @@ def house_1sg : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "lu")] }
+    paperFeatures := [("class", "strong"), ("alternation", "lu"), ("follower", "agreement"), ("weight", "light")] }
 
 def ocean_pl_nom : Datum :=
   { id := "aitha2026_ocean_pl_nom"
@@ -628,7 +662,7 @@ def ocean_pl_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "nom"), ("suffix", "lu"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
+    paperFeatures := [("class", "weak"), ("follower", "plural"), ("weight", "light")] }
 
 def ocean_pl_acc : Datum :=
   { id := "aitha2026_ocean_pl_acc"
@@ -643,7 +677,7 @@ def ocean_pl_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "acc"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
+    paperFeatures := [("class", "weak"), ("follower", "plural"), ("weight", "light")] }
 
 def ocean_pl_gen : Datum :=
   { id := "aitha2026_ocean_pl_gen"
@@ -658,7 +692,7 @@ def ocean_pl_gen : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "gen"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
+    paperFeatures := [("class", "weak"), ("follower", "plural"), ("weight", "light")] }
 
 def ocean_pl_dat : Datum :=
   { id := "aitha2026_ocean_pl_dat"
@@ -673,7 +707,7 @@ def ocean_pl_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "dat"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
+    paperFeatures := [("class", "weak"), ("follower", "plural"), ("weight", "light")] }
 
 def ocean_pl_p : Datum :=
   { id := "aitha2026_ocean_pl_p"
@@ -688,12 +722,13 @@ def ocean_pl_p : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "p"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
+    paperFeatures := [("class", "weak"), ("follower", "plural"), ("weight", "light")] }
 
 def bet_nom : Datum :=
   { id := "aitha2026_bet_nom"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "pand-em-ø"
     glossedTokens := [("pand-em-ø", "bet-n-NOM")]
@@ -703,12 +738,13 @@ def bet_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def bet_acc : Datum :=
   { id := "aitha2026_bet_acc"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "pand-ǣni-ni"
     glossedTokens := [("pand-ǣni-ni", "bet-n-ACC")]
@@ -718,12 +754,13 @@ def bet_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def bet_gen : Datum :=
   { id := "aitha2026_bet_gen"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "pand-em-ø"
     glossedTokens := [("pand-em-ø", "bet-n-GEN")]
@@ -733,12 +770,13 @@ def bet_gen : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def bet_dat : Datum :=
   { id := "aitha2026_bet_dat"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "pand-ǣni-ki"
     glossedTokens := [("pand-ǣni-ki", "bet-n-DAT")]
@@ -748,12 +786,13 @@ def bet_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def bet_p : Datum :=
   { id := "aitha2026_bet_p"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "pand-em-lō"
     glossedTokens := [("pand-em-lō", "bet-n-in")]
@@ -763,12 +802,13 @@ def bet_p : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "em"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "postposition"), ("weight", "heavy"), ("alternant", "short")] }
 
 def wife_nom : Datum :=
   { id := "aitha2026_wife_nom"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "peḷḷ-ām-ø"
     glossedTokens := [("peḷḷ-ām-ø", "wife-n-NOM")]
@@ -778,12 +818,13 @@ def wife_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def wife_acc : Datum :=
   { id := "aitha2026_wife_acc"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "peḷḷ-āni-ni"
     glossedTokens := [("peḷḷ-āni-ni", "wife-n-ACC")]
@@ -793,12 +834,13 @@ def wife_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def wife_gen : Datum :=
   { id := "aitha2026_wife_gen"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "peḷḷ-ām-ø"
     glossedTokens := [("peḷḷ-ām-ø", "wife-n-GEN")]
@@ -808,12 +850,13 @@ def wife_gen : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("alternant", "short")] }
 
 def wife_dat : Datum :=
   { id := "aitha2026_wife_dat"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "peḷḷ-āni-ki"
     glossedTokens := [("peḷḷ-āni-ki", "wife-n-DAT")]
@@ -823,12 +866,13 @@ def wife_dat : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
+    paperFeatures := [("class", "weak"), ("follower", "case"), ("weight", "light"), ("alternant", "long")] }
 
 def wife_p : Datum :=
   { id := "aitha2026_wife_p"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
+    method := some .description
     language := "telu1262"
     primaryText := "peḷḷ-ām-lō"
     glossedTokens := [("peḷḷ-ām-lō", "wife-n-in")]
@@ -838,7 +882,7 @@ def wife_p : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ām"), ("form", "short")] }
+    paperFeatures := [("class", "weak"), ("follower", "postposition"), ("weight", "heavy"), ("alternant", "short")] }
 
 def those_all_acc : Datum :=
   { id := "aitha2026_those_all_acc"
@@ -854,7 +898,7 @@ def those_all_acc : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "acc"), ("stem", "obl"), ("intervener", "quantifier")] }
+    paperFeatures := [("class", "strong"), ("follower", "quantifier"), ("weight", "heavy")] }
 
 def ocean_whole_acc_sentence : Datum :=
   { id := "aitha2026_ocean_whole_acc_sentence"
@@ -870,7 +914,7 @@ def ocean_whole_acc_sentence : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short"), ("intervener", "quantifier")] }
+    paperFeatures := [("class", "weak"), ("follower", "quantifier"), ("weight", "heavy"), ("alternant", "short")] }
 
 def those_all_nom : Datum :=
   { id := "aitha2026_those_all_nom"
@@ -886,7 +930,7 @@ def those_all_nom : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "nom"), ("intervener", "quantifier")] }
+    paperFeatures := [("class", "strong"), ("follower", "quantifier"), ("weight", "heavy")] }
 
 def those_all_nom_obl : Datum :=
   { id := "aitha2026_those_all_nom_obl"
@@ -902,8 +946,85 @@ def those_all_nom_obl : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "obl"), ("intervener", "quantifier")] }
+    paperFeatures := [("class", "strong"), ("follower", "quantifier"), ("weight", "heavy")] }
 
 def all : List Datum := [house_nom, house_acc, house_gen, house_dat, house_p, town_nom, town_dat, husband_nom, husband_dat, bow_nom, bow_dat, eye_nom, eye_dat, tooth_nom, tooth_dat, nest_nom, nest_dat, stream_nom, stream_dat, mouth_nom, mouth_dat, plough_nom, plough_dat, ghee_nom, ghee_dat, well_nom, well_dat, ocean_nom, ocean_acc, ocean_gen, ocean_dat, ocean_p, ocean_1sg, ocean_2sg, ocean_3sg, picture_1sg_apc, ocean_whole_acc, ocean_about, ocean_infront, house_1sg, ocean_pl_nom, ocean_pl_acc, ocean_pl_gen, ocean_pl_dat, ocean_pl_p, bet_nom, bet_acc, bet_gen, bet_dat, bet_p, wife_nom, wife_acc, wife_gen, wife_dat, wife_p, those_all_acc, ocean_whole_acc_sentence, those_all_nom, those_all_nom_obl]
+
+/-- The two classes of alternating nouns. -/
+inductive NounClass where
+  /-- strong: strongly suppletive: the exponent of n differs between the nominative and every other case (§2) -/
+  | strong
+  /-- weak: weakly suppletive: n is *-am* or *-āni* (§3) -/
+  | weak
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `class`. -/
+def nounClass (e : Datum) : Option NounClass :=
+  e.parse? "class" [("strong", .strong), ("weak", .weak)]
+
+/-- The rows of (2): the nominative exponent of n that a strong noun takes. -/
+inductive Alternation where
+  /-- u: *-u* ~ *-i* -/
+  | u
+  /-- lu: *-lu* ~ *-ṭi* -/
+  | lu
+  /-- nu: *-nu* ~ *-ṭi* -/
+  | nu
+  /-- du: *-ḍu* ~ *-ṭi* -/
+  | du
+  /-- ru: *-ru* ~ *-ṭi* -/
+  | ru
+  /-- li: *-li* ~ *-ṭi* -/
+  | li
+  /-- yi: *-yi* ~ *-ti* -/
+  | yi
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `alternation`. -/
+def alternation (e : Datum) : Option Alternation :=
+  e.parse? "alternation" [("u", .u), ("lu", .lu), ("nu", .nu), ("du", .du), ("ru", .ru), ("li", .li), ("yi", .yi)]
+
+/-- The overt morpheme after the noun stem, where there is one. -/
+inductive Follower where
+  /-- case: a case suffix -/
+  | case
+  /-- agreement: a nominal agreement suffix (12) -/
+  | agreement
+  /-- quantifier: a postposed quantifier -/
+  | quantifier
+  /-- postposition: a postposition -/
+  | postposition
+  /-- plural: the plural suffix -/
+  | plural
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `follower`. -/
+def follower (e : Datum) : Option Follower :=
+  e.parse? "follower" [("case", .case), ("agreement", .agreement), ("quantifier", .quantifier),
+    ("postposition", .postposition), ("plural", .plural)]
+
+/-- The weight of the first syllable of the morpheme after the noun stem. -/
+inductive Weight where
+  /-- light: a short vowel and no coda -/
+  | light
+  /-- heavy: a long vowel or a coda -/
+  | heavy
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `weight`. -/
+def weight (e : Datum) : Option Weight :=
+  e.parse? "weight" [("light", .light), ("heavy", .heavy)]
+
+/-- The form of a singular weak noun. -/
+inductive Alternant where
+  /-- long: the long form, *-āni* -/
+  | long
+  /-- short: the short form, *-am* -/
+  | short
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `alternant`. -/
+def alternant (e : Datum) : Option Alternant :=
+  e.parse? "alternant" [("long", .long), ("short", .short)]
 
 end Aitha2026.Examples

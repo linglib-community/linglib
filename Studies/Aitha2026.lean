@@ -1,341 +1,336 @@
 module
 
-public import Linglib.Core.Data.List.Sublist
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Fragments.Telugu.Case
-public import Linglib.Fragments.Telugu.Adpositions
-public import Mathlib.Data.Fintype.List
-public import Mathlib.Data.Fintype.Sigma
-public import Linglib.Morphology.Paradigm.Contiguity
-public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Phonology.OptimalityTheory.Stratal
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Core.Order.OrdConnected
 public import Linglib.Data.Examples.Aitha2026
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Readers
+public import Linglib.Fragments.Telugu.Adpositions
+public import Linglib.Fragments.Telugu.Case
+public import Linglib.Fragments.Telugu.Phonology
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
+public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Phonology.OptimalityTheory.Grammar
+public import Linglib.Phonology.OptimalityTheory.Stratal
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.Prosody.Foot
+public import Mathlib.Tactic.DeriveFintype
+public import Studies.Caha2009
 
 /-!
 # The nouns that say -ni
 
-Telugu nouns show two stem alternations. The strong one (*il-lu* ~ *in-ṭi* 'house') is
-contextual allomorphy of the nominalizer n conditioned by [ACC], the feature every
-nonnominative case contains under Caha's containment, as McFadden proposes. The weak one
-(*samudr-am* ~ *samudr-āni* 'ocean') only looks like case allomorphy: it violates *ABA, is
-triggered by agreement suffixes in nominative contexts, and reads the weight of the next syllable
-inside the prosodic word. It is the phonology of one underlying *-am-ni*, derived in Kiparsky's
-Stratal OT from prespecified stress on the singular suffix *-ni*.
-
-This file defines the Vocabulary Items of the strong alternation, the weak generalization, the
-singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the paper's (49),
-(59), (62), (63), (66), and (67) under the rankings of (64) and (68).
-
-## Main definitions
-
-* `strongItems`, `strongN`: the Vocabulary Items of (4) and the n exponent they insert.
-* `weakN`: the weak alternation by the syllable that follows n.
-* `numItems`, `numSg`: the singular suffix *-ni* of (40).
-* `wordOrder`, `phraseOrder`: the rankings of (64) and (68).
-
-* `distZero_alignR_max_reranked` and its siblings: the Word-to-Phrase rerankings of (68).
+Telugu nouns show two stem alternations. In the strong one (*il-lu* ~ *in-ṭi* 'house') the
+exponent of the nominalizer n is chosen by Vocabulary Insertion in the context of [ACC], the head
+that every nonnominative case contains under Caha's containment, as McFadden proposes; a
+vocabulary that reads case heads can only
+[cut a paradigm into contiguous stretches](##isContiguous_strongN). The weak one
+(*samudr-am* ~ *samudr-āni* 'ocean') has the nominative form again in the genitive, so
+[no such vocabulary derives it](##weakN_ne_subsetPrinciple), and it reads the weight of
+the next syllable inside the prosodic word. Nor can an exponent of n be chosen by that syllable:
+insertion runs from the root outward, and
+[n is realized before anything outside it has an exponent](##light_notMem_contextAt). The
+alternation is the phonology of one underlying *-am-ni*,
+derived in Kiparsky's Stratal OT from prespecified stress on the singular suffix *-ni*. The
+two strata rank the constraints differently: the consonant that deletes inside the word is kept
+before a postposition, and
+[no ranking makes the winners of both strata's tableaux optimal](##wordGrammar_inf_phraseGrammar).
 
 ## Implementation notes
 
-The cells of the paradigms are the cases of `Telugu.Case` and the uses of the postpositions of
-`Telugu.Adpositions`, a postposition with a value it marks, the paper's P cell being *lō*; they
-are ordered by the containment order on their comparative values, each case on the hierarchy
-containing the cases before it and a case off it comparable only to itself.
+The cells of a paradigm are the cases of `Telugu.Case` and a postposition. A case has its place
+in the Case sequence of `Studies/Caha2009.lean` and the postposition is above them all; the heads
+a cell's representation contains are the cells at or below it, the nominative having none.
 
-The hierarchy is the start of Blake's, nominative, accusative or ergative, genitive, dative,
-locative, ablative or instrumental, along its accusative alignment and cut before the ablative and
-instrumental, which share a position. McFadden takes Blake's hierarchy as Caha updates it, and the paper caps it
-with the postpositions, which the locative stands for here. Caha's own sequences differ and are in
-`Studies/Caha2009.lean`.
+The paper's Vocabulary Items for the strong nouns list the roots each exponent follows. A list is
+one feature here, borne by the roots on it, so each exponent has one item, and the items cover
+every row of the paper's table of strong nouns, which gives entries for two of its rows.
+
+The Word- and Phrase-level rankings are the paper's Hasse diagrams, as relations on the
+constraints, and a tableau is evaluated under every total ranking that extends its stratum's
+diagram. The Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below
+*DIST-0 as well: the quantifier tableau, with ONSET marked on each candidate whose *an* has no
+onset, has the paper's winner under a ranking only if both dominate ONSET
+(`onset_dominated`). A stratum is also a grammar in the sense of `OptimalityTheory.Grammar`, the
+rankings under which the winners of its tableaux are optimal, and the diagram's grammar lies
+below it.
+
+The marks of the Stem-level tableau are computed from each parse's feet by the paper's
+definitions of the three constraints, a mark of FT-BIN for each foot that is not bimoraic and a
+mark of ALL-FT-LEFT for each syllable between a foot and the left edge. The marks of the other
+tableaux are the printed cells.
+
+Syllable weight is that of `Telugu.Phonology.initialSyllable` on the transcribed form of the
+morpheme after the noun stem.
+
+## TODO
+
+* The strong items read [ACC] on the bundle of n, which stands for the case heads outside it;
+  they are not run through `DistributedMorphology.ComplexHead.insertAll`, and the paper's
+  contrast between the strong alternation, which reaches across a postposed quantifier, and the
+  weak one, which needs adjacency, is not stated on the engine's two localities.
+* The Stem-level tableaux for the sandhi of *pandem* 'bet' and *peḷḷām* 'wife' and the Stem-level
+  Hasse diagram are not formalized.
+* The marks of the Word- and Phrase-level tableaux are not computed from representations of the
+  candidates.
 
 ## References
 
 * [aitha-2026]
-* [blake-1994]
 * [caha-2009]
 * [mcfadden-2018]
 * [kiparsky-2000]
+* [bobaljik-2000]
 -/
 
 @[expose] public section
 
 namespace Aitha2026
 
-open DistributedMorphology Prosody
-open OptimalityTheory
+open DistributedMorphology Morphology Prosody OptimalityTheory
+open Examples (Alternation Alternant Follower)
 
-/-! ### The containment order -/
+/-! ### Case containment -/
 
-/-- The containment hierarchy is the nominative, accusative, genitive, dative and locative, each
-containing the cases before it. -/
-def containment : List Case := [.nom, .acc, .gen, .dat, .loc]
-
-theorem nodup_containment : containment.Nodup := by decide
-
-open List in
-/-- A case is below another when it comes earlier in `containment`, and a case off the hierarchy is
-comparable only to itself. -/
-scoped instance : PartialOrder Case :=
-  haveI := nodup_containment.isStrictOrder_pair_sublist
-  partialOrderOfSO fun c₁ c₂ ↦ [c₁, c₂] <+ containment
-
-open List in
-scoped instance : DecidableLE Case := fun c₁ c₂ ↦
-  inferInstanceAs (Decidable (c₁ = c₂ ∨ [c₁, c₂] <+ containment))
-
-open List in
-scoped instance : DecidableLT Case := fun c₁ c₂ ↦
-  inferInstanceAs (Decidable ([c₁, c₂] <+ containment))
-
-/-- A case is nonnominative when its representation contains the accusative's, McFadden's natural
-class. -/
-def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
-
-instance (c : Case) : Decidable (IsNonnominative c) :=
-  inferInstanceAs (Decidable ((.acc : Case) ≤ c))
-
-/-! ### Case -/
-
-/-- The case of a paradigm cell by the paper's label, its P the postposition *lō*. -/
-def caseOfLabel : String → Option Case
-  | "nom" => some .nom | "acc" => some .acc | "gen" => some .gen | "dat" => some .dat
-  | "p" => some .loc | _ => none
-
-/-! ### The strong alternation (§2) -/
-
-/-- The strong roots of (2), by gloss. -/
-inductive Root where
-  | house | bow | eye | tooth | nest | stream | mouth | plough | ghee | well | town | husband
-  deriving DecidableEq, Repr, Fintype
-
-def Root.ofString : String → Option Root
-  | "house" => some .house | "bow" => some .bow | "eye" => some .eye | "tooth" => some .tooth
-  | "nest" => some .nest | "stream" => some .stream | "mouth" => some .mouth
-  | "plough" => some .plough | "ghee" => some .ghee | "well" => some .well | "town" => some .town
-  | "husband" => some .husband | _ => none
-
-/-- The features at the n head are the root it attaches to and, in every nonnominative case,
-[ACC]. -/
-inductive Feature where
-  | root (r : Root)
-  | acc
-  deriving DecidableEq, Repr
-
-/-- The n head's bundle for root `r` in case `c`, with [ACC] in every nonnominative case, the
-natural class of the oblique ((3), [caha-2009]). -/
-def site (r : Root) (c : Case) : Finset Feature :=
-  insert (.root r) (if IsNonnominative c then {.acc} else ∅)
-
-/-- `forRoots roots e acc` lists the items inserting `e` next to each root of `roots`, in the
-context of [ACC] when `acc`. -/
-def forRoots (roots : List Root) (e : String) (acc : Bool := false) :
-    List (VocabularyItem Feature String) :=
-  roots.map fun r ↦ insert (.root r) (if acc then {.acc} else ∅) ⟷ e
-
-/-- The Vocabulary Items of (4) for the roots of (2) insert the nominative exponents next to
-their roots and the oblique exponents next to the same roots and [ACC], one *-ṭi* entry
-spanning the *-ru*, *-lu*, *-nu*, *-ḍu*, and *-li* classes, *-ti* for the *-yi* class and *-i*
-for the *-u* class. -/
-def strongItems : List (VocabularyItem Feature String) :=
-  forRoots [.stream, .mouth] "ru" ++ forRoots [.house, .bow] "lu" ++
-    forRoots [.eye, .tooth] "nu" ++ forRoots [.nest] "ḍu" ++ forRoots [.plough] "li" ++
-    forRoots [.stream, .mouth, .house, .bow, .eye, .tooth, .nest, .plough] "ṭi" true ++
-    forRoots [.ghee, .well] "yi" ++ forRoots [.ghee, .well] "ti" true ++
-    forRoots [.town, .husband] "u" ++ forRoots [.town, .husband] "i" true
-
-/-- The exponent of n for root `r` in case `c`. -/
-def strongN (r : Root) (c : Case) : Option String := subsetPrinciple strongItems (site r c)
-
-/-- A use of a Telugu postposition is the postposition with a comparative value named for a
-function it marks. -/
-abbrev PostpositionUse :=
-  Σ a : {a // a ∈ Telugu.Adpositions.inventory},
-    {c : Case // (c.functions ∩ a.1.functions).Nonempty}
-
-/-- A cell of the paradigms (1) and (8), a case or a use of a postposition. -/
-inductive ParadigmCell where
+/-- A cell of a paradigm is a case or a postposition. -/
+inductive Cell where
   /-- A case of `Telugu.Case`. -/
   | case (c : Telugu.Case)
-  /-- A use of a postposition of `Telugu.Adpositions`. -/
-  | postposition (u : PostpositionUse)
-  deriving DecidableEq, Fintype
+  /-- A postposition, *lō* 'in' in the paper's paradigms. -/
+  | postposition
+  deriving DecidableEq, Fintype, Repr
 
-/-- The comparative value of a cell. -/
-def ParadigmCell.label : ParadigmCell → Case
-  | .case c => c.label
-  | .postposition u => u.2.1
+/-- The place of a cell on the hierarchy (3): a case has its place in Caha's Case sequence, and
+the postposition is above every case. -/
+def Cell.place : Cell → WithTop (Fin 6)
+  | .case c => (((List.finRange 6).find? (Caha2009.sequence · = c.label)).map WithTop.some).getD ⊤
+  | .postposition => ⊤
 
-/-- The cells are ordered by the containment order on their comparative values. -/
-instance : Preorder ParadigmCell := Preorder.lift ParadigmCell.label
-
-instance : DecidableLE ParadigmCell := fun a b ↦ inferInstanceAs (Decidable (a.label ≤ b.label))
-
-theorem strongN_nonnom :
-    ∀ r : Root, ∀ c : ParadigmCell, IsNonnominative c.label →
-      strongN r c.label = strongN r .acc := by
+theorem sequence_place : ∀ c : Telugu.Case, ∃ i : Fin 6,
+    Cell.place (.case c) = WithTop.some i ∧ Caha2009.sequence i = c.label := by
   decide
 
-/-! ### The weak alternation (§3) -/
+/-- The cells are ordered by containment, a cell containing the cells before it. -/
+instance : Preorder Cell := Preorder.lift Cell.place
 
-/-- What follows the n exponent is recorded by its membership in the noun's prosodic word and
-the weight of its initial syllable (§3.2). -/
+instance : DecidableLE Cell := fun a b ↦ inferInstanceAs (Decidable (a.place ≤ b.place))
+
+instance : DecidableLT Cell := fun a b ↦ inferInstanceAs (Decidable (a.place < b.place))
+
+/-- The heads the representation of a cell contains: those of the cells it contains, the
+nominative having no head of its own. -/
+def Cell.heads (c : Cell) : Finset Cell := {h | .case .nom < h ∧ h ≤ c}
+
+theorem Cell.heads_mono : Monotone Cell.heads := fun _ _ h ↦
+  Finset.monotone_filter_right _ fun _ _ hx ↦ ⟨hx.1, hx.2.trans h⟩
+
+/-! ### The strong alternation -/
+
+/-- The exponents of n in the strong nouns of (2). -/
+inductive Exponent where
+  | u | lu | nu | «ḍu» | ru | li | yi | «ṭi» | ti | i
+  deriving DecidableEq, Fintype, Repr
+
+/-- The exponent as the paper transcribes it. -/
+def Exponent.form : Exponent → String
+  | .u => "u" | .lu => "lu" | .nu => "nu" | .«ḍu» => "ḍu" | .ru => "ru" | .li => "li"
+  | .yi => "yi" | .«ṭi» => "ṭi" | .ti => "ti" | .i => "i"
+
+/-- The nominative exponent of a row of (2). -/
+def nominative : Alternation → Exponent
+  | .u => .u | .lu => .lu | .nu => .nu | .du => .«ḍu» | .ru => .ru | .li => .li | .yi => .yi
+
+/-- The oblique exponent of a row of (2). -/
+def oblique : Alternation → Exponent
+  | .u => .i
+  | .yi => .ti
+  | _ => .«ṭi»
+
+/-- The features at the n head: the root is on the list of roots an exponent follows, and the
+case heads above the noun. -/
+inductive Feature where
+  | listed (e : Exponent)
+  | head (h : Cell)
+  deriving DecidableEq, Repr
+
+/-- (4): a nominative exponent is inserted after the roots on its list, and an oblique exponent
+after the roots on its list in the context of [ACC]. -/
+def strongItems : RuleSet (VocabularyItem Feature Exponent) :=
+  [.ru, .lu, .nu, .«ḍu», .li, .yi, .u].map (fun e ↦ {.listed e} ⟷ e) ++
+    [.«ṭi», .ti, .i].map fun e ↦ {.listed e, .head (.case .acc)} ⟷ e
+
+/-- The n head of a noun of the row `k` in the cell `c`: the root is on the lists of the row's
+two exponents, under the case heads of the cell. -/
+def site (k : Alternation) (c : Cell) : Finset Feature :=
+  {.listed (nominative k), .listed (oblique k)} ∪ c.heads.image .head
+
+/-- The exponent of n for a noun of the row `k` in the cell `c`. -/
+def strongN (k : Alternation) (c : Cell) : Option Exponent := subsetPrinciple strongItems (site k c)
+
+theorem antihomophonous_strongItems : RuleSet.Antihomophonous strongItems := by decide
+
+theorem monotone_site (k : Alternation) :
+    Monotone fun c ↦ (site k c : Neighborhood (Finset Feature)) := fun _ _ h ↦
+  Neighborhood.ofBundle_subset_iff.2 <|
+    Finset.union_subset_union_right (Finset.image_subset_image (Cell.heads_mono h))
+
+/-- The strong paradigm of every row of (2) is contiguous on the containment hierarchy: an
+exponent inserted in two cells is inserted in every cell between them. -/
+theorem isContiguous_strongN (k : Alternation) : IsContiguous (strongN k) :=
+  (isContiguous_subsetPrinciple antihomophonous_strongItems).comp_monotone (monotone_site k)
+
+-- (1), (2): the nominative exponent in the nominative, the oblique one wherever [ACC] is
+theorem strongN_eq :
+    ∀ k c, strongN k c = some (if .case .acc ≤ c then oblique k else nominative k) := by
+  decide
+
+/-! ### The weak alternation -/
+
+/-- The weight of the first syllable of a romanized form. -/
+def weight? (s : List Char) : Option Syllable.Weight :=
+  (Telugu.Phonology.transcribe s).map fun w ↦ (Telugu.Phonology.initialSyllable w).weight
+
+/-- What follows the n exponent: the kind of the morpheme and the weight of its first
+syllable. -/
 structure Following where
-  internal : Bool
+  kind : Follower
   weight : Syllable.Weight
   deriving DecidableEq, Repr
 
-/-- The long form is triggered iff the next syllable is light and inside the
-prosodic word; postpositions with light initial syllables ((18)) and the
-heavy-initial postposed quantifier ((17)) do not trigger it. -/
-def TriggersLong (f : Option Following) : Prop :=
-  ∃ m ∈ f, m.internal = true ∧ m.weight = .light
+/-- (29): a postposition is outside the noun's prosodic word, and the case suffixes, the
+agreement suffixes, the plural suffix and a postposed quantifier are inside it. -/
+def Following.Inside (f : Following) : Prop := f.kind ≠ .postposition
 
-instance (f : Option Following) : Decidable (TriggersLong f) := by
-  unfold TriggersLong; infer_instance
+instance : DecidablePred Following.Inside := fun f ↦ inferInstanceAs (Decidable (f.kind ≠ _))
 
-/-- The weak n exponent is *-āni* before a word-internal light syllable and *-am* otherwise. -/
-def weakN (f : Option Following) : String := if TriggersLong f then "āni" else "am"
+/-- The long form is triggered by a light syllable that follows inside the prosodic word. -/
+def Long (f : Option Following) : Prop := ∃ x ∈ f, x.Inside ∧ x.weight = .light
 
-/-! ### The data pool -/
+instance : DecidablePred Long := fun f ↦ inferInstanceAs (Decidable (∃ x ∈ f, _))
 
-/-- A paradigm cell of the pool records the noun, its strong root if any, its number, its case
-if any, what follows n, the n exponent, and for singular weak nouns whether the form is long. -/
-structure Cell where
-  noun : String
-  strongRoot : Option Root
-  plural : Bool
-  case : Option Case
-  following : Option Following
-  n : String
-  long : Option Bool
-  deriving DecidableEq, Repr
+/-- What follows n in a cell of the paradigm: the first exponent of the case, if it has one, or
+the postposition *lō*. -/
+def Cell.following : Cell → Option Following
+  | .case c => c.exponents.head?.bind fun m ↦ (weight? m.form.toList).map (⟨.case, ·⟩)
+  | .postposition =>
+    Telugu.Adpositions.lō.morphs.head?.bind fun m ↦
+      (weight? m.form.toList).map (⟨.postposition, ·⟩)
 
-/-- The cell an example records, from its `paperFeatures`. -/
-def Cell.ofDatum (ex : Datum) : Option Cell := do
-  let fs := ex.paperFeatures
-  let noun ← fs.lookup "noun"
-  let cls ← fs.lookup "class"
-  let number ← fs.lookup "number"
-  let case ← fs.lookup "case"
-  let prwd ← fs.lookup "prwd"
-  let weight ← fs.lookup "weight"
-  let n ← fs.lookup "n"
-  let following ← match prwd, weight with
-    | "none", _ => some none
-    | "internal", "light" => some (some ⟨true, .light⟩)
-    | "internal", "heavy" => some (some ⟨true, .heavy⟩)
-    | "external", "light" => some (some ⟨false, .light⟩)
-    | "external", "heavy" => some (some ⟨false, .heavy⟩)
-    | _, _ => none
-  let strongRoot ←
-    if cls = "strong" then (fs.lookup "root" >>= Root.ofString).map some else some none
-  pure ⟨noun, strongRoot, number = "pl", caseOfLabel case, following, n,
-    (fs.lookup "form").map (· = "long")⟩
+/-- The form of a singular weak noun in a cell: long before a light syllable inside the prosodic
+word, and short otherwise. -/
+def weakN (c : Cell) : Alternant := if Long c.following then .long else .short
 
-theorem cell_ofDatum_isSome :
-    ∀ ex ∈ Examples.all, (ex.feature? "n").isSome → (Cell.ofDatum ex).isSome := by decide
+-- (8): the weak paradigm is ABA, the nominative form resurfacing in the genitive
+theorem not_isContiguous_weakN : ¬ IsContiguous weakN :=
+  fun h ↦ absurd (h (i := .case .nom) (j := .case .acc) (k := .case .gen) (by decide) (by decide)
+    (by decide)) (by decide)
 
-/-- The cells of the pool. -/
-def cells : List Cell := Examples.all.filterMap Cell.ofDatum
+/-- No Vocabulary Items conditioned by case derive the weak paradigm: whatever the features and
+the items, if no two items share an exponent and a cell presents the features of the cells it
+contains, the Subset Principle does not insert the long and short forms where the weak nouns have
+them. -/
+theorem weakN_ne_subsetPrinciple {F E : Type*} [DecidableEq F]
+    {items : RuleSet (VocabularyItem F E)} (hv : items.Antihomophonous)
+    {site : Cell → Neighborhood (Finset F)} (hs : Monotone site) {exp : Alternant → E}
+    (hexp : Function.Injective exp) :
+    (fun c ↦ subsetPrinciple items (site c)) ≠ fun c ↦ some (exp (weakN c)) := fun h ↦ by
+  have hc : IsContiguous fun c ↦ subsetPrinciple items (site c) :=
+    (isContiguous_subsetPrinciple hv).comp_monotone hs
+  rw [h] at hc
+  exact not_isContiguous_weakN <| (isContiguous_comp_iff (h := fun a ↦ some (exp a))
+    ((Option.some_injective E).comp hexp)).1 hc
 
-/-- The strong cells, with their roots. -/
-def strongCells : List (Root × Case × String) :=
-  cells.filterMap fun c ↦ do pure (← c.strongRoot, ← c.case, c.n)
+/-! ### The rows -/
 
-/-- The singular weak cells. -/
-def weakCells : List Cell := cells.filter fun c ↦ c.strongRoot = none ∧ ¬ c.plural
+/-- The word of a row that bears the noun: the word glossed with n or with a postposed
+quantifier. -/
+def noun? (e : Datum) : Option GlossedWord :=
+  e.glossedWords.find? fun w ↦
+    "n".toList ∈ w.glosses ∨
+      ∃ g ∈ w.glosses.flatMap Gloss.elements, g ∈ ["all".toList, "whole".toList]
 
-/-- The items of (4) insert the attested exponent in every strong cell of (1), (2), and fn. 6. -/
-theorem strong_rows : ∀ x ∈ strongCells, strongN x.1 x.2.1 = some x.2.2 := by decide
+/-- The exponent of n in a row: the morph glossed n. -/
+def nMorph? (e : Datum) : Option (List Char) :=
+  (noun? e).bind fun w ↦ (w.glossedMorphemes.find? (·.gloss = "n".toList)).map (·.morpheme)
 
-/-- In every singular weak cell of (6)–(8), (13)–(18), and (34), the form is long exactly when the
-following syllable is light and word-internal. -/
-theorem weak_rows : ∀ c ∈ weakCells, c.long = some (decide (TriggersLong c.following)) := by
+/-- The case of the noun of a row: the case its last morpheme is glossed with, and the nominative
+for a predicate noun glossed with the person of its subject. -/
+def case? (e : Datum) : Option Telugu.Case :=
+  (noun? e).bind fun w ↦
+    let fs := Features.ofLabels
+      (((w.glosses.getLast?.map Gloss.elements).getD []).filter (decide <| Gloss.IsLabel ·))
+    ([Telugu.Case.nom, .acc, .gen, .dat].find? fun c ↦ fs .case = Flat.some c.label).orElse
+      fun _ ↦ if (w.features .person).isSome then some .nom else none
+
+/-- The cell of a row: a postposition, or the case of its noun. -/
+def cell? (e : Datum) : Option Cell :=
+  if Examples.follower e = some .postposition then some .postposition else (case? e).map .case
+
+/-- What follows the noun stem in a row: the morph after n, or after the stem where n is not
+segmented, with the kind the row records. -/
+def following? (e : Datum) : Option Following := do
+  let w ← noun? e
+  let k ← Examples.follower e
+  let i := (w.glosses.idxOf? "n".toList).getD 0
+  let m ← w.morphs[i + 1]?
+  let x ← weight? m
+  pure ⟨k, x⟩
+
+-- (1), (2), fn. 6
+theorem strong_rows :
+    ∀ e ∈ Examples.all, ∀ k ∈ Examples.alternation e,
+      ∃ c ∈ cell? e, ∃ x ∈ strongN k c, nMorph? e = some x.form.toList := by
   decide
 
-/-- The nominative short form of (8). -/
-def oceanNom : Cell := ⟨"samudram", none, false, some .nom, none, "am", some false⟩
+/-- Every singular weak noun of the paper has its long form exactly before a light syllable
+inside the prosodic word, with case suffixes, agreement suffixes, postpositions and a postposed
+quantifier alike. -/
+theorem weak_rows :
+    ∀ e ∈ Examples.all, ∀ a ∈ Examples.alternant e, (a = .long ↔ Long (following? e)) := by
+  decide
 
-/-- The long form under the 1SG agreement suffix, in a nominative predicate nominal ((13)). -/
-def ocean1sg : Cell := ⟨"samudram", none, false, some .nom, some ⟨true, .light⟩, "āni", some true⟩
+-- (8): the paradigm of the cells is the attested one
+theorem weakN_rows :
+    ∀ e ∈ [Examples.ocean_nom, Examples.ocean_acc, Examples.ocean_gen, Examples.ocean_dat,
+        Examples.ocean_p],
+      ∃ c ∈ cell? e, Examples.alternant e = some (weakN c) := by
+  decide
 
-/-- No assignment of forms to cases fits the weak cells, since the nominative has both *-am* and
-*-āni* ((8) with (13)–(16)). -/
-theorem weak_not_case_function :
-    ¬ ∃ f : Option Case → Option Bool, ∀ c ∈ weakCells, f c.case = c.long := by
+-- (8), (13): the nominative has both forms
+theorem weak_not_function_of_case :
+    ¬ ∃ f : Telugu.Case → Alternant,
+      ∀ e ∈ Examples.all, ∀ c ∈ case? e, ∀ a ∈ Examples.alternant e, f c = a := by
   rintro ⟨f, h⟩
-  have h₁ := h oceanNom (by decide)
-  have h₂ := h ocean1sg (by decide)
-  simp only [oceanNom, ocean1sg] at h₁ h₂
+  have h₁ := h Examples.ocean_nom (by decide) .nom (by decide) .short (by decide)
+  have h₂ := h Examples.ocean_1sg (by decide) .nom (by decide) .long (by decide)
   exact absurd (h₁.symm.trans h₂) (by decide)
 
-/-- Across a postposed quantifier the strong oblique is licensed exactly when the overall case
-is nonnominative ((33)–(36)). -/
+-- (33), (35), (36): the oblique stem across a postposed quantifier goes by the overall case
 theorem oblique_across_quantifier :
-    ∀ row ∈ Examples.all, row.feature? "intervener" = some "quantifier" →
-      row.feature? "class" = some "strong" →
-      (row.judgment = .acceptable ↔
-        (row.feature? "stem" = some "obl" ↔ row.feature? "case" ≠ some "nom")) := by
+    ∀ e ∈ Examples.all, Examples.nounClass e = some .strong →
+      Examples.follower e = some .quantifier →
+        ∃ w ∈ noun? e, ∃ c ∈ case? e,
+          (e.judgment = .acceptable ↔
+            ("OBL".toList ∈ w.labels ↔ Cell.case .acc ≤ .case c)) := by
   decide
 
-/-! ### Paradigm shapes against containment (§3.1) -/
+/-! ### Stem-level phonology -/
 
-/-- What follows n in each cell of the paradigms (1) and (8) is nothing in the unmarked
-nominative and genitive, a light suffix inside the prosodic word, or a heavy postposition
-outside it. -/
-def caseSuffix : ParadigmCell → Option Following
-  | .case c => c.exponents.head?.map fun _ ↦ ⟨true, .light⟩
-  | .postposition _ => some ⟨false, .heavy⟩
-
-/-- The weak paradigm (8) violates *ABA on the containment hierarchy, since the nominative
-form resurfaces in the genitive, which contains [ACC] ([caha-2009]). -/
-theorem weak_violates_aba :
-    ¬ IsContiguous fun c : ParadigmCell ↦ weakN (caseSuffix c) := by
-  decide
-
--- (1)
-theorem strong_contiguous :
-    IsContiguous fun c : ParadigmCell ↦ strongN .house c.label := by
-  decide
-
-/-! ### The singular suffix (§4.2) -/
-
-/-- The context of Num records that the preceding n exponent is *-am*. -/
-inductive NumContext where
-  | afterAm
-  deriving DecidableEq, Repr
-
-/-- The Vocabulary Items of Num in the singular ((40)) insert *-ni* after *-am* and null
-elsewhere, conditioned inward as root-out insertion allows. -/
-def numItems : List (VocabularyItem NumContext String) := [{.afterAm} ⟷ "ni", ∅ ⟷ "ø"]
-
-/-- The singular exponent of Num after an n exponent. -/
-def numSg (nExponent : String) : Option String :=
-  subsetPrinciple numItems (if nExponent = "am" then {.afterAm} else ∅ : Finset NumContext)
-
--- (41)
-theorem numSg_am : numSg "am" = some "ni" ∧ numSg "lu" = some "ø" := by decide
-
-/-! ### Stem-level phonology (§5.1) -/
-
-/-- The metrical parses of *samudr-am* in (49) leave the final heavy syllable unparsed, form
-three degenerate feet, or form two bimoraic trochees. -/
+/-- (49): the metrical parses of *samudr-am* leave the final heavy syllable unparsed, form three
+degenerate feet, or form two bimoraic trochees. -/
 inductive StemCandidate where
   | unparsedFinal
   | degenerate
   | trochees
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
+/-- The feet of a parse. -/
 def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .unparsedFinal => [.inl ⟨[.light, .light], 0⟩, .inr .heavy]
   | .degenerate => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), each read off a parse's footing as its
+/-- (46)–(48): FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT, each read off a parse's footing as its
 non-bimoraic feet, its stray syllables, and the feet's distances from the left edge. -/
 def stemRanking : List (Constraint StemCandidate) :=
   [fun c ↦ (c.toFooting.nonBimoraicFeet id).length, fun c ↦ c.toFooting.strays.length,
@@ -344,179 +339,373 @@ def stemRanking : List (Constraint StemCandidate) :=
 -- (49)
 theorem stem_optimal : (Tableau.ofList Finset.univ stemRanking).optimal = {.trochees} := by decide
 
-/-! ### Word- and Phrase-level rankings (§5.2–5.3)
-
-The constraints of the two strata are shared by label; each stratum fixes one order, and
-each tableau supplies only its candidates' violation marks (`Tableau.ofOrder`). -/
+/-! ### The rankings of the Word and the Phrase -/
 
 /-- The constraints of (64) and (68). -/
 inductive Con where
   | distZero | alignR | identStress | ftBin | complexCoda | maxMora | max | identLength | onset
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The Word-level ranking (64), with ONSET below IDENT-STRESS (§5.2); Hasse siblings are
-listed in the order of the paper's tableau columns. -/
-def wordOrder : List Con :=
-  [.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora, .max, .identLength, .onset]
+/-- (64): the Word-level ranking. *DIST-0, ALIGN-RIGHT, IDENT-STRESS, FT-BIN and *COMPLEX-CODA
+dominate MAX(μ), which dominates MAX and IDENT-length, and IDENT-STRESS and *DIST-0 dominate
+ONSET. -/
+def word (a b : Con) : Prop :=
+  a = b ∨
+    match b with
+    | .maxMora => a ∈ [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda]
+    | .max | .identLength =>
+      a ∈ [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora]
+    | .onset => a ∈ [Con.distZero, .identStress]
+    | _ => False
 
-/-- The Phrase-level ranking (68). -/
-def phraseOrder : List Con :=
-  [.ftBin, .onset, .identLength, .max, .identStress, .distZero, .alignR, .maxMora]
+/-- (68): the Phrase-level ranking. FT-BIN, ONSET, IDENT-length and MAX dominate IDENT-STRESS,
+which dominates *DIST-0, which dominates ALIGN-RIGHT and MAX(μ). -/
+def phrase (a b : Con) : Prop :=
+  a = b ∨
+    match b with
+    | .identStress => a ∈ [Con.ftBin, .onset, .identLength, .max]
+    | .distZero => a ∈ [Con.ftBin, .onset, .identLength, .max, .identStress]
+    | .alignR | .maxMora => a ∈ [Con.ftBin, .onset, .identLength, .max, .identStress, .distZero]
+    | _ => False
 
-/-! ### Word-level phonology (§5.2) -/
+instance : DecidableRel word := fun a b ↦ by unfold word; cases b <;> exact inferInstance
 
-/-- The candidates for dative *samudr-am-ní-ki* ((59)) keep /mn/, delete /n/ or /m/ with the
-mora, or delete /m/ or /n/ with compensatory lengthening. -/
+instance : DecidableRel phrase := fun a b ↦ by unfold phrase; cases b <;> exact inferInstance
+
+instance : IsPartialOrder Con word where
+  refl _ := .inl rfl
+  trans := by decide
+  antisymm := by decide
+
+instance : IsPartialOrder Con phrase where
+  refl _ := .inl rfl
+  trans := by decide
+  antisymm := by decide
+
+example : ∃ σ : Ranking Con 9, σ.IsLinearExtension word :=
+  Ranking.exists_isLinearExtension word (by decide)
+
+example : ∃ σ : Ranking Con 9, σ.IsLinearExtension phrase :=
+  Ranking.exists_isLinearExtension phrase (by decide)
+
+variable {σ : Ranking Con 9}
+
+/-! ### Word-level phonology -/
+
+/-- (59): the candidates for dative *samudr-am-ní-ki* keep /mn/, delete /n/ or /m/ with the mora,
+or delete /m/ or /n/ with compensatory lengthening. -/
 inductive WordCandDat where
   | faithful | deleteN | deleteM | deleteMLengthen | deleteNLengthen
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
 /-- The marks of (59). -/
-def WordCandDat.marks : WordCandDat → Con → ℕ
-  | .faithful, .distZero => 1
-  | .deleteN, .alignR | .deleteN, .maxMora => 1
-  | .deleteN, .max => 2
-  | .deleteM, .maxMora | .deleteM, .max => 1
-  | .deleteMLengthen, .max | .deleteMLengthen, .identLength => 1
-  | .deleteNLengthen, .alignR | .deleteNLengthen, .identLength => 1
-  | .deleteNLengthen, .max => 2
+def WordCandDat.marks : ConstraintSet WordCandDat Con
+  | .distZero, .faithful => 1
+  | .alignR, .deleteN | .maxMora, .deleteN => 1
+  | .max, .deleteN => 2
+  | .maxMora, .deleteM | .max, .deleteM => 1
+  | .max, .deleteMLengthen | .identLength, .deleteMLengthen => 1
+  | .alignR, .deleteNLengthen | .identLength, .deleteNLengthen => 1
+  | .max, .deleteNLengthen => 2
   | _, _ => 0
 
-/-- The /mn/ contact is repaired by deleting /m/ and lengthening /a/, the long form
-*samudrāniki* ((59)). -/
-theorem wordDat_optimal :
-    (Tableau.ofOrder wordOrder WordCandDat.marks).optimal = {.deleteMLengthen} := by
-  decide
+/-- The segments of a candidate of (59). -/
+def WordCandDat.form : WordCandDat → String
+  | .faithful => "samudramniki"
+  | .deleteN => "samudramiki"
+  | .deleteM => "samudraniki"
+  | .deleteMLengthen => "samudrāniki"
+  | .deleteNLengthen => "samudrāmiki"
 
-/-- The candidates for nominative *samudr-am-ní* ((62)) destress *-ni*, foot it alone, delete
-/i/ into a coda cluster, delete /i/ and /m/, or delete /ni/. -/
+-- (59): /m/ deletes and /a/ lengthens, the long form *samudrāniki*
+theorem wordDat_optimal (hσ : σ.IsLinearExtension word) :
+    (Tableau.ofRanking WordCandDat.marks σ Finset.univ).optimal = {.deleteMLengthen} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+
+/-- (62): the candidates for nominative *samudr-am-ní* destress *-ni*, foot it alone, delete /i/
+into a coda cluster, delete /i/ and /m/, or delete /ni/. -/
 inductive WordCandNom where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
 /-- The marks of (62). -/
-def WordCandNom.marks : WordCandNom → Con → ℕ
-  | .destress, .identStress => 1
-  | .degenerateFoot, .ftBin => 1
-  | .deleteI, .complexCoda | .deleteI, .maxMora | .deleteI, .max => 1
-  | .deleteIM, .alignR | .deleteIM, .maxMora => 1
-  | .deleteIM, .max => 2
-  | .deleteNi, .maxMora => 1
-  | .deleteNi, .max => 2
+def WordCandNom.marks : ConstraintSet WordCandNom Con
+  | .identStress, .destress => 1
+  | .ftBin, .degenerateFoot => 1
+  | .complexCoda, .deleteI | .maxMora, .deleteI | .max, .deleteI => 1
+  | .alignR, .deleteIM | .maxMora, .deleteIM => 1
+  | .max, .deleteIM => 2
+  | .maxMora, .deleteNi => 1
+  | .max, .deleteNi => 2
   | _, _ => 0
 
-/-- Word-final stressed *-ni*, unable to head a binary foot, is deleted, the short form
-*samudram* ((62)). -/
-theorem wordNom_optimal :
-    (Tableau.ofOrder wordOrder WordCandNom.marks).optimal = {.deleteNi} := by
-  decide
+/-- The segments of a candidate of (62). -/
+def WordCandNom.form : WordCandNom → String
+  | .destress | .degenerateFoot => "samudramni"
+  | .deleteI => "samudramn"
+  | .deleteIM => "samudran"
+  | .deleteNi => "samudram"
 
-/-- The candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier ((63)) destress
-*-ni*, foot it alone, delete /i/ into /mn/, delete /i/ and /m/ with /n/ as coda, delete /ni/,
-or delete /i/ and /m/ with /n/ resyllabified as onset. -/
+-- (62): word-final stressed *-ni* cannot head a binary foot and deletes, the short form
+theorem wordNom_optimal (hσ : σ.IsLinearExtension word) :
+    (Tableau.ofRanking WordCandNom.marks σ Finset.univ).optimal = {.deleteNi} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+
+/-- (63): the candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier destress *-ni*,
+foot it alone, delete /i/ into /mn/, delete /i/ and /m/ with /n/ as coda, delete /ni/, or delete
+/i/ and /m/ with /n/ resyllabified as onset. -/
 inductive WordCandQ where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi | deleteIMResyllabify
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
 /-- The marks of (63), with ONSET marked on every candidate whose *an* lacks an onset. -/
-def WordCandQ.marks : WordCandQ → Con → ℕ
-  | .destress, .identStress | .destress, .onset => 1
-  | .degenerateFoot, .ftBin | .degenerateFoot, .onset => 1
-  | .deleteI, .distZero | .deleteI, .max => 1
-  | .deleteIM, .alignR | .deleteIM, .onset => 1
-  | .deleteIM, .max => 2
-  | .deleteNi, .onset => 1
-  | .deleteNi, .max => 2
-  | .deleteIMResyllabify, .identStress => 1
-  | .deleteIMResyllabify, .max => 2
+def WordCandQ.marks : ConstraintSet WordCandQ Con
+  | .identStress, .destress | .onset, .destress => 1
+  | .ftBin, .degenerateFoot | .onset, .degenerateFoot => 1
+  | .distZero, .deleteI | .max, .deleteI => 1
+  | .alignR, .deleteIM | .onset, .deleteIM => 1
+  | .max, .deleteIM => 2
+  | .onset, .deleteNi => 1
+  | .max, .deleteNi => 2
+  | .identStress, .deleteIMResyllabify => 1
+  | .max, .deleteIMResyllabify => 2
   | _, _ => 0
 
+/-- The segments of a candidate of (63). -/
+def WordCandQ.form : WordCandQ → String
+  | .destress | .degenerateFoot => "samudramniantaṭini"
+  | .deleteI => "samudramnantaṭini"
+  | .deleteIM | .deleteIMResyllabify => "samudranantaṭini"
+  | .deleteNi => "samudramantaṭini"
+
 -- (63)
-theorem wordQ_optimal :
-    (Tableau.ofOrder wordOrder WordCandQ.marks).optimal = {.deleteNi} := by
-  decide
+theorem wordQ_optimal (hσ : σ.IsLinearExtension word) :
+    (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal = {.deleteNi} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
 
-/-- The n exponent each Word-level output leaves. -/
-def WordCandNom.nExponent : WordCandNom → String
-  | .destress | .degenerateFoot => "amni"
-  | .deleteI => "amn"
-  | .deleteIM => "an"
-  | .deleteNi => "am"
+-- any ranking under which the winner of (63) is optimal has IDENT-STRESS and *DIST-0 above ONSET
+theorem onset_dominated
+    (h : .deleteNi ∈ (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal) :
+    σ.Dominates .identStress .onset ∧ σ.Dominates .distZero .onset :=
+  ⟨Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteIMResyllabify)
+      (Finset.mem_univ _) (by decide) (by decide),
+    Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteI)
+      (Finset.mem_univ _) (by decide) (by decide)⟩
 
-def WordCandDat.nExponent : WordCandDat → String
-  | .faithful => "amni"
-  | .deleteN => "ami"
-  | .deleteM => "ani"
-  | .deleteMLengthen => "āni"
-  | .deleteNLengthen => "āmi"
+/-! ### Phrase-level phonology -/
 
-theorem word_level_derives_weakN :
-    WordCandNom.deleteNi.nExponent = weakN (caseSuffix (.case .nom)) ∧
-      WordCandDat.deleteMLengthen.nExponent = weakN (caseSuffix (.case .dat)) := by
-  decide
-
-/-! ### Phrase-level phonology (§5.3) -/
-
-/-- The candidates for *samudram nunci* 'from the ocean' ((66)) delete /m/ with or without
+/-- (66): the candidates for *samudram nunci* 'from the ocean' delete /m/ with or without
 lengthening, delete the postposition's /n/, or keep the /mn/ contact. -/
 inductive PhraseCandP where
   | deleteMLengthen | deleteM | deleteN | faithful
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
-/-- The marks of (66), as printed. -/
-def PhraseCandP.marks : PhraseCandP → Con → ℕ
-  | .deleteMLengthen, .max => 1
-  | .deleteM, .identStress | .deleteM, .max => 1
-  | .deleteN, .max | .deleteN, .alignR => 1
-  | .faithful, .distZero => 1
-  | .faithful, .alignR => 2
+/-- The marks of (66). -/
+def PhraseCandP.marks : ConstraintSet PhraseCandP Con
+  | .max, .deleteMLengthen => 1
+  | .identStress, .deleteM | .max, .deleteM => 1
+  | .max, .deleteN | .alignR, .deleteN => 1
+  | .distZero, .faithful => 1
+  | .alignR, .faithful => 2
   | _, _ => 0
 
 -- (66)
-theorem phraseP_optimal :
-    (Tableau.ofOrder phraseOrder PhraseCandP.marks).optimal = {.faithful} := by
-  decide
+theorem phraseP_optimal (hσ : σ.IsLinearExtension phrase) :
+    (Tableau.ofRanking PhraseCandP.marks σ Finset.univ).optimal = {.faithful} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
 
-/-- The candidates for the Word-level output of (63) at the Phrase level ((67)) keep the
-onsetless *an*, resyllabify /m/ as its onset, lengthen /a/ and resyllabify, or foot the
-shortened *dra* alone. -/
+/-- (67): the candidates for the Word-level output of (63) keep the onsetless *an*, resyllabify
+/m/ as its onset, lengthen /a/ and resyllabify, or foot the shortened *dra* alone. -/
 inductive PhraseCandQ where
   | faithful | resyllabify | lengthen | degenerateFoot
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
 /-- The marks of (67). -/
-def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
-  | .faithful, .onset => 1
-  | .resyllabify, .identStress | .resyllabify, .alignR | .resyllabify, .maxMora => 1
-  | .lengthen, .identLength | .lengthen, .alignR => 1
-  | .degenerateFoot, .ftBin | .degenerateFoot, .identStress | .degenerateFoot, .alignR
-  | .degenerateFoot, .maxMora => 1
+def PhraseCandQ.marks : ConstraintSet PhraseCandQ Con
+  | .onset, .faithful => 1
+  | .identStress, .resyllabify | .alignR, .resyllabify | .maxMora, .resyllabify => 1
+  | .identLength, .lengthen | .alignR, .lengthen => 1
+  | .ftBin, .degenerateFoot | .identStress, .degenerateFoot | .alignR, .degenerateFoot
+  | .maxMora, .degenerateFoot => 1
   | _, _ => 0
 
+/-- The segments of a candidate of (67). -/
+def PhraseCandQ.form : PhraseCandQ → String
+  | .lengthen => "samudrāmantaṭini"
+  | _ => "samudramantaṭini"
+
 -- (67)
-theorem phraseQ_optimal :
-    (Tableau.ofOrder phraseOrder PhraseCandQ.marks).optimal = {.resyllabify} := by
+theorem phraseQ_optimal (hσ : σ.IsLinearExtension phrase) :
+    (Tableau.ofRanking PhraseCandQ.marks σ Finset.univ).optimal = {.resyllabify} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+
+/-! ### The outputs -/
+
+/-- The morphs of the noun of a row, without the null ones. -/
+def surface? (e : Datum) : Option (List Char) :=
+  (noun? e).map fun w ↦ (w.morphs.filter (· ≠ "ø".toList)).flatten
+
+-- (57), (65): the outputs of the strata are the attested nominative, dative and quantified forms
+theorem outputs_attested :
+    surface? Examples.ocean_nom = some WordCandNom.deleteNi.form.toList ∧
+      surface? Examples.ocean_dat = some WordCandDat.deleteMLengthen.form.toList ∧
+      surface? Examples.ocean_whole_acc = some PhraseCandQ.resyllabify.form.toList ∧
+      WordCandQ.deleteNi.form = PhraseCandQ.faithful.form := by
   decide
 
-/-! ### Rerankings (68) -/
+/-! ### Insertion from the root outward -/
 
-open OptimalityTheory.Stratal
+/-- The features of the morphemes of a weak noun, and of their exponents once inserted. -/
+inductive PF where
+  /-- The root is on the list of roots the n exponent *-am* follows. -/
+  | weak
+  /-- The nominalizer. -/
+  | n
+  /-- Singular Num. -/
+  | num
+  /-- A case head. -/
+  | case (c : Telugu.Case)
+  /-- The exponent is *-am*. -/
+  | am
+  /-- The first syllable of the exponent is light. -/
+  | light
+  deriving DecidableEq, Repr
 
-/-- *DIST-0 and ALIGN-RIGHT outrank MAX at the Word level and are outranked by it at the
-Phrase level, so consonants delete at the Word level and are kept and resyllabified at the
-Phrase level. -/
-theorem distZero_alignR_max_reranked :
-    Reranked Con.distZero .max wordOrder phraseOrder ∧
-      Reranked Con.alignR .max wordOrder phraseOrder := by
+/-- An inserted exponent presents whether it is *-am* and whether its first syllable is light. -/
+def expFeatures (e : String) : Finset PF :=
+  (if e = "am" then {.am} else ∅) ∪
+    if weight? e.toList = some Syllable.Weight.light then {.light} else ∅
+
+/-- The case suffixes of `Telugu.Case`, null where a case has none. -/
+def caseItems : List (VocabularyItem PF String) :=
+  [Telugu.Case.nom, .acc, .gen, .dat].map fun c ↦
+    {.case c} ⟷ (c.exponents.head?.map (·.form)).getD ""
+
+/-- The Vocabulary Items of a weak noun: n is *-am* after the roots on its list, and (40) Num is
+*-ni* after the exponent *-am* and null elsewhere. -/
+def weakItems : List (VocabularyItem PF String) :=
+  [⟨{(0, .n), (-1, .weak)}, "am"⟩, ⟨{(0, .num), (-1, .am)}, "ni"⟩, {.num} ⟷ ""] ++ caseItems
+
+/-- (30): the rejected analysis has a second exponent of n, *-āni*, before a light syllable. -/
+def pcsaItems : List (VocabularyItem PF String) :=
+  [⟨{(0, .n), (-1, .weak)}, "am"⟩, ⟨{(0, .n), (-1, .weak), (1, .light)}, "āni"⟩] ++ caseItems
+
+/-- The complex head of *samudram* 'ocean' with the heads `hs` above its root. -/
+def ocean (hs : List (Finset PF)) : ComplexHead (Morpheme PF String) (Morpheme PF String) :=
+  ⟨⟨{.weak}, some "samudr", .after⟩, hs.map fun fs ↦ ⟨fs, none, .after⟩⟩
+
+/-- The exponents of a complex head after insertion from the root outward. -/
+def spell (voc : List (VocabularyItem PF String))
+    (w : ComplexHead (Morpheme PF String) (Morpheme PF String)) : List String :=
+  (w.insertAll (· = "") voc .hierarchical expFeatures .nondeletion).exponents
+
+-- (41), (57): insertion gives the inputs of the Word-level tableaux, *-ni* after *-am*
+theorem spell_weakItems :
+    (spell weakItems (ocean [{.n}, {.num}, {.case .dat}])).flatMap (·.toList) =
+        WordCandDat.faithful.form.toList ∧
+      (spell weakItems (ocean [{.n}, {.num}, {.case .nom}])).flatMap (·.toList) =
+        WordCandNom.destress.form.toList := by
   decide
 
-theorem prosodic_segmental_reranked :
-    Reranked Con.identStress .max wordOrder phraseOrder ∧
-      Reranked Con.maxMora .identLength wordOrder phraseOrder := by
+/-- When n is inserted the morphemes outside it are bare and present no exponent, so an item of n
+that asks for a light syllable after it does not apply, whatever follows. -/
+theorem light_notMem_contextAt (w : ComplexHead (Morpheme PF String) (Morpheme PF String))
+    (hw : ∀ s ∈ w.heads, s.exp = none) (hl : ∀ s ∈ w.heads, PF.light ∉ s.feats) :
+    ((1 : ℤ), PF.light) ∉ w.contextAt (· = "") .hierarchical expFeatures 0 := by
+  have h := w.nth_contextAt_hierarchical (· = "") (expFeatures := expFeatures) (i := 0) (j := 1)
+    (Nat.zero_le _) one_ne_zero
+  simp only [Nat.cast_one, Nat.cast_zero, sub_zero] at h
+  rw [Neighborhood.mem_def, h, List.getD_eq_getElem?_getD, List.getElem?_map]
+  cases hs : w.heads[1]? with
+  | none => simp
+  | some s =>
+    have hm := List.mem_of_getElem? hs
+    simp [ComplexHead.visible_of_exp_none (hw s hm), hl s hm]
+
+-- (30) inserts *-am* in every case, the dative and accusative included
+theorem spell_pcsaItems :
+    ∀ c : Telugu.Case, (spell pcsaItems (ocean [{.n}, {.case c}]))[1]? = some "am" := by
   decide
 
--- (63), (67)
-theorem identStress_onset_reranked : Reranked Con.identStress .onset wordOrder phraseOrder := by
+/-! ### The grammars of the strata -/
+
+open Stratal Finset
+
+/-- The grammar of the Word level: the rankings under which the winners of (59), (62) and (63)
+are optimal. -/
+def wordGrammar : Grammar Con 9 :=
+  .ofWinner WordCandDat.marks univ .deleteMLengthen ⊓ .ofWinner WordCandNom.marks univ .deleteNi ⊓
+    .ofWinner WordCandQ.marks univ .deleteNi
+
+/-- The grammar of the Phrase level: the rankings under which the winners of (66) and (67) are
+optimal. -/
+def phraseGrammar : Grammar Con 9 :=
+  .ofWinner PhraseCandP.marks univ .faithful ⊓ .ofWinner PhraseCandQ.marks univ .resyllabify
+
+private theorem ofRel_le_ofWinner {C : Type*} [Fintype C] {con : ConstraintSet C Con}
+    {r : Con → Con → Prop} {w : C}
+    (h : ∀ σ : Ranking Con 9, σ.IsLinearExtension r →
+      (Tableau.ofRanking con σ univ).optimal = {w}) :
+    (Grammar.ofRel r : Grammar Con 9) ≤ .ofWinner con univ w :=
+  Concept.extent_subset_extent_iff.1 fun σ hσ ↦ (Grammar.mem_extent_ofWinner (mem_univ _)).2 <|
+    h σ (Grammar.mem_extent_ofRel.1 hσ) ▸ mem_singleton_self _
+
+-- (64) suffices for the Word level: each of its total rankings selects the three winners
+theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
+  le_inf (le_inf (ofRel_le_ofWinner fun _ ↦ wordDat_optimal)
+    (ofRel_le_ofWinner fun _ ↦ wordNom_optimal)) (ofRel_le_ofWinner fun _ ↦ wordQ_optimal)
+
+-- (68) suffices for the Phrase level
+theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
+  le_inf (ofRel_le_ofWinner fun _ ↦ phraseP_optimal) (ofRel_le_ofWinner fun _ ↦ phraseQ_optimal)
+
+/-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
+def alignRLast : Ranking Con 9 :=
+  .ofList [.distZero, .identStress, .ftBin, .complexCoda, .maxMora, .max, .identLength, .onset,
+    .alignR]
+
+-- the three tableaux do not fix the place of ALIGN-RIGHT, which the diagram puts above MAX(μ):
+-- their winners are optimal with it ranked last
+theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
+  have hmem : alignRLast ∈ wordGrammar.extent :=
+    ⟨⟨(Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide),
+      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩,
+      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩
+  have hext : alignRLast.IsLinearExtension word :=
+    Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
+  exact absurd hext (by decide)
+
+instance : Nonempty Con := ⟨.max⟩
+
+-- (59), (66): *DIST-0 above MAX in the word, MAX above *DIST-0 in the phrase
+theorem ofWinner_dat_inf_ofWinner_postposition :
+    Grammar.ofWinner WordCandDat.marks univ .deleteMLengthen ⊓
+      .ofWinner PhraseCandP.marks univ .faithful = (⊥ : Grammar Con 9) :=
+  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun σ ⟨hw, hp⟩ ↦
+    lt_asymm
+      (Tableau.dominates_of_mem_ofRanking_optimal (i := Con.distZero) (j := .max)
+        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hw) (d := .faithful) (mem_univ _)
+        (by decide) (by decide))
+      (Tableau.dominates_of_mem_ofRanking_optimal
+        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hp) (d := .deleteMLengthen) (mem_univ _)
+        (by decide) (by decide))
+
+/-- The strata are different grammars: no ranking of the constraints makes the winners of the
+Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
+deletes inside the word is kept before a postposition. -/
+theorem wordGrammar_inf_phraseGrammar : wordGrammar ⊓ phraseGrammar = ⊥ :=
+  eq_bot_mono (inf_le_inf (inf_le_left.trans inf_le_left) inf_le_left)
+    ofWinner_dat_inf_ofWinner_postposition
+
+-- (68): *DIST-0 and ALIGN-RIGHT against MAX, the prosodic against the segmental faithfulness
+-- constraints, and IDENT-STRESS against ONSET
+theorem reranked :
+    Reranked word phrase .distZero .max ∧ Reranked word phrase .alignR .max ∧
+      Reranked word phrase .identStress .max ∧ Reranked word phrase .maxMora .identLength ∧
+      Reranked word phrase .identStress .onset := by
   decide
+
+-- the Word-level diagram does not rank FT-BIN and *DIST-0
+example : ¬ Reranked word phrase .distZero .ftBin := by decide
 
 end Aitha2026

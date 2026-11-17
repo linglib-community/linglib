@@ -66,6 +66,17 @@ theorem IsLinearExtension.dominates (hσ : σ.IsLinearExtension r) {a b : ι} (h
     (hne : a ≠ b) : σ.Dominates a b :=
   (toRel_iff_dominates σ hne).1 (hσ a b hab)
 
+/-- A linear extension strictly ranks the distinct pairs of the relation. -/
+theorem IsLinearExtension.le_dominates (hσ : σ.IsLinearExtension r) :
+    (fun a b ↦ r a b ∧ a ≠ b) ≤ σ.Dominates :=
+  fun _ _ h ↦ hσ.dominates h.1 h.2
+
+/-- Two relations with a common linear extension order no two distinct constraints in opposite
+ways. -/
+theorem IsLinearExtension.eq_of_rel_of_rel {s : ι → ι → Prop} (hσ : σ.IsLinearExtension r)
+    (hσ' : σ.IsLinearExtension s) {a b : ι} (hab : r a b) (hba : s b a) : a = b :=
+  antisymm_of σ.toRel (hσ a b hab) (hσ' b a hba)
+
 theorem isLinearExtension_toRel (σ : Ranking ι n) : σ.IsLinearExtension σ.toRel :=
   le_refl σ.toRel
 

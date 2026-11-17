@@ -102,6 +102,27 @@ theorem toAntimatroid_ofERCs_isFeasible [Fintype ι]
 
 end Grammar
 
+/-! ### The grammar of a winner -/
+
+section Winner
+
+variable {C : Type*} {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
+  {σ : Ranking ι n}
+
+/-- The grammar of a winner among the candidates of a tableau, presented by its ERC against each
+candidate. -/
+def Grammar.ofWinner (con : ConstraintSet C ι) (candidates : Finset C) (w : C) : Grammar ι n :=
+  .ofERCs ((fun l ↦ ercOfProfiles (con · w) (con · l)) '' candidates)
+
+/-- The rankings of the grammar of a winner are those under which it is optimal. -/
+theorem Grammar.mem_extent_ofWinner (hw : w ∈ candidates) :
+    σ ∈ (Grammar.ofWinner con candidates w).extent ↔
+      w ∈ (Tableau.ofRanking con σ candidates).optimal := by
+  rw [Tableau.ofRanking_mem_optimal_iff_satisfiedBy, and_iff_right hw]
+  exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
+
+end Winner
+
 /-! ### The grammars of a typology -/
 
 /-- Each class of a typology is the set of rankings of a grammar: the rankings with a given
