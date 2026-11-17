@@ -98,9 +98,10 @@ def weightAt (i : ℕ) : ℕ := #(P.form.moraeAt i)
 def feet : List (RoseTree (Constituent Level ℕ)) :=
   P.above.flatMap fun t ↦ t.subtrees.filter fun s ↦ s.value.level = .ft
 
-/-- FT-BIN over the weight of the form's syllables: a violation for each foot whose syllables
-carry other than two morae together. -/
-def ftBinViol : ℕ := P.feet.countP fun t ↦ ((syllableLeaves t).map P.form.weight).sum ≠ 2
+/-- FT-BIN(μ), minimal binarity: a violation for each foot whose syllables carry fewer than two
+morae together, a degenerate foot. A foot of more than two morae is the business of a separate
+constraint on maximal binarity. -/
+def ftBinViol : ℕ := P.feet.countP fun t ↦ ((syllableLeaves t).map P.form.weight).sum < 2
 
 /-- ONSET: a violation for each syllable without an onset. -/
 def onsetViol : ℕ := #(P.form.syllables.filter fun s ↦ P.form.onset s = ∅)

@@ -546,7 +546,7 @@ def specified (P : Parse Segment) (i : ℕ) : Option ℕ :=
 * (58) *DIST-0: a coda consonant before an onset consonant of the same sonority.
 * (60) ALIGN-RIGHT(Stem, σ): the last segment of the Stem is not the last of a syllable.
 * (61) IDENT-STRESS: a mora whose stress differs from that of its input mora.
-* FT-BIN(μ): a foot that does not have two morae.
+* FT-BIN(μ): a foot of fewer than two morae.
 * *COMPLEXCODA: a coda of two consonants.
 * MAX(μ): a mora of the input without one in the candidate.
 * MAX: a segment of the input without one in the candidate.
