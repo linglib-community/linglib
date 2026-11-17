@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases
 
 /-!

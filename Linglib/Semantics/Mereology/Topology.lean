@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Classical
+public import Linglib.Semantics.Mereology.Individuation
 
 /-!
 # Mereotopology
@@ -34,10 +35,7 @@ runs through, so a cluster of self-connected entities need not be self-connected
 ## TODO
 
 Internal parts, the interior as their sum, strong self-connection, its maximal form relative
-to a property, and the strong and external connection relations are not formalized. The
-theorems on sums of self-connected individuals are proved over a generalized Boolean algebra
-and not over a classical mereology, where they need the common part of two overlapping
-individuals.
+to a property, and the strong and external connection relations are not formalized.
 
 ## References
 
@@ -120,7 +118,73 @@ theorem Atom.isSelfConnected (hC : IsConnection C) (hx : Atom x) : IsSelfConnect
   exact hC.of_overlap ⟨x, hx.not_isBot, key ((h y).2 (.inl (.refl hy))),
     key ((h z).2 (.inr (.refl hz)))⟩
 
+section Sum
+
+variable [StronglySupplemented α] [HasProducts α]
+
+/-- The sum of self-connected individuals any two of which are transitively connected through
+others among them is self-connected, as a pile of touching grains comes in one piece. -/
+theorem IsSelfConnected.of_isLUB (hC : IsConnection C) {Z : Set α}
+    (hZ : ∀ z ∈ Z, IsSelfConnected C z)
+    (hR : ∀ a ∈ Z, ∀ b ∈ Z, (connectionGraph C (· ∈ Z)).Reachable a b) (hx : IsLUB Z x) :
+    IsSelfConnected C x := by
+  intro u v hu hv H
+  by_contra hCuv
+  have hdich : ∀ z ∈ Z, z ≤ u ∨ z ≤ v := fun z hz ↦ by
+    by_contra! h
+    have cover (p : α) (hp : p ≤ z) (hp0 : ¬ IsBot p) : Overlap p u ∨ Overlap p v :=
+      (H p).1 (.of_le hp0 (hp.trans (hx.1 hz)))
+    have hzu : Overlap z u := by
+      by_contra hn
+      exact h.2 (le_of_forall_overlap fun p hp hp0 ↦
+        (cover p hp hp0).resolve_left fun ho ↦ hn (ho.mono hp le_rfl))
+    have hzv : Overlap z v := by
+      by_contra hn
+      exact h.1 (le_of_forall_overlap fun p hp hp0 ↦
+        (cover p hp hp0).resolve_right fun ho ↦ hn (ho.mono hp le_rfl))
+    obtain ⟨a, ha0, ha⟩ := hzu.exists_isGLB
+    obtain ⟨b, hb0, hb⟩ := hzv.exists_isGLB
+    have haz : a ≤ z := ha.1 (.inl rfl)
+    have hbz : b ≤ z := hb.1 (.inl rfl)
+    refine hCuv (hC.mono₂ (ha.1 (.inr rfl)) (hb.1 (.inr rfl)) (hZ z hz a b ha0 hb0 fun w ↦
+      ⟨fun ⟨p, hp0, hpw, hpz⟩ ↦ ?_, fun h ↦ h.elim (·.mono le_rfl haz) (·.mono le_rfl hbz)⟩))
+    rcases cover p hpz hp0 with ⟨q, hq0, hqp, hqu⟩ | ⟨q, hq0, hqp, hqv⟩
+    · exact .inl ⟨q, hq0, hqp.trans hpw,
+        ha.2 (by rintro _ (rfl | rfl); exacts [hqp.trans hpz, hqu])⟩
+    · exact .inr ⟨q, hq0, hqp.trans hpw,
+        hb.2 (by rintro _ (rfl | rfl); exacts [hqp.trans hpz, hqv])⟩
+  have hov (h : x ≤ u ∨ x ≤ v) : Overlap u v := by
+    rcases h with h | h
+    · obtain ⟨p, hp0, hpv, hpx⟩ := (H v).2 (.inr (.refl hv))
+      exact ⟨p, hp0, hpx.trans h, hpv⟩
+    · obtain ⟨p, hp0, hpu, hpx⟩ := (H u).2 (.inl (.refl hu))
+      exact ⟨p, hp0, hpu, hpx.trans h⟩
+  obtain ⟨a, haZ, hav⟩ : ∃ a ∈ Z, ¬ a ≤ v := by
+    by_contra! h
+    exact hCuv (hC.of_overlap (hov (.inr (hx.2 h))))
+  obtain ⟨b, hbZ, hbu⟩ : ∃ b ∈ Z, ¬ b ≤ u := by
+    by_contra! h
+    exact hCuv (hC.of_overlap (hov (.inl (hx.2 h))))
+  refine hbu ((SimpleGraph.reachable_iff_reflTransGen _ _).1 (hR a haZ b hbZ) |>.rec
+    ((hdich a haZ).resolve_right hav) fun {c d} _ hcd ih ↦ ?_)
+  obtain ⟨hdZ, hC'⟩ : d ∈ Z ∧ C c d := by
+    rcases hcd.2 with ⟨-, hd, h⟩ | ⟨hd, -, h⟩
+    exacts [⟨hd, h⟩, ⟨hd, hC.symm h⟩]
+  exact (hdich d hdZ).resolve_right fun hdv ↦ hCuv (hC.mono₂ ih hdv hC')
+end Sum
+
 end SelfConnected
+
+/-- The sum of two connected self-connected individuals is self-connected. -/
+theorem IsSelfConnected.sup [SemilatticeSup α] [StronglySupplemented α] [HasProducts α]
+    {C : α → α → Prop} {x y : α} (hC : IsConnection C) (hx : IsSelfConnected C x)
+    (hy : IsSelfConnected C y) (hxy : C x y) : IsSelfConnected C (x ⊔ y) := by
+  have h : (connectionGraph C (· ∈ ({x, y} : Set α))).Reachable x y :=
+    connectionGraph_reachable (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl) hxy
+  refine .of_isLUB hC (Z := {x, y}) ?_ ?_ isLUB_pair
+  · rintro z (rfl | rfl) <;> assumption
+  · rintro a (rfl | rfl) b (rfl | rfl)
+    exacts [.refl _, h, h.symm, .refl _]
 
 section GeneralizedBooleanAlgebra
 
@@ -141,47 +205,6 @@ connected. -/
 theorem isSelfConnected_iff :
     IsSelfConnected C x ↔ ∀ y z, y ≠ ⊥ → z ≠ ⊥ → y ⊔ z = x → C y z := by
   simp only [IsSelfConnected, isBot_iff_eq_bot, forall_overlap_iff_or]
-
-/-- The sum of self-connected individuals any two of which are transitively connected through
-others among them is self-connected, as a pile of touching grains comes in one piece. -/
-theorem IsSelfConnected.of_isLUB (hC : IsConnection C) {Z : Set α}
-    (hZ : ∀ z ∈ Z, IsSelfConnected C z)
-    (hR : ∀ a ∈ Z, ∀ b ∈ Z, (connectionGraph C (· ∈ Z)).Reachable a b) (hx : IsLUB Z x) :
-    IsSelfConnected C x := by
-  rw [isSelfConnected_iff]
-  rintro u v hu hv rfl
-  by_contra hCuv
-  have hdich : ∀ z ∈ Z, z ≤ u ∨ z ≤ v := fun z hz ↦ by
-    by_contra! h
-    refine hCuv (hC.mono₂ inf_le_right inf_le_right
-      (isSelfConnected_iff.1 (hZ z hz) (z ⊓ u) (z ⊓ v) (fun h0 ↦ h.2 ?_) (fun h0 ↦ h.1 ?_) ?_))
-    · exact (disjoint_iff.2 h0).left_le_of_le_sup_left (hx.1 hz)
-    · exact (disjoint_iff.2 h0).left_le_of_le_sup_right (hx.1 hz)
-    · rw [← inf_sup_left, inf_eq_left.2 (hx.1 hz)]
-  obtain ⟨a, haZ, hav⟩ : ∃ a ∈ Z, ¬ a ≤ v := by
-    by_contra! h
-    exact hCuv (hC.of_overlap
-      ⟨u, mt isBot_iff_eq_bot.1 hu, le_rfl, le_sup_left.trans (hx.2 h)⟩)
-  obtain ⟨b, hbZ, hbu⟩ : ∃ b ∈ Z, ¬ b ≤ u := by
-    by_contra! h
-    exact hCuv (hC.of_overlap
-      ⟨v, mt isBot_iff_eq_bot.1 hv, le_sup_right.trans (hx.2 h), le_rfl⟩)
-  refine hbu ((SimpleGraph.reachable_iff_reflTransGen _ _).1 (hR a haZ b hbZ) |>.rec
-    ((hdich a haZ).resolve_right hav) fun {c d} _ hcd ih ↦ ?_)
-  obtain ⟨hdZ, hC'⟩ : d ∈ Z ∧ C c d := by
-    rcases hcd.2 with ⟨-, hd, h⟩ | ⟨hd, -, h⟩
-    exacts [⟨hd, h⟩, ⟨hd, hC.symm h⟩]
-  exact (hdich d hdZ).resolve_right fun hdv ↦ hCuv (hC.mono₂ ih hdv hC')
-
-/-- The sum of two connected self-connected individuals is self-connected. -/
-theorem IsSelfConnected.sup (hC : IsConnection C) (hx : IsSelfConnected C x)
-    (hy : IsSelfConnected C y) (hxy : C x y) : IsSelfConnected C (x ⊔ y) := by
-  have h : (connectionGraph C (· ∈ ({x, y} : Set α))).Reachable x y :=
-    connectionGraph_reachable (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl) hxy
-  refine .of_isLUB hC (Z := {x, y}) ?_ ?_ isLUB_pair
-  · rintro z (rfl | rfl) <;> assumption
-  · rintro a (rfl | rfl) b (rfl | rfl)
-    exacts [.refl _, h, h.symm, .refl _]
 
 end GeneralizedBooleanAlgebra
 

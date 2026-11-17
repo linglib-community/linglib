@@ -7,6 +7,7 @@ public import Linglib.Semantics.Composition.Sorts
 public import Studies.IoninMatushansky2006
 public import Linglib.Fragments.Mayan.Chol.Classifiers
 public import Linglib.Fragments.Shan.Classifiers
+public import Linglib.Semantics.Mereology.Measure
 
 /-!
 # Little, Moroney and Royer (2022): Classifiers Can Be for Numerals or Nouns

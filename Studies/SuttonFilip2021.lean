@@ -1,8 +1,9 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Fragments.English.Nouns
+public import Linglib.Semantics.Mereology.Individuation
 
 /-!
 # Sutton and Filip (2021): The Count/Mass Distinction for Granular Nouns

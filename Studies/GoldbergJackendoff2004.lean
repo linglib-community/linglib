@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004

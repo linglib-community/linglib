@@ -1,10 +1,11 @@
 module
 
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Reference.Kind
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.SupClosed
+public import Linglib.Semantics.Mereology.Measure
 
 /-!
 # Krifka (2003): Bare NPs: Kind-referring, Indefinites, Both, or Neither?

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Mathlib.Data.Finset.Card
 

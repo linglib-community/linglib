@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Aspect.Telicity
 public import Mathlib.Order.Minimal
+public import Linglib.Semantics.Mereology.Measure
 
 /-!
 # Krifka (1989): Nominal Reference, Temporal Constitution and Quantification in Event Semantics

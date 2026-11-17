@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.SupClosed
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Questions.Number
 public import Linglib.Data.Examples.ElliottNicolaeSauerland2022
 public import Linglib.Data.Examples.Readers

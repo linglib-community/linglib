@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Relation
 public import Linglib.Core.Data.Set.Functor
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Cumulative predication
