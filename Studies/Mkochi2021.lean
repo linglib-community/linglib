@@ -60,7 +60,7 @@ open Data.Hiatus (ElidedVowel)
 between a root and a suffix, and none does between two suffixes or two enclitics. -/
 theorem exists_mem_optimal_iff_rootSuffix :
     ∀ row ∈ Data.Hiatus.Mkochi2021.rows, ∀ c, IsOfKind c row.juncture →
-      ((∃ r, row.elided ∈ (tableau c r).optimal) ↔ row.juncture = .rootSuffix) := by
+      ((∃ r, row.elided ∈ optimal c r) ↔ row.juncture = .rootSuffix) := by
   have key : ∀ row ∈ Data.Hiatus.Mkochi2021.rows, (row.elided = .first ∨
       (kinds row.juncture).1 = .root ∧ (kinds row.juncture).2 ≠ .root) ↔
         row.juncture = .rootSuffix := by
@@ -78,7 +78,7 @@ single vowel. -/
 theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') (hb : c.beforeKind.isSome)
     (r : Ranking (Option Prominence)) :
-    (tableau c r).optimal =
+    optimal c r =
       if c.leftBody = [] then if c.rightBody = [] then {.first, .second} else {.second}
       else {.first} := by
   obtain ⟨b, hb⟩ := Option.isSome_iff_exists.1 hb
@@ -96,7 +96,7 @@ theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
 vowel exactly when the first morph is a single vowel. -/
 theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') :
-    (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftBody = [] := by
+    (∃ r, .second ∈ optimal c r) ↔ c.leftBody = [] := by
   by_cases h : c.leftBody = [] <;>
     simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
       violations_second_subset_first_iff, hl, hr, h, Morph.Kind.JoinsAt]
@@ -104,14 +104,14 @@ theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound 
 /-- Two final-vowel suffixes after a root, as in (10): the first is a vowel, a consonant and a
 vowel, and its last vowel elides under every ranking. -/
 example (r : Ranking (Option Prominence)) :
-    (tableau { schematic .suffixSuffix with beforeKind := some .root } r).optimal = {.first} :=
+    optimal { schematic .suffixSuffix with beforeKind := some .root } r = {.first} :=
   optimal_of_bound_after rfl rfl rfl r
 
 /-- The vowel of the applicative before a final vowel after a root, as in (11): each morph is a
 single vowel, and both elisions are optimal under every ranking. -/
 example (r : Ranking (Option Prominence)) :
-    (tableau { schematic .suffixSuffix with
-      leftBody := [], rightBody := [], beforeKind := some .root } r).optimal =
+    optimal { schematic .suffixSuffix with
+      leftBody := [], rightBody := [], beforeKind := some .root } r =
         {.first, .second} :=
   optimal_of_bound_after rfl rfl rfl r
 
