@@ -184,10 +184,10 @@ abbrev Corpus : Type :=
 def dmpcfg : DirichletPCFG (suffixGrammar ι) :=
   ⟨fun _ ↦ 1, fun _ _ ↦ one_pos⟩
 
-theorem dmpcfg_derivProb_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
-    (i : ι) : (dmpcfg.update x).mean.derivProb (s.word i) =
+theorem dmpcfg_ruleWeight_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
+    (i : ι) : (s.word i).ruleWeight (dmpcfg.update x).mean.weight =
       .ofReal ((dmpcfg.update x).countsProb (RoseTree.ruleCounts {s.word i})) :=
-  (dmpcfg.update x).derivProb_mean (s.licensed_word i)
+  (dmpcfg.update x).ruleWeight_mean (s.licensed_word i)
     fun a ↦ by cases s <;> cases a <;> simp [Suffix.word]
 
 /-! ## Adaptor and fragment grammars (§3.1.7, §3.1.8)

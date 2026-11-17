@@ -12,7 +12,7 @@ A Dirichlet PCFG puts a Dirichlet prior on the rule distribution at each nonterm
 independently across nonterminals: [the prior](##DirichletPCFG.prior) is a measure on the PCFGs
 over the grammar. With the rule weights integrated out, the rules applied at a nonterminal are
 draws from a Pólya urn over its rules weighted by their pseudo-counts, so
-[the expected probability of a corpus](##DirichletPCFG.lintegral_corpusProb_prior) depends only on
+[the expected probability of a corpus](##DirichletPCFG.lintegral_corpusWeight_prior) depends only on
 its rule counts, and [factors](##DirichletPCFG.countsProb_add) through the posterior given part of
 them. The PCFG of [mean rule weights](##DirichletPCFG.mean) is the predictive rule distribution.
 
@@ -192,11 +192,11 @@ theorem lintegral_prod_pow_prior (x : ContextFreeRule T G.NT → ℕ) :
 
 /-- The expected probability under the prior of a corpus of derivation trees the grammar licenses
 is the probability of its rule counts. -/
-theorem lintegral_corpusProb_prior {D : Multiset (RoseTree (Symbol T G.NT))}
+theorem lintegral_corpusWeight_prior {D : Multiset (RoseTree (Symbol T G.NT))}
     (hD : ∀ t ∈ D, t.Licensed G.Licenses) :
-    ∫⁻ W, W.corpusProb D ∂M.prior = .ofReal (M.countsProb (ruleCounts D)) := by
+    ∫⁻ W, corpusWeight W.weight D ∂M.prior = .ofReal (M.countsProb (ruleCounts D)) := by
   rw [← lintegral_prod_pow_prior]
-  exact lintegral_congr fun W ↦ W.corpusProb_eq_prod_pow_ruleCounts D hD
+  exact lintegral_congr fun W ↦ corpusWeight_eq_prod_pow_ruleCounts W.weight D hD
 
 /-! ### Mean rule weights -/
 
@@ -236,10 +236,10 @@ probability under the prior. For the posterior given a corpus, the proposal gram
 Hastings sampler of [johnson-griffiths-goldwater-2007] is then the exact conditional. A tree that
 expands a nonterminal twice generally separates the two: the first expansion reinforces the urn
 at that nonterminal, and the mean PCFG does not see it. -/
-theorem derivProb_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.Licenses)
+theorem ruleWeight_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.Licenses)
     (hone : ∀ a, t.values.count (.nonterminal a) ≤ 1) :
-    M.mean.derivProb t = .ofReal (M.countsProb (ruleCounts {t})) := by
-  rw [PCFG.derivProb_eq_prod_pow_ruleCount _ ht, countsProb,
+    t.ruleWeight M.mean.weight = .ofReal (M.countsProb (ruleCounts {t})) := by
+  rw [ruleWeight_eq_prod_pow_ruleCount _ ht, countsProb,
     ← G.prod_inputs_prod_rulesWithInput,
     ENNReal.ofReal_prod_of_nonneg fun a _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
   refine prod_congr rfl fun a _ ↦ ?_

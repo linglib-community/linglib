@@ -41,39 +41,32 @@ open scoped ENNReal
 
 namespace PCFG
 
-/-- Rules carry the discrete σ-algebra. -/
-scoped instance {T N : Type*} : MeasurableSpace (ContextFreeRule T N) := ⊤
-
 /-- Symbols carry the discrete σ-algebra. -/
 scoped instance {T N : Type*} : MeasurableSpace (Symbol T N) := ⊤
 
 variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
-/-- The rule distribution at nonterminal `A`, as a measure on rules. -/
-noncomputable def ruleMeasure (A : G.NT) : Measure (ContextFreeRule T G.NT) :=
-  ∑ r ∈ G.rulesWithInput A, W.weight r • Measure.dirac r
-
-theorem ruleMeasure_apply (A : G.NT) (s : Set (ContextFreeRule T G.NT)) :
-    W.ruleMeasure A s = ∑ r ∈ G.rulesWithInput A, W.weight r * s.indicator 1 r := by
-  simp [ruleMeasure, Measure.finsetSum_apply, Measure.dirac_apply' _ .of_discrete]
-
 /-- The offspring of a symbol: none at a terminal, and at a nonterminal the right-hand side of a
 rule chosen with its weight. -/
 noncomputable def offspring : Symbol T G.NT → Measure (List (Symbol T G.NT))
   | .terminal _ => Measure.dirac []
-  | .nonterminal A => (W.ruleMeasure A).map ContextFreeRule.output
+  | .nonterminal A => ∑ r ∈ G.rulesWithInput A, W.weight r • Measure.dirac r.output
+
+theorem offspring_nonterminal_apply (A : G.NT) (s : Set (List (Symbol T G.NT))) :
+    W.offspring (.nonterminal A) s =
+      ∑ r ∈ G.rulesWithInput A, W.weight r * s.indicator 1 r.output := by
+  simp [offspring, Measure.finsetSum_apply, Measure.dirac_apply' _ .of_discrete]
 
 theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
-    W.offspring s {syms} = W.symbolWeight s syms := by
+    W.offspring s {syms} = s.ruleWeight W.weight syms := by
   classical
   cases s with
   | terminal a =>
     cases syms <;> simp [offspring, Measure.dirac_apply' _ .of_discrete]
   | nonterminal A =>
-    rw [offspring, Measure.map_apply .of_discrete .of_discrete, ruleMeasure_apply,
-      symbolWeight_nonterminal,
+    rw [offspring_nonterminal_apply, Symbol.ruleWeight_nonterminal,
       Finset.sum_congr rfl fun r hr ↦
-        show W.weight r * (ContextFreeRule.output ⁻¹' {syms}).indicator 1 r =
+        show W.weight r * ({syms} : Set (List (Symbol T G.NT))).indicator 1 r.output =
           if r = ⟨A, syms⟩ then W.weight r else 0 from ?_, Finset.sum_ite_eq']
     · split_ifs with h
       · rfl
@@ -88,8 +81,7 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
 
 theorem offspring_nonterminal_univ (A : G.NT) :
     W.offspring (.nonterminal A) Set.univ = ∑ r ∈ G.rulesWithInput A, W.weight r := by
-  rw [offspring, Measure.map_apply .of_discrete .univ, Set.preimage_univ, ruleMeasure_apply]
-  simp
+  simp [offspring_nonterminal_apply]
 
 theorem offspring_univ_le_one (s : Symbol T G.NT) : W.offspring s Set.univ ≤ 1 := by
   cases s with
@@ -114,8 +106,8 @@ theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.inputs) :
 
 /-- The Galton–Watson weight of a derivation tree is the product of its rule weights. -/
 theorem galtonWatson_weight (t : RoseTree (Symbol T G.NT)) :
-    GaltonWatson.weight W.galtonWatson t = W.derivProb t := by
-  simp only [GaltonWatson.weight, derivProb, galtonWatson_apply, offspring_singleton]
+    GaltonWatson.weight W.galtonWatson t = t.ruleWeight W.weight := by
+  simp only [GaltonWatson.weight, ruleWeight, galtonWatson_apply, offspring_singleton]
 
 /-- The law of the derivation tree at each symbol: the law of the family tree of the grammar's
 branching process. -/
@@ -123,7 +115,7 @@ noncomputable def derivationMeasure : Kernel (Symbol T G.NT) (RoseTree (Symbol T
   GaltonWatson.law W.galtonWatson
 
 theorem derivationMeasure_singleton_value (t : RoseTree (Symbol T G.NT)) :
-    W.derivationMeasure t.value {t} = W.derivProb t :=
+    W.derivationMeasure t.value {t} = t.ruleWeight W.weight :=
   (GaltonWatson.law_singleton_value W.galtonWatson W.offspring_univ_le_one t).trans
     (W.galtonWatson_weight t)
 
@@ -132,10 +124,10 @@ theorem derivationMeasure_singleton_of_ne {t : RoseTree (Symbol T G.NT)} {s : Sy
   GaltonWatson.law_singleton_of_ne W.galtonWatson h
 
 open scoped Classical in
-/-- Under the derivation measure at `s`, a tree has probability `derivProb` when rooted at `s`
+/-- Under the derivation measure at `s`, a tree has its weight as probability when rooted at `s`
 and `0` otherwise. -/
 theorem derivationMeasure_singleton (t : RoseTree (Symbol T G.NT)) (s : Symbol T G.NT) :
-    W.derivationMeasure s {t} = if t.value = s then W.derivProb t else 0 := by
+    W.derivationMeasure s {t} = if t.value = s then t.ruleWeight W.weight else 0 := by
   rw [derivationMeasure, GaltonWatson.law_singleton _ W.offspring_univ_le_one, galtonWatson_weight]
   split_ifs <;> rfl
 
@@ -153,8 +145,7 @@ omit [Countable T] [Countable G.NT] in
 theorem lintegral_offspring_nonterminal (A : G.NT) (F : List (Symbol T G.NT) → ℝ≥0∞) :
     ∫⁻ l, F l ∂W.offspring (.nonterminal A) =
       ∑ r ∈ G.rulesWithInput A, W.weight r * F r.output := by
-  rw [offspring, lintegral_map .of_discrete .of_discrete, ruleMeasure,
-    lintegral_finsetSum_measure]
+  rw [offspring, lintegral_finsetSum_measure]
   simp only [lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
 
 /-- A derivation from a nonterminal terminates when the rule chosen there has a right-hand side
