@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Analysis.MeanInequalities
+public import Linglib.Core.Analysis.Convex.StdSimplex
 public import Linglib.Core.Basic.ENNReal.BigOperators
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Mathlib.Algebra.BigOperators.Finprod
@@ -19,7 +19,8 @@ Rule weights give a derivation tree the product of the weights of the rules it a
 corpus, a multiset of trees, the product over its trees; over licensed trees that is the product
 of the rule weights [raised to their counts](##RoseTree.prod_map_ruleWeight).
 A probabilistic context-free grammar (PCFG) over `G` is a weighting in which the rules at each
-nonterminal have total weight one ([abney-mcallester-pereira-1999], [smith-johnson-2007]).
+nonterminal have total weight one ([abney-mcallester-pereira-1999], [smith-johnson-2007]), so
+[a family of probability vectors](##PCFG.simplexEquiv), one over the rules at each nonterminal.
 Normalizing rule counts at each nonterminal gives the relative-frequency estimate,
 [the maximum-likelihood PCFG](##PCFG.prod_map_ruleWeight_le_ofCounts) of a corpus of licensed
 trees ([chi-1999]) and [the only one](##PCFG.prod_map_ruleWeight_eq_ofCounts_iff) at the
@@ -45,6 +46,7 @@ weights, and its total mass ([booth-thompson-1973]), are in
 
 @[expose] public section
 
+open Convexity
 open scoped ENNReal
 
 /-! ### Weighted grammars
@@ -182,54 +184,112 @@ theorem weight_le_one (r : ContextFreeRule T G.NT) : W.weight r ≤ 1 := by
 theorem weight_ne_top (r : ContextFreeRule T G.NT) : W.weight r ≠ ⊤ :=
   ne_top_of_le_ne_top ENNReal.one_ne_top (W.weight_le_one r)
 
+/-! ### Probability vectors -/
+
+/-- The rule distribution of a PCFG at a nonterminal the grammar has a rule for, the probability
+vector of the weights of the rules there. -/
+noncomputable def toSimplex (a : G.inputs) : StdSimplex ℝ≥0∞ (G.rulesWithInput a) :=
+  .ofFintype (fun r ↦ W.weight r) (fun _ ↦ zero_le) <| by
+    rw [Finset.sum_coe_sort (G.rulesWithInput a) W.weight, W.sum_weight a a.2]
+
+@[simp]
+theorem toSimplex_weights (a : G.inputs) (r : G.rulesWithInput a) :
+    (W.toSimplex a).weights r = W.weight r :=
+  rfl
+
+/-- A product of powers of the rule weights is the product over the nonterminals of the products
+at their probability vectors. -/
+theorem prod_weight_pow (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r =
+      ∏ a : G.inputs, ∏ r : G.rulesWithInput a, (W.toSimplex a).weights r ^ x r := by
+  rw [← G.prod_inputs_prod_rulesWithInput,
+    ← Finset.prod_coe_sort G.inputs fun a ↦ ∏ r ∈ G.rulesWithInput a, W.weight r ^ x r]
+  exact Finset.prod_congr rfl fun a _ ↦
+    (Finset.prod_coe_sort (G.rulesWithInput a) fun r ↦ W.weight r ^ x r).symm
+
 section
 
 variable [DecidableEq T]
 
+/-- The PCFG whose rule distribution at each nonterminal is a given probability vector over the
+rules there. -/
+noncomputable def ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) : PCFG G :=
+  mk' (fun r ↦
+      if h : r ∈ G.rules then
+        (θ ⟨r.input, G.input_mem_inputs h⟩).weights ⟨r, G.mem_rulesWithInput_input h⟩
+      else 0)
+    (fun _ hr ↦ dite_eq_right hr) fun a ha ↦ by
+    rw [← Finset.sum_attach, ← Finset.univ_eq_attach,
+      Finset.sum_congr rfl (g := fun r ↦ (θ ⟨a, ha⟩).weights r) fun r _ ↦ by
+        obtain ⟨r, hr⟩ := r
+        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+        exact dite_eq_left hmem,
+      StdSimplex.total_of_fintype]
+
+theorem ofSimplex_weight (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a))
+    (a : G.inputs) (r : G.rulesWithInput a) : (ofSimplex θ).weight r = (θ a).weights r := by
+  obtain ⟨r, hr⟩ := r
+  obtain ⟨a, ha⟩ := a
+  obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+  exact dite_eq_left hmem
+
+theorem ofSimplex_toSimplex : ofSimplex W.toSimplex = W := by
+  refine PCFG.ext (funext fun r ↦ ?_)
+  by_cases hr : r ∈ G.rules
+  · exact ofSimplex_weight _ ⟨_, G.input_mem_inputs hr⟩ ⟨r, G.mem_rulesWithInput_input hr⟩
+  · simp [ofSimplex, hr]
+
+theorem toSimplex_ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) :
+    (ofSimplex θ).toSimplex = θ :=
+  funext fun a ↦ StdSimplex.weights_inj.mp (Finsupp.ext fun r ↦ ofSimplex_weight θ a r)
+
+/-- PCFGs over `G` are the families of probability vectors over the rules at each nonterminal the
+grammar has a rule for. -/
+noncomputable def simplexEquiv : PCFG G ≃ ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a) where
+  toFun := toSimplex
+  invFun := ofSimplex
+  left_inv W := W.ofSimplex_toSimplex
+  right_inv := toSimplex_ofSimplex
+
+@[simp] theorem simplexEquiv_apply : simplexEquiv W = W.toSimplex := rfl
+
+@[simp]
+theorem simplexEquiv_symm_apply (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) :
+    simplexEquiv.symm θ = ofSimplex θ :=
+  rfl
+
 /-! ### Normalized weights -/
 
-open scoped Classical in
 /-- The rule weights `w` normalized at each nonterminal give a rule of the grammar its weight over
 the total weight of the rules sharing its input. At a nonterminal where that total is `0` or `⊤`
 the rules get equal weights. -/
 noncomputable def normalize (w : ContextFreeRule T G.NT → ℝ≥0∞) : PCFG G :=
-  mk' (fun r ↦
-      if r ∈ G.rules then
-        if ∑ r' ∈ G.rulesWithInput r.input, w r' = 0 ∨ ∑ r' ∈ G.rulesWithInput r.input, w r' = ⊤
-        then ((G.rulesWithInput r.input).card : ℝ≥0∞)⁻¹
-        else w r / ∑ r' ∈ G.rulesWithInput r.input, w r'
-      else 0)
-    (fun _ hr ↦ ite_eq_right hr) fun a ha ↦ by
-    rw [Finset.sum_congr rfl (g := fun r ↦
-      if ∑ r' ∈ G.rulesWithInput a, w r' = 0 ∨ ∑ r' ∈ G.rulesWithInput a, w r' = ⊤
-      then ((G.rulesWithInput a).card : ℝ≥0∞)⁻¹ else w r / ∑ r' ∈ G.rulesWithInput a, w r')
-      fun r hr ↦ by
-        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-        exact ite_eq_left hmem]
-    by_cases h : ∑ r' ∈ G.rulesWithInput a, w r' = 0 ∨ ∑ r' ∈ G.rulesWithInput a, w r' = ⊤
-    · simp only [ite_eq_left h, Finset.sum_const, nsmul_eq_mul]
-      exact ENNReal.mul_inv_cancel (Nat.cast_ne_zero.mpr (Finset.card_ne_zero.mpr
-        (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr ha))) (ENNReal.natCast_ne_top _)
-    · simp only [ite_eq_right h, div_eq_mul_inv, ← Finset.sum_mul]
-      exact ENNReal.mul_inv_cancel (fun h0 ↦ h (.inl h0)) fun htop ↦ h (.inr htop)
+  ofSimplex fun _ ↦ .normalize fun r ↦ w r
 
-variable {w : ContextFreeRule T G.NT → ℝ≥0∞} {a : G.NT} {r r' : ContextFreeRule T G.NT}
+variable {w : ContextFreeRule T G.NT → ℝ≥0∞} {a : G.NT}
 
-theorem normalize_weight (hr : r ∈ G.rules) (h0 : ∑ r' ∈ G.rulesWithInput r.input, w r' ≠ 0)
-    (htop : ∑ r' ∈ G.rulesWithInput r.input, w r' ≠ ⊤) :
-    (normalize w).weight r = w r / ∑ r' ∈ G.rulesWithInput r.input, w r' := by
-  simp [normalize, hr, h0, htop]
+theorem toSimplex_normalize (a : G.inputs) :
+    (normalize w).toSimplex a = .normalize fun r ↦ w r :=
+  congrFun (toSimplex_ofSimplex _) a
 
-theorem normalize_weight_lt_normalize_weight_iff (hr : r ∈ G.rulesWithInput a)
-    (hr' : r' ∈ G.rulesWithInput a) (htop : ∑ r'' ∈ G.rulesWithInput a, w r'' ≠ ⊤) :
+theorem normalize_weight (r : G.rulesWithInput a) (h0 : ∑ r' ∈ G.rulesWithInput a, w r' ≠ 0)
+    (htop : ∑ r' ∈ G.rulesWithInput a, w r' ≠ ⊤) :
+    (normalize w).weight r = w r / ∑ r' ∈ G.rulesWithInput a, w r' := by
+  obtain ⟨a, rfl⟩ : ∃ a' : G.inputs, (a' : G.NT) = a :=
+    ⟨⟨a, ContextFreeGrammar.rulesWithInput_nonempty_iff.mp ⟨r, r.2⟩⟩, rfl⟩
+  rw [normalize, ofSimplex_weight _ a r,
+    StdSimplex.normalize_weights (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w])
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w]),
+    Finset.sum_coe_sort (G.rulesWithInput a) w]
+
+theorem normalize_weight_lt_normalize_weight_iff (r r' : G.rulesWithInput a)
+    (htop : ∑ r'' ∈ G.rulesWithInput a, w r'' ≠ ⊤) :
     (normalize w).weight r < (normalize w).weight r' ↔ w r < w r' := by
-  obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-  obtain ⟨hmem', hin⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr'
-  by_cases h0 : ∑ r'' ∈ G.rulesWithInput r.input, w r'' = 0
-  · simp [normalize, hmem, hmem', hin, h0, (Finset.sum_eq_zero_iff.mp h0 _ hr),
-      (Finset.sum_eq_zero_iff.mp h0 _ hr')]
-  · rw [normalize_weight hmem h0 htop, normalize_weight hmem' (hin ▸ h0) (hin ▸ htop), hin]
-    exact ENNReal.div_lt_div_iff_left h0 htop
+  obtain ⟨a, rfl⟩ : ∃ a' : G.inputs, (a' : G.NT) = a :=
+    ⟨⟨a, ContextFreeGrammar.rulesWithInput_nonempty_iff.mp ⟨r, r.2⟩⟩, rfl⟩
+  rw [normalize, ofSimplex_weight _ a r, ofSimplex_weight _ a r',
+    StdSimplex.normalize_weights_lt_normalize_weights_iff
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w])]
 
 /-- The uniform PCFG puts the uniform distribution over its rules at every nonterminal. -/
 noncomputable def uniform : PCFG G :=
@@ -246,70 +306,53 @@ noncomputable def ofCounts (x : ContextFreeRule T G.NT → ℕ) : PCFG G :=
 
 variable {x : ContextFreeRule T G.NT → ℕ}
 
-theorem ofCounts_weight (hr : r ∈ G.rules) (h : ∑ r' ∈ G.rulesWithInput r.input, x r' ≠ 0) :
-    (ofCounts x).weight r = x r / ∑ r' ∈ G.rulesWithInput r.input, (x r' : ℝ≥0∞) :=
-  normalize_weight hr (by exact_mod_cast h) (by simp [← Nat.cast_sum])
+theorem toSimplex_ofCounts (a : G.inputs) :
+    (ofCounts x).toSimplex a = .normalize fun r ↦ (x r : ℝ≥0∞) :=
+  toSimplex_normalize a
 
-theorem ofCounts_weight_lt_ofCounts_weight_iff (hr : r ∈ G.rulesWithInput a)
-    (hr' : r' ∈ G.rulesWithInput a) :
+theorem ofCounts_weight (r : G.rulesWithInput a) (h : ∑ r' ∈ G.rulesWithInput a, x r' ≠ 0) :
+    (ofCounts x).weight r = x r / ∑ r' ∈ G.rulesWithInput a, (x r' : ℝ≥0∞) :=
+  normalize_weight r (by exact_mod_cast h) (by simp [← Nat.cast_sum])
+
+theorem ofCounts_weight_lt_ofCounts_weight_iff (r r' : G.rulesWithInput a) :
     (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
-  rw [ofCounts, normalize_weight_lt_normalize_weight_iff hr hr'
-    (by simp [← Nat.cast_sum]), Nat.cast_lt]
-
-private theorem prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) (a : G.NT) :
-    ∏ r ∈ G.rulesWithInput a, (ofCounts x).weight r ^ x r =
-      ∏ r ∈ G.rulesWithInput a,
-        ((x r : ℝ≥0∞) / ∑ r' ∈ G.rulesWithInput a, (x r' : ℝ≥0∞)) ^ x r := by
-  refine Finset.prod_congr rfl fun r hr ↦ ?_
-  obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-  rcases Nat.eq_zero_or_pos (x r) with h | h
-  · simp [h]
-  rw [ofCounts_weight hmem
-    (h.trans_le (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr)).ne']
-
-private theorem prod_pow_le_prod_ofCounts_pow_aux (x : ContextFreeRule T G.NT → ℕ) (a : G.NT) :
-    ∏ r ∈ G.rulesWithInput a, W.weight r ^ x r ≤
-      ∏ r ∈ G.rulesWithInput a, (ofCounts x).weight r ^ x r :=
-  (ENNReal.prod_pow_le_prod_div_sum_pow _ (W.sum_weight_le_one a) x).trans_eq
-    (prod_ofCounts_pow x a).symm
+  rw [ofCounts, normalize_weight_lt_normalize_weight_iff r r' (by simp [← Nat.cast_sum]),
+    Nat.cast_lt]
 
 /-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
 theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
     ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
-  rw [← G.prod_inputs_prod_rulesWithInput, ← G.prod_inputs_prod_rulesWithInput]
-  exact Finset.prod_le_prod fun a _ ↦ W.prod_pow_le_prod_ofCounts_pow_aux x a
+  rw [W.prod_weight_pow, (ofCounts x).prod_weight_pow]
+  refine Finset.prod_le_prod fun a _ ↦ ?_
+  rw [toSimplex_ofCounts]
+  exact (W.toSimplex a).prod_weights_pow_le_normalize fun r : G.rulesWithInput a ↦ x r
 
 /-- Rule counts attain their greatest likelihood only at their relative frequencies: a PCFG giving
-them that likelihood has the relative frequencies as its weights at every nonterminal with a
-counted rule. -/
+them that likelihood has the relative frequencies as its rule distribution at every nonterminal
+with a counted rule. -/
 theorem prod_pow_eq_prod_ofCounts_pow_iff (x : ContextFreeRule T G.NT → ℕ) :
     ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
-      ∀ r ∈ G.rules, ∑ r' ∈ G.rulesWithInput r.input, x r' ≠ 0 →
-        W.weight r = (ofCounts x).weight r := by
-  rw [← G.prod_inputs_prod_rulesWithInput, ← G.prod_inputs_prod_rulesWithInput,
-    ENNReal.prod_eq_prod_iff_of_le (fun a _ ↦ W.prod_pow_le_prod_ofCounts_pow_aux x a)
-      (fun a _ ↦ Finset.prod_ne_zero_iff.mpr fun r hr ↦ ?_)
+      ∀ a : G.inputs, ∑ r ∈ G.rulesWithInput a, x r ≠ 0 →
+        W.toSimplex a = (ofCounts x).toSimplex a := by
+  rw [W.prod_weight_pow, (ofCounts x).prod_weight_pow,
+    ENNReal.prod_eq_prod_iff_of_le
+      (fun a _ ↦ by
+        rw [toSimplex_ofCounts]
+        exact (W.toSimplex a).prod_weights_pow_le_normalize fun r : G.rulesWithInput a ↦ x r)
+      (fun a _ ↦ by
+        rw [toSimplex_ofCounts]
+        exact StdSimplex.prod_normalize_weights_pow_ne_zero fun r : G.rulesWithInput a ↦ x r)
       fun a _ ↦ ENNReal.prod_ne_top fun r _ ↦
-        ENNReal.pow_ne_top ((ofCounts x).weight_ne_top r)]
-  · refine ⟨fun h r hr hX ↦ ?_, fun h a _ ↦ ?_⟩
-    · have ha := h r.input (G.input_mem_inputs hr)
-      rw [prod_ofCounts_pow,
-        ENNReal.prod_pow_eq_prod_div_sum_pow_iff _ (W.sum_weight_le_one _) hX] at ha
-      rw [ha r (G.mem_rulesWithInput_input hr), ofCounts_weight hr hX]
-    · by_cases hX : ∑ r' ∈ G.rulesWithInput a, x r' = 0
-      · exact Finset.prod_congr rfl fun r hr ↦ by simp [Finset.sum_eq_zero_iff.mp hX r hr]
-      · rw [prod_ofCounts_pow,
-          ENNReal.prod_pow_eq_prod_div_sum_pow_iff _ (W.sum_weight_le_one _) hX]
-        intro r hr
-        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-        rw [h r hmem hX, ofCounts_weight hmem hX]
-  · obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-    rcases Nat.eq_zero_or_pos (x r) with h | h
-    · simp [h]
-    · have hX := (h.trans_le (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr)).ne'
-      rw [ofCounts_weight hmem hX]
-      exact pow_ne_zero _ (ENNReal.div_ne_zero.mpr
-        ⟨by exact_mod_cast h.ne', by simp [← Nat.cast_sum]⟩)
+        ENNReal.pow_ne_top (StdSimplex.weights_ne_top _ r)]
+  refine forall_congr' fun a ↦ ?_
+  simp only [Finset.mem_univ, forall_true_left]
+  rw [toSimplex_ofCounts]
+  by_cases hx : ∑ r ∈ G.rulesWithInput a, x r = 0
+  · have h0 : ∀ r : G.rulesWithInput a, x r = 0 := fun r ↦ Finset.sum_eq_zero_iff.mp hx r r.2
+    simp [h0, hx]
+  · rw [StdSimplex.prod_weights_pow_eq_normalize_iff _ (x := fun r : G.rulesWithInput a ↦ x r)
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) x])]
+    simp [hx]
 
 /-- When every nonterminal with a rule has a counted rule, the relative frequencies are the only
 PCFG giving the counts their greatest likelihood. -/
@@ -318,10 +361,7 @@ theorem prod_pow_eq_prod_ofCounts_pow_iff_eq {x : ContextFreeRule T G.NT → ℕ
     ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
       W = ofCounts x := by
   rw [prod_pow_eq_prod_ofCounts_pow_iff]
-  refine ⟨fun h ↦ PCFG.ext (funext fun r ↦ ?_), fun h _ _ _ ↦ by rw [h]⟩
-  by_cases hr : r ∈ G.rules
-  · exact h r hr (hx _ (G.input_mem_inputs hr))
-  · simp [hr]
+  exact ⟨fun h ↦ simplexEquiv.injective (funext fun a ↦ h a (hx a a.2)), fun h _ _ ↦ by rw [h]⟩
 
 /-! ### Corpora -/
 
@@ -335,14 +375,14 @@ theorem prod_map_ruleWeight_le_ofCounts {D : Multiset (RoseTree (Symbol T G.NT))
   exact W.prod_pow_le_prod_ofCounts_pow _
 
 /-- **The maximum-likelihood PCFG is unique**: a PCFG giving a corpus of licensed derivation trees
-the probability its relative frequencies do has those frequencies as weights at every nonterminal
-the corpus applies a rule to. -/
+the probability its relative frequencies do has those frequencies as its rule distribution at
+every nonterminal the corpus applies a rule to. -/
 theorem prod_map_ruleWeight_eq_ofCounts_iff {D : Multiset (RoseTree (Symbol T G.NT))}
     (hD : ∀ t ∈ D, t.Licensed G.Licenses) :
     (D.map (RoseTree.ruleWeight W.weight)).prod =
         (D.map (RoseTree.ruleWeight (ofCounts (RoseTree.ruleCounts D)).weight)).prod ↔
-      ∀ r ∈ G.rules, ∑ r' ∈ G.rulesWithInput r.input, RoseTree.ruleCounts D r' ≠ 0 →
-        W.weight r = (ofCounts (RoseTree.ruleCounts D)).weight r := by
+      ∀ a : G.inputs, ∑ r ∈ G.rulesWithInput a, RoseTree.ruleCounts D r ≠ 0 →
+        W.toSimplex a = (ofCounts (RoseTree.ruleCounts D)).toSimplex a := by
   rw [RoseTree.prod_map_ruleWeight _ D hD, RoseTree.prod_map_ruleWeight _ D hD]
   exact W.prod_pow_eq_prod_ofCounts_pow_iff _
 

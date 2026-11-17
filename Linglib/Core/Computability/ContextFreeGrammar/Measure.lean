@@ -206,7 +206,7 @@ theorem sum_mul_lintegral_offspring_ofCounts (x : ContextFreeRule T G.NT → ℕ
         rw [lintegral_offspring_nonterminal, Finset.mul_sum]
         refine Finset.sum_congr rfl fun r hr ↦ ?_
         obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
-        rw [ofCounts_weight hmem hn, ← mul_assoc, ENNReal.mul_div_cancel hn0 hntop]
+        rw [ofCounts_weight ⟨r, hr⟩ hn, ← mul_assoc, ENNReal.mul_div_cancel hn0 hntop]
 
 variable {D : Multiset (RoseTree (Symbol T G.NT))}
 
