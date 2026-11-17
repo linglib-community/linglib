@@ -169,6 +169,23 @@ theorem satisfiedBy_iff_dominance :
     Pi.toLex_comp_le_iff_forall_exists]
   simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
 
+/-- An ERC *holds* of a relation on the constraints when every loser-preferring constraint is
+below some winner-preferring one, the `∀∃` form of an elementary ranking condition in
+[prince-2002]. Of the dominance of a ranking it is satisfaction, and of a partial order it is
+satisfaction by every ranking that extends the order. -/
+def Holds (R : ι → ι → Prop) (α : ERC ι) : Prop := ∀ j, α j = .L → ∃ i, α i = .W ∧ R i j
+
+instance [Fintype ι] (R : ι → ι → Prop) [DecidableRel R] : Decidable (α.Holds R) :=
+  inferInstanceAs (Decidable (∀ _, _ → ∃ _, _))
+
+theorem Holds.mono {R S : ι → ι → Prop} {α : ERC ι} (h : α.Holds R) (hRS : R ≤ S) :
+    α.Holds S :=
+  fun j hj ↦ (h j hj).imp fun i hi ↦ ⟨hi.1, hRS i j hi.2⟩
+
+/-- A ranking satisfies an ERC iff the ERC holds of its dominance. -/
+theorem satisfiedBy_iff_holds : α.SatisfiedBy r ↔ α.Holds r.Dominates :=
+  satisfiedBy_iff_dominance r α
+
 instance : Decidable (α.SatisfiedBy r) :=
   inferInstanceAs (Decidable (toLex 0 ≤ toLex (α ∘ r)))
 
@@ -565,16 +582,25 @@ theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : Constra
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
     (satisfiedBy_ercOfProfiles_iff_le r (con · w) (con · l)).symm
 
-/-- A ranking argument: when `c` is optimal under a ranking and `i` is the only constraint
-preferring it to a competitor `d`, `i` dominates every constraint preferring `d`. -/
+/-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
+competitor `d` is dominated by some constraint preferring `c`. -/
+theorem Tableau.exists_dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
+    {r : Ranking ι n} {candidates : Finset C} {c d : C} {j : ι}
+    (h : c ∈ (Tableau.ofRanking con r candidates).optimal) (hd : d ∈ candidates)
+    (hj : con j d < con j c) : ∃ i, con i c < con i d ∧ r.Dominates i j :=
+  ((ERC.satisfiedBy_iff_dominance r _).1
+    (((Tableau.ofRanking_mem_optimal_iff_satisfiedBy con r candidates c).1 h).2 d hd) j
+    ((ercOfProfiles_eq_L_iff _ _ j).2 hj)).imp fun _ hw ↦
+      ⟨(ercOfProfiles_eq_W_iff _ _ _).1 hw.1, hw.2⟩
+
+/-- When `i` is the only constraint preferring an optimal candidate `c` to a competitor `d`, `i`
+dominates every constraint preferring `d`. -/
 theorem Tableau.dominates_of_mem_ofRanking_optimal {C : Type*} {con : ConstraintSet C ι}
     {r : Ranking ι n} {candidates : Finset C} {c d : C} {i j : ι}
     (h : c ∈ (Tableau.ofRanking con r candidates).optimal) (hd : d ∈ candidates)
     (hi : ∀ k, con k c < con k d → k = i) (hj : con j d < con j c) : r.Dominates i j := by
-  obtain ⟨w, hw, hdom⟩ := (ERC.satisfiedBy_iff_dominance r _).1
-    (((Tableau.ofRanking_mem_optimal_iff_satisfiedBy con r candidates c).1 h).2 d hd) j
-    ((ercOfProfiles_eq_L_iff _ _ j).2 hj)
-  exact hi w ((ercOfProfiles_eq_W_iff _ _ w).1 hw) ▸ hdom
+  obtain ⟨w, hw, hdom⟩ := Tableau.exists_dominates_of_mem_ofRanking_optimal h hd hj
+  exact hi w hw ▸ hdom
 
 /-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/
 def ConstraintSystem.ercs {I O : Type*} (S : ConstraintSystem I O ι) (i : I) (o : O) :

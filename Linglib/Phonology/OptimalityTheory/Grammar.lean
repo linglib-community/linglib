@@ -165,6 +165,83 @@ def Grammar.ofRel (r : ι → ι → Prop) : Grammar ι n := .ofERCs (ERC.ofRel 
     σ ∈ (Grammar.ofRel r).extent ↔ σ.IsLinearExtension r :=
   ERC.forall_mem_ofRel_satisfiedBy_iff
 
+omit [DecidableEq ι] in
+/-- An ERC that holds of a relation is satisfied by every ranking extending the relation. -/
+theorem ERC.Holds.satisfiedBy {α : ERC ι} (h : α.Holds r) (hσ : σ.IsLinearExtension r) :
+    α.SatisfiedBy σ :=
+  (ERC.satisfiedBy_iff_holds σ α).2 fun j hj ↦ by
+    obtain ⟨i, hi, hij⟩ := h j hj
+    have hne : i ≠ j := by rintro rfl; rw [hi] at hj; exact absurd hj (by decide)
+    exact ⟨i, hi, hσ.dominates hij hne⟩
+
+omit [DecidableEq ι] in
+/-- An ERC holds of a transitive antisymmetric relation, such as a partial order on the
+constraints, iff every ranking extending the relation satisfies it. -/
+theorem ERC.holds_iff_forall_satisfiedBy [Fintype ι] [ht : IsTrans ι r] [ha : Std.Antisymm r]
+    {α : ERC ι} (hn : Fintype.card ι = n := by simp) :
+    α.Holds r ↔ ∀ σ : Ranking ι n, σ.IsLinearExtension r → α.SatisfiedBy σ := by
+  refine ⟨fun h σ hσ ↦ h.satisfiedBy hσ, fun h j hj ↦ ?_⟩
+  by_contra hno
+  have hup : ∀ {a b : ι}, r a b → (b = j ∨ r b j) → (a = j ∨ r a j) := fun hab hb ↦
+    hb.elim (fun e ↦ Or.inr (e ▸ hab)) fun hbj ↦ Or.inr (ht.trans _ _ _ hab hbj)
+  -- the order that also puts everything at or above `j` above everything else
+  have hpo : IsPartialOrder ι
+      (fun a b ↦ a = b ∨ r a b ∨ ((a = j ∨ r a j) ∧ ¬ (b = j ∨ r b j))) :=
+    { refl := fun a ↦ Or.inl rfl
+      trans := by
+        intro a b c h1 h2
+        rcases h1 with rfl | h1 | ⟨ha', hb⟩
+        · exact h2
+        · rcases h2 with rfl | h2 | ⟨hb, hc⟩
+          · exact Or.inr (Or.inl h1)
+          · exact Or.inr (Or.inl (ht.trans _ _ _ h1 h2))
+          · exact Or.inr (Or.inr ⟨hup h1 hb, hc⟩)
+        · rcases h2 with rfl | h2 | ⟨hb', hc⟩
+          · exact Or.inr (Or.inr ⟨ha', hb⟩)
+          · exact Or.inr (Or.inr ⟨ha', fun hc ↦ hb (hup h2 hc)⟩)
+          · exact absurd hb' hb
+      antisymm := by
+        intro a b h1 h2
+        rcases h1 with rfl | h1 | ⟨ha', hb⟩
+        · rfl
+        · rcases h2 with rfl | h2 | ⟨hb, ha'⟩
+          · rfl
+          · exact ha.antisymm _ _ h1 h2
+          · exact absurd (hup h1 hb) ha'
+        · rcases h2 with rfl | h2 | ⟨hb', _⟩
+          · rfl
+          · exact absurd (hup h2 ha') hb
+          · exact absurd hb' hb }
+  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension
+    (fun a b ↦ a = b ∨ r a b ∨ ((a = j ∨ r a j) ∧ ¬ (b = j ∨ r b j))) hn
+  obtain ⟨i, hi, hij⟩ := (ERC.satisfiedBy_iff_holds σ α).1
+    (h σ fun a b hab ↦ hσ a b (Or.inr (Or.inl hab))) j hj
+  have hUi : i = j ∨ r i j := by
+    by_contra hni
+    exact absurd hij (not_lt.2 (hσ j i (Or.inr (Or.inr ⟨Or.inl rfl, hni⟩))))
+  rcases hUi with rfl | hij'
+  · rw [hi] at hj; exact absurd hj (by decide)
+  · exact hno ⟨i, hi, hij'⟩
+
+/-- The intent of the grammar of a transitive antisymmetric relation: the ERCs that hold of
+it. -/
+theorem Grammar.mem_intent_ofRel [Fintype ι] [IsTrans ι r] [Std.Antisymm r] {α : ERC ι}
+    (hn : Fintype.card ι = n := by simp) :
+    α ∈ (Grammar.ofRel r : Grammar ι n).intent ↔ α.Holds r := by
+  rw [ERC.holds_iff_forall_satisfiedBy hn, ← Concept.upperPolar_extent]
+  exact forall_congr' fun σ ↦ by rw [Grammar.mem_extent_ofRel]
+
+/-- The grammar of a diagram lies below the grammar of a winner iff each of the winner's ERCs
+holds of the diagram: the winner is optimal under every ranking that extends the diagram. -/
+theorem Grammar.ofRel_le_ofWinner_iff [Fintype ι] [IsTrans ι r] [Std.Antisymm r] {C : Type*}
+    {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
+    (hn : Fintype.card ι = n := by simp) :
+    (Grammar.ofRel r : Grammar ι n) ≤ Grammar.ofWinner con candidates w ↔
+      ∀ d ∈ candidates, (ercOfProfiles (con · w) (con · d)).Holds r := by
+  rw [Grammar.ofWinner, Concept.le_ofAttributes_iff]
+  exact ⟨fun h d hd ↦ (Grammar.mem_intent_ofRel hn).1 (h ⟨d, Finset.mem_coe.2 hd, rfl⟩),
+    by rintro h _ ⟨d, hd, rfl⟩; exact (Grammar.mem_intent_ofRel hn).2 (h d hd)⟩
+
 theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
     (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.linearExtensions (n := n) r) := by
   ext σ

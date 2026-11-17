@@ -49,16 +49,20 @@ every row of the paper's table of strong nouns, which gives entries for two of i
 The Word- and Phrase-level rankings are the paper's Hasse diagrams, as relations on the
 constraints, and a tableau is evaluated under every total ranking that extends its stratum's
 diagram. The Word-level diagram has ONSET, which the paper ranks below IDENT-STRESS, below
-*DIST-0 as well: the quantifier tableau, with ONSET marked on each candidate whose *an* has no
-onset, has the paper's winner under a ranking only if both dominate ONSET
-(`onset_dominated`). A stratum is also a grammar in the sense of `OptimalityTheory.Grammar`, the
-rankings under which the winners of its tableaux are optimal, and the diagram's grammar lies
-below it.
+*DIST-0 as well: the winner of the quantifier tableau is optimal under a ranking only if *DIST-0
+dominates ONSET (`onset_dominated`). A stratum is also a grammar in the sense of
+`OptimalityTheory.Grammar`, the rankings under which the winners of its tableaux are optimal, and
+the diagram's grammar lies below it.
 
-The marks of the Stem-level tableau are computed from each parse's feet by the paper's
-definitions of the three constraints, a mark of FT-BIN for each foot that is not bimoraic and a
-mark of ALL-FT-LEFT for each syllable between a foot and the left edge. The marks of the other
-tableaux are the printed cells.
+A candidate is written as the paper prints it and read against the segments of its input, which
+gives the positions it deletes and the vowels it lengthens, and every mark is computed from that
+by the paper's definitions of the constraints; the Phrase-level input of the quantified form is the Word-level winner. A candidate
+therefore also bears the marks of constraints its tableau has no column for. In the printed
+columns the computed marks are the printed cells, except that MAX counts one segment for the two
+dative candidates that delete /n/, ALIGN-RIGHT marks the nominative candidate ending in *mn* and
+no candidate of the postpositional tableau, IDENT-STRESS does not mark the last candidate of the
+Phrase-level quantifier tableau, FT-BIN marks each non-bimoraic foot and ALL-FT-LEFT each
+syllable between a foot and the left edge.
 
 Syllable weight is that of `Telugu.Phonology.initialSyllable` on the transcribed form of the
 morpheme after the noun stem.
@@ -71,8 +75,6 @@ morpheme after the noun stem.
   weak one, which needs adjacency, is not stated on the engine's two localities.
 * The Stem-level tableaux for the sandhi of *pandem* 'bet' and *peḷḷām* 'wife' and the Stem-level
   Hasse diagram are not formalized.
-* The marks of the Word- and Phrase-level tableaux are not computed from representations of the
-  candidates.
 
 ## References
 
@@ -87,7 +89,7 @@ morpheme after the noun stem.
 
 namespace Aitha2026
 
-open DistributedMorphology Morphology Prosody OptimalityTheory
+open DistributedMorphology Morphology Phonology Prosody OptimalityTheory
 open Examples (Alternation Alternant Follower)
 
 /-! ### Case containment -/
@@ -390,156 +392,252 @@ example : ∃ σ : Ranking Con 9, σ.IsLinearExtension phrase :=
 
 variable {σ : Ranking Con 9}
 
-/-! ### Word-level phonology -/
+/-! ### Candidates
 
-/-- (59): the candidates for dative *samudr-am-ní-ki* keep /mn/, delete /n/ or /m/ with the mora,
-or delete /m/ or /n/ with compensatory lengthening. -/
-inductive WordCandDat where
-  | faithful | deleteN | deleteM | deleteMLengthen | deleteNLengthen
-  deriving DecidableEq, Repr, Fintype
+A candidate is written as the paper prints it, with feet in parentheses, syllables separated by
+periods and stress marks, and is read against the segments of its input: each of its segments has
+the position of the input segment it continues, a long vowel taking one position twice. Its marks
+are computed from that. -/
 
-/-- The marks of (59). -/
-def WordCandDat.marks : ConstraintSet WordCandDat Con
-  | .distZero, .faithful => 1
-  | .alignR, .deleteN | .maxMora, .deleteN => 1
-  | .max, .deleteN => 2
-  | .maxMora, .deleteM | .max, .deleteM => 1
-  | .max, .deleteMLengthen | .identLength, .deleteMLengthen => 1
-  | .alignR, .deleteNLengthen | .identLength, .deleteNLengthen => 1
-  | .max, .deleteNLengthen => 2
-  | _, _ => 0
+/-- A syllable of a candidate: its segments with their positions in the input, and whether it
+is printed with a stress mark. -/
+structure Syl where
+  segs : List (Segment × ℕ)
+  stressed : Bool
+  deriving DecidableEq
 
-/-- The segments of a candidate of (59). -/
-def WordCandDat.form : WordCandDat → String
-  | .faithful => "samudramniki"
-  | .deleteN => "samudramiki"
-  | .deleteM => "samudraniki"
-  | .deleteMLengthen => "samudrāniki"
-  | .deleteNLengthen => "samudrāmiki"
+/-- A parse: feet, each a list of syllables, and syllables outside the feet. -/
+abbrev Parse := List (List Syl ⊕ Syl)
 
--- (59): /m/ deletes and /a/ lengthens, the long form *samudrāniki*
-theorem wordDat_optimal (hσ : σ.IsLinearExtension word) :
-    (Tableau.ofRanking WordCandDat.marks σ Finset.univ).optimal = {.deleteMLengthen} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+/-- The stress marks. -/
+def stressMarks : List Char := ['ˈ', 'ˌ']
 
-/-- (62): the candidates for nominative *samudr-am-ní* destress *-ni*, foot it alone, delete /i/
-into a coda cluster, delete /i/ and /m/, or delete /ni/. -/
-inductive WordCandNom where
-  | destress | degenerateFoot | deleteI | deleteIM | deleteNi
-  deriving DecidableEq, Repr, Fintype
+/-- The feet and stray syllables of a printed form, as strings. -/
+def split : List Char → List Char → Option (List (List Char)) →
+    List (List (List Char) ⊕ List Char)
+  | [], cur, _ => if cur = [] then [] else [.inr cur.reverse]
+  | '(' :: cs, _, _ => split cs [] (some [])
+  | ')' :: cs, cur, some f => .inl (cur.reverse :: f).reverse :: split cs [] none
+  | c :: cs, cur, foot =>
+    if c = '.' ∨ c = ' ' then
+      match foot with
+      | some f => split cs [] (some (if cur = [] then f else cur.reverse :: f))
+      | none => if cur = [] then split cs [] none else .inr cur.reverse :: split cs [] none
+    else split cs (c :: cur) foot
 
-/-- The marks of (62). -/
-def WordCandNom.marks : ConstraintSet WordCandNom Con
-  | .identStress, .destress => 1
-  | .ftBin, .degenerateFoot => 1
-  | .complexCoda, .deleteI | .maxMora, .deleteI | .max, .deleteI => 1
-  | .alignR, .deleteIM | .maxMora, .deleteIM => 1
-  | .max, .deleteIM => 2
-  | .maxMora, .deleteNi => 1
-  | .max, .deleteNi => 2
-  | _, _ => 0
+/-- The segments of a romanized form. -/
+def segments (s : List Char) : List Segment := (Telugu.Phonology.transcribe s).getD []
 
-/-- The segments of a candidate of (62). -/
-def WordCandNom.form : WordCandNom → String
-  | .destress | .degenerateFoot => "samudramni"
-  | .deleteI => "samudramn"
-  | .deleteIM => "samudran"
-  | .deleteNi => "samudram"
+/-- Each segment of a candidate with the position of the next input segment like it; the second
+half of a long vowel shares the position of the first. -/
+def assign (input : List Segment) : ℕ → Option (Segment × ℕ) → List Segment → List (Segment × ℕ)
+  | _, _, [] => []
+  | i, prev, x :: xs =>
+    if ∃ p ∈ prev, p.1 = x ∧ x.IsSyllabic ∧ input[i]? ≠ some x then
+      ((prev.map (·.2)).getD 0 |> (x, ·)) :: assign input i none xs
+    else
+      let k := i + (input.drop i).idxOf x
+      (x, k) :: assign input (k + 1) (some (x, k)) xs
 
--- (62): word-final stressed *-ni* cannot head a binary foot and deletes, the short form
-theorem wordNom_optimal (hσ : σ.IsLinearExtension word) :
-    (Tableau.ofRanking WordCandNom.marks σ Finset.univ).optimal = {.deleteNi} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+/-- A list cut into consecutive stretches of the given lengths. -/
+def chunk {α : Type*} : List α → List ℕ → List (List α)
+  | _, [] => []
+  | l, n :: ns => l.take n :: chunk (l.drop n) ns
 
-/-- (63): the candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier destress *-ni*,
-foot it alone, delete /i/ into /mn/, delete /i/ and /m/ with /n/ as coda, delete /ni/, or delete
-/i/ and /m/ with /n/ resyllabified as onset. -/
-inductive WordCandQ where
-  | destress | degenerateFoot | deleteI | deleteIM | deleteNi | deleteIMResyllabify
-  deriving DecidableEq, Repr, Fintype
+/-- The syllables `l` grouped as the printed feet and strays `raw`. -/
+def regroup : List (List (List Char) ⊕ List Char) → List Syl → Parse
+  | [], _ => []
+  | .inl f :: r, l => .inl (l.take f.length) :: regroup r (l.drop f.length)
+  | .inr _ :: r, l => (l.head?.map Sum.inr).toList ++ regroup r l.tail
 
-/-- The marks of (63), with ONSET marked on every candidate whose *an* lacks an onset. -/
-def WordCandQ.marks : ConstraintSet WordCandQ Con
-  | .identStress, .destress | .onset, .destress => 1
-  | .ftBin, .degenerateFoot | .onset, .degenerateFoot => 1
-  | .distZero, .deleteI | .max, .deleteI => 1
-  | .alignR, .deleteIM | .onset, .deleteIM => 1
-  | .max, .deleteIM => 2
-  | .onset, .deleteNi => 1
-  | .max, .deleteNi => 2
-  | .identStress, .deleteIMResyllabify => 1
-  | .max, .deleteIMResyllabify => 2
-  | _, _ => 0
+/-- The parse of a printed form against the segments of an input. -/
+def read (input : List Segment) (s : String) : Parse :=
+  let raw := split s.toList [] none
+  let σs := raw.flatMap (Sum.elim id ([·]))
+  let segs := σs.map fun σ ↦ segments (σ.filter (· ∉ stressMarks))
+  regroup raw <| ((chunk (assign input 0 none segs.flatten) (segs.map List.length)).zip σs).map
+    fun p ↦ ⟨p.1, p.2.any (· ∈ stressMarks)⟩
 
-/-- The segments of a candidate of (63). -/
-def WordCandQ.form : WordCandQ → String
-  | .destress | .degenerateFoot => "samudramniantaṭini"
-  | .deleteI => "samudramnantaṭini"
-  | .deleteIM | .deleteIMResyllabify => "samudranantaṭini"
-  | .deleteNi => "samudramantaṭini"
+namespace Syl
 
--- (63)
-theorem wordQ_optimal (hσ : σ.IsLinearExtension word) :
-    (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal = {.deleteNi} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+/-- The consonants before the vowel. -/
+def onset (s : Syl) : List (Segment × ℕ) := s.segs.takeWhile (¬ ·.1.IsSyllabic)
 
--- any ranking under which the winner of (63) is optimal has IDENT-STRESS and *DIST-0 above ONSET
-theorem onset_dominated
-    (h : .deleteNi ∈ (Tableau.ofRanking WordCandQ.marks σ Finset.univ).optimal) :
-    σ.Dominates .identStress .onset ∧ σ.Dominates .distZero .onset :=
-  ⟨Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteIMResyllabify)
-      (Finset.mem_univ _) (by decide) (by decide),
-    Tableau.dominates_of_mem_ofRanking_optimal h (d := .deleteI)
-      (Finset.mem_univ _) (by decide) (by decide)⟩
+/-- The vowel and what follows it. -/
+def rime (s : Syl) : List (Segment × ℕ) := s.segs.dropWhile (¬ ·.1.IsSyllabic)
 
-/-! ### Phrase-level phonology -/
+/-- The consonants after the vowel. -/
+def coda (s : Syl) : List (Segment × ℕ) := s.rime.dropWhile (·.1.IsSyllabic)
 
-/-- (66): the candidates for *samudram nunci* 'from the ocean' delete /m/ with or without
-lengthening, delete the postposition's /n/, or keep the /mn/ contact. -/
-inductive PhraseCandP where
-  | deleteMLengthen | deleteM | deleteN | faithful
-  deriving DecidableEq, Repr, Fintype
+/-- The morae of a syllable: one for each half of its vowel, and one for a coda. -/
+def morae (s : Syl) : ℕ := (s.rime.takeWhile (·.1.IsSyllabic)).length + if s.coda = [] then 0 else 1
 
-/-- The marks of (66). -/
-def PhraseCandP.marks : ConstraintSet PhraseCandP Con
-  | .max, .deleteMLengthen => 1
-  | .identStress, .deleteM | .max, .deleteM => 1
-  | .max, .deleteN | .alignR, .deleteN => 1
-  | .distZero, .faithful => 1
-  | .alignR, .faithful => 2
-  | _, _ => 0
+end Syl
 
--- (66)
-theorem phraseP_optimal (hσ : σ.IsLinearExtension phrase) :
-    (Tableau.ofRanking PhraseCandP.marks σ Finset.univ).optimal = {.faithful} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+namespace Parse
 
-/-- (67): the candidates for the Word-level output of (63) keep the onsetless *an*, resyllabify
-/m/ as its onset, lengthen /a/ and resyllabify, or foot the shortened *dra* alone. -/
-inductive PhraseCandQ where
-  | faithful | resyllabify | lengthen | degenerateFoot
-  deriving DecidableEq, Repr, Fintype
+/-- The syllables of a parse, in order. -/
+def syllables (p : Parse) : List Syl := p.flatMap (Sum.elim id ([·]))
 
-/-- The marks of (67). -/
-def PhraseCandQ.marks : ConstraintSet PhraseCandQ Con
-  | .onset, .faithful => 1
-  | .identStress, .resyllabify | .alignR, .resyllabify | .maxMora, .resyllabify => 1
-  | .identLength, .lengthen | .alignR, .lengthen => 1
-  | .ftBin, .degenerateFoot | .identStress, .degenerateFoot | .alignR, .degenerateFoot
-  | .maxMora, .degenerateFoot => 1
-  | _, _ => 0
+/-- The input positions of the segments of a parse. -/
+def positions (p : Parse) : List ℕ := p.syllables.flatMap fun s ↦ s.segs.map (·.2)
 
-/-- The segments of a candidate of (67). -/
-def PhraseCandQ.form : PhraseCandQ → String
-  | .lengthen => "samudrāmantaṭini"
-  | _ => "samudramantaṭini"
+/-- The segments of a parse. -/
+def output (p : Parse) : List Segment := p.syllables.flatMap fun s ↦ s.segs.map (·.1)
 
--- (67)
-theorem phraseQ_optimal (hσ : σ.IsLinearExtension phrase) :
-    (Tableau.ofRanking PhraseCandQ.marks σ Finset.univ).optimal = {.resyllabify} :=
-  Tableau.ofRanking_optimal_eq_singleton_of_rel hσ.le_dominates (Finset.mem_univ _) (by decide)
+/-- The syllables of a parse with their stress, which a syllable has when it is in a foot or
+printed with a stress mark. -/
+def stress (p : Parse) : List (Syl × Option Bool) :=
+  p.flatMap fun
+    | .inl f => f.map fun s ↦ (s, some s.stressed)
+    | .inr s => [(s, if s.stressed then some true else none)]
 
-/-! ### The outputs -/
+end Parse
+
+/-- The marks of a candidate `c` for an input `I` whose first `stem` segments are the Stem.
+* (58) *DIST-0: a coda consonant before an onset consonant of the same sonority.
+* (60) ALIGN-RIGHT(Stem, σ): the last segment of the Stem is not the last of a syllable.
+* (61) IDENT-STRESS: a mora whose stress differs from that of its input mora.
+* FT-BIN(μ): a foot that does not have two morae.
+* *COMPLEXCODA: a coda of two consonants.
+* MAX(μ): a mora of the input without one in the candidate.
+* MAX: a segment of the input without one in the candidate.
+* IDENT-length: a vowel of the candidate longer than in the input.
+* ONSET: a syllable that begins with its vowel. -/
+def violations (I : Parse) (stem : ℕ) (c : Parse) : Con → ℕ :=
+  let σs := c.syllables
+  fun
+  | .distZero => (σs.zip σs.tail).countP fun p ↦
+      ∃ x ∈ p.1.coda.getLast?, ∃ y ∈ p.2.onset.head?,
+        Sonority.ofSegment x.1 = Sonority.ofSegment y.1
+  | .alignR =>
+      if ∀ e ∈ (c.positions.filter (· < stem)).getLast?,
+        ∃ s ∈ σs, (s.segs.map (·.2)).getLast? = some e then 0 else 1
+  | .identStress => (σs.map fun s ↦
+      (s.rime.head?.toList ++ s.coda.head?.toList).countP fun h ↦
+        ∃ t ∈ I.stress, h.2 ∈ t.1.segs.map (·.2) ∧ ∃ b ∈ t.2, b ≠ s.stressed).sum
+  | .ftBin => (c.filterMap Sum.getLeft?).countP fun f ↦ (f.map Syl.morae).sum ≠ 2
+  | .complexCoda => σs.countP (2 ≤ ·.coda.length)
+  | .maxMora => (I.syllables.map Syl.morae).sum - (σs.map Syl.morae).sum
+  | .max => (I.positions.toFinset \ c.positions.toFinset).card
+  | .identLength =>
+      (c.positions.length - c.positions.toFinset.card) -
+        (I.positions.length - I.positions.toFinset.card)
+  | .onset => σs.countP (·.onset = [])
+
+/-- A tableau as the paper prints it: the input, the candidates and the winner. -/
+structure Evaluation where
+  input : String
+  candidates : List String
+  winner : String
+  deriving DecidableEq
+
+namespace Evaluation
+
+variable (t : Evaluation)
+
+/-- The segments of the input. -/
+def segs : List Segment := segments (t.input.toList.filter (· ∉ "(). ".toList ++ stressMarks))
+
+/-- The Stem of the paper's tableaux, *samudr-am*. -/
+def stem : ℕ := (segments "samudram".toList).length
+
+/-- The marks of the tableau. -/
+def marks : ConstraintSet String Con :=
+  fun k c ↦ violations (read t.segs t.input) stem (read t.segs c) k
+
+/-- The tableau under a ranking. -/
+def tableau (σ : Ranking Con 9) : Tableau String 9 :=
+  .ofRanking t.marks σ t.candidates.toFinset
+
+/-- The grammar of the tableau: the rankings under which its winner is optimal. -/
+def grammar : Grammar Con 9 := .ofWinner t.marks t.candidates.toFinset t.winner
+
+/-- The segments of the winner. -/
+def output : List Segment := (read t.segs t.winner).output
+
+variable {t} {R : Con → Con → Prop}
+
+theorem mem_extent_grammar (h : t.winner ∈ t.candidates) :
+    σ ∈ t.grammar.extent ↔ t.winner ∈ (t.tableau σ).optimal :=
+  Grammar.mem_extent_ofWinner (List.mem_toFinset.2 h)
+
+/-- The ERCs of the winner against the candidates hold of a relation: against each candidate,
+every constraint preferring it is below one preferring the winner. -/
+def Holds (t : Evaluation) (R : Con → Con → Prop) : Prop :=
+  ∀ d ∈ t.candidates, (ercOfProfiles (t.marks · t.winner) (t.marks · d)).Holds R
+
+instance (t : Evaluation) (R : Con → Con → Prop) [DecidableRel R] : Decidable (t.Holds R) :=
+  inferInstanceAs (Decidable (∀ d ∈ t.candidates, _))
+
+-- the winner is optimal under every total ranking extending a partial order of which its ERCs
+-- hold
+theorem Holds.ofRel_le [IsTrans Con R] [Std.Antisymm R] (h : t.Holds R) :
+    .ofRel R ≤ t.grammar :=
+  (Grammar.ofRel_le_ofWinner_iff (by decide)).2 fun d hd ↦ h d (List.mem_toFinset.1 hd)
+
+end Evaluation
+
+/-! ### The tableaux
+
+The inputs are syllabified here where the paper prints the unparsed suffixes as one string. -/
+
+/-- (59): the dativeWord, where /m/ deletes and /a/ lengthens. -/
+def dativeWord : Evaluation where
+  input := "(ˈsa.mu).(ˌdram).ˌni.ki"
+  candidates :=
+    ["(ˈsa.mu).(ˌdram).(ˌni.ki)", "(ˈsa.mu).dra.(ˌmi.ki)", "(ˈsa.mu).dra.(ˌni.ki)",
+      "(ˈsa.mu).(ˌdrā).(ˌni.ki)", "(ˈsa.mu).(ˌdrā).(ˌmi.ki)"]
+  winner := "(ˈsa.mu).(ˌdrā).(ˌni.ki)"
+
+/-- (62): the nominativeWord, where word-final stressed *-ni* cannot head a binary foot and
+deletes. -/
+def nominativeWord : Evaluation where
+  input := "(ˈsa.mu).(ˌdram).ˌni"
+  candidates :=
+    ["(ˈsa.mu).(ˌdram).ni", "(ˈsa.mu).(ˌdram).(ˌni)", "(ˈsa.mu).(ˌdramn)", "(ˈsa.mu).(ˌdran)",
+      "(ˈsa.mu).(ˌdram)"]
+  winner := "(ˈsa.mu).(ˌdram)"
+
+/-- (63): the noun with a postposed quantifier at the Word level. -/
+def quantifiedWord : Evaluation where
+  input := "(ˈsa.mu).(ˌdram).ˌni.an.ta.ṭi.ni"
+  candidates :=
+    ["(ˈsa.mu).(ˌdram).ni.(ˌan).(ˌta.ṭi).ni", "(ˈsa.mu).(ˌdram).(ˌni).(ˌan).(ˌta.ṭi).ni",
+      "(ˈsa.mu).(ˌdram).(ˌnan).(ˌta.ṭi).ni", "(ˈsa.mu).(ˌdran).(ˌan).(ˌta.ṭi).ni",
+      "(ˈsa.mu).(ˌdram).(ˌan).(ˌta.ṭi).ni", "(ˈsa.mu).dra.(ˌnan).(ˌta.ṭi).ni"]
+  winner := "(ˈsa.mu).(ˌdram).(ˌan).(ˌta.ṭi).ni"
+
+/-- (66): the noun before the postposition *nunci* 'from', where the /mn/ contact stays. -/
+def postpositional : Evaluation where
+  input := "(ˈsa.mu).(ˌdram) (ˈnun).(ci)"
+  candidates :=
+    ["(ˈsa.mu).(ˌdrā) (ˈnun).(ci)", "(ˈsa.mu).dra (ˈnun).(ci)", "(ˈsa.mu).(ˌdram) (ˈun).(ci)",
+      "(ˈsa.mu).(ˌdram) (ˈnun).(ci)"]
+  winner := "(ˈsa.mu).(ˌdram) (ˈnun).(ci)"
+
+/-- (67): the Word-level output of (63) at the Phrase level, where /m/ becomes the onset of
+*an*. -/
+def quantifiedPhrase : Evaluation where
+  input := quantifiedWord.winner
+  candidates :=
+    ["(ˈsa.mu).(ˌdram).(ˌan).(ˌta.ṭi).ni", "(ˈsa.mu).dra.(ˌman).(ˌta.ṭi).ni",
+      "(ˈsa.mu).(ˌdrā).(ˌman).(ˌta.ṭi).ni", "(ˈsa.mu).(ˌdra).(ˌman).(ˌta.ṭi).ni"]
+  winner := "(ˈsa.mu).dra.(ˌman).(ˌta.ṭi).ni"
+
+-- (64) suffices for the Word level: the ERCs of the winners of (59), (62) and (63) hold of it
+theorem holds_word : ∀ t ∈ [dativeWord, nominativeWord, quantifiedWord], t.Holds word := by
+  decide
+
+-- (68) suffices for (66) and (67)
+theorem holds_phrase : ∀ t ∈ [postpositional, quantifiedPhrase], t.Holds phrase := by
+  decide
+
+-- any ranking under which the winner of (63) is optimal has *DIST-0 above ONSET
+theorem onset_dominated (h : quantifiedWord.winner ∈ (quantifiedWord.tableau σ).optimal) :
+    σ.Dominates .distZero .onset :=
+  Tableau.dominates_of_mem_ofRanking_optimal h (d := "(ˈsa.mu).(ˌdram).(ˌnan).(ˌta.ṭi).ni")
+    (by decide) (by decide) (by decide)
 
 /-- The morphs of the noun of a row, without the null ones. -/
 def surface? (e : Datum) : Option (List Char) :=
@@ -547,10 +645,9 @@ def surface? (e : Datum) : Option (List Char) :=
 
 -- (57), (65): the outputs of the strata are the attested nominative, dative and quantified forms
 theorem outputs_attested :
-    surface? Examples.ocean_nom = some WordCandNom.deleteNi.form.toList ∧
-      surface? Examples.ocean_dat = some WordCandDat.deleteMLengthen.form.toList ∧
-      surface? Examples.ocean_whole_acc = some PhraseCandQ.resyllabify.form.toList ∧
-      WordCandQ.deleteNi.form = PhraseCandQ.faithful.form := by
+    (surface? Examples.ocean_nom).map segments = some nominativeWord.output ∧
+      (surface? Examples.ocean_dat).map segments = some dativeWord.output ∧
+      (surface? Examples.ocean_whole_acc).map segments = some quantifiedPhrase.output := by
   decide
 
 /-! ### Insertion from the root outward -/
@@ -601,10 +698,10 @@ def spell (voc : List (VocabularyItem PF String))
 
 -- (41), (57): insertion gives the inputs of the Word-level tableaux, *-ni* after *-am*
 theorem spell_weakItems :
-    (spell weakItems (ocean [{.n}, {.num}, {.case .dat}])).flatMap (·.toList) =
-        WordCandDat.faithful.form.toList ∧
-      (spell weakItems (ocean [{.n}, {.num}, {.case .nom}])).flatMap (·.toList) =
-        WordCandNom.destress.form.toList := by
+    segments ((spell weakItems (ocean [{.n}, {.num}, {.case .dat}])).flatMap (·.toList)) =
+        dativeWord.segs ∧
+      segments ((spell weakItems (ocean [{.n}, {.num}, {.case .nom}])).flatMap (·.toList)) =
+        nominativeWord.segs := by
   decide
 
 /-- When n is inserted the morphemes outside it are bare and present no exponent, so an item of n
@@ -622,42 +719,31 @@ theorem light_notMem_contextAt (w : ComplexHead (Morpheme PF String) (Morpheme P
     have hm := List.mem_of_getElem? hs
     simp [ComplexHead.visible_of_exp_none (hw s hm), hl s hm]
 
--- (30) inserts *-am* in every case, the dative and accusative included
+-- (30) inserts *-am* in every case, the dativeWord and accusative included
 theorem spell_pcsaItems :
     ∀ c : Telugu.Case, (spell pcsaItems (ocean [{.n}, {.case c}]))[1]? = some "am" := by
   decide
 
 /-! ### The grammars of the strata -/
 
-open Stratal Finset
+open Stratal
 
 /-- The grammar of the Word level: the rankings under which the winners of (59), (62) and (63)
 are optimal. -/
 def wordGrammar : Grammar Con 9 :=
-  .ofWinner WordCandDat.marks univ .deleteMLengthen ⊓ .ofWinner WordCandNom.marks univ .deleteNi ⊓
-    .ofWinner WordCandQ.marks univ .deleteNi
+  dativeWord.grammar ⊓ nominativeWord.grammar ⊓ quantifiedWord.grammar
 
 /-- The grammar of the Phrase level: the rankings under which the winners of (66) and (67) are
 optimal. -/
-def phraseGrammar : Grammar Con 9 :=
-  .ofWinner PhraseCandP.marks univ .faithful ⊓ .ofWinner PhraseCandQ.marks univ .resyllabify
+def phraseGrammar : Grammar Con 9 := postpositional.grammar ⊓ quantifiedPhrase.grammar
 
-private theorem ofRel_le_ofWinner {C : Type*} [Fintype C] {con : ConstraintSet C Con}
-    {r : Con → Con → Prop} {w : C}
-    (h : ∀ σ : Ranking Con 9, σ.IsLinearExtension r →
-      (Tableau.ofRanking con σ univ).optimal = {w}) :
-    (Grammar.ofRel r : Grammar Con 9) ≤ .ofWinner con univ w :=
-  Concept.extent_subset_extent_iff.1 fun σ hσ ↦ (Grammar.mem_extent_ofWinner (mem_univ _)).2 <|
-    h σ (Grammar.mem_extent_ofRel.1 hσ) ▸ mem_singleton_self _
-
--- (64) suffices for the Word level: each of its total rankings selects the three winners
+-- the grammars of the diagrams lie below the grammars of the strata
 theorem ofRel_word_le : .ofRel word ≤ wordGrammar :=
-  le_inf (le_inf (ofRel_le_ofWinner fun _ ↦ wordDat_optimal)
-    (ofRel_le_ofWinner fun _ ↦ wordNom_optimal)) (ofRel_le_ofWinner fun _ ↦ wordQ_optimal)
+  le_inf (le_inf (holds_word _ (by decide)).ofRel_le (holds_word _ (by decide)).ofRel_le)
+    (holds_word _ (by decide)).ofRel_le
 
--- (68) suffices for the Phrase level
 theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
-  le_inf (ofRel_le_ofWinner fun _ ↦ phraseP_optimal) (ofRel_le_ofWinner fun _ ↦ phraseQ_optimal)
+  le_inf (holds_phrase _ (by decide)).ofRel_le (holds_phrase _ (by decide)).ofRel_le
 
 /-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
 def alignRLast : Ranking Con 9 :=
@@ -668,34 +754,38 @@ def alignRLast : Ranking Con 9 :=
 -- their winners are optimal with it ranked last
 theorem not_wordGrammar_le : ¬ wordGrammar ≤ .ofRel word := fun h ↦ by
   have hmem : alignRLast ∈ wordGrammar.extent :=
-    ⟨⟨(Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide),
-      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩,
-      (Grammar.mem_extent_ofWinner (mem_univ _)).2 (by decide)⟩
+    ⟨⟨(dativeWord.mem_extent_grammar (by decide)).2 (by decide),
+      (nominativeWord.mem_extent_grammar (by decide)).2 (by decide)⟩,
+      (quantifiedWord.mem_extent_grammar (by decide)).2 (by decide)⟩
   have hext : alignRLast.IsLinearExtension word :=
     Grammar.mem_extent_ofRel.1 (Concept.extent_subset_extent_iff.2 h hmem)
   exact absurd hext (by decide)
 
 instance : Nonempty Con := ⟨.max⟩
 
--- (59), (66): *DIST-0 above MAX in the word, MAX above *DIST-0 in the phrase
-theorem ofWinner_dat_inf_ofWinner_postposition :
-    Grammar.ofWinner WordCandDat.marks univ .deleteMLengthen ⊓
-      .ofWinner PhraseCandP.marks univ .faithful = (⊥ : Grammar Con 9) :=
-  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun σ ⟨hw, hp⟩ ↦
-    lt_asymm
-      (Tableau.dominates_of_mem_ofRanking_optimal (i := Con.distZero) (j := .max)
-        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hw) (d := .faithful) (mem_univ _)
-        (by decide) (by decide))
-      (Tableau.dominates_of_mem_ofRanking_optimal
-        ((Grammar.mem_extent_ofWinner (mem_univ _)).1 hp) (d := .deleteMLengthen) (mem_univ _)
-        (by decide) (by decide))
+-- (59), (66): *DIST-0 above MAX and IDENT-length in the word, one of them above it in the phrase
+theorem dativeWord_inf_postpositional :
+    dativeWord.grammar ⊓ postpositional.grammar = ⊥ :=
+  Grammar.eq_bot_iff_extent.2 <| Set.eq_empty_of_forall_notMem fun σ ⟨hw, hp⟩ ↦ by
+    have hw := (dativeWord.mem_extent_grammar (by decide)).1 hw
+    obtain ⟨i, hi, hdom⟩ := Tableau.exists_dominates_of_mem_ofRanking_optimal
+      ((postpositional.mem_extent_grammar (by decide)).1 hp) (d := "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)")
+      (by decide) (j := .distZero) (by decide)
+    have key : ∀ k, postpositional.marks k postpositional.winner <
+        postpositional.marks k "(ˈsa.mu).(ˌdrā) (ˈnun).(ci)" → k = .max ∨ k = .identLength := by
+      decide
+    rcases key i hi with rfl | rfl
+    · exact lt_asymm hdom (Tableau.dominates_of_mem_ofRanking_optimal hw
+        (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)") (by decide) (by decide) (by decide))
+    · exact lt_asymm hdom (Tableau.dominates_of_mem_ofRanking_optimal hw
+        (d := "(ˈsa.mu).(ˌdram).(ˌni.ki)") (by decide) (by decide) (by decide))
 
 /-- The strata are different grammars: no ranking of the constraints makes the winners of the
 Word-level tableaux and those of the Phrase-level tableaux all optimal. The consonant that
 deletes inside the word is kept before a postposition. -/
 theorem wordGrammar_inf_phraseGrammar : wordGrammar ⊓ phraseGrammar = ⊥ :=
   eq_bot_mono (inf_le_inf (inf_le_left.trans inf_le_left) inf_le_left)
-    ofWinner_dat_inf_ofWinner_postposition
+    dativeWord_inf_postpositional
 
 -- (68): *DIST-0 and ALIGN-RIGHT against MAX, the prosodic against the segmental faithfulness
 -- constraints, and IDENT-STRESS against ONSET
