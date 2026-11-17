@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Frame
+public import Studies.Yamada2012
 
 /-!
 # van der Leer 2026: Speech Act Logic
@@ -34,6 +35,9 @@ cooperative continuations, and of the thesis's three levels of discourse expecta
   [an act may change a commitment the content
   mentions](##exists_isFree_committed_not_committed_update). Theorems 29, 31 and 35 carry the
   freeness that Definition 10 uses, whose confirmation is evaluated at the new root.
+* A state is a model of Yamada's logic of propositional commitments, in which
+  [the update is the act of asserting](##toModel_restrictCommitment) and
+  [his formulas free of an agent's commitments are free here](##isFree_realize).
 * Theorem 31(1) assumes $a \ne b$, and Theorem 36(1) that the answerer has no violation at the
   root. The second part of Theorem 36 is not stated: in the space of all states
   [the questioner's own assertion is cooperative](##exists_cooperative_assert_question_self).
@@ -47,6 +51,7 @@ cooperative continuations, and of the thesis's three levels of discourse expecta
 
 * [T. van der Leer, *Commitments, beliefs and expectations in conversation*
   (2026)][van-der-leer-2026]
+* [T. Yamada, *Dynamic Logic of Propositional Commitments* (2012)][yamada-2012]
 * [C. Bary, *Speech acts, common ground and commitments* (2025)][bary-2025]
 * [M. Krifka, *Performative updates and the modeling of speech acts* (2024)][krifka-2024a]
 * [M. Krifka, *Structure and interpretation of declarative sentences* (2024)][krifka-2024b]
@@ -658,5 +663,46 @@ theorem exists_cooperative_assert_question_self :
     .inr ⟨(h₁.trans h₄).le, _, Set.mem_insert _ _, h₄.le⟩, h₁.trans h₄, ?_⟩
   rw [Frame.restrictCommitment_comm]
   exact h₅.le
+
+/-! ### Yamada's acts of asserting -/
+
+section Yamada
+
+open Yamada2012
+
+variable {P : Type*} (c : Frame W A) (val : P → Set W) (a b : A) (σ : Set W)
+
+/-- A state as a model of [yamada-2012]'s logic whose agents are the ordered pairs, with one
+commitment relation for both kinds of commitment. -/
+def toModel : Model W P (A × A) where
+  acc k := c.commitment k.1
+  conceded_subset _ := subset_rfl
+  val := val
+
+-- Definition 4 is the act of asserting
+theorem toModel_restrictCommitment :
+    toModel (c.restrictCommitment a b σ) val = (toModel c val).assert (a, b) σ := by
+  simp only [toModel, Model.assert, Model.mk.injEq, and_true]
+  funext ⟨k, kind⟩
+  ext p
+  cases kind <;> simp [Prod.ext_iff]
+
+variable {a b}
+
+-- a formula in which the pair's commitments do not occur is `C_{a,b}`-free
+theorem isFree_realize {φ : Formula P (A × A)} (h : φ.IFree (a, b)) :
+    IsFree a b fun c : Frame W A ↦ φ.realize (toModel c val) := by
+  intro c c' hb hc
+  induction φ with
+  | top | atom => rfl
+  | neg φ ih => exact congrArg (·ᶜ) (ih h)
+  | and φ ψ ihφ ihψ => exact congrArg₂ (· ∩ ·) (ihφ h.1) (ihψ h.2)
+  | cmt k j φ ih =>
+    simp only [Formula.realize, toModel] at ih ⊢
+    rw [ih h.2]
+    simp only [Commitment.committed, hc j h.1]
+  | afterAssert | afterConcede => exact h.elim
+
+end Yamada
 
 end VanDerLeer2026
