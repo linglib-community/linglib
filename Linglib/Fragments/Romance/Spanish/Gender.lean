@@ -66,18 +66,14 @@ structure Noun extends GenderedNoun Value where
   animacy : Animacy
   deriving DecidableEq, Repr
 
-/-- A noun's gender is natural when it is the one its referents' gender is assigned. -/
-abbrev Noun.IsNatural (n : Noun) : Prop :=
-  _root_.Gender.IsNatural (Option.map Value.ofReferentGender) (·.referentGender) (·.gender) n
-
 /-- `Noun.ofReferentGender form gloss a x` is the noun `form` 'gloss' for referents of gender `x`
 and animacy `a`, whose grammatical gender is the one `x` is assigned. -/
 def Noun.ofReferentGender (form gloss : String) (animacy : Animacy) (x : ReferentGender) : Noun :=
-  ⟨⟨⟨form, gloss⟩, Value.ofReferentGender x, some x⟩, animacy⟩
+  ⟨⟨⟨form, gloss, some x⟩, Value.ofReferentGender x⟩, animacy⟩
 
 @[simp]
 theorem Noun.isNatural_ofReferentGender (form gloss : String) (a : Animacy) (x : ReferentGender) :
-    (Noun.ofReferentGender form gloss a x).IsNatural :=
+    (Noun.ofReferentGender form gloss a x).IsNatural Value.ofReferentGender :=
   rfl
 
 /-! ### Nouns taking the referent's gender -/

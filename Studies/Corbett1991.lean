@@ -367,7 +367,7 @@ assigns *Mädchen* its neuter only if its semantic rules do not come first. -/
 theorem not_semanticFirst {φ : Type*}
     {A : Gender.AssignmentSystem (Option ReferentGender) φ Value} {form : GenderedNoun Value → φ}
     (hfem : A.semantic (some .female) = some .fem)
-    (h : A.assign GenderedNoun.referentGender form maedchen = maedchen.gender) :
+    (h : A.assign (·.referentGender) form maedchen = maedchen.gender) :
     ¬ A.SemanticFirst := fun hA ↦
   absurd ((Gender.AssignmentSystem.assign_of_semantic (n := maedchen) hA hfem).symm.trans h)
     (by decide)
@@ -378,8 +378,8 @@ example : let A : Gender.AssignmentSystem (Option ReferentGender) (Option Suffix
       ⟨[.formal diminutive, .semantic (Option.map Value.ofReferentGender)], .masc⟩
     let chen : GenderedNoun Value → Option Suffix := fun _ ↦ some .chen
     A.semantic (some .female) = some .fem ∧
-      A.assign GenderedNoun.referentGender chen maedchen = maedchen.gender ∧
-      A.assign GenderedNoun.referentGender chen buebchen = buebchen.gender := by
+      A.assign (·.referentGender) chen maedchen = maedchen.gender ∧
+      A.assign (·.referentGender) chen buebchen = buebchen.gender := by
   decide
 
 end German

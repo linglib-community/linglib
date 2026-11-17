@@ -128,9 +128,7 @@ def arbitrary (g : G) : Bundle Node := .single .uninterpretable (L.entailments (
 unless the gender of `n` is the one its referents' gender is assigned, the uninterpretable features
 of that gender. -/
 def nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) : Bundle Node :=
-  if Gender.IsNatural (Option.map L.ofReferentGender) GenderedNoun.referentGender
-      GenderedNoun.gender n then
-    L.conceptual r
+  if n.IsNatural L.ofReferentGender then L.conceptual r
   else L.conceptual r ⊔ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
