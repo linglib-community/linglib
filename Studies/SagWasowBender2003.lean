@@ -132,7 +132,8 @@ def coordinationPrinciple : Constraint sig where
           (.pathEq (.path [.MTR, .GAP]) (.path [.CONJ1, .GAP]))))
 
 /-- The filler-gap grammar with the coordination construction. -/
-def swbGrammar : Grammar sig := (constraints ++ [coordinationPrinciple]).map Constraint.toDesc
+abbrev swbGrammar : Grammar sig :=
+  .ofList ((constraints ++ [coordinationPrinciple]).map Constraint.toDescription)
 
 /-- The entities of a worked coordinate construct are the construct, its mother and two
 conjuncts, their category, a one-gap list with its NP gap and the gap's index, and the empty

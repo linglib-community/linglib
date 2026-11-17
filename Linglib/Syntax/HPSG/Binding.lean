@@ -112,33 +112,31 @@ example : sig.approp .ana .IDX = some .idx ∧ sig.approp .sign .IDX = none := b
 /-! ### Principles A and B -/
 
 /-- The entities at the variables `x` and `y` are coindexed when they share their index. -/
-def coindexed (x y : ℕ) : Desc sig :=
+def coindexed (x y : ℕ) : Formula sig :=
   .pathEq (.feat (.var x) .IDX) (.feat (.var y) .IDX)
 
 /-- The entities at the variables `x` and `y` agree when they share their gender and their
 number. -/
-def agrees (x y : ℕ) : Desc sig :=
+def agrees (x y : ℕ) : Formula sig :=
   .and (.pathEq (.feat (.var x) .GEND) (.feat (.var y) .GEND))
     (.pathEq (.feat (.var x) .NUM) (.feat (.var y) .NUM))
 
 /-- The entity at `y` locally o-binds the entity at `x` when it locally o-commands it, is
 coindexed with it, and agrees with it. -/
-def locallyOBinds (y x : ℕ) : Desc sig :=
+def locallyOBinds (y x : ℕ) : Formula sig :=
   .and (.rel .locO ![y, x]) (.and (coindexed y x) (agrees y x))
 
 /-- Principle A says that a locally o-commanded anaphor is locally o-bound. -/
-def principleA : Desc sig :=
+def principleA : Formula sig :=
   .all 0 (.imp (.and (.sortAssign (.var 0) .ana) (.ex 1 (.rel .locO ![1, 0])))
     (.ex 1 (locallyOBinds 1 0)))
 
 /-- Principle B says that a personal pronoun is locally o-free. -/
-def principleB : Desc sig :=
+def principleB : Formula sig :=
   .all 0 (.imp (.sortAssign (.var 0) .ppro) (.neg (.ex 1 (locallyOBinds 1 0))))
 
 /-- The grammar of the binding fragment. -/
-def grammar : Grammar sig := [principleA, principleB]
-
-theorem freeVars_grammar : ∀ d ∈ grammar, d.freeVars = ∅ := by decide
+abbrev grammar : Grammar sig := .ofList [⟨principleA, by decide⟩, ⟨principleB, by decide⟩]
 
 example : (locallyOBinds 1 0).freeVars = {0, 1} := by decide
 
@@ -198,7 +196,8 @@ theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ![x, x] ∉ I
       (configuration I).Satisfies (Codependent I) (configuration I).exempt
         fun x ↦ (I.S x).bindingClass := by
   have hne {a b : U} (h : ![a, b] ∈ I.R .locO) : a ≠ b := fun e ↦ hirr b (e ▸ h)
-  simp only [grammar, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
+  simp only [grammar, Grammar.mem_ofList, List.mem_cons, List.not_mem_nil, or_false,
+    forall_eq_or_imp, forall_eq,
     satisfies_principleA_iff hr, satisfies_principleB_iff hr, Satisfies,
     Srt.bindingClass_eq_some_iff]
   refine ⟨fun ⟨hA, hB⟩ x c hc ↦ ?_, fun h ↦ ⟨fun x hx y hy ↦ ?_, fun x hx y hy hc ↦ ?_⟩⟩
@@ -216,6 +215,6 @@ theorem satisfies_of_models (hI : I.Models grammar) (hr : I.IsRootedAt r)
     (hirr : ∀ x, ![x, x] ∉ I.R .locO) :
     (configuration I).Satisfies (Codependent I) (configuration I).exempt
       fun x ↦ (I.S x).bindingClass :=
-  (satisfies_grammar_iff hr hirr).1 (hI r)
+  (satisfies_grammar_iff hr hirr).1 fun d hd ↦ hI d hd _ r
 
 end HPSG.RSRL.Binding
