@@ -24,6 +24,9 @@ with one ternary foot in odd parity](##MartinezParicioKager2015.garawa_optimum).
 * Candidates are `Prosody.MetricalTree`s with every weight zero, since the systems are
   quantity-insensitive. A strong syllable is a foot head; a strong foot under a foot is the
   minimal foot of a layered one, and a strong foot under the word carries primary stress.
+* A layered foot is a foot node over a foot and a syllable, well formed under
+  `Prosody.IsFoot`, which admits a foot under a foot as `Prosody.IsWord` admits the recursive
+  word of [ito-mester-2009].
 * The projections are read as the paper defines them, from a node's mother and daughters: a foot
   is non-minimal when a daughter of it is a foot, and the feet the word immediately dominates
   are the maximal ones.
@@ -178,6 +181,11 @@ def feet : List MetricalTree :=
     adjoin .left (.iamb 0 0), (Foot.trochee 0 0).toProsTree id, (Foot.iamb 0 0).toProsTree id,
     (Foot.monosyllable 0).toProsTree id]
 
+-- (5b): each of the seven is a well-formed foot with at most one layer of recursion.
+theorem isFoot_feet : ∀ f ∈ feet,
+    IsFoot f ∧ nonrecursivity .ft f = if IsNonMinimal f then 1 else 0 := by
+  decide
+
 -- (19)
 theorem trochee_add_iamb : ∀ f ∈ feet, trochee f + iamb f = 1 := by decide
 
@@ -217,6 +225,8 @@ def gen : ℕ → List (List MetricalTree)
   | 2 => [[.σ, .σ], [.σ, una], [una, .σ], [una, una], [bin]]
   | n + 3 => (gen (n + 2)).flatMap (fun w ↦ [.σ :: w, una :: w]) ++
       (gen (n + 1)).map (bin :: ·) ++ (gen n).map (ter :: ·)
+
+example : IsWord (word [ter, ter, .σ, .σ]) ∧ noRec (word [ter, ter, .σ, .σ]) = 2 := by decide
 
 -- (9)
 theorem alignMax_left :
