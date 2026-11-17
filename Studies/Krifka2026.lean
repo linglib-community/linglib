@@ -35,8 +35,9 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
   individuals, and σ is ι of `IsGreatest`, as in (13a), so *it* is ∩, `Kind.down`. The
-  sufficient condition for σ is stated for finite extensions (`Kind.down_dom_of_supClosed`),
-  where the paper has closure under arbitrary sums, since Link's model has no empty sum.
+  paper's sufficient condition for σ, closure under arbitrary sums, is
+  `Kind.down_dom_of_sumClosed`, which holds in Link's model as a classical mereology; for a
+  finite extension closure under binary sums is enough (`Kind.down_dom_of_supClosed`).
 
 ## TODO
 

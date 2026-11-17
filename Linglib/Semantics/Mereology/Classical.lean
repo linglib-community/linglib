@@ -153,6 +153,13 @@ theorem _root_.Mereology.SumClosed.isGreatest_sum [PartialOrder α] [IsClassical
     {P : α → Prop} (h : SumClosed P) (hP : ∃ x, P x) : IsGreatest {x | P x} (sum P hP) :=
   ⟨h P (fun _ hx ↦ hx) hP _ (isSum_sum hP), fun _ hx ↦ le_sum hP hx⟩
 
+/-- The closure of a predicate under sums has the sum of the predicate as greatest member: the
+supremum of a plural is the sum of the singular ([champollion-krifka-2016]). -/
+theorem isGreatest_sumClosure [PartialOrder α] [IsClassicalMereology α] {P : α → Prop}
+    (hP : ∃ x, P x) : IsGreatest {x | SumClosure P x} (sum P hP) :=
+  ⟨⟨P, fun _ hx ↦ hx, hP, isSum_sum hP⟩, fun _ ⟨_, hQ, _, hx⟩ ↦
+    hx.isLUB.2 fun _ hy ↦ le_sum hP (hQ _ hy)⟩
+
 instance [SemilatticeSup α] [IsClassicalMereology α] : HasRemainders α where
   exists_remainder _ _ h :=
     let ⟨z, hz, hlub⟩ := exists_remainder h
