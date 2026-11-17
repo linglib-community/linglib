@@ -1,246 +1,254 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Data.Examples.Borer2005
+public import Linglib.Fragments.English.Determiners
 public import Linglib.Syntax.Minimalist.ExtendedProjection
-public import Mathlib.Data.Finset.Card
+public import Mathlib.Order.Partition.Finpartition
 
 /-!
 # Borer (2005): In Name Only
 
-This file formalizes the count structure of [borer-2005]. Noun stems denote cumulative stuff and
-are mass by default; the mass/count distinction is not lexical but structural, with two open
-values in the nominal spine assigned range by the functional lexicon. The classifier head ⟨e⟩div
-divides the stuff, and plural inflection is the head feature that assigns it range, so a bare
-plural is divided but not counted (27). The quantity head ⟨e⟩# counts the divisions or measures
-undivided mass, *much salt* projecting no classifier phrase (28). Cardinals other than *one* and
-the plural-taking quantifiers are pure counters, which is why *two meat* and *two boy* fail (29),
-while *a*, *one*, *every* and *each* are portmanteau morphemes assigning range to both open
-values (30), as are the cardinals of Hungarian, Turkish and Armenian, which never co-occur with
-plural inflection (36) to (38); *all* takes a mass or a plural restriction and, dividing nothing,
-has no count reading on a bare stem (35). Each open value takes range once, so *every boys* and
-*several a boy* are out, and the distribution of the determiner classes of (20) over bare stems
-and plurals follows. Division creates no individuals: a reticule may have no complete cell, as
-in *zero apples* and *0.5 apples*, and individuals emerge only when a counter selects a reticule
-with the requisite number of cells, so *more than three circles* presupposes circles where bare
-*circles* does not.
-
-## Main definitions
-
-* `Determiner`: what a range assigner does at ⟨e⟩#, counting, measuring or either, and whether it
-  also assigns range to ⟨e⟩div.
-* `Nominal`: a nominal by its determiner, if any, and its plural inflection, with `Divided` and
-  `WellFormed`, the two principles of range assignment.
-* `IsDivision`, `count`: a reticule over stuff, a finset of cells, and the number of its complete
-  cells.
-* `status`: the mereological type a nominal spine composes bottom-up.
+For [borer-2005] the mass and count distinction is structural and not lexical. A noun stem denotes
+stuff, and the nominal spine has two open values, ⟨e⟩DIV at the classifier head and ⟨e⟩# at the
+quantity head, to which the functional lexicon assigns range. Plural inflection assigns range to
+⟨e⟩DIV alone and so divides without counting; cardinals and the plural-taking quantifiers assign
+range to ⟨e⟩# alone; *a*, *one*, *every*, *each* and the cardinals of Hungarian are portmanteau
+morphemes that assign range to both. An open value takes range once, so
+[two assigners to one value exclude each other](##not_wellFormed_pair_of_mem), and a counter
+counts the cells of a division, of which an undivided stem has none: among the pure counters
+[only *zero* takes a bare stem](##wellFormed_cardinal_iff). It follows that
+[no determiner selects both singulars and plurals](##not_wellFormed_div_of_divided), and the
+conditions [sort the judged nominals of the chapter](##wellFormed_iff_judgment). Dividing creates
+no individuals: a portion that is no unit has [a reticule without a complete
+cell](##exists_finpartition_filter_eq_empty), and individuals
+[emerge only under a counter](##exists_pairwiseDisjoint_of_card_filter).
 
 ## Implementation notes
 
-The two open values ⟨e⟩div and ⟨e⟩# are the heads `Q` and `Num` of the substrate's nominal
-sequence. The existential closure and generic binding of ⟨e⟩d, the Hebrew and Chinese systems
-and the measure phrases of the later chapters are not formalized.
+The open values ⟨e⟩DIV and ⟨e⟩# are the heads `Q` and `Num` of the substrate's nominal sequence,
+and a range assigner is the set of heads whose value it assigns together with its row of the
+typology of determiners. A nominal is the list of its range assigners, plural inflection among
+them. A cardinal carries the number of complete cells it counts, which is what lets *zero*, a
+counter, take undivided mass; the vague standards of *several*, *many* and *few* and the
+fractional counts of the decimals are not represented. A reticule on a portion of stuff is a
+`Finpartition` of it, a finite set of pairwise disjoint cells that sum to the portion. The
+determiners the typology takes to be ambiguous (*some*, *any*, *no*) and the definite article,
+the existential closure and generic binding of ⟨e⟩d, the Hebrew and Chinese systems and the
+measure phrases of the later chapters are not formalized.
 
 ## References
 
 * [borer-2005]
-* [krifka-1998]
-* [chierchia-1998]
 -/
 
 @[expose] public section
 
 namespace Borer2005
 
-open Mereology Minimalist
+open Minimalist Finset Function
 
 /-! ### Range assignment to the two open values -/
 
-/-- The range a determiner assigns to ⟨e⟩#, which is a count over the cells of a division, a
-measure over undivided mass, or either. -/
+/-- (40): the quantity a range assigner gives ⟨e⟩#, the ±Count column of the typology of
+determiners. -/
 inductive Quantity
+  /-- A cardinal, which selects the reticules with `n` complete cells. -/
+  | cardinal (n : ℕ)
+  /-- A counting quantifier, +Count. -/
   | count
+  /-- A measure of undivided mass, −Count. -/
   | measure
-  | either
+  /-- Unspecified for ±Count. -/
+  | unspecified
   deriving DecidableEq, Repr
 
-/-- A range assigner from the functional lexicon, by the quantity it assigns to ⟨e⟩# and whether
-it also assigns range to ⟨e⟩div, as the portmanteau morphemes of (30) do. -/
-structure Determiner where
-  quantity : Quantity
-  divides : Bool
-  deriving DecidableEq, Repr
+namespace Quantity
 
-/-- *much* and *little* measure undivided mass (28). -/
-def much : Determiner := ⟨.measure, false⟩
+/-- The quantity can be assigned over a division: every quantity but a measure, whose nominal
+projects no classifier phrase. -/
+def Counts : Quantity → Prop
+  | measure => False
+  | _ => True
 
-/-- Cardinals other than *one*, *zero* included, and the plural-taking quantifiers *several*,
-*many*, *few*, *a few* and *both* are pure counters over a division established before them
-(30b). -/
-def cardinal : Determiner := ⟨.count, false⟩
+/-- The quantity can be assigned over an undivided stem, which has no cells: a counter cannot,
+unless it is the cardinal that counts none. -/
+def Measures : Quantity → Prop
+  | cardinal n => n = 0
+  | count => False
+  | _ => True
 
-/-- *a* and *one* divide and count at once, the dividing and counting functions being one for
-singulars (30a). -/
-def indefArticle : Determiner := ⟨.count, true⟩
+instance : DecidablePred Counts
+  | cardinal _ | count | unspecified => isTrue trivial
+  | measure => isFalse id
 
-/-- *every* and *each* are portmanteau dividers and counters over a bare stem (30c). -/
-def every : Determiner := ⟨.count, true⟩
+instance : DecidablePred Measures
+  | cardinal n => inferInstanceAs (Decidable (n = 0))
+  | count => isFalse id
+  | measure | unspecified => isTrue trivial
 
-/-- The cardinals of Hungarian, Turkish and Armenian divide as well as count (38a). -/
-def hungarianCardinal : Determiner := ⟨.count, true⟩
+end Quantity
 
-/-- *all*, *a lot of* and *most* take a mass or a plural restriction and divide nothing (35). -/
-def all : Determiner := ⟨.either, false⟩
+/-- A range assigner, an f-morph or a head feature of the functional lexicon. -/
+structure Assigner where
+  /-- The heads whose open value it assigns range to. -/
+  values : Finset Cat
+  /-- The quantity it gives ⟨e⟩#. -/
+  quantity : Quantity := .unspecified
+  deriving DecidableEq
 
-/-- A nominal, by its determiner, if any, and whether it carries plural inflection, the head
-feature that assigns range to ⟨e⟩div. -/
-structure Nominal where
-  det : Option Determiner
-  plural : Bool
-  deriving DecidableEq, Repr
+namespace Assigner
 
-namespace Nominal
+/-- (40d): the head feature ⟨div⟩, spelled out as plural inflection, assigns range to ⟨e⟩DIV
+alone. -/
+def div : Assigner := ⟨{.Q}, .unspecified⟩
 
-variable (n : Nominal)
+/-- An assigner of range to ⟨e⟩# alone. -/
+def pure (q : Quantity) : Assigner := ⟨{.Num}, q⟩
 
-/-- ⟨e⟩div has range, from plural inflection or from a dividing determiner, so the nominal is
-count; a bare stem is mass. -/
-def Divided : Prop := n.plural = true ∨ ∃ d ∈ n.det, d.divides = true
+/-- (30a): a portmanteau morpheme, which assigns range to ⟨e⟩DIV and to ⟨e⟩#. -/
+def portmanteau (q : Quantity) : Assigner := ⟨{.Q, .Num}, q⟩
 
-/-- The two principles of range assignment. No open value takes range twice, so plural inflection
-and a divider exclude each other, and a range assigner to ⟨e⟩# finds the restriction it needs, a
-counter a division and a measure undivided mass. -/
-def WellFormed : Prop :=
-  ¬ (n.plural = true ∧ ∃ d ∈ n.det, d.divides = true) ∧
-    ∀ d ∈ n.det, (d.quantity = .count → n.Divided) ∧ (d.quantity = .measure → ¬ n.Divided)
+end Assigner
 
-instance : Decidable n.Divided := inferInstanceAs (Decidable (_ ∨ _))
+/-- ⟨e⟩DIV has range, so that the nominal is count; a nominal that is not divided is mass. -/
+def Divided (n : List Assigner) : Prop := ∃ a ∈ n, Cat.Q ∈ a.values
 
-instance : Decidable n.WellFormed := inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred Divided := fun n ↦ inferInstanceAs (Decidable (∃ a ∈ n, _))
 
-end Nominal
+/-- A nominal, the list of its range assigners, is well formed when range assignment succeeds. -/
+@[mk_iff]
+structure WellFormed (n : List Assigner) : Prop where
+  /-- No open value takes range twice. -/
+  pairwise_disjoint : n.Pairwise (Disjoint on Assigner.values)
+  /-- Each quantity finds its restriction, a division or undivided mass. -/
+  quantity : ∀ a ∈ n, if Divided n then a.quantity.Counts else a.quantity.Measures
 
-/-- A pure counter needs the division that plural inflection supplies: *three boys* and *several
-meats* but not *two meat* or *two boy* (29). -/
-theorem wellFormed_counter_iff {d : Determiner} (hq : d.quantity = .count)
-    (hd : d.divides = false) (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ↔ p = true := by
-  cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
+instance : DecidablePred WellFormed := fun n ↦
+  haveI : DecidableRel (Disjoint on Assigner.values) := fun a b ↦
+    inferInstanceAs (Decidable (Disjoint a.values b.values))
+  decidable_of_iff' _ (wellFormed_iff n)
 
-/-- A divider never co-occurs with plural inflection, so neither *a boys* nor a Hungarian cardinal
-with a plural is possible (38). -/
-theorem not_wellFormed_of_divides {d : Determiner} (hd : d.divides = true) :
-    ¬ Nominal.WellFormed ⟨some d, true⟩ := fun h ↦ h.1 ⟨rfl, d, rfl, hd⟩
+variable {a b : Assigner} {c : Cat}
 
--- (30a)
-theorem wellFormed_divider {d : Determiner} (hq : d.quantity = .count) (hd : d.divides = true) :
-    Nominal.WellFormed ⟨some d, false⟩ := by
-  simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
+-- A determiner on a bare stem.
+theorem wellFormed_singleton :
+    WellFormed [a] ↔ if Cat.Q ∈ a.values then a.quantity.Counts else a.quantity.Measures := by
+  simp [wellFormed_iff, Divided]
 
-/-- A measure takes undivided mass alone: *much salt* but not *much boys* (28). -/
-theorem wellFormed_measure_iff {d : Determiner} (hq : d.quantity = .measure)
-    (hd : d.divides = false) (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ↔ p = false := by
-  cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
+-- A determiner on a plural.
+theorem wellFormed_div_cons :
+    WellFormed [.div, a] ↔ Cat.Q ∉ a.values ∧ a.quantity.Counts := by
+  simp [wellFormed_iff, Divided, Assigner.div, Quantity.Counts, onFun]
 
-/-- A determiner indifferent to quantity takes mass and plurals alike and divides only a plural
-(35). -/
-theorem wellFormed_neutral {d : Determiner} (hq : d.quantity = .either) (hd : d.divides = false)
-    (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ∧ (Nominal.Divided ⟨some d, p⟩ ↔ p = true) := by
-  cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
+-- (34): an open value takes range once, so the two counters of *zero a cat* exclude each other.
+theorem not_wellFormed_pair_of_mem (ha : c ∈ a.values) (hb : c ∈ b.values) :
+    ¬ WellFormed [a, b] := fun h ↦
+  Finset.disjoint_left.1 (List.rel_of_pairwise_cons h.pairwise_disjoint List.mem_cons_self) ha hb
 
--- (20)
-theorem determiner_classes :
-    (Nominal.WellFormed ⟨some much, false⟩ ∧ ¬ Nominal.WellFormed ⟨some much, true⟩) ∧
-      (¬ Nominal.WellFormed ⟨some cardinal, false⟩ ∧ Nominal.WellFormed ⟨some cardinal, true⟩) ∧
-      (Nominal.WellFormed ⟨some indefArticle, false⟩ ∧
-        ¬ Nominal.WellFormed ⟨some indefArticle, true⟩) ∧
-      (Nominal.WellFormed ⟨some every, false⟩ ∧ ¬ Nominal.WellFormed ⟨some every, true⟩) ∧
-      (Nominal.WellFormed ⟨some all, false⟩ ∧ Nominal.WellFormed ⟨some all, true⟩) ∧
-      (Nominal.WellFormed ⟨some hungarianCardinal, false⟩ ∧
-        ¬ Nominal.WellFormed ⟨some hungarianCardinal, true⟩) := by
+/-- (29), (31): of the pure cardinals only *zero*, whose count the absence of divisions meets,
+takes a bare stem; the others need the division that plural inflection supplies. -/
+theorem wellFormed_cardinal_iff {k : ℕ} : WellFormed [.pure (.cardinal k)] ↔ k = 0 := by
+  simp [wellFormed_singleton, Assigner.pure, Quantity.Measures]
+
+-- (30b)
+theorem wellFormed_div_cardinal (k : ℕ) : WellFormed [.div, .pure (.cardinal k)] := by
+  simp [wellFormed_div_cons, Assigner.pure, Quantity.Counts]
+
+/-- No determiner selects both singulars and plurals: one that divides a bare stem assigns range
+to ⟨e⟩DIV, which plural inflection has assigned already, as with the cardinals of Hungarian
+(38). -/
+theorem not_wellFormed_div_of_divided (h : Divided [a]) : ¬ WellFormed [.div, a] := fun hw ↦
+  (wellFormed_div_cons.1 hw).1 (by simpa [Divided] using h)
+
+-- (35): a determiner unspecified for ±Count takes mass and plurals, and divides neither.
+theorem wellFormed_unspecified :
+    WellFormed [.pure .unspecified] ∧ WellFormed [.div, .pure .unspecified] ∧
+      ¬ Divided [.pure .unspecified] := by
   decide
+
+/-! ### The judged nominals -/
+
+namespace Examples.Determiner
+
+/-- (40), (38a): the range a determiner assigns. -/
+def assigner : Examples.Determiner → Assigner
+  | .much => .pure .measure
+  | .two => .pure (.cardinal 2)
+  | .three => .pure (.cardinal 3)
+  | .zero => .pure (.cardinal 0)
+  | .decimal | .several | .many | .aFew | .both => .pure .count
+  | .a | .one | .egy => .portmanteau (.cardinal 1)
+  | .ket => .portmanteau (.cardinal 2)
+  | .every | .each | .minden => .portmanteau .count
+  | .all => .pure .unspecified
+
+end Examples.Determiner
+
+/-- The range assigners of a row, plural inflection first. -/
+def nominal (e : Datum) : List Assigner :=
+  (if Examples.stem e = some .plural then [.div] else []) ++
+    (Examples.determiners e).map (·.assigner)
+
+/-- A row is acceptable exactly when its range assignment is well formed and, where the judgment
+is of a singular reading, divides the stem. -/
+theorem wellFormed_iff_judgment :
+    ∀ e ∈ Examples.all, (WellFormed (nominal e) ∧
+      (Examples.construal e = some .singular → Divided (nominal e))) ↔
+        e.judgment = .acceptable := by
+  decide
+
+/-! ### The English fragment -/
+
+/-- The selection a fragment records for a quantifier is the one an assigner predicts: a singular
+where the assigner divides a bare stem, a plural or dual where it takes plural inflection, and
+mass where it takes an undivided stem. -/
+@[mk_iff]
+structure Predicts (a : Assigner) (q : QuantificationalDeterminer) : Prop where
+  singular : q.numberRestriction = some .singular ↔ WellFormed [a] ∧ Divided [a]
+  plural : (q.numberRestriction = some .plural ∨ q.numberRestriction = some .dual) ↔
+    WellFormed [.div, a]
+  mass : q.selectsMass = true ↔ WellFormed [a] ∧ ¬ Divided [a]
+
+-- (40b), (40d), (40e)
+open English.Determiners in
+theorem predicts_fragment :
+    (∀ q ∈ [every, each], Predicts (.portmanteau .count) q) ∧
+      (∀ q ∈ [many, few, both], Predicts (.pure .count) q) ∧
+      ∀ q ∈ [all, most], Predicts (.pure .unspecified) q := by
+  simp [predicts_iff, every, each, many, few, both, all, most, wellFormed_singleton,
+    wellFormed_div_cons, Divided, Assigner.pure, Assigner.portmanteau, Quantity.Counts,
+    Quantity.Measures]
 
 /-! ### Dividing without individuating
 
-Assigning range to ⟨e⟩div superimposes reticules on a mass denotation; a reticule carves cells,
-none of which need be a canonical unit, and the counter at ⟨e⟩# selects among the reticules one
-with the number of complete cells it requires. -/
+Assigning range to ⟨e⟩DIV superimposes reticules on a portion of stuff; a reticule carves cells,
+none of which need be a canonical unit, and a cardinal at ⟨e⟩# selects the reticules with the
+number of complete cells it counts. -/
 
-variable {α : Type*} {P : α → Prop}
+section Reticules
 
-/-- A finset of cells is a division of the `P`-stuff when every cell is carved from it. -/
-def IsDivision (P : α → Prop) (d : Finset α) : Prop := ∀ x ∈ d, P x
+variable {α : Type*} [Lattice α] [OrderBot α] {m : α} (unit : α → Prop) [DecidablePred unit]
 
-/-- Divided stuff is still stuff: the sum of the cells of a cumulative root satisfies the root,
-apples plus apples being apples, the cumulativity bare plurals share with mass nouns. -/
-theorem sup'_mem [SemilatticeSup α] (hCum : CUM P) {d : Finset α} (hne : d.Nonempty)
-    (hd : IsDivision P d) : P (d.sup' hne id) :=
-  hCum.finsetSup'_mem hne hd
+/-- Plural marking presupposes no singulars: a portion that is not itself a unit has a reticule
+without a complete cell, the one *zero apples* and *0.5 apples* select. -/
+theorem exists_finpartition_filter_eq_empty (hm : m ≠ ⊥) (h : ¬ unit m) :
+    ∃ r : Finpartition m, {c ∈ r.parts | unit c} = ∅ :=
+  ⟨.indiscrete hm, by simpa [filter_eq_empty_iff] using h⟩
 
-section Units
+/-- Individuals emerge at ⟨e⟩#: a reticule with `n` complete cells holds `n` pairwise disjoint
+units within the portion, so *more than three circles* cannot be true without individual circles,
+though bare *circles* can. -/
+theorem exists_pairwiseDisjoint_of_card_filter {n : ℕ} (r : Finpartition m)
+    (h : #{c ∈ r.parts | unit c} = n) :
+    ∃ s : Finset α, #s = n ∧ (s : Set α).PairwiseDisjoint id ∧ ∀ x ∈ s, unit x ∧ x ≤ m :=
+  ⟨_, h, r.disjoint.subset (coe_subset.2 (filter_subset _ _)), fun _ hx ↦
+    ⟨(mem_filter.1 hx).2, r.le (mem_filter.1 hx).1⟩⟩
 
-variable (unit : α → Prop)
-
-/-- Plural marking presupposes no singulars: whenever the stuff has a noncanonical portion, some
-nonempty division contains no unit, the reticules behind *zero apples* and *0.5 apples*. -/
-theorem exists_division_without_units (h : ∃ x, P x ∧ ¬ unit x) :
-    ∃ d : Finset α, IsDivision P d ∧ d.Nonempty ∧ ∀ x ∈ d, ¬ unit x :=
-  let ⟨x, hP, hu⟩ := h
-  ⟨{x}, by simpa [IsDivision] using hP, Finset.singleton_nonempty x, by simpa using hu⟩
-
-variable [DecidablePred unit]
-
-/-- The number of complete cells of a division, those that are canonical units, by which a
-counter at ⟨e⟩# selects a reticule. -/
-def count (d : Finset α) : ℕ := (d.filter unit).card
-
-/-- Individuals emerge at ⟨e⟩#: a division with a positive count contains a canonical unit of
-the stuff, so *more than three circles* cannot be true without individual circles, though bare
-*circles* can. -/
-theorem exists_unit_of_count_pos {d : Finset α} (hd : IsDivision P d) (h : 0 < count unit d) :
-    ∃ x, unit x ∧ P x :=
-  let ⟨x, hx⟩ := Finset.card_pos.1 h
-  ⟨x, (Finset.mem_filter.1 hx).2, hd x (Finset.mem_filter.1 hx).1⟩
-
-end Units
+end Reticules
 
 /-! ### The nominal spine -/
 
-/-- The mereological type of a nominal denotation along the spine, which is cumulative stuff,
-divided stuff, or a quantity. -/
-inductive Status
-  | stuff
-  | divided
-  | quantity
-  deriving DecidableEq, Repr
-
-/-- The semantically active heads are ⟨e⟩div, the head `Q`, which divides stuff, and ⟨e⟩#, the
-head `Num`, which counts a division or measures undivided stuff; the other heads are
-transparent, and nothing divides a quantity. -/
-def steps : Cat → Status → Option Status
-  | .Q, .stuff => some .divided
-  | .Q, _ => none
-  | .Num, .quantity => none
-  | .Num, _ => some .quantity
-  | _, s => some s
-
-/-- The type of a spine's denotation, composed bottom-up from cumulative stuff, or `none` when a
-head has no well-typed input. -/
-def status (spine : List Cat) : Option Status :=
-  spine.foldl (fun s c ↦ s.bind (steps c)) (some .stuff)
-
-/-- Dividing feeds counting and nothing divides a quantity, so the only well-typed order puts the
-dividing head below the quantity head, the order (27) draws. -/
-theorem q_below_num : status [.N, .n, .Q, .Num] = some .quantity ∧
-    status [.N, .n, .Num, .Q] = none := by
-  decide
-
--- (28)
-theorem quantified_mass : status [.N, .n, .Num] = some .quantity := by decide
-
--- (27)
-theorem status_truncations :
-    status [.N, .n] = some .stuff ∧ status [.N, .n, .Q] = some .divided := by
-  decide
-
+-- (27): the quantity head is above the dividing head.
 theorem asymmRel_Q_Num : AsymmRel Cat.ExtendsTo .Q .Num := by decide +kernel
 
 end Borer2005
