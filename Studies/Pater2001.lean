@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Indonesian.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
 public import Linglib.Morphology.Morph
@@ -176,9 +176,9 @@ def corr (N x : Segment) : Outcome → Cand :=
 
 /-- The tableau of the nasal `N` of a morph of kind `kN` before the consonant `x` of a morph of
 kind `kx`, under the constraints `cs` in rank order. -/
-def tableau (cs : List Morph.Kind → List (Constraint Cand)) (N x : Segment) (kN kx : Morph.Kind)
-    (cands : Finset Outcome) :=
-  Tableau.ofList cands ((cs [kN, kx]).map (Constraint.comap (corr N x)))
+def optimal (cs : List Morph.Kind → List (Constraint Cand)) (N x : Segment) (kN kx : Morph.Kind)
+    (cands : Finset Outcome) : Finset Outcome :=
+  Constraint.eval cands ((cs [kN, kx]).map (Constraint.comap (corr N x)))
 
 /-- [pater-1999]'s analysis as (3) and (4) state it: UNIFORMITY of roots ≫ *NC̥ ≫ UNIFORMITY. -/
 def ncRanking (kinds : List Morph.Kind) : List (Constraint Cand) :=
@@ -191,8 +191,8 @@ def ranking (kinds : List Morph.Kind) : List (Constraint Cand) :=
 
 /-- The output of the winners of a tableau over the outcomes of the nasal `N` before `x`, if
 they have one output. -/
-def winningOutput {n : ℕ} (N x : Segment) (t : Tableau Outcome n) : Option (List Segment) :=
-  match (([Outcome.fuse, .assimilate, .faithful].filter (· ∈ t.optimal)).map
+def winningOutput (N x : Segment) (s : Finset Outcome) : Option (List Segment) :=
+  match (([Outcome.fuse, .assimilate, .faithful].filter (· ∈ s)).map
       fun o ↦ (corr N x o).string .rhs).dedup with
   | [w] => some w
   | _ => none
@@ -200,7 +200,7 @@ def winningOutput {n : ℕ} (N x : Segment) (t : Tableau Outcome n) : Option (Li
 /-- What *meN-* before `base` comes out as under `cs`, among the outcomes `cands`. -/
 def meN (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcome) :
     List Segment → Option (List Segment)
-  | x :: w => (winningOutput ng x (tableau cs ng x prefixKind .root cands)).map fun o ↦
+  | x :: w => (winningOutput ng x (optimal cs ng x prefixKind .root cands)).map fun o ↦
       [m, e] ++ o ++ w
   | [] => none
 
@@ -208,7 +208,7 @@ def meN (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcom
 `cands`. -/
 def meNper (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcome)
     (base : List Segment) : Option (List Segment) :=
-  (winningOutput ng p (tableau cs ng p prefixKind prefixKind cands)).map fun o ↦
+  (winningOutput ng p (optimal cs ng p prefixKind prefixKind cands)).map fun o ↦
     [m, e] ++ o ++ [e, r] ++ base
 
 /-- What an Indonesian relation of the table predicts for its base. -/
@@ -268,13 +268,13 @@ def cands : List Segment → List Cand
 def ranking : List (Constraint Cand) := [plab2, identPharExp, maxIO, uniformity]
 
 /-- The tableau of *-um-* before the root `x :: w` under `cs`. -/
-def tableau (cs : List (Constraint Cand)) (x : Segment) (w : List Segment) :=
-  Tableau.ofList .univ (cs.map (Constraint.comap (corr x w)))
+def optimal (cs : List (Constraint Cand)) (x : Segment) (w : List Segment) : Finset UmOutcome :=
+  Constraint.eval .univ (cs.map (Constraint.comap (corr x w)))
 
 /-- What *-um-* before `root` comes out as under `cs`. -/
 def um (cs : List (Constraint Cand)) : List Segment → Option (List Segment)
   | x :: w =>
-    match [UmOutcome.infix, .delete, .fuse].filter (· ∈ (tableau cs x w).optimal) with
+    match [UmOutcome.infix, .delete, .fuse].filter (· ∈ optimal cs x w) with
     | [o] => some (output x w o)
     | _ => none
   | [] => none
@@ -297,8 +297,8 @@ def ncCands : Finset Outcome := {.fuse, .assimilate}
 
 -- (3), and (4) at the left edge of a root
 theorem optimal_ncRanking_prefix_root :
-    (tableau ncRanking ng p prefixKind .root ncCands).optimal = {.fuse} ∧
-      (tableau ncRanking ng b prefixKind .root ncCands).optimal = {.assimilate} := by
+    optimal ncRanking ng p prefixKind .root ncCands = {.fuse} ∧
+      optimal ncRanking ng b prefixKind .root ncCands = {.assimilate} := by
   decide +kernel
 
 -- (4), left: the fused candidate violates UNIFORMITY, the faithful one *NC̥
@@ -308,7 +308,7 @@ theorem uniformity_empat : uniformity (corr m p .fuse) = 1 ∧ uniformity (corr 
 
 -- (4) inside a root, *əmpat*
 theorem optimal_ncRanking_root :
-    (tableau ncRanking m p .root .root ncCands).optimal = {.assimilate} := by
+    optimal ncRanking m p .root .root ncCands = {.assimilate} := by
   decide +kernel
 
 /-- UNIFORMITY of roots keeps *NC̥ from fusing inside a root but not between two prefixes, so
@@ -352,7 +352,7 @@ theorem indonesian_predicts : ∀ r ∈ Wordlist.relations, r.relation ≠ "-um-
 
 -- (4) inside a root under the reanalysis: assimilation and the faithful cluster are one output
 theorem optimal_ranking_root :
-    (tableau ranking m p .root .root .univ).optimal = {.assimilate, .faithful} := by
+    optimal ranking m p .root .root .univ = {.assimilate, .faithful} := by
   decide +kernel
 
 -- (42): the fused nasal corresponds to the prefix's ŋ
@@ -361,21 +361,21 @@ theorem identPlace_fuse : identPlace (corr ng p .fuse) = 1 := by
 
 -- (40)
 theorem optimal_kalinga :
-    (tableau (fun kinds ↦ [nasAssim, crispEdge kinds, identPharExp, uniformity, identPlace])
-      ng b prefixKind .root .univ).optimal = {.fuse} := by
+    optimal (fun kinds ↦ [nasAssim, crispEdge kinds, identPharExp, uniformity, identPlace])
+      ng b prefixKind .root .univ = {.fuse} := by
   decide +kernel
 
 -- the voiceless obstruents, which add *c* and the loan fricatives to the substituting
 -- consonants of Sneddon's grammar
 theorem consonants_filter_fuse :
     consonants.filter (fun x ↦ x.IsObstruent ∧
-        (tableau ranking ng x prefixKind .root .univ).optimal = {.fuse}) =
+        optimal ranking ng x prefixKind .root .univ = {.fuse}) =
       substituting ∪ {c, f, sy, kh} := by
   decide +kernel
 
 -- before *l*, which the paper does not discuss, the nasal fuses; Indonesian loses it, as in
 -- *melihat*, and loss is not among the candidates
-theorem optimal_ranking_l : (tableau ranking ng l prefixKind .root .univ).optimal = {.fuse} := by
+theorem optimal_ranking_l : optimal ranking ng l prefixKind .root .univ = {.fuse} := by
   decide +kernel
 
 /-! ### Typology -/

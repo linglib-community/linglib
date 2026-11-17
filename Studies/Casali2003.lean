@@ -8,6 +8,7 @@ module
 public import Linglib.Fragments.Akan.Phonology
 public import Linglib.Fragments.Yoruba.Phonology
 public import Linglib.Phonology.OptimalityTheory.Typology
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -26,7 +27,7 @@ demands agreement. The rankings of these four constraints under which
 ranking does [the unspecified value override a specified root](##neutralizes_of_picksAt) unless
 the contrast is lost, so that [a 4Ht(M) language with [+ATR] dominance](##yorubaPlus) is not
 generated. A ban on [+ATR] low vowels above MAX([ATR]) gives
-[indirect [−ATR] dominance](##reversal_optimal) before a low-vowel suffix.
+[indirect [−ATR] dominance](##reversal_eq) before a low-vowel suffix.
 
 ## Implementation notes
 
@@ -376,8 +377,8 @@ structure LowSuffixCand extends Word where
 /-- Tableau (23) ranks *[+ATR, +low] and the preservation of [+low] above HARMONY above
 MAX([ATR]), the last two those of a 5Ht system at the input, over [tola], [tɔla], [tolæ] and
 [tole]. -/
-def reversal : Tableau LowSuffixCand 4 :=
-  Tableau.ofList
+def reversal : Finset LowSuffixCand :=
+  Constraint.eval
     {⟨⟨true, false⟩, true⟩, ⟨⟨false, false⟩, true⟩, ⟨⟨true, true⟩, true⟩, ⟨⟨true, true⟩, false⟩}
     [.binary fun c ↦ c.affix ∧ c.low, .binary fun c ↦ ¬ c.low,
       ((system InventoryType.fiveHeight.specifiedValue).conAt ⟨true, false⟩ .harmony).comap
@@ -387,6 +388,6 @@ def reversal : Tableau LowSuffixCand 4 :=
 
 /-- Indirect [−ATR] dominance: before the low-vowel suffix the [+ATR] root gives up its
 specification, [tɔla]. -/
-theorem reversal_optimal : reversal.optimal = {⟨⟨false, false⟩, true⟩} := by decide
+theorem reversal_eq : reversal = {⟨⟨false, false⟩, true⟩} := by decide
 
 end Casali2003
