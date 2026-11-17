@@ -416,7 +416,8 @@ variable {D : Corpus ι}
 /-- With unit pseudo-counts, the DMPCFG ranks *-ion* above *-ness* on a corpus with the book's
 counts (§3.5.5, §3.3, p. 74). -/
 theorem dmpcfg_ness_lt_ion (h : Realizes D) :
-    (PCFG.relFreq D).weight Suffix.ness.rule < (PCFG.relFreq D).weight Suffix.ion.rule := by
+    (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ness.rule <
+      (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ion.rule := by
   refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff Suffix.ness.rule_mem
     Suffix.ion.rule_mem).mpr ?_
   change tokens D .ness < tokens D .ion

@@ -167,6 +167,10 @@ theorem mem_inputs : a ∈ g.inputs ↔ ∃ r ∈ g.rules, r.input = a :=
 theorem mem_rulesWithInput : r ∈ g.rulesWithInput a ↔ r ∈ g.rules ∧ r.input = a :=
   Finset.mem_filter
 
+theorem coe_rulesWithInput :
+    (g.rulesWithInput a : Set (ContextFreeRule T g.NT)) = {r | r ∈ g.rules ∧ r.input = a} :=
+  Set.ext fun _ ↦ mem_rulesWithInput
+
 theorem input_mem_inputs (hr : r ∈ g.rules) : r.input ∈ g.inputs :=
   Finset.mem_image_of_mem _ hr
 

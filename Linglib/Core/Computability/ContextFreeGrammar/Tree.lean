@@ -433,4 +433,13 @@ theorem exists_licensed_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈
     exact ⟨t, rfl⟩
   exact ⟨t, hvalid t (List.mem_singleton_self t), by simpa using hyield, by simpa using hroot⟩
 
+/-- A product over the rules of a grammar is a product over the nonterminals it has a rule for
+of the products over the rules at each. -/
+@[to_additive /-- A sum over the rules of a grammar is a sum over the nonterminals it has a rule
+for of the sums over the rules at each. -/]
+theorem prod_inputs_prod_rulesWithInput {M : Type*} [CommMonoid M]
+    (g : ContextFreeGrammar T) [DecidableEq g.NT] (f : ContextFreeRule T g.NT → M) :
+    ∏ a ∈ g.inputs, ∏ r ∈ g.rulesWithInput a, f r = ∏ r ∈ g.rules, f r :=
+  Finset.prod_fiberwise_of_maps_to (fun _ hr ↦ g.input_mem_inputs hr) f
+
 end ContextFreeGrammar

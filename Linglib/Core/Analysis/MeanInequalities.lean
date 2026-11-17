@@ -27,8 +27,9 @@ categorical distribution is the empirical one. Equality holds
 ## Implementation notes
 
 `[UPSTREAM]` candidate for the AM-GM section of `Mathlib/Analysis/MeanInequalities.lean`. The
-`ℝ≥0∞` statements take `ℝ≥0` weights, as `ENNReal.geom_mean_le_arith_mean_weighted` does; the
-equality case is transferred from the real one.
+Each statement comes in `Real`, `NNReal` and `ENNReal` versions with the arguments of the
+corresponding `geom_mean_le_arith_mean_weighted`; the `ℝ≥0∞` equality case is transferred from the
+real one.
 
 ## References
 
@@ -55,6 +56,8 @@ private theorem sum_mul_div_le (hp : ∀ i ∈ s, 0 ≤ p i) (hq : ∀ i ∈ s, 
   rcases (hp i hi).eq_or_lt with h | h
   · simpa [← h] using hq i hi
   · exact (mul_div_cancel₀ _ h.ne').le
+
+variable (s p q)
 
 /-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
 `1`, is greatest at `q = p`. -/
@@ -93,9 +96,32 @@ theorem prod_rpow_eq_prod_rpow_self_iff (hp : ∀ i ∈ s, 0 ≤ p i) (hp' : ∑
 
 end Real
 
+namespace NNReal
+
+variable {ι : Type*} (s : Finset ι)
+
+/-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
+`1`, is greatest at `q = p`. -/
+theorem prod_rpow_le_prod_rpow_self (p q : ι → ℝ≥0) (hp : ∑ i ∈ s, p i = 1)
+    (hq : ∑ i ∈ s, q i ≤ 1) : ∏ i ∈ s, q i ^ (p i : ℝ) ≤ ∏ i ∈ s, p i ^ (p i : ℝ) := by
+  exact_mod_cast Real.prod_rpow_le_prod_rpow_self s (fun i ↦ (p i : ℝ)) (fun i ↦ (q i : ℝ))
+    (fun i _ ↦ (p i).coe_nonneg) (by exact_mod_cast hp) (fun i _ ↦ (q i).coe_nonneg)
+    (by exact_mod_cast hq)
+
+/-- **Gibbs' inequality, equality case**: the geometric mean of `q` weighted by `p`, over `q`
+summing to at most `1`, attains its greatest value only at `q = p`. -/
+theorem prod_rpow_eq_prod_rpow_self_iff (p q : ι → ℝ≥0) (hp : ∑ i ∈ s, p i = 1)
+    (hq : ∑ i ∈ s, q i ≤ 1) :
+    ∏ i ∈ s, q i ^ (p i : ℝ) = ∏ i ∈ s, p i ^ (p i : ℝ) ↔ ∀ i ∈ s, q i = p i := by
+  exact_mod_cast Real.prod_rpow_eq_prod_rpow_self_iff s (fun i ↦ (p i : ℝ)) (fun i ↦ (q i : ℝ))
+    (fun i _ ↦ (p i).coe_nonneg) (by exact_mod_cast hp) (fun i _ ↦ (q i).coe_nonneg)
+    (by exact_mod_cast hq)
+
+end NNReal
+
 namespace ENNReal
 
-variable {ι : Type*} {s : Finset ι}
+variable {ι : Type*} (s : Finset ι)
 
 /-- **Gibbs' inequality**: the geometric mean of `q` weighted by `p`, over `q` summing to at most
 `1`, is greatest at `q = p`. -/
@@ -126,10 +152,12 @@ theorem prod_rpow_eq_prod_rpow_self_iff (p : ι → ℝ≥0) (q : ι → ℝ≥0
       (hq' i hi)) (prod_ne_top fun i _ ↦ rpow_ne_top_of_nonneg (p i).coe_nonneg coe_ne_top),
     toReal_prod, toReal_prod]
   simp only [← toReal_rpow, coe_toReal]
-  rw [Real.prod_rpow_eq_prod_rpow_self_iff (fun i _ ↦ (p i).coe_nonneg) (by exact_mod_cast hp)
-    (fun _ _ ↦ toReal_nonneg) hsum]
+  rw [Real.prod_rpow_eq_prod_rpow_self_iff s _ _ (fun i _ ↦ (p i).coe_nonneg)
+    (by exact_mod_cast hp) (fun _ _ ↦ toReal_nonneg) hsum]
   exact forall₂_congr fun i hi ↦ by
     rw [← coe_toReal (r := p i), toReal_eq_toReal_iff' (hq' i hi) coe_ne_top]
+
+variable {s}
 
 private theorem prod_pow_eq_prod_rpow_rpow {x : ι → ℕ} (hX : ∑ j ∈ s, x j ≠ 0) (a : ι → ℝ≥0∞) :
     ∏ i ∈ s, a i ^ x i =
@@ -151,6 +179,8 @@ private theorem sum_natCast_div_sum {x : ι → ℕ} (hX : ∑ j ∈ s, x j ≠ 
     ∑ i ∈ s, (x i : ℝ≥0) / ∑ j ∈ s, (x j : ℝ≥0) = 1 := by
   rw [← Finset.sum_div, _root_.div_self (by exact_mod_cast hX)]
 
+variable (s)
+
 /-- **Maximum likelihood of a categorical distribution.** Under weights `w` summing to at most
 `1`, counts `x` have likelihood at most their likelihood under their relative frequencies. -/
 theorem prod_pow_le_prod_div_sum_pow {w : ι → ℝ≥0∞} (hsum : ∑ i ∈ s, w i ≤ 1) (x : ι → ℕ) :
@@ -159,7 +189,7 @@ theorem prod_pow_le_prod_div_sum_pow {w : ι → ℝ≥0∞} (hsum : ∑ i ∈ s
   · exact le_of_eq (prod_congr rfl fun i hi ↦ by simp [sum_eq_zero_iff.mp hX i hi])
   simp only [← coe_natCast_div_sum hX]
   rw [prod_pow_eq_prod_rpow_rpow hX, prod_pow_eq_prod_rpow_rpow hX]
-  exact rpow_le_rpow (prod_rpow_le_prod_rpow_self _ w (sum_natCast_div_sum hX) hsum)
+  exact rpow_le_rpow (prod_rpow_le_prod_rpow_self s _ w (sum_natCast_div_sum hX) hsum)
     (Nat.cast_nonneg _)
 
 /-- **Uniqueness of the maximum-likelihood estimate.** Under weights `w` summing to at most `1`,
@@ -172,6 +202,6 @@ theorem prod_pow_eq_prod_div_sum_pow_iff {w : ι → ℝ≥0∞} (hsum : ∑ i �
   simp only [← coe_natCast_div_sum hX]
   rw [prod_pow_eq_prod_rpow_rpow hX, prod_pow_eq_prod_rpow_rpow hX,
     (rpow_left_injective (by exact_mod_cast hX)).eq_iff,
-    prod_rpow_eq_prod_rpow_self_iff _ w (sum_natCast_div_sum hX) hsum]
+    prod_rpow_eq_prod_rpow_self_iff s _ w (sum_natCast_div_sum hX) hsum]
 
 end ENNReal
