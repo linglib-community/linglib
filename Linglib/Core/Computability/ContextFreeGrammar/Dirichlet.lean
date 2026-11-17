@@ -13,13 +13,14 @@ public import Mathlib.Basic.ENNReal.BigOperators
 /-!
 # Dirichlet priors on probabilistic context-free grammars
 
-A Dirichlet PCFG puts a Dirichlet prior on the rule distribution at each nonterminal,
-independently across nonterminals: [the prior](##DirichletPCFG.prior) is a measure on the PCFGs
-over the grammar. With the rule weights integrated out, the rules applied at a nonterminal are
-draws from a Pólya urn over its rules weighted by their pseudo-counts, so the expected probability
-of a corpus [depends only on its rule counts](##DirichletPCFG.lintegral_prod_map_ruleWeight_prior)
-and [factors](##DirichletPCFG.countsProb_add) through the posterior given part of them. The PCFG
-of [mean rule weights](##DirichletPCFG.mean) is the predictive rule distribution.
+A PCFG [is a family of probability vectors](##PCFG.simplexEquiv), one over the rules at each
+nonterminal. A Dirichlet PCFG puts a Dirichlet distribution on each, independently across
+nonterminals: [the prior](##DirichletPCFG.prior) is a measure on the PCFGs over the grammar. With
+the rule weights integrated out, the rules applied at a nonterminal are draws from a Pólya urn
+over its rules weighted by their pseudo-counts, so the expected probability of a corpus
+[depends only on its rule counts](##DirichletPCFG.lintegral_prod_map_ruleWeight_prior) and
+[factors](##DirichletPCFG.countsProb_add) through the posterior given part of them. The PCFG of
+normalized pseudo-counts is [the mean of the prior](##DirichletPCFG.lintegral_weight_prior).
 
 ## Implementation notes
 
@@ -30,7 +31,6 @@ The mean PCFG of the posterior given a corpus is the proposal grammar of the Has
 ## TODO
 
 * The law of a corpus as a measure, the PCFG derivation measure mixed over the prior.
-* `DirichletPCFG.mean` is the mean of the prior: `∫⁻ W, W.weight r ∂M.prior = M.mean.weight r`.
 * With unit pseudo-counts the posterior density is the likelihood, so the posterior mode is
   the relative frequencies of the counts.
 
@@ -79,6 +79,55 @@ theorem measurable_ofSimplex : Measurable (ofSimplex (G := G)) := by
     fun_prop
   · simp only [Function.comp_def, ofSimplex, mk'_weight, dite_eq_right h]
     exact measurable_const
+
+/-- The rule distribution of a PCFG at a nonterminal the grammar has a rule for, as a probability
+vector over the rules there. -/
+noncomputable def toSimplex (W : PCFG G) (a : G.inputs) : StdSimplex ℝ (G.rulesWithInput a) where
+  weights := Finsupp.equivFunOnFinite.symm fun r ↦ (W.weight r).toReal
+  nonneg := fun _ ↦ ENNReal.toReal_nonneg
+  total := by
+    rw [Finsupp.sum_fintype _ _ fun _ ↦ rfl, Finsupp.coe_equivFunOnFinite_symm,
+      Finset.sum_coe_sort (G.rulesWithInput a) fun r ↦ (W.weight r).toReal,
+      ← ENNReal.toReal_sum fun r _ ↦ W.weight_ne_top r, W.sum_weight a a.2, ENNReal.toReal_one]
+
+omit [DecidableEq T] in
+@[simp]
+theorem toSimplex_weights (W : PCFG G) (a : G.inputs) (r : G.rulesWithInput a) :
+    (W.toSimplex a).weights r = (W.weight r).toReal := rfl
+
+theorem ofSimplex_toSimplex (W : PCFG G) : ofSimplex W.toSimplex = W := by
+  refine PCFG.ext (funext fun r ↦ ?_)
+  by_cases hr : r ∈ G.rules
+  · rw [ofSimplex_weight _ (G.input_mem_inputs hr) (G.mem_rulesWithInput_input hr),
+      toSimplex_weights, ENNReal.ofReal_toReal (W.weight_ne_top r)]
+  · simp [hr]
+
+theorem toSimplex_ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) :
+    (ofSimplex θ).toSimplex = θ := by
+  refine funext fun a ↦ StdSimplex.weights_inj.mp (Finsupp.ext fun r ↦ ?_)
+  rw [toSimplex_weights, ofSimplex_weight θ a.2 r.2,
+    ENNReal.toReal_ofReal ((θ a).weights_nonneg r)]
+
+omit [DecidableEq T] in
+theorem measurable_toSimplex : Measurable (toSimplex (G := G)) :=
+  measurable_pi_iff.mpr fun _ ↦
+    (StdSimplex.measurableEmbedding_weights _).measurable_comp_iff.mp <|
+      measurable_pi_iff.mpr fun r ↦ (measurable_weight (r : ContextFreeRule T G.NT)).ennreal_toReal
+
+/-- PCFGs over `G` are the families of probability vectors over the rules at each nonterminal the
+grammar has a rule for. -/
+noncomputable def simplexEquiv : PCFG G ≃ᵐ ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a) where
+  toFun := toSimplex
+  invFun := ofSimplex
+  left_inv := ofSimplex_toSimplex
+  right_inv := toSimplex_ofSimplex
+  measurable_toFun := measurable_toSimplex
+  measurable_invFun := measurable_ofSimplex
+
+@[simp] theorem simplexEquiv_apply (W : PCFG G) : simplexEquiv W = W.toSimplex := rfl
+
+@[simp] theorem simplexEquiv_symm_apply (θ : ∀ a : G.inputs, StdSimplex ℝ (G.rulesWithInput a)) :
+    simplexEquiv.symm θ = ofSimplex θ := rfl
 
 end PCFG
 
@@ -155,15 +204,15 @@ variable [DecidableEq T]
 on the probability vectors over its rules with their pseudo-counts as parameters, independently
 across nonterminals. -/
 noncomputable def prior : Measure (PCFG G) :=
-  (Measure.pi fun a : G.inputs ↦ dirichlet (M.urn a)).map PCFG.ofSimplex
+  (Measure.pi fun a : G.inputs ↦ dirichlet (M.urn a)).map PCFG.simplexEquiv.symm
 
 instance : IsProbabilityMeasure M.prior := by
   have (a : G.inputs) : Nonempty (G.rulesWithInput a) :=
     (ContextFreeGrammar.rulesWithInput_nonempty_iff.mpr a.2).to_subtype
   have (a : G.inputs) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
     isProbabilityMeasure_dirichlet (M.urn_pos a)
-  exact (Measure.isProbabilityMeasure_map_iff PCFG.measurable_ofSimplex.aemeasurable).mpr
-    inferInstance
+  exact (Measure.isProbabilityMeasure_map_iff
+    PCFG.simplexEquiv.symm.measurable.aemeasurable).mpr inferInstance
 
 /-- The probability `∏ r, W.weight r ^ x r` of a corpus with rule counts `x`, integrated against
 the prior, is the probability of the counts
@@ -177,8 +226,8 @@ theorem lintegral_prod_pow_prior (x : ContextFreeRule T G.NT → ℕ) :
   have hX (a : G.inputs) : Measurable fun t : StdSimplex ℝ
       (G.rulesWithInput a) ↦ ∏ r, ENNReal.ofReal (t.weights r) ^ x r := by
     fun_prop
-  rw [prior, lintegral_map (by fun_prop) PCFG.measurable_ofSimplex,
-    lintegral_congr fun θ ↦ show ∏ r ∈ G.rules, (PCFG.ofSimplex θ).weight r ^ x r =
+  rw [prior, lintegral_map_equiv,
+    lintegral_congr fun θ ↦ show ∏ r ∈ G.rules, (PCFG.simplexEquiv.symm θ).weight r ^ x r =
       ∏ a : G.inputs, ∏ r : G.rulesWithInput a, ENNReal.ofReal ((θ a).weights r) ^ x r from ?_,
     lintegral_prod_eq_prod_lintegral_of_indepFun univ _
       (iIndepFun_pi fun a ↦ (hX a).aemeasurable) fun a ↦ (hX a).comp (measurable_pi_apply a),
@@ -192,7 +241,8 @@ theorem lintegral_prod_pow_prior (x : ContextFreeRule T G.NT → ℕ) :
   · rw [← G.prod_inputs_prod_rulesWithInput, ← prod_coe_sort]
     refine prod_congr rfl fun a _ ↦ ?_
     rw [← prod_coe_sort]
-    exact prod_congr rfl fun r _ ↦ by rw [PCFG.ofSimplex_weight θ a.2 r.2]
+    exact prod_congr rfl fun r _ ↦ by
+      rw [PCFG.simplexEquiv_symm_apply, PCFG.ofSimplex_weight θ a.2 r.2]
 
 /-- The expected probability under the prior of a corpus of derivation trees the grammar licenses
 is the probability of its rule counts. -/
@@ -211,9 +261,9 @@ private theorem sum_ofReal_pseudo_ne_zero {r : ContextFreeRule T G.NT} (hr : r �
     single_le_sum (f := fun r ↦ ENNReal.ofReal (M.pseudo r)) (fun _ _ ↦ zero_le)
       (G.mem_rulesWithInput_input hr)).ne'
 
-/-- The PCFG of normalized pseudo-counts, the predictive rule distribution. On a tree with at most
-one node per nonterminal it gives
-[the probability under the prior](##DirichletPCFG.ruleWeight_mean). -/
+/-- The PCFG of normalized pseudo-counts. It is [the mean of the
+prior](##DirichletPCFG.lintegral_weight_prior), the predictive rule distribution, and for the
+posterior given rule counts the posterior predictive one. -/
 noncomputable def mean : PCFG G :=
   PCFG.normalize fun r ↦ .ofReal (M.pseudo r)
 
@@ -236,6 +286,33 @@ theorem mean_weight_lt_mean_weight_iff {a : G.NT} {r r' : ContextFreeRule T G.NT
     ENNReal.ofReal_lt_ofReal_iff
       (M.pseudo_pos r' (ContextFreeGrammar.mem_rulesWithInput.mp hr').1)]
 
+/-- Counts with at most one counted rule at each nonterminal have, under the mean PCFG, their
+probability under the prior. -/
+theorem prod_pow_mean_weight {x : ContextFreeRule T G.NT → ℕ}
+    (hx : ∀ a, ∑ r ∈ G.rulesWithInput a, x r ≤ 1) :
+    ∏ r ∈ G.rules, M.mean.weight r ^ x r = .ofReal (M.countsProb x) := by
+  rw [countsProb, ← G.prod_inputs_prod_rulesWithInput,
+    ENNReal.ofReal_prod_of_nonneg fun a _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
+  refine prod_congr rfl fun a _ ↦ ?_
+  have hcount : ∑ r : G.rulesWithInput a, x r ≤ 1 := by
+    rw [sum_coe_sort (G.rulesWithInput a) x]
+    exact hx a
+  rw [polyaUrnProb_eq_prod_pow_of_sum_le_one _ hcount,
+    ENNReal.ofReal_prod_of_nonneg fun r _ ↦
+      pow_nonneg (polyaUrnPredictive_pos (M.urn_pos a) 0 r).le _]
+  refine (prod_coe_sort _ _).symm.trans (Fintype.prod_congr _ _ fun r ↦ ?_)
+  rw [mean_weight, polyaUrnPredictive_zero, ENNReal.ofReal_pow
+    (div_nonneg (M.urn_pos a r).le (sum_nonneg fun r' _ ↦ (M.urn_pos a r').le))]
+
+/-- **The mean PCFG is the mean of the prior**: the expected weight of a rule of the grammar is
+its normalized pseudo-count. -/
+theorem lintegral_weight_prior {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules) :
+    ∫⁻ W, W.weight r ∂M.prior = M.mean.weight r := by
+  have h := M.lintegral_prod_pow_prior (Pi.single r 1)
+  rw [← M.prod_pow_mean_weight (x := Pi.single r 1) fun a ↦ by
+    rw [Finset.sum_pi_single']; split_ifs <;> simp] at h
+  simpa [Pi.single_apply, pow_ite, Finset.prod_ite_eq', hr] using h
+
 /-- On a tree with at most one node labelled by each nonterminal, the mean PCFG gives the tree its
 probability under the prior. For the posterior given a corpus, the proposal grammar of the
 Hastings sampler of [johnson-griffiths-goldwater-2007] is then the exact conditional. A tree that
@@ -244,19 +321,9 @@ at that nonterminal, and the mean PCFG does not see it. -/
 theorem ruleWeight_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.Licenses)
     (hone : ∀ a, t.values.count (.nonterminal a) ≤ 1) :
     t.ruleWeight M.mean.weight = .ofReal (M.countsProb (ruleCounts {t})) := by
-  rw [ruleWeight_eq_prod_pow_ruleCount _ ht, countsProb,
-    ← G.prod_inputs_prod_rulesWithInput,
-    ENNReal.ofReal_prod_of_nonneg fun a _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
-  refine prod_congr rfl fun a _ ↦ ?_
-  have hcount : ∑ r : G.rulesWithInput a, ruleCounts {t} r ≤ 1 := by
-    rw [sum_coe_sort (G.rulesWithInput a) (ruleCounts {t})]
-    simpa using (ht.sum_ruleCount_eq_count_values a).trans_le (hone a)
-  rw [polyaUrnProb_eq_prod_pow_of_sum_le_one _ hcount,
-    ENNReal.ofReal_prod_of_nonneg fun r _ ↦
-      pow_nonneg (polyaUrnPredictive_pos (M.urn_pos a) 0 r).le _]
-  refine (prod_coe_sort _ _).symm.trans (Fintype.prod_congr _ _ fun r ↦ ?_)
-  rw [mean_weight, polyaUrnPredictive_zero, ENNReal.ofReal_pow
-    (div_nonneg (M.urn_pos a r).le (sum_nonneg fun r' _ ↦ (M.urn_pos a r').le)),
-    ruleCounts_singleton]
+  rw [ruleWeight_eq_prod_pow_ruleCount _ ht,
+    ← M.prod_pow_mean_weight fun a ↦ by
+      simpa using (ht.sum_ruleCount_eq_count_values a).trans_le (hone a)]
+  simp [ruleCounts_singleton]
 
 end DirichletPCFG
