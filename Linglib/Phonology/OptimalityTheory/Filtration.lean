@@ -113,6 +113,23 @@ theorem map_filter_le_map_filter_iff {p : ι → Prop} [DecidablePred p]
       rw [List.filter_cons_of_neg (by simp [hk])]
       simp only [List.map_cons, List.cons_le_cons_iff', ih, he, lt_irrefl, true_and, false_or]
 
+/-- A candidate is the sole survivor iff its violations along the list are lexicographically
+least, strictly. -/
+theorem filtration_eq_singleton_iff :
+    filtration v s l = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c → l.map (v c) < l.map (v d) := by
+  refine ⟨fun h ↦ ?_, fun ⟨hc, h⟩ ↦ ?_⟩
+  · have hc : c ∈ filtration v s l := h ▸ Finset.mem_singleton_self c
+    refine ⟨filtration_subset hc, fun d hd hne ↦ ?_⟩
+    have hd' : d ∉ filtration v s l := h ▸ fun hd' ↦ hne (Finset.mem_singleton.1 hd')
+    rw [mem_filtration, not_and, not_forall₂] at hd'
+    obtain ⟨e, he, hlt⟩ := hd' hd
+    exact ((mem_filtration.1 hc).2 e he).trans_lt (not_le.1 hlt)
+  · have hc' : c ∈ filtration v s l := mem_filtration.2 ⟨hc, fun d hd ↦ by
+      rcases eq_or_ne d c with rfl | hne
+      exacts [le_rfl, (h d hd hne).le]⟩
+    refine Finset.eq_singleton_iff_unique_mem.2 ⟨hc', fun d hd ↦ by_contra fun hne ↦ ?_⟩
+    exact ((mem_filtration.1 hd).2 c hc).not_gt (h d (filtration_subset hd) hne)
+
 /-- No Dead Man Walking ([merchant-prince-2022]): a candidate that survives filtration along
 a list `l`, such as a whole ranking, and also along a list `l₁`, survives along `l₁` followed
 by the constraints of `l` that are not in `l₁`. A possible optimum that passes a prefix is
