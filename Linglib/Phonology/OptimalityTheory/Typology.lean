@@ -43,7 +43,7 @@ namespace OptimalityTheory
 
 namespace ConstraintSystem
 
-variable {I O ι : Type*} {n : ℕ} (S : ConstraintSystem I O ι) (r : Ranking ι n) (i : I)
+variable {I O ι : Type*} {n : ℕ} (S : ConstraintSystem I O ι) (r : Ranking.Enumeration ι n) (i : I)
 
 /-- The tableau of an input under a ranking evaluates its candidates by the system's constraints
 in rank order. -/
@@ -55,11 +55,12 @@ def language : Finset O := (S.tableau r i).optimal
 
 /-- The **typology** of a system identifies the rankings with the same language, so that its
 classes, the ranking grammars, partition the rankings ([merchant-prince-2022]). -/
-def typology : Setoid (Ranking ι n) := Setoid.ker S.language
+def typology : Setoid (Ranking.Enumeration ι n) := Setoid.ker S.language
 
 variable {S r i} {o : O}
 
-theorem typology_iff {r' : Ranking ι n} : S.typology r r' ↔ S.language r = S.language r' :=
+theorem typology_iff {r' : Ranking.Enumeration ι n} : S.typology r r' ↔ S.language r =
+    S.language r' :=
   Iff.rfl
 
 /-- A ranking selects `o` alone at an input iff `o` is a candidate whose violations, read in
@@ -119,7 +120,7 @@ theorem PicksAt.unique {o' : O} (h : S.PicksAt r i o) (h' : S.PicksAt r i o') : 
 
 /-- A ranking picks some candidate at an input whose candidates have distinct violations. -/
 theorem exists_picksAt (h : (S.gen i).Nonempty)
-    (hinj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (r : Ranking ι n) :
+    (hinj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (r : Ranking.Enumeration ι n) :
     ∃ o ∈ S.gen i, S.PicksAt r i o := by
   obtain ⟨o, ho⟩ := language_nonempty (r := r) h
   refine ⟨o, Tableau.optimal_subset ho, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
@@ -145,12 +146,12 @@ variable {S}
 /-- **One tableau suffices** ([prince-2015]). When every input has a candidate, the joint system
 has the system's typology. -/
 theorem typology_joint [DecidableEq O] (h : ∀ i, (S.gen i).Nonempty) :
-    (S.joint.typology : Setoid (Ranking ι n)) = S.typology := by
+    (S.joint.typology : Setoid (Ranking.Enumeration ι n)) = S.typology := by
   refine Setoid.ext fun r r' ↦ ?_
   rw [typology_iff, typology_iff]
   refine ⟨fun hj ↦ funext fun i ↦ ?_, fun hl ↦ funext fun _ ↦ by rw [language_joint, hl,
     ← language_joint]⟩
-  have hne (r : Ranking ι n) : ∀ j, i ≠ j → (S.language r j).Nonempty :=
+  have hne (r : Ranking.Enumeration ι n) : ∀ j, i ≠ j → (S.language r j).Nonempty :=
     fun j _ ↦ language_nonempty (h j)
   have := congrArg (fun F ↦ (F ()).image (· i)) hj
   simpa only [language_joint, Fintype.eval_image_piFinset _ _ (hne _)] using this

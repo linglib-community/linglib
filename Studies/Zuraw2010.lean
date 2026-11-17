@@ -151,7 +151,7 @@ private theorem nasalSubstitution_gen (c : StemC) :
 
 /-- `subProb c` is the share of the 720 total orders on which stem `c` substitutes. -/
 noncomputable def subProb (c : StemC) : ℝ :=
-  (uniformOn (Set.univ : Set (Ranking (Fin 6) 6))).real {σ | nasalSubstitution.PicksAt σ c .yes}
+  (uniformOn (Set.univ : Set (Ranking (Fin 6)))).real {σ | nasalSubstitution.PicksAt σ c .yes}
 
 private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((favoring con c .yes .no).card : ℝ) / (active con c .yes .no).card :=

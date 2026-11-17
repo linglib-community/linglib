@@ -48,16 +48,16 @@ instance {α : Type*} : IsPartialOrder α (· = ·) where
   trans _ _ _ := Eq.trans
   antisymm _ _ h _ := h
 
-namespace Ranking
+namespace Ranking.Enumeration
 
-variable {r : ι → ι → Prop} {σ : Ranking ι n} {g : Equiv.Perm ι}
+variable {r : ι → ι → Prop} {σ : Ranking.Enumeration ι n} {g : Equiv.Perm ι}
 
 /-- The ranking `σ` is a *linear extension* of the relation `r` when it ranks `a` at least as high
 as `b` whenever `r a b`. -/
-def IsLinearExtension (σ : Ranking ι n) (r : ι → ι → Prop) : Prop :=
+def IsLinearExtension (σ : Ranking.Enumeration ι n) (r : ι → ι → Prop) : Prop :=
   r ≤ σ.toRel
 
-instance [Fintype ι] (σ : Ranking ι n) (r : ι → ι → Prop) [DecidableRel r] :
+instance [Fintype ι] (σ : Ranking.Enumeration ι n) (r : ι → ι → Prop) [DecidableRel r] :
     Decidable (σ.IsLinearExtension r) :=
   decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
 
@@ -85,7 +85,7 @@ theorem IsLinearExtension.transGen (hσ : σ.IsLinearExtension r) :
   | single h => exact hσ _ _ h
   | tail _ h ih => exact le_trans ih (hσ _ _ h)
 
-theorem isLinearExtension_toRel (σ : Ranking ι n) : σ.IsLinearExtension σ.toRel :=
+theorem isLinearExtension_toRel (σ : Ranking.Enumeration ι n) : σ.IsLinearExtension σ.toRel :=
   le_refl σ.toRel
 
 /-- Composing with a permutation `g` of the constraints turns the linear extensions of the
@@ -107,16 +107,17 @@ variable [Fintype ι]
 
 /-- Every grammar has a linear extension, by Szpilrajn's theorem. -/
 theorem exists_isLinearExtension (r : ι → ι → Prop) [IsPartialOrder ι r]
-    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.IsLinearExtension r := by
+    (hn : Fintype.card ι =
+        n := by simp) : ∃ σ : Ranking.Enumeration ι n, σ.IsLinearExtension r := by
   obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
-  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq s hn
+  obtain ⟨σ, rfl⟩ := Ranking.Enumeration.exists_toRel_eq s hn
   exact ⟨σ, hsub⟩
 
 variable [DecidableEq ι]
 
 /-- The linear extensions of a grammar: Anttila's tableaux, the total rankings among which the
 grammar chooses at each evaluation. -/
-def linearExtensions (r : ι → ι → Prop) [DecidableRel r] : Finset (Ranking ι n) :=
+def linearExtensions (r : ι → ι → Prop) [DecidableRel r] : Finset (Ranking.Enumeration ι n) :=
   {σ | σ.IsLinearExtension r}
 
 @[simp]
@@ -126,14 +127,15 @@ theorem mem_linearExtensions [DecidableRel r] :
 
 /-- A ranking is the only linear extension of its own order. -/
 @[simp]
-theorem linearExtensions_toRel (σ : Ranking ι n) : linearExtensions σ.toRel = {σ} := by
+theorem linearExtensions_toRel (σ : Ranking.Enumeration ι n) : linearExtensions σ.toRel = {σ} := by
   ext τ
-  rw [mem_linearExtensions, mem_singleton, IsLinearExtension, Ranking.toRel_le_toRel_iff, eq_comm]
+  rw [mem_linearExtensions, mem_singleton, IsLinearExtension,
+    Ranking.Enumeration.toRel_le_toRel_iff, eq_comm]
 
 /-- Every ranking is a linear extension of the discrete grammar. -/
 @[simp]
 theorem linearExtensions_eq (ι : Type*) [Fintype ι] [DecidableEq ι] (n : ℕ) :
-    linearExtensions (· = · : ι → ι → Prop) = (univ : Finset (Ranking ι n)) :=
+    linearExtensions (· = · : ι → ι → Prop) = (univ : Finset (Ranking.Enumeration ι n)) :=
   eq_univ_of_forall fun _ ↦ mem_linearExtensions.2 fun _ _ h ↦ h ▸ le_refl _
 
 theorem linearExtensions_nonempty (r : ι → ι → Prop) [IsPartialOrder ι r]
@@ -143,7 +145,7 @@ theorem linearExtensions_nonempty (r : ι → ι → Prop) [IsPartialOrder ι r]
 
 end Fintype
 
-end Ranking
+end Ranking.Enumeration
 
 /-! ### Stratified grammars
 

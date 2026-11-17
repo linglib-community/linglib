@@ -261,10 +261,11 @@ namespace Grammar
 variable (G : Grammar)
 
 /-- The linear extensions of the grammar's order. -/
-def rankings : Finset (Ranking (Fin G.n) G.n) := Ranking.linearExtensions G.order
+def rankings : Finset (Ranking.Enumeration
+    (Fin G.n) G.n) := Ranking.Enumeration.linearExtensions G.order
 
 /-- The licensors in the order of a ranking, most dominant first. -/
-def ranked (σ : Ranking (Fin G.n) G.n) : List Licensor :=
+def ranked (σ : Ranking.Enumeration (Fin G.n) G.n) : List Licensor :=
     (List.finRange G.n).map fun p ↦ G.licensor (σ p)
 
 /-- The outputs of an input, the winners under some linear extension. -/
@@ -277,7 +278,7 @@ def free {n : ℕ} (licensor : Fin n → Licensor) : Grammar :=
 
 /-- A grammar of two licensors, the first ranked above the second. -/
 def two (l₁ l₂ : Licensor) : Grammar :=
-  { n := 2, licensor := ![l₁, l₂], order := (1 : Ranking (Fin 2) 2).toRel }
+  { n := 2, licensor := ![l₁, l₂], order := (1 : Ranking.Enumeration (Fin 2) 2).toRel }
 
 end Grammar
 
@@ -389,7 +390,7 @@ theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
     exact absurd this (by decide)
 
 theorem Grammar.template_mem_ranked {G : Grammar} (hT : ∃ p, G.licensor p = .template)
-    (σ : Ranking (Fin G.n) G.n) : Licensor.template ∈ G.ranked σ := by
+    (σ : Ranking.Enumeration (Fin G.n) G.n) : Licensor.template ∈ G.ranked σ := by
   obtain ⟨p, hp⟩ := hT
   exact List.mem_map.mpr ⟨σ.symm p, List.mem_finRange _, by simp [hp]⟩
 

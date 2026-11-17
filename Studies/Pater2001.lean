@@ -387,19 +387,19 @@ def typologyCon (x : Segment) : ConstraintSet Outcome (Fin 4) :=
     ![nasAssim, identPharExp, crispEdge [prefixKind, .root], uniformity]
 
 /-- The stops of Newman's typology (41) that fuse with the prefix nasal under the ranking `ρ`. -/
-def fusingStops (ρ : Ranking (Fin 4) 4) : List Segment :=
+def fusingStops (ρ : Ranking (Fin 4)) : List Segment :=
   [p, t, k, b, d, g].filter fun x ↦ (Tableau.ofRanking (typologyCon x) ρ .univ).optimal = {.fuse}
 
 /-- With NASASSIM undominated, the stops that fuse are none, the voiceless ones or all of them,
 as in Newman's Malay and Kalinga types, never only some of the voiced ones, as in his
 intermediate types. -/
-theorem fusingStops_mem : ∀ ρ : Ranking (Fin 4) 4, ρ 0 = 0 →
+theorem fusingStops_mem : ∀ ρ : Ranking (Fin 4), ρ 0 = 0 →
     fusingStops ρ ∈ [[], [p, t, k], [p, t, k, b, d, g]] := by
   decide +kernel
 
 -- with NASASSIM dominated, the velars alone fuse, since the unassimilated cluster before them is
 -- already homorganic
-theorem exists_fusingStops_eq_velars : ∃ ρ : Ranking (Fin 4) 4, fusingStops ρ = [k, g] := by
+theorem exists_fusingStops_eq_velars : ∃ ρ : Ranking (Fin 4), fusingStops ρ = [k, g] := by
   decide +kernel
 
 end Pater2001

@@ -143,7 +143,7 @@ end Violations
 /-! ### Which vowel elides -/
 
 /-- The tableau of the two elisions under the ranking `r`. -/
-abbrev tableau (r : Ranking (Option Prominence) 5) : Tableau ElidedVowel 5 :=
+abbrev tableau (r : Ranking (Option Prominence)) : Tableau ElidedVowel 5 :=
   Tableau.ofRanking (con c) r {.first, .second}
 
 private theorem card_option_prominence : Fintype.card (Option Prominence) = 5 := rfl
@@ -176,17 +176,17 @@ theorem optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') (r) :
   optimal_eq_singleton_positionalMax_iff (candidates_eq_pair hne) hne rfl rfl r
 
 theorem optimal_eq_singleton_of_ssubset {e e' : ElidedVowel} (hne : e ≠ e')
-    (h : violations c e ⊂ violations c e') (r : Ranking (Option Prominence) 5) :
+    (h : violations c e ⊂ violations c e') (r : Ranking (Option Prominence)) :
     (tableau c r).optimal = {e} :=
   optimal_eq_singleton_positionalMax_of_ssubset (candidates_eq_pair hne) rfl rfl h r
 
-theorem optimal_eq_pair_iff (r : Ranking (Option Prominence) 5) :
+theorem optimal_eq_pair_iff (r : Ranking (Option Prominence)) :
     (tableau c r).optimal = {.first, .second} ↔ violations c .first = violations c .second :=
   optimal_eq_pair_positionalMax_iff (c := .first) (d := .second) (P := protects c)
     (del := fun e ↦ {position c e}) rfl rfl rfl r
 
 theorem optimal_eq_singleton_of_forall_dominates {e e' : ElidedVowel} (hne : e ≠ e')
-    {r : Ranking (Option Prominence) 5} {i : Option Prominence} (hi : i ∉ violations c e)
+    {r : Ranking (Option Prominence)} {i : Option Prominence} (hi : i ∉ violations c e)
     (hi' : i ∈ violations c e') (hr : ∀ j, j ≠ i → r.Dominates i j) :
     (tableau c r).optimal = {e} :=
   (optimal_eq_singleton_iff hne r).2 ⟨i, hi', hi, fun j hj _ ↦ hr j fun h ↦ hi (h ▸ hj)⟩
@@ -271,7 +271,7 @@ theorem schematic_second :
   simp only [exists_mem_optimal_iff_of_isOfKind (isOfKind_schematic _)]
   decide
 
-theorem lexical_on_top {r : Ranking (Option Prominence) 5}
+theorem lexical_on_top {r : Ranking (Option Prominence)}
     (hr : ∀ j, j ≠ some .lexical → r.Dominates (some .lexical) j) {c c' : Context}
     (hc : IsOfKind c .prefixRoot) (hc' : IsOfKind c' .rootSuffix) :
     (tableau c r).optimal = {.first} ∧ (tableau c' r).optimal = {.second} :=
@@ -281,7 +281,7 @@ theorem lexical_on_top {r : Ranking (Option Prominence) 5}
       (by simp [hc'.rightKind, kinds]) (by simp [hc'.leftKind, kinds]) hr⟩
 
 -- (19), (20)
-theorem soleSegment_over_lexical {r : Ranking (Option Prominence) 5}
+theorem soleSegment_over_lexical {r : Ranking (Option Prominence)}
     (h₁ : r.Dominates (some .soleSegment) (some .lexical))
     (h₂ : r.Dominates (some .lexical) (some .morphemeInitial)) (hc : IsOfKind c .rootSuffix) :
     (tableau c r).optimal = {if c.rightBody = [] then .first else .second} := by

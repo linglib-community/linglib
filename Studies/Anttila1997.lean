@@ -276,7 +276,7 @@ def tableauCon : ConstraintSet (Shape × List Syllable) (Fin 20) :=
   fun c x ↦ (constraint c).violations x.2
 
 /-- The total rankings consistent with the Finnish grammar. -/
-def rankings : Finset (Ranking (Fin 20) 20) := Ranking.linearExtensions finnishGrammar
+def rankings : Finset (Ranking (Fin 20)) := Ranking.Enumeration.linearExtensions finnishGrammar
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
@@ -284,22 +284,26 @@ def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
 
 -- (32), (33)
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (Ranking.mem_linearExtensions.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (34), (35)
 theorem kala_weak : Shape.Categorical .kala [X', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (Ranking.mem_linearExtensions.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (38), (40)
 theorem margariini_weak : Shape.Categorical .margariini [X', X, H', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (Ranking.mem_linearExtensions.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (41), (44)
 theorem italiaano_weak : Shape.Categorical .italiaano [X', X, L, H', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (Ranking.mem_linearExtensions.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (36), (38), (41)
@@ -345,7 +349,7 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
   fun c x ↦ (constraint c).violations (word x.1 x.2)
 
 /-- The rankings under which variant `v` wins motif `m`. -/
-def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
+def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20)) :=
   rankings.filter fun σ ↦ ConstraintSystem.PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
 
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)

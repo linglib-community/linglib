@@ -232,13 +232,13 @@ private theorem marks :
       [[2, 2, 2, 2, 0], [2, 2, 2, 2, 1], [1, 2, 0, 2, 0], [0, 2, 1, 2, 0], [0, 2, 0, 2, 1]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
+theorem optimal_iff (r : Ranking Con) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .lAnchorM .maxTone ∧ r.Dominates .rAnchorM .maxTone := by
   rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau24
@@ -281,14 +281,14 @@ private theorem marks :
         [0, 0, 2, 1, 1], [0, 0, 2, 2, 0]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
+theorem optimal_iff (r : Ranking Con) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
         r.Dominates .rAnchorM .maxTone := by
   rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau25
@@ -334,7 +334,7 @@ private theorem marks :
         [0, 0, 0, 1, 2], [0, 0, 1, 1, 1]] := by
   decide
 
-theorem optimal_iff (r : Ranking Con 5) :
+theorem optimal_iff (r : Ranking Con) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candD} ↔
       (r.Dominates .lAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) ∧
         (r.Dominates .rAnchorH .maxTone ∨ r.Dominates .rAnchorM .maxTone) ∧
@@ -342,7 +342,7 @@ theorem optimal_iff (r : Ranking Con 5) :
   rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
   simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
-    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+    true_implies, imp_false, con_exists, con_forall, Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 end Tableau26
@@ -351,32 +351,32 @@ end Tableau26
 
 /-- A ranking selects the printed verbs: the spreading of M over the root in the first tableau,
 M then H in the second, and M on the reduplicant with H on the base in the third. -/
-def SelectsWinners (r : Ranking Con 5) : Prop :=
+def SelectsWinners (r : Ranking Con) : Prop :=
   (Tableau.ofRanking con r Tableau24.candidates.toFinset).optimal = {Tableau24.candE} ∧
     (Tableau.ofRanking con r Tableau25.candidates.toFinset).optimal = {Tableau25.candE} ∧
     (Tableau.ofRanking con r Tableau26.candidates.toFinset).optimal = {Tableau26.candD}
 
 /-- The tableaux select the printed verbs exactly under the rankings with
 R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and MAX-Tone below both M anchors. -/
-theorem selectsWinners_iff (r : Ranking Con 5) :
+theorem selectsWinners_iff (r : Ranking Con) :
     SelectsWinners r ↔ r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
       r.Dominates .rAnchorM .maxTone ∧ r.Dominates .lAnchorM .maxTone := by
   rw [SelectsWinners, Tableau24.optimal_iff, Tableau25.optimal_iff, Tableau26.optimal_iff]
-  simp only [Ranking.Dominates, Fin.lt_def]
+  simp only [Ranking.Enumeration.Dominates, Fin.lt_def]
   omega
 
 /-- Neither L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ nor L-ANCH-Hᵥ ≫ MAX-Tone, both of which the paper states, is
 needed: the ranking R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Mᵥ ≫ MAX-Tone ≫ L-ANCH-Hᵥ reverses both and
 selects the printed verbs. -/
 theorem exists_selectsWinners_rAnchorM_lAnchorM :
-    ∃ r : Ranking Con 5, SelectsWinners r ∧ r.Dominates .rAnchorM .lAnchorM ∧
+    ∃ r : Ranking Con, SelectsWinners r ∧ r.Dominates .rAnchorM .lAnchorM ∧
       r.Dominates .maxTone .lAnchorH := by
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := 5)
+  obtain ⟨r, hr⟩ := Ranking.Enumeration.exists_dominates_iff (n := 5)
     (fun | .rAnchorH => 0 | .rAnchorM => 1 | .lAnchorM => 2 | .maxTone => 3 | .lAnchorH => 4 :
       Con → ℕ) (by decide) rfl
   refine ⟨r, (selectsWinners_iff r).2 ?_, ?_⟩ <;> simp [hr]
 
-theorem selectsWinners_of_dominates {r : Ranking Con 5}
+theorem selectsWinners_of_dominates {r : Ranking Con}
     (h₁ : r.Dominates .lAnchorM .rAnchorM) (h₂ : r.Dominates .rAnchorH .rAnchorM)
     (h₃ : r.Dominates .rAnchorM .lAnchorH) (h₄ : r.Dominates .lAnchorH .maxTone) :
     SelectsWinners r :=

@@ -129,7 +129,8 @@ variable {n : ℕ}
 
 /-- The winners of a tableau under a ranking are the survivors of filtration along the
 ranking. -/
-theorem Tableau.optimal_ofRanking_eq_filtration (con : ConstraintSet C ι) (r : Ranking ι n)
+theorem Tableau.optimal_ofRanking_eq_filtration (con : ConstraintSet C ι)
+    (r : Ranking.Enumeration ι n)
     (s : Finset C) :
     (Tableau.ofRanking con r s).optimal = filtration (fun c k ↦ con k c) s (List.ofFn r) := by
   ext c

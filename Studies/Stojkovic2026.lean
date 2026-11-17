@@ -197,12 +197,12 @@ def ofHigh (h : Bool) : Con := cond h .depHigh .depNonhigh
 variable {n : ℕ}
 
 /-- `form r c` is the winner under the ranking `r` in the context `c`. -/
-def form (r : Ranking Con n) : Context → Candidate
+def form (r : Ranking.Enumeration Con n) : Context → Candidate
   | ⟨_, .je⟩ => .u
   | ⟨s, .a⟩ =>
     .fill (s = .plain ∨ r.Dominates .noShare .depBack) (r.Dominates .depNonhigh .depHigh)
 
-variable {r : Ranking Con n}
+variable {r : Ranking.Enumeration Con n}
 
 private theorem mem_candidates_fill (s : Wordlist.Root) (t : Theme) (b h : Bool) :
     Candidate.fill b h ∈ candidates ⟨s, t⟩ ↔ s = .palatal ∨ b = true := by
@@ -275,7 +275,7 @@ theorem language_eq (hr : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r.
       ((wellFormed_je_iff s _ hm).2 rfl) (mt (wellFormed_je_iff s k hk).1 hne)⟩
 
 -- The two comparisons of `language_eq` are all that a ranking's language depends on.
-theorem typology_iff {r' : Ranking Con n}
+theorem typology_iff {r' : Ranking.Enumeration Con n}
     (hr : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r.Dominates i j)
     (hr' : ∀ i ∈ wellFormedness, ∀ j ∉ wellFormedness, r'.Dominates i j) :
     system.typology r r' ↔ (r.Dominates .noShare .depBack ↔ r'.Dominates .noShare .depBack) ∧
@@ -318,7 +318,7 @@ inductive Group where
   deriving DecidableEq, Fintype, Repr
 
 /-- The hierarchies (17), (21) and (29) of the three groups. -/
-def Group.ranking : Group → Ranking Con 8
+def Group.ranking : Group → Ranking Con
   | .ov => .ofList (hierarchy .noShare .depNonhigh .depBack)
   | .ovEv => .ofList (hierarchy .depBack .depNonhigh .noShare)
   | .uv => .ofList (hierarchy .depNonhigh .noShare .depBack)
@@ -347,7 +347,7 @@ private theorem con_high_lt_con_mid (c : Context) (b : Bool) :
 /-- No ranking of the paper's constraints gives a mid vowel, since a high vowel with the same
 backness violates each of them at most as often and DEP[−high] less often. So (31a)–(31d) do not
 follow from them. -/
-theorem fill_false_notMem_language (r : Ranking PaperCon n) (c : Context) (b : Bool) :
+theorem fill_false_notMem_language (r : Ranking.Enumeration PaperCon n) (c : Context) (b : Bool) :
     Candidate.fill b false ∉ paperSystem.language r c := fun h ↦ by
   have hm := Tableau.optimal_subset h
   have hc : Candidate.fill b true ∈ candidates c := by
@@ -356,7 +356,8 @@ theorem fill_false_notMem_language (r : Ranking PaperCon n) (c : Context) (b : B
   exact Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 (con_high_lt_con_mid c b)) h
 
 -- (11): with MAX last, [v] wins before /-a-/ and ties with [u] before /-je-/.
-theorem language_of_max_last {r : Ranking PaperCon (n + 1)} (hr : (r (Fin.last n)).1 = .maxNode)
+theorem language_of_max_last {r : Ranking.Enumeration PaperCon (n + 1)} (hr : (r
+    (Fin.last n)).1 = .maxNode)
     (s : Wordlist.Root) :
     paperSystem.language r ⟨s, .a⟩ = {.v} ∧ paperSystem.language r ⟨s, .je⟩ = {.u, .v} := by
   have hm : r (Fin.last n) = ⟨.maxNode, by decide⟩ := Subtype.ext hr
@@ -372,7 +373,8 @@ private theorem con_a_eq_con_je (s : Wordlist.Root) (i : Con) (hi : i ≠ .noClu
 /-- No ranking of constraints without \*CC gives [u] before /-je-/ and a vowel with [v] before
 /-a-/, since [v] before /-a-/ violates them as [u] does before /-je-/, and a filled candidate
 violates them alike in both contexts. -/
-theorem not_alternation {ι : Type*} {e : ι → Con} (he : ∀ i, e i ≠ .noCluster) (r : Ranking ι n)
+theorem not_alternation {ι : Type*} {e : ι → Con} (he : ∀ i, e i ≠ .noCluster)
+    (r : Ranking.Enumeration ι n)
     (s : Wordlist.Root) (b h : Bool) :
     ¬((restrict e).language r ⟨s, .a⟩ = {.fill b h} ∧ (restrict e).language r ⟨s, .je⟩ = {.u}) := by
   rintro ⟨ha, hj⟩

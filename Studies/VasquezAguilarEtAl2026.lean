@@ -269,7 +269,7 @@ theorem wellFormed_noCrossing_cand :
 
 section Derivation
 
-variable {r : Ranking Con 8}
+variable {r : Ranking Con}
 
 -- (15), (16), (17), (19), (21) follow from the arrows of Figure 5 but *GemTap over *μ/C.
 theorem derives_of_required (hr : ∀ p ∈ required, r.Dominates p.1 p.2) :
@@ -301,18 +301,18 @@ end Derivation
 
 /-- No printed tableau decides between *GemTap and *μ/C: a ranking that respects every other arrow
 of Figure 5 but puts *μ/C above *GemTap selects every attested output. -/
-theorem gemTap_unforced : ∃ r : Ranking Con 8, r.Dominates .starMuC .gemTap ∧
+theorem gemTap_unforced : ∃ r : Ranking Con, r.Dominates .starMuC .gemTap ∧
     (Tableau.ofRanking (con.comap cand15) r Finset.univ).optimal = {.a} ∧
     (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ∧
     (Tableau.ofRanking (con.comap cand17) r Finset.univ).optimal = {.a} ∧
     (Tableau.ofRanking (con.comap cand19) r Finset.univ).optimal = {.a} ∧
     (Tableau.ofRanking (con.comap cand21) r Finset.univ).optimal = {.a} :=
-  let r : Ranking Con 8 := .ofList [.starMuIntV, .headedness, .noSharedMora, .crispEdge, .maxIntV,
+  let r : Ranking Con := .ofList [.starMuIntV, .headedness, .noSharedMora, .crispEdge, .maxIntV,
     .starMuC, .gemTap, .onset]
   ⟨r, by decide, derives_of_required (by decide)⟩
 
 /-- A total ranking that respects Figure 5. -/
-def shiwilu : Ranking Con 8 :=
+def shiwilu : Ranking Con :=
   .ofList [.gemTap, .starMuIntV, .headedness, .noSharedMora, .crispEdge, .maxIntV, .onset,
     .starMuC]
 
@@ -322,12 +322,12 @@ theorem shiwilu_respects : ∀ p ∈ figure5, shiwilu.Dominates p.1 p.2 := by de
 /-! ### The syllabification of the tap -/
 
 /-- The reranking of (22), with HEADEDNESS-σ over ONSET over *μ/INTV. -/
-def tapOnset₁ : Ranking Con 8 :=
+def tapOnset₁ : Ranking Con :=
   .ofList [.gemTap, .headedness, .noSharedMora, .crispEdge, .maxIntV, .onset, .starMuIntV,
     .starMuC]
 
 /-- The reranking of (23), with *μ/INTV over ONSET over HEADEDNESS-σ. -/
-def tapOnset₂ : Ranking Con 8 :=
+def tapOnset₂ : Ranking Con :=
   .ofList [.gemTap, .starMuIntV, .noSharedMora, .crispEdge, .maxIntV, .onset, .headedness,
     .starMuC]
 
@@ -357,7 +357,7 @@ theorem con_cand16 : ∀ i x, con i (cand16 x) = if i = violated x then 1 else 0
 interior vowel's syllable has no mora, as in Piuma Paiwan and Northwest Mari, or the interior
 vowel bears the mora; each outcome wins exactly when the one constraint it violates is ranked
 below the two the others violate (25). -/
-theorem typology (r : Ranking Con 8) (x : C16) :
+theorem typology (r : Ranking Con) (x : C16) :
     (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {x} ↔
       ∀ y, y ≠ x → r.Dominates (violated y) (violated x) := by
   have key (p q : Prop) [Decidable p] [Decidable q] :
@@ -371,7 +371,7 @@ theorem typology (r : Ranking Con 8) (x : C16) :
   · exact ⟨_, ⟨violated_injective.ne hy, rfl⟩, fun j ⟨_, hj⟩ ↦ hj ▸ h⟩
 
 -- (25b): the consonant geminates exactly when HEADEDNESS-σ and *μ/INTV both dominate *μ/C.
-theorem gemination_iff (r : Ranking Con 8) :
+theorem gemination_iff (r : Ranking Con) :
     (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ↔
       r.Dominates .headedness .starMuC ∧ r.Dominates .starMuIntV .starMuC := by
   rw [typology]

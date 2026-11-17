@@ -238,14 +238,16 @@ def IsHGRealizable [Fintype ι] (P : RealizationProblem Input Output ι) : Prop 
 
 /-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, the sole
     winner of the input's tableau under `σ`. -/
-def realizedByRanking (P : RealizationProblem Input Output ι) (σ : Ranking ι n) : Prop :=
+def realizedByRanking (P : RealizationProblem Input Output ι)
+    (σ : Ranking.Enumeration ι n) : Prop :=
   ∀ i ∈ P.inputs, P.toConstraintSystem.PicksAt σ i (P.target i)
 
 /-- A problem is OT-realizable when some constraint ranking realizes its target. -/
 def IsOTRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
-  ∃ σ : Ranking (Fin n) n, P.realizedByRanking σ
+  ∃ σ : Ranking.Enumeration (Fin n) n, P.realizedByRanking σ
 
-instance [DecidableEq Output] (P : RealizationProblem Input Output ι) (σ : Ranking ι n) :
+instance [DecidableEq Output] (P : RealizationProblem Input Output ι)
+    (σ : Ranking.Enumeration ι n) :
     Decidable (P.realizedByRanking σ) := by
   unfold realizedByRanking; infer_instance
 
@@ -269,7 +271,7 @@ theorem mem_ercs {P : RealizationProblem Input Output ι} {α : ERC ι} :
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
     satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output ι}
-    {σ : Ranking ι n}
+    {σ : Ranking.Enumeration ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by
@@ -286,7 +288,7 @@ def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar (Fin n) n :=
 /-- Provided no competitor ties the target's violation profile, the rankings of a problem's
     grammar are those that realize its target. -/
 theorem mem_extent_grammar {P : RealizationProblem Input Output (Fin n)}
-    {σ : Ranking (Fin n) n}
+    {σ : Ranking.Enumeration (Fin n) n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     σ ∈ P.grammar.extent ↔ P.realizedByRanking σ :=
@@ -307,7 +309,7 @@ end RealizationProblem
     separated weights read off the ranking, with the largest violation count as the separation
     bound. -/
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
-    (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking ι n) :
+    (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking.Enumeration ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
   set M := (X.sup fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o))) + 1
   have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.con k (i, o) ≤ M := fun i hi o ho k ↦
@@ -378,10 +380,10 @@ namespace RealizationProblem
 
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
     realizes it. Since consistent extensions always exist
-    (`Ranking.exists_isLinearExtension`), this is never vacuous. -/
+    (`Ranking.Enumeration.exists_isLinearExtension`), this is never vacuous. -/
 def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     (r : Fin n → Fin n → Prop) : Prop :=
-  ∀ σ : Ranking (Fin n) n, σ.IsLinearExtension r → P.realizedByRanking σ
+  ∀ σ : Ranking.Enumeration (Fin n) n, σ.IsLinearExtension r → P.realizedByRanking σ
 
 /-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
@@ -408,7 +410,7 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
   obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
-  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension (n := n) r
+  obtain ⟨σ, hσ⟩ := Ranking.Enumeration.exists_isLinearExtension (n := n) r
   exact ⟨σ, hreal σ hσ⟩
 
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
@@ -416,7 +418,7 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
     (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
   obtain ⟨σ, hσ⟩ := h
   exact ⟨σ.toRel, inferInstance,
-    fun τ hτ ↦ Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
+    fun τ hτ ↦ Ranking.Enumeration.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
 /-- Under categorical realizability, OT and partial orders coincide; the
     partial order's advantage is probabilistic, the uniform measure on its linear extensions. -/

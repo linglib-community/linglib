@@ -203,10 +203,11 @@ def tone : ConstraintSet (NonemptyInterval ℕ) ToneConstraint
   | .alignR => alignR t
 
 /-- The column order of Tables 7 and 14. -/
-def toneRanking : Ranking ToneConstraint 4 := Ranking.ofList [.alignL, .nonFin, .culm, .alignR]
+def toneRanking : Ranking.Enumeration ToneConstraint 4 := Ranking.Enumeration.ofList
+    [.alignL, .nonFin, .culm, .alignR]
 
 /-- The tone-domain tableau of a phrase under a ranking of (4)–(7). -/
-def toneTableau (r : Ranking ToneConstraint 4) : Tableau (NonemptyInterval ℕ) 4 :=
+def toneTableau (r : Ranking.Enumeration ToneConstraint 4) : Tableau (NonemptyInterval ℕ) 4 :=
   .ofRanking (tone t) r (domains t)
 
 /-- The extent of the predicted domain is the number of syllables it takes in after the phrase
@@ -218,7 +219,7 @@ def extent : ℕ :=
 /-- The predicted domain runs from the phrase head over `extent t` further syllables. -/
 def toneDomain : NonemptyInterval ℕ := ⟨(head t, head t + extent t), Nat.le_add_right _ _⟩
 
-variable {t} {r : Ranking ToneConstraint 4} {d d' : NonemptyInterval ℕ}
+variable {t} {r : Ranking.Enumeration ToneConstraint 4} {d d' : NonemptyInterval ℕ}
 
 theorem alignL_eq_zero_iff (hμ : ∀ i < syllableCount t, 0 < moras t i)
     (hd : d ∈ domains t) : alignL t d = 0 ↔ d.fst = head t := by

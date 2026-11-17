@@ -77,7 +77,7 @@ the first morph is a single vowel and the second morph is not, and both where ea
 single vowel. -/
 theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') (hb : c.beforeKind.isSome)
-    (r : Ranking (Option Prominence) 5) :
+    (r : Ranking (Option Prominence)) :
     (tableau c r).optimal =
       if c.leftBody = [] then if c.rightBody = [] then {.first, .second} else {.second}
       else {.first} := by
@@ -103,13 +103,13 @@ theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound 
 
 /-- Two final-vowel suffixes after a root, as in (10): the first is a vowel, a consonant and a
 vowel, and its last vowel elides under every ranking. -/
-example (r : Ranking (Option Prominence) 5) :
+example (r : Ranking (Option Prominence)) :
     (tableau { schematic .suffixSuffix with beforeKind := some .root } r).optimal = {.first} :=
   optimal_of_bound_after rfl rfl rfl r
 
 /-- The vowel of the applicative before a final vowel after a root, as in (11): each morph is a
 single vowel, and both elisions are optimal under every ranking. -/
-example (r : Ranking (Option Prominence) 5) :
+example (r : Ranking (Option Prominence)) :
     (tableau { schematic .suffixSuffix with
       leftBody := [], rightBody := [], beforeKind := some .root } r).optimal =
         {.first, .second} :=

@@ -375,13 +375,15 @@ instance : DecidableRel phrase := fun a b ↦ by unfold phrase; cases b <;> exac
 /-- The order a diagram generates: `a` is above `b` when edges lead from `a` down to `b`. -/
 abbrev Above (R : Con → Con → Prop) [DecidableRel R] (a b : Con) : Prop := b ∈ below R a
 
-example : (Ranking.ofList [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora,
+example : (Ranking.Enumeration.ofList
+    [Con.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora,
     .max, .identLength, .onset]).IsLinearExtension word := by decide
 
-example : (Ranking.ofList [Con.ftBin, .onset, .identLength, .max, .identStress, .distZero,
+example : (Ranking.Enumeration.ofList
+    [Con.ftBin, .onset, .identLength, .max, .identStress, .distZero,
     .alignR, .maxMora, .complexCoda]).IsLinearExtension phrase := by decide
 
-variable {σ : Ranking Con 9}
+variable {σ : Ranking Con}
 
 /-! ### Candidates
 
@@ -538,7 +540,7 @@ def marks : ConstraintSet String Con :=
   fun k c ↦ violations (read t.segs t.input) stem (read t.segs c) k
 
 /-- The tableau under a ranking. -/
-def tableau (σ : Ranking Con 9) : Tableau String 9 :=
+def tableau (σ : Ranking Con) : Tableau String 9 :=
   .ofRanking t.marks σ t.candidates.toFinset
 
 /-- The grammar of the tableau: the rankings under which its winner is optimal. -/
@@ -771,7 +773,7 @@ theorem ofRel_phrase_le : .ofRel phrase ≤ phraseGrammar :=
   le_inf (holds_phrase _ (by decide +kernel)).ofRel_le (holds_phrase _ (by decide +kernel)).ofRel_le
 
 /-- A ranking of the Word-level constraints with ALIGN-RIGHT last. -/
-def alignRLast : Ranking Con 9 :=
+def alignRLast : Ranking Con :=
   .ofList [.distZero, .identStress, .ftBin, .complexCoda, .maxMora, .max, .identLength, .onset,
     .alignR]
 

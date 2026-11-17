@@ -220,12 +220,12 @@ theorem phrase_le (x : Input) (c : Candidate) :
 /-! ### English -/
 
 /-- English with Align-R over PRIORITY, (41a) and (42a). -/
-def alignFirst : Ranking Con 6 :=
-  Ranking.ofList [.initFaith, .headedness, .phrase, .alignR, .priority, .word]
+def alignFirst : Ranking Con :=
+  Ranking.Enumeration.ofList [.initFaith, .headedness, .phrase, .alignR, .priority, .word]
 
 /-- English with PRIORITY over Align-R, (41b) and (42b). -/
-def priorityFirst : Ranking Con 6 :=
-  Ranking.ofList [.initFaith, .headedness, .phrase, .priority, .alignR, .word]
+def priorityFirst : Ranking Con :=
+  Ranking.Enumeration.ofList [.initFaith, .headedness, .phrase, .priority, .alignR, .word]
 
 /-- A phrase-final function word takes its strong form, and an object pronoun inside the verb its
 weak form ((18), (25)). -/
@@ -269,7 +269,7 @@ private theorem medial_le_final :
 
 /-- Under every ranking of standard Match Theory, enclisis in *Kim 's leaving* implies enclisis in
 *Kim 's* ((43)–(46)). -/
-theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
+theorem matchTheory_enclitic_final_of_medial (r : Ranking Con)
     (h : Form.enclitic ∈ (matchTheory.language r kimIsLeaving).image (·.form)) :
     Form.enclitic ∈ (matchTheory.language r kimIs).image (·.form) := by
   obtain ⟨c, hc, hce⟩ := Finset.mem_image.1 h
@@ -281,7 +281,7 @@ theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
 /-- Existential correspondence draws the line: under `priorityFirst` an enclitic wins in
 *Kim 's leaving* and none in *Kim 's*, against the implication exact Match obeys. -/
 theorem correspondence_not_enclitic_final_of_medial :
-    ¬ ∀ r : Ranking Con 6,
+    ¬ ∀ r : Ranking Con,
       Form.enclitic ∈ (correspondence.language r kimIsLeaving).image (·.form) →
         Form.enclitic ∈ (correspondence.language r kimIs).image (·.form) := fun h ↦ by
   simpa [language_kimIs priorityFirst (by simp)] using

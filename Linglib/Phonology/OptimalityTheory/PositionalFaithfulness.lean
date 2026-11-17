@@ -117,7 +117,7 @@ theorem positionalMax_le_iff (hc : del c = {k}) (hd : del d = {k'}) :
 variable [DecidableEq C] {n : ℕ} {cands : Finset C}
 
 theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c ≠ d)
-    (hc : del c = {k}) (hd : del d = {k'}) (r : Ranking ι n) :
+    (hc : del c = {k}) (hd : del d = {k'}) (r : Ranking.Enumeration ι n) :
     (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c} ↔
       ∃ i, P i k' ∧ ¬ P i k ∧ ∀ j, P j k → ¬ P j k' → r.Dominates i j := by
   rw [Tableau.optimal_eq_singleton_iff_pair hcand hne,
@@ -129,14 +129,14 @@ theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c
 /-- Of two single deletions, the one whose position fewer constraints protect is the sole winner
 under every ranking. -/
 theorem optimal_eq_singleton_positionalMax_of_ssubset (hcand : cands = {c, d}) (hc : del c = {k})
-    (hd : del d = {k'}) (h : {i | P i k} ⊂ {i | P i k'}) (r : Ranking ι n) :
+    (hd : del d = {k'}) (h : {i | P i k} ⊂ {i | P i k'}) (r : Ranking.Enumeration ι n) :
     (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c} :=
   Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [hcand]) fun e he hne ↦ by
     obtain rfl : e = d := by simpa [hcand, hne] using he
     exact (positionalMax_lt_iff hc hd).2 h
 
 theorem optimal_eq_pair_positionalMax_iff (hcand : cands = {c, d}) (hc : del c = {k})
-    (hd : del d = {k'}) (r : Ranking ι n) :
+    (hd : del d = {k'}) (r : Ranking.Enumeration ι n) :
     (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c, d} ↔
       {i | P i k} = {i | P i k'} := by
   rw [Tableau.ofRanking_optimal_eq_pair_iff hcand, Set.ext_iff]
@@ -151,7 +151,7 @@ omit [DecidableEq C] in
 /-- Among deletions of one position each, one is optimal under some ranking exactly when the
 constraints protecting its position are minimal among the sets protecting each. -/
 theorem exists_mem_optimal_positionalMax_iff {pos : C → ℕ} :
-    (∃ r : Ranking ι n,
+    (∃ r : Ranking.Enumeration ι n,
         c ∈ (Tableau.ofRanking (positionalMax P fun d ↦ {pos d}) r cands).optimal) ↔
       MinimalFor (· ∈ cands) (fun d ↦ {i | P i (pos d)}) c := by
   rw [Tableau.exists_mem_ofRanking_optimal_iff_minimalFor hn fun d _ i ↦ by
@@ -161,7 +161,8 @@ theorem exists_mem_optimal_positionalMax_iff {pos : C → ℕ} :
 
 theorem exists_optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d})
     (hne : c ≠ d) (hc : del c = {k}) (hd : del d = {k'}) :
-    (∃ r : Ranking ι n, (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c}) ↔
+    (∃ r : Ranking.Enumeration ι n, (Tableau.ofRanking (positionalMax P del) r cands).optimal =
+        {c}) ↔
       ¬ {i | P i k'} ⊆ {i | P i k} := by
   rw [Tableau.exists_ofRanking_optimal_eq_singleton_iff_pair hn hcand hne, Set.not_subset]
   simp only [positionalMax_lt_positionalMax_iff hc hd]

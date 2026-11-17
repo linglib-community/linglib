@@ -358,7 +358,7 @@ def summary : Finset (Con × Con) :=
 
 /-- The winners under `σ` for a derived word bearing `rel`, with base `base` and input `input`,
 among the accentings of its segments `w`. -/
-def eval {n : ℕ} (σ : Ranking Con n) (base input w : List Char) (rel : OORelation) :
+def eval {n : ℕ} (σ : Ranking.Enumeration Con n) (base input w : List Char) (rel : OORelation) :
     Finset (List Char) :=
   (Tableau.ofLabels (derivation base input) (accentings w) (recursive (List.ofFn fun p ↦ (σ p).eval)
     rel)).optimal
@@ -386,7 +386,7 @@ theorem Con.atBase_derivation (c : Con) (rel : OORelation) {b i d d' : List Char
     (c.eval rel).atBase (derivation b i d) = (c.eval rel).atBase (derivation b i d') := by
   cases c <;> rfl
 
-theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) (rel : OORelation) :
+theorem eval_eq {n : ℕ} (σ : Ranking.Enumeration Con n) (b i w : List Char) (rel : OORelation) :
     eval σ b i w rel =
       (Tableau.ofList (accentings w) (List.ofFn fun p ↦ (σ p).violations rel b i)).optimal := by
   rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
@@ -396,7 +396,7 @@ theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) (rel : OORela
   exact Con.atBase_derivation _ _
 
 /-- A ranking extending (24) with ¬OO_Dom-MAX(Ac) over IO-MAX(Ac) and CULMIN. -/
-def grammar : Ranking Con 8 :=
+def grammar : Ranking Con :=
   .ofList [.antiDomMax, .domMax, .recMax, .antiRecMax, .ioMax, .ioDep, .alignR, .culmin]
 
 theorem grammar_extends_summary : ∀ p ∈ summary, grammar.Dominates p.1 p.2 := by decide
@@ -452,7 +452,7 @@ theorem rows : ∀ x ∈ Wordlist.analyses, ∀ u ∈ x.underlying,
 /-- **(24) does not derive (23).** A ranking consistent with every ranking (24) draws, with
 IO-MAX(Ac) over ¬OO_Dom-MAX(Ac), keeps the base accent, *kóobe-kko*. -/
 theorem summary_mispredicts :
-    ∃ σ : Ranking Con 8, (∀ p ∈ summary, σ.Dominates p.1 p.2) ∧
+    ∃ σ : Ranking Con, (∀ p ∈ summary, σ.Dominates p.1 p.2) ∧
       eval σ (word "kóobe") (word "kóobe+kko") (word "koobe-kko") .dominant = {word "kóobe-kko"} :=
   ⟨.ofList [.ioDep, .ioMax, .culmin, .antiDomMax, .domMax, .recMax, .antiRecMax, .alignR],
     by decide, by rw [eval_eq]; decide +kernel⟩
@@ -507,7 +507,7 @@ def summary : Finset (Con × Con) :=
 
 /-- The winners under `σ` for a word derived by a mutating suffix, with base `base` and input
 `input`, among the tone patterns of its segments `w`. -/
-def eval {n : ℕ} (σ : Ranking Con n) (base input w : List Char) : Finset (List Char) :=
+def eval {n : ℕ} (σ : Ranking.Enumeration Con n) (base input w : List Char) : Finset (List Char) :=
   (Tableau.ofLabels (derivation base input) (tonePatterns w)
     (recursive (List.ofFn fun p ↦ (σ p).eval) .dominant)).optimal
 
@@ -536,7 +536,7 @@ theorem Con.atBase_derivation (c : Con) {b i d d' : List Char} :
       (c.eval .dominant).atBase (derivation b i d') := by
   cases c <;> rfl
 
-theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) :
+theorem eval_eq {n : ℕ} (σ : Ranking.Enumeration Con n) (b i w : List Char) :
     eval σ b i w =
       (Tableau.ofList (tonePatterns w) (List.ofFn fun p ↦ (σ p).violations b i)).optimal := by
   rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
@@ -546,7 +546,7 @@ theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) :
   exact Con.atBase_derivation _
 
 /-- A ranking extending (54) with ¬OO_Dom-NOFLOP(Tone) over IO-NOFLOP(Tone). -/
-def grammar : Ranking Con 8 :=
+def grammar : Ranking Con :=
   .ofList [.alignL, .antiDomNoFlop, .ioNoFlop, .ioNoSpread, .domNoFlop, .domNoSpread,
     .antiRecNoFlop, .starH]
 
@@ -588,7 +588,7 @@ theorem rows : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .d
 /-- **(54) does not derive (52).** A ranking consistent with every ranking (54) draws, with
 IO-NOFLOP(Tone) over ¬OO_Dom-NOFLOP(Tone), keeps the dragging tone, *káál-ə*. -/
 theorem summary_mispredicts :
-    ∃ σ : Ranking Con 8, (∀ p ∈ summary, σ.Dominates p.1 p.2) ∧
+    ∃ σ : Ranking Con, (∀ p ∈ summary, σ.Dominates p.1 p.2) ∧
       eval σ (word "káál") (word "káál+ə") (word "káal-ə") = {word "káál-ə"} :=
   ⟨.ofList [.alignL, .ioNoFlop, .ioNoSpread, .antiDomNoFlop, .domNoFlop, .domNoSpread,
     .antiRecNoFlop, .starH], by decide, by rw [eval_eq]; decide +kernel⟩

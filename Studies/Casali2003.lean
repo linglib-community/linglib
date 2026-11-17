@@ -191,7 +191,7 @@ def system : ConstraintSystem Word Word Con where
     | .maxAtr => fun p ↦ (if p.1.root = s ∧ p.2.root ≠ s then 1 else 0) +
         if p.1.affix = s ∧ p.2.affix ≠ s then 1 else 0
 
-variable {s} {r : Ranking Con 4}
+variable {s} {r : Ranking Con}
 
 private theorem picksAt_iff {w o : Word} : (system s).PicksAt r w o ↔ ∀ o', o' ≠ o →
     ∃ c, (system s).con c (w, o) < (system s).con c (w, o') ∧
@@ -234,7 +234,7 @@ theorem rootControl_iff :
             cases c' <;> first | exact absurd hc' (by decide) | assumption⟩
 
 /-- The ranking of tableaux (21) and (22). -/
-def rootControl : Ranking Con 4 := .ofList [.harmony, .maxRoot, .starAtr, .maxAtr]
+def rootControl : Ranking Con := .ofList [.harmony, .maxRoot, .starAtr, .maxAtr]
 
 -- (21): /du-tI/ surfaces as [duti].
 example : (system true).PicksAt rootControl ⟨true, false⟩ ⟨true, true⟩ := by decide

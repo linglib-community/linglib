@@ -28,7 +28,7 @@ weighting is a homomorphism of the merge monoids into the tropical semiring of c
 
 Profiles are `ViolationProfile n`, whose lexicographic order is harmonic inequality under
 the identity ranking; a ranking reads a profile through the action of
-`OptimalityTheory.Ranking`, as the tableau substrate does. The weighted same-length
+`OptimalityTheory.Ranking.Enumeration`, as the tableau substrate does. The weighted same-length
 transducers of the paper's sections 3 and 4, their intersection, and the complexity bound
 of the H-Opt algorithm are not formalized.
 
@@ -55,12 +55,13 @@ variable {n : ℕ}
 /-- Harmonic inequality (Definition 1) under a ranking: the ranking's reading of `A` is
 lexicographically below that of `B`, so `A` has fewer violations of the highest-ranked
 constraint on which the two differ. -/
-def HarmonicLT (r : Ranking (Fin n) n) (A B : ViolationProfile n) : Prop := r • A < r • B
+def HarmonicLT (r : Ranking.Enumeration (Fin n) n)
+    (A B : ViolationProfile n) : Prop := r • A < r • B
 
-theorem smul_add (r : Ranking (Fin n) n) (A B : ViolationProfile n) :
+theorem smul_add (r : Ranking.Enumeration (Fin n) n) (A B : ViolationProfile n) :
     r • (A + B) = r • A + r • B := rfl
 
-theorem HarmonicLT.add_right {r : Ranking (Fin n) n} {A B : ViolationProfile n}
+theorem HarmonicLT.add_right {r : Ranking.Enumeration (Fin n) n} {A B : ViolationProfile n}
     (h : HarmonicLT r A B) (C : ViolationProfile n) : HarmonicLT r (A + C) (B + C) := by
   unfold HarmonicLT at *
   rw [smul_add, smul_add]
@@ -68,17 +69,17 @@ theorem HarmonicLT.add_right {r : Ranking (Fin n) n} {A B : ViolationProfile n}
 
 /-- A profile is optimal in a set under a ranking when it is minimal in the set for the
 ranking's reading of profiles: no member is more harmonic. -/
-abbrev Optimal (r : Ranking (Fin n) n) (S : Set (ViolationProfile n))
+abbrev Optimal (r : Ranking.Enumeration (Fin n) n) (S : Set (ViolationProfile n))
     (A : ViolationProfile n) : Prop :=
   MinimalFor (· ∈ S) (r • ·) A
 
-theorem Optimal.left_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
+theorem Optimal.left_of_add {r : Ranking.Enumeration (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r S A :=
   minimalFor_iff_forall_lt.2 ⟨hA, fun _ hlt hC ↦
     MinimalFor.not_lt h (Set.add_mem_add hC hB) (HarmonicLT.add_right hlt B)⟩
 
-theorem Optimal.right_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
+theorem Optimal.right_of_add {r : Ranking.Enumeration (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r T B := by
   rw [add_comm S, add_comm A] at h

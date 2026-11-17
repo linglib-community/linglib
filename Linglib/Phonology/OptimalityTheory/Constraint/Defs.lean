@@ -114,7 +114,8 @@ def Constraint.joint (inputs : κ → I) (con : Constraint (I × O)) : Constrain
     con.joint inputs f = ∑ i, con (inputs i, f i) := rfl
 
 /-- A grammar's **constraint set**, CON in [prince-smolensky-1993], is a family of constraints over
-candidates `C` indexed by the constraint names `ι`. An OT grammar ranks it (a `Ranking ι n`), a
+candidates `C` indexed by the constraint names `ι`. An OT grammar ranks it (a `Ranking.Enumeration ι
+n`), a
 Harmonic Grammar weights its violations by a vector `ι → ℝ`, and MaxEnt takes the softmax of the
 resulting harmonies. A constraint set written as a vector `![C₀, …]` is indexed by `Fin n`. -/
 abbrev ConstraintSet (C : Type*) (ι : Type*) := ι → Constraint C

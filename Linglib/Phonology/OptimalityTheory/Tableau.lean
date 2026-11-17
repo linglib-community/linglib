@@ -241,7 +241,7 @@ end Pair
 
 section Constructors
 
-variable {ι : Type*} (con : ConstraintSet C ι) (r : Ranking ι n) (candidates : Finset C)
+variable {ι : Type*} (con : ConstraintSet C ι) (r : Ranking.Enumeration ι n) (candidates : Finset C)
   (ranking : List (Constraint C))
 
 /-- The tableau of a constraint set `con` under a ranking `r`: the constraint at rank position
@@ -371,14 +371,15 @@ theorem ofRanking_mem_optimal_of_forall_le {C' : Type*} {con' : ConstraintSet C'
 
 /-- If some candidate violates none of the constraints a ranking puts above its last, the winners
 are the candidates violating none of them that do best on the last. -/
-theorem ofRanking_optimal_eq_argmin_filter [Fintype ι] [DecidableEq ι] {r : Ranking ι (n + 1)}
+theorem ofRanking_optimal_eq_argmin_filter [Fintype ι] [DecidableEq ι] {r : Ranking.Enumeration ι
+    (n + 1)}
     (h : ∃ c ∈ candidates, ∀ i ≠ r (Fin.last n), con i c = 0) :
     (ofRanking con r candidates).optimal =
       (candidates.filter fun c ↦ ∀ i ≠ r (Fin.last n), con i c = 0).argmin
         (con (r (Fin.last n))) := by
   set j := r (Fin.last n)
   have hr : ∀ i ≠ j, r.Dominates i j := fun i hi ↦ by
-    rw [Ranking.Dominates, Equiv.symm_apply_apply, Fin.lt_last_iff_ne_last]
+    rw [Ranking.Enumeration.Dominates, Equiv.symm_apply_apply, Fin.lt_last_iff_ne_last]
     exact fun h ↦ hi (r.symm_apply_eq.1 h)
   obtain ⟨m, hm, hm0⟩ := h
   ext c
@@ -412,7 +413,8 @@ include hn
 /-- A candidate wins against its only competitor under some ranking iff the competitor does not
 harmonically bound it. -/
 theorem exists_mem_ofRanking_optimal_iff_pair (hcand : candidates = {c, d}) :
-    (∃ r : Ranking ι n, c ∈ (ofRanking con r candidates).optimal) ↔ ¬ (con · d) < (con · c) := by
+    (∃ r : Ranking.Enumeration ι n, c ∈ (ofRanking con r candidates).optimal) ↔ ¬ (con · d) <
+        (con · c) := by
   rw [← Pi.forall_toLex_comp_lt_iff hn, not_forall]
   exact exists_congr fun _ ↦ mem_optimal_iff_pair hcand
 
@@ -420,7 +422,8 @@ theorem exists_mem_ofRanking_optimal_iff_pair (hcand : candidates = {c, d}) :
 constraint prefers it. -/
 theorem exists_ofRanking_optimal_eq_singleton_iff_pair (hcand : candidates = {c, d})
     (hne : c ≠ d) :
-    (∃ r : Ranking ι n, (ofRanking con r candidates).optimal = {c}) ↔ ∃ i, con i c < con i d := by
+    (∃ r : Ranking.Enumeration ι n, (ofRanking con r candidates).optimal = {c}) ↔
+        ∃ i, con i c < con i d := by
   rw [← Pi.exists_toLex_comp_lt_iff hn]
   exact exists_congr fun _ ↦ optimal_eq_singleton_iff_pair hcand hne
 
@@ -429,11 +432,11 @@ omit [DecidableEq C] in
 ranking iff no candidate's violations are a proper part of its own. -/
 theorem exists_mem_ofRanking_optimal_iff_minimalFor
     (h : ∀ d ∈ candidates, ∀ i, con i d ≤ 1) :
-    (∃ r : Ranking ι n, c ∈ (ofRanking con r candidates).optimal) ↔
+    (∃ r : Ranking.Enumeration ι n, c ∈ (ofRanking con r candidates).optimal) ↔
       MinimalFor (· ∈ candidates) (fun d i ↦ con i d) c := by
   refine ⟨fun ⟨r, hr⟩ ↦ ⟨optimal_subset hr, fun d hd hle ↦ by_contra fun hnle ↦ ?_⟩, fun hc ↦ ?_⟩
   · exact ofRanking_notMem_optimal_of_lt hd (lt_of_le_not_ge hle hnle) hr
-  · obtain ⟨σ, hσ⟩ := Ranking.exists_dominates_iff
+  · obtain ⟨σ, hσ⟩ := Ranking.Enumeration.exists_dominates_iff
       (fun i ↦ toLex (con i c, Fintype.equivFinOfCardEq hn i))
       (fun i j hij ↦ (Fintype.equivFinOfCardEq hn).injective (Prod.ext_iff.1 hij).2) hn
     refine ⟨σ, mem_optimal_iff.2 ⟨hc.prop, fun d hd ↦ not_lt.1 fun hlt ↦ ?_⟩⟩

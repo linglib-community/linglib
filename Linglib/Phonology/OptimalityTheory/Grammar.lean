@@ -44,11 +44,11 @@ variable {ι : Type*} {n : ℕ}
 /-- An *Optimality-theoretic grammar* over the constraints `ι`: a formal concept of the satisfaction
 relation between rankings and ERCs. Its extent is the set of its rankings and its intent the set
 of ERCs that all of them satisfy. -/
-abbrev Grammar (ι : Type*) (n : ℕ) := Concept (Ranking ι n) (ERC ι) ERC.SatisfiedBy
+abbrev Grammar (ι : Type*) (n : ℕ) := Concept (Ranking.Enumeration ι n) (ERC ι) ERC.SatisfiedBy
 
 namespace Grammar
 
-variable {E E' : Set (ERC ι)} {σ : Ranking ι n} {G : Grammar ι n}
+variable {E E' : Set (ERC ι)} {σ : Ranking.Enumeration ι n} {G : Grammar ι n}
 
 /-- The grammar presented by a set of ERCs, whose rankings are those satisfying all of them. -/
 abbrev ofERCs (E : Set (ERC ι)) : Grammar ι n := Concept.ofAttributes _ E
@@ -56,7 +56,7 @@ abbrev ofERCs (E : Set (ERC ι)) : Grammar ι n := Concept.ofAttributes _ E
 theorem mem_extent_ofERCs : σ ∈ (ofERCs E).extent ↔ ∀ α ∈ E, α.SatisfiedBy σ := Iff.rfl
 
 theorem coe_linearExtensions [Fintype ι] [DecidableEq ι] (E : Finset (ERC ι)) :
-    ((ERC.linearExtensions E : Finset (Ranking ι n)) : Set (Ranking ι n)) =
+    ((ERC.linearExtensions E : Finset (Ranking.Enumeration ι n)) : Set (Ranking.Enumeration ι n)) =
       (ofERCs (E : Set (ERC ι))).extent := by
   ext σ
   rw [Finset.mem_coe, ERC.mem_linearExtensions, mem_extent_ofERCs]
@@ -64,7 +64,7 @@ theorem coe_linearExtensions [Fintype ι] [DecidableEq ι] (E : Finset (ERC ι))
 
 /-- Two sets of ERCs present the same grammar iff the same rankings satisfy them. -/
 theorem ofERCs_eq_iff : (ofERCs E : Grammar ι n) = ofERCs E' ↔
-    ∀ σ : Ranking ι n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
+    ∀ σ : Ranking.Enumeration ι n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
   Concept.extent_injective.eq_iff.symm.trans Set.ext_iff
 
 /-- Over at least one constraint the bottom grammar has no ranking, since no ranking satisfies
@@ -107,7 +107,7 @@ end Grammar
 section Winner
 
 variable {C : Type*} {con : ConstraintSet C ι} {candidates : Finset C} {w : C}
-  {σ : Ranking ι n}
+  {σ : Ranking.Enumeration ι n}
 
 /-- The grammar of a winner among the candidates of a tableau, presented by its ERC against each
 candidate. -/
@@ -141,7 +141,7 @@ end Winner
 /-- Each class of a typology is the set of rankings of a grammar: the rankings with a given
 language are those satisfying its ERC grammar ([merchant-prince-2022]). -/
 theorem ConstraintSystem.isExtent_setOf_typology {I O ι : Type*} (S : ConstraintSystem I O ι)
-    (r : Ranking ι n) : Order.IsExtent ERC.SatisfiedBy {r' | S.typology r r'} :=
+    (r : Ranking.Enumeration ι n) : Order.IsExtent ERC.SatisfiedBy {r' | S.typology r r'} :=
   ⟨S.ercGrammar r, Set.ext fun _ ↦
     ConstraintSystem.forall_ercGrammar_satisfiedBy_iff.trans eq_comm⟩
 
@@ -152,7 +152,7 @@ them all are the linear extensions of the relation. -/
 
 section Rel
 
-variable [DecidableEq ι] {r : ι → ι → Prop} {σ : Ranking ι n}
+variable [DecidableEq ι] {r : ι → ι → Prop} {σ : Ranking.Enumeration ι n}
 
 /-- The ERCs of a relation: the simple ERC `a ≫ b` for each related pair, which is trivial when
 `a = b`. -/
@@ -192,7 +192,7 @@ omit [DecidableEq ι] in
 constraints, iff every ranking extending the relation satisfies it. -/
 theorem ERC.holds_iff_forall_satisfiedBy [Fintype ι] [ht : IsTrans ι r] [ha : Std.Antisymm r]
     {α : ERC ι} (hn : Fintype.card ι = n := by simp) :
-    α.Holds r ↔ ∀ σ : Ranking ι n, σ.IsLinearExtension r → α.SatisfiedBy σ := by
+    α.Holds r ↔ ∀ σ : Ranking.Enumeration ι n, σ.IsLinearExtension r → α.SatisfiedBy σ := by
   refine ⟨fun h σ hσ ↦ h.satisfiedBy hσ, fun h j hj ↦ ?_⟩
   by_contra hno
   have hup : ∀ {a b : ι}, r a b → (b = j ∨ r b j) → (a = j ∨ r a j) := fun hab hb ↦
@@ -225,7 +225,7 @@ theorem ERC.holds_iff_forall_satisfiedBy [Fintype ι] [ht : IsTrans ι r] [ha : 
           · rfl
           · exact absurd (hup h2 ha') hb
           · exact absurd hb' hb }
-  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension
+  obtain ⟨σ, hσ⟩ := Ranking.Enumeration.exists_isLinearExtension
     (fun a b ↦ a = b ∨ r a b ∨ ((a = j ∨ r a j) ∧ ¬ (b = j ∨ r b j))) hn
   obtain ⟨i, hi, hij⟩ := (ERC.satisfiedBy_iff_holds σ α).1
     (h σ fun a b hab ↦ hσ a b (Or.inr (Or.inl hab))) j hj
@@ -299,21 +299,22 @@ theorem Grammar.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r] {
       (Grammar.mem_extent_ofRel.1 hσ).transGen
 
 theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
-    (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.linearExtensions (n := n) r) := by
+    (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.Enumeration.linearExtensions
+        (n := n) r) := by
   ext σ
-  rw [Grammar.mem_extent_ofRel, Finset.mem_coe, Ranking.mem_linearExtensions]
+  rw [Grammar.mem_extent_ofRel, Finset.mem_coe, Ranking.Enumeration.mem_linearExtensions]
 
 /-- A ranking is the only ranking of the grammar of its own order. -/
-theorem Grammar.extent_ofRel_toRel (σ : Ranking ι n) :
+theorem Grammar.extent_ofRel_toRel (σ : Ranking.Enumeration ι n) :
     (Grammar.ofRel σ.toRel).extent = {σ} := by
   ext τ
-  rw [Grammar.mem_extent_ofRel, Set.mem_singleton_iff, Ranking.IsLinearExtension,
-    Ranking.toRel_le_toRel_iff, eq_comm]
+  rw [Grammar.mem_extent_ofRel, Set.mem_singleton_iff, Ranking.Enumeration.IsLinearExtension,
+    Ranking.Enumeration.toRel_le_toRel_iff, eq_comm]
 
 /-- The grammar of a partial order has a ranking. -/
 theorem Grammar.extent_ofRel_nonempty [Fintype ι] (r : ι → ι → Prop) [IsPartialOrder ι r]
     (hn : Fintype.card ι = n := by simp) : (Grammar.ofRel r : Grammar ι n).extent.Nonempty :=
-  (Ranking.exists_isLinearExtension r hn).imp fun _ ↦ Grammar.mem_extent_ofRel.2
+  (Ranking.Enumeration.exists_isLinearExtension r hn).imp fun _ ↦ Grammar.mem_extent_ofRel.2
 
 private theorem forall_isFeasible_ofRel_iff [Fintype ι]
     (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)
@@ -321,7 +322,7 @@ private theorem forall_isFeasible_ofRel_iff [Fintype ι]
     (∀ α ∈ ERC.ofRel r, ERC.IsFeasible n {α} (S : Set ι)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
   obtain ⟨σ, hσ⟩ := h
-  have hsat : ∀ α ∈ ERC.ofRel r, ∃ σ : Ranking ι n, ERC.SatisfiedBy σ α :=
+  have hsat : ∀ α ∈ ERC.ofRel r, ∃ σ : Ranking.Enumeration ι n, ERC.SatisfiedBy σ α :=
     fun α hα ↦ ⟨σ, hσ hα⟩
   refine ⟨fun h a b hrel hbS ↦ ?_, fun h α hα ↦ ?_⟩
   · rcases eq_or_ne a b with rfl | hab

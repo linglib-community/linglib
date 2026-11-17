@@ -272,7 +272,7 @@ private theorem con_erdesz_lt_iff (i : Con) :
 
 /-- A ranking of Vago's constraints under which erdő-ész deletes its first vowel ranks \*VV above
 MAX on long vowels and above MAX LEX, since that vowel is long and in a root. -/
-theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
+theorem starVV_dominates_of_erdesz {r : Ranking Con}
     (h : {.first} ∈
       (Tableau.ofRanking (con erdesz) r {∅, {.first}, {.second}, {.first, .second}}).optimal) :
     r.Dominates .starVV .maxLong ∧ r.Dominates .starVV .maxLex := by
@@ -288,7 +288,7 @@ theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
 
 /-- The reranking (8b) as a ranking of all five constraints, with the two that Table 2 does not
 print placed below it. -/
-def v1Deletion : Ranking Con 5 :=
+def v1Deletion : Ranking Con :=
   .ofList (Wordlist.Hierarchy.v1Deletion.order ++ [.maxLong, .maxMS])
 
 -- The premise of `starVV_dominates_of_erdesz` holds of the reranking (8b).

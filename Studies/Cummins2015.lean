@@ -201,19 +201,19 @@ def atLeast22 : Context := { lo := some 22 }
 def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 
 -- Table 3.1, Table 3.3
-theorem atLeast22_optimal (r : Ranking (Fin 3) 3) :
+theorem atLeast22_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (toy atLeast22) r {moreThan 21, moreThan 20}).optimal =
       if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
   revert r; decide
 
 -- Table 3.2, Table 3.3
-theorem atLeast22Primed_optimal (r : Ranking (Fin 3) 3) :
+theorem atLeast22Primed_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (toy atLeast22Primed) r {moreThan 21, moreThan 20}).optimal =
       if r.Dominates 1 0 ∧ r.Dominates 1 2 then {moreThan 20} else {moreThan 21} := by
   revert r; decide
 
 /-- Priming over salience over informativeness, the last ranking of Table 3.3. -/
-def primingFirst : Ranking (Fin 3) 3 := Equiv.swap 0 2
+def primingFirst : Ranking (Fin 3) := Equiv.swap 0 2
 
 theorem primingFirst_optimal :
     (Tableau.ofRanking (toy atLeast22) primingFirst {moreThan 21, moreThan 20}).optimal =
@@ -247,7 +247,7 @@ def approx (s : Situation) : ConstraintSet Candidate (Fin 3) := ![s.info, nsal, 
 
 -- Table 3.4
 theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
-    (r : Ranking (Fin 3) 3) {cands : Finset Candidate} (hc : bare n ∈ cands) :
+    (r : Ranking (Fin 3)) {cands : Finset Candidate} (hc : bare n ∈ cands) :
     bare m ∉ (Tableau.ofRanking (approx (.exact n)) r cands).optimal := by
   have hne : m ≠ n := ne_of_apply_ne roundness hmn.ne
   refine Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 1, ?_⟩)
@@ -263,25 +263,25 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
     have := roundness_le_four n; omega
 
 -- Table 3.5
-theorem exact51_optimal (r : Ranking (Fin 3) 3) :
+theorem exact51_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (approx (.exact 51)) r {bare 50, bare 51}).optimal =
       if r.Dominates 0 1 then {bare 51} else {bare 50} := by
   revert r; decide
 
 -- Table 3.6
-theorem exact100_optimal (r : Ranking (Fin 3) 3) :
+theorem exact100_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (approx (.exact 100)) r {bare 100, exactly 100, about 100, about 99}).optimal
       = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
   revert r; decide
 
 -- Table 3.7
-theorem about100_optimal (r : Ranking (Fin 3) 3) :
+theorem about100_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (approx (.about 100)) r {bare 100, about 100}).optimal =
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
 
 -- Table 3.8
-theorem exact99_optimal (r : Ranking (Fin 3) 3) :
+theorem exact99_optimal (r : Ranking (Fin 3)) :
     (Tableau.ofRanking (approx (.exact 99)) r {bare 99, exactly 99, bare 100, about 100}).optimal
       = if r.Dominates 0 1 then {bare 99}
         else if r.Dominates 2 0 then {bare 100} else {about 100} := by
@@ -359,12 +359,12 @@ theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
     simp [corrOn, corr, table3_10, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
       Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
 
-theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
+theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
     (Tableau.ofRanking (corrOn (correctionContext n .moreThan n) n) r Correction.all).optimal =
       if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
   rw [corrOn_moreThan hn]; revert r; decide +kernel
 
-theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
+theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
     (Tableau.ofRanking (corrOn (correctionContext n .atLeast (n - 1)) n) r
       Correction.all).optimal =
       if r.Dominates 1 0 ∨ r.Dominates 2 0 then {.moreThan} else {.atLeast} := by
@@ -372,7 +372,7 @@ theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)
 
 /-! ### The hearer, and the implicature of *more than n* (§3.4, §5.3, §5.4) -/
 
-theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3) 3) :
+theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3)) :
     about 100 ∉ (Tableau.ofRanking (approx (.exact 100)) r {bare 100, about 100}).optimal := by
   revert r; decide
 
@@ -388,7 +388,7 @@ instance (ctx : Context) (n m : ℕ) : Decidable (StrongerAlternative ctx n m) :
 -- [cummins-sauerland-solt-2012]
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral ≠ some n)
-    (r : Ranking (Fin 6) 6) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
+    (r : Ranking (Fin 6)) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
     moreThan n ∉ (Tableau.ofRanking (con ctx) r cands).optimal := by
   obtain ⟨hnm, hsal, hgran⟩ := halt
   refine Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 0, ?_⟩)
@@ -418,7 +418,7 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
 -- §5.4
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
-    (r : Ranking (Fin 6) 6) :
+    (r : Ranking (Fin 6)) :
     (Tableau.ofRanking (con ctx) r {moreThan n, moreThan m}).optimal = {moreThan n} ↔
       r.Dominates 4 0 ∧ (roundness n < roundness m → r.Dominates 4 3) := by
   obtain ⟨hnm, hsal, hgran⟩ := halt

@@ -270,7 +270,7 @@ def eq30 : Candidate eq30Input := .input _
 
 /-- Eq. (30) ranking: `stdRanking` plus `*M◁L` above *TAUTDOCK — the inversion that
     licenses tautomorphemic docking (30c). -/
-def eq30Ranking : List (Constraint (Candidate eq30Input)) :=
+def eq30Ranking.Enumeration : List (Constraint (Candidate eq30Input)) :=
   haveTone :: starMlessL :: starFloatBlock ++
     [ starCrowd 2, starTautDock,
       maxTone TRN.H, starFall, depLinkTone TRN.H,
@@ -278,7 +278,7 @@ def eq30Ranking : List (Constraint (Candidate eq30Input)) :=
 
 def derivationLR : HSDerivation (Candidate eq30Input) where
   gen := Candidate.gen
-  ranking := eq30Ranking
+  ranking := eq30Ranking.Enumeration
 
 /-- Attested `[kǎk ìlí]`: H-kāk docks onto its own TBU, making an MH contour. -/
 def attestedForm : Candidate eq30Input := eq30.insertLink 1 0

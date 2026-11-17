@@ -130,7 +130,7 @@ def Requires (hi lo : List Con) (i j : Con) : Prop :=
 instance (hi lo : List Con) : DecidableRel (Requires hi lo) := fun _ _ ↦
   inferInstanceAs (Decidable (_ ∨ _))
 
-variable {r : Ranking Con 7}
+variable {r : Ranking Con}
 
 /-- **A stressless function word is not a prosodic word**: under every ranking with Headedness
 undominated, the structure in which the function word is a prosodic word loses to the free
@@ -172,19 +172,19 @@ quantifies over. -/
 
 /-- A ranking of the English hierarchy in its revised form (42), the alignment of lexical words
 over Nonrecursivity over the alignment of prosodic words and Exhaustivity. -/
-def english : Ranking Con 7 :=
+def english : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .nonRec, .pwdConL, .pwdConR, .exh]
 
 /-- A ranking of the first Serbo-Croatian dialect of (47). -/
-def ns1 : Ranking Con 7 :=
+def ns1 : Ranking Con :=
   .ofList [.headedness, .nonRec, .exh, .wdConL, .wdConR, .pwdConL, .pwdConR]
 
 /-- A ranking of the second Serbo-Croatian dialect of (47). -/
-def ns2 : Ranking Con 7 :=
+def ns2 : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .pwdConL, .pwdConR, .nonRec, .exh]
 
 /-- A ranking of the third Serbo-Croatian dialect of (47). -/
-def ns3 : Ranking Con 7 :=
+def ns3 : Ranking Con :=
   .ofList [.headedness, .wdConL, .wdConR, .exh, .nonRec, .pwdConL, .pwdConR]
 
 -- (36), (42)

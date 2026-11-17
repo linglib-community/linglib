@@ -135,7 +135,7 @@ theorem IsPerfect.restrictors_eq_zero {fc : Word} (h : IsPerfect fc) :
 
 /-- A perfect candidate is optimal under every ranking of the restrictors. -/
 theorem isPerfect_mem_optimal {cands : Finset Word} {fc : Word} (hc : fc ∈ cands)
-    (h : IsPerfect fc) (r : Ranking (Fin 3) 3) :
+    (h : IsPerfect fc) (r : Ranking (Fin 3)) :
     fc ∈ (Tableau.ofRanking restrictors r cands).optimal :=
   Tableau.ofRanking_zero_mem_optimal hc h.restrictors_eq_zero
 
@@ -143,7 +143,7 @@ theorem isPerfect_mem_optimal {cands : Finset Word} {fc : Word} (hc : fc ∈ can
 whatever their ranking. -/
 theorem isPerfect_of_mem_optimal {cands : Finset Word} {fc₀ fc : Word} (hc₀ : fc₀ ∈ cands)
     (h₀ : IsPerfect fc₀) (hfc : fc ≠ []) (hpos : ∀ s ∈ fc.strays, s ≠ 0)
-    (r : Ranking (Fin 3) 3) (hc : fc ∈ (Tableau.ofRanking restrictors r cands).optimal) :
+    (r : Ranking (Fin 3)) (hc : fc ∈ (Tableau.ofRanking restrictors r cands).optimal) :
     IsPerfect fc := by
   have hzero := Tableau.ofRanking_eq_zero_of_mem_optimal hc hc₀ h₀.restrictors_eq_zero
   exact (isPerfect_iff hpos).2 ⟨hfc, hzero 0, hzero 1, hzero 2⟩

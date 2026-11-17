@@ -76,11 +76,13 @@ that no competitor harmonically bounds. -/
 def rowGrammar (t : Tableau C n) (w : C) : Grammar (Fin n) n :=
   Grammar.ofERCs ↑(rowERCs t w)
 
-@[simp] theorem mem_rowGrammar_extent {t : Tableau C n} {w : C} {r : Ranking (Fin n) n} :
+@[simp] theorem mem_rowGrammar_extent {t : Tableau C n} {w : C} {r : Ranking.Enumeration
+    (Fin n) n} :
     r ∈ (rowGrammar t w).extent ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α :=
   Grammar.mem_extent_ofERCs
 
-theorem mem_rowGrammar_extent_iff_lex {t : Tableau C n} {w : C} {r : Ranking (Fin n) n} :
+theorem mem_rowGrammar_extent_iff_lex {t : Tableau C n} {w : C} {r : Ranking.Enumeration
+    (Fin n) n} :
     r ∈ (rowGrammar t w).extent ↔
       ∀ l ∈ t.candidates.erase w,
         r • t.profile w ≤ r • t.profile l := by
@@ -102,26 +104,26 @@ section GMOAT
 
 universe u
 
-variable {ι : Type u} {n : ℕ} (π : Setoid (Ranking ι n)) (c : ι)
+variable {ι : Type u} {n : ℕ} (π : Setoid (Ranking.Enumeration ι n)) (c : ι)
 
 /-- `BorderLT π c r s` holds when the leg `r` ranks `c` immediately above some constraint, `s`
 transposes the two, and `r` and `s` lie in different blocks of `π`, so that `{r, s}` is a border
 point pair (159). Between blocks it is the base relation `≺π.bp.c` of (160). -/
-def BorderLT (r s : Ranking ι n) : Prop :=
+def BorderLT (r s : Ranking.Enumeration ι n) : Prop :=
   ∃ k, ∃ hk : k + 1 < n, r ⟨k, Nat.lt_of_succ_lt hk⟩ = c ∧ s = r.swapAt k hk ∧ ¬ π r s
 
 /-- `PrefixSwap c r s` holds when `s` transposes two adjacent constraints that `r` ranks below
 `c`. These pairs generate the base relation `≡π.bp.c` of (161). -/
-def PrefixSwap (r s : Ranking ι n) : Prop :=
+def PrefixSwap (r s : Ranking.Enumeration ι n) : Prop :=
   ∃ k, ∃ hk : k + 1 < n, (r.symm c).val < k ∧ s = r.swapAt k hk
 
 /-- The GEPO equivalence `~π.bp.c` of (163) joins the blocks of `π` across transpositions below
 `c`. -/
-def gepoRel : Setoid (Ranking ι n) := π ⊔ Relation.EqvGen.setoid (PrefixSwap c)
+def gepoRel : Setoid (Ranking.Enumeration ι n) := π ⊔ Relation.EqvGen.setoid (PrefixSwap c)
 
 /-- The hypertransitive closure `<π.htc.bp.c` of (152) and (169) closes the base relation under
 composition and under the GEPO equivalence on either side. -/
-def HtcLT : Ranking ι n → Ranking ι n → Prop :=
+def HtcLT : Ranking.Enumeration ι n → Ranking.Enumeration ι n → Prop :=
   Relation.TransGen fun r s ↦ ∃ μ ν, gepoRel π c r μ ∧ BorderLT π c μ ν ∧ gepoRel π c ν s
 
 /-- The GMOAT of a partition is **acyclic** (definitions (277) and (278)) when for every
@@ -131,7 +133,7 @@ def IsAcyclic : Prop := ∀ c r, ¬ HtcLT π c r r
 
 /-- A function on legs **instantiates** the GEPO of `c` when it is constant on GEPO-equivalent
 legs and increases strictly across the base relation. -/
-def Instantiates (f : Ranking ι n → ℕ) : Prop :=
+def Instantiates (f : Ranking.Enumeration ι n → ℕ) : Prop :=
   gepoRel π c ≤ Setoid.ker f ∧ ∀ r s, BorderLT π c r s → f r < f s
 
 /-- A partition of the rankings is a **typology** when it is the typology of some OT system over
@@ -142,15 +144,16 @@ variable {π c}
 
 theorem le_gepoRel : π ≤ gepoRel π c := le_sup_left
 
-theorem PrefixSwap.gepoRel {r s : Ranking ι n} (h : PrefixSwap c r s) : gepoRel π c r s :=
+theorem PrefixSwap.gepoRel {r s : Ranking.Enumeration ι n}
+    (h : PrefixSwap c r s) : gepoRel π c r s :=
   (le_sup_right : Relation.EqvGen.setoid (PrefixSwap c) ≤ _) (Relation.EqvGen.rel _ _ h)
 
-theorem HtcLT.trans_gepoRel {r s t : Ranking ι n} (h : HtcLT π c r s)
+theorem HtcLT.trans_gepoRel {r s t : Ranking.Enumeration ι n} (h : HtcLT π c r s)
     (hst : gepoRel π c s t) : HtcLT π c r t := by
   obtain ⟨b, hrb, μ, ν, hbμ, hμν, hνs⟩ := Relation.TransGen.tail'_iff.1 h
   exact Relation.TransGen.tail' hrb ⟨μ, ν, hbμ, hμν, (gepoRel π c).iseqv.trans hνs hst⟩
 
-theorem irreflexive_htcLT_of_forall {κ : Type*} (g : κ → Ranking ι n → ℕ)
+theorem irreflexive_htcLT_of_forall {κ : Type*} (g : κ → Ranking.Enumeration ι n → ℕ)
     (hg : ∀ j, gepoRel π c ≤ Setoid.ker (g j))
     (hle : ∀ r s, BorderLT π c r s → ∀ j, g j r ≤ g j s)
     (hlt : ∀ r s, BorderLT π c r s → ∃ j, g j r < g j s) : ∀ r, ¬ HtcLT π c r r := by
@@ -184,11 +187,13 @@ theorem exists_instantiates_iff [Fintype ι] [DecidableEq ι] :
 
 /-! #### Filtration by instantiating functions -/
 
-private theorem exists_bubble (P : Ranking ι n → Ranking ι n → Prop) (hrefl : ∀ μ, P μ μ)
-    (htrans : ∀ a b d, P a b → P b d → P a d) (c : ι) (k : ℕ) (μ₀ : Ranking ι n)
-    (hstep : ∀ μ : Ranking ι n, ∀ m (hm : m + 1 < n), k ≤ m → μ ⟨m + 1, hm⟩ = c →
+private theorem exists_bubble (P : Ranking.Enumeration ι n → Ranking.Enumeration ι n → Prop)
+    (hrefl : ∀ μ, P μ μ)
+    (htrans : ∀ a b d, P a b → P b d → P a d) (c : ι) (k : ℕ) (μ₀ : Ranking.Enumeration ι n)
+    (hstep : ∀ μ : Ranking.Enumeration ι n, ∀ m (hm : m + 1 < n), k ≤ m → μ ⟨m + 1, hm⟩ = c →
       (∀ j : Fin n, j.val < k → μ j = μ₀ j) → P μ (μ.swapAt m hm)) :
-    ∀ d (μ : Ranking ι n), (μ.symm c).val = k + d → (∀ j : Fin n, j.val < k → μ j = μ₀ j) →
+    ∀ d (μ : Ranking.Enumeration ι n), (μ.symm c).val = k + d → (∀ j : Fin n, j.val < k → μ j =
+        μ₀ j) →
       ∃ μ', (μ'.symm c).val = k ∧ (∀ j : Fin n, j.val < k → μ' j = μ₀ j) ∧ P μ μ' := by
   intro d
   induction d with
@@ -200,12 +205,13 @@ private theorem exists_bubble (P : Ranking ι n → Ranking ι n → Prop) (href
       rw [← μ.apply_symm_apply c]
       exact congrArg μ (Fin.ext (by simp only; omega))
     have hsymm : (μ.swapAt (k + d) hm).symm c = ⟨k + d, Nat.lt_of_succ_lt hm⟩ :=
-      (Equiv.symm_apply_eq _).2 (by rw [Ranking.swapAt_apply_left, hc])
+      (Equiv.symm_apply_eq _).2 (by rw [Ranking.Enumeration.swapAt_apply_left, hc])
     obtain ⟨μ', h₁, h₂, h₃⟩ := ih (μ.swapAt (k + d) hm) (by rw [hsymm])
-      fun j hj ↦ by rw [Ranking.swapAt_apply_of_ne (by omega) (by omega)]; exact hpre j hj
+      fun j hj ↦ by rw [Ranking.Enumeration.swapAt_apply_of_ne (by omega)
+          (by omega)]; exact hpre j hj
     exact ⟨μ', h₁, h₂, htrans _ _ _ (hstep μ (k + d) hm (Nat.le_add_right k d) hc hpre) h₃⟩
 
-private theorem le_symm_apply {l ν : Ranking ι n} {t : ℕ} {c : ι} (ht : t < n)
+private theorem le_symm_apply {l ν : Ranking.Enumeration ι n} {t : ℕ} {c : ι} (ht : t < n)
     (hc : l ⟨t, ht⟩ = c) (hν : ∀ j : Fin n, j.val < t → ν j = l j) : t ≤ (ν.symm c).val := by
   subst hc
   by_contra hlt
@@ -215,7 +221,7 @@ private theorem le_symm_apply {l ν : Ranking ι n} {t : ℕ} {c : ι} (ht : t <
   simp only at this
   omega
 
-private theorem apply_eq_of_lt_succ {l ν : Ranking ι n} {k : ℕ} {c : ι} (hk : k < n)
+private theorem apply_eq_of_lt_succ {l ν : Ranking.Enumeration ι n} {k : ℕ} {c : ι} (hk : k < n)
     (hc : l ⟨k, hk⟩ = c) (hpos : (ν.symm c).val = k) (hν : ∀ j : Fin n, j.val < k → ν j = l j)
     (j : Fin n) (hj : j.val < k + 1) : ν j = l j := by
   rcases Nat.lt_succ_iff_lt_or_eq.1 hj with hj | hj
@@ -223,11 +229,12 @@ private theorem apply_eq_of_lt_succ {l ν : Ranking ι n} {k : ℕ} {c : ι} (hk
   · rw [← (Equiv.symm_apply_eq _).1 (Fin.ext (hpos.trans hj.symm)), ← hc]
     exact congrArg l (Fin.ext hj.symm)
 
-variable {f : ι → Ranking ι n → ℕ}
+variable {f : ι → Ranking.Enumeration ι n → ℕ}
 
-private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Ranking ι n) (k : ℕ)
+private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Ranking.Enumeration ι n)
+    (k : ℕ)
     (hk : k < n) (hc : l ⟨k, hk⟩ = c) :
-    ∀ d t, t + d = n → k < t → ∀ ν : Ranking ι n, (∀ j : Fin n, j.val < t → ν j = l j) →
+    ∀ d t, t + d = n → k < t → ∀ ν : Ranking.Enumeration ι n, (∀ j : Fin n, j.val < t → ν j = l j) →
       f c ν = f c l := by
   intro d
   induction d with
@@ -237,7 +244,7 @@ private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Rankin
   | succ d ih =>
     intro t ht hkt ν hν
     have htn : t < n := by omega
-    have hstep (μ : Ranking ι n) (m : ℕ) (hm : m + 1 < n) (htm : t ≤ m)
+    have hstep (μ : Ranking.Enumeration ι n) (m : ℕ) (hm : m + 1 < n) (htm : t ≤ m)
         (hpre : ∀ j : Fin n, j.val < t → μ j = ν j) : f c μ = f c (μ.swapAt m hm) := by
       refine Setoid.ker_def.1 (hf.1 (PrefixSwap.gepoRel ⟨m, hm, ?_, rfl⟩))
       have : μ.symm c = ⟨k, hk⟩ := (Equiv.symm_apply_eq _).2
@@ -252,8 +259,8 @@ private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Rankin
       (apply_eq_of_lt_succ htn rfl h₁ fun j hj ↦ (h₂ j hj).trans (hν j hj)))
 
 -- (287)
-private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι n) :
-    ∀ k ≤ n, ∀ μ : Ranking ι n,
+private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking.Enumeration ι n) :
+    ∀ k ≤ n, ∀ μ : Ranking.Enumeration ι n,
       (∃ j : Fin n, j.val < k ∧ (∀ j' < j, f (l j') μ = f (l j') l) ∧ f (l j) l < f (l j) μ) ∨
       ((∀ j : Fin n, j.val < k → f (l j) μ = f (l j) l) ∧
         ∃ μ', π μ μ' ∧ ∀ j : Fin n, j.val < k → μ' j = l j) := by
@@ -267,12 +274,12 @@ private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι
     · exact .inl ⟨j, by omega, hpre, hlt⟩
     have hkn : k < n := by omega
     generalize hc : l ⟨k, hkn⟩ = c
-    have hstep (a : Ranking ι n) (m : ℕ) (hm : m + 1 < n) (hcm : a ⟨m + 1, hm⟩ = c) :
+    have hstep (a : Ranking.Enumeration ι n) (m : ℕ) (hm : m + 1 < n) (hcm : a ⟨m + 1, hm⟩ = c) :
         f c (a.swapAt m hm) ≤ f c a ∧ (f c (a.swapAt m hm) = f c a → π a (a.swapAt m hm)) := by
       by_cases hπ : π a (a.swapAt m hm)
       · exact ⟨(Setoid.ker_def.1 ((hf c).1 (le_gepoRel hπ))).ge, fun _ ↦ hπ⟩
-      · have hlt := (hf c).2 _ _ ⟨m, hm, by rw [Ranking.swapAt_apply_left, hcm],
-          Ranking.swapAt_swapAt.symm, fun h ↦ hπ (π.iseqv.symm h)⟩
+      · have hlt := (hf c).2 _ _ ⟨m, hm, by rw [Ranking.Enumeration.swapAt_apply_left, hcm],
+          Ranking.Enumeration.swapAt_swapAt.symm, fun h ↦ hπ (π.iseqv.symm h)⟩
         exact ⟨hlt.le, fun h ↦ absurd h hlt.ne⟩
     obtain ⟨μ'', h₁, h₂, h₃⟩ := exists_bubble
       (fun a b ↦ f c b ≤ f c a ∧ (f c b = f c a → π a b))
@@ -300,8 +307,8 @@ private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι
 
 /-- Under instantiating functions, every leg outside a leg's block has a strictly higher row in that
 leg's rank order (Lemma (287)). -/
-theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι n)
-    {μ : Ranking ι n} (h : ¬ π l μ) :
+theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking.Enumeration ι n)
+    {μ : Ranking.Enumeration ι n} (h : ¬ π l μ) :
     toLex ((fun c ↦ f c l) ∘ l) < toLex ((fun c ↦ f c μ) ∘ l) := by
   rcases filtration hf l n le_rfl μ with ⟨j, -, hpre, hlt⟩ | ⟨-, μ', hμμ', hpre⟩
   · exact ⟨j, fun j' hj' ↦ (hpre j' hj').symm, hlt⟩
@@ -309,7 +316,7 @@ theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking �
     exact absurd (π.iseqv.symm hμμ') h
 
 private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O ι)
-    {r : Ranking ι n} {k : ℕ} (hk : k + 1 < n) {i : I}
+    {r : Ranking.Enumeration ι n} {k : ℕ} (hk : k + 1 < n) {i : I}
     (hne : S.language r i ≠ S.language (r.swapAt k hk) i) :
     ∃ x ∈ S.language r i, ∃ y ∈ S.language (r.swapAt k hk) i,
       (∀ j < (⟨k, by omega⟩ : Fin n), S.con (r j) (i, x) = S.con (r j) (i, y)) ∧
@@ -325,7 +332,8 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
     Finset.ext fun o ↦ by
       rw [ConstraintSystem.mem_language_iff_of_mem hx, ConstraintSystem.mem_language_iff_of_mem hy]
       exact and_congr_right fun _ ↦ forall_congr' fun c ↦ by rw [congrFun he c]
-  have hne' {e : Ranking ι n} {v w : ι → ℕ} (h : v ≠ w) : toLex (v ∘ e) ≠ toLex (w ∘ e) :=
+  have hne' {e : Ranking.Enumeration ι n} {v w : ι → ℕ} (h : v ≠ w) : toLex (v ∘ e) ≠ toLex
+      (w ∘ e) :=
     fun he ↦ h (funext fun c ↦ by simpa using congrFun (toLex.injective he) (e.symm c))
   have hlt : toLex ((fun c ↦ S.con c (i, x)) ∘ r) < toLex ((fun c ↦ S.con c (i, y)) ∘ r) :=
     lt_of_le_of_ne (Tableau.le_of_mem_optimal hx (show y ∈ S.gen i from Tableau.optimal_subset hy))
@@ -343,7 +351,7 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
 -- A partition with a block that is not a grammar is not a typology.
-theorem IsTypology.isExtent_setOf_rel (h : IsTypology π) (r : Ranking ι n) :
+theorem IsTypology.isExtent_setOf_rel (h : IsTypology π) (r : Ranking.Enumeration ι n) :
     Order.IsExtent ERC.SatisfiedBy {r' | π r r'} := by
   obtain ⟨I, O, S, rfl⟩ := h
   exact S.isExtent_setOf_typology r
@@ -352,7 +360,7 @@ theorem IsTypology.isExtent_setOf_rel (h : IsTypology π) (r : Ranking ι n) :
 theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
   obtain ⟨I, O, S, rfl⟩ := h
   intro c
-  let g (i : I) (r : Ranking ι n) : ℕ :=
+  let g (i : I) (r : Ranking.Enumeration ι n) : ℕ :=
     if h : (S.language r i).Nonempty then S.con c (i, h.choose) else 0
   have hg_of_mem {i r o} (ho : o ∈ S.language r i) : g i r = S.con c (i, o) := by
     have hne : (S.language r i).Nonempty := ⟨o, ho⟩
@@ -388,8 +396,9 @@ variable [Fintype ι] [DecidableEq ι]
 
 /-- An instantiated GMOAT is a typology (Theorem (288)). -/
 theorem isTypology_of_instantiates (hf : ∀ c, Instantiates π c (f c)) : IsTypology π := by
-  let S : ConstraintSystem PUnit.{u + 1} (Ranking ι n) ι := ⟨fun _ ↦ Finset.univ, fun c x ↦ f c x.2⟩
-  have hrow : ∀ {μ ν : Ranking ι n}, π μ ν → ∀ c, f c μ = f c ν := fun h c ↦
+  let S : ConstraintSystem PUnit.{u + 1}
+      (Ranking.Enumeration ι n) ι := ⟨fun _ ↦ Finset.univ, fun c x ↦ f c x.2⟩
+  have hrow : ∀ {μ ν : Ranking.Enumeration ι n}, π μ ν → ∀ c, f c μ = f c ν := fun h c ↦
     Setoid.ker_def.1 ((hf c).1 (le_gepoRel h))
   have hmem : ∀ r μ, μ ∈ S.language r PUnit.unit ↔ π r μ := by
     intro r μ
@@ -402,7 +411,7 @@ theorem isTypology_of_instantiates (hf : ∀ c, Instantiates π c (f c)) : IsTyp
       by_cases hrν : π r ν
       · rw [show (fun c ↦ f c ν) = fun c ↦ f c r from funext fun c ↦ (hrow hrν c).symm]
       · exact (toLex_lt_of_not_rel hf r hrν).le
-  refine ⟨PUnit, Ranking ι n, S, Setoid.ext fun r s ↦ ?_⟩
+  refine ⟨PUnit, Ranking.Enumeration ι n, S, Setoid.ext fun r s ↦ ?_⟩
   rw [ConstraintSystem.typology_iff]
   refine ⟨fun h ↦ (hmem r s).1 (h ▸ (hmem s s).2 (π.iseqv.refl s)), fun h ↦ funext fun _ ↦
     Finset.ext fun μ ↦ ?_⟩
@@ -431,16 +440,16 @@ inductive Con
 
 /-- The leg `a ≫ b ≫ c`. -/
 def leg (a b c : Con) (h : [a, b, c].Nodup := by decide) (h' : ∀ x, x ∈ [a, b, c] := by decide) :
-    Ranking Con 3 :=
-  Ranking.ofList [a, b, c] h h'
+    Ranking Con :=
+  Ranking.Enumeration.ofList [a, b, c] h h'
 
 /-- The block `O = {YXZ, XZY, ZYX}` of the partition (164). -/
-def blockO : Finset (Ranking Con 3) := {leg .Y .X .Z, leg .X .Z .Y, leg .Z .Y .X}
+def blockO : Finset (Ranking Con) := {leg .Y .X .Z, leg .X .Z .Y, leg .Z .Y .X}
 
 /-- The partition (164) of the six legs into `O` and `B = {XYZ, ZXY, YZX}`. -/
-def partition164 : Setoid (Ranking Con 3) := Setoid.ker (· ∈ blockO)
+def partition164 : Setoid (Ranking Con) := Setoid.ker (· ∈ blockO)
 
-theorem partition164_iff {r s : Ranking Con 3} : partition164 r s ↔ (r ∈ blockO ↔ s ∈ blockO) :=
+theorem partition164_iff {r s : Ranking Con} : partition164 r s ↔ (r ∈ blockO ↔ s ∈ blockO) :=
   Setoid.ker_def.trans eq_iff_iff
 
 -- (164)
@@ -459,7 +468,7 @@ theorem not_isTypology_partition164 : ¬ IsTypology partition164 :=
   fun h ↦ h.isAcyclic .X _ htcLT_X_cycle
 
 /-- The typology (165) separates `GB`, the legs with `X ≫ Y`, from `GO`, those with `Y ≫ X`. -/
-def typology165 : Setoid (Ranking Con 3) := Setoid.ker fun r ↦ r.Dominates .X .Y
+def typology165 : Setoid (Ranking Con) := Setoid.ker fun r ↦ r.Dominates .X .Y
 
 /-- The rows of the violation tableau (166). -/
 inductive Row
@@ -475,7 +484,7 @@ def uvt166 : ConstraintSystem Unit Row Con where
     | .Y, .gb => 1
     | _, _ => 0
 
-theorem language_uvt166 (r : Ranking Con 3) :
+theorem language_uvt166 (r : Ranking Con) :
     uvt166.language r () = {if r.Dominates .X .Y then .gb else .go} := by
   revert r
   decide +kernel
@@ -483,7 +492,7 @@ theorem language_uvt166 (r : Ranking Con 3) :
 -- (166), (165)
 theorem typology_uvt166 : uvt166.typology = typology165 := by
   refine Setoid.ext fun r s ↦ ?_
-  have key (r : Ranking Con 3) :
+  have key (r : Ranking Con) :
       uvt166.language r = fun _ ↦ {if r.Dominates .X .Y then .gb else .go} :=
     funext fun _ ↦ language_uvt166 r
   show uvt166.language r = uvt166.language s ↔ r.Dominates .X .Y = s.Dominates .X .Y

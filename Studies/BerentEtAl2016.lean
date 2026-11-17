@@ -158,12 +158,12 @@ def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).su
 def con (x : α) (l : Level) : ConstraintSet (Parse α) (Fin 2) := ![ocp, dep (l.input x)]
 
 /-- The competition between XX and XY at a level, under a ranking of the OCP and DEP. -/
-def tableau (x y : α) (l : Level) (r : Ranking (Fin 2) 2) : Tableau (Parse α) 2 :=
+def tableau (x y : α) (l : Level) (r : Ranking (Fin 2)) : Tableau (Parse α) 2 :=
   .ofRanking (con x l) r (candidates x y l)
 
 /-- At the phonological level the control wins under either ranking, because doubling is
 identity within a morpheme, which the OCP bans. -/
-theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
+theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2)) :
     (tableau x y .phonology r).optimal = {.simplex [x, y]} := by
   refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
   simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
@@ -173,7 +173,7 @@ theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
 
 /-- At the morphological level the reduplicative parse wins under either ranking, because it
 escapes the OCP and adds nothing to the base, while the control violates DEP. -/
-theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
+theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2)) :
     (tableau x y .morphology r).optimal = {.reduplicated [x]} := by
   refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
   simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
@@ -235,7 +235,7 @@ end SpokenLanguage
 /-- Doubling is preferred exactly for the meanings the spoken language licenses, in that
 the winner surfaces as XX when the meaning is licensed and as XY otherwise. -/
 theorem exists_optimal_surface_iff [DecidableEq M] (l : SpokenLanguage M) (f : M) (h : x ≠ y)
-    (r : Ranking (Fin 2) 2) :
+    (r : Ranking (Fin 2)) :
     (∃ p ∈ (tableau x y (l.level f) r).optimal, p.surface = [x, x]) ↔ l.Licenses f := by
   unfold SpokenLanguage.level
   split_ifs with hf
@@ -274,7 +274,7 @@ theorem licenses_not_monotone :
       english.Licenses .plural ∧ ¬ hebrew.Licenses .plural := by
   decide
 
-theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2) 2) :
+theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2)) :
     ((∃ p ∈ (tableau x y (english.level f) r).optimal, p.surface = [x, x]) ↔ f = .plural) ∧
       ((∃ p ∈ (tableau x y (hebrew.level f) r).optimal, p.surface = [x, x]) ↔
         f = .diminutive) := by
