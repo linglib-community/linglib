@@ -78,13 +78,8 @@ universe u
 
 namespace CobrerosEtAl2012
 
-open ModalLogic (IsKTBFrame Box Diamond box_T)
-open scoped SetRel
-open scoped ModalLogic Trivalent.Formula
-open Consequence (IsDual MixedConsequence isTrans_mixedConsequence
-  mixedConsequence_insert_insert_iff mixedConsequence_iff_dual mixedConsequence_empty_singleton
-  mixedConsequence_singleton_empty mixedConsequence_singleton_right
-  mixedConsequence_singleton_singleton stdRefl_mixedConsequence_iff)
+open ModalLogic Consequence
+open scoped SetRel Trivalent.Formula
 
 /-! ### T-models -/
 

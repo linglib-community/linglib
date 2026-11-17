@@ -61,10 +61,7 @@ the model sending every atom to `undefined` voids every formula under the Strong
 
 namespace Trivalent
 
-open Trivalent
-
-open Consequence (IsDual MixedConsequence mixedConsequence_iff_dual
-  mixedConsequence_singleton_singleton)
+open Trivalent Consequence
 
 /-- Propositional formulas over an atom type, built by negation, conjunction, disjunction and the
 conditional. -/
