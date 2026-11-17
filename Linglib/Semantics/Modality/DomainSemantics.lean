@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Order.Heyting.Basic
+public import Linglib.Logic.Consequence
 
 /-!
 # Domain semantics
@@ -14,7 +15,8 @@ nonepistemic sentence is accepted by the states that entail it, *must φ* by the
 accept `φ`, and *might φ* by the states with a world verifying `φ` and by the absurd state.
 
 Consequence preserves truth at every index (standard), truth at the diagonal indices, those whose
-world lies in the state (diagonal), or acceptance (informational).
+world lies in the state (diagonal), or acceptance (informational): three notions of satisfaction
+for one language, each giving the consequence relation `Consequence.Entails` of its models.
 
 ## Main definitions
 
@@ -44,6 +46,8 @@ world.
 @[expose] public section
 
 namespace DomainSemantics
+
+open Consequence
 
 variable {W : Type*}
 
@@ -90,27 +94,41 @@ theorem acceptedIn_might_iff : φ.might.AcceptedIn s ↔ s = ∅ ∨ ∃ w ∈ s
 
 end Sentence
 
-/-- Standard consequence preserves truth at every index. -/
-def StandardConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s w, (∀ γ ∈ Γ, γ s w) → φ s w
+/-- Standard consequence preserves truth at every index, an information state paired with a
+world. -/
+def StandardConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
+  Γ ⊨[fun (i : Set W × W) ψ ↦ ψ i.1 i.2] φ
 
-/-- Diagonal consequence preserves truth at the diagonal indices, those whose world lies in the
-information state. -/
-def DiagonalConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s w, w ∈ s → (∀ γ ∈ Γ, γ s w) → φ s w
+/-- Diagonal consequence preserves truth at the diagonal indices, an information state paired
+with one of its worlds. -/
+def DiagonalConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
+  Γ ⊨[fun (i : (s : Set W) × s) ψ ↦ ψ i.1 i.2] φ
 
-/-- Informational consequence preserves acceptance. -/
-def InformationalConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s, (∀ γ ∈ Γ, γ.AcceptedIn s) → φ.AcceptedIn s
+/-- Informational consequence preserves acceptance in an information state. -/
+def InformationalConsequence (Γ : Set (Sentence W)) (φ : Sentence W) : Prop :=
+  Γ ⊨[fun s (ψ : Sentence W) ↦ ψ.AcceptedIn s] φ
 
-variable {Γ : List (Sentence W)} {φ ψ : Sentence W}
+variable {Γ : Set (Sentence W)} {φ ψ : Sentence W}
 
+theorem standardConsequence_iff :
+    StandardConsequence Γ φ ↔ ∀ s w, (∀ γ ∈ Γ, γ s w) → φ s w :=
+  ⟨fun h s w ↦ h (s, w), fun h i ↦ h i.1 i.2⟩
+
+theorem diagonalConsequence_iff :
+    DiagonalConsequence Γ φ ↔ ∀ s, ∀ w ∈ s, (∀ γ ∈ Γ, γ s w) → φ s w :=
+  ⟨fun h s w hw ↦ h ⟨s, w, hw⟩, fun h i ↦ h i.1 i.2 i.2.2⟩
+
+theorem informationalConsequence_iff :
+    InformationalConsequence Γ φ ↔ ∀ s, (∀ γ ∈ Γ, γ.AcceptedIn s) → φ.AcceptedIn s :=
+  .rfl
+
+/-- The diagonal indices are among the indices, so standard consequence is diagonal. -/
 theorem StandardConsequence.diagonalConsequence (h : StandardConsequence Γ φ) :
     DiagonalConsequence Γ φ :=
-  fun s w _ hΓ ↦ h s w hΓ
+  h.comap (fun i ↦ (i.1, i.2)) fun _ _ ↦ .rfl
 
 theorem informationalConsequence_singleton_iff :
-    InformationalConsequence [φ] ψ ↔ ∀ s, φ.AcceptedIn s → ψ.AcceptedIn s := by
-  simp [InformationalConsequence]
+    InformationalConsequence {φ} ψ ↔ ∀ s, φ.AcceptedIn s → ψ.AcceptedIn s := by
+  simp [InformationalConsequence, Entails]
 
 end DomainSemantics
