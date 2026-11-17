@@ -6,48 +6,42 @@ public import Linglib.Semantics.Mereology
 /-!
 # Mereotopology
 
-Mereotopology adds to parthood a relation of connection, which is reflexive, symmetric, and
-monotone along parthood, so that parthood and overlap entail it. Casati and Varzi's ground
-mereotopology, in the form Grimm gives it, uses connection to single out the self-connected
-individuals, which come in one piece, and the clusters, sums of entities transitively connected
-through others of their kind, such as a pile of sand or a swarm of locusts. Grimm lets aggregate
-nouns denote clusters, under external connection for *sand* and proximate connection for *ants*.
-Transitive connection is reachability in the graph of connection between the entities of a
-predicate, so a cluster is the sum of finitely many of them inside one connected component, and
-the clusters of a component are cumulative.
-
-## Main definitions
-
-* `IsConnection C`: the axioms of a connection relation.
-* `SelfConnected C x`: self-connection.
-* `connectionGraph C P`: connection between `P`-entities as a graph, whose reachability is
-  transitive connection.
-* `IsClusterIn C P c`, `IsCluster C P`, `IsMaxCluster C P`: clusters inside a connected
-  component, clusters, and maximal clusters.
-
-## Main results
-
-* `IsConnection.of_le`, `IsConnection.of_overlap`: parthood and overlap entail connection.
-* `isCluster_iff`: a cluster is the sum of a nonempty finite set of `P`-entities any two of which
-  are transitively connected, Grimm's definition.
-* `cum_isClusterIn`: the clusters of a connected component are cumulative.
-* `disjointPred_isMaxCluster`: maximal clusters do not overlap.
+Mereotopology adds to parthood a relation of connection, reflexive, symmetric and monotone along
+parthood, of which [overlap is the least](##Mereology.IsConnection.of_overlap). Connection
+singles out the self-connected individuals, which come in one piece:
+[any two individuals that sum to one are connected](##Mereology.isSelfConnected_iff). Grimm's
+clusters, a pile of sand or a swarm of ants, are sums of entities of a kind transitively
+connected through others of the kind, which is to lie in one component of the kind's connection
+graph. [The clusters of a component are cumulative](##Mereology.cum_isClusterIn), and a sum of
+self-connected individuals transitively connected among themselves
+[is self-connected](##Mereology.IsSelfConnected.of_isLUB).
 
 ## Implementation notes
 
 Connection is reflexive on non-null individuals only, as `Overlap` relates non-null parts: were
-a null individual connected to itself, monotonicity would connect everything. On a carrier
-without a null individual, such as a classical mereology, the axioms are Casati and Varzi's.
+a null individual connected to itself, monotonicity would connect everything. For the same
+reason the two individuals that self-connection quantifies over are non-null; a null one would
+make every self-connected individual connected to it and so to everything. On a carrier without
+a null individual, such as a classical mereology, both are the definitions of the sources.
 Monotonicity is stated in the second argument, which by symmetry is the axiom that whatever is
-connected to a part is connected to the whole. Self-connection keeps Grimm's overlap formulation.
-Strong self-connection, its maximal form, and the strong and external connection relations
-defined from it need an interior operator and are not formalized. The chain that connects two
-members of a cluster may run through `P`-entities outside the cluster, since Grimm's definition
-quantifies over the set the chain runs through.
+connected to a part is connected to the whole. Self-connection keeps Grimm's overlap
+formulation, which over a generalized Boolean algebra is the formulation by sums. The
+relation a cluster is taken under need not be a connection relation, as external connection
+is not reflexive. The chain that connects two members of a cluster may run through
+`P`-entities outside the cluster, since Grimm's definition quantifies over the set the chain
+runs through, so a cluster of self-connected entities need not be self-connected.
+
+## TODO
+
+Internal parts, the interior as their sum, strong self-connection, its maximal form relative
+to a property, and the strong and external connection relations are not formalized. The
+theorems on sums of self-connected individuals are proved over a generalized Boolean algebra
+and not over a classical mereology, where they need the common part of two overlapping
+individuals.
 
 ## References
 
-* [casati-varzi-1999], [grimm-2012]
+* [casati-varzi-1999], [grimm-2012], [grimm-docekal-2021]
 -/
 
 @[expose] public section
@@ -56,7 +50,7 @@ namespace Mereology
 
 variable {α : Type*}
 
-/-! ### Connection and self-connection -/
+/-! ### Connection -/
 
 section Connection
 
@@ -69,7 +63,12 @@ structure IsConnection (C : α → α → Prop) : Prop where
   symm ⦃x y : α⦄ : C x y → C y x
   mono (z : α) : Monotone (C z)
 
-variable {C : α → α → Prop} {x y : α}
+variable {C : α → α → Prop} {x y x' y' : α}
+
+/-- Connection is monotone in both arguments. -/
+theorem IsConnection.mono₂ (hC : IsConnection C) (hx : x ≤ x') (hy : y ≤ y') (h : C x y) :
+    C x' y' :=
+  hC.mono x' hy (hC.symm (hC.mono y hx (hC.symm h)))
 
 /-- Parthood entails connection. -/
 theorem IsConnection.of_le (hC : IsConnection C) (hx : ¬ IsBot x) (h : x ≤ y) : C x y :=
@@ -78,17 +77,17 @@ theorem IsConnection.of_le (hC : IsConnection C) (hx : ¬ IsBot x) (h : x ≤ y)
 /-- Overlap entails connection ([grimm-2012] (8)). -/
 theorem IsConnection.of_overlap (hC : IsConnection C) (h : Overlap x y) : C x y :=
   let ⟨_, hz, hzx, hzy⟩ := h
-  hC.symm (hC.mono y hzx (hC.symm (hC.of_le hz hzy)))
+  hC.mono₂ hzx hzy (hC.refl hz)
 
-variable (C) in
-/-- An individual is self-connected ([grimm-2012] D24) if any two individuals that between them
-overlap exactly what it overlaps are connected. -/
-def SelfConnected (x : α) : Prop :=
-  ∀ y z, (∀ w, Overlap w x ↔ Overlap w y ∨ Overlap w z) → C y z
+/-- Overlap is a connection relation, by `IsConnection.of_overlap` the least one. -/
+theorem isConnection_overlap : IsConnection (Overlap : α → α → Prop) where
+  refl _ h := .refl h
+  symm _ _ h := h.symm
+  mono _ _ _ h ho := ho.mono le_rfl h
 
 end Connection
 
-/-! ### Clusters -/
+/-! ### Transitive connection -/
 
 /-- In the connection graph of `P`, two distinct `P`-entities are adjacent when they are
 connected. Its reachability is transitive connection ([grimm-2012] D32), a chain of `P`-entities
@@ -102,30 +101,116 @@ theorem connectionGraph_reachable {C : α → α → Prop} {P : α → Prop} {a 
   · exact hab ▸ .refl a
   · exact SimpleGraph.Adj.reachable ⟨hab, .inl ⟨ha, hb, h⟩⟩
 
+/-! ### Self-connection -/
+
+section SelfConnected
+
+variable [PartialOrder α] {C : α → α → Prop} {x : α}
+
+variable (C) in
+/-- An individual is self-connected ([grimm-2012] D24) if any two non-null individuals that
+between them overlap exactly what it overlaps are connected. -/
+def IsSelfConnected (x : α) : Prop :=
+  ∀ y z, ¬ IsBot y → ¬ IsBot z → (∀ w, Overlap w x ↔ Overlap w y ∨ Overlap w z) → C y z
+
+/-- An atom is self-connected, as two individuals that cover it both contain it. -/
+theorem Atom.isSelfConnected (hC : IsConnection C) (hx : Atom x) : IsSelfConnected C x := by
+  intro y z hy hz h
+  have key {u : α} : Overlap u x → x ≤ u := fun ⟨p, hp, hpu, hpx⟩ ↦ hx.eq hpx hp ▸ hpu
+  exact hC.of_overlap ⟨x, hx.not_isBot, key ((h y).2 (.inl (.refl hy))),
+    key ((h z).2 (.inr (.refl hz)))⟩
+
+end SelfConnected
+
+section GeneralizedBooleanAlgebra
+
+variable [GeneralizedBooleanAlgebra α] {C : α → α → Prop} {x y z : α}
+
+private theorem eq_of_forall_disjoint_iff (h : ∀ w, Disjoint w x ↔ Disjoint w y) : x = y :=
+  le_antisymm
+    (sdiff_eq_bot_iff.1 (((h _).2 disjoint_sdiff_self_left).eq_bot_of_le sdiff_le))
+    (sdiff_eq_bot_iff.1 (((h _).1 disjoint_sdiff_self_left).eq_bot_of_le sdiff_le))
+
+/-- Two individuals between them overlap exactly what `x` overlaps iff they sum to `x`. -/
+theorem forall_overlap_iff_or : (∀ w, Overlap w x ↔ Overlap w y ∨ Overlap w z) ↔ y ⊔ z = x := by
+  simp only [overlap_iff_not_disjoint, ← not_and_or, not_iff_not, ← disjoint_sup_right]
+  exact ⟨fun h ↦ (eq_of_forall_disjoint_iff h).symm, fun h _ ↦ h ▸ Iff.rfl⟩
+
+/-- An individual is self-connected iff any two non-null individuals that sum to it are
+connected. -/
+theorem isSelfConnected_iff :
+    IsSelfConnected C x ↔ ∀ y z, y ≠ ⊥ → z ≠ ⊥ → y ⊔ z = x → C y z := by
+  simp only [IsSelfConnected, isBot_iff_eq_bot, forall_overlap_iff_or]
+
+/-- The sum of self-connected individuals any two of which are transitively connected through
+others among them is self-connected, as a pile of touching grains comes in one piece. -/
+theorem IsSelfConnected.of_isLUB (hC : IsConnection C) {Z : Set α}
+    (hZ : ∀ z ∈ Z, IsSelfConnected C z)
+    (hR : ∀ a ∈ Z, ∀ b ∈ Z, (connectionGraph C (· ∈ Z)).Reachable a b) (hx : IsLUB Z x) :
+    IsSelfConnected C x := by
+  rw [isSelfConnected_iff]
+  rintro u v hu hv rfl
+  by_contra hCuv
+  have hdich : ∀ z ∈ Z, z ≤ u ∨ z ≤ v := fun z hz ↦ by
+    by_contra! h
+    refine hCuv (hC.mono₂ inf_le_right inf_le_right
+      (isSelfConnected_iff.1 (hZ z hz) (z ⊓ u) (z ⊓ v) (fun h0 ↦ h.2 ?_) (fun h0 ↦ h.1 ?_) ?_))
+    · exact (disjoint_iff.2 h0).left_le_of_le_sup_left (hx.1 hz)
+    · exact (disjoint_iff.2 h0).left_le_of_le_sup_right (hx.1 hz)
+    · rw [← inf_sup_left, inf_eq_left.2 (hx.1 hz)]
+  obtain ⟨a, haZ, hav⟩ : ∃ a ∈ Z, ¬ a ≤ v := by
+    by_contra! h
+    exact hCuv (hC.of_overlap
+      ⟨u, mt isBot_iff_eq_bot.1 hu, le_rfl, le_sup_left.trans (hx.2 h)⟩)
+  obtain ⟨b, hbZ, hbu⟩ : ∃ b ∈ Z, ¬ b ≤ u := by
+    by_contra! h
+    exact hCuv (hC.of_overlap
+      ⟨v, mt isBot_iff_eq_bot.1 hv, le_sup_right.trans (hx.2 h), le_rfl⟩)
+  refine hbu ((SimpleGraph.reachable_iff_reflTransGen _ _).1 (hR a haZ b hbZ) |>.rec
+    ((hdich a haZ).resolve_right hav) fun {c d} _ hcd ih ↦ ?_)
+  obtain ⟨hdZ, hC'⟩ : d ∈ Z ∧ C c d := by
+    rcases hcd.2 with ⟨-, hd, h⟩ | ⟨hd, -, h⟩
+    exacts [⟨hd, h⟩, ⟨hd, hC.symm h⟩]
+  exact (hdich d hdZ).resolve_right fun hdv ↦ hCuv (hC.mono₂ ih hdv hC')
+
+/-- The sum of two connected self-connected individuals is self-connected. -/
+theorem IsSelfConnected.sup (hC : IsConnection C) (hx : IsSelfConnected C x)
+    (hy : IsSelfConnected C y) (hxy : C x y) : IsSelfConnected C (x ⊔ y) := by
+  have h : (connectionGraph C (· ∈ ({x, y} : Set α))).Reachable x y :=
+    connectionGraph_reachable (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl) hxy
+  refine .of_isLUB hC (Z := {x, y}) ?_ ?_ isLUB_pair
+  · rintro z (rfl | rfl) <;> assumption
+  · rintro a (rfl | rfl) b (rfl | rfl)
+    exacts [.refl _, h, h.symm, .refl _]
+
+end GeneralizedBooleanAlgebra
+
+/-! ### Clusters -/
+
 section Cluster
 
 variable [PartialOrder α] (C : α → α → Prop) (P : α → Prop)
 
-/-- A cluster of `P`-entities inside the connected component `c` is the sum of a nonempty finite
-set of `P`-entities of `c`. -/
+/-- A cluster of `P`-entities inside the connected component `c` is the sum of a nonempty set of
+`P`-entities of `c`. -/
 def IsClusterIn (c : (connectionGraph C P).ConnectedComponent) (x : α) : Prop :=
-  ∃ Z : Finset α, Z.Nonempty ∧
-    (∀ z ∈ Z, P z ∧ (connectionGraph C P).connectedComponentMk z = c) ∧ IsLUB (Z : Set α) x
+  ∃ Z : Set α, Z.Nonempty ∧
+    (∀ z ∈ Z, P z ∧ (connectionGraph C P).connectedComponentMk z = c) ∧ IsLUB Z x
 
 /-- A cluster of `P`-entities ([grimm-2012] D33) is a cluster inside some connected component. -/
 def IsCluster (x : α) : Prop := ∃ c, IsClusterIn C P c x
 
-/-- A maximal cluster contains every cluster that overlaps it. -/
+/-- A maximal cluster ([grimm-docekal-2021]) contains every cluster that overlaps it. -/
 def IsMaxCluster (x : α) : Prop :=
   IsCluster C P x ∧ ∀ y, IsCluster C P y → Overlap y x → y ≤ x
 
 variable {C P}
 
-/-- A cluster is the sum of a nonempty finite set of `P`-entities any two of which are
-transitively connected. -/
+/-- A cluster is the sum of a nonempty set of `P`-entities any two of which are transitively
+connected. -/
 theorem isCluster_iff {x : α} :
-    IsCluster C P x ↔ ∃ Z : Finset α, Z.Nonempty ∧ (∀ z ∈ Z, P z) ∧
-      (∀ z ∈ Z, ∀ z' ∈ Z, (connectionGraph C P).Reachable z z') ∧ IsLUB (Z : Set α) x := by
+    IsCluster C P x ↔ ∃ Z : Set α, Z.Nonempty ∧ (∀ z ∈ Z, P z) ∧
+      (∀ z ∈ Z, ∀ z' ∈ Z, (connectionGraph C P).Reachable z z') ∧ IsLUB Z x := by
   constructor
   · rintro ⟨c, Z, hne, hZ, hx⟩
     exact ⟨Z, hne, fun z hz ↦ (hZ z hz).1, fun z hz z' hz' ↦
@@ -144,12 +229,8 @@ end Cluster
 /-- The clusters of a connected component are cumulative. -/
 theorem cum_isClusterIn [SemilatticeSup α] (C : α → α → Prop) (P : α → Prop)
     (c : (connectionGraph C P).ConnectedComponent) : CUM (IsClusterIn C P c) := by
-  classical
   rintro x ⟨Z₁, h₁, hZ₁, hx⟩ y ⟨Z₂, -, hZ₂, hy⟩
-  refine ⟨Z₁ ∪ Z₂, h₁.mono Finset.subset_union_left, fun z hz ↦ ?_, ?_⟩
-  · rcases Finset.mem_union.1 hz with hz | hz
-    exacts [hZ₁ z hz, hZ₂ z hz]
-  · rw [Finset.coe_union]
-    exact hx.union hy
+  exact ⟨Z₁ ∪ Z₂, h₁.mono Set.subset_union_left, fun z hz ↦ hz.elim (hZ₁ z) (hZ₂ z),
+    hx.union hy⟩
 
 end Mereology

@@ -15,13 +15,14 @@ countability from their part structure: a mixed drink is a mereological sum of i
 standing in a fixed ratio of measures (`Recipe`, `RatioHolds`), one of which — the shot of liquor or
 espresso, the MEASURED PART — supplies the unit of individuation, and the whole is a connected
 liquid, self-connected in the mereotopological sense of Casati and Varzi and of Grimm under a
-connection relation `C` (`ConnectedLiquid`, `Mereology.SelfConnected`). The denotation
+connection relation `C` (`ConnectedLiquid`, `Mereology.IsSelfConnected`). The denotation
 `mixedDrinkDen` packages Moon's final formula as the existence of a `MixedDrinkWitness`.
 
 Two consequences carry the countability argument. The sum of two spatially separate drinks is not a
-connected liquid, so the denotation is not cumulative (`not_mixedDrinkDen_of_not_selfConnected`), a
-mereotopological route to non-cumulativity that a bare semilattice lacks, where it comes only from
-quantization (`connectivity_breaks_cum`). And a mixed drink has proper parts, so it is not a
+connected liquid, so the denotation is not cumulative
+(`not_mixedDrinkDen_of_not_isSelfConnected`), a mereotopological route to non-cumulativity that a
+bare semilattice lacks, where it comes only from quantization (`connectivity_breaks_cum`). And a
+mixed drink has proper parts, so it is not a
 mereological atom (`mixedDrink_not_atom`), and the atomicity on which count theories found
 countability excludes it (`atomsOf_excludes_mixed_drinks`), while half a drink with its ratios
 preserved is still a drink, so the denotation is not quantized either (`mixedDrink_not_qua`). Mixed
@@ -73,20 +74,20 @@ inductive Phase where
 /-- A connected liquid (Moon's definition (23), without its temporal parameter) is
 self-connected with every part liquid. -/
 def ConnectedLiquid [PartialOrder α] (C : α → α → Prop) (phase : α → Phase) (x : α) : Prop :=
-  SelfConnected C x ∧ ∀ y ≤ x, phase y = .liquid
+  IsSelfConnected C x ∧ ∀ y ≤ x, phase y = .liquid
 
-theorem ConnectedLiquid.selfConnected [PartialOrder α] {C : α → α → Prop} {phase : α → Phase}
-    {x : α} (h : ConnectedLiquid C phase x) : SelfConnected C x :=
+theorem ConnectedLiquid.isSelfConnected [PartialOrder α] {C : α → α → Prop} {phase : α → Phase}
+    {x : α} (h : ConnectedLiquid C phase x) : IsSelfConnected C x :=
   h.1
 
 variable [SemilatticeSup α] {C : α → α → Prop} {P : α → Prop}
 
-theorem connectivity_breaks_cum (hConn : ∀ x, P x → SelfConnected C x) {x y : α} (hx : P x)
-    (hy : P y) (hDisc : ¬ SelfConnected C (x ⊔ y)) : ¬ CUM P :=
+theorem connectivity_breaks_cum (hConn : ∀ x, P x → IsSelfConnected C x) {x y : α} (hx : P x)
+    (hy : P y) (hDisc : ¬ IsSelfConnected C (x ⊔ y)) : ¬ CUM P :=
   fun hCum ↦ hDisc (hConn _ (hCum hx hy))
 
-theorem connectivity_middle_ground (hConn : ∀ x, P x → SelfConnected C x) {a b : α}
-    (ha : P a) (hb : P b) (hDisc : ¬ SelfConnected C (a ⊔ b)) {x y : α} (hx : P x) (hy : P y)
+theorem connectivity_middle_ground (hConn : ∀ x, P x → IsSelfConnected C x) {a b : α}
+    (ha : P a) (hb : P b) (hDisc : ¬ IsSelfConnected C (a ⊔ b)) {x y : α} (hx : P x) (hy : P y)
     (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
   ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
 
@@ -138,13 +139,13 @@ def mixedDrinkDen (C : α → α → Prop) (recipe : Recipe α K n) (μ : α →
 
 variable {C : α → α → Prop} {recipe : Recipe α K n} {μ : α → K} {phase : α → Phase}
 
-theorem selfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe μ phase x) :
-    SelfConnected C x :=
-  hx.some.connected.selfConnected
+theorem isSelfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe μ phase x) :
+    IsSelfConnected C x :=
+  hx.some.connected.isSelfConnected
 
-theorem not_mixedDrinkDen_of_not_selfConnected {x : α} (hDisc : ¬ SelfConnected C x) :
+theorem not_mixedDrinkDen_of_not_isSelfConnected {x : α} (hDisc : ¬ IsSelfConnected C x) :
     ¬ mixedDrinkDen C recipe μ phase x :=
-  fun hx ↦ hDisc (selfConnected_of_mixedDrinkDen hx)
+  fun hx ↦ hDisc (isSelfConnected_of_mixedDrinkDen hx)
 
 theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (i : Fin (n + 2))
     (hExcl : ∀ j ≠ i, ∀ z ≤ y, ¬ recipe.ingredients j z) :
@@ -171,10 +172,10 @@ theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
   fun hQ ↦ hQ hy hx hlt.ne hlt.le
 
 theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen C recipe μ phase a)
-    (hb : mixedDrinkDen C recipe μ phase b) (hDisc : ¬ SelfConnected C (a ⊔ b)) {x y : α}
+    (hb : mixedDrinkDen C recipe μ phase b) (hDisc : ¬ IsSelfConnected C (a ⊔ b)) {x y : α}
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
-  connectivity_middle_ground (fun _ ↦ selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
+  connectivity_middle_ground (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
