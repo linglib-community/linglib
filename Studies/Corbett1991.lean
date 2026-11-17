@@ -30,7 +30,7 @@ public import Linglib.Data.Examples.Languages
 
 A language's genders are its agreement classes, assigned to nouns by ordered rules that read
 meaning or form, never form alone; German diminutives put [a formal rule before the semantic
-one](##German.not_semanticFirst). Hybrid nouns take semantic agreement more readily down the
+one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily down the
 Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu [semantic
 agreement spreads up it stage by stage](##BantuStage.respectsHierarchy). Coordinations resolve
 by ordered rules reading the conjuncts' person, meaning or gender, and Serbo-Croat moves from
