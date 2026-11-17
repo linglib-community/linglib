@@ -56,8 +56,9 @@ the diagram's grammar lies below it.
 
 A candidate is written as the paper prints it and read against the segments of its input, which
 gives the positions it deletes and the vowels it lengthens, and every mark is computed from that
-by the paper's definitions of the constraints; the Phrase-level input of the quantified form is the Word-level winner. A candidate
-therefore also bears the marks of constraints its tableau has no column for. In the printed
+by the paper's definitions of the constraints; the Phrase-level input of the quantified form is
+the Word-level winner. A candidate therefore also bears the marks of constraints its tableau has
+no column for. In the printed
 columns the computed marks are the printed cells, except that MAX counts one segment for the two
 dative candidates that delete /n/, ALIGN-RIGHT marks the nominative candidate ending in *mn* and
 no candidate of the postpositional tableau, IDENT-STRESS does not mark the last candidate of the
