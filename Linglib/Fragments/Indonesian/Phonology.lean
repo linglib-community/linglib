@@ -146,11 +146,11 @@ theorem subset_ind : (consonants ∪ vowels).erase y ⊆ Inventories.Indonesian.
 
 /-- The segments that a preceding nasal assimilates to, which are the obstruents. The glottal
 `h` is not consonantal. -/
-def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
+def trigger : Segment := [+consonantal, −sonorant]
 
 /-- The sonorant consonants, [+sonorant, −syllabic], which are the nasals, liquids and
 glides. -/
-def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabic, false)]
+def sonorantConsonant : Segment := [+sonorant, −syllabic]
 
 /-! ### Nasal assimilation -/
 

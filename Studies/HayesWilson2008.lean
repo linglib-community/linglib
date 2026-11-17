@@ -99,8 +99,8 @@ def chart : Feature → List Seg × List Seg
   | _ => ([], [])
 
 /-- The feature specification of a segment is read off the chart. -/
-def spec (x : Seg) : Segment := fun f ↦
-  if x ∈ (chart f).1 then Flat.some true else if x ∈ (chart f).2 then Flat.some false else ⊥
+def spec (x : Seg) : Segment := ⟨fun f ↦
+  if x ∈ (chart f).1 then some true else if x ∈ (chart f).2 then some false else none⟩
 
 /-- `ofChar` reads the segment written by one IPA letter. -/
 def ofChar : Char → Option Seg
@@ -158,14 +158,14 @@ def Cx.prefixMatch (spec : α → Segment) : Cx → List (Option α) → Bool
 def Cx.violations (spec : α → Segment) (c : Cx) (form : List α) : ℕ :=
   ((none :: form.map some ++ [none]).tails.filter (c.prefixMatch spec)).length
 
-/-- `M l` is the natural class `[αF, βG, …]` of the specifications `l`. -/
-def M (l : List (Feature × Bool)) : Matrix := .cls (Segment.ofSpecs l)
+/-- `M d` is the natural class `[αF, βG, …]` of the feature matrix `d`. -/
+def M (d : Segment) : Matrix := .cls d
 
-/-- `M' l` is the complement class `[^αF, βG, …]` of the specifications `l`. -/
-def M' (l : List (Feature × Bool)) : Matrix := .compl (Segment.ofSpecs l)
+/-- `M' d` is the complement class `[^αF, βG, …]` of the feature matrix `d`. -/
+def M' (d : Segment) : Matrix := .compl d
 
 /-- The empty matrix `[ ]` matches any segment. -/
-def any : Matrix := .cls (Segment.ofSpecs [])
+def any : Matrix := .cls ⊥
 
 /-! ### Score, maxent value, and probability (§3.2) -/
 
@@ -203,12 +203,12 @@ inductive CV
 
 /-- `C` is `[−syllabic]`, `V` is `[+syllabic]` (footnote 7). -/
 def CV.spec : CV → Segment
-  | .C => Segment.ofSpecs [(.syllabic, false)]
-  | .V => Segment.ofSpecs [(.syllabic, true)]
+  | .C => [−syllabic]
+  | .V => [+syllabic]
 
 /-- Table 1 has the constraints `*#V` and `*C#`. -/
 def table1 : Fin 2 → Cx :=
-  ![[.boundary, M [(.syllabic, true)]], [M [(.syllabic, false)], .boundary]]
+  ![[.boundary, M [+syllabic]], [M [−syllabic], .boundary]]
 
 /-- The weights of Table 1 are written in hundredths. -/
 def table1W : Fin 2 → ℕ := ![300, 200]
@@ -323,30 +323,30 @@ end Learning
 
 /-- Table 4 lists 23 constraints in the order they were learned. -/
 def table4 : Fin 23 → Cx := ![
-  [M [(.sonorant, true), (.dorsal, true)]],
-  [M [(.continuant, true), (.voice, true), (.anterior, false)]],
-  [M' [(.voice, false), (.anterior, true), (.strident, true)], M [(.approximant, false)]],
-  [any, M [(.continuant, true)]],
-  [any, M [(.voice, true)]],
-  [M [(.sonorant, true)], any],
-  [M [(.strident, false)], M [(.consonantal, true)]],
-  [any, M [(.strident, true)]],
-  [M [(.labial, true)], M' [(.approximant, true), (.coronal, true)]],
-  [M [(.anterior, false)], M' [(.approximant, true), (.anterior, false)]],
-  [M [(.continuant, true), (.voice, true)], any],
-  [M [(.continuant, false), (.anterior, false)], any],
-  [any, M [(.back, false)]],
-  [M [(.anterior, true), (.strident, true)], M [(.anterior, false)]],
-  [M [(.spreadGlottis, true)], M' [(.back, true)]],
-  [M [(.continuant, true), (.voice, true), (.coronal, true)]],
-  [M [(.voice, true)], M' [(.approximant, true), (.coronal, true)]],
-  [M [(.continuant, true), (.strident, false)], M' [(.approximant, true), (.anterior, false)]],
-  [any, M' [(.continuant, false), (.voice, false), (.labial, true)], M [(.consonantal, true)]],
-  [any, M [(.coronal, true)], M' [(.approximant, true), (.anterior, false)]],
-  [M [(.continuant, true), (.strident, false)]],
-  [M [(.strident, true)], M [(.anterior, false)]],
-  [M [(.continuant, false), (.voice, false), (.coronal, true)],
-    M' [(.approximant, true), (.anterior, false)]]]
+  [M [+sonorant, +dorsal]],
+  [M [+continuant, +voice, −anterior]],
+  [M' [−voice, +anterior, +strident], M [−approximant]],
+  [any, M [+continuant]],
+  [any, M [+voice]],
+  [M [+sonorant], any],
+  [M [−strident], M [+consonantal]],
+  [any, M [+strident]],
+  [M [+labial], M' [+approximant, +coronal]],
+  [M [−anterior], M' [+approximant, −anterior]],
+  [M [+continuant, +voice], any],
+  [M [−continuant, −anterior], any],
+  [any, M [−back]],
+  [M [+anterior, +strident], M [−anterior]],
+  [M [+spreadGlottis], M' [+back]],
+  [M [+continuant, +voice, +coronal]],
+  [M [+voice], M' [+approximant, +coronal]],
+  [M [+continuant, −strident], M' [+approximant, −anterior]],
+  [any, M' [−continuant, −voice, +labial], M [+consonantal]],
+  [any, M [+coronal], M' [+approximant, −anterior]],
+  [M [+continuant, −strident]],
+  [M [+strident], M [−anterior]],
+  [M [−continuant, −voice, +coronal],
+    M' [+approximant, −anterior]]]
 
 /-- The weights of Table 4 are written in hundredths. -/
 def table4W : Fin 23 → ℕ :=

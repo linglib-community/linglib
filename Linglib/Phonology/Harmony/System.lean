@@ -166,9 +166,10 @@ def mk' (feature : Feature) (IsTarget IsTransparent : Segment → Prop) [Decidab
         else .participating
       direction := direction }
   IsTarget := IsTarget
-  write v s := Function.update s feature (some v)
+  write v s := s.setFeature feature v
   value_write _ _ _ := Function.update_self ..
-  write_value _ _ _ h := h ▸ Function.update_eq_self ..
+  write_value v s _ h := Segment.ext <| by
+    rw [Segment.setFeature, ← show s.val feature = some v from h]; exact Function.update_eq_self ..
   default := default
 
 /-! ### Fixed points and image -/

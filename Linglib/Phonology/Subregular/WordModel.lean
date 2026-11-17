@@ -8,7 +8,6 @@ public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Tactic.FinCases
 public import Linglib.Core.Computability.Edge
-public import Linglib.Core.Order.Flat
 
 /-!
 # Word models
@@ -36,7 +35,7 @@ factor stands for a natural class.
 
 * A labelling is a function `ℓ : β → Set P` passed to `WordModel`, the labels each symbol
   carries: `({·})` in the conventional model, where a symbol is its own one label, and
-  `WordModel.featureValues` for words of segments. A homomorphism may add labels, so its
+  the feature values of a segment for words of segments. A homomorphism may add labels, so its
   condition on symbols is `ℓ a ⊆ ℓ b`.
 * An ordering is a relation on the positions passed to `WordModel`, so precedence is
   `WordModel ℓ w (· < ·)` and successor `WordModel ℓ (anchor w) (· ⋖ ·)`. Rogers and Lambert's word
@@ -292,43 +291,6 @@ theorem factors_eq_iff_subseqSet {k : ℕ} :
   · exact (diagram_occurs_iff hs).1 (h.symm.subset ((diagram_occurs_iff hs).2 hsw))
 
 end Precedence
-
-/-! ### Feature-labelled models
-
-A position may carry several properties, the values of features, as in Chandlee, Eyraud,
-Heinz, Jardine and Rawski's unconventional models. A word of partial valuations `ι → Flat V`,
-such as a word of segments, has a unary relation for each feature value, holding at the
-positions with that value, so a position never has two values of one feature and may have none.
-Under precedence the diagram of such a word occurs exactly in the words with a subsequence lying
-above it position by position, and a natural class is a one-position factor. -/
-
-section Features
-
-variable {ι V : Type*}
-
-/-- The labels of a partial valuation, such as a segment: the values it gives its features. -/
-def featureValues (s : ι → Flat V) : Set (ι × V) := {p | s p.1 = p.2}
-
-theorem featureValues_subset_featureValues_iff {s t : ι → Flat V} :
-    featureValues s ⊆ featureValues t ↔ s ≤ t := by
-  refine ⟨fun h i ↦ ?_, fun h p hp ↦ Flat.coe_le_iff.1 ((show s p.1 = p.2 from hp) ▸ h p.1)⟩
-  cases hs : s i with
-  | bot => exact bot_le
-  | coe a => exact Flat.coe_le_iff.2 (h (show s (i, a).1 = (i, a).2 from hs))
-
-/-- A partial valuation carries more labels exactly when it lies higher. -/
-def featureValuesEmbedding : (ι → Flat V) ↪o Set (ι × V) :=
-  OrderEmbedding.ofMapLEIff featureValues fun _ _ ↦ featureValues_subset_featureValues_iff
-
-@[simp] theorem coe_featureValuesEmbedding :
-    ⇑(featureValuesEmbedding : (ι → Flat V) ↪o Set (ι × V)) = featureValues := rfl
-
-theorem diagram_occurs_iff_forall₂_le {s w : List (ι → Flat V)} {k : ℕ} (hs : s.length ≤ k) :
-    (diagram featureValues s hs).Occurs (WordModel featureValues w (· < ·)) ↔
-      ∃ t, t <+ w ∧ List.Forall₂ (· ≤ ·) s t := by
-  simp only [diagram_occurs_iff_forall₂, featureValues_subset_featureValues_iff]
-
-end Features
 
 /-! ### Successor -/
 

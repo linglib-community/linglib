@@ -59,11 +59,10 @@ open OptimalityTheory Phonology Prosody Shiwilu
 
 /-- The description of an interior vowel, a non-low central vowel. -/
 def interior : Segment :=
-  .ofSpecs [(.syllabic, true), (.consonantal, false), (.low, false), (.front, false),
-    (.back, false)]
+  [+syllabic, −consonantal, −low, −front, −back]
 
 /-- The interior vowel of Shiwilu is /ɘ/ alone; /i u a/ are peripheral (§3.2). -/
-theorem naturalClass_interior : interior.naturalClass Shiwilu.inventory = {«ɘ»} := by decide
+theorem naturalClass_interior : naturalClass interior Shiwilu.inventory = {«ɘ»} := by decide
 
 /-! ### Candidates and constraints -/
 
@@ -122,7 +121,7 @@ def onset : Constraint Candidate := fun c ↦
 /-- *GEMTAP (20): a violation for each tap with two association lines. -/
 def gemTap : Constraint Candidate := fun c ↦
   (c.form.slots.filter fun i ↦
-    HasAt c.form (·.HasValue .tap true) i ∧ 2 ≤ c.form.lineCount i).card
+    HasAt c.form (· .tap = true) i ∧ 2 ≤ c.form.lineCount i).card
 
 /-- CRISPEDGE(PRWD) (18): a violation for each consonant that two prosodic words dominate. -/
 def crispEdge : Constraint Candidate := fun c ↦

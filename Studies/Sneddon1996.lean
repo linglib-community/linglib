@@ -77,15 +77,15 @@ theorem homorganic_iff_of_mem_rules : ∀ r ∈ rules, ∀ N ∈ r.2, ∀ x ∈ 
 
 /-- The voiceless obstruents. -/
 def voicelessObstruent : Segment :=
-  Segment.ofSpecs [(.consonantal, true), (.sonorant, false), (.voice, false)]
+  [+consonantal, −sonorant, −voice]
 
 theorem substituting_subset :
-    substituting ⊆ voicelessObstruent.naturalClass consonants := by
+    substituting ⊆ naturalClass voicelessObstruent consonants := by
   decide +kernel
 
 -- the voiceless obstruents that are not lost are `c` and the loan fricatives (pp. 9–10)
 theorem voicelessObstruents_sdiff_substituting :
-    voicelessObstruent.naturalClass consonants \ substituting = {c, f, sy, kh} := by
+    naturalClass voicelessObstruent consonants \ substituting = {c, f, sy, kh} := by
   decide +kernel
 
 /-- "The initial sound of the base cannot be predicted from the form of the derived verb"

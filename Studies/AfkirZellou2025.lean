@@ -186,7 +186,7 @@ vowels. -/
 def sonorityWith (o : Ordering) (x : Segment) : ℕ :=
   match Sonority.ofSegment x with
   | .obstruent =>
-    Parker2002.hierarchy o ⟨decide (x.HasValue .continuant true), decide (x.HasValue .voice true)⟩
+    Parker2002.hierarchy o ⟨decide (x .continuant = true), decide (x .voice = true)⟩
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
@@ -202,7 +202,7 @@ theorem coarsens_ofSegment : Sonority.Coarsens Sonority.ofSegment sonority := by
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
 def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
-  ∃ p ∈ r.segments[i]?, Sonority.ofSegment p = .obstruent ∧ ¬ p.HasValue .voice true
+  ∃ p ∈ r.segments[i]?, Sonority.ofSegment p = .obstruent ∧ ¬ p .voice = true
 
 instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) := by
   unfold VoicelessAt; infer_instance

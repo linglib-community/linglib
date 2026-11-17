@@ -345,14 +345,14 @@ namespace Akan
 open _root_.Akan Data.PHOIBLE
 
 /-- A coronal consonant. -/
-def IsCoronal (s : Segment) : Prop := s.HasValue .syllabic false ∧ s.HasValue .coronal true
+def IsCoronal (s : Segment) : Prop := s .syllabic = false ∧ s .coronal = true
 
 /-- A plain velar, which PAL requires to palatalize before a front vowel. -/
 def IsVelar (s : Segment) : Prop :=
-  s.HasValue .syllabic false ∧ s.HasValue .dorsal true ∧ s.HasValue .coronal false
+  s .syllabic = false ∧ s .dorsal = true ∧ s .coronal = false
 
 /-- A front vowel. -/
-def IsFrontVowel (s : Segment) : Prop := s.HasValue .syllabic true ∧ s.HasValue .front true
+def IsFrontVowel (s : Segment) : Prop := s .syllabic = true ∧ s .front = true
 
 instance : DecidablePred IsCoronal := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsVelar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -417,9 +417,10 @@ end Candidate
 IDENT(−cor) constraint is violated by a [−coronal] segment whose correspondent is not [−coronal]. -/
 def con : ConstraintSet Candidate (Fin 4) :=
   ![fun c ↦ ocpCoronal c.surface,
-    fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .base .reduplicant,
+    fun c ↦ c.correspondence.maxViolFeature (fun s : Segment ↦ s .coronal = false) .base
+      .reduplicant,
     fun c ↦ pal c.surface,
-    fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .input .base]
+    fun c ↦ c.correspondence.maxViolFeature (fun s : Segment ↦ s .coronal = false) .input .base]
 
 -- (131)
 theorem con_apply :

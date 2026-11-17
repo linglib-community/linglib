@@ -70,7 +70,7 @@ instance : LinearOrder Sonority := LinearOrder.lift' Sonority.rank (by decide)
 /-- The sonority of a vowel by its height: the low vowels are A, the high vowels I, and the
 others O. -/
 def Sonority.ofVowel (v : Phonology.Segment) : Sonority :=
-  if v.HasValue .low true then .a else if v.HasValue .high true then .i else .o
+  if v .low = true then .a else if v .high = true then .i else .o
 
 -- §2.2
 theorem Sonority.ofVowel_finnish :

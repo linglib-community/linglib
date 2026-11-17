@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.Piecewise
-public import Linglib.Core.Order.Flat
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Segments and features
@@ -17,8 +17,8 @@ the twenty-six of Hayes's charts and the tongue-root features [ATR] and [RTR]. H
 [ATR] but leaves it off his charts, noting that it is unclear whether it is the same feature as
 [tense]; it is a feature of its own here. [long] and [stress], which Hayes also names, are not
 features here: length is a segment on two timing slots, and stress belongs to syllables. A
-segment gives each feature the value `+`, `−` or none, and segments are ordered by specificity,
-with the unspecified segment least and the meet of two segments the description they share.
+segment `s` gives each feature the value `+`, `−` or none (`s f = true`, `s f = false`,
+`s f = none`), as a row of a feature chart does.
 
 The file also names some natural classes by their features. The sonority hierarchy is in
 `Phonology/Segmental/Sonority.lean`, and the theorems about segments in
@@ -127,68 +127,133 @@ end Feature
 
 /-! ### Segments -/
 
-/-- A segment: each feature `+`, `−` or unspecified, ordered by specificity. -/
-abbrev Segment := Feature → Flat Bool
+/-- A segment: each feature `+`, `−` or unspecified. A structure and not the type of functions
+itself, so that the order and the instances of function types do not apply to segments: the
+order on segments is inclusion of feature matrices, and the segments are not enumerated as a
+finite type when a statement about the members of an inventory is decided. -/
+@[ext] structure Segment where
+  /-- The value a segment gives each feature. -/
+  val : Feature → Option Bool
 
-/-- Equality of segments is decidable, as one instance rather than one rebuilt from the
-function type at each use, which keeps instance search within bounds for lists of segments. -/
-instance Segment.instDecidableEq : DecidableEq Segment :=
-  inferInstanceAs (DecidableEq (Feature → Flat Bool))
+namespace Segment
+
+instance : CoeFun Segment fun _ ↦ Feature → Option Bool := ⟨val⟩
+
+@[simp] theorem mk_apply (v : Feature → Option Bool) (f : Feature) : (⟨v⟩ : Segment) f = v f := rfl
+
+/-- Two segments with the same value for every feature are equal. -/
+theorem ext' {s t : Segment} (h : ∀ f, s f = t f) : s = t := Segment.ext (funext h)
+
+instance instDecidableEq : DecidableEq Segment := fun s t ↦
+  decidable_of_iff (s.val = t.val) Segment.ext_iff.symm
+
+variable (s : Segment)
+
+/-- The feature matrix with no values. -/
+instance : Bot Segment := ⟨⟨fun _ ↦ none⟩⟩
+
+instance : Inhabited Segment := ⟨⊥⟩
+
+@[simp] theorem bot_apply (f : Feature) : (⊥ : Segment) f = none := rfl
+
+/-- `d ≤ s` holds when `s` has every value that `d` has: the matrix of `s` includes the matrix
+`d`, as a segment includes the matrices of a rule that applies to it. -/
+instance : LE Segment := ⟨fun d s ↦ ∀ f v, d f = some v → s f = some v⟩
+
+theorem le_def {d s : Segment} : d ≤ s ↔ ∀ f v, d f = some v → s f = some v := Iff.rfl
+
+instance : DecidableLE Segment := fun d s ↦
+  inferInstanceAs (Decidable (∀ f v, d f = some v → s f = some v))
+
+end Segment
+
+/-! ### Feature matrices -/
+
+/-- A feature value in a feature matrix: `+nasal` or `−voice`. -/
+declare_syntax_cat featureValue
+/-- The value `+` of a feature. -/
+syntax "+" ident : featureValue
+/-- The value `−` of a feature. -/
+syntax "−" ident : featureValue
+/-- The value `−` of a feature, written with a hyphen. -/
+syntax "-" ident : featureValue
+
+/-- `[+nasal, −voice]` is the segment with those feature values and no others, the feature
+matrix of a rule or of a natural class. A feature may be named only once. -/
+scoped syntax (name := featureMatrix) "[" featureValue,+ "]" : term
+
+open Lean in
+macro_rules
+  | `([$vs:featureValue,*]) => do
+    let parsed ← vs.getElems.mapM fun v ↦ match v with
+      | `(featureValue| +$f:ident) => pure (f, true)
+      | `(featureValue| −$f:ident) => pure (f, false)
+      | `(featureValue| -$f:ident) => pure (f, false)
+      | _ => Macro.throwUnsupported
+    let mut seen : Array Name := #[]
+    for (f, _) in parsed do
+      if seen.contains f.getId then
+        Macro.throwErrorAt f s!"the feature [{f.getId}] is named twice"
+      seen := seen.push f.getId
+    let body ← parsed.foldrM (fun (f, b) acc ↦ do
+      let feat := mkIdentFrom f (`Phonology.Feature ++ f.getId)
+      let val ← if b then `(true) else `(false)
+      `($(mkCIdent `Phonology.Segment.setFeature) $acc $feat $val))
+      (← `((⊥ : $(mkCIdent `Phonology.Segment))))
+    `($body)
 
 namespace Segment
 
 variable (s : Segment)
 
-/-- `s.HasValue f v` holds when `s` gives `f` the value `v`. -/
-def HasValue (f : Feature) (v : Bool) : Prop := s f = some v
-
-instance (f : Feature) (v : Bool) : Decidable (s.HasValue f v) :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- `s.Unspecified f` holds when `s` gives `f` no value. -/
-def Unspecified (f : Feature) : Prop := s f = none
-
-instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidable (_ = none))
-
-/-- The segment with the values of a list of feature-value pairs, unspecified for the features
-the list omits. -/
-def ofSpecs (specs : List (Feature × Bool)) : Segment := fun f ↦ specs.lookup f
-
 /-! ### Natural classes -/
 
 /-- A segment is syllabic when it is [+syllabic], the nucleus of its syllable, as a vowel, a
 syllabic liquid or a syllabic nasal is. -/
-def IsSyllabic : Prop := s.HasValue .syllabic true
-instance : Decidable s.IsSyllabic := inferInstanceAs (Decidable (s.HasValue _ _))
+def IsSyllabic : Prop := s .syllabic = true
+instance : Decidable s.IsSyllabic := inferInstanceAs (Decidable (_ = _))
 
 /-- A vowel is a [+syllabic, −consonantal] segment, which the syllabic liquids and nasals are not
 ([hayes-2009], Table 4.1 and §4.4.3). -/
-def IsVowel : Prop := s.IsSyllabic ∧ s.HasValue .consonantal false
+def IsVowel : Prop := s.IsSyllabic ∧ s .consonantal = false
 instance : Decidable s.IsVowel := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A consonant is a [+consonantal] segment. -/
-def IsConsonant : Prop := s.HasValue .consonantal true
-instance : Decidable s.IsConsonant := inferInstanceAs (Decidable (s.HasValue _ _))
+def IsConsonant : Prop := s .consonantal = true
+instance : Decidable s.IsConsonant := inferInstanceAs (Decidable (_ = _))
 
 /-- An obstruent is a [−sonorant] segment. -/
-def IsObstruent : Prop := s.HasValue .sonorant false
-instance : Decidable s.IsObstruent := inferInstanceAs (Decidable (s.HasValue _ _))
+def IsObstruent : Prop := s .sonorant = false
+instance : Decidable s.IsObstruent := inferInstanceAs (Decidable (_ = _))
 
 /-- A nasal is a [−approximant, +sonorant] segment. -/
-def IsNasal : Prop := s.HasValue .approximant false ∧ s.HasValue .sonorant true
+def IsNasal : Prop := s .approximant = false ∧ s .sonorant = true
 instance : Decidable s.IsNasal := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A sibilant is a [+strident] segment. -/
-def IsSibilant : Prop := s.HasValue .strident true
-instance : Decidable s.IsSibilant := inferInstanceAs (Decidable (s.HasValue _ _))
+def IsSibilant : Prop := s .strident = true
+instance : Decidable s.IsSibilant := inferInstanceAs (Decidable (_ = _))
 
 /-! ### Changes -/
 
 /-- The segment with feature `f` set to `v`, whatever its value before. -/
-def setFeature (f : Feature) (v : Bool) : Segment := Function.update s f (some v)
+def setFeature (f : Feature) (v : Bool) : Segment := ⟨Function.update s f (some v)⟩
+
+/-- The segment with the values of `d` where it has them and those of `s` elsewhere, as when
+`s` undergoes the change `A → d` of a rule. -/
+protected def or (d s : Segment) : Segment := ⟨fun f ↦ (d f).or (s f)⟩
+
+@[simp] theorem or_apply (d s : Segment) (f : Feature) : d.or s f = (d f).or (s f) := rfl
 
 /-- The segment kept on the features in `C` and unspecified on the rest. -/
-def restrict (C : Finset Feature) (s : Segment) : Segment := C.piecewise s ⊥
+def restrict (C : Finset Feature) (s : Segment) : Segment := ⟨C.piecewise s fun _ ↦ none⟩
+
+/-- The segment with the values of `s` on the features in `C` and those of `t` on the rest, as
+when `t` takes a class of features from `s`. -/
+def piecewise (C : Finset Feature) (s t : Segment) : Segment := ⟨C.piecewise s t⟩
+
+@[simp] theorem coe_piecewise (C : Finset Feature) (s t : Segment) :
+    ⇑(piecewise C s t) = C.piecewise s t := rfl
 
 end Segment
 

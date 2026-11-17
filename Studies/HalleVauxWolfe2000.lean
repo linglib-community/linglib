@@ -151,14 +151,12 @@ theorem place_eq_union :
 
 /-- The labiovelar stop is `[dorsal, labial, +consonantal, −sonorant, −round, −continuant]`. -/
 def kp : Segment :=
-  Segment.ofSpecs [(.dorsal, true), (.labial, true), (.consonantal, true), (.sonorant, false),
-    (.round, false), (.continuant, false)]
+  [+dorsal, +labial, +consonantal, −sonorant, −round, −continuant]
 
 /-- The labialised velar stop is `[dorsal, +consonantal, −sonorant, +round, −continuant]`, with no
 specification for [labial]. -/
 def kw : Segment :=
-  Segment.ofSpecs [(.dorsal, true), (.consonantal, true), (.sonorant, false), (.round, true),
-    (.continuant, false)]
+  [+dorsal, +consonantal, −sonorant, +round, −continuant]
 
 /-- Only the labiovelar is a complex segment. -/
 theorem isComplex_kp : kp.IsComplex := by decide
@@ -171,7 +169,7 @@ variable (src tgt : Segment)
 
 /-- Irish Nasal Place Assimilation spreads the terminal features under Place from `src` onto
 `tgt`, the substrate's `Finset.piecewise` on the Place class. -/
-def placeAssimilation : Segment := (featureClass node Node.place).piecewise src tgt
+def placeAssimilation : Segment := Segment.piecewise (featureClass node Node.place) src tgt
 
 /-- Spreading Place carries the whole Tongue Body class, which Place contains; in the same way
 the Lips and Tongue Blade classes. -/
@@ -182,18 +180,19 @@ theorem placeAssimilation_eqOn_tongueBody :
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was and the
 assimilated nasal is still a nasal, the two classes being disjoint. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
-  Finset.eqOn_piecewise_of_disjoint
+  Finset.eqOn_piecewise_of_disjoint (f := src.val) (g := tgt.val)
     (disjoint_featureClass (a := Node.place) (b := Node.softPalate) ⟨by decide, by decide⟩)
     (by decide : Feature.nasal ∈ featureClass node Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone, the terminal
 feature [dorsal] rather than the Tongue Body node. -/
-def dorsalAssimilation : Segment := ({Feature.dorsal} : Finset Feature).piecewise src tgt
+def dorsalAssimilation : Segment := Segment.piecewise {Feature.dorsal} src tgt
 
 /-- Spreading terminal [dorsal] leaves the target's [back] untouched (44), so the nasals of (44a)
 and (44b) keep their secondary articulation. -/
 theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :=
-  Finset.piecewise_eq_of_notMem _ _ _ (by decide)
+  Finset.piecewise_eq_of_notMem {Feature.dorsal} src.val tgt.val
+    (by decide : Feature.back ∉ ({Feature.dorsal} : Finset Feature))
 
 /-- Spreading the Tongue Body node instead would carry [back] along with [dorsal] (45), the
 prediction of a Place-node analysis of (44) that the data refute. -/
