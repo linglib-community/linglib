@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Indonesian.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
-public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
 public import Linglib.Morphology.Morph
@@ -382,13 +382,13 @@ theorem optimal_ranking_l : optimal ranking ng l prefixKind .root .univ = {.fuse
 
 /-- The constraints of (38) to (40), NASASSIM, IDENT[PHAREXP], CRISPEDGE[PRWD] and UNIFORMITY,
 on the candidates of the prefix nasal before `x` at the left edge of a root. -/
-def typologyCon (x : Segment) : ConstraintSet Outcome (Fin 4) :=
-  ConstraintSet.comap (corr ng x)
-    ![nasAssim, identPharExp, crispEdge [prefixKind, .root], uniformity]
+def typologyCon (x : Segment) (o : Outcome) : Fin 4 → ℕ :=
+  ![nasAssim (corr ng x o), identPharExp (corr ng x o),
+    crispEdge [prefixKind, .root] (corr ng x o), uniformity (corr ng x o)]
 
 /-- The stops of Newman's typology (41) that fuse with the prefix nasal under the ranking `ρ`. -/
 def fusingStops (ρ : Ranking (Fin 4)) : List Segment :=
-  [p, t, k, b, d, g].filter fun x ↦ (Tableau.ofRanking (typologyCon x) ρ .univ).optimal = {.fuse}
+  [p, t, k, b, d, g].filter fun x ↦ ρ.optimal (typologyCon x) .univ = {.fuse}
 
 /-- With NASASSIM undominated, the stops that fuse are none, the voiceless ones or all of them,
 as in Newman's Malay and Kalinga types, never only some of the voiced ones, as in his

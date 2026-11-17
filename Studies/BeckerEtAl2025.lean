@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Grid
-public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Basic
 public import Mathlib.Order.Interval.Finset.Nat
@@ -13,7 +13,7 @@ Becker, Franchetto, Kuikuro, Kuikuro and Petrović analyze Kuikuro prosody with 
 optimality-theoretic grammars. Words are footed into iambs from left to right with a final
 trochee under *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb, and the last foot heads the word. The High tone of
 a phrase is realized in a domain chosen by Align-L(Δφ,H), NonFin(H) and Culminativity-H over
-Align-R(H), and `toneTableau_optimal` derives the paper's generalization from these
+Align-R(H), and `toneOptimal_eq` derives the paper's generalization from these
 constraints: the domain runs from the primary stress up to the next foot head, so the High
 target can fall up to three syllables after the stress it marks.
 
@@ -195,20 +195,20 @@ inductive ToneConstraint
   | alignL | nonFin | culm | alignR
   deriving DecidableEq, Fintype
 
-/-- The tone-domain constraints (4)–(7). -/
-def tone : ConstraintSet (NonemptyInterval ℕ) ToneConstraint
-  | .alignL => alignL t
-  | .nonFin => nonFin t
-  | .culm => culm t
-  | .alignR => alignR t
+/-- The marks of a tone domain on the constraints (4)–(7). -/
+def tone (d : NonemptyInterval ℕ) : ToneConstraint → ℕ
+  | .alignL => alignL t d
+  | .nonFin => nonFin t d
+  | .culm => culm t d
+  | .alignR => alignR t d
 
 /-- The column order of Tables 7 and 14. -/
 def toneRanking : Ranking.Enumeration ToneConstraint 4 := Ranking.Enumeration.ofList
     [.alignL, .nonFin, .culm, .alignR]
 
-/-- The tone-domain tableau of a phrase under a ranking of (4)–(7). -/
-def toneTableau (r : Ranking.Enumeration ToneConstraint 4) : Tableau (NonemptyInterval ℕ) 4 :=
-  .ofRanking (tone t) r (domains t)
+/-- The optimal tone domains of a phrase under a ranking of (4)–(7). -/
+def toneOptimal (r : Ranking.Enumeration ToneConstraint 4) : Finset (NonemptyInterval ℕ) :=
+  r.optimal (tone t) (domains t)
 
 /-- The extent of the predicted domain is the number of syllables it takes in after the phrase
     head, the most it can take without a foot head or the phrase-final syllable. -/
@@ -249,15 +249,15 @@ theorem alignR_lt_alignR (hμ : ∀ i < syllableCount t, 0 < moras t i)
 
 /-- If Align-R(H) is ranked last, the optimal tone domain of a metrical phrase is `toneDomain t`
 (§4.5). -/
-theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
-    (toneTableau t r).optimal = {toneDomain t} := by
+theorem toneOptimal_eq (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
+    toneOptimal t r = {toneDomain t} := by
   obtain ⟨hμ, hp, hn⟩ := ht
   have hext : ∀ i ∈ Finset.Ioc (head t) (head t + extent t), ¬ Stressed t i :=
     Nat.findGreatest_spec (P := fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
       (Nat.zero_le _) (by simp)
   have hle : extent t ≤ syllableCount t - head t - 2 := Nat.findGreatest_le _
   -- a domain satisfies Align-L(Δφ,H), NonFin(H) and Culminativity-H iff it lies in `toneDomain t`
-  have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t c d = 0) ↔
+  have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t d c = 0) ↔
       d.fst = head t ∧ d.snd ≤ head t + extent t := by
     intro d hd
     have hpd := d.fst_le_snd
@@ -277,7 +277,7 @@ theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .al
   have hm : toneDomain t ∈ domains t :=
     mem_domains.2 (by simp only [toneDomain]; omega)
   have hmf := (hfeas _ hm).2 ⟨rfl, le_rfl⟩
-  rw [toneTableau, Tableau.ofRanking_optimal_eq_argmin_filter ⟨_, hm, hr ▸ hmf⟩, hr]
+  rw [toneOptimal, Ranking.Enumeration.optimal_eq_argmin_filter ⟨_, hm, hr ▸ hmf⟩, hr]
   refine StrictAntiOn.argmin_eq_singleton (fun d hd d' hd' hlt ↦ ?_)
     ⟨Finset.mem_filter.2 ⟨hm, hmf⟩, fun d hd ↦ ?_⟩
   · rw [Finset.coe_filter] at hd hd'
@@ -293,12 +293,12 @@ end ToneDomain
 
 -- Table 7
 theorem tone_in_isolation :
-    (toneTableau fell toneRanking).optimal = {⟨(3, 3), le_rfl⟩} ∧
-      (toneTableau weFell toneRanking).optimal = {⟨(4, 4), le_rfl⟩} ∧
-      (toneTableau annatto toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
-  ⟨by rw [toneTableau_optimal (by decide) rfl]; decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide⟩
+    toneOptimal fell toneRanking = {⟨(3, 3), le_rfl⟩} ∧
+      toneOptimal weFell toneRanking = {⟨(4, 4), le_rfl⟩} ∧
+      toneOptimal annatto toneRanking = {⟨(1, 1), le_rfl⟩} :=
+  ⟨by rw [toneOptimal_eq (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide⟩
 
 /-! ### Phrases -/
 
@@ -314,13 +314,13 @@ def friendHasBeenInjured : MetricalTree :=
 
 -- Fig. 9
 theorem tone_blocked_by_trochee_head :
-    (toneTableau friendInjured toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+    toneOptimal friendInjured toneRanking = {⟨(1, 1), le_rfl⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 -- Fig. 10, §1
 theorem tone_crosses_iamb_dependent :
-    (toneTableau friendHasBeenInjured toneRanking).optimal = {⟨(1, 2), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+    toneOptimal friendHasBeenInjured toneRanking = {⟨(1, 2), by decide⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
     `/σσσ # σσσ/`. -/
@@ -329,8 +329,8 @@ def manHasBeenHeard : MetricalTree :=
     .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
 -- Table 14
-theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+theorem table14 : toneOptimal manHasBeenHeard toneRanking = {⟨(1, 3), by decide⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
     and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
@@ -340,10 +340,10 @@ def annattoFell : MetricalTree :=
 
 -- Fig. 3, §1, §7
 theorem stress_tone_incoherence :
-    head annattoFell = 1 ∧ (toneTableau annattoFell toneRanking).optimal = {⟨(1, 4), by decide⟩} ∧
+    head annattoFell = 1 ∧ toneOptimal annattoFell toneRanking = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=
   ⟨by decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide,
     by decide, by decide⟩
 
 end BeckerEtAl2025
