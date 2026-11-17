@@ -65,7 +65,6 @@ namespace HartmannZimmermann2004
 
 open Exhaustification Reflex
 open OptimalityTheory (Constraint)
-open OptimalityTheory (Tableau)
 
 /-! ## The marking system (§4.1, §5.2, §6.2) -/
 

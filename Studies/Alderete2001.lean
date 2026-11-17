@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
+public import Linglib.Phonology.OptimalityTheory.Ranking
 public import Linglib.Data.Wordlist.Alderete2001
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Segmental.PHOIBLE
