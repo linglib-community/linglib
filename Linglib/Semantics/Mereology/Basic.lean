@@ -361,4 +361,9 @@ theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s 
 theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
   ⟨fun h _ hy ↦ h.2 (not_isBot _) hy, fun h ↦ ⟨not_isBot x, fun _ _ hy ↦ h hy⟩⟩
 
+/-- Without a null individual, two elements overlap iff they share a part. -/
+theorem overlap_iff_exists_le [PartialOrder α] [NoBotOrder α] {x y : α} :
+    Overlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
+  ⟨fun ⟨z, _, hzx, hzy⟩ ↦ ⟨z, hzx, hzy⟩, fun ⟨z, hzx, hzy⟩ ↦ ⟨z, not_isBot z, hzx, hzy⟩⟩
+
 end Mereology

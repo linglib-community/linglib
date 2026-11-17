@@ -1,23 +1,30 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Mathlib.Order.CompleteBooleanAlgebra
+public import Linglib.Semantics.Mereology.Sum
 
 /-!
 # Classical mereology
 
-Classical extensional mereology is a partial order in which every inhabited predicate has a
-unique sum in Tarski's sense, a bound each of whose parts overlaps a member. Weak and strong
-supplementation and the absence of a null individual are theorems, a proper part
-[has a unique remainder](##Mereology.IsClassicalMereology.existsUnique_remainder), and two
-overlapping individuals have a product, so classical mereologies satisfy the principles Boolean
-algebras do: `HasRemainders`, `StronglySupplemented` and `HasProducts`. The nonempty subsets of
-a set with two elements or more form a classical mereology whose sums are unions.
+Classical extensional mereology is a strongly supplemented part structure in which every
+inhabited predicate has a sum, which is to say
+[a unique sum](##Mereology.isClassicalMereology_iff_existsUnique). Its sums are its least upper
+bounds, a proper part
+[has a unique remainder](##Mereology.IsClassicalMereology.existsUnique_remainder) and two
+overlapping individuals have a product. A complete Boolean algebra is a classical
+mereology whose null individual is its bottom, and
+[the non-null individuals](##Mereology.IsClassicalMereology.instSubtypeNotIsBot) of a classical
+mereology form one with no null individual, as the nonempty subsets of a set do. Conversely a
+classical mereology with a null individual
+[is a complete Boolean algebra](##Mereology.IsClassicalMereology.toCompleteBooleanAlgebra), and
+one without becomes one when a null individual is added.
 
 ## Implementation notes
 
-Classical mereology is defined, as in Champollion's book, by unique sums; Hovda compares the
-alternative axiomatizations. Since `Overlap` excludes null parts, the element of a one-point
-carrier is null, so the trivial model is not a classical mereology.
+Classical mereology is defined by strong supplementation and unrestricted sums; the definition
+by unique sums of Champollion's book is a theorem, and Hovda compares the axiomatizations. A
+carrier may have a null individual: the sources' systems are the classical mereologies with
+`NoBotOrder`. The one-point carrier, whose individual is null, is a classical mereology.
 
 ## References
 
@@ -28,177 +35,64 @@ carrier is null, so the trivial model is not a classical mereology.
 
 namespace Mereology
 
-variable {α β : Type*}
+variable {α : Type*}
 
-/-! ### The remainder principle
+/-- A part structure is a classical extensional mereology ([champollion-krifka-2016]) if it is
+strongly supplemented and every inhabited predicate has a sum. -/
+class IsClassicalMereology (α : Type*) [PartialOrder α] : Prop
+    extends StronglySupplemented α where
+  exists_isSum (P : α → Prop) : (∃ x, P x) → ∃ t, IsSum P t
 
-A proper part of a whole is completed to the whole by a remainder that does not overlap it.
-This is the remainder principle of [krifka-1998], the relative complementarity of
-[krifka-1989], and the unique separation of [champollion-2017]. Boolean algebras satisfy it with
-the difference `y \ x`, and so do classical mereologies (`IsClassicalMereology.exists_remainder`).
-The sources also require the remainder to be unique; the results below need only existence. -/
-
-/-- A part structure has remainders if every proper part `x` of `y` is completed to `y` by a
-part that does not overlap `x`. -/
-class HasRemainders (α : Type*) [SemilatticeSup α] : Prop where
-  exists_remainder : ∀ ⦃x y : α⦄, x < y → ∃ z, ¬ Overlap z x ∧ x ⊔ z = y
-
-instance [GeneralizedBooleanAlgebra α] : HasRemainders α where
-  exists_remainder _ y h :=
-    ⟨y \ _, overlap_iff_not_disjoint.not_left.2 disjoint_sdiff_self_left,
-      sup_sdiff_cancel_right h.le⟩
-
-/-! ### Strong supplementation and products
-
-Two further principles hold both of Boolean algebras and of classical mereologies: whatever is
-not part of `y` has a part that does not overlap `y`, and two overlapping individuals have a
-greatest common part, their product. -/
-
-/-- A part structure is strongly supplemented if whatever is not part of `y` has a non-null part
-that does not overlap `y`. -/
-class StronglySupplemented (α : Type*) [PartialOrder α] : Prop where
-  exists_not_overlap ⦃x y : α⦄ : ¬ x ≤ y → ∃ z ≤ x, ¬ IsBot z ∧ ¬ Overlap z y
-
-/-- A part structure has products if two overlapping individuals have a greatest common part. -/
-class HasProducts (α : Type*) [PartialOrder α] : Prop where
-  exists_isGLB ⦃x y : α⦄ : Overlap x y → ∃ p, IsGLB {x, y} p
-
-/-- In a strongly supplemented part structure, `x` is part of whatever all its non-null parts
-overlap. -/
-theorem le_of_forall_overlap [PartialOrder α] [StronglySupplemented α] {x y : α}
-    (h : ∀ z ≤ x, ¬ IsBot z → Overlap z y) : x ≤ y := by
-  by_contra hxy
-  obtain ⟨z, hzx, hz, hzy⟩ := StronglySupplemented.exists_not_overlap hxy
-  exact hzy (h z hzx hz)
-
-/-- The product of two overlapping individuals is non-null. -/
-theorem Overlap.exists_isGLB [PartialOrder α] [HasProducts α] {x y : α} (h : Overlap x y) :
-    ∃ p, ¬ IsBot p ∧ IsGLB {x, y} p :=
-  let ⟨p, hp⟩ := HasProducts.exists_isGLB h
-  let ⟨_, hq, hqx, hqy⟩ := h
-  ⟨p, fun hb ↦ hq (hb.mono (hp.2 (by rintro _ (rfl | rfl) <;> assumption))), hp⟩
-
-instance [GeneralizedBooleanAlgebra α] : StronglySupplemented α where
-  exists_not_overlap x y h := ⟨x \ y, sdiff_le, by rwa [isBot_iff_eq_bot, sdiff_eq_bot_iff],
-    overlap_iff_not_disjoint.not_left.2 disjoint_sdiff_self_left⟩
-
-instance [SemilatticeInf α] : HasProducts α where
-  exists_isGLB x y _ := ⟨x ⊓ y, isGLB_pair⟩
-
-/-! ### Classical mereology
-
-Classical extensional mereology is the system of [champollion-krifka-2016] and
-[champollion-2017]: a partial order in which every inhabited predicate has a unique sum in
-Tarski's sense. Weak and strong supplementation, the remainder principle and the absence of a
-null individual are theorems; [hovda-2009] compares this axiomatization with others. Binary sums
-are fusions of pairs (`IsClassicalMereology.toSemilatticeSup`), and the nonempty subsets of a set
-with two elements or more form a classical mereology. -/
-
-section Classical
-
-variable [PartialOrder α]
-
-/-- `t` is a sum of the `P`-elements in Tarski's sense if it lies above each of them and each of
-its parts overlaps one of them. -/
-def IsFusion (P : α → Prop) (t : α) : Prop :=
-  (∀ x, P x → x ≤ t) ∧ ∀ y, y ≤ t → ∃ x, P x ∧ Overlap y x
-
-/-- A partial order is a classical extensional mereology if every inhabited predicate has a
-unique sum. -/
-class IsClassicalMereology (α : Type*) [PartialOrder α] : Prop where
-  existsUnique_isFusion : ∀ P : α → Prop, (∃ x, P x) → ∃! t, IsFusion P t
+/-- A part structure is a classical mereology iff every inhabited predicate has exactly one sum,
+the axiom of unique sums of [champollion-krifka-2016]. -/
+theorem isClassicalMereology_iff_existsUnique [PartialOrder α] :
+    IsClassicalMereology α ↔ ∀ P : α → Prop, (∃ x, P x) → ∃! t, IsSum P t := by
+  refine ⟨fun h P hP ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨t, ht⟩ := h.exists_isSum P hP
+    exact ⟨t, ht, fun s hs ↦ hs.unique ht⟩
+  · have weak {x y : α} (hxy : x < y) : ∃ z ≤ y, ¬ IsBot z ∧ ¬ Overlap z x := by
+      by_contra! hall
+      exact hxy.ne ((h (· = x) ⟨x, rfl⟩).unique (isSum_eq x)
+        ⟨fun _ e ↦ e ▸ hxy.le, fun z hz hz0 ↦ ⟨x, rfl, hall z hz hz0⟩⟩)
+    refine { exists_not_overlap := fun y u hyu ↦ ?_, exists_isSum := fun P hP ↦ (h P hP).exists }
+    obtain ⟨s, hs⟩ := (h (fun w ↦ w = y ∨ w = u) ⟨y, .inl rfl⟩).exists
+    have hus : u < s := lt_of_le_of_ne (hs.1 u (.inr rfl)) fun e ↦ hyu (e ▸ hs.1 y (.inl rfl))
+    obtain ⟨w, hws, hw0, hwu⟩ := weak hus
+    obtain ⟨_, rfl | rfl, v, hv, hvw, hvy⟩ := hs.2 w hws hw0
+    · exact ⟨v, hvy, hv, fun ⟨q, hq, hqv, hqu⟩ ↦ hwu ⟨q, hq, hqv.trans hvw, hqu⟩⟩
+    · exact absurd ⟨v, hv, hvw, hvy⟩ hwu
 
 namespace IsClassicalMereology
 
-variable [IsClassicalMereology α] {x y u : α}
+section PartialOrder
 
-theorem exists_isFusion (P : α → Prop) (h : ∃ x, P x) : ∃ t, IsFusion P t :=
-  (existsUnique_isFusion P h).exists
+variable [PartialOrder α] [IsClassicalMereology α] {P : α → Prop} {t x y z : α}
 
-theorem not_isBot (x : α) : ¬ IsBot x := fun hx ↦ by
-  obtain ⟨t, ht⟩ := exists_isFusion (· = x) ⟨x, rfl⟩
-  obtain ⟨_, rfl, w, hw, -, hwx⟩ := ht.2 t le_rfl
-  exact hw (hx.mono hwx)
+/-- In a classical mereology the sums of an inhabited predicate are its least upper bounds. -/
+theorem isSum_iff_isLUB (hP : ∃ x, P x) : IsSum P t ↔ IsLUB {x | P x} t :=
+  ⟨IsSum.isLUB, fun h ↦ let ⟨_, hs⟩ := exists_isSum P hP; hs.isLUB.unique h ▸ hs⟩
 
-theorem overlap_iff : Overlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
-  ⟨fun ⟨z, _, hzx, hzy⟩ ↦ ⟨z, hzx, hzy⟩, fun ⟨z, hzx, hzy⟩ ↦ ⟨z, not_isBot z, hzx, hzy⟩⟩
-
-theorem isFusion_eq (x : α) : IsFusion (· = x) x :=
-  ⟨fun _ h ↦ h.le, fun z hz ↦ ⟨x, rfl, z, not_isBot z, le_rfl, hz⟩⟩
-
-end IsClassicalMereology
-
-variable [IsClassicalMereology α] {P : α → Prop} {s t x y u : α}
-
-theorem IsFusion.unique (hs : IsFusion P s) (ht : IsFusion P t) : s = t :=
-  let ⟨x, hx, _⟩ := hs.2 s le_rfl
-  (IsClassicalMereology.existsUnique_isFusion P ⟨x, hx⟩).unique hs ht
-
-theorem IsClassicalMereology.weak_supplementation (h : x < y) : ∃ z ≤ y, ¬ Overlap z x := by
-  by_contra! hall
-  exact h.ne ((IsClassicalMereology.isFusion_eq x).unique
-    ⟨fun _ h' ↦ h' ▸ h.le, fun z hz ↦ ⟨x, rfl, hall z hz⟩⟩)
-
-theorem IsFusion.isLUB (h : IsFusion P t) : IsLUB {x | P x} t := by
-  refine ⟨fun a ha ↦ h.1 a ha, fun w hw ↦ ?_⟩
-  obtain ⟨v, hv⟩ :=
-    IsClassicalMereology.exists_isFusion (fun u ↦ u = w ∨ u = t) ⟨w, Or.inl rfl⟩
-  have hwv : w ≤ v := hv.1 w (Or.inl rfl)
-  have htv : t ≤ v := hv.1 t (Or.inr rfl)
-  suffices hvw : v = w by rw [hvw] at htv; exact htv
-  by_contra hne
-  obtain ⟨s, hsv, hsw⟩ :=
-    IsClassicalMereology.weak_supplementation (lt_of_le_of_ne hwv (Ne.symm hne))
-  obtain ⟨u, hu, p, hp, hps, hpu⟩ := hv.2 s hsv
-  rcases hu with rfl | rfl
-  · exact hsw ⟨p, hp, hps, hpu⟩
-  · obtain ⟨a, hPa, q, hq, hqp, hqa⟩ := h.2 p hpu
-    exact hsw ⟨q, hq, hqp.trans hps, hqa.trans (hw hPa)⟩
-
-namespace IsClassicalMereology
-
-theorem strong_supplementation (h : ¬ y ≤ u) : ∃ v ≤ y, ¬ Overlap v u := by
-  obtain ⟨s, hs⟩ := exists_isFusion (fun w ↦ w = y ∨ w = u) ⟨y, .inl rfl⟩
-  have hus : u < s := lt_of_le_of_ne (hs.1 u (.inr rfl)) fun he ↦ h (he ▸ hs.1 y (.inl rfl))
-  obtain ⟨w, hws, hwu⟩ := weak_supplementation hus
-  obtain ⟨p, rfl | rfl, hov⟩ := hs.2 w hws
-  · obtain ⟨v, hv, hvw, hvy⟩ := hov
-    exact ⟨v, hvy, fun ⟨q, hq, hqv, hqu⟩ ↦ hwu ⟨q, hq, hqv.trans hvw, hqu⟩⟩
-  · exact absurd hov hwu
+theorem isSum_pair (h : IsLUB {x, y} t) : IsSum (fun u ↦ u = x ∨ u = y) t :=
+  (isSum_iff_isLUB ⟨x, .inl rfl⟩).2 h
 
 theorem exists_remainder (h : x < y) : ∃ z, ¬ Overlap z x ∧ IsLUB {x, z} y := by
-  obtain ⟨w₀, hw₀y, hw₀x⟩ := weak_supplementation h
-  obtain ⟨z, hz⟩ := exists_isFusion (fun w ↦ w ≤ y ∧ ¬ Overlap w x) ⟨w₀, hw₀y, hw₀x⟩
-  have hzy : z ≤ y := hz.isLUB.2 fun _ hw ↦ hw.1
+  obtain ⟨w₀, hw₀y, -, hw₀x⟩ := exists_not_overlap_of_lt h
+  obtain ⟨z, hz⟩ := exists_isSum (fun w ↦ w ≤ y ∧ ¬ Overlap w x) ⟨w₀, hw₀y, hw₀x⟩
   refine ⟨z, fun ⟨q, hq, hqz, hqx⟩ ↦ ?_, ⟨?_, fun u hu ↦ ?_⟩⟩
-  · obtain ⟨r, ⟨_, hrx⟩, v, hv, hvq, hvr⟩ := hz.2 q hqz
+  · obtain ⟨r, ⟨_, hrx⟩, v, hv, hvq, hvr⟩ := hz.2 q hqz hq
     exact hrx ⟨v, hv, hvr, hvq.trans hqx⟩
   · rintro _ (rfl | rfl)
-    exacts [h.le, hzy]
-  · by_contra hyu
-    obtain ⟨v, hvy, hvu⟩ := strong_supplementation hyu
-    have hvz : v ≤ z := hz.isLUB.1
-      ⟨hvy, fun ⟨q, hq, hqv, hqx⟩ ↦ hvu ⟨q, hq, hqv, hqx.trans (hu (.inl rfl))⟩⟩
-    exact hvu ⟨v, not_isBot v, le_rfl, hvz.trans (hu (.inr rfl))⟩
+    exacts [h.le, hz.isLUB.2 fun _ hw ↦ hw.1]
+  · refine le_of_forall_overlap fun v hv hv0 ↦ ?_
+    by_cases hvx : Overlap v x
+    · exact hvx.mono le_rfl (hu (.inl rfl))
+    · exact .of_le hv0 ((hz.1 v ⟨hv, hvx⟩).trans (hu (.inr rfl)))
 
-/-- A classical mereology has no bottom element. -/
-instance : NoBotOrder α := ⟨fun x ↦ not_forall.1 (not_isBot x)⟩
-
-instance : StronglySupplemented α where
-  exists_not_overlap _ _ h :=
-    let ⟨v, hv, ho⟩ := strong_supplementation h
-    ⟨v, hv, not_isBot v, ho⟩
-
-theorem remainder_unique {z z' : α} (hz : ¬ Overlap z x) (hlub : IsLUB {x, z} y)
+theorem remainder_unique {z' : α} (hz : ¬ Overlap z x) (hlub : IsLUB {x, z} y)
     (hz' : ¬ Overlap z' x) (hlub' : IsLUB {x, z'} y) : z = z' := by
-  have key : ∀ {z z' : α}, ¬ Overlap z x → IsLUB {x, z} y → IsLUB {x, z'} y → z ≤ z' := by
-    intro z z' hz hlub hlub'
-    obtain ⟨f, hf⟩ := exists_isFusion (fun u ↦ u = x ∨ u = z') ⟨x, .inl rfl⟩
-    have hfy : f = y := hf.isLUB.unique
-      (by rwa [show {u | u = x ∨ u = z'} = ({x, z'} : Set α) from by ext; simp])
-    subst hfy
-    refine le_of_forall_overlap fun v hv _ ↦ ?_
-    obtain ⟨p, rfl | rfl, hov⟩ := hf.2 v (hv.trans (hlub.1 (by simp)))
+  have key {z z' : α} (hz : ¬ Overlap z x) (hlub : IsLUB {x, z} y) (hlub' : IsLUB {x, z'} y) :
+      z ≤ z' := le_of_forall_overlap fun v hv hv0 ↦ by
+    obtain ⟨_, rfl | rfl, hov⟩ := (isSum_pair hlub').2 v (hv.trans (hlub.1 (.inr rfl))) hv0
     · exact absurd (hov.mono hv le_rfl) hz
     · exact hov
   exact le_antisymm (key hz hlub hlub') (key hz' hlub' hlub)
@@ -209,76 +103,203 @@ theorem existsUnique_remainder (h : x < y) : ∃! z, ¬ Overlap z x ∧ IsLUB {x
   let ⟨z, hz, hlub⟩ := exists_remainder h
   ⟨z, ⟨hz, hlub⟩, fun _ ⟨hz', hlub'⟩ ↦ remainder_unique hz' hlub' hz hlub⟩
 
-theorem exists_isLUB_pair (a b : α) : ∃ s, IsLUB {a, b} s := by
-  obtain ⟨t, ht⟩ := exists_isFusion (fun u ↦ u = a ∨ u = b) ⟨a, Or.inl rfl⟩
-  refine ⟨t, ?_⟩
-  have h := ht.isLUB
-  rwa [show {x | x = a ∨ x = b} = ({a, b} : Set α) from by ext x; simp [Set.mem_insert_iff]] at h
-
 /-- The product of two overlapping individuals is the sum of their common parts. -/
 instance : HasProducts α where
   exists_isGLB x y := fun ⟨q, _, hqx, hqy⟩ ↦ by
-    obtain ⟨p, hp⟩ := exists_isFusion (fun w ↦ w ≤ x ∧ w ≤ y) ⟨q, hqx, hqy⟩
-    refine ⟨p, ?_, fun w hw ↦ hp.isLUB.1 ⟨hw (.inl rfl), hw (.inr rfl)⟩⟩
+    obtain ⟨p, hp⟩ := exists_isSum (fun w ↦ w ≤ x ∧ w ≤ y) ⟨q, hqx, hqy⟩
+    refine ⟨p, ?_, fun w hw ↦ hp.1 w ⟨hw (.inl rfl), hw (.inr rfl)⟩⟩
     rintro _ (rfl | rfl)
     exacts [hp.isLUB.2 fun _ h ↦ h.1, hp.isLUB.2 fun _ h ↦ h.2]
 
-/-- The binary sum `a ⊔ b` of a classical mereology is the sum of the pair `{a, b}`. -/
+/-! ### The generalized sum -/
+
+/-- `sum P h` is the sum of the inhabited predicate `P`, the generalized sum `⊕P` of
+[champollion-krifka-2016]. -/
+noncomputable def sum (P : α → Prop) (h : ∃ x, P x) : α := (exists_isSum P h).choose
+
+variable (hP : ∃ x, P x)
+
+theorem isSum_sum : IsSum P (sum P hP) := (exists_isSum P hP).choose_spec
+
+theorem isLUB_sum : IsLUB {x | P x} (sum P hP) := (isSum_sum hP).isLUB
+
+theorem _root_.Mereology.IsSum.eq_sum (h : IsSum P t) : t = sum P hP := h.unique (isSum_sum hP)
+
+theorem le_sum (hx : P x) : x ≤ sum P hP := (isSum_sum hP).1 x hx
+
+theorem sum_le_iff : sum P hP ≤ t ↔ ∀ x, P x → x ≤ t := isLUB_le_iff (isLUB_sum hP)
+
+@[simp]
+theorem sum_eq (x : α) : sum (· = x) ⟨x, rfl⟩ = x := ((isSum_eq x).eq_sum _).symm
+
+/-- The binary sum `a ⊕ b` of a classical mereology is the sum of the pair `{a, b}`. -/
 @[reducible] noncomputable def toSemilatticeSup : SemilatticeSup α :=
   { ‹PartialOrder α› with
-    sup := fun a b ↦ Classical.choose (exists_isLUB_pair a b)
-    le_sup_left := fun a b ↦ (Classical.choose_spec (exists_isLUB_pair a b)).1 (Set.mem_insert _ _)
-    le_sup_right := fun a b ↦
-      (Classical.choose_spec (exists_isLUB_pair a b)).1 (Set.mem_insert_of_mem _ rfl)
-    sup_le := fun a b c ha hb ↦ (Classical.choose_spec (exists_isLUB_pair a b)).2 <| by
+    sup := fun a b ↦ sum (fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩
+    le_sup_left := fun a b ↦ le_sum (P := fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩ (.inl rfl)
+    le_sup_right := fun a b ↦ le_sum (P := fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩ (.inr rfl)
+    sup_le := fun _ _ _ ha hb ↦ (sum_le_iff _).2 <| by
       rintro _ (rfl | rfl)
       exacts [ha, hb] }
 
-end IsClassicalMereology
+end PartialOrder
 
-end Classical
+instance [SemilatticeSup α] [IsClassicalMereology α] : SupIsSum α where
+  isSum_sup _ _ := isSum_pair isLUB_pair
+
+/-- A predicate closed under sums has its sum as greatest member, the referent of a definite
+description ([champollion-krifka-2016]). -/
+theorem _root_.Mereology.SumClosed.isGreatest_sum [PartialOrder α] [IsClassicalMereology α]
+    {P : α → Prop} (h : SumClosed P) (hP : ∃ x, P x) : IsGreatest {x | P x} (sum P hP) :=
+  ⟨h P (fun _ hx ↦ hx) hP _ (isSum_sum hP), fun _ hx ↦ le_sum hP hx⟩
 
 instance [SemilatticeSup α] [IsClassicalMereology α] : HasRemainders α where
   exists_remainder _ _ h :=
-    let ⟨z, hz, hlub⟩ := IsClassicalMereology.exists_remainder h
+    let ⟨z, hz, hlub⟩ := exists_remainder h
     ⟨z, hz, (hlub.unique isLUB_pair).symm⟩
 
-section SetModel
+/-! ### Boolean algebras and non-null individuals -/
 
-variable {ι : Type*} [Nontrivial ι]
+/-- A complete Boolean algebra is a classical mereology, its bottom the null individual and its
+sums its suprema. -/
+instance [CompleteBooleanAlgebra α] : IsClassicalMereology α where
+  exists_isSum P _ := ⟨sSup {x | P x}, Mereology.isSum_iff_isLUB.2 (isLUB_sSup _)⟩
 
-private theorem not_isBot_singleton (p : ι) :
-    ¬ IsBot (⟨{p}, Set.singleton_nonempty p⟩ : {s : Set ι // s.Nonempty}) := fun h ↦ by
-  obtain ⟨q, hq⟩ := exists_ne p
-  exact hq (Set.singleton_subset_singleton.1 (h ⟨{q}, Set.singleton_nonempty q⟩)).symm
+theorem sum_eq_sSup [CompleteBooleanAlgebra α] (P : α → Prop) (hP : ∃ x, P x) :
+    sum P hP = sSup {x | P x} :=
+  (isLUB_sum hP).unique (isLUB_sSup _)
 
-private theorem isFusion_iff_eq_iUnion {P : {s : Set ι // s.Nonempty} → Prop}
-    {t : {s : Set ι // s.Nonempty}} : IsFusion P t ↔ t.1 = ⋃ (x) (_ : P x), x.1 := by
+section Subtype
+
+private theorem overlap_of_overlap_subtype [PartialOrder α] {x y : {x : α // ¬ IsBot x}}
+    (h : Overlap x y) : Overlap x.1 y.1 :=
+  let ⟨z, _, hzx, hzy⟩ := h
+  ⟨z, z.2, hzx, hzy⟩
+
+variable [PartialOrder α] [IsClassicalMereology α]
+
+private theorem eq_of_isBot_subtype {m : {x : α // ¬ IsBot x}} (hm : IsBot m)
+    (x : {x : α // ¬ IsBot x}) : x = m := by
+  refine le_antisymm (Subtype.coe_le_coe.1 ?_) (hm x)
+  by_contra h
+  obtain ⟨z, -, hz, hzm⟩ := StronglySupplemented.exists_not_overlap h
+  exact hzm ⟨m, m.2, hm ⟨z, hz⟩, le_rfl⟩
+
+/-- The non-null individuals of a classical mereology form a classical mereology, as the
+nonempty subsets of a set do under inclusion ([champollion-krifka-2016]). -/
+instance instSubtypeNotIsBot : IsClassicalMereology {x : α // ¬ IsBot x} where
+  exists_not_overlap x y h := by
+    obtain ⟨z, hzx, hz, hzy⟩ := StronglySupplemented.exists_not_overlap
+      (fun h' ↦ h (Subtype.coe_le_coe.1 h') : ¬ x.1 ≤ y.1)
+    exact ⟨⟨z, hz⟩, hzx, fun hb ↦ hzy ⟨z, hz, le_rfl, hb y⟩,
+      fun ho ↦ hzy (overlap_of_overlap_subtype ho)⟩
+  exists_isSum P := fun ⟨a, ha⟩ ↦ by
+    obtain ⟨t, ht⟩ := exists_isSum (fun x : α ↦ ∃ h, P ⟨x, h⟩) ⟨a, a.2, ha⟩
+    have ht0 : ¬ IsBot t := fun hb ↦ a.2 (hb.mono (ht.1 a ⟨a.2, ha⟩))
+    refine ⟨⟨t, ht0⟩, fun x hx ↦ ht.1 x ⟨x.2, hx⟩, fun y hy hy0 ↦ ?_⟩
+    obtain ⟨x, ⟨hx0, hx⟩, p, hp0, hpy, hpx⟩ := ht.2 y hy y.2
+    exact ⟨⟨x, hx0⟩, hx, ⟨p, hp0⟩,
+      fun hb ↦ hy0 (eq_of_isBot_subtype hb y ▸ hb), hpy, hpx⟩
+
+end Subtype
+
+/-! ### The Boolean representation
+
+A classical mereology with a null individual is a complete Boolean algebra, and adding a null
+individual to a classical mereology without one gives a classical mereology, so the classical
+mereologies without a null individual are the complete Boolean algebras with the bottom
+removed. -/
+
+section OrderBot
+variable [PartialOrder α] [OrderBot α] [IsClassicalMereology α]
+
+open Classical in
+/-- A classical mereology with a null individual is a complete lattice. -/
+@[reducible] noncomputable def toCompleteLattice : CompleteLattice α :=
+  letI : SupSet α := ⟨fun s ↦ if h : ∃ x, x ∈ s then sum (· ∈ s) h else ⊥⟩
+  completeLatticeOfSup α fun s ↦ by
+    change IsLUB s (if h : ∃ x, x ∈ s then sum (· ∈ s) h else ⊥)
+    split_ifs with h
+    · exact isLUB_sum h
+    · rw [Set.not_nonempty_iff_eq_empty.1 h]
+      exact isLUB_empty
+
+/-- A classical mereology with a null individual is a complete Boolean algebra. -/
+@[reducible] noncomputable def toCompleteBooleanAlgebra : CompleteBooleanAlgebra α :=
+  letI L : CompleteLattice α := toCompleteLattice
+  have hc (x : α) : IsSum (fun w ↦ ¬ Overlap w x) (sSup {w | ¬ Overlap w x}) :=
+    (isSum_iff_isLUB ⟨⊥, fun h ↦ h.not_isBot_left isBot_bot⟩).2 (isLUB_sSup _)
+  { L with
+    le_sup_inf := fun x y z ↦ le_of_forall_overlap fun p hp hp0 ↦ by
+      by_cases hpx : Overlap p x
+      · exact hpx.mono le_rfl le_sup_left
+      · have key {u : α} (hu : p ≤ x ⊔ u) : p ≤ u := le_of_forall_overlap fun q hq hq0 ↦ by
+          obtain ⟨_, rfl | rfl, ho⟩ := (isSum_pair isLUB_pair).2 q (hq.trans hu) hq0
+          · exact absurd (ho.mono hq le_rfl) hpx
+          · exact ho
+        exact .of_le hp0 (le_sup_of_le_right
+          (le_inf (key (hp.trans inf_le_left)) (key (hp.trans inf_le_right))))
+    compl := fun x ↦ sSup {w | ¬ Overlap w x}
+    sdiff := fun x y ↦ x ⊓ sSup {w | ¬ Overlap w y}
+    himp := fun x y ↦ y ⊔ sSup {w | ¬ Overlap w x}
+    inf_compl_le_bot := fun x ↦ le_of_forall_overlap fun p hp hp0 ↦ by
+      obtain ⟨w, hw, q, hq, hqp, hqw⟩ := (hc x).2 p (hp.trans inf_le_right) hp0
+      exact absurd ⟨q, hq, hqw, hqp.trans (hp.trans inf_le_left)⟩ hw
+    top_le_sup_compl := fun x ↦ le_of_forall_overlap fun p _ hp0 ↦ by
+      by_cases hpx : Overlap p x
+      · exact hpx.mono le_rfl le_sup_left
+      · exact .of_le hp0 (le_sup_of_le_right ((hc x).1 p hpx))
+    sdiff_eq := fun _ _ ↦ rfl
+    himp_eq := fun _ _ ↦ rfl }
+end OrderBot
+
+section WithBot
+variable [PartialOrder α]
+
+theorem _root_.Mereology.overlap_coe_withBot [NoBotOrder α] {a b : α} :
+    Overlap (a : WithBot α) b ↔ Overlap a b := by
   constructor
-  · rintro ⟨hub, hov⟩
-    refine Set.Subset.antisymm (fun p hp ↦ ?_) (Set.iUnion₂_subset fun x hx ↦ hub x hx)
-    obtain ⟨x, hx, w, -, hwp, hwx⟩ :=
-      hov ⟨{p}, Set.singleton_nonempty p⟩ (Set.singleton_subset_iff.2 hp)
-    obtain ⟨q, hq⟩ := w.2
-    exact Set.mem_iUnion₂.2 ⟨x, hx, (hwp hq : q = p) ▸ hwx hq⟩
-  · intro h
-    refine ⟨fun x hx ↦ (Set.subset_iUnion₂ (s := fun x (_ : P x) ↦ x.1) x hx).trans h.ge,
-      fun y hy ↦ ?_⟩
-    obtain ⟨p, hp⟩ := y.2
-    obtain ⟨x, hx, hpx⟩ := Set.mem_iUnion₂.1 (h ▸ hy hp : p ∈ ⋃ (x) (_ : P x), x.1)
-    exact ⟨x, hx, ⟨{p}, Set.singleton_nonempty p⟩, not_isBot_singleton p,
-      Set.singleton_subset_iff.2 hp, Set.singleton_subset_iff.2 hpx⟩
+  · rintro ⟨z, hz, hza, hzb⟩
+    induction z with
+    | bot => exact absurd isBot_bot hz
+    | coe c => exact ⟨c, not_isBot c, WithBot.coe_le_coe.1 hza, WithBot.coe_le_coe.1 hzb⟩
+  · rintro ⟨c, -, hca, hcb⟩
+    exact ⟨c, fun h ↦ WithBot.not_coe_le_bot c (h ⊥), WithBot.coe_le_coe.2 hca,
+      WithBot.coe_le_coe.2 hcb⟩
 
-/-- The nonempty subsets of a set with two elements or more form a classical mereology whose
-sums are unions ([champollion-2017]). -/
-instance : IsClassicalMereology {s : Set ι // s.Nonempty} where
-  existsUnique_isFusion P := by
-    rintro ⟨x, hx⟩
-    have hne : (⋃ (y) (_ : P y), y.1).Nonempty :=
-      x.2.mono (Set.subset_iUnion₂ (s := fun y (_ : P y) ↦ y.1) x hx)
-    exact ⟨⟨_, hne⟩, isFusion_iff_eq_iUnion.2 rfl,
-      fun t ht ↦ Subtype.ext (isFusion_iff_eq_iUnion.1 ht)⟩
+/-- Adding a null individual to a classical mereology without one gives a classical
+mereology. -/
+instance [NoBotOrder α] [IsClassicalMereology α] : IsClassicalMereology (WithBot α) where
+  exists_not_overlap x y h := by
+    induction x with
+    | bot => exact absurd bot_le h
+    | coe a =>
+      have ha : ¬ IsBot (a : WithBot α) := fun hb ↦ WithBot.not_coe_le_bot a (hb ⊥)
+      induction y with
+      | bot => exact ⟨a, le_rfl, ha, fun ho ↦ ho.not_isBot_right isBot_bot⟩
+      | coe b =>
+        obtain ⟨z, hza, -, hzb⟩ := StronglySupplemented.exists_not_overlap
+          (fun h' ↦ h (WithBot.coe_le_coe.2 h') : ¬ a ≤ b)
+        exact ⟨z, WithBot.coe_le_coe.2 hza, fun hb ↦ WithBot.not_coe_le_bot z (hb ⊥),
+          fun ho ↦ hzb (overlap_coe_withBot.1 ho)⟩
+  exists_isSum P hP := by
+    by_cases h : ∃ a : α, P a
+    · obtain ⟨t, ht⟩ := exists_isSum (fun a : α ↦ P a) h
+      refine ⟨t, fun x hx ↦ ?_, fun y hy hy0 ↦ ?_⟩
+      · induction x with
+        | bot => exact bot_le
+        | coe a => exact WithBot.coe_le_coe.2 (ht.1 a hx)
+      · induction y with
+        | bot => exact absurd isBot_bot hy0
+        | coe c =>
+          obtain ⟨a, ha, ho⟩ := ht.2 c (WithBot.coe_le_coe.1 hy) (not_isBot c)
+          exact ⟨a, ha, overlap_coe_withBot.2 ho⟩
+    · refine ⟨⊥, fun x hx ↦ ?_, fun y hy hy0 ↦ absurd (isBot_iff_eq_bot.2 (le_bot_iff.1 hy)) hy0⟩
+      induction x with
+      | bot => exact le_rfl
+      | coe a => exact absurd ⟨a, hx⟩ h
+end WithBot
 
-end SetModel
+end IsClassicalMereology
 
 end Mereology

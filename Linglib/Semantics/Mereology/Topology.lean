@@ -10,7 +10,7 @@ public import Linglib.Semantics.Mereology.Individuation
 Mereotopology adds to parthood a relation of connection, reflexive, symmetric and monotone along
 parthood, of which [overlap is the least](##Mereology.IsConnection.of_overlap). Connection
 singles out the self-connected individuals, which come in one piece:
-[any two individuals that sum to one are connected](##Mereology.isSelfConnected_iff). Grimm's
+[any two individuals that sum to one are connected](##Mereology.isSelfConnected_iff_isSum). Grimm's
 clusters, a pile of sand or a swarm of ants, are sums of entities of a kind transitively
 connected through others of the kind, which is to lie in one component of the kind's connection
 graph. [The clusters of a component are cumulative](##Mereology.cum_isClusterIn), and a sum of
@@ -26,7 +26,8 @@ make every self-connected individual connected to it and so to everything. On a 
 a null individual, such as a classical mereology, both are the definitions of the sources.
 Monotonicity is stated in the second argument, which by symmetry is the axiom that whatever is
 connected to a part is connected to the whole. Self-connection keeps Grimm's overlap
-formulation, which over a generalized Boolean algebra is the formulation by sums. The
+formulation, which in a strongly supplemented part structure says that any two non-null
+individuals [whose sum it is](##Mereology.isSelfConnected_iff_isSum) are connected. The
 relation a cluster is taken under need not be a connection relation, as external connection
 is not reflexive. The chain that connects two members of a cluster may run through
 `P`-entities outside the cluster, since Grimm's definition quantifies over the set the chain
@@ -186,27 +187,21 @@ theorem IsSelfConnected.sup [SemilatticeSup α] [StronglySupplemented α] [HasPr
   · rintro a (rfl | rfl) b (rfl | rfl)
     exacts [.refl _, h, h.symm, .refl _]
 
-section GeneralizedBooleanAlgebra
+/-- In a strongly supplemented part structure, an individual is self-connected iff any two
+non-null individuals whose sum it is are connected. -/
+theorem isSelfConnected_iff_isSum [PartialOrder α] [StronglySupplemented α] {C : α → α → Prop}
+    {x : α} : IsSelfConnected C x ↔
+      ∀ y z, ¬ IsBot y → ¬ IsBot z → IsSum (fun u ↦ u = y ∨ u = z) x → C y z := by
+  simp only [IsSelfConnected, isSum_iff_forall_overlap, or_and_right, exists_or,
+    exists_eq_left]
 
-variable [GeneralizedBooleanAlgebra α] {C : α → α → Prop} {x y z : α}
-
-private theorem eq_of_forall_disjoint_iff (h : ∀ w, Disjoint w x ↔ Disjoint w y) : x = y :=
-  le_antisymm
-    (sdiff_eq_bot_iff.1 (((h _).2 disjoint_sdiff_self_left).eq_bot_of_le sdiff_le))
-    (sdiff_eq_bot_iff.1 (((h _).1 disjoint_sdiff_self_left).eq_bot_of_le sdiff_le))
-
-/-- Two individuals between them overlap exactly what `x` overlaps iff they sum to `x`. -/
-theorem forall_overlap_iff_or : (∀ w, Overlap w x ↔ Overlap w y ∨ Overlap w z) ↔ y ⊔ z = x := by
-  simp only [overlap_iff_not_disjoint, ← not_and_or, not_iff_not, ← disjoint_sup_right]
-  exact ⟨fun h ↦ (eq_of_forall_disjoint_iff h).symm, fun h _ ↦ h ▸ Iff.rfl⟩
-
-/-- An individual is self-connected iff any two non-null individuals that sum to it are
-connected. -/
-theorem isSelfConnected_iff :
+/-- In a Boolean algebra, an individual is self-connected iff any two non-null individuals that
+join to it are connected. -/
+theorem isSelfConnected_iff [GeneralizedBooleanAlgebra α] {C : α → α → Prop} {x : α} :
     IsSelfConnected C x ↔ ∀ y z, y ≠ ⊥ → z ≠ ⊥ → y ⊔ z = x → C y z := by
-  simp only [IsSelfConnected, isBot_iff_eq_bot, forall_overlap_iff_or]
-
-end GeneralizedBooleanAlgebra
+  simp only [isSelfConnected_iff_isSum, isBot_iff_eq_bot, isSum_iff_isLUB]
+  exact forall₄_congr fun y z _ _ ↦
+    ⟨fun h e ↦ h (e ▸ isLUB_pair), fun h hl ↦ h (isLUB_pair.unique hl)⟩
 
 /-! ### Clusters -/
 
