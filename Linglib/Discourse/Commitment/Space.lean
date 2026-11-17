@@ -196,6 +196,11 @@ def question (P : Set S) : Space S := C.restrict (upperClosure P)
 theorem mem_question {P : Set S} : d ∈ C.question P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ≤ d :=
   .rfl
 
+/-- A question one of whose proposals the root already carries changes nothing. -/
+theorem question_eq_self {P : Set S} (h : ∃ p ∈ P, p ≤ C.root) : C.question P = C :=
+  ext fun _ ↦ ⟨fun hd ↦ hd.elim (· ▸ C.root_mem) And.left, fun hd ↦
+    let ⟨p, hp, hle⟩ := h; .inr ⟨hd, p, hp, hle.trans (C.root_le hd)⟩⟩
+
 /-- A question with alternative proposals is the disjunction of the questions
 ([krifka-2015] (31), (34)). -/
 theorem coe_question_union (P Q : Set S) :

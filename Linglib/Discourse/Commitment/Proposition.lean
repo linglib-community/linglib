@@ -117,6 +117,10 @@ theorem perform_perform : perform (perform O k φ) k ψ = perform O k (φ ∩ ψ
     simp only [mem_perform, Set.mem_inter_iff]
     tauto
 
+theorem perform_comm : perform (perform O k φ) k' ψ = perform (perform O k' ψ) k φ :=
+  funext fun _ ↦ Set.ext fun _ ↦
+    ⟨fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩, fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩⟩
+
 theorem perform_eq_self_iff : perform O k φ = O ↔ committed O k φ = Set.univ := by
   refine ⟨fun h ↦ by rw [← committed_perform_self (O := O), h], fun h ↦ ?_⟩
   funext k'

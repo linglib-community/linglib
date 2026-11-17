@@ -119,6 +119,11 @@ theorem restrictCommitment_restrictCommitment :
     (c.restrictCommitment a b π).restrictCommitment a b τ = c.restrictCommitment a b (π ∩ τ) :=
   Frame.ext rfl perform_perform
 
+theorem restrictCommitment_comm (a' b' : A) :
+    (c.restrictCommitment a b π).restrictCommitment a' b' τ =
+      (c.restrictCommitment a' b' τ).restrictCommitment a b π :=
+  Frame.ext rfl perform_comm
+
 theorem restrictCommitment_mono (h : π ⊆ τ) (k : A × A) :
     (c.restrictCommitment a b π).commitment k ⊆ (c.restrictCommitment a b τ).commitment k :=
   perform_mono h k
