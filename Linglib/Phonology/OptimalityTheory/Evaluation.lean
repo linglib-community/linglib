@@ -161,6 +161,16 @@ theorem exists_mem_optimal_iff_minimalFor (h : ∀ d ∈ s, ∀ i, v d i ≤ 1) 
 
 end Bounding
 
+/-- Against its only competitor a candidate is the sole winner iff its profile is less. -/
+theorem optimal_eq_singleton_iff_pair [DecidableEq C] (hs : s = {c, d}) (hne : c ≠ d) :
+    σ.optimal v s = {c} ↔ σ.profile v c < σ.profile v d :=
+  Tableau.optimal_eq_singleton_iff_pair (t := Tableau.ofRanking (fun k c ↦ v c k) σ s) hs hne
+
+/-- Against its only competitor a candidate wins iff its profile is not greater. -/
+theorem mem_optimal_iff_pair [DecidableEq C] (hs : s = {c, d}) :
+    c ∈ σ.optimal v s ↔ ¬ σ.profile v d < σ.profile v c :=
+  Tableau.mem_optimal_iff_pair (t := Tableau.ofRanking (fun k c ↦ v c k) σ s) hs
+
 /-- Two candidates with no other competitor both win iff no constraint tells them apart. -/
 theorem optimal_eq_pair_iff [DecidableEq C] (hs : s = {c, d}) :
     σ.optimal v s = {c, d} ↔ v c = v d :=
