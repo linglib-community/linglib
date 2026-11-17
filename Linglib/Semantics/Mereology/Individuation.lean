@@ -6,10 +6,12 @@ public import Linglib.Semantics.Mereology.Basic
 /-!
 # Individuation perspectives
 
-A predicate is overlapping if two distinct members overlap, and disjoint otherwise. A maximally
-disjoint subset of a predicate is an individuation perspective on it, a way of counting its
-members, and [every member lies in one](##Mereology.nullSchema_eq), so the null schema, the
-union of all perspectives, is the predicate itself.
+A set is disjoint if no two distinct members overlap. A maximal disjoint subset of a predicate is
+an individuation perspective on it, a way of counting its members ([landman-2011],
+[landman-2020]), and [every member lies in one](##Mereology.exists_isMaxDisjointIn_mem). A
+disjoint predicate
+[is its own only perspective](##Mereology.DisjointPred.isMaxDisjointIn_iff_eq), and a predicate
+with [two perspectives is not disjoint](##Mereology.IsMaxDisjointIn.not_disjointPred).
 
 ## References
 
@@ -20,104 +22,86 @@ union of all perspectives, is the predicate itself.
 
 namespace Mereology
 
-variable {α β : Type*}
+open Set
 
-/-! ### Individuation perspectives
+variable {α : Type*} [PartialOrder α] {P Q D D₁ D₂ : Set α} {x : α}
 
-A predicate is overlapping if two distinct members share a part, and disjoint otherwise; a
-maximally disjoint subset is an individuation perspective ([landman-2011], [landman-2020]),
-and the null schema of [sutton-filip-2021] unions all perspectives. The overlap relation
-`ov` is a parameter (mereologically, `Overlap`). -/
+/-! ### Disjoint sets -/
 
-section Individuation
+/-- A set is disjoint if no two distinct members overlap. -/
+def DisjointPred (P : Set α) : Prop := P.Pairwise fun x y ↦ ¬ Overlap x y
 
-variable (ov : α → α → Prop)
+theorem not_disjointPred_iff : ¬ DisjointPred P ↔ ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ Overlap x y := by
+  simp [DisjointPred, Set.Pairwise]
 
-/-- A predicate overlaps if two distinct members share a part. -/
-def OverlapPred (P : Set α) : Prop := ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ ov x y
+theorem DisjointPred.anti (h : P ⊆ Q) (hQ : DisjointPred Q) : DisjointPred P := hQ.mono h
 
-/-- A predicate is disjoint if no two distinct members share a part. -/
-def DisjointPred (P : Set α) : Prop := ¬ OverlapPred ov P
+@[simp]
+theorem disjointPred_singleton (x : α) : DisjointPred {x} := pairwise_singleton x _
 
-theorem disjointPred_iff_pairwise {P : Set α} : DisjointPred ov P ↔ P.Pairwise (¬ ov · ·) := by
-  simp [DisjointPred, OverlapPred, Set.Pairwise]
-
-theorem overlapPred_mono {P Q : Set α} (h : P ⊆ Q) (hP : OverlapPred ov P) : OverlapPred ov Q :=
-  let ⟨x, hx, y, hy, hne, hov⟩ := hP; ⟨x, h hx, y, h hy, hne, hov⟩
-
-theorem DisjointPred.anti {P Q : Set α} (h : P ⊆ Q) (hQ : DisjointPred ov Q) :
-    DisjointPred ov P :=
-  fun hP ↦ hQ (overlapPred_mono ov h hP)
-
-/-- `D` is a maximally disjoint subset of `P` if it is disjoint and cannot be extended within `P`
-without overlap. -/
-def IsMaxDisjointIn (D P : Set α) : Prop :=
-  D ⊆ P ∧ DisjointPred ov D ∧ ∀ x ∈ P, x ∉ D → OverlapPred ov (insert x D)
-
-theorem isMaxDisjointIn_iff_maximal (D P : Set α) :
-    IsMaxDisjointIn ov D P ↔ Maximal (fun D ↦ D ⊆ P ∧ DisjointPred ov D) D := by
-  constructor
-  · rintro ⟨hDP, hD, hmax⟩
-    refine ⟨⟨hDP, hD⟩, fun D' ⟨hD'P, hD'⟩ hDD' x hx ↦ ?_⟩
-    by_contra hxD
-    exact hD' (overlapPred_mono ov (Set.insert_subset hx hDD') (hmax x (hD'P hx) hxD))
-  · rintro ⟨⟨hDP, hD⟩, hmax⟩
-    refine ⟨hDP, hD, fun x hxP hxD ↦ ?_⟩
-    by_contra hno
-    exact hxD (hmax ⟨Set.insert_subset hxP hDP, hno⟩ (Set.subset_insert x D) (Set.mem_insert x D))
-
-/-- The null individuation schema of `P` is the union of its maximally disjoint subsets. -/
-def nullSchema (P : Set α) : Set α := {x | ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D}
-
-theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α} (h₁ : IsMaxDisjointIn ov D₁ P)
-    (h₂ : IsMaxDisjointIn ov D₂ P) (hne : D₁ ≠ D₂) : OverlapPred ov (D₁ ∪ D₂) := by
-  obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
-      (∃ x, x ∈ D₂ ∧ x ∉ D₁) ∨ (∃ x, x ∈ D₁ ∧ x ∉ D₂) := by
-    by_contra hcon
-    push Not at hcon
-    exact hne (Set.Subset.antisymm hcon.2 hcon.1)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inr hx₂, fun a ha ↦ Or.inl ha⟩)
-      (h₁.2.2 x (h₂.1 hx₂) hx₁)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inl hx₁, fun a ha ↦ Or.inr ha⟩)
-      (h₂.2.2 x (h₁.1 hx₁) hx₂)
-
-theorem overlapPred_nullSchema {D₁ D₂ P : Set α} (h₁ : IsMaxDisjointIn ov D₁ P)
-    (h₂ : IsMaxDisjointIn ov D₂ P) (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
-  overlapPred_mono ov
-    (Set.union_subset (fun _ ha ↦ ⟨D₁, h₁, ha⟩) (fun _ ha ↦ ⟨D₂, h₂, ha⟩))
-    (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
-
-theorem isMaxDisjointIn_self {P : Set α} (h : DisjointPred ov P) : IsMaxDisjointIn ov P P :=
-  ⟨Set.Subset.rfl, h, fun _ hy hny ↦ absurd hy hny⟩
-
-theorem exists_isMaxDisjointIn_mem {P : Set α} {x : α} (hx : x ∈ P) :
-    ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D := by
-  obtain ⟨D, hxD, hD⟩ := zorn_subset_nonempty {D | D ⊆ P ∧ DisjointPred ov D}
-    (fun c hc hchain _ ↦ ⟨⋃₀ c, ⟨Set.sUnion_subset fun D hD ↦ (hc hD).1,
-      fun ⟨a, ⟨A, hA, haA⟩, b, ⟨B, hB, hbB⟩, hab, hov⟩ ↦
-        (hchain.total hA hB).elim (fun hAB ↦ (hc hB).2 ⟨a, hAB haA, b, hbB, hab, hov⟩)
-          (fun hBA ↦ (hc hA).2 ⟨a, haA, b, hBA hbB, hab, hov⟩)⟩,
-      fun D hD ↦ Set.subset_sUnion_of_mem hD⟩)
-    {x} ⟨Set.singleton_subset_iff.2 hx, fun ⟨a, ha, b, hb, hab, _⟩ ↦
-      hab ((Set.mem_singleton_iff.1 ha).trans (Set.mem_singleton_iff.1 hb).symm)⟩
-  refine ⟨D, ⟨hD.prop.1, hD.prop.2, fun y hy hyD ↦ ?_⟩, hxD rfl⟩
-  by_contra hno
-  exact hyD (hD.2 ⟨Set.insert_subset hy hD.prop.1, hno⟩ (Set.subset_insert _ _)
-    (Set.mem_insert _ _))
-
-/-- The null schema is the identity, since every member of a predicate is in some
-perspective. -/
-theorem nullSchema_eq (P : Set α) : nullSchema ov P = P :=
-  Set.Subset.antisymm (fun _ ⟨_, hD, hx⟩ ↦ hD.1 hx)
-    (fun _ hx ↦ let ⟨D, hD, hxD⟩ := exists_isMaxDisjointIn_mem ov hx; ⟨D, hD, hxD⟩)
-
-end Individuation
-
-theorem disjointPred_overlap_iff [PartialOrder α] [OrderBot α] {P : Set α} :
-    DisjointPred Overlap P ↔ P.PairwiseDisjoint id := by
-  simp only [disjointPred_iff_pairwise, overlap_iff_not_disjoint, not_not]
+theorem disjointPred_iff_pairwiseDisjoint [OrderBot α] :
+    DisjointPred P ↔ P.PairwiseDisjoint id := by
+  simp only [DisjointPred, overlap_iff_not_disjoint, not_not]
   rfl
+
+instance [Fintype α] [DecidableEq α] [DecidableRel (Overlap (α := α))]
+    [DecidablePred (· ∈ P)] : Decidable (DisjointPred P) :=
+  decidable_of_iff (∀ x, x ∈ P → ∀ y, y ∈ P → x ≠ y → ¬ Overlap x y) Iff.rfl
+
+/-! ### Perspectives -/
+
+/-- `D` is a maximal disjoint subset of `P`, an individuation perspective on `P`. -/
+def IsMaxDisjointIn (D P : Set α) : Prop := Maximal (fun D ↦ D ⊆ P ∧ DisjointPred D) D
+
+theorem IsMaxDisjointIn.subset (h : IsMaxDisjointIn D P) : D ⊆ P := h.prop.1
+
+theorem IsMaxDisjointIn.disjointPred (h : IsMaxDisjointIn D P) : DisjointPred D := h.prop.2
+
+/-- A disjoint subset is maximal when no member of the predicate can be added to it without
+overlap. -/
+theorem isMaxDisjointIn_iff :
+    IsMaxDisjointIn D P ↔
+      D ⊆ P ∧ DisjointPred D ∧ ∀ x ∈ P, x ∉ D → ¬ DisjointPred (insert x D) :=
+  ⟨fun h ↦ ⟨h.subset, h.disjointPred, fun x hx hxD hd ↦
+      hxD (h.2 ⟨insert_subset hx h.subset, hd⟩ (subset_insert x D) (mem_insert x D))⟩,
+    fun ⟨hDP, hD, hmax⟩ ↦ ⟨⟨hDP, hD⟩, fun _ hD' hDD' x hx ↦ by_contra fun hxD ↦
+      hmax x (hD'.1 hx) hxD (hD'.2.anti (insert_subset hx hDD'))⟩⟩
+
+instance [Fintype α] [DecidableEq α] [DecidableRel (Overlap (α := α))] [DecidablePred (· ∈ D)]
+    [DecidablePred (· ∈ P)] : Decidable (IsMaxDisjointIn D P) :=
+  haveI (x : α) : DecidablePred (· ∈ insert x D) := fun y ↦
+    decidable_of_iff (y = x ∨ y ∈ D) Iff.rfl
+  decidable_of_iff ((∀ x, x ∈ D → x ∈ P) ∧ DisjointPred D ∧
+    ∀ x, x ∈ P → x ∉ D → ¬ DisjointPred (insert x D)) isMaxDisjointIn_iff.symm
+
+/-- Every member of a predicate lies in a perspective on it. -/
+theorem exists_isMaxDisjointIn_mem (hx : x ∈ P) : ∃ D, IsMaxDisjointIn D P ∧ x ∈ D := by
+  obtain ⟨D, hxD, hD⟩ := zorn_subset_nonempty {D | D ⊆ P ∧ DisjointPred D}
+    (fun c hc hchain _ ↦ ⟨⋃₀ c, ⟨sUnion_subset fun D hD ↦ (hc hD).1,
+      (pairwise_sUnion hchain.directedOn).2 fun D hD ↦ (hc hD).2⟩,
+      fun D hD ↦ subset_sUnion_of_mem hD⟩)
+    {x} ⟨singleton_subset_iff.2 hx, disjointPred_singleton x⟩
+  exact ⟨D, hD, hxD rfl⟩
+
+/-- The union of two distinct perspectives is not disjoint. -/
+theorem IsMaxDisjointIn.not_disjointPred_union (h₁ : IsMaxDisjointIn D₁ P)
+    (h₂ : IsMaxDisjointIn D₂ P) (hne : D₁ ≠ D₂) : ¬ DisjointPred (D₁ ∪ D₂) := fun h ↦
+  have hP : D₁ ∪ D₂ ⊆ P ∧ DisjointPred (D₁ ∪ D₂) := ⟨union_subset h₁.subset h₂.subset, h⟩
+  hne ((subset_union_left.trans (h₂.2 hP subset_union_right)).antisymm
+    (subset_union_right.trans (h₁.2 hP subset_union_left)))
+
+/-- A predicate with two distinct perspectives is not disjoint. -/
+theorem IsMaxDisjointIn.not_disjointPred (h₁ : IsMaxDisjointIn D₁ P)
+    (h₂ : IsMaxDisjointIn D₂ P) (hne : D₁ ≠ D₂) : ¬ DisjointPred P := fun h ↦
+  h₁.not_disjointPred_union h₂ hne (h.anti (union_subset h₁.subset h₂.subset))
+
+/-- A disjoint predicate is its own only perspective. -/
+theorem DisjointPred.isMaxDisjointIn_iff_eq (h : DisjointPred P) :
+    IsMaxDisjointIn D P ↔ D = P :=
+  ⟨fun hD ↦ hD.subset.antisymm (hD.2 ⟨Subset.rfl, h⟩ hD.subset),
+    by rintro rfl; exact ⟨⟨Subset.rfl, h⟩, fun _ hD' _ ↦ hD'.1⟩⟩
+
+theorem DisjointPred.isMaxDisjointIn_self (h : DisjointPred P) : IsMaxDisjointIn P P :=
+  h.isMaxDisjointIn_iff_eq.2 rfl
 
 end Mereology

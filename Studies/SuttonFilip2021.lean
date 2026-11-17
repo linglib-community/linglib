@@ -75,6 +75,13 @@ def Frame.ofUnits (units : Set α) : Frame α := ⟨{x | AlgClosure (· ∈ unit
 
 @[simp] theorem Frame.objects_ofUnits (units : Set α) : (ofUnits units).objects = units := rfl
 
+/-- The null individuation schema of `P` is the union of the perspectives on `P`. -/
+def nullSchema (P : Set α) : Set α := {x | ∃ D, IsMaxDisjointIn D P ∧ x ∈ D}
+
+/-- The null schema returns the predicate, since every member is in some perspective. -/
+theorem nullSchema_eq (P : Set α) : nullSchema P = P :=
+  Set.Subset.antisymm (fun _ ⟨_, hD, hx⟩ ↦ hD.subset hx) fun _ hx ↦ exists_isMaxDisjointIn_mem hx
+
 /-- A lexical entry (33): the basic predicate; whether the counting base applies the object
 identifying function, `[±O]`; whether the extension is closed under sum, the `(*)` of (33);
 and the perspective the schema of utterance selects, `[+S]`, or none for the null schema,
@@ -87,7 +94,7 @@ structure Entry (α : Type*) [SemilatticeSup α] where
   [decSumClosed : Decidable sumClosed]
   perspective : Option (Set α)
   perspective_max : ∀ D, perspective = some D →
-    IsMaxDisjointIn Overlap D (if objectFn then frame.objects else frame.extn)
+    IsMaxDisjointIn D (if objectFn then frame.objects else frame.extn)
 
 attribute [instance] Entry.decObjectFn Entry.decSumClosed
 
@@ -100,38 +107,38 @@ under `[−O]`. -/
 def base : Set α := if E.objectFn then E.frame.objects else E.frame.extn
 
 /-- The counting base is the perspective under a specific schema, the null schema otherwise. -/
-def cbase : Set α := E.perspective.getD (nullSchema Overlap E.base)
+def cbase : Set α := E.perspective.getD (nullSchema E.base)
 
 /-- The extension is the counting base, closed under sum when the entry is. -/
 def extn : Set α := if E.sumClosed then {x | AlgClosure (· ∈ E.cbase) x} else E.cbase
 
 /-- Grammatical counting (A1) is defined over disjoint counting bases only: an entry is count
 when its base is disjoint. -/
-def IsCount : Prop := DisjointPred Overlap E.cbase
+def IsCount : Prop := DisjointPred E.cbase
 
 variable {E}
 
 /-- A `[+S]` entry is count: its perspective is disjoint. -/
 theorem isCount_of_perspective {D : Set α} (h : E.perspective = some D) : E.IsCount := by
   rw [IsCount, cbase, h, Option.getD_some]
-  exact (E.perspective_max D h).2.1
+  exact (E.perspective_max D h).disjointPred
 
 theorem cbase_of_null (h : E.perspective = none) : E.cbase = E.base := by
   rw [cbase, h, Option.getD_none, nullSchema_eq]
 
 /-- A `[−S]` entry is count exactly when the predicate its schema applies to is disjoint. -/
 theorem isCount_iff_of_null (h : E.perspective = none) :
-    E.IsCount ↔ DisjointPred Overlap E.base := by
+    E.IsCount ↔ DisjointPred E.base := by
   rw [IsCount, cbase_of_null h]
 
 
 variable (E)
 
 /-- The substitution of the null schema by the schema of utterance, `⟦furniture⟧^{𝒮₀ ↦ 𝒮ᵢ}`. -/
-def withPerspective (D : Set α) (h : IsMaxDisjointIn Overlap D E.base) : Entry α :=
+def withPerspective (D : Set α) (h : IsMaxDisjointIn D E.base) : Entry α :=
   { E with perspective := some D, perspective_max := fun _ hD ↦ Option.some_inj.1 hD ▸ h }
 
-theorem withPerspective_isCount (D : Set α) (h : IsMaxDisjointIn Overlap D E.base) :
+theorem withPerspective_isCount (D : Set α) (h : IsMaxDisjointIn D E.base) :
     (E.withPerspective D h).IsCount :=
   isCount_of_perspective rfl
 
@@ -141,19 +148,19 @@ end Entry
 
 /-- The unit extracting classifier (49): the object identifying function and the schema of
 utterance inserted into the counting base of any entry, the extension closed under sum. -/
-def unitShift (E : Entry α) (D : Set α) (h : IsMaxDisjointIn Overlap D E.frame.objects) :
+def unitShift (E : Entry α) (D : Set α) (h : IsMaxDisjointIn D E.frame.objects) :
     Entry α :=
   ⟨E.frame, True, True, some D, fun _ hD ↦ Option.some_inj.1 hD ▸ h⟩
 
 /-- The unit shift is `[+O,+S]`. -/
 theorem objectFn_unitShift (E : Entry α) (D : Set α)
-    (h : IsMaxDisjointIn Overlap D E.frame.objects) :
+    (h : IsMaxDisjointIn D E.frame.objects) :
     (unitShift E D h).objectFn ∧ (unitShift E D h).perspective.isSome :=
   ⟨trivial, rfl⟩
 
 /-- The unit shift makes every entry count ((49), (50)). -/
 theorem isCount_unitShift (E : Entry α) (D : Set α)
-    (h : IsMaxDisjointIn Overlap D E.frame.objects) : (unitShift E D h).IsCount :=
+    (h : IsMaxDisjointIn D E.frame.objects) : (unitShift E D h).IsCount :=
   Entry.isCount_of_perspective rfl
 
 /-- The extension of the container reading (44): sums of counted receptacles, each of which
@@ -177,18 +184,17 @@ theorem not_cum_extn_of_singular {E : Entry α} (hs : ¬ E.sumClosed) (hc : E.Is
   intro hcum
   have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
   by_cases huv : u ⊔ v = u
-  · exact hc ⟨u, hu, v, hv, hne, v, hv0, sup_eq_left.1 huv, le_rfl⟩
-  · exact hc ⟨u, hu, u ⊔ v, hsum, Ne.symm huv, u, hu0, le_rfl, le_sup_left⟩
+  · exact hc hu hv hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
+  · exact hc hu hsum (Ne.symm huv) ⟨u, hu0, le_rfl, le_sup_left⟩
 
 /-! ### Granular frames -/
 
-theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units)
-    (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
-    OverlapPred Overlap (Frame.ofUnits units).extn := by
+theorem not_disjointPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units)
+    (hv : v ∈ units) (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
+    ¬ DisjointPred (Frame.ofUnits units).extn := fun h ↦ by
   by_cases huv : u ⊔ v = u
-  · exact ⟨u, .base hu, v, .base hv, hne, v, hv0, sup_eq_left.1 huv, le_rfl⟩
-  · exact ⟨u, .base hu, u ⊔ v, .sum (.base hu) (.base hv), Ne.symm huv, u, hu0, le_rfl,
-      le_sup_left⟩
+  · exact h (.base hu) (.base hv) hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
+  · exact h (.base hu) (.sum (.base hu) (.base hv)) (Ne.symm huv) ⟨u, hu0, le_rfl, le_sup_left⟩
 
 /-- A `[−O,−S]` entry over a frame of units and their sums with two distinct non-null units is
 mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
@@ -197,17 +203,17 @@ theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ uni
     (hO : ¬ E.objectFn) (hS : E.perspective = none) : ¬ E.IsCount := by
   rw [Entry.isCount_iff_of_null hS]
   simp only [Entry.base, hO, ↓reduceIte, hF]
-  exact fun h ↦ h (overlapPred_extn_ofUnits hu hv hne hu0 hv0)
+  exact not_disjointPred_extn_ofUnits hu hv hne hu0 hv0
 
 /-- The `[+O,+S]` entry over a frame of disjoint units, *lentil* (36)–(37): the perspective
 is the units themselves. -/
-def lentil (units : Set α) (hd : DisjointPred Overlap units) (sumClosed : Prop)
+def lentil (units : Set α) (hd : DisjointPred units) (sumClosed : Prop)
     [Decidable sumClosed] : Entry α :=
   ⟨Frame.ofUnits units, True, sumClosed, some units,
-    fun _ hD ↦ Option.some_inj.1 hD ▸ isMaxDisjointIn_self _ hd⟩
+    fun _ hD ↦ Option.some_inj.1 hD ▸ hd.isMaxDisjointIn_self⟩
 
 /-- *lentil* is count, with the units as its counting base. -/
-theorem lentil_count {units : Set α} (hd : DisjointPred Overlap units) (sumClosed : Prop)
+theorem lentil_count {units : Set α} (hd : DisjointPred units) (sumClosed : Prop)
     [Decidable sumClosed] :
     (lentil units hd sumClosed).IsCount ∧ (lentil units hd sumClosed).cbase = units :=
   ⟨Entry.isCount_of_perspective rfl, rfl⟩
@@ -223,24 +229,6 @@ abbrev Part := Finset (Fin 3)
 
 instance : DecidableRel (Overlap (α := Part)) := fun s t ↦
   decidable_of_iff (¬ Disjoint s t) overlap_iff_not_disjoint.symm
-
-instance {a : Part} {P : Set Part} [DecidablePred (· ∈ P)] : DecidablePred (· ∈ insert a P) :=
-  fun x ↦ decidable_of_iff (x = a ∨ x ∈ P) (by simp [Set.mem_insert_iff])
-
-instance {P : Set Part} [DecidablePred (· ∈ P)] : Decidable (OverlapPred Overlap P) := by
-  unfold OverlapPred; infer_instance
-
-instance {P : Set Part} [DecidablePred (· ∈ P)] : Decidable (DisjointPred Overlap P) :=
-  decidable_of_iff (¬ OverlapPred Overlap P) Iff.rfl
-
-instance {P Q : Set Part} [DecidablePred (· ∈ P)] [DecidablePred (· ∈ Q)] : Decidable (P ⊆ Q) :=
-  decidable_of_iff (∀ x, x ∈ P → x ∈ Q) Iff.rfl
-
-instance {D P : Set Part} [DecidablePred (· ∈ D)] [DecidablePred (· ∈ P)] :
-    Decidable (IsMaxDisjointIn Overlap D P) :=
-  decidable_of_iff
-    ((∀ x, x ∈ D → x ∈ P) ∧ DisjointPred Overlap D ∧
-      ∀ x, x ∈ P → x ∉ D → OverlapPred Overlap (insert x D)) Iff.rfl
 
 /-- The functional units of *furniture*: a table, a mirror, and the vanity they compose. -/
 def furnitureUnits : Set Part := {s | s = {0} ∨ s = {1} ∨ s = {0, 1}}
@@ -265,27 +253,28 @@ def furniture : Entry Part :=
 
 theorem furniture_mass : ¬ furniture.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
-  show ¬ DisjointPred Overlap furnitureUnits
-  exact fun h ↦ h (by decide)
+  show ¬ DisjointPred furnitureUnits
+  decide
 
 /-- Two perspectives on the furniture units, the pieces and the vanity, are both maximal and
 differ, which is why the null schema's base overlaps. -/
 theorem furniture_two_perspectives :
-    IsMaxDisjointIn Overlap piecePerspective furnitureUnits ∧
-      IsMaxDisjointIn Overlap vanityPerspective furnitureUnits ∧
-      piecePerspective ≠ vanityPerspective ∧ OverlapPred Overlap furniture.cbase := by
-  refine ⟨by decide, by decide, fun h ↦ ?_, ?_⟩
-  · have h0 : ({0} : Part) ∈ vanityPerspective := by rw [← h]; exact Or.inl rfl
-    exact absurd h0 (by decide)
-  · rw [Entry.cbase_of_null rfl]
-    show OverlapPred Overlap furnitureUnits
-    decide
+    IsMaxDisjointIn piecePerspective furnitureUnits ∧
+      IsMaxDisjointIn vanityPerspective furnitureUnits ∧
+      piecePerspective ≠ vanityPerspective ∧ ¬ DisjointPred furniture.cbase := by
+  have h₁ : IsMaxDisjointIn piecePerspective furnitureUnits := by decide
+  have h₂ : IsMaxDisjointIn vanityPerspective furnitureUnits := by decide
+  have hne : piecePerspective ≠ vanityPerspective := fun h ↦
+    absurd (h ▸ Or.inl rfl : ({0} : Part) ∈ vanityPerspective) (by decide)
+  refine ⟨h₁, h₂, hne, ?_⟩
+  rw [Entry.cbase_of_null rfl]
+  exact h₁.not_disjointPred h₂ hne
 
 /-- *huonekalut* (41): *furniture* with the null schema replaced by the piece perspective, and
 count. -/
 def huonekalut : Entry Part :=
   furniture.withPerspective piecePerspective
-    (by show IsMaxDisjointIn Overlap piecePerspective furnitureUnits; decide)
+    (by show IsMaxDisjointIn piecePerspective furnitureUnits; decide)
 
 theorem huonekalut_count : huonekalut.IsCount := furniture.withPerspective_isCount _ _
 
@@ -298,13 +287,13 @@ instance : DecidablePred (· ∈ riceGrains) := fun s ↦
 /-- *rice* (38): `[−O,−S]` over the grains and their sums. -/
 def rice : Entry Part := ⟨Frame.ofUnits riceGrains, False, True, none, fun _ h ↦ by simp at h⟩
 
-theorem riceGrains_disjoint : DisjointPred Overlap riceGrains := by decide
+theorem riceGrains_disjoint : DisjointPred riceGrains := by decide
 
 /-- The rice grains are disjoint and in the basic predicate, yet *rice* is mass, while *grains of
 rice* (50) is count ((Q2), 9.5.3). -/
 theorem rice_accessibility :
     riceGrains ⊆ rice.frame.extn ∧ ¬ rice.IsCount ∧
-      unitShift rice riceGrains (isMaxDisjointIn_self _ riceGrains_disjoint) =
+      unitShift rice riceGrains riceGrains_disjoint.isMaxDisjointIn_self =
         lentil riceGrains riceGrains_disjoint True ∧
       (lentil riceGrains riceGrains_disjoint True).IsCount ∧
       (lentil riceGrains riceGrains_disjoint True).cbase = riceGrains :=
@@ -319,8 +308,9 @@ def mud : Entry Part :=
 
 theorem mud_mass : ¬ mud.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
-  show ¬ DisjointPred Overlap {s : Part | s.Nonempty}
-  exact fun h ↦ h ⟨{0}, by decide, {0, 1}, by decide, by decide, {0}, by decide, le_rfl, by decide⟩
+  show ¬ DisjointPred {s : Part | s.Nonempty}
+  exact fun h ↦
+    @h {0} (by decide) {0, 1} (by decide) (by decide) ⟨{0}, by decide, le_rfl, by decide⟩
 
 /-- The categorization agrees with the English lexicon: a numeral counts *lentil* and neither
 *furniture* nor *rice*. -/
