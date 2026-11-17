@@ -307,9 +307,6 @@ theorem brace_add_cons (x u v : L) (M : Multiset L) :
     brace x ((u + v) ::ₘ M) = brace x (u ::ₘ M) + brace x (v ::ₘ M) :=
   braceWith_add_cons isRightLieAction_mul x u v M
 
-@[simp] theorem brace_zero_cons (x : L) (M : Multiset L) : brace x (0 ::ₘ M) = 0 :=
-  braceWith_zero_cons isRightLieAction_mul x M
-
 theorem brace_sum_cons (x : L) (s M : Multiset L) :
     brace x (s.sum ::ₘ M) = (s.map fun u ↦ brace x (u ::ₘ M)).sum :=
   braceWith_sum_cons isRightLieAction_mul x s M

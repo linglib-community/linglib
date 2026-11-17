@@ -70,17 +70,8 @@ section Semiring
 
 variable [Semiring R] {x y : ChapotonLivernet R α}
 
-/-- `coeff` as an equivalence with the finitely supported functions on trees. -/
-def coeffEquiv : ChapotonLivernet R α ≃ (UnorderedTree α →₀ R) where
-  toFun := coeff
-  invFun := ofCoeff
-  left_inv _ := rfl
-  right_inv _ := rfl
-
 theorem coeff_injective : Function.Injective (coeff : ChapotonLivernet R α → _) :=
-  coeffEquiv.injective
-
-@[simp] theorem coeff_inj : x.coeff = y.coeff ↔ x = y := coeff_injective.eq_iff
+  fun ⟨_⟩ ⟨_⟩ h ↦ congrArg ofCoeff h
 
 @[ext] theorem ext (h : x.coeff = y.coeff) : x = y := coeff_injective h
 
@@ -103,7 +94,10 @@ instance instAddCommMonoid : AddCommMonoid (ChapotonLivernet R α) :=
 
 /-- `coeff` as an additive equivalence. -/
 def coeffAddEquiv : ChapotonLivernet R α ≃+ (UnorderedTree α →₀ R) where
-  __ := coeffEquiv
+  toFun := coeff
+  invFun := ofCoeff
+  left_inv _ := rfl
+  right_inv _ := rfl
   map_add' _ _ := rfl
 
 instance instModule : Module R (ChapotonLivernet R α) :=
@@ -116,9 +110,6 @@ def coeffLinearEquiv : ChapotonLivernet R α ≃ₗ[R] (UnorderedTree α →₀ 
 
 @[simp] theorem coeffLinearEquiv_apply (x : ChapotonLivernet R α) :
     coeffLinearEquiv x = x.coeff := rfl
-
-@[simp] theorem coeffLinearEquiv_symm_apply (f : UnorderedTree α →₀ R) :
-    coeffLinearEquiv.symm f = ofCoeff f := rfl
 
 /-! ### The basis of trees -/
 
@@ -156,15 +147,12 @@ theorem lhom_ext {M : Type*} [AddCommMonoid M] [Module R M] {f g : ChapotonLiver
 
 /-! ### The grafting product -/
 
-/-- `graft T S` sums the basis vectors of the trees in `T ◁ S`. -/
-def graft (T S : UnorderedTree α) : ChapotonLivernet R α := ((T ◁ S).map of).sum
-
-/-- The grafting product extends `graft` bilinearly. -/
+/-- The grafting product: on trees, `of T * of S` sums the trees of `T ◁ S`. -/
 instance instMul : Mul (ChapotonLivernet R α) where
-  mul x y := x.coeff.sum fun T a ↦ y.coeff.sum fun S b ↦ (a * b) • graft T S
+  mul x y := x.coeff.sum fun T a ↦ y.coeff.sum fun S b ↦ (a * b) • ((T ◁ S).map of).sum
 
 theorem mul_def (x y : ChapotonLivernet R α) :
-    x * y = x.coeff.sum fun T a ↦ y.coeff.sum fun S b ↦ (a * b) • graft T S := rfl
+    x * y = x.coeff.sum fun T a ↦ y.coeff.sum fun S b ↦ (a * b) • ((T ◁ S).map of).sum := rfl
 
 instance instNonUnitalNonAssocSemiring : NonUnitalNonAssocSemiring (ChapotonLivernet R α) where
   zero_mul := by simp [mul_def]
@@ -175,18 +163,12 @@ instance instNonUnitalNonAssocSemiring : NonUnitalNonAssocSemiring (ChapotonLive
     classical simp [mul_def, add_mul, add_smul, Finsupp.sum_add, Finsupp.sum_add_index]
 
 theorem single_mul_single (T S : UnorderedTree α) (a b : R) :
-    single T a * single S b = (a * b) • graft T S := by
+    single T a * single S b = (a * b) • ((T ◁ S).map of).sum := by
   simp [mul_def]
 
 theorem of_mul_of (T S : UnorderedTree α) :
     (of T : ChapotonLivernet R α) * of S = ((T ◁ S).map of).sum := by
-  rw [single_mul_single, mul_one, one_smul, graft]
-
-theorem of_leaf_mul_of_leaf (a b : α) :
-    (of (leaf a) : ChapotonLivernet R α) * of (leaf b) = of (node a {leaf b}) := by
-  rw [of_mul_of, ← node_zero, insertSum_node, insertionMultiset_zero_left_of_ne_zero _ (by simp),
-    Multiset.map_zero, Multiset.cons_zero, Multiset.map_singleton, Multiset.sum_singleton]
-  rfl
+  rw [single_mul_single, mul_one, one_smul]
 
 instance instIsScalarTower : IsScalarTower R (ChapotonLivernet R α) (ChapotonLivernet R α) where
   smul_assoc r x y := by
@@ -352,9 +334,7 @@ def liftTree (f : α → A) : UnorderedTree α → A :=
 @[simp] theorem liftTree_leaf (f : α → A) (a : α) : liftTree f (leaf a) = f a := by
   rw [← node_zero, liftTree_node, Multiset.map_zero, brace_zero]
 
-/-- Summing over the graftings of `S` into a forest is summing over the ways to multiply one
-value by the value of `S`, for a map `φ` on trees that is multiplicative on the forest. -/
-theorem sum_map_insertionMultiset_singleton {φ : UnorderedTree α → A} {g : Multiset A → A}
+private theorem sum_map_insertionMultiset_singleton {φ : UnorderedTree α → A} {g : Multiset A → A}
     (hg : ∀ s M : Multiset A, g (s.sum ::ₘ M) = (s.map fun u ↦ g (u ::ₘ M)).sum)
     (F : Multiset (UnorderedTree α)) (S : UnorderedTree α)
     (hF : ∀ T ∈ F, ((T ◁ S).map φ).sum = φ T * φ S) :
@@ -387,50 +367,46 @@ theorem sum_map_liftTree_insertSum (f : α → A) (T S : UnorderedTree α) :
     abel
 
 variable (R) in
-/-- The homomorphism that extends `f : α → A` from the one-vertex trees. -/
-def liftHom (f : α → A) : ChapotonLivernet R α →ₙₐ[R] A where
-  toFun := (basis R α).constr R (liftTree f)
-  map_smul' r x := map_smul _ r x
-  map_zero' := map_zero _
-  map_add' := map_add _
-  map_mul' x y := by
-    have hof (T : UnorderedTree α) :
-        (basis R α).constr R (liftTree f) (of T) = liftTree f T :=
-      (basis R α).constr_basis R (liftTree f) T
-    induction x using induction_linear with
-    | zero => simp
-    | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add, h₁, h₂]
-    | single T a =>
-    induction y using induction_linear with
-    | zero => simp
-    | add y₁ y₂ h₁ h₂ => simp only [mul_add, map_add, h₁, h₂]
-    | single S b =>
-      rw [single_eq_smul_of T a, single_eq_smul_of S b, smul_mul_smul_comm, map_smul, map_smul,
-        map_smul, smul_mul_smul_comm, of_mul_of, map_multiset_sum, Multiset.map_map, hof, hof,
-        ← sum_map_liftTree_insertSum]
-      simp only [Function.comp_def, hof]
-
-@[simp] theorem liftHom_of (f : α → A) (T : UnorderedTree α) :
-    liftHom R f (of T) = liftTree f T :=
-  (basis R α).constr_basis R (liftTree f) T
-
-variable (R) in
 /-- The rooted trees labelled by `α` are the free right pre-Lie algebra on `α`: a function from
 `α` to a right pre-Lie algebra extends uniquely to a homomorphism. -/
 def lift : (α → A) ≃ (ChapotonLivernet R α →ₙₐ[R] A) where
-  toFun := liftHom R
+  toFun f :=
+    { toFun := (basis R α).constr R (liftTree f)
+      map_smul' := fun r x ↦ map_smul _ r x
+      map_zero' := map_zero _
+      map_add' := map_add _
+      map_mul' := fun x y ↦ by
+        have hof (T : UnorderedTree α) :
+            (basis R α).constr R (liftTree f) (of T) = liftTree f T :=
+          (basis R α).constr_basis R (liftTree f) T
+        induction x using induction_linear with
+        | zero => simp
+        | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add, h₁, h₂]
+        | single T a =>
+        induction y using induction_linear with
+        | zero => simp
+        | add y₁ y₂ h₁ h₂ => simp only [mul_add, map_add, h₁, h₂]
+        | single S b =>
+          rw [single_eq_smul_of T a, single_eq_smul_of S b, smul_mul_smul_comm, map_smul,
+            map_smul, map_smul, smul_mul_smul_comm, of_mul_of, map_multiset_sum,
+            Multiset.map_map, hof, hof, ← sum_map_liftTree_insertSum]
+          simp only [Function.comp_def, hof] }
   invFun F a := F (of (leaf a))
-  left_inv f := funext fun a ↦ (liftHom_of f _).trans (liftTree_leaf f a)
-  right_inv _ := hom_ext fun a ↦ (liftHom_of _ _).trans (liftTree_leaf _ a)
+  left_inv f := funext fun a ↦
+    ((basis R α).constr_basis R (liftTree f) (leaf a)).trans (liftTree_leaf f a)
+  right_inv _ := hom_ext fun a ↦
+    ((basis R α).constr_basis R (liftTree _) (leaf a)).trans (liftTree_leaf _ a)
 
 @[simp] theorem lift_symm_apply (F : ChapotonLivernet R α →ₙₐ[R] A) (a : α) :
     (lift R).symm F a = F (of (leaf a)) := rfl
 
-@[simp] theorem lift_of_leaf (f : α → A) (a : α) : lift R f (of (leaf a)) = f a :=
-  (liftHom_of f _).trans (liftTree_leaf f a)
-
+/-- The extension of `f` sends a tree to the brace of the value of its root and the values of
+its children. -/
 theorem lift_of (f : α → A) (T : UnorderedTree α) : lift R f (of T) = liftTree f T :=
-  liftHom_of f T
+  (basis R α).constr_basis R (liftTree f) T
+
+@[simp] theorem lift_of_leaf (f : α → A) (a : α) : lift R f (of (leaf a)) = f a :=
+  (lift_of f _).trans (liftTree_leaf f a)
 
 end Lift
 
