@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.NonAssoc.PreLie.OudomGuin
 public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCutDuality
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
@@ -21,6 +22,8 @@ commutator of the Grossman–Larson product; it extends to the map
 for [grafting onto a grafting](##UnorderedTree.insertionMultiset_bind_insertionMultiset_singleton),
 by which the braces of the pre-Lie algebra of trees are
 [the graftings of several trees at once](##ChapotonLivernet.brace_of).
+The product is [the product of Oudom and Guin](##GrossmanLarson.product_eq_oudomGuin) on the
+symmetric algebra of the pre-Lie algebra of trees.
 
 ## Implementation notes
 
@@ -252,6 +255,69 @@ noncomputable def ιLie : ChapotonLivernet R α →ₗ⁅R⁆ GrossmanLarson R �
       abel }
 
 @[simp] theorem ιLie_apply (x : ChapotonLivernet R α) : ιLie x = ι x := rfl
+
+/-! ### The Grossman–Larson product as the product of Oudom and Guin -/
+
+/-- Grafting one tree onto a forest is the derivation of the forests that grafts it onto one
+tree. -/
+theorem insertion_ofTree (y : ConnesKreimer R (UnorderedTree α)) (X : UnorderedTree α) :
+    insertion y (ofTree X) =
+      OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) y := by
+  refine LinearMap.congr_fun (lhom_ext' (f := insertion.flip (ofTree X))
+    (g := (OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) :
+      ConnesKreimer R (UnorderedTree α) →ₗ[R] _)) fun F ↦ ?_) y
+  rw [LinearMap.flip_apply, Derivation.coeFn_coe, ← of'_singleton, insertion_of'_of']
+  induction F using Multiset.induction_on with
+  | empty =>
+    rw [insertionMultiset_zero_left_of_ne_zero _ (Multiset.singleton_ne_zero X), of'_zero,
+      Derivation.map_one_eq_zero]
+    rfl
+  | cons T F ih =>
+    rw [insertionMultiset_cons_singleton, Multiset.map_add, Multiset.sum_add, Multiset.map_map,
+      Multiset.map_map, of'_cons, Derivation.leibniz, ← ih, OudomGuin.derivation_ofTree,
+      ChapotonLivernet.basis_apply, ChapotonLivernet.of_mul_of, map_multiset_sum,
+      Multiset.map_map, smul_eq_mul, smul_eq_mul, ← Multiset.sum_map_mul_left,
+      ← Multiset.sum_map_mul_left, add_comm]
+    refine congrArg₂ _ (congrArg _ (Multiset.map_congr rfl fun G _ ↦ ?_))
+      (congrArg _ (Multiset.map_congr rfl fun T' _ ↦ ?_))
+    · rw [Function.comp_apply, of'_cons]
+    · rw [Function.comp_apply, Function.comp_apply, ← ChapotonLivernet.basis_apply,
+        OudomGuin.incl_basis, of'_cons, mul_comm]
+
+/-- The Grossman–Larson product is the product of Oudom and Guin on the symmetric algebra of the
+pre-Lie algebra of rooted trees. -/
+theorem product_eq_oudomGuin :
+    (product : LinearMap.BilinMap R (ConnesKreimer R (UnorderedTree α)) _) =
+      OudomGuin.product (ChapotonLivernet.basis R α) := by
+  refine LinearMap.ext fun x ↦ ?_
+  have hstep (w : ConnesKreimer R (UnorderedTree α)) (X : UnorderedTree α) :
+      product w (ofTree X) = OudomGuin.product (ChapotonLivernet.basis R α) w (ofTree X) := by
+    rw [OudomGuin.product_ofTree, ChapotonLivernet.basis_apply, ← insertion_ofTree,
+      product_apply, comulPrim_ofTree]
+    simp [mul_comm, add_comm]
+  suffices h : ∀ n (E : Forest (UnorderedTree α)), Multiset.card E = n →
+      product x (of' E) = OudomGuin.product (ChapotonLivernet.basis R α) x (of' E) from
+    lhom_ext' fun E ↦ h _ E rfl
+  intro n
+  induction n with
+  | zero =>
+    intro E hE
+    obtain rfl := Multiset.card_eq_zero.mp hE
+    simp [product_one_right]
+  | succ n ih =>
+    intro E hE
+    obtain ⟨X, hX⟩ := (Multiset.card_pos_iff_exists_mem (s := E)).mp (by omega)
+    obtain ⟨E, rfl⟩ := Multiset.exists_cons_of_mem hX
+    have hE' : Multiset.card E = n := by simpa using hE
+    have hD := OudomGuin.eqOn_derivation_of' (ChapotonLivernet.basis R α) ih (.of X) E hE'
+    have hGL : product x (of' E * ofTree X) =
+        product (product x (of' E)) (ofTree X) -
+          product x (OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) (of' E)) := by
+      rw [product_assoc, eq_sub_iff_add_eq, ← map_add, ← insertion_ofTree, product_apply (of' E),
+        comulPrim_ofTree]
+      simp [mul_comm, add_comm]
+    rw [of'_cons, mul_comm, hGL, OudomGuin.product_mul_ofTree, ChapotonLivernet.basis_apply,
+      ih E hE', hD, hstep]
 
 end Ring
 
