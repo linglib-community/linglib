@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Perm
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.OptimalityTheory.Typology
-public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Phonology.OptimalityTheory.Candidate
 public import Studies.Hayes1989
 
 /-!
@@ -114,22 +114,18 @@ theorem gen_wellFormed : ∀ i, ∀ o ∈ gen i, o.WellFormed ∧ o.NoCrossing �
 
 /-! ### The constraints -/
 
-/-- NOSHAREDMORA (27b): a violation for each mora linked to more than one segment. -/
-def noSharedMora {α : Type*} : Constraint (MoraicForm α) := fun X ↦
-  (X.morae.filter fun m ↦ 1 < (X.moraSpan m).card).card
-
 /-- SYLLBIN (27a): a violation for each syllable of more than two morae. -/
 def syllBin {α : Type*} : Constraint (MoraicForm α) := fun X ↦
   (X.syllables.filter (2 < X.weight ·)).card
 
 /-- NOCMORA (27c): a violation for each mora whose head is a consonant. -/
-def noCMora : Constraint (MoraicForm Slot × MoraicForm Slot) := fun p ↦
-  (p.2.morae.filter fun m ↦ p.2.head m = some C).card
+def noCMora : Constraint (MoraicForm Slot) := fun X ↦
+  (X.morae.filter fun m ↦ X.head m = some C).card
 
-/-- MORAFAITH (28): a violation for each segment linked to a different number of morae in the
-input and in the output. -/
-def moraFaith : Constraint (MoraicForm Slot × MoraicForm Slot) := fun p ↦
-  (p.1.slots.filter fun i ↦ (p.1.moraeAt i).card ≠ (p.2.moraeAt i).card).card
+/-- The candidate with the output form `o` for the input form `i`, each segment corresponding
+to itself. -/
+def candidate (i o : MoraicForm Slot) : Candidate Slot :=
+  { io := .identity i.melody, input := { form := i }, output := { form := o } }
 
 /-- The constraints. -/
 inductive Con
@@ -139,12 +135,14 @@ inductive Con
   | moraFaith
   deriving DecidableEq, Fintype, Repr
 
-/-- The marks of an output form for an input form. -/
+/-- The marks of an output form for an input form. MORAFAITH (28) is a violation for each segment
+linked to a different number of morae in the input and in the output, NOSHAREDMORA (27b) one for
+each mora linked to more than one segment. -/
 def marks (i o : MoraicForm Slot) : Con → ℕ
-  | .noSharedMora => noSharedMora o
+  | .noSharedMora => (candidate i o).output.noSharedMoraViol
   | .syllBin => syllBin o
-  | .noCMora => noCMora (i, o)
-  | .moraFaith => moraFaith (i, o)
+  | .noCMora => noCMora o
+  | .moraFaith => (candidate i o).identViol fun P k ↦ some (P.weightAt k)
 
 /-- The constraint system of the four inputs. -/
 def system : ConstraintSystem Input (MoraicForm Slot) Con where

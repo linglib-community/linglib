@@ -65,8 +65,8 @@ open Phonology OptimalityTheory HarmonicGrammar Real
 /-! ### The segments of Table 3 -/
 
 /-- `Seg` enumerates the English consonants of Table 3. Segments without an ASCII letter take
-    their ARPAbet names, with `ch` for [tʃ], `jh` for [dʒ], `th` for [θ], `sh` for [ʃ], `hh` for
-    [h], `dh` for [ð], `zh` for [ʒ], and `ng` for [ŋ]. -/
+their ARPAbet names, with `ch` for [tʃ], `jh` for [dʒ], `th` for [θ], `sh` for [ʃ], `hh` for
+[h], `dh` for [ð], `zh` for [ʒ], and `ng` for [ŋ]. -/
 inductive Seg
   | p | t | ch | k | b | d | jh | g | f | th | s | sh | hh | v | dh | z | zh | m | n | ng | l | r
   | j | w
@@ -75,8 +75,8 @@ inductive Seg
 namespace Seg
 
 /-- The chart of Table 3 lists, for each feature, the segments specified `+` and then those
-    specified `−`. A segment in neither list is unspecified for the feature, as in the chart's
-    blanks (privative and contrastive underspecification, §4.1.2). -/
+specified `−`. A segment in neither list is unspecified for the feature, as in the chart's
+blanks (privative and contrastive underspecification, §4.1.2). -/
 def chart : Feature → List Seg × List Seg
   | .consonantal =>
     ([p, t, ch, k, b, d, jh, g, f, th, s, sh, hh, v, dh, z, zh, m, n, ng, l], [r, j, w])
@@ -122,7 +122,7 @@ end Seg
 /-! ### Constraints (§4.1.1) -/
 
 /-- A matrix of a constraint (9) is a natural class `[αF, βG, …]`, its complement
-    `[^αF, βG, …]` (the implication operator), or the word boundary `#`. -/
+`[^αF, βG, …]` (the implication operator), or the word boundary `#`. -/
 inductive Matrix
   | cls (pat : Segment)
   | compl (pat : Segment)
@@ -131,7 +131,7 @@ inductive Matrix
 variable {α : Type*}
 
 /-- A matrix matches one symbol of a boundary-padded form, read through the segment
-    specification `spec`; `none` is a word boundary. -/
+specification `spec`; `none` is a word boundary. -/
 def Matrix.Matches (spec : α → Segment) : Matrix → Option α → Prop
   | .cls pat, some x => pat ≤ spec x
   | .compl pat, some x => ¬ pat ≤ spec x
@@ -154,7 +154,7 @@ def Cx.prefixMatch (spec : α → Segment) : Cx → List (Option α) → Bool
   | _ :: _, [] => false
 
 /-- A constraint's violation count on a form is the number of positions of the boundary-padded
-    form at which its matrices match, as (9) specifies. -/
+form at which its matrices match, as (9) specifies. -/
 def Cx.violations (spec : α → Segment) (c : Cx) (form : List α) : ℕ :=
   ((none :: form.map some ++ [none]).tails.filter (c.prefixMatch spec)).length
 
@@ -195,7 +195,7 @@ theorem rating_lt_iff {T : ℝ} (hT : 0 < T) {k₁ k₂ : ℕ} :
     (one_div_pos.2 hT), maxentValue_lt_iff]
 
 /-- Table 1 evaluates schematic forms over consonants `C` and vowels `V` with two constraints,
-    `*#V` weighted 3.0 and `*C#` weighted 2.0. -/
+`*#V` weighted 3.0 and `*C#` weighted 2.0. -/
 inductive CV
   | C
   | V
@@ -239,12 +239,12 @@ variable {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω] {n : ℕ} (viol : Constr
   (w : Fin n → ℝ) (D : Ω → ℕ)
 
 /-- The observed number of violations of constraint `i` sums its counts over data given as
-    counts per form. -/
+counts per form. -/
 def observed (i : Fin n) : ℕ :=
   ∑ x, D x * viol i x
 
 /-- The log probability of the data (7) sums the log probabilities (6) of the forms, each
-    weighted by its count, since the forms are independent. -/
+weighted by its count, since the forms are independent. -/
 noncomputable def logLik : ℝ :=
   ∑ x, D x * log ((maxEnt viol.violations w).real {x})
 
@@ -409,7 +409,7 @@ def hundredths (s : String) : Option ℕ :=
   | _ => none
 
 /-- A row that reports a score is reproduced when its onset parses and the grammar's score is
-    within one hundredth of the reported one. -/
+within one hundredth of the reported one. -/
 def Reproduced (e : Datum) : Prop :=
   ∀ sc ∈ e.feature? "score", ∃ o ∈ Seg.parse e.primaryText.toList, ∃ k ∈ hundredths sc,
     ((h o : ℤ) - k).natAbs ≤ 1
@@ -417,7 +417,7 @@ def Reproduced (e : Datum) : Prop :=
 instance : DecidablePred Reproduced := fun e ↦ by unfold Reproduced; infer_instance
 
 /-- Every score the paper reports (§5.2–5.3) is reproduced by the grammar to within one
-    hundredth, the rounding of the printed weights. -/
+hundredth, the rounding of the printed weights. -/
 theorem rows_scores : ∀ e ∈ Examples.all, Reproduced e := by decide +kernel
 
 /-! ### Probability over a candidate set (§3.2, (6)) -/
@@ -435,7 +435,7 @@ instance : MeasurableSingletonClass candidates := ⟨fun _ ↦ trivial⟩
 def onsetCon : ConstraintSet candidates (Fin 23) := fun k o ↦ viol k o
 
 /-- `onsetProb` is the probability (6) of each candidate under the learned grammar, with the
-    weights of Table 4 read as reals. -/
+weights of Table 4 read as reals. -/
 noncomputable def onsetProb (o : candidates) : ℝ :=
   (maxEnt onsetCon.violations fun k ↦ (table4W k : ℝ) / 100).real {o}
 

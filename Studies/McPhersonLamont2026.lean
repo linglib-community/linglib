@@ -141,7 +141,7 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
 /-! ### Regular HS: the divergent tie (eq. 62) -/
 
 /-- The regular-HS derivation uses the same ranking with the count-based `starFloatCount` for
-    `*FLOAT`. -/
+`*FLOAT`. -/
 def derivationParallel : HSDerivation (Candidate fig3Input) where
   gen := Candidate.gen
   ranking := haveTone :: starFloatCount :: rankingTail
@@ -259,7 +259,7 @@ end Eq27
 namespace Eq30
 
 /-- Eq. (30) input `/kāk^H + ìlí/`; ìlí has L on its first syllable and H on its second
-    (L% omitted). -/
+(L% omitted). -/
 def eq30Input : Form ℕ := kak 0 * ili 1
 
 instance : NeZero (eq30Input.word .upper).length := ⟨by decide⟩
@@ -269,7 +269,7 @@ instance : NeZero (eq30Input.word .lower).length := ⟨by decide⟩
 def eq30 : Candidate eq30Input := .input _
 
 /-- Eq. (30) ranking: `stdRanking` plus `*M◁L` above *TAUTDOCK — the inversion that
-    licenses tautomorphemic docking (30c). -/
+licenses tautomorphemic docking (30c). -/
 def eq30Ranking.Enumeration : List (Constraint (Candidate eq30Input)) :=
   haveTone :: starMlessL :: starFloatBlock ++
     [ starCrowd 2, starTautDock,
@@ -321,7 +321,7 @@ end Eq22
 /-! ### Eqs. (57)–(59): parallel evaluation -/
 
 /-- The four faithfulness constraints of the parallel tableaux (57) and (58), in their column
-    order. `*FLOAT` is left out, since every candidate the support (59) compares satisfies it. -/
+order. `*FLOAT` is left out, since every candidate the support (59) compares satisfies it. -/
 def faithfulness {u : Form ℕ} : ConstraintSet (Candidate u) (Fin 4) :=
   ![maxTone TRN.H, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M]
 

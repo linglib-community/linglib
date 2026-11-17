@@ -56,10 +56,10 @@ open Prosody OptimalityTheory
 /-- A function word after a lexical host, and the phrases over them. -/
 structure Input where
   /-- The host is a phrase of its own, a subject before T as in (21), not a verb before its
-  complement as in (18). -/
+complement as in (18). -/
   hostPhrase : Bool
   /-- The function word heads a phrase over itself and what follows, PP[at __] or TP[is leaving],
-  not an object pronoun inside the verb (24b). -/
+not an object pronoun inside the verb (24b). -/
   fncPhrase : Bool
   /-- A lexical word follows the function word in its phrase, TP[is leaving], not a gap. -/
   next : Bool

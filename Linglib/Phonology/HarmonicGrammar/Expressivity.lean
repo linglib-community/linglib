@@ -62,10 +62,10 @@ weighted-constraint object. -/
 /-! ### Exponentially separated weights -/
 
 /-- Weights are **exponentially separated** with violation bound `M` when each weight exceeds `M`
-    times the sum of all lower-ranked weights. These are exactly the weightings whose weighted
-    sums order the `M`-bounded violation profiles lexicographically
-    (`Pi.strictMonoOn_sum_mul_iff`), so that no combination of lower-ranked violations overrides
-    a single higher-ranked violation difference, as under OT's strict ranking. -/
+times the sum of all lower-ranked weights. These are exactly the weightings whose weighted
+sums order the `M`-bounded violation profiles lexicographically
+(`Pi.strictMonoOn_sum_mul_iff`), so that no combination of lower-ranked violations overrides
+a single higher-ranked violation difference, as under OT's strict ranking. -/
 def ExponentiallySeparated {n : Nat} (w : Fin n → ℝ) (M : Nat) : Prop :=
   ∀ k : Fin n, (M : ℝ) * ∑ i ∈ Ioi k, w i < w k
 
@@ -75,7 +75,7 @@ theorem ExponentiallySeparated.pos {n M : ℕ} {w : Fin n → ℝ} (hw : Exponen
   Pi.pos_of_forall_natCast_mul_sum_Ioi_lt hw k
 
 /-- The exponential weights give constraint `i` the weight `(M+1)^(n−1−i)`, so the
-    highest-ranked constraint `0` gets the largest weight `(M+1)^(n−1)`. -/
+highest-ranked constraint `0` gets the largest weight `(M+1)^(n−1)`. -/
 def expWeights (n : Nat) (M : Nat) : Fin n → ℝ :=
   fun i ↦ ((M + 1 : ℝ) ^ (n - 1 - i.val))
 
@@ -126,8 +126,8 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
 /-! ### Ganging (complement of exponential separation) -/
 
 /-- Two constraints with weights `w₁` and `w₂` **gang** against a third with weight `w₃` when each
-    is weaker than `w₃` but together they are stronger. Under OT's strict ranking a lower-ranked
-    constraint never overrides a higher-ranked one, however many violations accumulate. -/
+is weaker than `w₃` but together they are stronger. Under OT's strict ranking a lower-ranked
+constraint never overrides a higher-ranked one, however many violations accumulate. -/
 def Ganging (w₁ w₂ w₃ : ℝ) : Prop :=
   0 < w₁ ∧ 0 < w₂ ∧ 0 < w₃ ∧
   w₁ < w₃ ∧ w₂ < w₃ ∧
@@ -210,14 +210,14 @@ every input. -/
 variable {Input Output ι : Type*} {n : ℕ}
 
 /-- The weighting `w` *HG-realizes* the target when on every input the target is the sole
-    candidate of greatest harmony. -/
+candidate of greatest harmony. -/
 def _root_.OptimalityTheory.RealizationProblem.realizedByWeighting [Fintype ι]
     (P : RealizationProblem Input Output ι) (w : ι → ℝ) : Prop :=
   ∀ i ∈ P.inputs, P.hgLanguage w i = {P.target i}
 
 /-- A problem is HG-realizable when some non-negative weighting realizes its target.
-    Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
-    weights. -/
+Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
+weights. -/
 def _root_.OptimalityTheory.RealizationProblem.IsHGRealizable [Fintype ι]
     (P : RealizationProblem Input Output ι) : Prop :=
   ∃ w : ι → ℝ, 0 ≤ w ∧ P.realizedByWeighting w
@@ -225,8 +225,8 @@ def _root_.OptimalityTheory.RealizationProblem.IsHGRealizable [Fintype ι]
 /-! ### Forward containment — OT ⊆ HG -/
 
 /-- Every OT language is an HG language on a finite set of inputs. The weights are exponentially
-    separated weights read off the ranking, with the largest violation count as the separation
-    bound. -/
+separated weights read off the ranking, with the largest violation count as the separation
+bound. -/
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
     (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking.Enumeration ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
@@ -252,12 +252,12 @@ theorem _root_.OptimalityTheory.RealizationProblem.IsOTRealizable.isHGRealizable
 /-! ### Strict containment — the cumulativity gap -/
 
 /-- HG with non-negative weights strictly contains OT. The witness abstracts [pater-2009]'s
-    devoicing of Japanese loanwords ((22), on [kawahara-2006]'s data): faithful candidates
-    violate `{M1}`, `{M2}`, and `{M1, M2}`, as *bobu* violates OCP-Voice ([ito-mester-1986]),
-    *web:u* \*Vce-Gem and *dog:u* both, against an unfaithful `{F}`, and only the third input
-    targets the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds
-    on the third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some
-    markedness constraint above `F`" are inconsistent. -/
+devoicing of Japanese loanwords ((22), on [kawahara-2006]'s data): faithful candidates
+violate `{M1}`, `{M2}`, and `{M1, M2}`, as *bobu* violates OCP-Voice ([ito-mester-1986]),
+*web:u* \*Vce-Gem and *dog:u* both, against an unfaithful `{F}`, and only the third input
+targets the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds
+on the third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some
+markedness constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
     ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output (Fin n)),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by

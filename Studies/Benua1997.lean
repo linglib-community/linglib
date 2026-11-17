@@ -409,7 +409,7 @@ where
   /-- The input `/šamaʕ-tī/`. -/
   input : List Seg := stem .stop .vowel
   /-- The 2fs stem's IO relation truncates the final vowel and epenthesizes a vowel before the
-  stop. -/
+stop. -/
   truncated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 6)]
 
 -- (114)

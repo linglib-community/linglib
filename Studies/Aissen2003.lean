@@ -341,7 +341,7 @@ def starZero (ℓ : L) : Constraint (L × Bool) :=
   Constraint.binary (fun c ↦ c.1 = ℓ ∧ c.2 = false)
 
 /-- The iconicity subhierarchy of a scale (most prominent level first) with
-    \*STRUC_C interpolated at position `k`. -/
+\*STRUC_C interpolated at position `k`. -/
 def interpolation (levels : List L) (k : Nat) : List (Constraint (L × Bool)) :=
   (levels.map starZero).insertIdx k starStruc
 

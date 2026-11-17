@@ -63,7 +63,7 @@ def maxMora (input : List ℕ) : Constraint MetricalTree := fun t ↦
   (List.zipWith (· - ·) input (t.constituency.leafList.filterMap (·.weight?))).sum
 
 /-- The footing ranking *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb of Tables 2, 4 and 6, where Parse-σ,
-    constraint (1), marks every syllable no foot dominates. -/
+constraint (1), marks every syllable no foot dominates. -/
 def footing (input : List ℕ) : List (Constraint MetricalTree) :=
   [finalLong, maxMora input, parseInto .ft, iamb]
 
@@ -96,12 +96,12 @@ theorem table6 :
 /-! ### Words in isolation -/
 
 /-- *[(alaː)(makíː)lɨ]* 's/he fell' (Fig. 1) has two iambs and a stray final syllable, and the
-    second iamb heads the word. -/
+second iamb heads the word. -/
 def fell : MetricalTree :=
   .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true], .σ 1]
 
 /-- *[(tsihaː)(lamaː)(kílɨ)]* 'we fell' (Fig. 2) has an even number of syllables, so its last two
-    form a trochee, which heads the word. -/
+form a trochee, which heads the word. -/
 def weFell : MetricalTree :=
   .om false [.ft false [.σ 1, .σ 2 true], .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]
 
@@ -134,18 +134,18 @@ abbrev syllableCount : ℕ := (MetricalTree.columns t).length
 def moras (i : ℕ) : ℕ := ((MetricalTree.terminals t)[i]?.bind (·.constituency.value.weight?)).getD 0
 
 /-- A syllable is stressed when it heads a foot (p. 2365), its grid column rising above the
-    bottom row. -/
+bottom row. -/
 def Stressed (i : ℕ) : Prop := 2 ≤ (MetricalTree.columns t).getD i 0
 
 instance : DecidablePred (Stressed t) := fun _ ↦ inferInstanceAs (Decidable (2 ≤ _))
 
 /-- The phrase head Δφ, the primary stress of the phrase, is the position of the head
-    terminal. -/
+terminal. -/
 def head : ℕ := (MetricalTree.project t).findIdx (·.onSpine)
 
 /-- A phrase is metrical, in the sense the tone constraints presuppose (p. 2372), when every
-    syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
-    syllable. -/
+syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
+syllable. -/
 structure IsMetricalPhrase : Prop where
   moras_pos : ∀ i < syllableCount t, 0 < moras t i
   stressed_head : Stressed t (head t)
@@ -174,7 +174,7 @@ theorem mem_domains {d : NonemptyInterval ℕ} :
     exact ⟨d.toProd, ⟨d.fst_le_snd.trans_lt hd, hd⟩, by simp [d.fst_le_snd]⟩
 
 /-- Align-L(Δφ,H), (4), counts the moras between the phrase head and the left edge of the
-    domain. -/
+domain. -/
 def alignL : Constraint (NonemptyInterval ℕ) := fun d ↦
   ∑ i ∈ Finset.Ico (min d.fst (head t)) (max d.fst (head t)), moras t i
 
@@ -211,7 +211,7 @@ def toneOptimal (r : Ranking.Enumeration ToneConstraint 4) : Finset (NonemptyInt
   r.optimal (tone t) (domains t)
 
 /-- The extent of the predicted domain is the number of syllables it takes in after the phrase
-    head, the most it can take without a foot head or the phrase-final syllable. -/
+head, the most it can take without a foot head or the phrase-final syllable. -/
 def extent : ℕ :=
   Nat.findGreatest (fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
     (syllableCount t - head t - 2)
@@ -307,7 +307,7 @@ def friendInjured : MetricalTree :=
   .ph false [.om true [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]]
 
 /-- *[(atɔː) (hɛ́pɨː)ɾɨ]* 'the friend has been injured' (Fig. 10), whose second word begins with
-    an iamb. -/
+an iamb. -/
 def friendHasBeenInjured : MetricalTree :=
   .ph false [.om true [.ft true [.σ 1, .σ 2 true]],
     .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
@@ -323,7 +323,7 @@ theorem tone_crosses_iamb_dependent :
   by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
-    `/σσσ # σσσ/`. -/
+`/σσσ # σσσ/`. -/
 def manHasBeenHeard : MetricalTree :=
   .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
     .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
@@ -333,7 +333,7 @@ theorem table14 : toneOptimal manHasBeenHeard toneRanking = {⟨(1, 3), by decid
   by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
-    and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
+and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
 def annattoFell : MetricalTree :=
   .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
     .om false [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
