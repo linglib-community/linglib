@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Kiparsky1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Finnish.Case
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Kiparsky (1998): Partitive Case and Aspect

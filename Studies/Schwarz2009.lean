@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schwarz2009
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Determiner
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Fering.Determiners

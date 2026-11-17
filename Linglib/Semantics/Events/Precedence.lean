@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Temporal precedence on a part structure of events

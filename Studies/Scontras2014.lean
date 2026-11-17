@@ -27,7 +27,7 @@ measure term by lexical reinterpretation as the class of containers of a unit qu
 
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
-self-connection ((74), `Mereology.SelfConnected`), and a partition returns such units ((75),
+self-connection ((74), `Mereology.IsSelfConnected`), and a partition returns such units ((75),
 (76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred Overlap`) does not stop the water
 in a glass from counting as two. Either way the members of a partition form an antichain, so
 each of them measures one relative atom under the relative-atom measure of (68)
@@ -140,7 +140,7 @@ variable [PartialOrder E] (C : E → E → Prop)
 /-- A partition of the kind `k` ((75), (76)) returns maximally self-connected instances of it,
 instances of `k` maximal among its self-connected instances. -/
 def IsMSCPartition (k : E → Prop) (Q : E → Prop) : Prop :=
-  ∀ y, Q y → Maximal (fun x ↦ SelfConnected C x ∧ k x) y
+  ∀ y, Q y → Maximal (fun x ↦ IsSelfConnected C x ∧ k x) y
 
 /-- The relative-atom measure of `Q` (68) counts the `Q`-atoms, members of `Q` with no member of
 `Q` as a proper part, that are parts of `y`. -/

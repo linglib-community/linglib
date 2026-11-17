@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BonehDoron2013
 public import Linglib.Semantics.Genericity.Normality
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
 public import Studies.IatridouEtAl2001

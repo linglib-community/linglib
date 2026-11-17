@@ -755,7 +755,6 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic

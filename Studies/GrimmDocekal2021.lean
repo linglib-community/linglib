@@ -26,7 +26,7 @@ and *-ojí* counts subkinds and so fails on a kind-less argument (`oji_needs_sub
 ## Implementation notes
 
 The connection relation is a parameter, the paper's proximate or external connectedness, which (63)
-binds existentially; the cluster of (61) uses a finite set of members and its supremum. The group
+binds existentially; the cluster of (61) uses a set of members and its supremum. The group
 numeral is stated over the library's `Plurality.GroupStructure`, whose `up` forms a group atom
 from a sum of individuals, which is why a group can be counted again. The paper's Table 1, the
 twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is not retyped here.
@@ -271,9 +271,9 @@ example : IsCluster Near Leaf ({0, 2} : LeafSum) := by
   have h02 : (connectionGraph Near Leaf).Reachable {0} {2} :=
     (connectionGraph_reachable (b := {1}) (by decide) (by decide) (by decide)).trans
       (connectionGraph_reachable (by decide) (by decide) (by decide))
-  refine isCluster_iff.2 ⟨{{0}, {2}}, by simp, by decide, fun z hz z' hz' ↦ ?_, ?_⟩
-  · simp only [Finset.mem_insert, Finset.mem_singleton] at hz hz'
-    rcases hz with rfl | rfl <;> rcases hz' with rfl | rfl
+  refine isCluster_iff.2 ⟨{{0}, {2}}, Set.insert_nonempty _ _, ?_, ?_, ?_⟩
+  · rintro z (rfl | rfl) <;> decide
+  · rintro z (rfl | rfl) z' (rfl | rfl)
     exacts [.refl _, h02, h02.symm, .refl _]
   · simpa using isLUB_pair (a := ({0} : LeafSum)) (b := {2})
 

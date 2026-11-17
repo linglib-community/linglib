@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Basic.PEquiv
 

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Card
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.PolarityItem.Environment

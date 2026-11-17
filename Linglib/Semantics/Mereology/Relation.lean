@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Hom.SupPMap
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Order.UpperLower.Fibration
 
 /-!

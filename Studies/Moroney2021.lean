@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Description
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Mathlib.Basic.Rel

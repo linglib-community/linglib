@@ -24,7 +24,7 @@ order.
 
 ## Implementation notes
 
-* Parthood is an order on the event domain from `Semantics/Mereology.lean`, and theories that
+* Parthood is an order on the event domain from `Semantics/Mereology/Basic.lean`, and theories that
   never read a run time take no trace.
 * Run times are `NonemptyInterval T`, and the sum of two intervals is their convex hull, so the
   sum of two events runs from the start of the earlier to the end of the later, where Krifka's

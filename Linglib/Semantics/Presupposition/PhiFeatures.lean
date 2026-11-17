@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Interval.Set.Defs
 public import Linglib.Semantics.Presupposition.Strengthening
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures

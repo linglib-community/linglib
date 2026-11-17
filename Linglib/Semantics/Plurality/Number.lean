@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Number features as region operators

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Pasternak (2019): A Lot of Hatred and a Ton of Desire

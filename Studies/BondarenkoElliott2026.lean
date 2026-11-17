@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Truthmaker.Basic
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Bondarenko and Elliott (2026): Monotonicity via mereology in the semantics of attitude reports
