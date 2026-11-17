@@ -8,9 +8,7 @@ module
 public import Linglib.Core.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.Homogeneous
-public import Linglib.Core.Algebra.RootedTree.SymmetricAlgebra
 public import Linglib.Core.Data.Multiset.Antidiagonal
-public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 /-!
 # The primitive coproduct on the Connes–Kreimer algebra
@@ -30,8 +28,6 @@ of the symmetric algebra on the trees, unlike the admissible-cut coproducts of t
 * `ConnesKreimer.comulPrim_coassoc`, `ConnesKreimer.rTensor_counit_comp_comulPrim`,
   `ConnesKreimer.lTensor_counit_comp_comulPrim`, `ConnesKreimer.comm_comp_comulPrim`: the
   coalgebra laws and cocommutativity, in the shape of `Bialgebra.ofAlgHom`.
-* `ConnesKreimer.comulPrim_comp_equiv`: along `IsSymmetricAlgebra.connesKreimer`, `Δ_P` is the
-  comultiplication of `SymmetricAlgebra.instBialgebra`.
 
 ## Implementation notes
 
@@ -128,16 +124,5 @@ theorem comm_comp_comulPrim :
       (comulPrim (R := R) (T := T)) = comulPrim := by
   ext t
   simp [add_comm]
-
-/-- Along the identification of `ConnesKreimer R T` with the symmetric algebra on a module with
-basis `T`, `Δ_P` is the comultiplication of the symmetric algebra, in which every generator is
-primitive (Example 1.3.14 of [grinberg-reiner-2020]). -/
-theorem comulPrim_comp_equiv {M : Type*} [AddCommMonoid M] [Module R M] (b : Module.Basis T R M) :
-    (comulPrim (R := R)).comp (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom =
-      (Algebra.TensorProduct.map (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom
-        (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom).comp
-        (Bialgebra.comulAlgHom R (SymmetricAlgebra R M)) := by
-  refine SymmetricAlgebra.algHom_ext <| b.ext fun t ↦ ?_
-  simp
 
 end ConnesKreimer
