@@ -146,7 +146,7 @@ inductive Con where
   /-- SPECIFY counts the output nodes that have no features. -/
   | specify
   /-- \*SHARE[−back] counts the adjacent output segments that are both [−back] and whose first is
-  a segment of the input, a palatal sharing its frontness with the vowel after it. -/
+a segment of the input, a palatal sharing its frontness with the vowel after it. -/
   | noShare
   /-- DEP[+back]. -/
   | depBack

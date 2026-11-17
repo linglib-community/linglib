@@ -40,18 +40,18 @@ Language-neutral accent-placement rules over a syllable-weight profile,
 compared on loanword default accentuation (§2). -/
 
 /-- The antepenultimate accent rule, which accents the syllable containing
-    the antepenultimate mora and the initial syllable of shorter words
-    ([mccawley-1968]). Returns the 0-indexed syllable. -/
+the antepenultimate mora and the initial syllable of shorter words
+([mccawley-1968]). Returns the 0-indexed syllable. -/
 def defaultAccentAAR (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
   | _ => some ((weights.scanl (· + ·) 0).tail.findIdx (weights.sum - 3 < ·))
 
 /-- The Latin Stress Rule, which accents a heavy (≥ 2μ) penult and the
-    antepenult otherwise, with mono- and disyllables accented initially
-    ([hayes-1995]). §2.3 reviews arguments that LSR-conforming variants
-    occur even where the two rules diverge, making the LSR arguably the
-    better characterization of the Japanese default. -/
+antepenult otherwise, with mono- and disyllables accented initially
+([hayes-1995]). §2.3 reviews arguments that LSR-conforming variants
+occur even where the two rules diverge, making the LSR arguably the
+better characterization of the Japanese default. -/
 def latinStressRule (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
@@ -86,27 +86,27 @@ Loanwords lack lexical accent specifications, so their accentuation reveals
 the default pattern (§2.1; [kubozono-2006]). -/
 
 /-- The weight profile of an all-light loanword — one light syllable per
-    mora. -/
+mora. -/
 def lightProfile (e : ProsodicEntry) : List Syllable.Weight :=
   List.replicate e.nMorae .light
 
 /-- *ku-ri-su'-ma-su* 'Christmas', accented on the antepenultimate mora
-    ((10a)). -/
+((10a)). -/
 def kurisumasu : ProsodicEntry :=
   { form := "kurisumasu", gloss := "Christmas", accentMora := some 2, nMorae := 5 }
 
 /-- *a-su-fa'-ru-to* 'asphalt', accented on the antepenultimate mora
-    ((10g)). -/
+((10g)). -/
 def asufaruto : ProsodicEntry :=
   { form := "asufaruto", gloss := "asphalt", accentMora := some 2, nMorae := 5 }
 
 /-- *ma-ku-do-na'-ru-do* 'McDonald', accented on the antepenultimate mora
-    ((10h)). -/
+((10h)). -/
 def makudonarudo : ProsodicEntry :=
   { form := "makudonarudo", gloss := "McDonald's", accentMora := some 3, nMorae := 6 }
 
 /-- *a.me.ri.ka* 'America', unaccented as a four-mora word with two final
-    light non-epenthetic syllables ((16a)). -/
+light non-epenthetic syllables ((16a)). -/
 def amerika : ProsodicEntry :=
   { form := "amerika", gloss := "America", accentMora := none, nMorae := 4 }
 
@@ -143,14 +143,14 @@ def initialRise (i : ℕ) : Option LevelTone :=
   if i = 0 then some .L else if i = 1 then some .H else none
 
 /-- The tonal specification of mora `i` before spreading, with the
-    accentual HL taking precedence over the initial rise ((5b)). -/
+accentual HL taking precedence over the initial rise ((5b)). -/
 def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
   (accentualHL accentMora i).or (initialRise i)
 
 /-- The surface tones of an `nMorae`-word from its accent position, by
-    specification (`toneSpec`) followed by spreading — a left scan copying
-    the most recent specified tone rightward ((7)–(9)). The seed is never
-    consulted, since mora 0 is always specified. -/
+specification (`toneSpec`) followed by spreading — a left scan copying
+the most recent specified tone rightward ((7)–(9)). The seed is never
+consulted, since mora 0 is always specified. -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
   (((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o ↦ o.getD t) .H).tail
 
@@ -174,7 +174,7 @@ theorem trisyllabic_tone_patterns :
 length. -/
 
 /-- The number of H-to-L falls in a tone string — the occurrences of
-    `(H, L)` among adjacent pairs. -/
+`(H, L)` among adjacent pairs. -/
 def hlFallCount (l : List LevelTone) : ℕ := (l.zip l.tail).count (.H, .L)
 
 theorem hlFallCount_L_cons (l : List LevelTone) :
@@ -239,7 +239,7 @@ theorem count_L_toneSpec_dense (a : Option ℕ) (l : List ℕ) (hnd : l.Nodup)
     exact List.nodup_iff_count_le_one.mp hnd _
 
 /-- A word carries at most one HL fall, whatever its accent location and
-    length (culminativity, §1.4). -/
+length (culminativity, §1.4). -/
 theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
     hlFallCount (accentToTones a n) ≤ 1 := by
   obtain _ | m := n
@@ -266,25 +266,25 @@ counts; the paper's rules target syllables, and the two coincide on the
 light-syllable data of (21)–(24) formalized below. -/
 
 /-- A retaining short N2 keeps its own accent, shifted into the compound
-    (§4.1, (21)). -/
+(§4.1, (21)). -/
 def shortN2Retain (n1Morae : ℕ) (n2Accent : Option ℕ) : Option ℕ :=
   n2Accent.map (n1Morae + ·)
 
 /-- A pre-accenting short N2 accents the N1-final mora — the partial
-    predecessor of N1's length — its own accent lost to NonFinality
-    (§4.1, (22)). -/
+predecessor of N1's length — its own accent lost to NonFinality
+(§4.1, (22)). -/
 def shortN2PreAccent (n1Morae : ℕ) : Option ℕ :=
   n1Morae.ppred
 
 /-- The compound accent under a long (≥ 3μ) N2, which receives N2-initial
-    accent when unaccented or finally-accented and otherwise retains its
-    own accent (§4.2). -/
+accent when unaccented or finally-accented and otherwise retains its
+own accent (§4.2). -/
 def longN2CompoundAccent (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) : Option ℕ :=
   some (n1Morae + (n2Accent.filter (· + 1 != n2Morae)).getD 0)
 
 /-- The NonFinality constraint over an (accent, mora count) pair, violated
-    once when the accent sits on the final mora ([prince-smolensky-1993];
-    §4.1 invokes it for the loss of final accent in compounds). -/
+once when the accent sits on the final mora ([prince-smolensky-1993];
+§4.1 invokes it for the loss of final accent in compounds). -/
 def nonFinality : Constraint (Option ℕ × ℕ) :=
   Constraint.binary fun an ↦ an.1.map (· + 1) = some an.2
 

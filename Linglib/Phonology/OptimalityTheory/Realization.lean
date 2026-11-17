@@ -25,8 +25,8 @@ namespace OptimalityTheory
 variable {Input Output ι : Type*} {n : ℕ}
 
 /-- A realization problem is a constraint system with a target output for each of finitely many
-    inputs, which a single grammar must select on every input at once. For OT it is the data of
-    [tesar-smolensky-1995]'s ranking problem. -/
+inputs, which a single grammar must select on every input at once. For OT it is the data of
+[tesar-smolensky-1995]'s ranking problem. -/
 structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*)
     extends ConstraintSystem Input Output ι where
   /-- The grammar handles a finite set of inputs. -/
@@ -39,7 +39,7 @@ structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*)
 namespace RealizationProblem
 
 /-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, the sole
-    winner of the input's tableau under `σ`. -/
+winner of the input's tableau under `σ`. -/
 def realizedByRanking (P : RealizationProblem Input Output ι)
     (σ : Ranking.Enumeration ι n) : Prop :=
   ∀ i ∈ P.inputs, P.toConstraintSystem.PicksAt σ i (P.target i)
@@ -52,7 +52,7 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output ι)
 /-! ### OT-realization is ERC satisfaction -/
 
 /-- The winner–loser ERCs of a problem are those of each input's target against its rivals
-    ([prince-2002]). -/
+([prince-2002]). -/
 def ercs (P : RealizationProblem Input Output ι) : Set (ERC ι) :=
   ⋃ i ∈ P.inputs, P.toConstraintSystem.ercs i (P.target i)
 
@@ -63,7 +63,7 @@ theorem mem_ercs {P : RealizationProblem Input Output ι} {α : ERC ι} :
   rfl
 
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
-    satisfies every winner–loser ERC ([prince-2002]). -/
+satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output ι}
     {σ : Ranking.Enumeration ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
@@ -80,7 +80,7 @@ theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output �
 def grammar (P : RealizationProblem Input Output ι) : Grammar.Enumeration ι n := .ofERCs P.ercs
 
 /-- Provided no competitor ties the target's violation profile, the rankings of a problem's
-    grammar are those that realize its target. -/
+grammar are those that realize its target. -/
 theorem mem_extent_grammar {P : RealizationProblem Input Output ι}
     {σ : Ranking.Enumeration ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
@@ -108,14 +108,14 @@ theorem isOTRealizable_iff_extent_nonempty [Fintype ι]
 /-! ### Realization by a partial order -/
 
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
-    realizes it. Since consistent extensions always exist
-    (`Ranking.Enumeration.exists_isLinearExtension`), this is never vacuous. -/
+realizes it. Since consistent extensions always exist
+(`Ranking.Enumeration.exists_isLinearExtension`), this is never vacuous. -/
 def realizedByPartialOrder (n : ℕ) (P : RealizationProblem Input Output ι) (r : ι → ι → Prop) :
     Prop :=
   ∀ σ : Ranking.Enumeration ι n, σ.IsLinearExtension r → P.realizedByRanking σ
 
 /-- A partial order realizes the target iff its grammar lies below the problem's: every one of
-    its linear extensions is a ranking that realizes the target. -/
+its linear extensions is a ranking that realizes the target. -/
 theorem realizedByPartialOrder_iff_le [DecidableEq ι] {P : RealizationProblem Input Output ι}
     {r : ι → ι → Prop}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →

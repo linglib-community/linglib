@@ -95,7 +95,8 @@ def starMu (P : Segment → Prop) [DecidablePred P] : Constraint (Candidate Segm
 
 /-- NOSHAREDMORA, from [broselow-chen-huffman-1997]: a violation for each mora linked to more
 than one segment. -/
-def noSharedMora : Constraint (Candidate Segment) := BroselowChenHuffman1997.noSharedMora.comap (·.output.form)
+def noSharedMora : Constraint (Candidate Segment) :=
+  BroselowChenHuffman1997.noSharedMora.comap (·.output.form)
 
 /-- *GEMTAP (20): a violation for each tap with two association lines. -/
 def gemTap : Constraint (Candidate Segment) := fun c ↦
