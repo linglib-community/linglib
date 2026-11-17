@@ -15,11 +15,11 @@ A PCFG is a multitype Galton–Watson process whose types are the symbols: a ter
 offspring, and a nonterminal's offspring is the right-hand side of a rule at it chosen with its
 weight. The law of its family tree is the derivation measure, under which a tree has
 [the product of its rule weights](##PCFG.derivationMeasure_singleton). It is
-[a sub-probability kernel](##PCFG.derivationMeasure_apply_univ_le_one), and total mass one is
-tightness in the sense of [booth-thompson-1973] and [chi-1999]: the grammar almost surely produces
-a finite derivation. The relative-frequency estimate from a corpus of licensed trees is
-[tight](##PCFG.isProbabilityMeasure_derivationMeasure_relFreq) at the root of every tree of the
-corpus ([chi-geman-1998]).
+[a sub-probability kernel](##PCFG.derivationMeasure_apply_univ_le_one). Total mass one, the
+grammar almost surely producing a finite derivation, is tightness in [chi-geman-1998], consistency
+in [booth-thompson-1973] and properness in [chi-1999]. The relative-frequency estimate from a
+corpus of licensed trees is [tight](##PCFG.isProbabilityMeasure_derivationMeasure_relFreq) at the
+root of every tree of the corpus ([chi-geman-1998]).
 
 ## TODO
 

@@ -21,9 +21,10 @@ nonterminals the corpus applies a rule to.
 ## Implementation notes
 
 Weights are `ℝ≥0∞`, the scalar of `MeasureTheory.Measure`. `PCFG.normalize` is total: at a
-nonterminal where the weights total `0` or `⊤` it gives the rules equal weights. The measure on
-trees whose singleton masses are `PCFG.derivProb`, and tightness ([booth-thompson-1973]), are in
-`Linglib.Core.Computability.ContextFreeGrammar.Measure`.
+nonterminal where the weights total `0` or `⊤` it gives the rules equal weights, where [chi-1999]
+defines relative frequencies only for a sample in which every nonterminal occurs. The measure on
+trees whose singleton masses are `PCFG.derivProb`, and its total mass ([booth-thompson-1973]), are
+in `Linglib.Core.Computability.ContextFreeGrammar.Measure`.
 
 ## References
 
