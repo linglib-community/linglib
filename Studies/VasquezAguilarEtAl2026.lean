@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Shiwilu.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Phonology.Prosody.Mora
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Studies.BroselowChenHuffman1997
@@ -144,16 +144,16 @@ inductive Con
   | starMuC
   deriving DecidableEq, Fintype, Repr
 
-/-- The constraint set. -/
-def con : ConstraintSet Candidate Con
-  | .gemTap => gemTap
-  | .starMuIntV => starMu (interior ≤ ·)
-  | .headedness => headedness
-  | .noSharedMora => noSharedMora
-  | .crispEdge => crispEdge
-  | .maxIntV => maxIntV
-  | .onset => onset
-  | .starMuC => starMu Segment.IsConsonant
+/-- The marks of a candidate. -/
+def marks (c : Candidate) : Con → ℕ
+  | .gemTap => gemTap c
+  | .starMuIntV => starMu (interior ≤ ·) c
+  | .headedness => headedness c
+  | .noSharedMora => noSharedMora c
+  | .crispEdge => crispEdge c
+  | .maxIntV => maxIntV c
+  | .onset => onset c
+  | .starMuC => starMu Segment.IsConsonant c
 
 /-- The solid arrows of Figure 5, each from a dominating constraint to a dominated one. -/
 def figure5 : List (Con × Con) :=
@@ -273,28 +273,28 @@ variable {r : Ranking Con}
 
 -- (15), (16), (17), (19), (21) follow from the arrows of Figure 5 but *GemTap over *μ/C.
 theorem derives_of_required (hr : ∀ p ∈ required, r.Dominates p.1 p.2) :
-    (Tableau.ofRanking (con.comap cand15) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand17) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand19) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand21) r Finset.univ).optimal = {.a} := by
+    r.optimal (marks ∘ cand15) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand16) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand17) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand19) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand21) Finset.univ = {.a} := by
   have hR : (fun i j ↦ (i, j) ∈ required) ≤ r.Dominates := fun i j h ↦ hr (i, j) h
-  exact ⟨Tableau.ofRanking_optimal_eq_singleton_of_rel hR (by simp) (by decide),
-    Tableau.ofRanking_optimal_eq_singleton_of_rel hR (by simp) (by decide),
-    Tableau.ofRanking_optimal_eq_singleton_of_rel hR (by simp) (by decide),
-    Tableau.ofRanking_optimal_eq_singleton_of_rel hR (by simp) (by decide),
-    Tableau.ofRanking_optimal_eq_singleton_of_rel hR (by simp) (by decide)⟩
+  exact ⟨Ranking.Enumeration.optimal_eq_singleton_of_rel hR (by simp) (by decide),
+    Ranking.Enumeration.optimal_eq_singleton_of_rel hR (by simp) (by decide),
+    Ranking.Enumeration.optimal_eq_singleton_of_rel hR (by simp) (by decide),
+    Ranking.Enumeration.optimal_eq_singleton_of_rel hR (by simp) (by decide),
+    Ranking.Enumeration.optimal_eq_singleton_of_rel hR (by simp) (by decide)⟩
 
 /-- Every ranking that respects Figure 5 selects the attested outputs: the coda bears the mora
 of /ð̞ɘk/ (15), the consonant after the interior vowel geminates in /kɘki/ (16) but not after a
 peripheral vowel in /ð̞aka/ (17), the interior vowel deletes rather than geminate a consonant
 across a word boundary (19), and the tap is a moraic coda (21). -/
 theorem figure5_derives (hr : ∀ p ∈ figure5, r.Dominates p.1 p.2) :
-    (Tableau.ofRanking (con.comap cand15) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand17) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand19) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand21) r Finset.univ).optimal = {.a} :=
+    r.optimal (marks ∘ cand15) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand16) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand17) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand19) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand21) Finset.univ = {.a} :=
   derives_of_required fun p hp ↦ hr p (List.mem_of_mem_erase hp)
 
 end Derivation
@@ -302,11 +302,11 @@ end Derivation
 /-- No printed tableau decides between *GemTap and *μ/C: a ranking that respects every other arrow
 of Figure 5 but puts *μ/C above *GemTap selects every attested output. -/
 theorem gemTap_unforced : ∃ r : Ranking Con, r.Dominates .starMuC .gemTap ∧
-    (Tableau.ofRanking (con.comap cand15) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand17) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand19) r Finset.univ).optimal = {.a} ∧
-    (Tableau.ofRanking (con.comap cand21) r Finset.univ).optimal = {.a} :=
+    r.optimal (marks ∘ cand15) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand16) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand17) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand19) Finset.univ = {.a} ∧
+    r.optimal (marks ∘ cand21) Finset.univ = {.a} :=
   let r : Ranking Con := .ofList [.starMuIntV, .headedness, .noSharedMora, .crispEdge, .maxIntV,
     .starMuC, .gemTap, .onset]
   ⟨r, by decide, derives_of_required (by decide)⟩
@@ -333,11 +333,11 @@ def tapOnset₂ : Ranking Con :=
 
 -- (22): the tap is an onset and the interior vowel is moraic.
 theorem tapOnset₁_optimal :
-    (Tableau.ofRanking (con.comap cand21) tapOnset₁ Finset.univ).optimal = {.b} := by decide
+    tapOnset₁.optimal (marks ∘ cand21) Finset.univ = {.b} := by decide
 
 -- (23): the tap is an onset and its syllable has no mora.
 theorem tapOnset₂_optimal :
-    (Tableau.ofRanking (con.comap cand21) tapOnset₂ Finset.univ).optimal = {.c} := by decide
+    tapOnset₂.optimal (marks ∘ cand21) Finset.univ = {.c} := by decide
 
 /-! ### The typology of interior vowels -/
 
@@ -351,20 +351,20 @@ def violated : C16 → Con
 theorem violated_injective : Function.Injective violated := by decide
 
 -- Each candidate of (16) violates its constraint once and no other.
-theorem con_cand16 : ∀ i x, con i (cand16 x) = if i = violated x then 1 else 0 := by decide
+theorem marks_cand16 : ∀ x i, marks (cand16 x) i = if i = violated x then 1 else 0 := by decide
 
 /-- Under any ranking, a consonant after the interior vowel geminates, as in Shiwilu, the
 interior vowel's syllable has no mora, as in Piuma Paiwan and Northwest Mari, or the interior
 vowel bears the mora; each outcome wins exactly when the one constraint it violates is ranked
 below the two the others violate (25). -/
 theorem typology (r : Ranking Con) (x : C16) :
-    (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {x} ↔
+    r.optimal (marks ∘ cand16) Finset.univ = {x} ↔
       ∀ y, y ≠ x → r.Dominates (violated y) (violated x) := by
   have key (p q : Prop) [Decidable p] [Decidable q] :
       ((if p then 1 else 0 : ℕ) < if q then 1 else 0) ↔ ¬p ∧ q := by
     split_ifs <;> simp_all
-  simp only [Tableau.ofRanking_optimal_eq_singleton_iff, Finset.mem_univ, true_and,
-    forall_const, ConstraintSet.comap, Constraint.comap, Function.comp_apply, con_cand16, key]
+  simp only [Ranking.Enumeration.optimal_eq_singleton_iff, Finset.mem_univ, true_and,
+    forall_const, Function.comp_apply, marks_cand16, key]
   refine forall₂_congr fun y hy ↦ ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨_, ⟨-, rfl⟩, h⟩
     exact h _ ⟨violated_injective.ne hy.symm, rfl⟩
@@ -372,7 +372,7 @@ theorem typology (r : Ranking Con) (x : C16) :
 
 -- (25b): the consonant geminates exactly when HEADEDNESS-σ and *μ/INTV both dominate *μ/C.
 theorem gemination_iff (r : Ranking Con) :
-    (Tableau.ofRanking (con.comap cand16) r Finset.univ).optimal = {.a} ↔
+    r.optimal (marks ∘ cand16) Finset.univ = {.a} ↔
       r.Dominates .headedness .starMuC ∧ r.Dominates .starMuIntV .starMuC := by
   rw [typology]
   exact ⟨fun h ↦ ⟨h .b (by decide), h .c (by decide)⟩,
