@@ -8,9 +8,7 @@ module
 public import Linglib.Core.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.Homogeneous
-public import Linglib.Core.Algebra.RootedTree.SymmetricAlgebra
 public import Linglib.Core.Data.Multiset.Antidiagonal
-public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 /-!
 # The primitive coproduct on the Connes–Kreimer algebra
@@ -27,17 +25,15 @@ of the symmetric algebra on the trees, unlike the admissible-cut coproducts of t
   is the empty one.
 * `ConnesKreimer.rTensor_homogeneousComponent_comulPrim_of'`: the terms whose left factor has
   `k` trees are indexed by the `k`-tree subforests.
-* `ConnesKreimer.comulPrim_coassoc`, `ConnesKreimer.rTensor_counit_comp_comulPrim`,
-  `ConnesKreimer.lTensor_counit_comp_comulPrim`, `ConnesKreimer.comm_comp_comulPrim`: the
-  coalgebra laws and cocommutativity, in the shape of `Bialgebra.ofAlgHom`.
-* `ConnesKreimer.comulPrim_comp_equiv`: along `IsSymmetricAlgebra.connesKreimer`, `Δ_P` is the
-  comultiplication of `SymmetricAlgebra.instBialgebra`.
+* `ConnesKreimer.comm_comp_comulPrim`: `Δ_P` is cocommutative.
+* `ConnesKreimer.WithCuts.comulAlgHom_emptyCuts`: on trees, `Δ_P` is the comultiplication of the
+  bialgebra `WithCuts R emptyCuts`.
 
 ## Implementation notes
 
-`Δ_P` is not a `Bialgebra` instance: on trees the carrier already carries the Connes–Kreimer
-`Bialgebra` (`ConnesKreimer.instBialgebra`), so `Δ_P` is an algebra homomorphism with its laws
-stated separately.
+`Δ_P` is not a `Bialgebra` instance on `ConnesKreimer R T`: on trees that carrier already carries
+the Connes–Kreimer `Bialgebra` (`ConnesKreimer.instBialgebra`). On trees the synonym
+`WithCuts R emptyCuts` carries `Δ_P` as its `Bialgebra`.
 
 ## References
 
@@ -102,42 +98,42 @@ theorem rTensor_homogeneousComponent_comulPrim_of' [DecidableEq T] (k : ℕ) (F 
   simp only [Function.comp_apply, LinearMap.rTensor_tmul, homogeneousComponent_of']
   split_ifs <;> simp
 
-theorem comulPrim_coassoc :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R T) (ConnesKreimer R T)
-        (ConnesKreimer R T)).toAlgHom.comp
-      ((Algebra.TensorProduct.map (comulPrim (R := R) (T := T)) (.id R _)).comp comulPrim) =
-    (Algebra.TensorProduct.map (.id R _) (comulPrim (R := R) (T := T))).comp comulPrim := by
-  ext t
-  simp [Algebra.TensorProduct.one_def, TensorProduct.add_tmul, TensorProduct.tmul_add]
-  abel
-
-theorem rTensor_counit_comp_comulPrim :
-    (Algebra.TensorProduct.map counit (.id R _)).comp (comulPrim (R := R) (T := T)) =
-      (Algebra.TensorProduct.lid R (ConnesKreimer R T)).symm := by
-  ext t
-  simp
-
-theorem lTensor_counit_comp_comulPrim :
-    (Algebra.TensorProduct.map (.id R _) counit).comp (comulPrim (R := R) (T := T)) =
-      (Algebra.TensorProduct.rid R R (ConnesKreimer R T)).symm := by
-  ext t
-  simp
-
 theorem comm_comp_comulPrim :
     (Algebra.TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T)).toAlgHom.comp
       (comulPrim (R := R) (T := T)) = comulPrim := by
   ext t
   simp [add_comm]
 
-/-- Along the identification of `ConnesKreimer R T` with the symmetric algebra on a module with
-basis `T`, `Δ_P` is the comultiplication of the symmetric algebra, in which every generator is
-primitive (Example 1.3.14 of [grinberg-reiner-2020]). -/
-theorem comulPrim_comp_equiv {M : Type*} [AddCommMonoid M] [Module R M] (b : Module.Basis T R M) :
-    (comulPrim (R := R)).comp (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom =
-      (Algebra.TensorProduct.map (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom
-        (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom).comp
-        (Bialgebra.comulAlgHom R (SymmetricAlgebra R M)) := by
-  refine SymmetricAlgebra.algHom_ext <| b.ext fun t ↦ ?_
-  simp
+/-! ### The primitive bialgebra
+
+On trees the primitive coproduct is the admissible-cut coproduct at the empty-cut enumeration, so
+`WithCuts R emptyCuts` carries it as a `Bialgebra`. -/
+
+section WithCuts
+variable {α : Type*}
+
+instance : IsBialgebraCuts (emptyCuts (α := α)) where
+  doubleCutsCrown_eq T := by
+    have h : Multiset.antidiagonal ({T} : Multiset (UnorderedTree α)) = {(0, {T}), ({T}, 0)} := by
+      rw [← Multiset.cons_zero T, Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]; rfl
+    simp only [doubleCutsCrown, doubleCutsTrunk, treeCuts, forestCuts_emptyCuts, emptyCuts]
+    simp [h]
+    rw [← Multiset.singleton_add, ← Multiset.singleton_add, ← Multiset.singleton_add,
+      ← Multiset.singleton_add]
+    abel
+  filter_card_eq_zero T := by simp [emptyCuts, Multiset.filter_singleton]
+
+theorem WithCuts.comulAlgHom_emptyCuts :
+    Bialgebra.comulAlgHom R (WithCuts R (emptyCuts (α := α))) = comulPrim :=
+  comulOfCuts_emptyCuts
+
+theorem WithCuts.counitAlgHom_emptyCuts :
+    Bialgebra.counitAlgHom R (WithCuts R (emptyCuts (α := α))) = counit :=
+  rfl
+
+instance : Coalgebra.IsCocomm R (WithCuts R (emptyCuts (α := α))) where
+  comm_comp_comul := congr(($comm_comp_comulPrim).toLinearMap)
+
+end WithCuts
 
 end ConnesKreimer
