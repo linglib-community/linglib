@@ -362,35 +362,4 @@ theorem ι_injective : Function.Injective (ι : ChapotonLivernet R α → Grossm
   exact fun x y hxy ↦
     ChapotonLivernet.coeffLinearEquiv.injective (h (linearEquiv.symm.injective hxy))
 
-/-- The grafting product of trees is the insertion of their one-tree forests. -/
-theorem toConnesKreimer_ι_mul (x y : ChapotonLivernet R α) :
-    (ι (x * y)).toConnesKreimer = insertion (ι x).toConnesKreimer (ι y).toConnesKreimer := by
-  induction x using ChapotonLivernet.induction_linear with
-  | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp [add_mul, h₁, h₂]
-  | single T a =>
-    induction y using ChapotonLivernet.induction_linear with
-    | zero => simp
-    | add y₁ y₂ h₁ h₂ => simp [mul_add, h₁, h₂]
-    | single S b =>
-      rw [ChapotonLivernet.single_eq_smul_of T, ChapotonLivernet.single_eq_smul_of S]
-      simp [smul_mul_smul_comm, ChapotonLivernet.of_mul_of, map_multiset_sum, Multiset.map_map,
-        smul_smul, mul_comm a b]
-
-/-- The product of one-tree forests is their disjoint union plus their insertion,
-`x ⋆ y = x y + x ∘ y`. -/
-theorem toConnesKreimer_ι_mul_ι (x y : ChapotonLivernet R α) :
-    (ι x * ι y).toConnesKreimer = (ι x).toConnesKreimer * (ι y).toConnesKreimer +
-      insertion (ι x).toConnesKreimer (ι y).toConnesKreimer := by
-  induction x using ChapotonLivernet.induction_linear with
-  | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp [add_mul, h₁, h₂]; abel
-  | single T a =>
-    induction y using ChapotonLivernet.induction_linear with
-    | zero => simp
-    | add y₁ y₂ h₁ h₂ => simp [mul_add, h₁, h₂]; abel
-    | single S b =>
-      rw [ChapotonLivernet.single_eq_smul_of T, ChapotonLivernet.single_eq_smul_of S]
-      simp [smul_mul_smul_comm, product_ofTree_ofTree, smul_add, smul_smul, mul_comm a b]
-
 end GrossmanLarson

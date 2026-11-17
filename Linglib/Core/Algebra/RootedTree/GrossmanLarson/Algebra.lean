@@ -137,21 +137,6 @@ noncomputable instance instAddCommGroup : AddCommGroup (GrossmanLarson R α) :=
 
 noncomputable instance instRing : Ring (GrossmanLarson R α) where
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
-/-- The one-tree forests as a map of Lie algebras: the commutator of two trees in the
-Grossman–Larson algebra is the commutator of their grafting products. -/
-noncomputable def ιLie : ChapotonLivernet R α →ₗ⁅R⁆ GrossmanLarson R α :=
-  { ι with
-    map_lie' := fun {x y} ↦ ext <| by
-      change (ι (x * y - y * x)).toConnesKreimer = (ι x * ι y - ι y * ι x).toConnesKreimer
-      rw [map_sub, toConnesKreimer_sub, toConnesKreimer_sub, toConnesKreimer_ι_mul,
-        toConnesKreimer_ι_mul, toConnesKreimer_ι_mul_ι, toConnesKreimer_ι_mul_ι,
-        mul_comm (ι y).toConnesKreimer]
-      abel }
-
-@[simp] theorem ιLie_apply (x : ChapotonLivernet R α) : ιLie x = ι x := rfl
-
 /-! ### The Grossman–Larson product as the product of Oudom and Guin -/
 
 /-- Grafting one tree onto a forest is the derivation of the forests that grafts it onto one
@@ -214,6 +199,29 @@ theorem product_eq_oudomGuin :
       simp [mul_comm, add_comm]
     rw [of'_cons, mul_comm, hGL, OudomGuin.product_mul_ofTree, ChapotonLivernet.basis_apply,
       ih E hE', hD, hstep]
+
+/-- The one-tree forests are the pre-Lie algebra of trees in its symmetric algebra. -/
+theorem toConnesKreimer_ι (x : ChapotonLivernet R α) :
+    (ι x).toConnesKreimer = OudomGuin.incl (ChapotonLivernet.basis R α) x := by
+  have h : linearEquiv.toLinearMap ∘ₗ ι = OudomGuin.incl (ChapotonLivernet.basis R α) :=
+    (ChapotonLivernet.basis R α).ext fun T ↦ by
+      rw [OudomGuin.incl_basis, LinearMap.comp_apply, ChapotonLivernet.basis_apply, ι_of]
+      rfl
+  exact LinearMap.congr_fun h x
+
+attribute [local instance 100] LieRing.ofAssociativeRing
+
+/-- The one-tree forests as a map of Lie algebras: the commutator of two trees in the
+Grossman–Larson algebra is the commutator of their grafting products. -/
+noncomputable def ιLie : ChapotonLivernet R α →ₗ⁅R⁆ GrossmanLarson R α :=
+  { ι with
+    map_lie' := fun {x y} ↦ ext <| by
+      change (ι (x * y - y * x)).toConnesKreimer = (ι x * ι y - ι y * ι x).toConnesKreimer
+      rw [toConnesKreimer_sub, toConnesKreimer_mul, toConnesKreimer_mul, toConnesKreimer_ι,
+        toConnesKreimer_ι, toConnesKreimer_ι, product_eq_oudomGuin,
+        OudomGuin.product_incl_incl_sub] }
+
+@[simp] theorem ιLie_apply (x : ChapotonLivernet R α) : ιLie x = ι x := rfl
 
 end Ring
 
