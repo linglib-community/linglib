@@ -26,7 +26,7 @@ only return their values [it returns its value](##Interpreter.realize_continuize
 
 ## References
 
-* [barker-2022]
+* [barker-2022a]
 * [barker-2002]
 -/
 

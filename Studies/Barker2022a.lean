@@ -7,7 +7,7 @@ public import Linglib.Semantics.Modality.DomainSemantics
 public import Linglib.Semantics.Presupposition.LocalContext
 
 /-!
-# Barker (2022): Composing local contexts
+# Barker (2022a): Composing local contexts
 
 A logical form is a derivation by functional application, and its meaning is the value of the
 derivation continuized in order (`LF.value`), a computation at the effect of continuations whose
@@ -41,7 +41,7 @@ context](##isLocalContext_subset_commitments) of a truth-functional environment.
 
 ## References
 
-* [barker-2022]
+* [barker-2022a]
 * [schlenker-2009]
 * [mandelkern-2019]
 * [veltman-1996]
@@ -51,7 +51,7 @@ context](##isLocalContext_subset_commitments) of a truth-functional environment.
 
 @[expose] public section
 
-namespace Barker2022
+namespace Barker2022a
 
 open Interpreter ManySorted ManySorted.Language Presupposition DomainSemantics Set
 open scoped ModalLogic
@@ -377,4 +377,4 @@ theorem commitments_fa_fa [Nonempty (a.Domain E W)] [Nonempty (b.Domain E W)] :
 
 end Both
 
-end Barker2022
+end Barker2022a

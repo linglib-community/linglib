@@ -52,7 +52,7 @@ the context set, so a world outside it constrains nothing.
 
 * [schlenker-2009]
 * [kalomoiros-2023]
-* [barker-2022]
+* [barker-2022a]
 -/
 
 @[expose] public section
@@ -323,7 +323,7 @@ end TruthFunctional
 
 /-- The commitments of a set of propositions: what some of them include and some exclude, their
 least upper bound less their greatest lower bound. For the propositions a sentence may still
-express these are the worlds at which its truth value is open, [barker-2022]'s semantic
+express these are the worlds at which its truth value is open, [barker-2022a]'s semantic
 commitments of a context. Propositions are the elements of any complete Boolean algebra, sets of
 worlds or predicates of them. -/
 def commitments {β : Type*} [CompleteBooleanAlgebra β] (S : Set β) : β := sSup S \ sInf S
