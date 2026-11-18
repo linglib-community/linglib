@@ -9,99 +9,97 @@ public import Mathlib.Order.Preorder.Finite
 /-!
 # Left-linear orders
 
-A partial order is **left-linear** when the predecessors of every element are linearly
-ordered: `a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a`. Equivalently, every principal down-set `Iic m`
-is a chain. This is the order-theoretic notion of a tree: the order may branch upward but
-never downward.
+An order is **left-linear** when the predecessors of every element are pairwise comparable,
+`a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a`, which is to say that
+[every principal down-set is a chain](##isLeftLinear_iff_forall_isChain_Iic). This is the
+order-theoretic notion of a tree: the order may branch upward but never downward. Linear orders
+are left-linear, as is every `PredOrder` with archimedean predecessor, such as the rooted trees of
+`Mathlib/Order/SuccPred/Tree.lean`, and left-linearity
+[pulls back along an order embedding](##OrderEmbedding.isLeftLinear).
 
-Linear orders are left-linear, and so is every rooted tree in the sense of
-`Mathlib/Order/SuccPred/Tree.lean`: a `PredOrder` with archimedean predecessor is left-linear by
-mathlib's `le_total_of_directed`. Left-linearity also pulls back along any order embedding
-(`OrderEmbedding.isLeftLinear`), so a suborder of a tree is left-linear. Branching-time frames,
-which need not have predecessors, assume left-linearity directly.
-
-The flags of a left-linear order, mathlib's maximal chains, behave like the branches of a tree:
-a flag through an element contains its entire past (`Flag.Iic_subset`), the down-set of a maximal
-element is a flag (`Flag.ofIsMax`), and on a finite order every flag arises this way
-(`Flag.exists_isMax_eq_ofIsMax`), which turns quantification over flags into quantification over
-maximal elements (`Flag.forall_mem_iff`) and so makes it decidable.
-
-## Main definitions
-
-* `IsLeftLinear M`: the predecessors of every element are linearly ordered.
-* `IsBranching x`: `x` has at least two covers.
-* `Flag.ofIsMax`: the down-set of a maximal element, as a flag.
-
-## Main results
-
-* `IsLeftLinear.isChain_Iic`: every principal down-set is a chain.
-* `exists_cherry`: in a finite order whose non-maximal elements all branch, some element is
-  covered by two maximal elements.
-* `Flag.exists_mem_gt_of_lt`: a flag cannot stop at an element with a strict successor; this
-  holds in any order.
-* `Flag.exists_isMax_eq_ofIsMax`, `Flag.forall_mem_iff`: on a finite left-linear order the
-  flags are the down-sets of the maximal elements.
+The flags of a left-linear order behave like the branches of a tree. A flag
+[contains the past](##Flag.Iic_subset) of each of its elements, the down-set of a maximal element
+[is a flag](##Flag.ofIsMax), and when `>` is well-founded
+[every flag arises this way](##Flag.exists_isMax_eq_ofIsMax), so that quantifying over flags
+[is quantifying over maximal elements](##Flag.forall_mem_iff).
 -/
 
 @[expose] public section
 
-/-- A partial order is **left-linear** when the predecessors of every element are linearly
-ordered, so that it never branches backward. -/
-class IsLeftLinear (M : Type*) [PartialOrder M] : Prop where
+/-- An order is **left-linear** when the predecessors of every element are pairwise comparable,
+so that it never branches backward. -/
+class IsLeftLinear (M : Type*) [LE M] : Prop where
   /-- The predecessors of any element are pairwise comparable. -/
-  comparable_of_le_common : ∀ ⦃a b c : M⦄, a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a
+  le_total_of_le_of_le : ∀ ⦃a b c : M⦄, a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a
 
 /-- A linear order is left-linear. -/
 instance (priority := 100) {M : Type*} [LinearOrder M] : IsLeftLinear M :=
   ⟨fun a b _ _ _ ↦ le_total a b⟩
 
 /-- A `PredOrder` with archimedean predecessor, such as a rooted tree, is left-linear. -/
-instance (priority := 100) {M : Type*} [PartialOrder M] [PredOrder M] [IsPredArchimedean M] :
+instance (priority := 100) {M : Type*} [Preorder M] [PredOrder M] [IsPredArchimedean M] :
     IsLeftLinear M :=
   ⟨fun _ _ _ ha hb ↦ (le_total_of_directed ha hb).symm⟩
 
-theorem OrderEmbedding.isLeftLinear {M N : Type*} [PartialOrder M] [PartialOrder N]
-    [IsLeftLinear N] (f : M ↪o N) : IsLeftLinear M :=
-  ⟨fun _ _ _ ha hb ↦ (IsLeftLinear.comparable_of_le_common (f.monotone ha)
-    (f.monotone hb)).imp f.le_iff_le.1 f.le_iff_le.1⟩
+theorem OrderEmbedding.isLeftLinear {M N : Type*} [LE M] [LE N] [IsLeftLinear N] (f : M ↪o N) :
+    IsLeftLinear M :=
+  ⟨fun _ _ _ ha hb ↦ (IsLeftLinear.le_total_of_le_of_le (f.map_rel_iff.2 ha)
+    (f.map_rel_iff.2 hb)).imp f.map_rel_iff.1 f.map_rel_iff.1⟩
 
-/-- The order dual of a partial order is left-linear exactly when the successors of every element
-are pairwise comparable, so that it never branches forward. -/
-theorem isLeftLinear_orderDual_iff {M : Type*} [PartialOrder M] :
+/-- The order dual of an order is left-linear exactly when the successors of every element are
+pairwise comparable, so that it never branches forward. -/
+theorem isLeftLinear_orderDual_iff {M : Type*} [LE M] :
     IsLeftLinear Mᵒᵈ ↔ ∀ ⦃a b c : M⦄, c ≤ a → c ≤ b → a ≤ b ∨ b ≤ a :=
-  ⟨fun h a b c ha hb ↦ (h.comparable_of_le_common (a := OrderDual.toDual a)
+  ⟨fun h a b c ha hb ↦ (h.le_total_of_le_of_le (a := OrderDual.toDual a)
       (b := OrderDual.toDual b) (c := OrderDual.toDual c) ha hb).symm,
     fun h ↦ ⟨fun a b c ha hb ↦ (h (a := OrderDual.ofDual a) (b := OrderDual.ofDual b)
       (c := OrderDual.ofDual c) ha hb).symm⟩⟩
 
 namespace IsLeftLinear
 
-variable {M : Type*} [PartialOrder M] [IsLeftLinear M]
+section Preorder
+
+variable {M : Type*} [Preorder M] [IsLeftLinear M] {a b c : M}
 
 /-- In a left-linear order the principal down-set `Iic m` is a chain. -/
-theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
-  intro a ha b hb _
-  exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
+theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) :=
+  fun _ ha _ hb _ ↦ le_total_of_le_of_le (Set.mem_Iic.1 ha) (Set.mem_Iic.1 hb)
 
 /-- In a left-linear order two principal up-sets are disjoint exactly when their generators are
 incomparable: the subtrees under two nodes of a tree share a node only when one node lies under
 the other. -/
-theorem disjoint_Ici_iff {a b : M} :
-    Disjoint (Set.Ici a) (Set.Ici b) ↔ IncompRel (· ≤ ·) a b :=
+theorem disjoint_Ici_iff : Disjoint (Set.Ici a) (Set.Ici b) ↔ IncompRel (· ≤ ·) a b :=
   ⟨fun h ↦ ⟨fun hab ↦ Set.disjoint_left.1 h hab le_rfl,
       fun hba ↦ Set.disjoint_right.1 h hba le_rfl⟩,
-    fun h ↦ Set.disjoint_left.2 fun _ ha hb ↦ (comparable_of_le_common ha hb).elim h.1 h.2⟩
+    fun h ↦ Set.disjoint_left.2 fun _ ha hb ↦ (le_total_of_le_of_le ha hb).elim h.1 h.2⟩
 
-theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
-  (comparable_of_le_common hb.le hm.le).elim id fun h ↦
-    h.eq_or_lt.elim Eq.ge fun hlt ↦ (hm.2 hlt hb).elim
+/-- The left-linear form of `CovBy.le_of_lt`. -/
+theorem le_of_lt_of_covBy (hab : a ⋖ b) (hcb : c < b) : c ≤ a :=
+  (le_total_of_le_of_le hcb.le hab.le).elim id fun h ↦
+    by_contra fun hca ↦ hab.2 (lt_of_le_not_ge h hca) hcb
 
-theorem eq_of_covBy_of_le {m c d x : M} (hc : m ⋖ c) (hd : m ⋖ d) (hcx : c ≤ x) (hdx : d ≤ x) :
-    c = d :=
-  (comparable_of_le_common hcx hdx).elim (fun h ↦ (hd.eq_or_eq hc.le h).resolve_left hc.ne')
+end Preorder
+
+section PartialOrder
+
+variable {M : Type*} [PartialOrder M] [IsLeftLinear M] {a b c d x : M}
+
+/-- The left-linear form of `CovBy.unique_left`: a node of a tree has at most one mother. -/
+theorem covBy_unique_left (ha : a ⋖ c) (hb : b ⋖ c) : a = b :=
+  (le_of_lt_of_covBy hb ha.lt).antisymm (le_of_lt_of_covBy ha hb.lt)
+
+theorem eq_of_covBy_of_le (hc : a ⋖ c) (hd : a ⋖ d) (hcx : c ≤ x) (hdx : d ≤ x) : c = d :=
+  (le_total_of_le_of_le hcx hdx).elim (fun h ↦ (hd.eq_or_eq hc.le h).resolve_left hc.ne')
     fun h ↦ ((hc.eq_or_eq hd.le h).resolve_left hd.ne').symm
 
+end PartialOrder
+
 end IsLeftLinear
+
+theorem isLeftLinear_iff_forall_isChain_Iic {M : Type*} [Preorder M] :
+    IsLeftLinear M ↔ ∀ m : M, IsChain (· ≤ ·) (Set.Iic m) :=
+  ⟨fun _ ↦ IsLeftLinear.isChain_Iic, fun h ↦
+    ⟨fun _ _ c ha hb ↦ (h c).total (Set.mem_Iic.2 ha) (Set.mem_Iic.2 hb)⟩⟩
 
 /-! ### Branching
 
@@ -138,7 +136,7 @@ end Branching
 /-! ### Flags
 
 In a left-linear order a flag, mathlib's maximal chain, is a branch: it contains the whole
-past of each of its elements, and when the order is finite it is the down-set of a maximal
+past of each of its elements, and when `>` is well-founded it is the down-set of a maximal
 element. -/
 
 /-- Maximality is decidable on a finite type. -/
@@ -163,7 +161,7 @@ variable [IsLeftLinear M]
 
 theorem Iic_subset (hm : m ∈ h) : Set.Iic m ⊆ (h : Set M) := fun _ hx ↦
   mem_iff_forall_le_or_ge.2 fun _ hb ↦ (h.le_or_le hb hm).elim
-    (fun hbm ↦ IsLeftLinear.comparable_of_le_common hx hbm) fun hmb ↦ .inl (hx.trans hmb)
+    (fun hbm ↦ IsLeftLinear.le_total_of_le_of_le hx hbm) fun hmb ↦ .inl (hx.trans hmb)
 
 /-- The down-set of a maximal element of a left-linear order, as a flag. -/
 def ofIsMax (hx : IsMax x) : Flag M where
@@ -172,16 +170,19 @@ def ofIsMax (hx : IsMax x) : Flag M where
   max_chain' := fun _ hc hsub ↦ hsub.antisymm fun _ hy ↦
     (hc.total (hsub (Set.mem_Iic.2 le_rfl)) hy).elim (fun h ↦ hx h) id
 
+@[simp, norm_cast] theorem coe_ofIsMax (hx : IsMax x) : (ofIsMax hx : Set M) = Set.Iic x := rfl
+
 @[simp] theorem mem_ofIsMax {hx : IsMax x} : y ∈ ofIsMax hx ↔ y ≤ x := Iff.rfl
 
 theorem eq_ofIsMax_of_mem (hx : IsMax x) (hxh : x ∈ h) : h = ofIsMax hx :=
   Flag.ext (Set.ext fun _ ↦ ⟨fun hy ↦ (h.le_or_le hy hxh).elim id fun hxy ↦ hx hxy,
     fun hy ↦ Iic_subset hxh hy⟩)
 
-variable [Finite M]
+variable [WellFoundedGT M]
 
-/-- On a finite left-linear order every flag is the down-set of a maximal element, since the
-flag has a greatest element, which a strict successor would contradict. -/
+/-- When `>` is well-founded, as on a finite order, every flag of a left-linear order is the
+down-set of a maximal element: the flag has a greatest element, which a strict successor would
+contradict. -/
 theorem exists_isMax_eq_ofIsMax [Nonempty M] (h : Flag M) :
     ∃ x, ∃ hx : IsMax x, h = ofIsMax hx := by
   obtain ⟨x, hx, hmax⟩ :=
@@ -191,12 +192,12 @@ theorem exists_isMax_eq_ofIsMax [Nonempty M] (h : Flag M) :
   obtain ⟨z, hz, hxz⟩ := exists_mem_gt_of_lt hx (lt_of_le_not_ge hxy hyx)
   exact hmax z hz hxz
 
-/-- On a finite left-linear order, quantifying over the flags through an element is
-quantifying over the maximal elements above it. -/
-theorem forall_mem_iff [Nonempty M] {P : Flag M → Prop} :
+/-- When `>` is well-founded, quantifying over the flags through an element of a left-linear
+order is quantifying over the maximal elements above it. -/
+theorem forall_mem_iff {P : Flag M → Prop} :
     (∀ h : Flag M, m ∈ h → P h) ↔ ∀ x, ∀ hx : IsMax x, m ≤ x → P (ofIsMax hx) :=
   ⟨fun H x hx hmx ↦ H _ hmx, fun H h hm ↦ by
-    obtain ⟨x, hx, rfl⟩ := exists_isMax_eq_ofIsMax h
+    obtain ⟨x, hx, rfl⟩ := have : Nonempty M := ⟨m⟩; exists_isMax_eq_ofIsMax h
     exact H x hx hm⟩
 
 end Flag

@@ -107,7 +107,7 @@ contains may condition anything else it contains. -/
 theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : GornAddress} (hh : IsHeadAt t h)
     (hα : h ≤ α) (hβ : h ≤ β) : MayCondition' t α β :=
   mayCondition'_iff.mpr fun _ hp hpβ ↦
-    (IsLeftLinear.comparable_of_le_common hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
+    (IsLeftLinear.le_total_of_le_of_le hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
       hh.mono
 
 /-! ### Pronominal stranding -/

@@ -225,7 +225,6 @@ namespace Peircean
 /-- Settled future truth on a finite frame is a search over the maximal moments. -/
 theorem mem_future_iff [IsLeftLinear M] [Finite M] {φ : Set M} {m : M} :
     m ∈ future φ ↔ ∀ x, IsMax x → m ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
-  have : Nonempty M := ⟨m⟩
   refine Flag.forall_mem_iff.trans ?_
   exact forall_congr' fun x ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
     ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', hlt, hm', hφ⟩, fun ⟨m', hlt, hm', hφ⟩ ↦ ⟨m', hm', hlt, hφ⟩⟩

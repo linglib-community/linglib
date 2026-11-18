@@ -235,7 +235,6 @@ theorem cond_eq_orderingImp (A C : Set (M × M)) :
 theorem mem_future_atom_iff [IsLeftLinear M] [Finite M] {φ : Set M} :
     (m, n) ∈ future (atom φ) ↔
       ∀ x, IsMax x → m ≤ x → n ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
-  have : Nonempty M := ⟨m⟩
   have h1 : (m, n) ∈ future (atom φ) ↔
       ∀ h : Flag M, m ∈ h → n ∈ h → ∃ m' ∈ h, m < m' ∧ m' ∈ φ := by
     simp only [mem_future, Set.mem_inter_iff, mem_histories, and_imp, mem_atom]

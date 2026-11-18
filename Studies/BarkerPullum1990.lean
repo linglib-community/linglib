@@ -166,7 +166,7 @@ theorem mem_commandRelation_Ici_iff [IsLeftLinear Node] (r : Node) (P : Set Node
     (a b : Set.Ici r) :
     a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
   mem_commandRelation_subtype_iff (fun _ ha _ hxa ↦
-    (IsLeftLinear.comparable_of_le_common hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
+    (IsLeftLinear.le_total_of_le_of_le hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
 
 /-! ### Characterizing command relations
 
@@ -457,7 +457,7 @@ theorem commandByRelation_union [IsLeftLinear Node] (R S : SetRel Node Node) :
   · by_contra hn
     simp only [Set.mem_union, mem_commandByRelation, not_or, not_forall, exists_prop] at hn
     obtain ⟨⟨c, hRc, hca, hcb⟩, d, hSd, hda, hdb⟩ := hn
-    rcases IsLeftLinear.comparable_of_le_common hca.le hda.le with hcd | hdc
+    rcases IsLeftLinear.le_total_of_le_of_le hca.le hda.le with hcd | hdc
     · exact hcb (h (a := (c, a)) ⟨subset_lowerPolar_upperPolar _ R hRc,
         mem_extentClosure_admitsAt.2 fun _ _ he ↦ hcd.trans (mem_commandByRelation.1 he d hSd hda)⟩
         rfl hca)

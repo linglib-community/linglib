@@ -158,7 +158,7 @@ theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjec
     rcases eq_or_lt_of_le hpx with rfl | hlt
     · exact .head hpd hdh
     · have hdx : d ≤ x := by
-        rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) hxh with h | h
+        rcases IsLeftLinear.le_total_of_le_of_le (IsProjectionOf.le hH hdh) hxh with h | h
         · exact h
         · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hxd ↦
             absurd hxd ((hH _ _ hpd).2 hlt)
@@ -173,7 +173,7 @@ theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
     rcases eq_or_lt_of_le hpq with rfl | hlt
     · exact .refl
     · refine .head hpd (ih ?_)
-      rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
+      rcases IsLeftLinear.le_total_of_le_of_le (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
       · exact h
       · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hqd ↦
           absurd hqd ((hH _ _ hpd).2 hlt)
@@ -193,7 +193,7 @@ theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
     exact ⟨hm, fun x hxm ↦ (hH _ _ hxm).lt.not_ge (hmin (hm.head hxm))⟩
   · rintro ⟨hm, hmax⟩
     refine ⟨hm, fun p hp ↦ ?_⟩
-    rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h | h
+    rcases IsLeftLinear.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h | h
     · rcases eq_or_lt_of_le h with rfl | hlt
       · exact le_rfl
       · obtain ⟨x, hx⟩ := hp.exists_of_lt hH hm hlt
@@ -206,7 +206,7 @@ theorem exists_isLeast_projections [IsLeftLinear α] [WellFoundedLT α] (h : α)
   obtain ⟨m, hm, hmin⟩ := WellFounded.has_min wellFounded_lt {p | IsProjectionOf H h p}
     ⟨h, .refl h⟩
   refine ⟨m, hm, fun p hp ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h' | h'
+  rcases IsLeftLinear.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h' | h'
   · exact (eq_or_lt_of_le h').elim (fun e ↦ e.symm.le) fun hlt ↦ absurd hlt (hmin p hp)
   · exact h'
 
@@ -289,12 +289,6 @@ theorem excludes_congr {x x' y : α} (h : x' ∈ segments A x) :
 theorem contains_of_covBy {m a : α} (ha : m ⋖ a) : Contains A m a :=
   ⟨m, mem_segments_self m, ha.lt.le⟩
 
-theorem eq_of_covBy_covBy [IsLeftLinear α] {m m' d : α} (hm : m ⋖ d) (hm' : m' ⋖ d) :
-    m = m' := by
-  rcases IsLeftLinear.comparable_of_le_common hm.le hm'.le with h | h
-  · exact (eq_or_lt_of_le h).elim id fun hlt ↦ absurd hm'.lt (hm.2 hlt).elim
-  · exact ((eq_or_lt_of_le h).elim Eq.symm fun hlt ↦ absurd hm.lt (hm'.2 hlt).elim)
-
 theorem not_le_of_covBy {m a d : α} (ha : m ⋖ a) (hd : m ⋖ d) (had : a ≠ d) : ¬ a ≤ d :=
   fun h ↦ had ((hd.eq_or_eq ha.lt.le h).resolve_left (ne_of_gt ha.lt))
 
@@ -302,7 +296,7 @@ variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
 theorem leftUnique_of_covBy [IsLeftLinear α] : Relator.LeftUnique A :=
-  fun _ _ _ hm hm' ↦ eq_of_covBy_covBy (hA _ _ hm) (hA _ _ hm')
+  fun _ _ _ hm hm' ↦ IsLeftLinear.covBy_unique_left (hA _ _ hm) (hA _ _ hm')
 
 theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
     y ∈ segments A x ↔ Relation.ReflTransGen A x y ∨ Relation.ReflTransGen A y x := by
@@ -449,7 +443,7 @@ theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m 
   rcases (mem_segments_iff hA hU).1 hs with hs | hs
   · rcases Relation.ReflTransGen.cases_tail hs with rfl | ⟨c, -, hcs⟩
     · exact h s .refl
-    · exact fun m hm ↦ hdisj c s hcs (eq_of_covBy_covBy (hP _ _ hm) (hA _ _ hcs) ▸ hm)
+    · exact fun m hm ↦ hdisj c s hcs (IsLeftLinear.covBy_unique_left (hP _ _ hm) (hA _ _ hcs) ▸ hm)
   · exact h s hs
 
 /-- A node that projects to the lowest segment `b` of a maximal category MAX-commands exactly what
@@ -459,7 +453,7 @@ theorem mem_maxCommand_iff_le [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d
     (h, x) ∈ maxCommand P A ↔ b ≤ x := by
   have hH : ∀ m d, (P ⊔ A) m d → m ⋖ d := fun m d hmd ↦ hmd.elim (hP m d) (hA m d)
   refine mem_commandRelation_iff_le ⟨⟨hmax, lt_of_le_of_ne (hb.le hH) hne⟩, fun x ⟨hx, hxh⟩ ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common hxh.le (hb.le hH) with h' | h'
+  rcases IsLeftLinear.le_total_of_le_of_le hxh.le (hb.le hH) with h' | h'
   · exact h'
   · rcases eq_or_lt_of_le h' with rfl | hlt
     · exact le_rfl

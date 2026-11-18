@@ -88,8 +88,7 @@ theorem bddAbove_pair_iff : BddAbove ({o, o'} : Set (Part α)) ↔ ∀ a ∈ o, 
 
 /-- Partial values are left-linear: below a defined value lie only itself and `⊥`. -/
 instance isLeftLinear : IsLeftLinear (Part α) :=
-  ⟨fun a _ _ ha hb ↦ (em a.Dom).symm.imp (fun h _ hx ↦ absurd hx.fst h) fun h x hx ↦
-    mem_unique (ha _ (get_mem h)) (hb x hx) ▸ get_mem h⟩
+  ⟨fun _ _ c ↦ le_total_of_le_of_le c⟩
 
 end Order
 

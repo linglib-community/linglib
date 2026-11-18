@@ -157,14 +157,13 @@ theorem not_le ⦃a b : X.Node⦄ (hab : X.Precedes a b) : ¬a ≤ b := fun hle 
 theorem not_ge ⦃a b : X.Node⦄ (hab : X.Precedes a b) : ¬b ≤ a := fun hle ↦
   h.irrefl a (h.mono hab le_rfl hle)
 
-/-- In a tree-shaped structure, the nodes dominating a node form a chain: a node has at most one
-mother. -/
-theorem isChain_Iic (a : X.Node) : IsChain (· ≤ ·) (Set.Iic a) := fun b hb c hc _ ↦ by
+/-- A tree-shaped structure is left-linear: a node has at most one mother. -/
+theorem isLeftLinear : IsLeftLinear X.Node := ⟨fun b c a hb hc ↦ by
   rcases h.le_or_precedes b c with hbc | hcb | hp | hp
   · exact .inl hbc
   · exact .inr hcb
   · exact (h.irrefl a (h.mono hp hb hc)).elim
-  · exact (h.irrefl a (h.mono hp hc hb)).elim
+  · exact (h.irrefl a (h.mono hp hc hb)).elim⟩
 
 /-- A tree-shaped structure has no crossing. -/
 theorem noCrossing : X.NoCrossing := fun _ _ _ _ hp hb hb' hp' ↦

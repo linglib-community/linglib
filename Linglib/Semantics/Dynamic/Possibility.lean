@@ -239,7 +239,7 @@ theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
     split_ifs with hv
     · obtain ⟨b, hb⟩ := hc v
       obtain ⟨hpb, hqb⟩ := mem_upperBounds_pair.mp hb
-      exact (IsLeftLinear.comparable_of_le_common hpb hqb).elim
+      exact (IsLeftLinear.le_total_of_le_of_le hpb hqb).elim
         (fun hle ↦ (Part.eq_of_le hle fun _ ↦ hv).ge) id
     · exact le_rfl
   · simp only [mem_domain] at hv

@@ -127,7 +127,7 @@ theorem diamond_future_diamond_past_le_iff :
     obtain rfl | hbc := hb.eq_or_lt
     · exact .inl ha
     exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_future.2 hac, mem_toSetRel_past.2 hbc⟩)
-  · exact mem_toSetRel_top_iff_le.2 (h.comparable_of_le_common (mem_toSetRel_future.1 h₁).le
+  · exact mem_toSetRel_top_iff_le.2 (h.le_total_of_le_of_le (mem_toSetRel_future.1 h₁).le
       (mem_toSetRel_past.1 h₂).le)
 
 /-- $PFp \to Mp$, the form `CPFpAApPpFp` of [prior-1967] (p. 52) and the axiom AK7 that
@@ -159,7 +159,7 @@ theorem isEuclidean_toSetRel_top_iff :
       (mem_toSetRel_top_iff_le.2 (.inl hb)))
   · rw [mem_toSetRel_top_iff_le] at hv hu ⊢
     rcases hv with hv | hv <;> rcases hu with hu | hu
-    exacts [hr hv hu, .inr (hu.trans hv), .inl (hv.trans hu), hl.comparable_of_le_common hv hu]
+    exacts [hr hv hu, .inr (hu.trans hv), .inl (hv.trans hu), hl.le_total_of_le_of_le hv hu]
 
 end PartialOrder
 

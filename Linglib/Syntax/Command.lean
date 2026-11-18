@@ -141,7 +141,7 @@ variable [PartialOrder α] [IsLeftLinear α] {P : Set α} {a b c m : α}
 
 theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
     a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
-  ⟨fun h _ hx hxa ↦ (IsLeftLinear.comparable_of_le_common (h hx hxa) hcb).resolve_right
+  ⟨fun h _ hx hxa ↦ (IsLeftLinear.le_total_of_le_of_le (h hx hxa) hcb).resolve_right
       fun hcx ↦ hca (hcx.trans_lt hxa),
     fun h ↦ mem_commandRelation_of_le h hcb⟩
 
@@ -305,7 +305,7 @@ theorem not_mem_dominanceImage_asymmetrize_of_covBy
   · exact hyx (hab hxy)
   · exact hn₂ ((IsLeftLinear.le_of_lt_of_covBy hb hy).trans ha.le)
   · exact hn₁ ((IsLeftLinear.le_of_lt_of_covBy ha hx).trans hb.le)
-  · exact (IsLeftLinear.comparable_of_le_common (IsLeftLinear.le_of_lt_of_covBy ha hx)
+  · exact (IsLeftLinear.le_total_of_le_of_le (IsLeftLinear.le_of_lt_of_covBy ha hx)
       (IsLeftLinear.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
 
 end DominanceImageTree
@@ -477,7 +477,7 @@ theorem mem_cCommand_replaceAt (h : ¬ c < a) :
 theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
     CCommands (t.replaceAt c new) a b ↔ CCommands t a c := by
   have hlt : ¬ c < a := fun h ↦ hca h.le
-  have hab : ¬ a ≤ b := fun h ↦ (IsLeftLinear.comparable_of_le_common h hcb).elim hac hca
+  have hab : ¬ a ≤ b := fun h ↦ (IsLeftLinear.le_total_of_le_of_le h hcb).elim hac hca
   have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
   simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
     hba, hac, hca, not_false_eq_true, and_true]
