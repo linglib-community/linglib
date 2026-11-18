@@ -429,7 +429,6 @@ def signOf (c : Category) : Sign where
   author := decide (referent c ∈ Examples.inclusive ∪ Examples.exclusive)
   participant := decide (referent c ∈ Examples.inclusive ∪ Examples.secondP)
 
-/-- In the quadripartition a category is `+author` exactly when it includes the speaker. -/
 theorem signOf_author (c : Category) : (signOf c).author = true ↔ c.IncludesSpeaker := by
   cases c <;> decide +kernel
 
@@ -493,7 +492,6 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
       naanŋgæ.toPronoun.categories.image (Category.toFeatures {.participant, .author}) := by
   decide
 
-/-- The exclusive is `+author −participant`, though its referents include a participant. -/
 theorem signOf_speakerOthers : signOf .speakerOthers = ⟨true, false⟩ := by decide +kernel
 
 end Harbour2016
