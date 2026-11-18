@@ -34,7 +34,7 @@ tenth win of the season is to the season. With the season the same in every worl
 ## Implementation notes
 
 * A main clause settled at a time holds there in every historical alternative of the world,
-  Condoravdi's `HistoricalAlternatives.settled`.
+  Condoravdi's `Temporal.TWFrame.IsSettled`.
 * An interval `I₂ ≤ I₀` of (19ii) is one that does not follow `I₀`, so (19i) and (19ii) divide the
   `B`-intervals of the world, and (19iii) applies exactly when the world has none. The earliest
   interval of (19iii) is the one that starts first, and precedence is that of fn. 22.
@@ -56,7 +56,7 @@ tenth win of the season is to the season. With the season the same in every worl
 namespace OgiharaSteinertThrelkeld2024
 
 open Event (τ)
-open OgiharaSteinertThrelkeld2024.Examples Temporal HistoricalAlternatives
+open OgiharaSteinertThrelkeld2024.Examples Temporal
 
 /-! ### Beaver and Condoravdi's alternatives (§2) -/
 
@@ -69,7 +69,7 @@ variable {W T : Type*} [LinearOrder T] {A B : Set (Index W T)} {w : W}
 /-- If the main clause is settled at its times and precludes the temporal clause afterwards,
 initial-branch-point alternatives never make *A before B* true (§2). -/
 theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
-    (hA : ∀ t, ⟨w, t⟩ ∈ A → F.alternatives.settled {w} t fun v ↦ ⟨v, t⟩ ∈ A)
+    (hA : ∀ t, ⟨w, t⟩ ∈ A → F.IsSettled {w} t fun v ↦ ⟨v, t⟩ ∈ A)
     (hAB : ∀ v t t', ⟨v, t⟩ ∈ A → ⟨v, t'⟩ ∈ B → t' < t) : ¬ before A B a.alt w := by
   rintro ⟨t, ht, e, ⟨⟨v, hv, he⟩, -⟩, hte⟩
   exact (hAB v t e ((hA t ht w (Set.mem_singleton w) v (a.subset_alternatives _ hv)).1 ht)
@@ -79,20 +79,20 @@ theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
 the death unsettled at its time, Mozart living on in an alternative that agrees with the world
 before it. -/
 theorem not_settled_mozart :
-    ¬ frame.alternatives.settled {World.early} 1 fun v ↦ ⟨v, 1⟩ ∈ dies := by
+    ¬ frame.IsSettled {World.early} 1 fun v ↦ ⟨v, 1⟩ ∈ dies := by
   intro h
   have := (h .early rfl .later (mem_alternatives_of_le_one le_rfl _ _)).1 rfl
   simp [dies, World.death] at this
 
 -- §2
-theorem not_lt_of_isLeast_of_lt {alt : HistoricalAlternatives W T} {v : W} {t t' e : T}
+theorem not_lt_of_isLeast_of_lt {alt : Index W T → Set W} {v : W} {t t' e : T}
     (hv : v ∈ alt ⟨w, t⟩) (hB : ⟨v, t'⟩ ∈ B) (ht' : t' < t)
     (he : IsLeast (instTimes (alt ⟨w, t⟩) B) e) : ¬ t < e :=
   fun hte ↦ not_lt_of_ge (he.2 ⟨v, hv, hB⟩) (ht'.trans hte)
 
 /-- A temporal clause confined to times no later than `hi` makes *A before B* false for main-clause
 times from `hi` on (§5.1). -/
-theorem not_before_of_le {alt : HistoricalAlternatives W T} {hi : T}
+theorem not_before_of_le {alt : Index W T → Set W} {hi : T}
     (hB : ∀ v t, ⟨v, t⟩ ∈ B → t ≤ hi) (hA : ∀ t, ⟨w, t⟩ ∈ A → hi ≤ t) : ¬ before A B alt w :=
   fun ⟨t, ht, _, ⟨⟨_, _, he⟩, _⟩, hte⟩ ↦ lt_irrefl t (hte.trans_le ((hB _ _ he).trans (hA t ht)))
 
