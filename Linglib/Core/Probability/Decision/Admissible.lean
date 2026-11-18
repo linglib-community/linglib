@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.LinearAlgebra.Matrix.Farkas
 public import Linglib.Core.MeasureTheory.Measure.Dirac
+public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.Decision.BayesEstimator
 public import Mathlib.Probability.Decision.Risk.Basic
@@ -202,14 +203,20 @@ theorem expectedPayoff_eq_sum (P : Measure Θ) [IsFiniteMeasure P] (ν : Measure
     expectedPayoff U P ν = ∑ θ, P.real {θ} * mixedPayoff U ν θ := by
   simp [expectedPayoff, integral_fintype .of_finite]
 
+/-- An average under a probability measure preserves a strict pointwise inequality: the average of
+the differences is a convex combination of positive numbers. -/
+private theorem sum_real_singleton_mul_lt (P : Measure Θ) [IsProbabilityMeasure P]
+    {a b : Θ → ℝ} (h : ∀ θ, a θ < b θ) : ∑ θ, P.real {θ} * a θ < ∑ θ, P.real {θ} * b θ := by
+  rw [← sub_pos, ← Finset.sum_sub_distrib]
+  simp_rw [← mul_sub]
+  exact (convex_Ioi (0 : ℝ)).sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp)
+    fun θ _ ↦ Set.mem_Ioi.2 (sub_pos.2 (h θ))
+
 theorem expectedPayoff_lt_of_forall_lt (P : Measure Θ) [IsProbabilityMeasure P]
     {ν ν' : Measure 𝓨} (h : ∀ θ, mixedPayoff U ν θ < mixedPayoff U ν' θ) :
     expectedPayoff U P ν < expectedPayoff U P ν' := by
   rw [expectedPayoff_eq_sum, expectedPayoff_eq_sum]
-  obtain ⟨θ₀, -, hθ₀⟩ := Finset.exists_lt_of_sum_lt (s := Finset.univ) (f := fun _ ↦ (0 : ℝ))
-    (g := fun θ ↦ P.real {θ}) (by simp)
-  exact Finset.sum_lt_sum (fun θ _ ↦ mul_le_mul_of_nonneg_left (h θ).le measureReal_nonneg)
-    ⟨θ₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (h θ₀) hθ₀⟩
+  exact sum_real_singleton_mul_lt P h
 
 end Avg
 
@@ -234,11 +241,7 @@ private theorem not_isStrictlyDominated_of_bayes {ν : Measure 𝓨} [IsProbabil
     toReal_avg (risk_ne_top hℓ ν')] at h
   have hlt' : ∀ θ, (∫⁻ y, ℓ θ y ∂ν').toReal < (∫⁻ y, ℓ θ y ∂ν).toReal := fun θ ↦
     (ENNReal.toReal_lt_toReal (risk_ne_top hℓ ν' θ) (risk_ne_top hℓ ν θ)).2 (hlt θ)
-  obtain ⟨θ₀, -, hθ₀⟩ := Finset.exists_lt_of_sum_lt (s := Finset.univ) (f := fun _ ↦ (0 : ℝ))
-    (g := fun θ ↦ π.real {θ}) (by simp)
-  refine absurd h (not_le.2 ?_)
-  exact Finset.sum_lt_sum (fun θ _ ↦ mul_le_mul_of_nonneg_left (hlt' θ).le measureReal_nonneg)
-    ⟨θ₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (hlt' θ₀) hθ₀⟩
+  exact absurd h (not_le.2 (sum_real_singleton_mul_lt π hlt'))
 
 include hℓ in
 private theorem bayes_of_real {ν : Measure 𝓨} [IsProbabilityMeasure ν] {x : Θ → ℝ}

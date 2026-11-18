@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.MeasureTheory.Measure.Real
 public import Studies.TesslerGoodman2019
 
@@ -187,27 +188,17 @@ private theorem sum_utterance (f : Utterance → ℝ) : ∑ u, f u = f .tall + f
   rw [show (Finset.univ : Finset Utterance) = {.tall, .short, .silent} from by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
 
-private theorem exists_real_pos (μ : Measure X) [IsProbabilityMeasure μ] : ∃ x, 0 < μ.real {x} := by
-  by_contra h
-  push Not at h
-  have := Finset.sum_nonpos (s := Finset.univ) fun x _ => h x
-  rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ] at this
-  linarith
-
 theorem mean_pos (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     0 < mean deg classPrior c := by
-  obtain ⟨x, hx⟩ := exists_real_pos (classPrior c)
   rw [mean, expectedPrevalence_eq_sum]
-  exact Finset.sum_pos' (fun y _ => mul_nonneg measureReal_nonneg (hdeg y).1.le)
-    ⟨x, Finset.mem_univ _, mul_pos hx (hdeg x).1⟩
+  exact (convex_Ioi (0 : ℝ)).sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp)
+    fun y _ ↦ Set.mem_Ioi.2 (hdeg y).1
 
 theorem mean_lt_one (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     mean deg classPrior c < 1 := by
-  obtain ⟨x, hx⟩ := exists_real_pos (classPrior c)
-  have h1 : ∑ y, (classPrior c).real {y} = 1 := by simp
-  rw [mean, expectedPrevalence_eq_sum, ← h1]
-  exact Finset.sum_lt_sum (fun y _ => mul_le_of_le_one_right measureReal_nonneg (hdeg y).2.le)
-    ⟨x, Finset.mem_univ _, mul_lt_of_lt_one_right hx (hdeg x).2⟩
+  rw [mean, expectedPrevalence_eq_sum]
+  exact (convex_Iio (1 : ℝ)).sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp)
+    fun y _ ↦ Set.mem_Iio.2 (hdeg y).2
 
 theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     ∑ x, meaning deg .short x * classPrior c {x} = ENNReal.ofReal (1 - mean deg classPrior c) := by

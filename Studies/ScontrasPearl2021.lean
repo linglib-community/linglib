@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
@@ -464,37 +465,26 @@ theorem expectedProduction_anti {μ' : Measure (World n)} [IsProbabilityMeasure 
   rw [expectedProduction_eq_integral, expectedProduction_eq_integral]
   exact h.integral_le_of_antitone (by simp) hprod .of_discrete .of_finite .of_finite
 
-theorem production_le_one (w : World n) : production D n α ν w ≤ 1 :=
-  (Finset.sum_le_sum fun l _ ↦
-    mul_le_of_le_one_right measureReal_nonneg (share_le_one D n α l w)).trans_eq
-    (by simp)
+/-- A production is a `ν`-weighted average of shares, so it lies in every convex set that holds
+the shares. -/
+theorem production_mem {s : Set ℝ} (hs : Convex ℝ s) {w : World n}
+    (h : ∀ l, share D n α l w ∈ s) : production D n α ν w ∈ s :=
+  hs.sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp) fun l _ ↦ h l
 
-theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν w < 1 := by
-  obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    (show ∑ l, ν.real {l} ≠ 0 by simp)
-  refine (Finset.sum_lt_sum (fun l _ ↦ mul_le_of_le_one_right measureReal_nonneg
-    (share_le_one D n α l w)) ⟨l, Finset.mem_univ l, ?_⟩).trans_eq
-    (by simp)
-  exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
-    (share_lt_one D n α hα l w)
+theorem production_le_one (w : World n) : production D n α ν w ≤ 1 :=
+  production_mem D n α ν (convex_Iic 1) (share_le_one D n α · w)
+
+theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν w < 1 :=
+  production_mem D n α ν (convex_Iio 1) (share_lt_one D n α hα · w)
 
 theorem production_pos (hα : 0 ≤ α) {w : World n} (h : ∀ l : Scope × QUD, w ∈ ext D n l.1 .amb) :
-    0 < production D n α ν w := by
-  obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    (show ∑ l, ν.real {l} ≠ 0 by simp)
-  exact Finset.sum_pos' (fun l _ ↦ mul_nonneg measureReal_nonneg (share_nonneg D n α l w))
-    ⟨l, Finset.mem_univ l, mul_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
-      (share_pos D n α hα (h l))⟩
+    0 < production D n α ν w :=
+  production_mem D n α ν (convex_Ioi 0) fun l ↦ share_pos D n α hα (h l)
 
 theorem expectedProduction_lt_one (hα : 0 ≤ α) : expectedProduction D n α μ ν < 1 := by
   rw [expectedProduction_eq_sum]
-  obtain ⟨w, -, hw⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    (show ∑ w, μ.real {w} ≠ 0 by simp)
-  refine (Finset.sum_lt_sum (fun w _ ↦ mul_le_of_le_one_right measureReal_nonneg
-    (production_le_one D n α ν w)) ⟨w, Finset.mem_univ w, ?_⟩).trans_eq
-    (by simp)
-  exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hw))
-    (production_lt_one D n α ν hα w)
+  exact (convex_Iio (1 : ℝ)).sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp)
+    fun w _ ↦ Set.mem_Iio.2 (production_lt_one D n α ν hα w)
 
 theorem expectedProduction_pos (hα : 0 ≤ α) {w : World n} (hμ : μ {w} ≠ 0)
     (h : ∀ l : Scope × QUD, w ∈ ext D n l.1 .amb) : 0 < expectedProduction D n α μ ν := by
