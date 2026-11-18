@@ -161,6 +161,30 @@ check compares the phonemes the words write, are the examples. Most data files i
 item under test in a column by its form; such a column becomes a span when its study is next
 audited.
 
+### Boundaries
+
+The generator segments a word at the separators of the Leipzig rules, `-` before an affix, `=`
+before a clitic and `~` before a reduplicant. A source with its own notation declares its
+symbols, since a row records the words as the source prints them. Karlsson's grammar writes `-`
+between a stem and an inflectional ending or a clitic, `=` between the words of a compound and
+`>` before a derivational suffix, and puts `+` before a word in the weak grade:
+
+```json
+"boundaries": {"type": "Boundary", "doc": "...",
+               "levels": [{"name": "inflection", "symbol": "-", "leipzig": "-", "doc": "..."},
+                          {"name": "compound", "symbol": "=", "leipzig": "-", "doc": "..."},
+                          {"name": "derivation", "symbol": ">", "leipzig": "-", "doc": "..."}],
+               "marks": [{"symbol": "+", "doc": "the weak grade of consonant gradation"}]}
+```
+
+The words are then segmented at the declared symbols and no others, and a mark is dropped from
+the morphemes while the word keeps it. The module emits the enum and the reader
+`Examples.boundary? : GlossedMorpheme → Option Examples.Boundary`, so a study asks for a kind of
+boundary, as `Karlsson2017` takes the morphs before the first inflectional one as the stem.
+`leipzig` gives the separator each symbol is written as in the CLDF export and in the
+conformance level, where the Leipzig rules have no symbol of their own for it. A distinction
+the source does not draw is not recovered: Karlsson's clitics are exported under `-`.
+
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,
@@ -328,12 +352,6 @@ aimed at. Known gaps:
   lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
   work list its own abbreviations; a data file would declare them and the generator would check
   its labels against the standard list and the declared ones.
-- **Declared boundary symbols.** The generator segments a word at the Leipzig separators `-`,
-  `=` and `~` and records the symbol. A source with its own notation is segmented by the same
-  symbols whatever they mean in it: Karlsson's grammar writes `=` within a compound, `>` before
-  a derivational suffix, which is not split, and `+` on a weak-grade form, which stays in the
-  morph, and its clitics take `-`. A data file would declare its symbols and their meanings, the
-  generator would segment by them, and the CLDF export would write the Leipzig rendering.
 - **Readings into a collection.** `Datum.Fits` and `Datum.Checks` take a reader into `Option`.
   A column that names a lexical entry is matched against a `Finset` inventory, so such a
   theorem is written with a bounded quantifier over the inventory and carries no coverage

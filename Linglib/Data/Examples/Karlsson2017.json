@@ -12,6 +12,36 @@
       ]
     }
   },
+  "boundaries": {
+    "type": "Boundary",
+    "doc": "The boundaries the grammar's notation marks within a word.",
+    "levels": [
+      {
+        "name": "inflection",
+        "symbol": "-",
+        "leipzig": "-",
+        "doc": "between a stem and an inflectional ending or a clitic, or between two of these"
+      },
+      {
+        "name": "compound",
+        "symbol": "=",
+        "leipzig": "-",
+        "doc": "between the words of a compound"
+      },
+      {
+        "name": "derivation",
+        "symbol": ">",
+        "leipzig": "-",
+        "doc": "before a derivational suffix"
+      }
+    ],
+    "marks": [
+      {
+        "symbol": "+",
+        "doc": "the weak grade of consonant gradation, written before the word"
+      }
+    ]
+  },
   "examples": [
     {
       "id": "karlsson2017_neg1",

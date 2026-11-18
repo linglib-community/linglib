@@ -119,6 +119,19 @@ maps each lexeme to its entry in a language's fragment by a total function: the 
 entry, and the study proves that the span is written as the entry is, rather than finding the
 entry by its spelling.
 
+Boundaries: the generator segments a word at the separators of the Leipzig rules, `-`, `=` and
+`~`. A source with its own notation declares its symbols beside `features`:
+
+  "boundaries": {"type": "Boundary", "doc": "...",
+                 "levels": [{"name": "compound", "symbol": "=", "leipzig": "-", "doc": "..."}],
+                 "marks":  [{"symbol": "+", "doc": "the weak grade of consonant gradation"}]}
+
+A word is then segmented at the declared symbols and no others, each morpheme keeps the symbol
+before it as the source prints it, and a mark is dropped from the morphemes while the word keeps
+it. The module emits the enum and the reader `boundary? : GlossedMorpheme → Option Boundary`.
+`leipzig` gives the Leipzig separator the symbol is written as in the CLDF export and in the
+conformance level. Every declared symbol is one character that some word of the rows writes.
+
 Dependencies: pure stdlib (json module).
 """
 
@@ -129,7 +142,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
-from lgr import glossed_morphemes, lgr_conformance  # noqa: E402
+from lgr import glossed_morphemes, leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
@@ -250,11 +263,12 @@ def lean_chars(s: str) -> str:
     return "[" + ", ".join(f"'{esc.get(c, c)}'" for c in s) + "]"
 
 
-def emit_glossed_words(xs) -> str:
-    """Emit the `List GlossedWord` of the validated gloss pairs `xs`."""
+def emit_glossed_words(xs, boundaries=None) -> str:
+    """Emit the `List GlossedWord` of the validated gloss pairs `xs`, segmented at the boundary
+    symbols the file declares, if it declares any."""
     words = []
     for word, gloss in xs:
-        gms = glossed_morphemes(word, gloss) or []
+        gms = glossed_morphemes(word, gloss, boundaries) or []
         items = ", ".join(
             f"⟨{lean_chars(m)}, {lean_chars(g)}, {'none' if sep is None else f'some {lean_chars(sep)[1:-1]}'}⟩"
             for m, g, sep in gms)
@@ -319,7 +333,8 @@ def emit_form_judgment_list(xs, where: str, key: str) -> str:
     return "[" + ", ".join(items) + "]"
 
 
-def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
+def emit_example(ex: dict, author_year_lower: str, default_method: str,
+                 boundaries: dict | None = None) -> str:
     ex_id   = (ex.get("id") or "").strip()
     if not ex_id:
         raise ValueError("example missing required `id`")
@@ -353,9 +368,10 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     pairs_      = ex.get("glossedTokens", [])
     gloss_lines = ""
     if pairs_:
-        gloss_lines = f"\n    glossedWords := {emit_glossed_words(pairs_)}"
-        if lgr_conformance(pairs_) is not None:
-            gloss_lines += f"\n    lgrConformance := some {CONFORMANCE[lgr_conformance(pairs_)]}"
+        gloss_lines = f"\n    glossedWords := {emit_glossed_words(pairs_, boundaries)}"
+        level = lgr_conformance(leipzig_pairs(pairs_, boundaries))
+        if level is not None:
+            gloss_lines += f"\n    lgrConformance := some {CONFORMANCE[level]}"
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
     verdict     = ex.get("verdict")
@@ -414,12 +430,13 @@ def split_data(data, where: str):
     """The declared features, the declared readings (or `None`), the declared labels and lexemes
     of spans (or `None`) and the example rows of a paper's JSON."""
     if isinstance(data, list):
-        return [], None, None, data
-    if (isinstance(data, dict) and set(data) <= {"features", "readings", "spans", "examples"}
-            and "examples" in data):
-        return data.get("features", []), data.get("readings"), data.get("spans"), data["examples"]
+        return [], None, None, None, data
+    keys = {"features", "readings", "spans", "boundaries", "examples"}
+    if isinstance(data, dict) and set(data) <= keys and "examples" in data:
+        return (data.get("features", []), data.get("readings"), data.get("spans"),
+                data.get("boundaries"), data["examples"])
     raise ValueError(f"{where}: top level must be an array of examples or an object with "
-                     f"`examples` and optionally `features`, `readings` and `spans`")
+                     f"`examples` and optionally `features`, `readings`, `spans` and `boundaries`")
 
 
 def validate_levels(levels: list, w: str) -> set:
@@ -494,6 +511,47 @@ def validate_features(features: list, examples: list, where: str) -> None:
                                      f"declared level of {ft['type']}")
         if not occurs:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
+
+
+def validate_boundaries(decl, taken: set, examples: list, where: str) -> None:
+    if decl is None:
+        return
+    w = f"{where}.boundaries"
+    if set(decl) - {"type", "doc", "levels", "marks"} or not {"type", "doc", "levels"} <= set(decl):
+        raise ValueError(f"{w}: needs `type`, `doc`, `levels` and optionally `marks`")
+    if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
+        raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
+    words = "".join(p[0] for ex in examples for p in ex.get("glossedTokens", []))
+    names, symbols = set(), set()
+    for lv in decl["levels"]:
+        if set(lv) != {"name", "symbol", "leipzig", "doc"}:
+            raise ValueError(f"{w}: a level needs exactly `name`, `symbol`, `leipzig` and `doc`")
+        if not IDENT.match(lv["name"]) or lv["name"] in LEAN_KEYWORDS or lv["name"] in names:
+            raise ValueError(f"{w}: level name {lv['name']!r} is not a fresh Lean identifier")
+        if lv["leipzig"] not in ("-", "=", "~"):
+            raise ValueError(f"{w}: `leipzig` of {lv['name']!r} must be one of `-`, `=`, `~`")
+        names.add(lv["name"])
+    for d in decl["levels"] + decl.get("marks", []):
+        s = d.get("symbol")
+        if not isinstance(s, str) or len(s) != 1 or s.isalnum() or s.isspace() or s in symbols:
+            raise ValueError(f"{w}: symbol {s!r} must be one fresh character, not a letter or digit")
+        if s not in words:
+            raise ValueError(f"{w}: no word of the rows writes {s!r}")
+        symbols.add(s)
+    for m in decl.get("marks", []):
+        if set(m) != {"symbol", "doc"}:
+            raise ValueError(f"{w}: a mark needs exactly `symbol` and `doc`")
+
+
+def emit_boundaries(decl: dict) -> str:
+    ctors = "\n".join(f"  /-- `{lv['symbol']}`: {lv['doc']} -/\n  | {lv['name']}"
+                      for lv in decl["levels"])
+    table = ", ".join(f"({lean_chars(lv['symbol'])[1:-1]}, .{lv['name']})" for lv in decl["levels"])
+    return (f"/-- {decl['doc']} -/\ninductive {decl['type']} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n"
+            f"/-- The boundary before a morpheme, by the symbol the source writes there. -/\n"
+            f"def boundary? (m : GlossedMorpheme) : Option {decl['type']} :=\n"
+            f"  m.sep.bind (List.lookup · [{table}])")
 
 
 SPAN_KINDS = (("labels", "label"), ("lexemes", "lexeme"))
@@ -595,7 +653,8 @@ def emit_readings(rd: dict) -> str:
 
 
 def emit_module(author_year: str, examples: list, features: list | None = None,
-                readings: dict | None = None, spans: dict | None = None) -> str:
+                readings: dict | None = None, spans: dict | None = None,
+                boundaries: dict | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -605,7 +664,8 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
         body = "-- (no examples in JSON)"
         all_def = "def all : List Datum := []"
     else:
-        body = "\n\n".join(emit_example(e, ay_lower, default_method) for e in examples)
+        body = "\n\n".join(emit_example(e, ay_lower, default_method, boundaries)
+                           for e in examples)
         local_ids = [
             lean_identifier((e.get("id") or "").strip(), ay_lower)
             for e in examples
@@ -617,7 +677,9 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
         feats += "\n\n" + emit_readings(readings)
     if spans is not None:
         feats += "\n\n" + emit_spans(spans)
-    typed = features or readings is not None or spans is not None
+    if boundaries is not None:
+        feats += "\n\n" + emit_boundaries(boundaries)
+    typed = features or readings is not None or spans is not None or boundaries is not None
     imports = "import Linglib.Data.Examples.Schema" + (
         "\nimport Linglib.Data.Examples.Readers" if features else "") + (
         "\nimport Mathlib.Tactic.DeriveFintype" if typed else "")
@@ -662,12 +724,15 @@ def process(author_year: str, check: bool) -> bool:
 
     try:
         where = str(json_path.relative_to(ROOT))
-        features, readings, spans, examples = split_data(examples, where)
+        features, readings, spans, boundaries, examples = split_data(examples, where)
         validate_features(features, examples, where)
         validate_readings(readings, features, examples, where)
         validate_spans(spans, features, readings, examples, where)
+        taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
+        taken |= {d["type"] for d in (spans or {}).values()}
+        validate_boundaries(boundaries, taken, examples, where)
         module_text = as_module_if_possible(
-            emit_module(author_year, examples, features, readings, spans))
+            emit_module(author_year, examples, features, readings, spans, boundaries))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -884,11 +949,11 @@ def fmt(author_year: str) -> bool:
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
     if isinstance(data, dict):
-        features, readings, spans, examples = split_data(data, str(json_path))
+        features, readings, spans, boundaries, examples = split_data(data, str(json_path))
         body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
         head = ""
         for key, val in (("features", features if "features" in data else None),
-                         ("readings", readings), ("spans", spans)):
+                         ("readings", readings), ("spans", spans), ("boundaries", boundaries)):
             if val is not None:
                 dumped = json.dumps(val, ensure_ascii=False, indent=2).replace("\n", "\n  ")
                 head += f'  "{key}": {dumped},\n'

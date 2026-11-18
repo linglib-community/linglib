@@ -24,7 +24,9 @@ printed object of each of the grammar's examples in the case the rules assign](#
 * Resultativity is the grammar's own notion, whether the action leads to a result, and is not
   identified with telicity.
 * A row records its sentence as the grammar segments it and marks the object, which the grammar
-  prints in italics; the object's stem is its morphs before the first inflectional boundary.
+  prints in italics. The data declares the grammar's boundary symbols, and the object's stem is
+  its morphs before the first inflectional boundary, compound and derivational boundaries lying
+  within the stem.
 * The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
@@ -169,7 +171,8 @@ def Row.ofDatum (e : Datum) : Option Row := do
     ("passive", .passive), ("obligation", .obligation), ("infinitival", .infinitival)]
   let w ← object? e
   some ⟨⟨p, t, q, n, num, cl⟩,
-    ← spell ((w.glossedMorphemes.takeWhile (·.sep ≠ some '-')).flatMap (·.morpheme)),
+    ← spell ((w.glossedMorphemes.takeWhile
+        (Examples.boundary? · ≠ some .inflection)).flatMap (·.morpheme)),
     ← spell (w.glossedMorphemes.flatMap (·.morpheme))⟩
 
 /-- The printed object of each example of sections 12.2.2 and 13.3 is a form, in its number, of

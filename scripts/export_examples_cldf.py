@@ -62,7 +62,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lgr import lgr_conformance  # noqa: E402
+from lgr import leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Examples"
@@ -122,12 +122,18 @@ def contribution_methods():
 CONTRIBUTION_METHODS = contribution_methods()
 
 
+# The boundary symbols a data file declares for its source's notation, by paper.
+BOUNDARIES = {}
+
+
 def load():
     papers = {}
     for path in sorted(JSON_DIR.glob("*.json")):
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
             papers[path.stem] = data["examples"] if isinstance(data, dict) else data
+            if isinstance(data, dict) and data.get("boundaries"):
+                BOUNDARIES[path.stem] = data["boundaries"]
     return papers
 
 
@@ -150,7 +156,8 @@ def judged_id(code):
 
 
 def example_row(paper, row):
-    pairs = row.get("glossedTokens") or []
+    # The words in the notation of the Leipzig rules, where the file declares its source's own.
+    pairs = leipzig_pairs(row.get("glossedTokens") or [], BOUNDARIES.get(paper))
     refs = [source_ref(row["source"])]
     if row.get("reportedIn"):
         refs.append(source_ref(row["reportedIn"]))

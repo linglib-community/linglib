@@ -24,7 +24,7 @@ def neg1 : Datum :=
     language := "finn1318"
     primaryText := "En lähetä tekstiviestiä."
     glossedTokens := [("E-n", ""), ("+lähetä", ""), ("teksti=viesti-ä.", "")]
-    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä'], [], [⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä'], [], none⟩]⟩, ⟨['t', 'e', 'k', 's', 't', 'i', '=', 'v', 'i', 'e', 's', 't', 'i', '-', 'ä', '.'], [], [⟨['t', 'e', 'k', 's', 't', 'i'], [], none⟩, ⟨['v', 'i', 'e', 's', 't', 'i'], [], some '='⟩, ⟨['ä'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä'], [], [⟨['l', 'ä', 'h', 'e', 't', 'ä'], [], none⟩]⟩, ⟨['t', 'e', 'k', 's', 't', 'i', '=', 'v', 'i', 'e', 's', 't', 'i', '-', 'ä', '.'], [], [⟨['t', 'e', 'k', 's', 't', 'i'], [], none⟩, ⟨['v', 'i', 'e', 's', 't', 'i'], [], some '='⟩, ⟨['ä'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -56,7 +56,7 @@ def neg3 : Datum :=
     language := "finn1318"
     primaryText := "En tunne noita miehiä."
     glossedTokens := [("E-n", ""), ("+tunne", ""), ("no-i-ta", ""), ("mieh-i-ä.", "")]
-    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['+', 't', 'u', 'n', 'n', 'e'], [], [⟨['+', 't', 'u', 'n', 'n', 'e'], [], none⟩]⟩, ⟨['n', 'o', '-', 'i', '-', 't', 'a'], [], [⟨['n', 'o'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['t', 'a'], [], some '-'⟩]⟩, ⟨['m', 'i', 'e', 'h', '-', 'i', '-', 'ä', '.'], [], [⟨['m', 'i', 'e', 'h'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['ä'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['+', 't', 'u', 'n', 'n', 'e'], [], [⟨['t', 'u', 'n', 'n', 'e'], [], none⟩]⟩, ⟨['n', 'o', '-', 'i', '-', 't', 'a'], [], [⟨['n', 'o'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['t', 'a'], [], some '-'⟩]⟩, ⟨['m', 'i', 'e', 'h', '-', 'i', '-', 'ä', '.'], [], [⟨['m', 'i', 'e', 'h'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['ä'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -72,7 +72,7 @@ def neg4 : Datum :=
     language := "finn1318"
     primaryText := "En ole tavannut häntä."
     glossedTokens := [("E-n", ""), ("ole", ""), ("+tavan-nut", ""), ("hän-tä.", "")]
-    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['o', 'l', 'e'], [], [⟨['o', 'l', 'e'], [], none⟩]⟩, ⟨['+', 't', 'a', 'v', 'a', 'n', '-', 'n', 'u', 't'], [], [⟨['+', 't', 'a', 'v', 'a', 'n'], [], none⟩, ⟨['n', 'u', 't'], [], some '-'⟩]⟩, ⟨['h', 'ä', 'n', '-', 't', 'ä', '.'], [], [⟨['h', 'ä', 'n'], [], none⟩, ⟨['t', 'ä'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['E', '-', 'n'], [], [⟨['E'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['o', 'l', 'e'], [], [⟨['o', 'l', 'e'], [], none⟩]⟩, ⟨['+', 't', 'a', 'v', 'a', 'n', '-', 'n', 'u', 't'], [], [⟨['t', 'a', 'v', 'a', 'n'], [], none⟩, ⟨['n', 'u', 't'], [], some '-'⟩]⟩, ⟨['h', 'ä', 'n', '-', 't', 'ä', '.'], [], [⟨['h', 'ä', 'n'], [], none⟩, ⟨['t', 'ä'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -152,7 +152,7 @@ def ex_2a_shoot_part : Datum :=
     language := "finn1318"
     primaryText := "Metsästäjä ampui lintua."
     glossedTokens := [("Metsä>stä>jä", ""), ("ampu-i", ""), ("lintu-a.", "")]
-    glossedWords := [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], none⟩]⟩, ⟨['a', 'm', 'p', 'u', '-', 'i'], [], [⟨['a', 'm', 'p', 'u'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['l', 'i', 'n', 't', 'u', '-', 'a', '.'], [], [⟨['l', 'i', 'n', 't', 'u'], [], none⟩, ⟨['a'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], [⟨['M', 'e', 't', 's', 'ä'], [], none⟩, ⟨['s', 't', 'ä'], [], some '>'⟩, ⟨['j', 'ä'], [], some '>'⟩]⟩, ⟨['a', 'm', 'p', 'u', '-', 'i'], [], [⟨['a', 'm', 'p', 'u'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['l', 'i', 'n', 't', 'u', '-', 'a', '.'], [], [⟨['l', 'i', 'n', 't', 'u'], [], none⟩, ⟨['a'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -168,7 +168,7 @@ def ex_2a_shoot_tot : Datum :=
     language := "finn1318"
     primaryText := "Metsästäjä ampui linnun."
     glossedTokens := [("Metsä>stä>jä", ""), ("ampu-i", ""), ("linnu-n.", "")]
-    glossedWords := [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], none⟩]⟩, ⟨['a', 'm', 'p', 'u', '-', 'i'], [], [⟨['a', 'm', 'p', 'u'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['l', 'i', 'n', 'n', 'u', '-', 'n', '.'], [], [⟨['l', 'i', 'n', 'n', 'u'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['M', 'e', 't', 's', 'ä', '>', 's', 't', 'ä', '>', 'j', 'ä'], [], [⟨['M', 'e', 't', 's', 'ä'], [], none⟩, ⟨['s', 't', 'ä'], [], some '>'⟩, ⟨['j', 'ä'], [], some '>'⟩]⟩, ⟨['a', 'm', 'p', 'u', '-', 'i'], [], [⟨['a', 'm', 'p', 'u'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['l', 'i', 'n', 'n', 'u', '-', 'n', '.'], [], [⟨['l', 'i', 'n', 'n', 'u'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -184,7 +184,7 @@ def ex_2b_love : Datum :=
     language := "finn1318"
     primaryText := "Rakastan tuota miestä."
     glossedTokens := [("Rakas>ta-n", ""), ("tuo-ta", ""), ("mies-tä.", "")]
-    glossedWords := [⟨['R', 'a', 'k', 'a', 's', '>', 't', 'a', '-', 'n'], [], [⟨['R', 'a', 'k', 'a', 's', '>', 't', 'a'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['t', 'u', 'o', '-', 't', 'a'], [], [⟨['t', 'u', 'o'], [], none⟩, ⟨['t', 'a'], [], some '-'⟩]⟩, ⟨['m', 'i', 'e', 's', '-', 't', 'ä', '.'], [], [⟨['m', 'i', 'e', 's'], [], none⟩, ⟨['t', 'ä'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['R', 'a', 'k', 'a', 's', '>', 't', 'a', '-', 'n'], [], [⟨['R', 'a', 'k', 'a', 's'], [], none⟩, ⟨['t', 'a'], [], some '>'⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['t', 'u', 'o', '-', 't', 'a'], [], [⟨['t', 'u', 'o'], [], none⟩, ⟨['t', 'a'], [], some '-'⟩]⟩, ⟨['m', 'i', 'e', 's', '-', 't', 'ä', '.'], [], [⟨['m', 'i', 'e', 's'], [], none⟩, ⟨['t', 'ä'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -296,7 +296,7 @@ def ex_3_people_part : Datum :=
     language := "finn1318"
     primaryText := "Näen ihmisiä."
     glossedTokens := [("+Näe-n", ""), ("ihmis-i-ä.", "")]
-    glossedWords := [⟨['+', 'N', 'ä', 'e', '-', 'n'], [], [⟨['+', 'N', 'ä', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['i', 'h', 'm', 'i', 's', '-', 'i', '-', 'ä', '.'], [], [⟨['i', 'h', 'm', 'i', 's'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['ä'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['+', 'N', 'ä', 'e', '-', 'n'], [], [⟨['N', 'ä', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['i', 'h', 'm', 'i', 's', '-', 'i', '-', 'ä', '.'], [], [⟨['i', 'h', 'm', 'i', 's'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['ä'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -360,7 +360,7 @@ def tot_message : Datum :=
     language := "finn1318"
     primaryText := "(Minä) lähetän tekstiviestin."
     glossedTokens := [("(Minä)", ""), ("+lähetä-n", ""), ("teksti=viesti-n.", "")]
-    glossedWords := [⟨['(', 'M', 'i', 'n', 'ä', ')'], [], [⟨['M', 'i', 'n', 'ä'], [], none⟩]⟩, ⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä', '-', 'n'], [], [⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['t', 'e', 'k', 's', 't', 'i', '=', 'v', 'i', 'e', 's', 't', 'i', '-', 'n', '.'], [], [⟨['t', 'e', 'k', 's', 't', 'i'], [], none⟩, ⟨['v', 'i', 'e', 's', 't', 'i'], [], some '='⟩, ⟨['n'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['(', 'M', 'i', 'n', 'ä', ')'], [], [⟨['M', 'i', 'n', 'ä'], [], none⟩]⟩, ⟨['+', 'l', 'ä', 'h', 'e', 't', 'ä', '-', 'n'], [], [⟨['l', 'ä', 'h', 'e', 't', 'ä'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['t', 'e', 'k', 's', 't', 'i', '=', 'v', 'i', 'e', 's', 't', 'i', '-', 'n', '.'], [], [⟨['t', 'e', 'k', 's', 't', 'i'], [], none⟩, ⟨['v', 'i', 'e', 's', 't', 'i'], [], some '='⟩, ⟨['n'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -376,7 +376,7 @@ def tot_milk : Datum :=
     language := "finn1318"
     primaryText := "Silja joi maidon."
     glossedTokens := [("Silja", ""), ("jo-i", ""), ("+maido-n.", "")]
-    glossedWords := [⟨['S', 'i', 'l', 'j', 'a'], [], [⟨['S', 'i', 'l', 'j', 'a'], [], none⟩]⟩, ⟨['j', 'o', '-', 'i'], [], [⟨['j', 'o'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['+', 'm', 'a', 'i', 'd', 'o', '-', 'n', '.'], [], [⟨['+', 'm', 'a', 'i', 'd', 'o'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['S', 'i', 'l', 'j', 'a'], [], [⟨['S', 'i', 'l', 'j', 'a'], [], none⟩]⟩, ⟨['j', 'o', '-', 'i'], [], [⟨['j', 'o'], [], none⟩, ⟨['i'], [], some '-'⟩]⟩, ⟨['+', 'm', 'a', 'i', 'd', 'o', '-', 'n', '.'], [], [⟨['m', 'a', 'i', 'd', 'o'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -408,7 +408,7 @@ def tot_computers : Datum :=
     language := "finn1318"
     primaryText := "Tietokoneet hankittiin halvalla."
     glossedTokens := [("Tiet>o=konee-t", ""), ("hankittiin", ""), ("+halva-lla.", "")]
-    glossedWords := [⟨['T', 'i', 'e', 't', '>', 'o', '=', 'k', 'o', 'n', 'e', 'e', '-', 't'], [], [⟨['T', 'i', 'e', 't', '>', 'o'], [], none⟩, ⟨['k', 'o', 'n', 'e', 'e'], [], some '='⟩, ⟨['t'], [], some '-'⟩]⟩, ⟨['h', 'a', 'n', 'k', 'i', 't', 't', 'i', 'i', 'n'], [], [⟨['h', 'a', 'n', 'k', 'i', 't', 't', 'i', 'i', 'n'], [], none⟩]⟩, ⟨['+', 'h', 'a', 'l', 'v', 'a', '-', 'l', 'l', 'a', '.'], [], [⟨['+', 'h', 'a', 'l', 'v', 'a'], [], none⟩, ⟨['l', 'l', 'a'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['T', 'i', 'e', 't', '>', 'o', '=', 'k', 'o', 'n', 'e', 'e', '-', 't'], [], [⟨['T', 'i', 'e', 't'], [], none⟩, ⟨['o'], [], some '>'⟩, ⟨['k', 'o', 'n', 'e', 'e'], [], some '='⟩, ⟨['t'], [], some '-'⟩]⟩, ⟨['h', 'a', 'n', 'k', 'i', 't', 't', 'i', 'i', 'n'], [], [⟨['h', 'a', 'n', 'k', 'i', 't', 't', 'i', 'i', 'n'], [], none⟩]⟩, ⟨['+', 'h', 'a', 'l', 'v', 'a', '-', 'l', 'l', 'a', '.'], [], [⟨['h', 'a', 'l', 'v', 'a'], [], none⟩, ⟨['l', 'l', 'a'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -488,7 +488,7 @@ def acc_whom : Datum :=
     language := "finn1318"
     primaryText := "Kenet näit?"
     glossedTokens := [("Kene-t", ""), ("+nä-i-t?", "")]
-    glossedWords := [⟨['K', 'e', 'n', 'e', '-', 't'], [], [⟨['K', 'e', 'n', 'e'], [], none⟩, ⟨['t'], [], some '-'⟩]⟩, ⟨['+', 'n', 'ä', '-', 'i', '-', 't', '?'], [], [⟨['+', 'n', 'ä'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['t'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['K', 'e', 'n', 'e', '-', 't'], [], [⟨['K', 'e', 'n', 'e'], [], none⟩, ⟨['t'], [], some '-'⟩]⟩, ⟨['+', 'n', 'ä', '-', 'i', '-', 't', '?'], [], [⟨['n', 'ä'], [], none⟩, ⟨['i'], [], some '-'⟩, ⟨['t'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -504,7 +504,7 @@ def pl_articles : Datum :=
     language := "finn1318"
     primaryText := "Luen artikkelit."
     glossedTokens := [("+Lue-n", ""), ("artikkeli-t.", "")]
-    glossedWords := [⟨['+', 'L', 'u', 'e', '-', 'n'], [], [⟨['+', 'L', 'u', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i', '-', 't', '.'], [], [⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i'], [], none⟩, ⟨['t'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['+', 'L', 'u', 'e', '-', 'n'], [], [⟨['L', 'u', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i', '-', 't', '.'], [], [⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i'], [], none⟩, ⟨['t'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -552,7 +552,7 @@ def num_articles : Datum :=
     language := "finn1318"
     primaryText := "Luen kaksi artikkelia."
     glossedTokens := [("+Lue-n", ""), ("kaksi", ""), ("artikkeli-a.", "")]
-    glossedWords := [⟨['+', 'L', 'u', 'e', '-', 'n'], [], [⟨['+', 'L', 'u', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['k', 'a', 'k', 's', 'i'], [], [⟨['k', 'a', 'k', 's', 'i'], [], none⟩]⟩, ⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i', '-', 'a', '.'], [], [⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i'], [], none⟩, ⟨['a'], [], some '-'⟩]⟩]
+    glossedWords := [⟨['+', 'L', 'u', 'e', '-', 'n'], [], [⟨['L', 'u', 'e'], [], none⟩, ⟨['n'], [], some '-'⟩]⟩, ⟨['k', 'a', 'k', 's', 'i'], [], [⟨['k', 'a', 'k', 's', 'i'], [], none⟩]⟩, ⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i', '-', 'a', '.'], [], [⟨['a', 'r', 't', 'i', 'k', 'k', 'e', 'l', 'i'], [], none⟩, ⟨['a'], [], some '-'⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
@@ -731,5 +731,19 @@ inductive SpanLabel where
 /-- The label of a span, where it is a declared one. -/
 def label? (p : Datum.Span) : Option SpanLabel :=
   List.lookup p.label [("object", .object)]
+
+/-- The boundaries the grammar's notation marks within a word. -/
+inductive Boundary where
+  /-- `-`: between a stem and an inflectional ending or a clitic, or between two of these -/
+  | inflection
+  /-- `=`: between the words of a compound -/
+  | compound
+  /-- `>`: before a derivational suffix -/
+  | derivation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The boundary before a morpheme, by the symbol the source writes there. -/
+def boundary? (m : GlossedMorpheme) : Option Boundary :=
+  m.sep.bind (List.lookup · [('-', .inflection), ('=', .compound), ('>', .derivation)])
 
 end Karlsson2017.Examples
