@@ -27,11 +27,11 @@ variable {T World Atom : Type*} [Preorder T] (F : TWFrame World T) (V : Atom →
 
 open scoped ModalLogic Denotes
 
-instance (t : T) : (F.alt t).IsRefl := ⟨(F.sim t).iseqv.refl⟩
+instance (t : T) : (F.alt t).IsRefl := ⟨(F.sim t).refl'⟩
 
-instance (t : T) : (F.alt t).IsSymm := ⟨fun _ _ ↦ (F.sim t).iseqv.symm⟩
+instance (t : T) : (F.alt t).IsSymm := ⟨fun _ _ ↦ (F.sim t).symm'⟩
 
-instance (t : T) : (F.alt t).IsTrans := ⟨fun _ _ _ ↦ (F.sim t).iseqv.trans⟩
+instance (t : T) : (F.alt t).IsTrans := ⟨fun _ _ _ ↦ (F.sim t).trans'⟩
 
 @[simp] theorem sat_atom (p : Atom) (t : T) (w : World) :
     F.sat V (.atom p) t w ↔ V p t w := Iff.rfl

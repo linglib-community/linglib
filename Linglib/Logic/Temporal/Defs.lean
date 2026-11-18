@@ -13,20 +13,19 @@ public import Linglib.Semantics.Tense.Defs
 /-!
 # T × W tense-modal logic: frames, language and satisfaction
 
-A T × W frame has worlds sharing one time order and, at each time, historical equivalence, an
-equivalence relation on worlds, agreement up to that time, that gets finer as time advances. Its
-object language has the linear tenses `G` and `H`, historical necessity `N` along historical
-equivalence and `box` over all worlds. Each of the four is necessity along a relation, so the
-logic is a multimodal Kripke logic by construction.
+A T × W frame (`TWFrame`) has worlds sharing one time order and, at each time, historical
+equivalence, an equivalence relation on worlds, agreement up to that time, that gets finer as
+time advances. Its object language (`Formula`) has the linear tenses `G` and `H`, historical
+necessity `N` along historical equivalence and `box` over all worlds. Each of the four is
+necessity along a relation (`TWFrame.sat`), so the logic is a multimodal Kripke logic by
+construction. Agreement on the facts dated by each time gives a frame (`TWFrame.ofDatedFacts`).
 
-## Main definitions
+## Implementation notes
 
-* `TWFrame`: a frame, with historical equivalence an antitone family of setoids.
-* `TWFrame.alt`: historical equivalence at a time as an accessibility relation.
-* `TWFrame.ofDatedFacts`: the frame of worlds agreeing on the facts dated by each time.
-* `Formula`, `TWFrame.sat`: the object language and satisfaction.
-* `Formula.M`, `Formula.Fut`, `Formula.Pst`, `Formula.dia`, `Formula.imp`, `Formula.or`: the derived
-  connectives.
+* [von-kutschera-1997] takes negation and material implication as the primitive connectives;
+  `Formula` takes negation and conjunction, with `Formula.imp` and `Formula.or` derived.
+* The sources order time linearly. A frame here is over any preorder, and the theorems that
+  need linearity assume it.
 
 ## References
 
