@@ -663,7 +663,7 @@ theorem kashmiriP_iff_isInverse (s : Scenario Person) :
   have hs : s.map ((· + 1) ∘ Person.prominence) =
       (s.map Person.prominence).map (· + 1) := rfl
   rw [← not_isDirect, isDirect_iff_kind_eq_downstream (P := BejarRezac2009.kashmiri)
-    (Phi.PersonSegment.isChain_Iic _), kashmiri_rank_eq, hs, Scenario.kind_map hm]
+    (PersonSegment.isChain_Iic _), kashmiri_rank_eq, hs, Scenario.kind_map hm]
   simp only [kashmiriP, Function.comp_apply]
   generalize (s.map Person.prominence).kind = k
   revert k; decide

@@ -11,77 +11,18 @@ public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Data.Set.Finite.Lattice
 
 /-!
-# The least set a function depends on
+# Dependence of a function of a set
 
-Lemmas on mathlib's `DependsOn`. The sets a function depends on are closed under binary
-intersection, so a function that depends on a finite set depends on a least one: the coordinates
-it does not ignore, those at which changing the argument alone can change the value.
-
-Closure under infinite intersections fails. A function of a set of natural numbers that says
-whether the set is infinite depends exactly on the cofinite sets, and they have no least element.
-
-## Main results
-
-* `DependsOn.inter`: a function that depends on `s` and on `t` depends on `s ∩ t`.
-* `dependsOn_compl_singleton_iff`: a function ignores a coordinate when updating it never changes
-  the value.
-* `isLeast_dependsOn`: a function that depends on a finite set depends on the coordinates it does
-  not ignore, and these lie in every set it depends on.
-* `Set.DependsOn`: a function of a set depends on `s` when its value at a set is its value at the
-  part of the set in `s`. This is [dependence of the function of the set's
-  predicate](##Set.dependsOn_iff_dependsOn_ofPred), stated without taking a set for a predicate.
+A function of a set [depends on `s`](##Set.DependsOn) when its value at a set is its value at the
+part of the set in `s`. This is [dependence of the function of the set's
+predicate](##Set.dependsOn_iff_dependsOn_ofPred) in the sense of mathlib's `DependsOn`, stated
+without taking a set for a predicate. A function that depends on a finite set [depends on the
+elements it does not ignore](##Set.isLeast_dependsOn), the least set it depends on.
 -/
 
 public section
 
 open Function Set
-
-variable {ι : Type*} {α : ι → Type*} {β : Type*} {f : (Π i, α i) → β} {s t : Set ι}
-
-/-- A function that depends on `s` and on `t` depends on `s ∩ t`. -/
-theorem DependsOn.inter (hs : DependsOn f s) (ht : DependsOn f t) : DependsOn f (s ∩ t) := by
-  classical
-  intro x y h
-  refine (hs (y := fun i ↦ if i ∈ s then x i else y i) fun i hi ↦ by simp [hi]).trans
-    (ht fun i hi ↦ ?_)
-  by_cases his : i ∈ s
-  · simp [his, h i ⟨his, hi⟩]
-  · simp [his]
-
-theorem DependsOn.biInter {κ : Type*} {u : Set κ} (hu : u.Finite) {t : κ → Set ι}
-    (h : ∀ k ∈ u, DependsOn f (t k)) : DependsOn f (⋂ k ∈ u, t k) := by
-  induction u, hu using Set.Finite.induction_on with
-  | empty => simpa using dependsOn_univ f
-  | insert _ _ ih =>
-    rw [biInter_insert]
-    exact (h _ (mem_insert _ _)).inter (ih fun k hk ↦ h k (mem_insert_of_mem _ hk))
-
-/-- A function ignores the coordinate `i` when updating it never changes the value. -/
-theorem dependsOn_compl_singleton_iff [DecidableEq ι] {i : ι} :
-    DependsOn f {i}ᶜ ↔ ∀ x (a : α i), f (update x i a) = f x := by
-  refine ⟨fun h x a ↦ h fun j hj ↦ update_of_ne hj a x, fun h x y hxy ↦ ?_⟩
-  rw [← h x (y i)]
-  congr 1
-  funext j
-  by_cases hj : j = i
-  · subst hj; simp
-  · simp [update_of_ne hj, hxy j hj]
-
-/-- A function that depends on a finite set depends on the coordinates it does not ignore, and
-every set it depends on contains them. -/
-theorem isLeast_dependsOn (hs : s.Finite) (hf : DependsOn f s) :
-    IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} := by
-  refine ⟨(hf.inter (DependsOn.biInter (hs.inter_of_left {i | DependsOn f {i}ᶜ})
-    fun i hi ↦ hi.2)).mono ?_, fun t ht i hi ↦ by_contra fun hit ↦ hi (ht.mono ?_)⟩
-  · rintro i ⟨his, hi⟩ hdep
-    exact (mem_iInter₂.1 hi i ⟨his, hdep⟩) rfl
-  · simpa using hit
-
-theorem isLeast_dependsOn_of_finite [Finite ι] (f : (Π i, α i) → β) :
-    IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} :=
-  isLeast_dependsOn finite_univ (dependsOn_univ f)
-
-/-! ### Functions of a set -/
 
 section Set
 
@@ -136,7 +77,21 @@ theorem Set.dependsOn_compl_singleton_iff {i : ι} :
 and every set it depends on contains them. -/
 theorem Set.isLeast_dependsOn (hs : s.Finite) (hf : Set.DependsOn f s) :
     IsLeast {t | Set.DependsOn f t} {i | ¬ Set.DependsOn f {i}ᶜ} := by
-  simp only [Set.dependsOn_iff_dependsOn_ofPred] at hf ⊢
-  exact _root_.isLeast_dependsOn hs hf
+  refine ⟨fun X ↦ ?_, fun t ht i hi ↦ by_contra fun hit ↦
+    hi (ht.mono (subset_compl_singleton_iff.2 hit))⟩
+  have key {D : Set ι} (hD : D.Finite) (h : ∀ i ∈ D, Set.DependsOn f {i}ᶜ) (X : Set ι) :
+      f (X \ D) = f X := by
+    induction D, hD using Set.Finite.induction_on generalizing X with
+    | empty => simp
+    | insert _ _ ih =>
+      rw [← union_singleton, ← sdiff_sdiff,
+        Set.dependsOn_compl_singleton_iff.1 (h _ (mem_insert ..)),
+        ih fun i hi ↦ h i (mem_insert_of_mem _ hi)]
+  rw [← hf X, ← hf (_ ∩ X), ← key (hs.sdiff (t := {i | ¬ Set.DependsOn f {i}ᶜ}))
+    (fun i hi ↦ not_not.1 hi.2) (s ∩ X)]
+  congr 1
+  ext i
+  simp only [mem_sdiff, mem_inter_iff, mem_ofPred_eq]
+  tauto
 
 end Set

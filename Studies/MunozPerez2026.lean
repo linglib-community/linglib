@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.MunozPerez2026
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice

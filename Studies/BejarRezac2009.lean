@@ -62,7 +62,7 @@ which would bring the Kashmiri past tense (31b) into the model.
 
 namespace BejarRezac2009
 
-open Minimalist Minimalist.CyclicAgree Agreement Phi Phi.PersonSegment
+open Minimalist Minimalist.CyclicAgree Agreement PersonSegment
 open Clause (Scenario)
 
 /-! ### The systems -/

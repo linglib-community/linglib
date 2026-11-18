@@ -802,7 +802,6 @@ import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.RunTimes
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat
