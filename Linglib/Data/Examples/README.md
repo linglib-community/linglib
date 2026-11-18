@@ -328,6 +328,12 @@ aimed at. Known gaps:
   lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
   work list its own abbreviations; a data file would declare them and the generator would check
   its labels against the standard list and the declared ones.
+- **Declared boundary symbols.** The generator segments a word at the Leipzig separators `-`,
+  `=` and `~` and records the symbol. A source with its own notation is segmented by the same
+  symbols whatever they mean in it: Karlsson's grammar writes `=` within a compound, `>` before
+  a derivational suffix, which is not split, and `+` on a weak-grade form, which stays in the
+  morph, and its clitics take `-`. A data file would declare its symbols and their meanings, the
+  generator would segment by them, and the CLDF export would write the Leipzig rendering.
 - **Readings into a collection.** `Datum.Fits` and `Datum.Checks` take a reader into `Option`.
   A column that names a lexical entry is matched against a `Finset` inventory, so such a
   theorem is written with a bounded quantifier over the inventory and carries no coverage

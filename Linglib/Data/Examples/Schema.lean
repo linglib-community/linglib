@@ -114,8 +114,10 @@ structure GlossedMorpheme where
   morpheme : List Char
   /-- The gloss of the morpheme. -/
   gloss : List Char
-  /-- The separator before the morpheme: `-` for an affix, `=` for a clitic and `~` for a
-  reduplicant; `none` for the first morpheme of the word. -/
+  /-- The separator before the morpheme, as the source prints it: in the Leipzig rules `-` for
+  an affix, `=` for a clitic and `~` for a reduplicant; `none` for the first morpheme of the
+  word. A source with its own notation may use these differently, as a grammar that writes `=`
+  between the parts of a compound, and its study reads them by that notation. -/
   sep : Option Char := none
   deriving DecidableEq, Repr
 
