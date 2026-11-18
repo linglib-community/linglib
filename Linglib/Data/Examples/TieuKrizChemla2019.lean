@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "Figure 1: the first and third trucks are blue, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neither true nor false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("context", "gap")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "Figure 1: the first and third trucks are blue, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("neither true nor false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("context", "gap")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "Figure 1: the first and third trucks are blue, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "all"), ("polarity", "positive"), ("context", "gap")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "Figure 1: the first and third trucks are blue, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the gap context", .acceptable)]
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("context", "gap")] }
 
@@ -76,7 +76,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("homogeneous", .acceptable), ("existential, as (6a)", .acceptable), ("universal, as (7a)", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive")] }
 
@@ -89,7 +89,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("homogeneous", .acceptable), ("existential, as (6b)", .acceptable), ("universal, as (7b)", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "negative")] }
 
@@ -102,7 +102,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "positive")] }
 
@@ -115,7 +115,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "negative")] }
 
@@ -128,7 +128,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("polarity", "positive")] }
 
@@ -141,7 +141,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("polarity", "negative")] }
 
@@ -154,7 +154,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "positive")] }
 
@@ -167,7 +167,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "positive")] }
 
@@ -180,7 +180,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some but not all, the scalar implicature (9b)", .acceptable)]
     paperFeatures := [("determiner", "some"), ("polarity", "positive"), ("inference", "scalar implicature")] }
 
@@ -193,7 +193,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("inference", "scalar implicature")] }
 
@@ -206,7 +206,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := "Figure 3: the first and third hearts are red, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("context", "gap"), ("condition", "homogeneity target")] }
 
@@ -219,7 +219,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := "Figure 3: the first and third hearts are red, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("context", "gap"), ("condition", "homogeneity target")] }
 
@@ -232,7 +232,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := "Figure 4: all four umbrellas are red, or all four are blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("condition", "definite control")] }
 
@@ -245,7 +245,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := "Figure 4: all four umbrellas are red, or all four are blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("condition", "definite control")] }
 
@@ -258,7 +258,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := "Figure 3: the first and third hearts are red, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "positive"), ("context", "gap"), ("condition", "universal control")] }
 
@@ -271,7 +271,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := "Figure 3: the first and third hearts are red, the second and fourth yellow."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("context", "gap"), ("condition", "universal control")] }
 
@@ -284,7 +284,7 @@ def si_target : Datum :=
     glossedTokens := []
     context := "Figure 5: all four tents are orange."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some but not all: rejected with the implicature", .acceptable), ("literal existential: accepted without the implicature", .acceptable)]
     paperFeatures := [("determiner", "some"), ("polarity", "positive"), ("context", "all"), ("condition", "scalar implicature target")] }
 
@@ -297,7 +297,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "A few insomniacs are reading in bed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-maximal", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("phenomenon", "non-maximality")] }
 
@@ -310,7 +310,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := "Mary has a house with over a dozen windows and forgot to close just a few of them; Max asks whether the house will be all right in the coming thunderstorm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("non-maximal, effectively existential", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("phenomenon", "non-maximality")] }
 

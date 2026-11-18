@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Pow.NNReal
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
@@ -140,7 +140,7 @@ variable [MeasurableSingletonClass α]
 @[simp] theorem geomMean_const (μ : Measure α) [IsProbabilityMeasure μ] (c : ℝ≥0∞) :
     μ.geomMean (fun _ ↦ c) = c := by
   rw [geomMean, ← ENNReal.rpow_sum_of_nonneg c fun _ _ ↦ measureReal_nonneg,
-    sum_measureReal_singleton_eq_one, ENNReal.rpow_one]
+    sum_measureReal_singleton, Finset.coe_univ, probReal_univ, ENNReal.rpow_one]
 
 /-- The geometric mean under a probability measure of a function constant on the atoms of
 positive mass is that constant. -/

@@ -97,6 +97,10 @@ theorem isBounded_ofCase_iff {c : Case} :
     (ofCase c).IsBounded ↔ (ofCase c).direction ≠ .place := by
   cases c <;> decide
 
+/-- The reading of a function, its localization and the shape of its path. -/
+def ofFunction (f : Case.Function) : SpatialReading :=
+  { localization := f.localization?, shape := f.shape? }
+
 end SpatialReading
 
 /-! ### Readings -/

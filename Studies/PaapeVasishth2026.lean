@@ -94,21 +94,21 @@ def Woman : ReferentialContext → Set Referent
   | .uniqueReferent => {.rescued}
   | .nonUniqueReferents => {.man}ᶜ
 
-theorem iota_woman_isSome_iff (c : ReferentialContext) :
-    (iota c.Woman).isSome ↔ c = .uniqueReferent := by
-  rw [iota_isSome_iff]
+theorem iota_woman_dom_iff (c : ReferentialContext) :
+    (iota c.Woman).Dom ↔ c = .uniqueReferent := by
+  rw [iota_dom]
   cases c <;> simp [Woman, ExistsUnique]
   decide
 
 theorem iota_woman_eq_none_iff (c : ReferentialContext) :
-    iota c.Woman = none ↔ c = .nonUniqueReferents := by
-  rw [← Option.not_isSome_iff_eq_none, iota_woman_isSome_iff]
+    iota c.Woman = Part.none ↔ c = .nonUniqueReferents := by
+  rw [Part.eq_none_iff', iota_woman_dom_iff]
   cases c <;> simp
 
-theorem iota_relativeClause_isSome (c : ReferentialContext) :
-    (iota ({.rescued} ∩ c.Woman)).isSome := by
+theorem iota_relativeClause_dom (c : ReferentialContext) :
+    (iota ({.rescued} ∩ c.Woman)).Dom := by
   have hw : .rescued ∈ c.Woman := by cases c <;> simp [Woman]
-  rw [iota_isSome_iff]
+  rw [iota_dom]
   exact ⟨.rescued, ⟨rfl, hw⟩, fun _ h ↦ h.1⟩
 
 end ReferentialContext
@@ -133,8 +133,8 @@ theorem Condition.isMatch_iff (c : Condition) :
   obtain ⟨d, x⟩ := c
   cases d <;> cases x <;> simp [Condition.IsMatch, ReferentiallySupported,
     Disambiguation.modifier, Disambiguation.IsRelative,
-    ReferentialContext.iota_woman_isSome_iff, ReferentialContext.iota_woman_eq_none_iff,
-    ReferentialContext.iota_relativeClause_isSome]
+    ReferentialContext.iota_woman_dom_iff, ReferentialContext.iota_woman_eq_none_iff,
+    ReferentialContext.iota_relativeClause_dom]
 
 /-! ### The processing tree -/
 

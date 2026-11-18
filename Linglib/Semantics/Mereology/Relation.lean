@@ -1,38 +1,34 @@
 module
 
-public import Mathlib.Logic.Relator
-public import Linglib.Semantics.Mereology
+public import Linglib.Core.Order.Hom.SupPMap
+public import Linglib.Semantics.Mereology.Basic
+public import Mathlib.Order.UpperLower.Fibration
 
 /-!
 # Mereology of relations
 
-Krifka states his conditions on the thematic relation between an object and an event as
-part-structure properties of a relation `θ : α → β → Prop` between two mereologies. Uniqueness of
-participants and of events are mathlib's `Relator.LeftUnique` and `Relator.RightUnique`,
-summativity is cumulativity of the graph of `θ` in the product order, and the mapping and
+A thematic relation between objects and events is a relation `θ : SetRel α β` between two
+mereologies, a set of pairs in the product part structure. Krifka's conditions on it are
+part-structure properties of that set. Summativity is closure of `θ` under sums, uniqueness of
+participants and of events are injectivity of the two projections on `θ`, and the mapping and
 uniqueness conditions relate the parts of a related object to the parts of its event. Each
-condition on the event side is the object-side condition of the converse relation `flip θ`. When
-the relation is the graph of a thematic function, as in [champollion-krifka-2016], the
-conditions become properties of the function: summativity is preservation of sums, general
-uniqueness of events is injectivity, and mapping to subobjects is strict monotonicity.
+condition on the object side is the event-side condition of the converse relation `θ.inv`. A
+relation maps to events exactly when
+[the objects of a divisive set of events are divisive](##Mereology.me_iff_forall_isLowerSet), and
+under both uniqueness conditions the parts of a related object and event
+[correspond by an order isomorphism](##Mereology.UE.partOrderIso) whose graph is `θ`. Uniqueness
+of objects makes mapping to subobjects the same as
+[quantization of the events of each object](##Mereology.UO.mso_iff_forall_qua), and a summative
+relation with unique events [gives each object one event](##Mereology.UE.gue_of_sum).
 
-## Main definitions
-
-* `UP`, `GUE`: uniqueness of participants and general uniqueness of events.
-* `SUM`: summativity, the cumulativity of a relation.
-* `ME`, `MSE`, `UE`: mapping to events, mapping to subevents, and uniqueness of events.
-* `MO`, `MSO`, `UO`: mapping to objects, mapping to subobjects, and uniqueness of objects.
-
-## Main results
-
-* `UP.uo_of_mo`, `UE.mse_of_uo`: uniqueness of participants gives uniqueness of objects, and the
-  two uniqueness conditions give the strict mappings.
-* `UO.up_of_sum`: conversely, a summative relation with unique objects has unique participants.
-* `UE.exists_orderIso_of_uo`: under both uniqueness conditions a related object and event have
-  order-isomorphic parts.
-* `UO.qua_of_mso`: the events of a fixed object form a quantized predicate.
-* `gue_graph_iff`, `mso_graph_iff`, `sum_graph_iff`: the conditions on the graph of a thematic
-  function.
+When the relation is the converse graph of a thematic function, as in [champollion-krifka-2016],
+the conditions become properties of the function: summativity is preservation of sums, general
+uniqueness of events is injectivity, mapping to subobjects is strict monotonicity, and mapping to
+events is mathlib's `Relation.Fibration` for the part orders. A summative relation with unique
+participants is always such a converse graph, of [a partial sum
+homomorphism](##Mereology.UP.inv_graph_toSupPMap) defined on the events that have a participant,
+and it [maps to objects](##Mereology.mo_graph_supPMap_iff) exactly when that domain is closed under
+parts.
 
 ## References
 
@@ -43,26 +39,45 @@ uniqueness of events is injectivity, and mapping to subobjects is strict monoton
 
 namespace Mereology
 
+open Function
+open scoped SetRel
+
 variable {α β : Type*}
 
 /-! ### Uniqueness of participants and events -/
 
 section Unique
 
-variable (θ : α → β → Prop)
+variable (θ : SetRel α β)
 
 /-- A relation has unique participants if an event has at most one `θ`-participant. -/
-abbrev UP : Prop := Relator.LeftUnique θ
+abbrev UP : Prop := Set.InjOn Prod.snd θ
 
 /-- A relation has general uniqueness of events if an object participates in at most one
 `θ`-event. -/
-abbrev GUE : Prop := Relator.RightUnique θ
+abbrev GUE : Prop := Set.InjOn Prod.fst θ
 
 variable {θ}
 
-theorem UP.flip (h : UP θ) : GUE (flip θ) := Relator.LeftUnique.flip h
+theorem up_iff : UP θ ↔ ∀ ⦃x y e⦄, x ~[θ] e → y ~[θ] e → x = y :=
+  ⟨fun h _ _ _ h₁ h₂ ↦ congrArg Prod.fst (h h₁ h₂ rfl),
+    fun h ⟨_, e⟩ h₁ ⟨_, e'⟩ h₂ he ↦ by
+      obtain rfl : e = e' := he
+      exact Prod.ext (h h₁ h₂) rfl⟩
 
-theorem GUE.flip (h : GUE θ) : UP (flip θ) := fun _ _ _ h₁ h₂ ↦ h h₁ h₂
+theorem gue_iff : GUE θ ↔ ∀ ⦃x e e'⦄, x ~[θ] e → x ~[θ] e' → e = e' :=
+  ⟨fun h _ _ _ h₁ h₂ ↦ congrArg Prod.snd (h h₁ h₂ rfl),
+    fun h ⟨x, _⟩ h₁ ⟨y, _⟩ h₂ hx ↦ by
+      obtain rfl : x = y := hx
+      exact Prod.ext rfl (h h₁ h₂)⟩
+
+alias ⟨UP.eq, _⟩ := up_iff
+
+alias ⟨GUE.eq, _⟩ := gue_iff
+
+theorem UP.inv (h : UP θ) : GUE θ.inv := gue_iff.2 fun _ _ _ h₁ h₂ ↦ h.eq h₁ h₂
+
+theorem GUE.inv (h : GUE θ) : UP θ.inv := up_iff.2 fun _ _ _ h₁ h₂ ↦ h.eq h₁ h₂
 
 end Unique
 
@@ -74,14 +89,15 @@ variable [SemilatticeSup α] [SemilatticeSup β]
 
 /-- A relation is summative ([krifka-1989]), or cumulative in the sense of [krifka-1998], if
 related pairs sum to related pairs. -/
-def SUM (θ : α → β → Prop) : Prop := ∀ ⦃x e⦄, θ x e → ∀ ⦃y e'⦄, θ y e' → θ (x ⊔ y) (e ⊔ e')
+abbrev SUM (θ : SetRel α β) : Prop := SupClosed θ
 
-variable {θ : α → β → Prop}
+variable {θ : SetRel α β}
 
-theorem sum_iff_cum_uncurry : SUM θ ↔ CUM (Function.uncurry θ) :=
-  ⟨fun h _ hp _ hq ↦ h hp hq, fun h _ _ hx _ _ hy ↦ h (a := (_, _)) (b := (_, _)) hx hy⟩
+theorem SUM.sup (h : SUM θ) {x y : α} {e e' : β} (h₁ : x ~[θ] e) (h₂ : y ~[θ] e') :
+    (x ⊔ y) ~[θ] (e ⊔ e') :=
+  h h₁ h₂
 
-theorem SUM.flip (h : SUM θ) : SUM (flip θ) := fun _ _ h₁ _ _ h₂ ↦ h h₁ h₂
+theorem SUM.inv (h : SUM θ) : SUM θ.inv := SupClosed.relInv h
 
 end Sum
 
@@ -89,31 +105,31 @@ end Sum
 
 section Preorder
 
-variable [Preorder α] [Preorder β] (θ : α → β → Prop)
+variable [Preorder α] [Preorder β] (θ : SetRel α β)
 
 /-- A relation maps to events if a part of a related object is related to a part of the
 event. -/
-def ME : Prop := ∀ ⦃x e⦄, θ x e → ∀ ⦃y⦄, y ≤ x → ∃ e' ≤ e, θ y e'
+def ME : Prop := ∀ ⦃x e⦄, x ~[θ] e → ∀ ⦃y⦄, y ≤ x → ∃ e' ≤ e, y ~[θ] e'
 
 /-- A relation maps to subevents if a proper part of a related object is related to a proper
 part of the event. -/
-def MSE : Prop := ∀ ⦃x e⦄, θ x e → ∀ ⦃y⦄, y < x → ∃ e' < e, θ y e'
+def MSE : Prop := ∀ ⦃x e⦄, x ~[θ] e → ∀ ⦃y⦄, y < x → ∃ e' < e, y ~[θ] e'
 
 /-- A relation has unique events if a part of a related object is related to exactly one
 part of the event. -/
-def UE : Prop := ∀ ⦃x e⦄, θ x e → ∀ ⦃y⦄, y ≤ x → ∃! e', e' ≤ e ∧ θ y e'
+def UE : Prop := ∀ ⦃x e⦄, x ~[θ] e → ∀ ⦃y⦄, y ≤ x → ∃! e', e' ≤ e ∧ y ~[θ] e'
 
 /-- A relation maps to objects if a part of a related event is related to a part of the
 object, the converse of `ME`. -/
-abbrev MO : Prop := ME (flip θ)
+abbrev MO : Prop := ME θ.inv
 
 /-- A relation maps to subobjects if a proper part of a related event is related to a proper
 part of the object, the converse of `MSE`. -/
-abbrev MSO : Prop := MSE (flip θ)
+abbrev MSO : Prop := MSE θ.inv
 
 /-- A relation has unique objects if a part of a related event is related to exactly one
 part of the object, the converse of `UE`. -/
-abbrev UO : Prop := UE (flip θ)
+abbrev UO : Prop := UE θ.inv
 
 variable {θ}
 
@@ -124,15 +140,28 @@ theorem UO.mo (h : UO θ) : MO θ := UE.me h
 /-- With mapping to objects, uniqueness of participants gives uniqueness of objects. -/
 theorem UP.uo_of_mo (hU : UP θ) (hm : MO θ) : UO θ := fun _ _ hxe _ hle ↦
   let ⟨y, hy, hθ⟩ := hm hxe hle
-  ⟨y, ⟨hy, hθ⟩, fun _ hz ↦ hU hz.2 hθ⟩
+  ⟨y, ⟨hy, hθ⟩, fun _ ⟨_, hz⟩ ↦ hU.eq hz hθ⟩
 
-theorem GUE.ue_of_me (hG : GUE θ) (hm : ME θ) : UE θ := UP.uo_of_mo hG.flip hm
+theorem GUE.ue_of_me (hG : GUE θ) (hm : ME θ) : UE θ := UP.uo_of_mo hG.inv hm
+
+/-- A relation maps to events iff the objects related to a lower set of events form a lower set,
+as `Relation.fibration_iff_isLowerSet_image` characterizes a fibration. -/
+theorem me_iff_forall_isLowerSet :
+    ME θ ↔ ∀ s : Set β, IsLowerSet s → IsLowerSet (θ.preimage s) :=
+  ⟨fun h _ hs _ _ hle ⟨_, he, hθ⟩ ↦ let ⟨e', he', hθ'⟩ := h hθ hle; ⟨e', hs he' he, hθ'⟩,
+    fun h _ e hθ _ hle ↦ h _ (isLowerSet_Iic e) hle ⟨e, le_rfl, hθ⟩⟩
+
+/-- A relation maps to objects iff the events related to a lower set of objects form a lower
+set. -/
+theorem mo_iff_forall_isLowerSet :
+    MO θ ↔ ∀ s : Set α, IsLowerSet s → IsLowerSet (θ.image s) :=
+  me_iff_forall_isLowerSet
 
 end Preorder
 
 section PartialOrder
 
-variable [PartialOrder α] [PartialOrder β] {θ : α → β → Prop}
+variable [PartialOrder α] [PartialOrder β] {θ : SetRel α β}
 
 theorem MSE.me (h : MSE θ) : ME θ := fun _ _ hxe _ hle ↦
   (eq_or_lt_of_le hle).elim (fun heq ↦ ⟨_, le_rfl, heq ▸ hxe⟩)
@@ -150,58 +179,91 @@ theorem UE.mse_of_uo (hE : UE θ) (hO : UO θ) : MSE θ := fun _ _ hxe _ hyx ↦
 
 theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 
-/-- With unique objects and mapping to subobjects, the events of a fixed object form a quantized
-predicate (cf. [krifka-1998] after (50)). -/
-theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (θ x) :=
-  qua_of_forall fun _ _ he hlt he' ↦
-    let ⟨_, hy, hθ⟩ := hm he hlt
-    hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩)
+/-- Under uniqueness of objects, a relation maps to subobjects iff the events of each object form
+a quantized predicate: it takes the whole event to relate the object, not a part of it
+([krifka-1998], after (50)). -/
+theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (x ~[θ] ·) :=
+  ⟨fun hm _ ↦ qua_of_forall fun _ _ he hlt he' ↦
+      let ⟨_, hy, hθ⟩ := hm he hlt
+      hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩),
+    fun hq _ x hxe e' hlt ↦
+      let ⟨y, hy, hθ⟩ := (hO hxe hlt.le).exists
+      ⟨y, lt_of_le_of_ne hy fun h ↦ hq x (h ▸ hθ : x ~[θ] e') hxe hlt.ne hlt.le, hθ⟩⟩
+
+theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (x ~[θ] ·) :=
+  hO.mso_iff_forall_qua.mp hm x
 
 end PartialOrder
 
 section SemilatticeSup
 
-variable [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop}
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β}
 
 /-- A summative relation with unique objects has unique participants: two participants of an event
 sum to a participant of it, and each is a part of the sum related to the whole event. -/
-theorem UO.up_of_sum (hO : UO θ) (hS : SUM θ) : UP θ := fun _ _ _ ha hb ↦
-  (hO (hS ha hb) le_sup_left).unique ⟨le_sup_left, ha⟩ ⟨le_sup_right, hb⟩
+theorem UO.up_of_sum (hO : UO θ) (hS : SUM θ) : UP θ := up_iff.2 fun _ _ _ ha hb ↦
+  (hO (hS.sup ha hb) le_sup_left).unique ⟨le_sup_left, ha⟩ ⟨le_sup_right, hb⟩
+
+/-- A summative relation with unique events has general uniqueness of events: two events of an
+object sum to an event of it, as two readings of a novel do, and each is a part of the sum related
+to the whole object ([krifka-1998], after (51)). -/
+theorem UE.gue_of_sum (hE : UE θ) (hS : SUM θ) : GUE θ :=
+  (UO.up_of_sum (θ := θ.inv) hE hS.inv).inv
 
 end SemilatticeSup
 
-/-! ### The correspondence between parts -/
+/-! ### The correspondence between parts
 
-section OrderIso
+Uniqueness of events and of objects make `θ`, between the parts of a related object and event, a
+one-to-one mapping ([krifka-1998], after (50)). -/
 
-variable [Preorder α] [Preorder β] {θ : α → β → Prop} {x : α} {e : β}
+section Part
 
-private theorem monotone_of_ue (hE : UE θ) {f : Set.Iic x → β}
-    (hf : ∀ y, (f y ≤ e ∧ θ y (f y)) ∧ ∀ e', e' ≤ e ∧ θ y e' → e' = f y) : Monotone f :=
-  fun y₁ y₂ hle ↦
-    let ⟨e₀, ⟨he₀, hθ⟩, _⟩ := hE (hf y₂).1.2 hle
-    (hf y₁).2 e₀ ⟨he₀.trans (hf y₂).1.1, hθ⟩ ▸ he₀
+variable [Preorder α] [Preorder β] {θ : SetRel α β} {x : α} {e : β}
 
-/-- Under uniqueness of events and of objects, `θ` restricts, between the parts of a related
-object and event, to the graph of an order isomorphism. -/
-theorem UE.exists_orderIso_of_uo (hE : UE θ) (hO : UO θ) (hxe : θ x e) :
-    ∃ f : Set.Iic x ≃o Set.Iic e, ∀ (y : Set.Iic x) (e' : Set.Iic e), θ y e' ↔ f y = e' := by
-  choose f hf using fun y : Set.Iic x ↦ hE hxe y.2
-  choose g hg using fun e' : Set.Iic e ↦ hO hxe e'.2
-  let F : Set.Iic x ≃ Set.Iic e :=
-    { toFun := fun y ↦ ⟨f y, (hf y).1.1⟩
-      invFun := fun e' ↦ ⟨g e', (hg e').1.1⟩
-      left_inv := fun y ↦ Subtype.ext ((hg ⟨f y, (hf y).1.1⟩).2 y ⟨y.2, (hf y).1.2⟩).symm
-      right_inv := fun e' ↦ Subtype.ext ((hf ⟨g e', (hg e').1.1⟩).2 e' ⟨e'.2, (hg e').1.2⟩).symm }
-  refine ⟨F.toOrderIso (fun _ _ h ↦ monotone_of_ue hE hf h) (fun _ _ h ↦ monotone_of_ue hO hg h),
-    fun y e' ↦ ⟨fun h ↦ Subtype.ext ((hf y).2 e' ⟨e'.2, h⟩).symm, fun h ↦ h ▸ (hf y).1.2⟩⟩
+/-- Under uniqueness of events, the part of a related event that a part of the object is related
+to. -/
+noncomputable def UE.part (hE : UE θ) (hxe : x ~[θ] e) (y : Set.Iic x) : Set.Iic e :=
+  ⟨(hE hxe y.prop).exists.choose, (hE hxe y.prop).exists.choose_spec.left⟩
 
-end OrderIso
+theorem UE.rel_part (hE : UE θ) (hxe : x ~[θ] e) (y : Set.Iic x) :
+    (y : α) ~[θ] (hE.part hxe y : β) :=
+  (hE hxe y.prop).exists.choose_spec.right
+
+/-- Between the parts of a related object and event, `θ` is the graph of `UE.part`. -/
+theorem UE.rel_iff_part_eq (hE : UE θ) (hxe : x ~[θ] e) {y : Set.Iic x} {e' : Set.Iic e} :
+    (y : α) ~[θ] (e' : β) ↔ hE.part hxe y = e' :=
+  ⟨fun h ↦ Subtype.ext
+      ((hE hxe y.prop).unique ⟨(hE.part hxe y).prop, hE.rel_part hxe y⟩ ⟨e'.prop, h⟩),
+    fun h ↦ h ▸ hE.rel_part hxe y⟩
+
+theorem UE.part_mono (hE : UE θ) (hxe : x ~[θ] e) : Monotone (hE.part hxe) := fun _ y₂ hle ↦
+  let ⟨e₀, ⟨he₀, hθ⟩, _⟩ := hE (hE.rel_part hxe y₂) hle
+  ((hE.rel_iff_part_eq hxe (e' := ⟨e₀, he₀.trans (hE.part hxe y₂).prop⟩)).mp hθ).le.trans he₀
+
+/-- Under uniqueness of events and of objects, the parts of a related object and event are
+order-isomorphic along `θ`. -/
+noncomputable def UE.partOrderIso (hE : UE θ) (hO : UO θ) (hxe : x ~[θ] e) :
+    Set.Iic x ≃o Set.Iic e :=
+  Equiv.toOrderIso
+    ⟨hE.part hxe, hO.part hxe, fun y ↦ (hO.rel_iff_part_eq hxe).mp (hE.rel_part hxe y),
+      fun e' ↦ (hE.rel_iff_part_eq hxe).mp (hO.rel_part hxe e')⟩
+    (hE.part_mono hxe) (hO.part_mono hxe)
+
+@[simp]
+theorem UE.partOrderIso_apply (hE : UE θ) (hO : UO θ) (hxe : x ~[θ] e) (y : Set.Iic x) :
+    hE.partOrderIso hO hxe y = hE.part hxe y := rfl
+
+@[simp]
+theorem UE.partOrderIso_symm (hE : UE θ) (hO : UO θ) (hxe : x ~[θ] e) :
+    (hE.partOrderIso hO hxe).symm = UE.partOrderIso (θ := θ.inv) hO hE hxe := rfl
+
+end Part
 
 /-! ### Thematic functions
 
-A thematic function `f : β → α` sends an event to its participant, and its graph `(· = f ·)` is
-the corresponding thematic relation. [champollion-krifka-2016] require of such a function
+A thematic function `f : β → α` sends an event to its participant, and the converse of its graph
+is the corresponding thematic relation. [champollion-krifka-2016] require of such a function
 cumulativity (13.23), that it preserve sums, and distinctiveness (13.24), that distinct events
 have distinct participants. -/
 
@@ -209,27 +271,44 @@ section Graph
 
 variable (f : β → α)
 
-theorem up_graph : UP (· = f ·) := fun _ _ _ hx hy ↦ hx.trans hy.symm
+theorem up_graph : UP (graph f).inv := GUE.inv (θ := graph f) (SetRel.injOn_fst_graph f)
 
-/-- The graph of a function has general uniqueness of events iff the function is injective, the
-distinctiveness (13.24) of [champollion-krifka-2016]. -/
-theorem gue_graph_iff : GUE (· = f ·) ↔ Function.Injective f :=
-  ⟨fun h _ _ heq ↦ h rfl heq, fun h _ _ _ h₁ h₂ ↦ h (h₁.symm.trans h₂)⟩
+/-- The converse graph of a function has general uniqueness of events iff the function is
+injective, the distinctiveness (13.24) of [champollion-krifka-2016]. -/
+theorem gue_graph_iff : GUE (graph f).inv ↔ Injective f :=
+  ⟨fun h ↦ SetRel.injOn_snd_graph_iff.1 (GUE.inv h),
+    fun h ↦ UP.inv (θ := graph f) (SetRel.injOn_snd_graph_iff.2 h)⟩
 
 variable [Preorder α] [Preorder β]
 
-theorem mo_graph_iff : MO (· = f ·) ↔ Monotone f :=
-  ⟨fun h _ _ hle ↦ let ⟨_, hy, hy'⟩ := h rfl hle; hy' ▸ hy,
-    fun h _ _ hxe _ hle ↦ ⟨_, hxe ▸ h hle, rfl⟩⟩
+/-- The converse graph of a function maps to events iff the function is a fibration of the part
+orders. -/
+theorem me_graph_iff : ME (graph f).inv ↔ Relation.Fibration (· ≤ ·) (· ≤ ·) f :=
+  ⟨fun h a _ hle ↦ h (show (f a, a) ∈ (graph f).inv from rfl) hle,
+    fun h _ _ hxe _ hle ↦ h (hle.trans_eq hxe.symm)⟩
 
-theorem uo_graph_iff : UO (· = f ·) ↔ Monotone f :=
-  ⟨fun h _ _ hle ↦ let ⟨_, ⟨hy, hy'⟩, _⟩ := h rfl hle; hy' ▸ hy,
-    fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ hz ↦ hz.2⟩⟩
+theorem mse_graph_iff : MSE (graph f).inv ↔ Relation.Fibration (· < ·) (· < ·) f :=
+  ⟨fun h a _ hlt ↦ h (show (f a, a) ∈ (graph f).inv from rfl) hlt,
+    fun h _ _ hxe _ hlt ↦ h (hlt.trans_eq hxe.symm)⟩
 
-/-- The graph of a function maps to subobjects iff the function is strictly monotone. -/
-theorem mso_graph_iff : MSO (· = f ·) ↔ StrictMono f :=
-  ⟨fun h _ _ hlt ↦ let ⟨_, hy, hy'⟩ := h rfl hlt; hy' ▸ hy,
-    fun h _ _ hxe _ hlt ↦ ⟨_, hxe ▸ h hlt, rfl⟩⟩
+theorem mo_graph_iff : MO (graph f).inv ↔ Monotone f :=
+  ⟨fun h _ b hle ↦
+      let ⟨_, hy, hy'⟩ := h (show (b, f b) ∈ graph f from rfl) hle
+      hy'.trans_le hy,
+    fun h _ _ hxe _ hle ↦ ⟨_, (h hle).trans_eq hxe, rfl⟩⟩
+
+theorem uo_graph_iff : UO (graph f).inv ↔ Monotone f :=
+  ⟨fun h _ b hle ↦
+      let ⟨_, ⟨hy, hy'⟩, _⟩ := h (show (b, f b) ∈ graph f from rfl) hle
+      hy'.trans_le hy,
+    fun h _ _ hxe _ hle ↦ ⟨_, ⟨(h hle).trans_eq hxe, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz.symm⟩⟩
+
+/-- The converse graph of a function maps to subobjects iff the function is strictly monotone. -/
+theorem mso_graph_iff : MSO (graph f).inv ↔ StrictMono f :=
+  ⟨fun h _ b hlt ↦
+      let ⟨_, hy, hy'⟩ := h (show (b, f b) ∈ graph f from rfl) hlt
+      hy'.trans_lt hy,
+    fun h _ _ hxe _ hlt ↦ ⟨_, (h hlt).trans_eq hxe, rfl⟩⟩
 
 end Graph
 
@@ -237,15 +316,55 @@ section GraphSum
 
 variable [SemilatticeSup α] [SemilatticeSup β]
 
-/-- The graph of a function is summative iff the function preserves sums, the cumulativity
-(13.23) of [champollion-krifka-2016]. -/
-theorem sum_graph_iff (f : β → α) : SUM (· = f ·) ↔ ∀ e e', f (e ⊔ e') = f e ⊔ f e' :=
-  ⟨fun h e e' ↦ (h (x := f e) rfl (y := f e') rfl).symm,
-    fun h _ _ hx _ _ hy ↦ (congr_arg₂ (· ⊔ ·) hx hy).trans (h _ _).symm⟩
+/-- The converse graph of a function is summative iff the function preserves sums, the
+cumulativity (13.23) of [champollion-krifka-2016]. -/
+theorem sum_graph_iff (f : β → α) : SUM (graph f).inv ↔ ∀ e e', f (e ⊔ e') = f e ⊔ f e' :=
+  SetRel.supClosed_inv.trans SetRel.supClosed_graph_iff
 
-theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : SUM (· = f ·) :=
-  (sum_graph_iff f).2 (map_sup f)
+theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : SUM (graph f).inv :=
+  (SetRel.supClosed_graph f).relInv
 
 end GraphSum
+
+/-! ### Partial thematic functions
+
+A thematic role need not be defined on every event. A summative relation with unique participants
+is the converse graph of a partially defined sum homomorphism from events to objects, defined on
+the events that have a participant. -/
+
+section SupPMap
+
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β}
+
+theorem sum_graph_supPMap (f : β →⊔. α) : SUM f.graph.inv := f.supClosed_graph.relInv
+
+theorem up_graph_supPMap (f : β →⊔. α) : UP f.graph.inv :=
+  GUE.inv (θ := f.graph) f.injOn_fst_graph
+
+/-- The converse graph of a partial thematic function maps to objects iff the function is defined
+on every part of an event it is defined on. -/
+theorem mo_graph_supPMap_iff (f : β →⊔. α) : MO f.graph.inv ↔ IsLowerSet f.domain := by
+  refine ⟨fun h e e' hle he ↦ ?_, fun h e x hex e' hle ↦ ?_⟩
+  · obtain ⟨_, _, he', _⟩ := h (show (e, f ⟨e, he⟩) ∈ f.graph.inv.inv from ⟨he, rfl⟩) hle
+    exact he'
+  · obtain ⟨he, rfl⟩ : ∃ he : e ∈ f.domain, f ⟨e, he⟩ = x := hex
+    exact ⟨f ⟨e', h hle he⟩, f.mono (show (⟨e', h hle he⟩ : f.domain) ≤ ⟨e, he⟩ from hle),
+      h hle he, rfl⟩
+
+/-- A summative relation with unique participants, as the partial sum homomorphism sending an
+event to its participant. -/
+noncomputable def UP.toSupPMap (hU : UP θ) (hS : SUM θ) : β →⊔. α :=
+  θ.inv.toSupPMap hS.inv hU.inv
+
+@[simp]
+theorem UP.domain_toSupPMap (hU : UP θ) (hS : SUM θ) : (hU.toSupPMap hS).domain = θ.cod := rfl
+
+/-- A summative relation with unique participants is the converse graph of its partial thematic
+function. -/
+@[simp]
+theorem UP.inv_graph_toSupPMap (hU : UP θ) (hS : SUM θ) : (hU.toSupPMap hS).graph.inv = θ := by
+  rw [UP.toSupPMap, SetRel.graph_toSupPMap, SetRel.inv_inv]
+
+end SupPMap
 
 end Mereology

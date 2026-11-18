@@ -104,7 +104,7 @@ inductive ModalInterpretability
 /-- A modal feature pairs a force with its interpretability: the four features `[i∀-MOD]`,
 `[u∀-MOD]`, `[i∃-MOD]` and `[u∃-MOD]`. -/
 structure ModalFeature where
-  force : ModalForce
+  force : QuantificationalForce
   interp : ModalInterpretability
   deriving DecidableEq
 
@@ -112,10 +112,10 @@ structure ModalFeature where
 interpretable feature may check several. -/
 def ModalFeature.Checks (checker checked : ModalFeature) : Prop :=
   checker.interp = .interpretable ∧ checked.interp = .uninterpretable ∧
-    (checker.force.IsUniversal ↔ checked.force.IsUniversal)
+    checker.force = checked.force
 
 instance : DecidableRel ModalFeature.Checks :=
-  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ = _))
 
 /-- The feature of a negated constituent: negation flips the force of the feature it scopes
 over, so concord across negation checks the negated feature (§4.2, footnote 7, after
@@ -124,14 +124,14 @@ def ModalFeature.negated (f : ModalFeature) : ModalFeature := ⟨f.force.dual, f
 
 theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
     (hi : checker.interp = .interpretable) (hu : checked.interp = .uninterpretable) :
-    checker.Checks checked.negated ↔ ¬ (checker.force.IsUniversal ↔ checked.force.IsUniversal) := by
+    checker.Checks checked.negated ↔ checker.force ≠ checked.force := by
   simp only [ModalFeature.Checks, ModalFeature.negated, hi, hu, true_and]
   cases checker.force <;> cases checked.force <;> decide
 
 /-- The features of a modal auxiliary of the Fragment: the forces of its meanings, uninterpretable,
 Zeijlstra's generalization that auxiliaries contribute no operator. -/
 def auxiliaryFeatures (a : ModalAuxiliary) : Finset ModalFeature :=
-  a.forces.image (⟨·, .uninterpretable⟩)
+  a.quantificationalForces.image (⟨·, .uninterpretable⟩)
 
 /-! ### Modal concord (§3) -/
 
@@ -140,13 +140,13 @@ class: one silent interpretable operator above the coordination then checks both
 modal outscopes the coordinator. -/
 def Concord (f₁ f₂ : ModalFeature) : Prop :=
   f₁.interp = .uninterpretable ∧ f₂.interp = .uninterpretable ∧
-    (f₁.force.IsUniversal ↔ f₂.force.IsUniversal)
+    f₁.force = f₂.force
 
-instance : DecidableRel Concord := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
+instance : DecidableRel Concord := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ = _))
 
 theorem exists_checks_of_concord {f₁ f₂ : ModalFeature} (h : Concord f₁ f₂) :
     ∃ op : ModalFeature, op.interp = .interpretable ∧ op.Checks f₁ ∧ op.Checks f₂ :=
-  ⟨⟨f₁.force, .interpretable⟩, rfl, ⟨rfl, h.1, Iff.rfl⟩, ⟨rfl, h.2.1, h.2.2⟩⟩
+  ⟨⟨f₁.force, .interpretable⟩, rfl, ⟨rfl, h.1, rfl⟩, ⟨rfl, h.2.1, h.2.2⟩⟩
 
 theorem concord_of_checks {op f₁ f₂ : ModalFeature} (h₁ : op.Checks f₁) (h₂ : op.Checks f₂) :
     Concord f₁ f₂ :=
@@ -172,8 +172,8 @@ theorem fragment_concord :
 -- (28), (29a), (29c)
 theorem need_not :
     ∀ f ∈ auxiliaryFeatures need,
-      ModalFeature.Checks ⟨.possibility, .interpretable⟩ f.negated ∧
-        ¬ ModalFeature.Checks ⟨.necessity, .interpretable⟩ f.negated := by
+      ModalFeature.Checks ⟨.existential, .interpretable⟩ f.negated ∧
+        ¬ ModalFeature.Checks ⟨.universal, .interpretable⟩ f.negated := by
   decide
 
 /-! ### The rows -/
@@ -185,8 +185,8 @@ def featuresOf : String → Finset ModalFeature
   | "can" => auxiliaryFeatures can
   | "must" => auxiliaryFeatures must
   | "need" => auxiliaryFeatures need
-  | "allow" | "it's ok" | "be allowed" | "be permitted" => {⟨.possibility, .interpretable⟩}
-  | "demand" | "be required" => {⟨.necessity, .interpretable⟩}
+  | "allow" | "it's ok" | "be allowed" | "be permitted" => {⟨.existential, .interpretable⟩}
+  | "demand" | "be required" => {⟨.universal, .interpretable⟩}
   | _ => ∅
 
 theorem coordination_rows :

@@ -12,7 +12,7 @@
     "translation": "fish",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "ká.loi.den",
         "judgment": "ungrammatical"
@@ -53,7 +53,7 @@
     "translation": "neighbor",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "náa.pu.rèi.den",
         "judgment": "acceptable"
@@ -94,7 +94,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

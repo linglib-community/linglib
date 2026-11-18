@@ -25,7 +25,7 @@ def articles_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "articles"), ("value", "sae")] }
 
@@ -39,7 +39,7 @@ def relpro_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativePronouns"), ("value", "sae")] }
 
@@ -53,7 +53,7 @@ def relparticle_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativePronouns"), ("value", "particle")] }
 
@@ -67,7 +67,7 @@ def haveperf_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
@@ -81,7 +81,7 @@ def haveperf_sv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
@@ -95,7 +95,7 @@ def haveperf_es : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
@@ -107,9 +107,11 @@ def perf_fi : Datum :=
     language := "finn1318"
     primaryText := "ole-n saa-nut"
     glossedTokens := [("ole-n", "be-1SG"), ("saa-nut", "receive-PTCP")]
+    glossedWords := [⟨['o', 'l', 'e', '-', 'n'], ['b', 'e', '-', '1', 'S', 'G'], [⟨['o', 'l', 'e'], ['b', 'e'], none⟩, ⟨['n'], ['1', 'S', 'G'], some '-'⟩]⟩, ⟨['s', 'a', 'a', '-', 'n', 'u', 't'], ['r', 'e', 'c', 'e', 'i', 'v', 'e', '-', 'P', 'T', 'C', 'P'], [⟨['s', 'a', 'a'], ['r', 'e', 'c', 'e', 'i', 'v', 'e'], none⟩, ⟨['n', 'u', 't'], ['P', 'T', 'C', 'P'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "participialCopula")] }
 
@@ -123,7 +125,7 @@ def perf_cy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "prepositional")] }
 
@@ -137,7 +139,7 @@ def nomexp_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "nominativeExperiencers"), ("value", "generalizing")] }
 
@@ -151,7 +153,7 @@ def invexp_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "nominativeExperiencers"), ("value", "inverting")] }
 
@@ -165,7 +167,7 @@ def getpass_cy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "participialPassive"), ("value", "getPassive")] }
 
@@ -179,7 +181,7 @@ def caus_mn : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "anticausativeProminence"), ("value", "causative")] }
 
@@ -193,7 +195,7 @@ def anticaus_ru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "anticausativeProminence"), ("value", "anticausative")] }
 
@@ -207,7 +209,7 @@ def datposs_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "dativeExternalPossessors"), ("value", "dative")] }
 
@@ -221,7 +223,7 @@ def locposs_sv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "dativeExternalPossessors"), ("value", "locative")] }
 
@@ -235,7 +237,7 @@ def vni_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "sae")] }
 
@@ -249,7 +251,7 @@ def nvni_el : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "negatedVerb")] }
 
@@ -263,7 +265,7 @@ def mixed_it_pre : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "mixed")] }
 
@@ -277,7 +279,7 @@ def mixed_it_post : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "mixed")] }
 
@@ -291,7 +293,7 @@ def equative_ca : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -305,7 +307,7 @@ def equative_pt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -319,7 +321,7 @@ def equative_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -333,7 +335,7 @@ def equative_ru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -347,7 +349,7 @@ def equative_hu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -361,7 +363,7 @@ def equative_fi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -375,7 +377,7 @@ def equative_ka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -389,7 +391,7 @@ def equative_bg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
@@ -403,7 +405,7 @@ def equative_ga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "special")] }
 
@@ -417,7 +419,7 @@ def equative_sv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "equally")] }
 
@@ -431,7 +433,7 @@ def agr_bg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "referential")] }
 
@@ -445,7 +447,7 @@ def agr_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "sae")] }
 
@@ -459,7 +461,7 @@ def nopro_sv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "obligatoryPronouns")] }
 
@@ -473,7 +475,7 @@ def intref_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
@@ -487,7 +489,7 @@ def intref_ru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
@@ -501,7 +503,7 @@ def intref_it : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
@@ -515,7 +517,7 @@ def intref_el : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
@@ -527,9 +529,11 @@ def intref_fa : Datum :=
     language := "west2369"
     primaryText := "Hušang xodaš-rā did"
     glossedTokens := [("Hušang", "Hushang"), ("xodaš-rā", "self-ACC"), ("did", "saw")]
+    glossedWords := [⟨['H', 'u', 'š', 'a', 'n', 'g'], ['H', 'u', 's', 'h', 'a', 'n', 'g'], [⟨['H', 'u', 'š', 'a', 'n', 'g'], ['H', 'u', 's', 'h', 'a', 'n', 'g'], none⟩]⟩, ⟨['x', 'o', 'd', 'a', 'š', '-', 'r', 'ā'], ['s', 'e', 'l', 'f', '-', 'A', 'C', 'C'], [⟨['x', 'o', 'd', 'a', 'š'], ['s', 'e', 'l', 'f'], none⟩, ⟨['r', 'ā'], ['A', 'C', 'C'], some '-'⟩]⟩, ⟨['d', 'i', 'd'], ['s', 'a', 'w'], [⟨['d', 'i', 'd'], ['s', 'a', 'w'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "undifferentiated")] }
 
@@ -541,9 +545,11 @@ def comparative_ja : Datum :=
     language := "nucl1643"
     primaryText := "inu-ga neko yori ookii"
     glossedTokens := [("inu-ga", "dog-SUBJ"), ("neko", "cat"), ("yori", "from"), ("ookii", "big")]
+    glossedWords := [⟨['i', 'n', 'u', '-', 'g', 'a'], ['d', 'o', 'g', '-', 'S', 'U', 'B', 'J'], [⟨['i', 'n', 'u'], ['d', 'o', 'g'], none⟩, ⟨['g', 'a'], ['S', 'U', 'B', 'J'], some '-'⟩]⟩, ⟨['n', 'e', 'k', 'o'], ['c', 'a', 't'], [⟨['n', 'e', 'k', 'o'], ['c', 'a', 't'], none⟩]⟩, ⟨['y', 'o', 'r', 'i'], ['f', 'r', 'o', 'm'], [⟨['y', 'o', 'r', 'i'], ['f', 'r', 'o', 'm'], none⟩]⟩, ⟨['o', 'o', 'k', 'i', 'i'], ['b', 'i', 'g'], [⟨['o', 'o', 'k', 'i', 'i'], ['b', 'i', 'g'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "comparativeMarking"), ("value", "standardMarkerOnly")] }
 
@@ -557,7 +563,7 @@ def with_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "comitativeInstrumentalSyncretism"), ("value", "sae")] }
 
@@ -571,7 +577,7 @@ def negcoord_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("feature", "negativeCoordination"), ("value", "sae")] }
 

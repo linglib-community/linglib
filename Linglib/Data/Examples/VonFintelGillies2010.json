@@ -8,7 +8,7 @@
     "translation": "",
     "context": "Answer to: Where are the keys? The speaker infers the location rather than seeing it.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "They are in the kitchen drawer.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "General epistemic context; the speaker infers John's departure.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John left.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "General epistemic context; the speaker infers John's whereabouts.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John is at home.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "General epistemic context; the speaker infers the climb.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "She climbed Mount Toby.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -93,7 +93,7 @@
     "translation": "",
     "context": "Billy sees the pouring rain through the window.",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {"form": "It's raining.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "Billy sees people coming in with wet umbrellas, slickers, and galoshes, and knows for sure that rain is the only possible cause.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "It's raining.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "Chris has lost her ball, but she knows with full certainty that it is either in Box A or B or C.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "Mastermind game: the conclusion is inferred from the clues, not directly observed.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "There aren't two reds.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -176,7 +176,7 @@
     "translation": "",
     "context": "Billy sees brilliant sunshine.",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {"form": "It's not raining.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -197,7 +197,7 @@
     "translation": "",
     "context": "Billy sees people coming in with sun gear and knows sunshine is the only possible explanation.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "It's not raining.", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "Speaker reflecting on their own internal state.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -258,7 +258,7 @@
     "translation": "",
     "context": "Flat-footed conjunction of must phi with perhaps not-phi.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Perhaps it isn't raining but it must be.", "judgment": "unacceptable"}
     ],
     "paperFeatures": [

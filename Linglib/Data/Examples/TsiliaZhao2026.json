@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "present"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "future"],
@@ -73,7 +73,7 @@
     "translation": "In 2000, Yanis knew that Maria was (lit. is) pregnant.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted present: the pregnancy overlaps the knowledge in 2000", "judgment": "acceptable"}
     ],
@@ -97,7 +97,7 @@
     "translation": "In 2000, Yanis knew that Maria was (lit. is) pregnant then.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -120,7 +120,7 @@
     "translation": "2,000 years ago, Yosef thought that Miriam loved (lit. loves) him then.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -143,7 +143,7 @@
     "translation": "In 2016 Tanja said that Putin was (lit. is) the president of Russia then.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "double access: Mary loves John at the utterance time and at the finding out", "judgment": "acceptable"}
     ],
@@ -190,7 +190,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -213,7 +213,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -236,7 +236,7 @@
     "translation": "20 years ago, Pavlos collaborated with a man who is president (now).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -259,7 +259,7 @@
     "translation": "2 years ago, Yusuke knew that Yukiko was (lit. is) pregnant.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -282,7 +282,7 @@
     "translation": "Two years ago, Yusuke collaborated with a man who was (lit. is) president.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],
@@ -305,7 +305,7 @@
     "translation": "In 2030, Maria will say that she is in jail (in 2030).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "future"],
@@ -328,7 +328,7 @@
     "translation": "",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "future"],
@@ -351,7 +351,7 @@
     "translation": "In 2030, Zoe will be married to someone who is in jail.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "future"],
@@ -374,7 +374,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "future"],
@@ -397,7 +397,7 @@
     "translation": "See you then.",
     "context": "Two friends are making plans to go to the movies on Saturday; one says this before they leave.",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sonotoki ai-mashou.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -419,7 +419,7 @@
     "translation": "Two thousand years ago Yosef believed that Miriam loved him then.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous: the love overlaps the belief", "judgment": "acceptable"}
     ],
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the meeting is at the time of the future saying, three days from now", "judgment": "acceptable"}
     ],
@@ -467,7 +467,7 @@
     "translation": "In 1960, Yanis knew that Maria was (lit. is) beautiful.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["matrix", "past"],

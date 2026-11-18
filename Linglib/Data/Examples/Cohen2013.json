@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}

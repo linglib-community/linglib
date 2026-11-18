@@ -11,9 +11,8 @@ public import Mathlib.Data.Fintype.Basic
 # Set-relation decidability over finite types
 
 `Set.decidableSubsetOfFintype`, `Set.decidableSSubsetOfFintype` and `Set.decidableEqOfFintype`
-derive `Decidable (s ⊆ t)`, `Decidable (s ⊂ t)` and `Decidable (s = t)`, and
-`Set.decidableEqOnOfFintype` derives `Decidable (Set.EqOn f g s)`, from `Fintype` plus decidable
-membership. Deliberately `def`s, not `instance`s, following
+derive `Decidable (s ⊆ t)`, `Decidable (s ⊂ t)` and `Decidable (s = t)` from `Fintype` plus
+decidable membership. Deliberately `def`s, not `instance`s, following
 mathlib's `Set.decidableMemOfFintype`: global `Decidable` instances on `Set`
 relations risk instance loops and higher-order `DecidablePred` searches.
 Activate with `attribute [local instance] Set.decidableSubsetOfFintype`.
@@ -46,11 +45,3 @@ def Set.decidableEqOfFintype {α : Type*} [Fintype α]
     (s t : Set α) [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
     Decidable (s = t) :=
   decidable_of_iff _ Set.ext_iff.symm
-
-/-- `Decidable (Set.EqOn f g s)` from `Fintype` plus decidable membership.
-Not an instance; activate locally. -/
-@[implicit_reducible]
-def Set.decidableEqOnOfFintype {α β : Type*} [Fintype α] [DecidableEq β]
-    (f g : α → β) (s : Set α) [DecidablePred (· ∈ s)] :
-    Decidable (Set.EqOn f g s) :=
-  show Decidable (∀ ⦃a⦄, a ∈ s → f a = g a) from inferInstance

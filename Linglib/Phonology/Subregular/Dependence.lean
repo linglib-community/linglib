@@ -112,6 +112,9 @@ theorem getElem?_flankWord :
 
 @[simp] theorem head?_flankWord : (flankWord x fill y n).head? = some x := rfl
 
+@[simp] theorem getLast?_flankWord : (flankWord x fill y n).getLast? = some y := by
+  rw [flankWord, ← List.cons_append, List.getLast?_concat]
+
 @[simp] theorem getElem?_flankWord_last :
     (flankWord x fill y n)[n + 1]? = some y := by
   rw [getElem?_flankWord]; simp

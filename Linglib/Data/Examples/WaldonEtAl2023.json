@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Hart's vehicle rule"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["rule", "prohibition"],
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "This tree is a pine in most respects.", "judgment": "unacceptable"},
       {"form": "This tree is a pine in every respect.", "judgment": "unacceptable"}
     ],
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "dimensional"],
@@ -92,7 +92,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "dimensional"],
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "This tree is more a pine than an oak.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -134,7 +134,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "This place is more a church than an art gallery.",
         "judgment": "marginal"
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "degree"],
@@ -179,7 +179,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "This tree is taller than it is wide.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -201,7 +201,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "quantificational"],
@@ -221,7 +221,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "degree"],
@@ -241,7 +241,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "meta-linguistic negotiation"]
@@ -260,7 +260,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "meta-linguistic negotiation"]
@@ -279,7 +279,7 @@
     "translation": "",
     "context": "Planning a party.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "meta-linguistic negotiation"],

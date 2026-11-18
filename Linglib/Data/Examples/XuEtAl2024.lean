@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("deedbox", .acceptable), ("strongbox", .acceptable), ("storeroom", .acceptable)]
+    contrasts := [("deedbox", .acceptable), ("strongbox", .acceptable), ("storeroom", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("renewal", .acceptable), ("renovation", .acceptable), ("urban-renovation", .acceptable)]
+    contrasts := [("renewal", .acceptable), ("renovation", .acceptable), ("urban-renovation", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1980+")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("réclame", .acceptable), ("annonce", .acceptable), ("pub", .acceptable), ("emballage", .acceptable)]
+    contrasts := [("réclame", .acceptable), ("annonce", .acceptable), ("pub", .acceptable), ("emballage", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1960+")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("turbine", .acceptable), ("générateur", .acceptable), ("moteur-gaz", .acceptable)]
+    contrasts := [("turbine", .acceptable), ("générateur", .acceptable), ("moteur-gaz", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")] }
 
@@ -180,7 +180,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("lasti", .acceptable), ("rahti", .acceptable), ("toimitus", .acceptable), ("kuorma", .acceptable)]
+    contrasts := [("lasti", .acceptable), ("rahti", .acceptable), ("toimitus", .acceptable), ("kuorma", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")] }
 
@@ -193,7 +193,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")] }
 
@@ -206,7 +206,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("rikos", .acceptable), ("laittomuus", .acceptable), ("sota-laittomuus", .acceptable)]
+    contrasts := [("rikos", .acceptable), ("laittomuus", .acceptable), ("sota-laittomuus", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
@@ -245,7 +245,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1920+")] }
 

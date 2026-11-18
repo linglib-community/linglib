@@ -24,7 +24,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("number", "mass")] }
 
@@ -102,7 +102,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("number", "plural")] }
 
@@ -115,7 +115,7 @@ def ex29c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("number", "plural")] }
 
@@ -128,7 +128,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("number", "singular")] }
 
@@ -141,7 +141,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("number", "singular")] }
 
@@ -154,7 +154,7 @@ def ex30d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("number", "singular")] }
 
@@ -167,7 +167,7 @@ def ex32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not required to talk to Mary", .acceptable), ("not required to talk to Sue", .acceptable)]
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not every friend has a boy friend", .acceptable), ("not every friend has a girl friend", .acceptable)]
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex59 : Datum :=
     glossedTokens := []
     context := "There are three girls, Mary, Sue, and Jane, and no non-girls."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exactly one girl", .acceptable)]
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def ex69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusive or", .acceptable)]
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def ex82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not two bottles", .acceptable)]
     paperFeatures := [("number", "singular")] }
 
@@ -271,7 +271,7 @@ def ex82b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not two students", .acceptable)]
     paperFeatures := [("number", "singular")] }
 
@@ -284,7 +284,7 @@ def ex89 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def ex91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("scope", "narrow")] }
 
@@ -310,7 +310,7 @@ def ex91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("scope", "wide")] }
 
@@ -323,7 +323,7 @@ def ex92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("scope", "wide")] }
 
@@ -336,7 +336,7 @@ def ex93a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("number", "plural"), ("scope", "narrow")] }
 
@@ -349,7 +349,7 @@ def ex93b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .acceptable)]
     paperFeatures := [("number", "plural"), ("scope", "narrow")] }
 
@@ -362,7 +362,7 @@ def ex93c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("number", "plural"), ("scope", "wide")] }
 

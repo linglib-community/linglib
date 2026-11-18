@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -37,7 +37,7 @@
     "translation": "Péter thinks that he loves Éva and Éva thinks that she loves Péter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "unacceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -64,7 +64,7 @@
     "translation": "John and Mary thought that selves saw each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -87,7 +87,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],
@@ -132,7 +132,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"}
     ],
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"}
     ],
@@ -201,7 +201,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -221,7 +221,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -241,7 +241,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "unacceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -287,7 +287,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5"],
@@ -307,7 +307,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5"],
@@ -328,7 +328,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5"],
@@ -349,7 +349,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5"],
@@ -370,7 +370,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5"],
@@ -391,7 +391,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal", "judgment": "acceptable"},
       {"name": "external", "judgment": "acceptable"}
@@ -414,7 +414,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal", "judgment": "unacceptable"},
       {"name": "external", "judgment": "acceptable"}
@@ -437,7 +437,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal", "judgment": "acceptable"}
     ],
@@ -459,7 +459,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal", "judgment": "acceptable"}
     ],
@@ -482,7 +482,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal", "judgment": "acceptable"}
     ],
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"}
     ],
@@ -528,7 +528,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"}
     ],
@@ -554,7 +554,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],
@@ -577,7 +577,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],
@@ -600,7 +600,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],
@@ -626,7 +626,7 @@
     "translation": "All the animals say they-LOG will eat each other.",
     "context": "A hare visits the animals of a forest one by one; worried about infighting, each says to the hare 'We will eat each other'. Back home the hare reports what they said.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -653,7 +653,7 @@
     "translation": "All the animals say that they-LOG are going to eat all the rest of the animals.",
     "context": "Each animal says 'I will eat the others'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "bound logophor", "judgment": "acceptable"}
     ],
@@ -678,7 +678,7 @@
     "translation": "They all say that they-3PL are going to eat each other.",
     "context": "Each animal says 'I will eat the others'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],

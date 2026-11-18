@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 
 /-!
 # Kao, Bergen and Goodman (2014): Formalizing the Pragmatics of Metaphor Understanding
@@ -71,18 +70,18 @@ def sem (u : Cat) : Set Meaning := {m | m.1 = u}
 
 /-- The literal listener conditions the prior on the category named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Cat Meaning :=
-  listener μ (truthful sem)
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The goal-indexed speaker (eq. 2) knows the value of her goal's feature and is informative
 about the literal listener's belief about it (eq. 1), at rationality `α` and no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) (p : Meaning × Goal) : Measure Cat :=
-  speaker α 0 ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
+  qudSpeaker α 0 (L0 μ) (project p.2) p.1
 
 instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × Goal) : IsFiniteMeasure (S1 μ α p) :=
-  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
+  inferInstanceAs (IsFiniteMeasure (qudSpeaker _ _ _ _ _))
 
 /-- The pragmatic listener over meaning and goal inverts the speaker against the product of
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
@@ -99,19 +98,27 @@ odds of the goal's feature value under the animal against the person. -/
 theorem speaker_odds :
     S1 μ α (m, g) {.animal} * (L0 μ).map (project g) .person {project g m} ^ α
       = S1 μ α (m, g) {.person} * (L0 μ).map (project g) .animal {project g m} ^ α := by
-  simp only [S1, speaker_dirac_zero_apply_singleton, ENNReal.div_eq_inv_mul]
+  simp only [S1, qudSpeaker, speaker_dirac_zero_apply_singleton, ENNReal.div_eq_inv_mul]
   ring
 
 /-- The speaker names the animal rather than the person exactly when the goal's feature value
 is likelier under the animal than under the person. -/
-theorem names_animal_iff (hα : 0 < α)
-    (h0 : ∃ u, (L0 μ).map (project g) u {project g m} ≠ 0) :
+theorem names_animal_iff (hα : 0 < α) :
     (S1 μ α (m, g)).real {.person} < (S1 μ α (m, g)).real {.animal}
       ↔ (L0 μ).map (project g) .person {project g m} <
         (L0 μ).map (project g) .animal {project g m} := by
-  rw [S1, speaker_dirac_real_singleton_lt_iff hα.le h0]
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
     ENNReal.rpow_lt_rpow_iff hα]
+
+-- The speaker does not depend on the category prior: priors that leave both categories
+-- possible and share the feature priors have the same speaker.
+theorem S1_compProd_congr (π π' : Measure Cat) [IsProbabilityMeasure π] [IsProbabilityMeasure π']
+    (κ : Kernel Cat Features) [IsMarkovKernel κ] (hπ : ∀ c, π {c} ≠ 0) (hπ' : ∀ c, π' {c} ≠ 0)
+    (p : Meaning × Goal) : S1 (π ⊗ₘ κ) α p = S1 (π' ⊗ₘ κ) α p := by
+  have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
+    literalListener_preimage_fst_compProd_congr π π' κ hπ hπ'
+  rw [S1, S1, h]
 
 end Speaker
 
@@ -122,10 +129,9 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
 
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
-      ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
-    Set.mem_ofPred_eq]
+      ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
+  listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff hα 0 μ ν sem
+    project u m
 
 /-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
 name whenever some animal of positive prior shares the value. -/
@@ -140,10 +146,8 @@ omit [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] in
 behaves alike at the animal and at the person with the same features, and the listener's
 posterior odds between the two categories at a feature vector are their prior odds. -/
 theorem category_odds (u : Cat) (c c' : Cat) (f : Features) :
-    (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
-  change (L1 μ ν α).fst u _ * _ = (L1 μ ν α).fst u _ * _
-  rw [L1, listener_prod_fst]
-  exact listener_apply_singleton_mul_eq_of_apply_eq _ _ rfl
+    (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} :=
+  listener_prod_fst_apply_singleton_mul_eq μ ν (S1 μ α) fun _ _ ↦ rfl
 
 end Listener
 

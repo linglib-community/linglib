@@ -16,7 +16,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -56,7 +56,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -96,7 +96,7 @@
     "translation": "",
     "context": "Because my road needs to be repaired.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -136,7 +136,7 @@
     "translation": "",
     "context": "Because they have been standing around all morning telling dirty jokes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -176,7 +176,7 @@
     "translation": "",
     "context": "A promise: the speaker hopes the hearer will fulfil the condition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -216,7 +216,7 @@
     "translation": "",
     "context": "A promise: the speaker hopes the hearer will fulfil the condition.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -256,7 +256,7 @@
     "translation": "",
     "context": "A warning: the speaker hopes the hearer will not fulfil the condition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -296,7 +296,7 @@
     "translation": "",
     "context": "A warning: the speaker hopes the hearer will not fulfil the condition.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -332,7 +332,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -364,7 +364,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -396,7 +396,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -428,7 +428,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -460,7 +460,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -492,7 +492,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -524,7 +524,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -556,7 +556,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -588,7 +588,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -609,6 +609,7 @@
   },
   {
     "id": "haspelmath1997_de_A1a_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1a)"
@@ -620,7 +621,7 @@
     "translation": "I lost something. Guess what!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -634,10 +635,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
@@ -645,6 +642,7 @@
   },
   {
     "id": "haspelmath1997_de_A1a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1a)"
@@ -656,7 +654,7 @@
     "translation": "I lost something. Guess what!",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -670,10 +668,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function. The book stars this alternative inside the example; the translation is the example's.",
@@ -681,6 +675,7 @@
   },
   {
     "id": "haspelmath1997_de_A1b_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1b)"
@@ -692,7 +687,7 @@
     "translation": "I lost something, but I don't know what.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -706,10 +701,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -717,6 +708,7 @@
   },
   {
     "id": "haspelmath1997_de_A1b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1b)"
@@ -728,7 +720,7 @@
     "translation": "I lost something, but I don't know what.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -742,10 +734,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -753,6 +741,7 @@
   },
   {
     "id": "haspelmath1997_de_A2_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A2)"
@@ -764,7 +753,7 @@
     "translation": "She wants to marry someone [non-specific/specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -778,10 +767,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -789,6 +774,7 @@
   },
   {
     "id": "haspelmath1997_de_A2_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A2)"
@@ -800,7 +786,7 @@
     "translation": "She wants to marry someone [non-specific/specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -814,10 +800,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -825,6 +807,7 @@
   },
   {
     "id": "haspelmath1997_de_A3a_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3a)"
@@ -836,7 +819,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -850,10 +833,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -861,6 +840,7 @@
   },
   {
     "id": "haspelmath1997_de_A3a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3a)"
@@ -872,7 +852,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -886,10 +866,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -897,6 +873,7 @@
   },
   {
     "id": "haspelmath1997_de_A3b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3b)"
@@ -908,7 +885,7 @@
     "translation": "Has she ever been to Chittagong?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -922,10 +899,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -933,6 +906,7 @@
   },
   {
     "id": "haspelmath1997_de_A3b_je",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3b)"
@@ -944,7 +918,7 @@
     "translation": "Has she ever been to Chittagong?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -958,10 +932,6 @@
       [
         "series",
         "je"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -969,6 +939,7 @@
   },
   {
     "id": "haspelmath1997_de_A3c_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3c)"
@@ -980,7 +951,7 @@
     "translation": "If anyone calls, tell me!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -994,10 +965,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1005,6 +972,7 @@
   },
   {
     "id": "haspelmath1997_de_A3c_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3c)"
@@ -1016,7 +984,7 @@
     "translation": "If anyone calls, tell me!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1030,10 +998,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1041,6 +1005,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_je_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1052,7 +1017,7 @@
     "translation": "I don't think that anyone has ever been here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1070,10 +1035,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1081,6 +1042,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_je_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1092,7 +1054,7 @@
     "translation": "I don't think that anyone has ever been here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1110,10 +1072,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1121,6 +1079,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_irgend_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1132,7 +1091,7 @@
     "translation": "I don't think that anyone has ever been here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1150,10 +1109,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1161,6 +1116,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_irgend_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1172,7 +1128,7 @@
     "translation": "I don't think that anyone has ever been here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1186,10 +1142,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1197,6 +1149,7 @@
   },
   {
     "id": "haspelmath1997_de_A5",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A5)"
@@ -1208,7 +1161,7 @@
     "translation": "Joan Baez sang better than anyone ever before.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1226,10 +1179,6 @@
       [
         "series",
         "je"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed.",
@@ -1237,6 +1186,7 @@
   },
   {
     "id": "haspelmath1997_de_A6",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A6)"
@@ -1248,7 +1198,7 @@
     "translation": "This problem can be solved by anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1262,10 +1212,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "Stressed; jeder is generally preferred.",
@@ -1273,6 +1219,7 @@
   },
   {
     "id": "haspelmath1997_de_A7",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A7)"
@@ -1284,7 +1231,7 @@
     "translation": "This problem can be solved by anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1298,10 +1245,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1309,6 +1252,7 @@
   },
   {
     "id": "haspelmath1997_de_A8",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A8)"
@@ -1320,7 +1264,7 @@
     "translation": "Joan Baez sings better than any other singer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1334,10 +1278,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1345,6 +1285,7 @@
   },
   {
     "id": "haspelmath1997_de_A9a_jeder",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9a)"
@@ -1356,7 +1297,7 @@
     "translation": "without any help",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1370,10 +1311,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
@@ -1381,6 +1318,7 @@
   },
   {
     "id": "haspelmath1997_de_A9a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9a)"
@@ -1392,7 +1330,7 @@
     "translation": "without any help",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1406,10 +1344,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1417,6 +1351,7 @@
   },
   {
     "id": "haspelmath1997_de_A9b_jeder",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9b)"
@@ -1428,7 +1363,7 @@
     "translation": "She denied any participation.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1442,10 +1377,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1453,6 +1384,7 @@
   },
   {
     "id": "haspelmath1997_de_A9b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9b)"
@@ -1464,7 +1396,7 @@
     "translation": "She denied any participation.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1478,10 +1410,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1489,6 +1417,7 @@
   },
   {
     "id": "haspelmath1997_de_A10a",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10a)"
@@ -1500,7 +1429,7 @@
     "translation": "Nobody has come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1514,10 +1443,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The n-series does not co-occur with verbal negation.",
@@ -1525,6 +1450,7 @@
   },
   {
     "id": "haspelmath1997_de_A10b_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10b)"
@@ -1536,7 +1462,7 @@
     "translation": "I didn't tell anything to anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1550,10 +1476,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series.",
@@ -1561,6 +1483,7 @@
   },
   {
     "id": "haspelmath1997_de_A10b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10b)"
@@ -1572,7 +1495,7 @@
     "translation": "I didn't tell anything to anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1586,10 +1509,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series.",
@@ -1608,7 +1527,7 @@
     "translation": "Someone is waiting for me. It's him that I will marry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1640,7 +1559,7 @@
     "translation": "Somebody is at the door. I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1672,7 +1591,7 @@
     "translation": "She wants to marry someone with black hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1704,7 +1623,7 @@
     "translation": "Have you heard anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1736,7 +1655,7 @@
     "translation": "If art were really only a continuation of life, would it be worth sacrificing anything for it?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1772,7 +1691,7 @@
     "translation": "How can one conclude anything from it about the order of thoughts?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1804,7 +1723,7 @@
     "translation": "I hold you responsible if anything transpires in the media.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1836,7 +1755,7 @@
     "translation": "I hold you responsible if anything transpires in the media.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1868,7 +1787,7 @@
     "translation": "Wake me up if anything happens.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1900,7 +1819,7 @@
     "translation": "I cannot see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1932,7 +1851,7 @@
     "translation": "Nobody ever said anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1964,7 +1883,7 @@
     "translation": "I haven't seen anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2000,7 +1919,7 @@
     "translation": "I doubt that anybody will succeed in it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2032,7 +1951,7 @@
     "translation": "I hesitate to write anything about that.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2064,7 +1983,7 @@
     "translation": "I hesitate to write anything about that.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2096,7 +2015,7 @@
     "translation": "He speaks better than any orator.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2128,7 +2047,7 @@
     "translation": "I much prefer to close my eyes than to blame him for anything that could annoy you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2160,7 +2079,7 @@
     "translation": "You can say anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2192,7 +2111,7 @@
     "translation": "You can say anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2224,7 +2143,7 @@
     "translation": "The general had understood pretty soon that this war, more than any war in the past, was a war of human and material resources.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2256,7 +2175,7 @@
     "translation": "Someone has come—guess who!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2288,7 +2207,7 @@
     "translation": "I can't find the pen, and yet I must have put it somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2320,7 +2239,7 @@
     "translation": "Buy something for me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2352,7 +2271,7 @@
     "translation": "Can you see anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2384,7 +2303,7 @@
     "translation": "Can you see anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2416,7 +2335,7 @@
     "translation": "If you hear anything, wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2448,7 +2367,7 @@
     "translation": "If you hear anything, wake me up.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2480,7 +2399,7 @@
     "translation": "It is not necessary that anyone come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2512,7 +2431,7 @@
     "translation": "It is not necessary that anyone come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2544,7 +2463,7 @@
     "translation": "You can go anywhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2576,7 +2495,7 @@
     "translation": "Christie has written more novels than anyone else in this century.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2608,7 +2527,7 @@
     "translation": "I have not seen anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2640,7 +2559,7 @@
     "translation": "Nobody has come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Nessuno non è venuto.",
         "judgment": "ungrammatical"
@@ -2677,7 +2596,7 @@
     "translation": "No professor has ever written any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2709,7 +2628,7 @@
     "translation": "Somebody knocked at the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2741,7 +2660,7 @@
     "translation": "Sing some romance for us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2773,7 +2692,7 @@
     "translation": "Sing some romance for us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2805,7 +2724,7 @@
     "translation": "We'll meet somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2837,7 +2756,7 @@
     "translation": "We'll meet somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2869,7 +2788,7 @@
     "translation": "Did anyone call me?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2901,7 +2820,7 @@
     "translation": "Did anyone call me?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2933,7 +2852,7 @@
     "translation": "If anything happens, I'll tell mom.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2965,7 +2884,7 @@
     "translation": "If anything happens, I'll tell mom.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2997,7 +2916,7 @@
     "translation": "She wants to marry someone [specific] from America.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3029,7 +2948,7 @@
     "translation": "She wants to marry someone [non-specific] from America.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3061,7 +2980,7 @@
     "translation": "She wants to marry someone [non-specific] from America.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3093,7 +3012,7 @@
     "translation": "Here it is more pleasant to live than anywhere in the world.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3125,7 +3044,7 @@
     "translation": "Here it is more pleasant to live than anywhere in the world.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3157,7 +3076,7 @@
     "translation": "Any indications about the mode of their use are lacking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3189,7 +3108,7 @@
     "translation": "Any indications about the mode of their use are lacking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3221,7 +3140,7 @@
     "translation": "without any help",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3253,7 +3172,7 @@
     "translation": "without any help",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3285,7 +3204,7 @@
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3317,7 +3236,7 @@
     "translation": "Did you hear anything (at all)?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3349,7 +3268,7 @@
     "translation": "You may buy any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3381,7 +3300,7 @@
     "translation": "You may buy any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3413,7 +3332,7 @@
     "translation": "You may buy any book.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3445,7 +3364,7 @@
     "translation": "I will never forget you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3477,7 +3396,7 @@
     "translation": "You and I have to talk about something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3526,7 +3445,7 @@
     "translation": "He went somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3571,7 +3490,7 @@
     "translation": "Buy something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3628,7 +3547,7 @@
     "translation": "Are you going to go anywhere?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3689,7 +3608,7 @@
     "translation": "If anyone comes, say that he should wait.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3750,7 +3669,7 @@
     "translation": "If you go anywhere, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3807,7 +3726,7 @@
     "translation": "If you go anywhere, tell me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3856,7 +3775,7 @@
     "translation": "You can come at any time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3917,7 +3836,7 @@
     "translation": "It made him more glad than anything else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3962,7 +3881,7 @@
     "translation": "without any changes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4015,7 +3934,7 @@
     "translation": "I don't think that anybody came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4060,7 +3979,7 @@
     "translation": "Nothing interests him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4133,7 +4052,7 @@
     "translation": "Someone has phoned, but I won't tell you who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4202,7 +4121,7 @@
     "translation": "Someone has phoned, but I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4279,7 +4198,7 @@
     "translation": "Someone has phoned, but I won't tell you who.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4352,7 +4271,7 @@
     "translation": "Someone has phoned, but I don't know who.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4421,7 +4340,7 @@
     "translation": "It doesn't seem to me that anyone will come tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4498,7 +4417,7 @@
     "translation": "It doesn't seem to me that anyone will come tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4559,7 +4478,7 @@
     "translation": "No one (at all) is at home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4624,7 +4543,7 @@
     "translation": "No one (at all) is at home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4681,7 +4600,7 @@
     "translation": "Nobody saw anything. (Or: Someone saw nothing.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4742,7 +4661,7 @@
     "translation": "She wants to phone someone (specific/non-specific).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4803,7 +4722,7 @@
     "translation": "She wants to phone someone (specific/non-specific).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4848,7 +4767,7 @@
     "translation": "Phone someone!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4897,7 +4816,7 @@
     "translation": "Phone someone!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4950,7 +4869,7 @@
     "translation": "Did you see somebody/anybody?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5011,7 +4930,7 @@
     "translation": "Did you see somebody/anybody?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5072,7 +4991,7 @@
     "translation": "If anybody (at all) calls, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5133,7 +5052,7 @@
     "translation": "If anybody (at all) calls, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5218,7 +5137,7 @@
     "translation": "This boy runs faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5283,7 +5202,7 @@
     "translation": "Anyone can come into the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5348,7 +5267,7 @@
     "translation": "Someone phoned you. Guess who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5409,7 +5328,7 @@
     "translation": "Someone phoned you. I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5474,7 +5393,7 @@
     "translation": "Someone phoned you. I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5527,7 +5446,7 @@
     "translation": "Call somewhere (or other)!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5576,7 +5495,7 @@
     "translation": "Call somewhere (or other)!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5629,7 +5548,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5678,7 +5597,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5731,7 +5650,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5792,7 +5711,7 @@
     "translation": "If anyone calls, tell me immediately.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5849,7 +5768,7 @@
     "translation": "If anyone calls, tell me immediately.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5898,7 +5817,7 @@
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5951,7 +5870,7 @@
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6004,7 +5923,7 @@
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6053,7 +5972,7 @@
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6102,7 +6021,7 @@
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6147,7 +6066,7 @@
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6200,7 +6119,7 @@
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6261,7 +6180,7 @@
     "translation": "Murat runs faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6306,7 +6225,7 @@
     "translation": "We have met somewhere before.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6375,7 +6294,7 @@
     "translation": "Master, we saw one casting out devils in thy name.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6424,7 +6343,7 @@
     "translation": "We'll manage somehow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6469,7 +6388,7 @@
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6514,7 +6433,7 @@
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6559,7 +6478,7 @@
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6608,7 +6527,7 @@
     "translation": "Neither said they any thing to any man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6649,7 +6568,7 @@
     "translation": "Anybody could learn.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6710,7 +6629,7 @@
     "translation": "Here the climate is better than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6771,7 +6690,7 @@
     "translation": "Here the climate is better than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6828,7 +6747,7 @@
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6885,7 +6804,7 @@
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6942,7 +6861,7 @@
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6995,7 +6914,7 @@
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7048,7 +6967,7 @@
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7101,7 +7020,7 @@
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7142,7 +7061,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7183,7 +7102,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7224,7 +7143,7 @@
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7281,7 +7200,7 @@
     "translation": "Someone called. Guess who (it was).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7330,7 +7249,7 @@
     "translation": "A certain friend told him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7391,7 +7310,7 @@
     "translation": "Someone called, but I didn't understand the name.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7464,7 +7383,7 @@
     "translation": "She wants to marry someone [non-specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7505,7 +7424,7 @@
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7546,7 +7465,7 @@
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7591,7 +7510,7 @@
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7644,7 +7563,7 @@
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7701,7 +7620,7 @@
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7754,7 +7673,7 @@
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7807,7 +7726,7 @@
     "translation": "Nobody told me anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7860,7 +7779,7 @@
     "translation": "I doubt that the boy stole anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7925,7 +7844,7 @@
     "translation": "Here the climate is more pleasant than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -7982,7 +7901,7 @@
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8047,7 +7966,7 @@
     "translation": "It is as pleasant here as anywhere else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8088,7 +8007,7 @@
     "translation": "Somebody has touched me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8141,7 +8060,7 @@
     "translation": "She has something to tell him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8202,7 +8121,7 @@
     "translation": "Jesus told him to give something to the poor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8247,7 +8166,7 @@
     "translation": "Do you see anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8320,7 +8239,7 @@
     "translation": "If anyone says anything to you say, the Lord needs them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8393,7 +8312,7 @@
     "translation": "Since the world began was it not heard that any man opened the eyes of one that was born blind.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8446,7 +8365,7 @@
     "translation": "And they did not say anything to anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8503,7 +8422,7 @@
     "translation": "That doctor will cure any disease whatsoever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8556,7 +8475,7 @@
     "translation": "You don't know anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8621,7 +8540,7 @@
     "translation": "To which of the angels did he ever say, You are my son?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8686,7 +8605,7 @@
     "translation": "If you ask anything in my name, I will do it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8743,7 +8662,7 @@
     "translation": "I found this book somewhere [I could say where].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8796,7 +8715,7 @@
     "translation": "Some Russian person has come [I don't know him/her].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8845,7 +8764,7 @@
     "translation": "Some Russian person has come [I don't know him/her].",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8886,7 +8805,7 @@
     "translation": "Call somebody!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8943,7 +8862,7 @@
     "translation": "I have to find this book somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8992,7 +8911,7 @@
     "translation": "Has anyone come?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9037,7 +8956,7 @@
     "translation": "Has anyone come?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9086,7 +9005,7 @@
     "translation": "If anyone comes, tell (me).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9151,7 +9070,7 @@
     "translation": "They couldn't persuade him to continue his studies anywhere in any way.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9220,7 +9139,7 @@
     "translation": "He knows Georgian better than anyone else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9281,7 +9200,7 @@
     "translation": "I'll never get anything from anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9330,7 +9249,7 @@
     "translation": "He hasn't told anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9379,7 +9298,7 @@
     "translation": "Don't tell anybody!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9444,7 +9363,7 @@
     "translation": "Please eat a little something before you leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9501,7 +9420,7 @@
     "translation": "He seems to like something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9562,7 +9481,7 @@
     "translation": "He must have seen something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9619,7 +9538,7 @@
     "translation": "He must have seen something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9676,7 +9595,7 @@
     "translation": "Does anyone like him?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9712,7 +9631,7 @@
     "translation": "If you want something, ring the bell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9777,7 +9696,7 @@
     "translation": "He does not work for anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9830,7 +9749,7 @@
     "translation": "He does not like anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9879,7 +9798,7 @@
     "translation": "He does not like anyone.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9932,7 +9851,7 @@
     "translation": "He does not like anyone.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -9981,7 +9900,7 @@
     "translation": "He does not like anyone.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10054,7 +9973,7 @@
     "translation": "Someone called. I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10127,7 +10046,7 @@
     "translation": "Someone called. Guess who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10180,7 +10099,7 @@
     "translation": "I don't know anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10237,7 +10156,7 @@
     "translation": "She doesn't trust anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10298,7 +10217,7 @@
     "translation": "I'm not going anywhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10355,7 +10274,7 @@
     "translation": "I'm not going anywhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10400,7 +10319,7 @@
     "translation": "No one is intelligent.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10457,7 +10376,7 @@
     "translation": "You can come anytime.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10526,7 +10445,7 @@
     "translation": "He runs faster than any boy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10591,7 +10510,7 @@
     "translation": "He cannot escape anywhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10652,7 +10571,7 @@
     "translation": "I don't think that anyone came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10705,7 +10624,7 @@
     "translation": "The boy saw something behind the tree.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10754,7 +10673,7 @@
     "translation": "I talked to someone on the bus yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10803,7 +10722,7 @@
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10848,7 +10767,7 @@
     "translation": "I'll go to Africa some time next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10889,7 +10808,7 @@
     "translation": "Did you see anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10934,7 +10853,7 @@
     "translation": "If you see anything, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -10987,7 +10906,7 @@
     "translation": "The boy can run faster than anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11036,7 +10955,7 @@
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11085,7 +11004,7 @@
     "translation": "Don't say anything!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11138,7 +11057,7 @@
     "translation": "Nobody told me anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11191,7 +11110,7 @@
     "translation": "I didn't want anyone to know.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11268,7 +11187,7 @@
     "translation": "Someone called, I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11345,7 +11264,7 @@
     "translation": "Someone called, guess who!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11394,7 +11313,7 @@
     "translation": "Let's ask somebody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11443,7 +11362,7 @@
     "translation": "Everybody ate something (non-specific).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11500,7 +11419,7 @@
     "translation": "Did somebody/anybody come while I was gone?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11553,7 +11472,7 @@
     "translation": "Did somebody/anybody come while I was gone?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11622,7 +11541,7 @@
     "translation": "If you eat something/anything, I won't take you to the movie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11691,7 +11610,7 @@
     "translation": "If you eat something/anything, I won't take you to the movie.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11752,7 +11671,7 @@
     "translation": "This boy can run faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11801,7 +11720,7 @@
     "translation": "Nobody loves her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11858,7 +11777,7 @@
     "translation": "I don't think anybody is coming today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11903,7 +11822,7 @@
     "translation": "Anybody can do it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11944,7 +11863,7 @@
     "translation": "Somebody called.",
     "context": "The speaker did not catch the caller's name.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -11985,7 +11904,7 @@
     "translation": "Somebody called.",
     "context": "The speaker did not catch the caller's name.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12026,7 +11945,7 @@
     "translation": "Somebody called.",
     "context": "The speaker goes on: guess who.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12067,7 +11986,7 @@
     "translation": "Somebody called.",
     "context": "The speaker goes on: guess who.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12116,7 +12035,7 @@
     "translation": "The boy saw something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12165,7 +12084,7 @@
     "translation": "The boy saw something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12210,7 +12129,7 @@
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12255,7 +12174,7 @@
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12300,7 +12219,7 @@
     "translation": "Let's go somewhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12365,7 +12284,7 @@
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12426,7 +12345,7 @@
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12487,7 +12406,7 @@
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12548,7 +12467,7 @@
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12593,7 +12512,7 @@
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12638,7 +12557,7 @@
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12683,7 +12602,7 @@
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12728,7 +12647,7 @@
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12781,7 +12700,7 @@
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12834,7 +12753,7 @@
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12887,7 +12806,7 @@
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12940,7 +12859,7 @@
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -12989,7 +12908,7 @@
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13038,7 +12957,7 @@
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13087,7 +13006,7 @@
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13140,7 +13059,7 @@
     "translation": "The girl did not see anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13193,7 +13112,7 @@
     "translation": "The girl did not see anybody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13246,7 +13165,7 @@
     "translation": "Nobody said anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -13307,7 +13226,7 @@
     "translation": "Here it is more beautiful than anywhere.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

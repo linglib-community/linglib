@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Epistemic.Basic
 public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Ortholattice.ProperFilter
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Frame semantics and completeness for the epistemic orthologic
@@ -31,7 +32,7 @@ representation of `Core/Order/Ortholattice/ProperFilter.lean`.
 
 @[expose] public section
 
-open Order Concept SetRel
+open Order Concept SetRel Consequence
 
 universe u
 
@@ -65,7 +66,7 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (R : SetRel S S) [IsRReg
   | var p => rfl
   | neg φ ih =>
     rw [eval, Concept.coe_compl, ← ih]
-    exact Set.ext fun _ ↦ F.mem_upperPolar_ortho.symm
+    exact Set.ext fun _ ↦ (F.mem_upperPolar_ortho (A := {s | Support _ _ _ s φ})).symm
   | and φ ψ ihφ ihψ =>
     rw [eval, Concept.coe_inf, ← ihφ, ← ihψ]
     rfl
@@ -75,6 +76,29 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (R : SetRel S S) [IsRReg
 
 /-! ### Consequence over epistemic compatibility frames -/
 
+/-- A model on an epistemic compatibility frame, an R-regular, reflexive frame with
+Knowability, with a distinguished possibility. -/
+structure PointedModel (Var : Type u) where
+  /-- The possibilities of the frame. -/
+  Possibility : Type u
+  /-- The compatibility frame. -/
+  frame : Compatibility Possibility
+  /-- The accessibility relation. -/
+  access : SetRel Possibility Possibility
+  [isRRegular : IsRRegular frame access]
+  [isRefl : access.IsRefl]
+  [isKnowable : IsKnowable frame access]
+  /-- The valuation, into the regular propositions of the frame. -/
+  val : Var → frame.Regular
+  /-- The possibility at which formulas are evaluated. -/
+  point : Possibility
+
+attribute [instance] PointedModel.isRRegular PointedModel.isRefl PointedModel.isKnowable
+
+/-- A pointed model supports a formula when its distinguished possibility does. -/
+def PointedModel.Supports (M : PointedModel Var) (φ : ModalFormula Var) : Prop :=
+  Support M.frame M.access M.val M.point φ
+
 variable {φ ψ : ModalFormula Var}
 
 variable (φ ψ) in
@@ -82,13 +106,20 @@ variable (φ ψ) in
 frames with Knowability, when in every model on such a frame every possibility supporting `φ`
 supports `ψ` ([holliday-mandelkern-2024] Definition 4.36 for the class of Definition 4.26). -/
 def FrameConsequence : Prop :=
-  ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S) [IsRRegular F R] [R.IsRefl]
-    [IsKnowable F R] (V : Var → F.Regular) (s : S), Support F R V s φ → Support F R V s ψ
+  {φ} ⊨[PointedModel.Supports] ψ
+
+theorem frameConsequence_iff :
+    FrameConsequence φ ψ ↔ ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S)
+      [IsRRegular F R] [R.IsRefl] [IsKnowable F R] (V : Var → F.Regular) (s : S),
+        Support F R V s φ → Support F R V s ψ :=
+  ⟨fun h _ F R _ _ _ V s hs ↦ h ⟨_, F, R, V, s⟩ (Set.forall_mem_singleton.2 hs),
+    fun h M hM ↦ h M.frame M.access M.val M.point (hM φ rfl)⟩
 
 theorem frameConsequence_iff_eval :
     FrameConsequence φ ψ ↔ ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S)
       [IsRRegular F R] [R.IsRefl] [IsKnowable F R] (V : Var → F.Regular),
         eval (F.necHom R) V φ ≤ eval (F.necHom R) V ψ := by
+  rw [frameConsequence_iff]
   refine ⟨fun h S F R _ _ _ V ↦ ?_, fun h S F R _ _ _ V s hs ↦ ?_⟩
   · rw [← SetLike.coe_subset_coe, ← support_setOf_eq_coe_eval, ← support_setOf_eq_coe_eval]
     exact fun s hs ↦ h F R V s hs
@@ -121,7 +152,7 @@ def ofFilters : Compatibility (ProperFilter L) where
   ortho_iff _ _ := not_not.symm
 
 theorem ofFilters_compat {F G : ProperFilter L} :
-    (ofFilters L).compat F G ↔ ∀ a ∈ F.1, aᶜ ∉ G.1 :=
+    (ofFilters L).compat F G ↔ ∀ a ∈ F, aᶜ ∉ G :=
   ⟨fun h a ha hac ↦ h ⟨a, ha, hac⟩, fun h ⟨a, ha, hac⟩ ↦ h a ha hac⟩
 
 variable {box : InfTopHom L L}
@@ -132,14 +163,14 @@ Theorem 4.37). -/
 theorem isRRegular_ofFilters (hT : ∀ a, box a ≤ a) : IsRRegular (ofFilters L) (access box) := by
   refine (isRRegular_iff _ _).2 fun F G' G hFG' hG'G ↦ ?_
   let dia : L →o L := ⟨diamondHom box, OrderHomClass.mono _⟩
-  have key : ∀ c ∈ F.1, cᶜ ∉ G.1.map dia := fun c hc hcD ↦ by
+  have key : ∀ c ∈ F, cᶜ ∉ G.toPFilter.map dia := fun c hc hcD ↦ by
     obtain ⟨a, haG, hac⟩ := PFilter.mem_map.1 hcD
-    have hbox : box aᶜ ∈ F.1 := F.1.mem_of_le (by
+    have hbox : box aᶜ ∈ F := F.mem_of_le (by
       simpa only [dia, OrderHom.coe_mk, diamondHom_apply, InvolutiveCompl.compl_compl] using
         InvolutiveCompl.le_compl_comm.mp hac) hc
     exact ofFilters_compat.1 hG'G aᶜ (mem_access.1 hFG' aᶜ hbox)
       (by rwa [InvolutiveCompl.compl_compl])
-  refine ⟨⟨G.1.map dia, fun h ↦ key ⊤ F.1.top_mem ?_⟩, ofFilters_compat.2 key,
+  refine ⟨⟨G.toPFilter.map dia, fun h ↦ key ⊤ F.top_mem ?_⟩, ofFilters_compat.2 key,
     fun H hDH ↦ ⟨nec hT H, access_nec hT H, ofFilters_compat.2 fun d hd hdG ↦
       ofFilters_compat.1 hDH (dia dᶜ) (PFilter.mem_map.2 ⟨dᶜ, hdG, le_rfl⟩) ?_⟩⟩
   · rwa [InvolutiveCompl.compl_top]
@@ -151,10 +182,10 @@ theorem isRRegular_ofFilters (hT : ∀ a, box a ≤ a) : IsRRegular (ofFilters L
 ([holliday-mandelkern-2024] proof of Theorem 4.37). -/
 theorem isKnowable_ofFilters (hE : IsEpistemic box) : IsKnowable (ofFilters L) (access box) := by
   let nb : L →o L := ⟨box, OrderHomClass.mono _⟩
-  refine ⟨fun F ↦ ⟨⟨F.1.map nb, fun h ↦ ?_⟩, fun H hGH ↦ ?_⟩⟩
+  refine ⟨fun F ↦ ⟨⟨F.toPFilter.map nb, fun h ↦ ?_⟩, fun H hGH ↦ ?_⟩⟩
   · obtain ⟨a, haF, ha⟩ := PFilter.mem_map.1 h
     rw [hE.wittgensteinLaw.eq_bot_of_box_eq_bot (le_bot_iff.mp ha)] at haF
-    exact F.2 haF
+    exact F.bot_notMem haF
   · exact (ofFilters L).mem_ofObject_ortho.2 fun I hHI ↦ ofFilters_compat.2 fun c hc hcI ↦
       ofFilters_compat.1 hHI c (mem_access.1 hGH c (PFilter.mem_map.2 ⟨c, hc, le_rfl⟩)) hcI
 
@@ -176,13 +207,8 @@ variable {Var : Type u} {φ ψ : ModalFormula Var}
 
 theorem eval_embed {box : InfTopHom L L} [IsRRegular (ofFilters L) (access box)]
     (hT : ∀ a, box a ≤ a) (v : Var → L) (φ : ModalFormula Var) :
-    eval ((ofFilters L).necHom (access box)) (fun p ↦ embed (v p)) φ = embed (eval box v φ) := by
-  induction φ with
-  | top => exact embed_top.symm
-  | var p => rfl
-  | neg φ ih => rw [eval, eval, ih, embed_compl]
-  | and φ ψ ihφ ihψ => rw [eval, eval, ihφ, ihψ, embed_inf]
-  | box φ ih => rw [eval, eval, ih, embed_box hT]
+    eval ((ofFilters L).necHom (access box)) (fun p ↦ embed (v p)) φ = embed (eval box v φ) :=
+  (map_eval embedHom (embed_box hT) v φ).symm
 
 /-- Consequence over epistemic compatibility frames implies derivability in EO
 ([holliday-mandelkern-2024] Theorem 4.37). -/

@@ -24,7 +24,7 @@ def fragment_answer : Datum :=
     glossedTokens := []
     context := "A: Who went to the movies?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("fragment", "Bob"), ("proposition", "Bob went to the movies")] }
 
@@ -37,7 +37,7 @@ def stressed_subject : Datum :=
     glossedTokens := []
     context := "Q: Who went to the movies? (CAPS = prosodic stress)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stress", "subject"), ("reading", "exhaustive")] }
 
@@ -50,7 +50,7 @@ def unstressed_subject : Datum :=
     glossedTokens := []
     context := "Q: Who went to the movies?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")] }
 

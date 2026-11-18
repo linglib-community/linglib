@@ -136,7 +136,7 @@ theorem not_antiExh_ssubset_of_antitone {C : Set W → Set W} (hC : Antitone C) 
 /-- In a positive context, antiexhaustive enrichment properly strengthens the statement (71). -/
 theorem antiExh_ssubset {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ D) (hPa : w ∈ P a)
     (hPb : w ∉ P b) : antiExh (fun S ↦ ⋃ a ∈ S, P a) D ⊂ ⋃ a ∈ D, P a :=
-  (Set.ssubset_iff_of_subset fun _ h ↦ h.1).2 ⟨w, Set.mem_biUnion ha hPa, fun h ↦
+  (Set.ssubset_iff_of_subset antiExh_subset).2 ⟨w, Set.mem_biUnion ha hPa, fun h ↦
     hPb (Set.mem_iInter₂.1 (antiExh_biUnion P ⟨a, ha⟩ ▸ h) b hb)⟩
 
 /-- Under a possibility modal, antiexhaustive enrichment makes every domain member a witness in

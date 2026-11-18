@@ -11,7 +11,7 @@
     "translation": "Who died?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "subject"],
@@ -33,7 +33,7 @@
     "translation": "Fatima laughed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "allNew"],
@@ -55,7 +55,7 @@
     "translation": "She LAUGHED.",
     "context": "Answer to: Mairo yaa-gó náŋ? 'What did Mairo do?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "vp"],
@@ -78,7 +78,7 @@
     "translation": "Laku sold A DRESS.",
     "context": "Answer to: What did Laku sell?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "object"],
@@ -101,7 +101,7 @@
     "translation": "Laku [sold A DRESS]FOC.",
     "context": "Answer to: What did Laku do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "vp"],
@@ -124,7 +124,7 @@
     "translation": "Laku [SOLD]FOC a dress.",
     "context": "Answer to: What did Laku do at the market? Did she buy a dress or did she sell a dress?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "verb"],
@@ -147,7 +147,7 @@
     "translation": "Laku is writing a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "allNew"],
@@ -169,7 +169,7 @@
     "translation": "Laku is writing A LETTER.",
     "context": "Answer to: Lakú n ball náŋ? 'What is Laku writing?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "object"],
@@ -191,7 +191,7 @@
     "translation": "Laku is [writing A LETTER]F.",
     "context": "Answer to: Lakú n yaaj náŋ? 'What is Laku doing?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "vp"],
@@ -213,7 +213,7 @@
     "translation": "Laku is WRITING a letter.",
     "context": "Answer to: Lakú n ball wasíika yá mad wasíika? 'Is Laku WRITING a letter or READING a letter?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "verb"],
@@ -236,7 +236,7 @@
     "translation": "I bought only THE BOOK, I bought nothing else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "object"],
@@ -259,7 +259,7 @@
     "translation": "I only bought THE BOOK, I did nothing else.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "vp"],
@@ -282,7 +282,7 @@
     "translation": "I only BOUGHT the book, but I have not read (it) yet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focused", "verb"],

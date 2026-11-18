@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Combinatorics.RootedTree.CutReplace
+public import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 
 /-!
 # Cuts that leave traces
@@ -65,6 +66,27 @@ def leaveTrace (τ : RoseTree (α ⊕ β) → β) :
 @[simp] theorem leaveTrace_inr (τ : RoseTree (α ⊕ β) → β)
     (b : β) (cs : List (RoseTree (α ⊕ β))) :
     leaveTrace τ (RoseTree.node (Sum.inr b) cs) = none := rfl
+
+/-- The Δ^c policy is coherent when cutting inside a tree keeps the marker `τ` gives it: a trace
+leaf has no cuts, and a trunk has the root label of the tree it was cut from. -/
+theorem extractCoherent_leaveTrace {τ : RoseTree (α ⊕ β) → β}
+    (hτ : ∀ t, ∀ p ∈ rootCuts (leaveTrace τ) t, τ p.2 = τ t) : ExtractCoherent (leaveTrace τ) where
+  childrenCuts_of_eq_some := by
+    rintro ⟨a | b, cs⟩ r h
+    · obtain rfl : [traceLeaf _] = r := Option.some.inj h
+      rw [childrenCuts_singleton, traceLeaf, childCuts_eq_none _ _ (leaveTrace_inr τ _ []),
+        rootCuts_node, childrenCuts_nil]
+      rfl
+    · cases h
+  extract_trunk := by
+    rintro ⟨a | b, cs⟩ p hp
+    · have := hτ _ p hp
+      rw [rootCuts_node] at hp
+      obtain ⟨q, -, rfl⟩ := Multiset.mem_map.1 hp
+      rw [leaveTrace_inl, leaveTrace_inl, this]
+    · rw [rootCuts_node] at hp
+      obtain ⟨q, -, rfl⟩ := Multiset.mem_map.1 hp
+      rfl
 
 /-! ### Descent to `UnorderedTree` -/
 

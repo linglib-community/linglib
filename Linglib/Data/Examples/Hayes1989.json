@@ -12,7 +12,7 @@
     "translation": "gray",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -40,7 +40,7 @@
     "translation": "courteous",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -68,7 +68,7 @@
     "translation": "pot",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -96,7 +96,7 @@
     "translation": "deserve-1 sg.-pres.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -124,7 +124,7 @@
     "translation": "daughter-in-law",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -152,7 +152,7 @@
     "translation": "slippery",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -180,7 +180,7 @@
     "translation": "house",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -208,7 +208,7 @@
     "translation": "new",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -236,7 +236,7 @@
     "translation": "threshold",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -264,7 +264,7 @@
     "translation": "tale",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -292,7 +292,7 @@
     "translation": "to cook ~ cook-goal focus",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -328,7 +328,7 @@
     "translation": "body, self ~ to have as one's own",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -364,7 +364,7 @@
     "translation": "the first time ~ to be new to something",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "dámo ~ dammw-én", "judgment": "marginal"}],
+    "contrasts": [{"form": "dámo ~ dammw-én", "judgment": "marginal"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -400,7 +400,7 @@
     "translation": "intense ~ to intensify",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -436,7 +436,7 @@
     "translation": "to fetch water ~ place where water is fetched",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -472,7 +472,7 @@
     "translation": "bottle",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -500,7 +500,7 @@
     "translation": "to fill",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -528,7 +528,7 @@
     "translation": "patience",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -556,7 +556,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -584,7 +584,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -612,7 +612,7 @@
     "translation": "to get rid of",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -640,7 +640,7 @@
     "translation": "drum",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "davul > daːul", "judgment": "ungrammatical"}],
+    "contrasts": [{"form": "davul > daːul", "judgment": "ungrammatical"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -668,7 +668,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -696,7 +696,7 @@
     "translation": "I stood up",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -724,7 +724,7 @@
     "translation": "to stand up",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -752,7 +752,7 @@
     "translation": "thought",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -784,7 +784,7 @@
     "translation": "speak-2 sg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -812,7 +812,7 @@
     "translation": "speak-1 pl.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -840,7 +840,7 @@
     "translation": "speak-1 sg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

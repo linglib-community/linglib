@@ -66,8 +66,8 @@ private theorem numEdges_sub_countP_leaves_node_pair (p : α → Prop) [Decidabl
     rw [countP_leaves_node_of_not p a _ hpa]
     simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
       Multiset.map_singleton, Multiset.sum_singleton]
-  have hbl := countP_leaves_le_numEdges p l hl
-  have hbr := countP_leaves_le_numEdges p r hr
+  have hbl := lt_numNodes_iff.mp hl
+  have hbr := lt_numNodes_iff.mp hr
   simp only [htl, hw]
   omega
 

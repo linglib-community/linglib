@@ -24,7 +24,7 @@ def amount_yori : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "amount_comparative")] }
 
@@ -38,7 +38,7 @@ def degree_yori : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degree_comparative")] }
 
@@ -51,7 +51,7 @@ def subcomp_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "subcomparative")] }
 
@@ -64,7 +64,7 @@ def subcomp_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "subcomparative")] }
 
@@ -77,7 +77,7 @@ def negisland_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negative_island")] }
 
@@ -90,7 +90,7 @@ def negisland_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negative_island")] }
 

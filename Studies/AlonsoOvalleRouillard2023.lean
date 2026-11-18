@@ -230,9 +230,9 @@ theorem mem_strengthen_disjunction [IsAtomistic E] [Finite E] (hu : u ≠ ⊥) (
   refine ⟨hleast, mem_strengthen_iff.2 ⟨⟨_, hleast⟩, ?_⟩⟩
   rintro _ (rfl | rfl | rfl) hs hss
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
-      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
+      (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
-      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
+      (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
   · refine hss.ne ?_
     simp only [contentMust, Form.hamblinSet, upwardGQ_whDomain_singular]
 
@@ -317,9 +317,9 @@ theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b
   refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
   rintro _ (rfl | rfl | rfl) - hs
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
-      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
+      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
-      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
+      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
   · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis
       (strengthen_subset _ _ _ (hs (.inr rfl)))
 

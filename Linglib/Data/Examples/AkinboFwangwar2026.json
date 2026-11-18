@@ -11,7 +11,7 @@
     "translation": "a heavy-duty vehicle hit the cow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "gɨ̀rgɨ̀r"],
@@ -33,7 +33,7 @@
     "translation": "a heavy-duty vehicle hit the cow and the goat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "gɨ̀rgɨ̀r"],
@@ -55,7 +55,7 @@
     "translation": "a heavy-duty vehicle hit the cow and the goat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "gɨ̀rgɨ̀r"],
@@ -77,7 +77,7 @@
     "translation": "a heavy-duty vehicle hit the cow multiple times",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "gɨ̀rgɨ̀r"],
@@ -99,7 +99,7 @@
     "translation": "there comes the vehicle making gɨ̀rgɨ̀r sounds",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "gɨ̀rgɨ̀r"],
@@ -120,7 +120,7 @@
     "translation": "Naanle rubbed/rubs groundnut oil",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "múl"],
@@ -141,7 +141,7 @@
     "translation": "Naanle will rub groundnut oil",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ideophone", "múl"],
@@ -163,7 +163,7 @@
     "translation": "Naanle walked/walks at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "underived"],
@@ -185,7 +185,7 @@
     "translation": "Naanle will walk at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "underived"],
@@ -207,7 +207,7 @@
     "translation": "Naanle WALKED (did nothing else) at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "underived"],
@@ -229,7 +229,7 @@
     "translation": "Naanle came here walk(ing)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "underived"],
@@ -252,7 +252,7 @@
     "translation": "Naanle did not walk at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "underived"],
@@ -274,7 +274,7 @@
     "translation": "Naanle wobbles crookedly at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -296,7 +296,7 @@
     "translation": "Naanle will wobble crookedly at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -318,7 +318,7 @@
     "translation": "Naanle WOBBLED CROOKEDLY at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -341,7 +341,7 @@
     "translation": "Naanle wobbles crookedly and dusty at the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -363,7 +363,7 @@
     "translation": "The elephant is coming wobbling crookedly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -386,7 +386,7 @@
     "translation": "Naanle did not wobble crookedly to the market",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "derived"],
@@ -408,7 +408,7 @@
     "translation": "the gerundive of to be feeble",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "wāːm"],
@@ -430,7 +430,7 @@
     "translation": "the gerundive of to rinse",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "pɨ̄lāŋ"],
@@ -452,7 +452,7 @@
     "translation": "the gerundive of to be rotten",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "wàm"],
@@ -474,7 +474,7 @@
     "translation": "the gerundive of to be generous",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "zùɣùm"],
@@ -496,7 +496,7 @@
     "translation": "water of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "lɛ̀k"],
@@ -519,7 +519,7 @@
     "translation": "clay of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "wān"],
@@ -542,7 +542,7 @@
     "translation": "pelvis of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "ɓwɔ́ːn"],
@@ -565,7 +565,7 @@
     "translation": "surroundings of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "ɓwɔ́ːn"],
@@ -588,7 +588,7 @@
     "translation": "heavy duty vehicle of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "gɨ̀r-gɨ̀r"],
@@ -611,7 +611,7 @@
     "translation": "excitement of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "rām-rām"],
@@ -634,7 +634,7 @@
     "translation": "pot scrapping sound of a thief",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possessed", "kúráʃ"],

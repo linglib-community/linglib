@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Ancient Greek case
@@ -15,7 +15,7 @@ Blake gives the system, vocative aside, as the four-case stage of his hierarchy.
 
 * `Greek.Ancient.Case`: the five cases.
 * `Greek.Ancient.Case.label`, `Greek.Ancient.Case.functions`: the comparative value each case is
-  named for, and the values it expresses.
+  named for, and the functions it marks.
 
 ## References
 
@@ -50,14 +50,15 @@ def label : Case → _root_.Case
   | gen => .gen
   | dat => .dat
 
-/-- The comparative values a case expresses: the genitive also expresses source, and the dative
+/-- The functions a case marks: the genitive also expresses source, and the dative
 location and instrument as well as the indirect object. -/
-def functions : Case → Finset _root_.Case
-  | gen => {.gen, .abl}
-  | dat => {.dat, .loc, .inst}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | gen => {.possessor, .spatial none .source}
+  | dat => {.argument .R, .spatial none .place, .instrumental}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 end Case

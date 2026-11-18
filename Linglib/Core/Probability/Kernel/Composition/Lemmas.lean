@@ -15,7 +15,8 @@ Pushing a product measure through `η ∥ₖ η'` pushes each factor through its
 joint measure on `α × β` through `Kernel.id ∥ₖ η` keeps the first marginal and composes the
 second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. Conditioning a joint
 `μ ⊗ₘ κ` on an event and keeping the first coordinate reweights `μ` by the mass each row of `κ`
-gives the event's section, and normalizes. On finite types, a
+gives the event's section, and normalizes; conditioning it on the first coordinate conditions `μ`
+and keeps `κ`. On finite types, a
 composition, a composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at
 atoms; an atom is charged by a composition exactly when some charged atom of the input emits it,
 and each row of a kernel charged by the input measure is absolutely continuous with respect to the
@@ -160,6 +161,29 @@ theorem fst_cond_prod (ν : Measure β) [SFinite ν] (hs : MeasurableSet s) :
   rw [← compProd_const, fst_cond_compProd μ _ hs]
   rfl
 
+theorem restrict_preimage_fst_compProd (κ : Kernel α β) [IsSFiniteKernel κ] {t : Set α}
+    (ht : MeasurableSet t) : (μ ⊗ₘ κ).restrict (Prod.fst ⁻¹' t) = μ.restrict t ⊗ₘ κ := by
+  ext s hs
+  rw [restrict_apply hs, compProd_apply (hs.inter (measurable_fst ht)), compProd_apply hs,
+    ← lintegral_indicator ht]
+  congr with a
+  by_cases ha : a ∈ t <;> simp [Set.preimage_inter, Set.preimage_preimage, ha]
+
+/-- Conditioning a joint on its first coordinate conditions the first marginal and keeps the
+kernel. -/
+theorem cond_preimage_fst_compProd (κ : Kernel α β) [IsMarkovKernel κ] {t : Set α}
+    (ht : MeasurableSet t) : (μ ⊗ₘ κ)[|Prod.fst ⁻¹' t] = μ[|t] ⊗ₘ κ := by
+  rw [ProbabilityTheory.cond, ProbabilityTheory.cond, restrict_preimage_fst_compProd μ κ ht,
+    compProd_smul_left, ← fst_apply ht, fst_compProd]
+
+/-- Conditioning a joint on a value of its first coordinate puts the point mass there in place of
+the first marginal. -/
+theorem cond_preimage_fst_singleton_compProd [MeasurableSingletonClass α] (κ : Kernel α β)
+    [IsMarkovKernel κ] {a : α} (h₀ : μ {a} ≠ 0) (h : μ {a} ≠ ⊤) :
+    (μ ⊗ₘ κ)[|Prod.fst ⁻¹' {a}] = dirac a ⊗ₘ κ := by
+  rw [cond_preimage_fst_compProd μ κ (.singleton a), ProbabilityTheory.cond, restrict_singleton,
+    smul_smul, ENNReal.inv_mul_cancel h₀ h, one_smul]
+
 end Event
 
 section Fiber
@@ -175,15 +199,11 @@ theorem integral_compProd_eq_sum {E : Type*} [NormedAddCommGroup E] [NormedSpace
   rw [integral_fintype .of_finite, Finset.smul_sum]
   exact Finset.sum_congr rfl fun b _ ↦ by rw [compProd_real_singleton, mul_smul]
 
+omit [Fintype α] [Fintype β] [MeasurableSingletonClass β] in
 theorem map_snd_cond_fst_compProd {a : α} (ha : μ {a} ≠ 0) :
     ((μ ⊗ₘ κ)[|Prod.fst ⁻¹' {a}]).map Prod.snd = κ a := by
-  refine ext_iff_singleton.2 fun b ↦ ?_
-  have hfst : (μ ⊗ₘ κ) (Prod.fst ⁻¹' {a}) = μ {a} := by
-    rw [← fst_apply (.singleton a), fst_compProd]
-  rw [map_apply measurable_snd (.singleton b), cond_apply (measurable_fst (.singleton a)),
-    show Prod.fst ⁻¹' {a} ∩ Prod.snd ⁻¹' {b} = {(a, b)} by ext ⟨x, y⟩; simp,
-    compProd_apply_singleton, hfst, ← mul_assoc, ENNReal.inv_mul_cancel ha (measure_ne_top _ _),
-    one_mul]
+  rw [cond_preimage_fst_singleton_compProd μ κ ha (measure_ne_top _ _), ← snd, snd_compProd,
+    dirac_bind κ.measurable]
 
 end Fiber
 

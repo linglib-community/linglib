@@ -62,21 +62,6 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
   finite clause or a gerund, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams'
   uniformity hypothesis takes them to be one verb.
 
-## Errata
-
-* (28b) binds the time of the complement existentially. So bound, [a plain infinitive presupposes
-  only that an event of its predicate started before the forgetting](##preExPrinted_aspP_iff), the
-  contradiction of (36) does not arise, and no modal is needed; the prose of (34) and (36) evaluates
-  the complement at the subjective now.
-* (37) does not require the state `s` to have a plan, and a state whose plan is empty satisfies it
-  vacuously, so that [any such state starting before the forgetting meets pre-existence under the
-  modal](##preEx_mod_of_plan_eq_empty) and (21b) is predicted fine wherever there is one; the
-  scenario of (21) gives every state a plan. (37) also applies `Q` to a world before a time, against
-  its type in (28).
-* (40) derives (iii) from (i) and (ii), neither of which follows from (37), and the proper inclusion
-  (ii) of the subjective now in the plan's run time allows them a common left bound; (iii) needs the
-  prose's "the runtime of Mod begins before this".
-
 ## TODO
 
 * The finite complements of (4), (11a) and (18), which the paper leaves to future work, and the
@@ -102,7 +87,7 @@ namespace Williams2025
 
 open Event (τ)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-! ### Complements -/
 
@@ -153,7 +138,7 @@ def den (hs : List Head) (P : W → E → Prop) : Complement W E T :=
 its plan the complement holds at a time from `t` on. -/
 def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T) :
     Complement W E T :=
-  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ C.closure w' t'
+  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ t' ∈ C.closure w'
 
 variable {P : W → E → Prop} {C : Complement W E T}
   {plan : E → NonemptyInterval T → W → Set W} {h : Head} {hs : List Head} {w : W}
@@ -204,12 +189,12 @@ subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
   Event.PreExists τ (C w (τ e)) (τ e)
 
-theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
+theorem PreEx.closure (h : PreEx C e w) : τ e ∈ C.closure w :=
   Event.PreExists.exists h
 
 -- (32), (34): the presupposition of an anterior complement is its truth at the subjective now
 theorem preEx_den_cons_iff :
-    PreEx (den (h :: hs) P) e w ↔ (den (h :: hs) P).closure w (τ e) :=
+    PreEx (den (h :: hs) P) e w ↔ τ e ∈ (den (h :: hs) P).closure w :=
   Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
 
 -- (36)
@@ -299,7 +284,7 @@ def Presupposes (hs : List Head)
 /-- Some state plans the predicate, which *…but he did not have to stop by the flower shop*
 denies. -/
 def Planned (P : W → E → Prop) (plan : E → NonemptyInterval T → W → Set W) (w : W) : Prop :=
-  ∃ t, (mod plan (aspP P)).closure w t
+  ∃ t, t ∈ (mod plan (aspP P)).closure w
 
 -- (5a), (12a)
 theorem presupposes_nil_planned : Presupposes W E [] Planned :=
@@ -432,7 +417,7 @@ theorem table1_rows [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Pr
   simp only [forall_needsMod_den_iff hE]
   decide
 
-/-! ### Errata -/
+/-! ### Variants of pre-existence -/
 
 /-- Pre-existence as (28b) prints it, with the time of the complement bound existentially. -/
 def PreExPrinted (C : Complement W E T) (e : E) (w : W) : Prop :=

@@ -5,11 +5,11 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Core.Order.Cover
 public import Linglib.Data.Wordlist.Booij2010
 public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
+public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Syntax.Cat
 public import Mathlib.Data.Fin.VecNotation
@@ -122,7 +122,7 @@ theorem awareness_related : nessSchema.Relates nessLexicon Wordlist.awareness.mo
 
 The right-headed schema for all English compounds dominates the nominal schema (6), which
 dominates the NN, VN, AN and PN subcases (7). The hierarchy is derived from the schemas by
-generality, and each schema is read at the positions modifier, head and whole through one
+generality, and each schema is a pattern over the positions modifier, head and whole through one
 subscripting, which coindexes the head with the whole. -/
 
 /-- The category variables of a compound schema: the modifier's `X` and the head's `Y`. -/
@@ -168,16 +168,22 @@ theorem covBy_nominal :
     ∀ n : CompoundNode, n ≠ .general → n ≠ .nominal → n ⋖ .nominal := by
   decide
 
-/-- Right-headedness needs no rule: in any instance of any schema of the family read through
-the subscripting of (6), the whole's category is the head's. -/
-theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
-    (h : (compoundFamily n).InstantiatesAt compoundSub w) : w 2 = w 1 :=
-  h.factorsThrough (by decide)
+/-- The schema of a node as a pattern over modifier, head and whole, with the coindexation of
+(6). -/
+abbrev compoundPattern (n : CompoundNode) : Pattern (Fin 3) (Flat Cat) :=
+  .ofSubscript compoundSub (compoundFamily n).body
 
-theorem blackbird_instantiatesAt :
-    (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
-      ¬ (compoundFamily .nn).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] := by
-  decide
+/-- Right-headedness needs no rule: every schema of the family coindexes the head with the whole,
+so in any item it subsumes the whole's category is the head's. -/
+theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
+    (h : compoundPattern n ≤ Pattern.ofItem w) : w 2 = w 1 :=
+  (h.2 (.inl rfl : (compoundPattern n).coindex 1 2)).elim
+    (fun e ↦ absurd e (by decide : (1 : Fin 3) ≠ 2)) fun e ↦ e.1.symm
+
+theorem blackbird_pattern :
+    compoundPattern .an ≤ Pattern.ofItem ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
+      ¬ compoundPattern .nn ≤ Pattern.ofItem ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] :=
+  ⟨by decide, by decide⟩
 
 /-- Whether the modifier may itself be a compound (8): allowed by the general schema, forbidden
 at the AN subschema. -/

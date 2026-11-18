@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Epistemic
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Mathlib.Order.Concept
 
 /-!
@@ -78,7 +78,7 @@ not formalized, and the paper's examples are not yet rows of `Data/Examples`.
 
 namespace Ney2026
 
-open Set Discourse Order ModalLogic SetRel
+open Set SpeechAct Order ModalLogic SetRel
 
 /-! ### Conceptions of reasonableness -/
 

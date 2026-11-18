@@ -66,7 +66,7 @@ theorem IsElsewhereWinner.exponent_eq (hv : v.Coherent key) (hr : v.IsElsewhereW
 
 theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
     ∃ r, v.IsElsewhereWinner key c r :=
-  (v.finite_toSet.subset fun _ hr ↦ hr.1).exists_minimalFor key _ h
+  (v.finite_toSet.sep _).exists_minimalFor key _ h
 
 /-! ### The prediction relation -/
 

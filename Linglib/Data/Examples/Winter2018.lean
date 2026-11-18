@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Dan dated Sue.", .acceptable)]
+    contrasts := [("Dan dated Sue.", .acceptable)]
     readings := []
     paperFeatures := [("predicate", "date"), ("property", "symmetric")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "date"), ("alternation", "plain")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hug"), ("alternation", "non-plain")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hug"), ("inference", "does not entail Sue and Dan hugged")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "agree"), ("inference", "one shared opinion")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "agree"), ("inference", "possibly three opinions")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The lamppost embraced the drunk.", .unacceptable)]
+    contrasts := [("The lamppost embraced the drunk.", .unacceptable)]
     readings := []
     paperFeatures := [("predicate", "embrace"), ("property", "non-symmetric")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hug"), ("scenario", "(39)"), ("truth", "does not follow")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hug"), ("scenario", "(39)"), ("truth", "true")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hug"), ("inference", "entails Sue and Dan hugged")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "break up"), ("inference", "does not entail Sue broke up with Dan")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "break up"), ("inference", "entails Sue and Dan broke up")] }
 
@@ -178,9 +178,11 @@ def ex_13 : Datum :=
     language := "hebr1245"
     primaryText := "morrissey makir et hod-ma'alata, ve-hi makira oto"
     glossedTokens := [("morrissey", "Morrissey"), ("makir", "know-MASC.SG"), ("et", "ACC"), ("hod-ma'alata", "her-majesty"), ("ve-hi", "and-she"), ("makira", "know-FEM.SG"), ("oto", "him")]
+    glossedWords := [⟨['m', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], ['M', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], [⟨['m', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], ['M', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], none⟩]⟩, ⟨['m', 'a', 'k', 'i', 'r'], ['k', 'n', 'o', 'w', '-', 'M', 'A', 'S', 'C', '.', 'S', 'G'], []⟩, ⟨['e', 't'], ['A', 'C', 'C'], [⟨['e', 't'], ['A', 'C', 'C'], none⟩]⟩, ⟨['h', 'o', 'd', '-', 'm', 'a', '\'', 'a', 'l', 'a', 't', 'a'], ['h', 'e', 'r', '-', 'm', 'a', 'j', 'e', 's', 't', 'y'], [⟨['h', 'o', 'd'], ['h', 'e', 'r'], none⟩, ⟨['m', 'a', '\'', 'a', 'l', 'a', 't', 'a'], ['m', 'a', 'j', 'e', 's', 't', 'y'], some '-'⟩]⟩, ⟨['v', 'e', '-', 'h', 'i'], ['a', 'n', 'd', '-', 's', 'h', 'e'], [⟨['v', 'e'], ['a', 'n', 'd'], none⟩, ⟨['h', 'i'], ['s', 'h', 'e'], some '-'⟩]⟩, ⟨['m', 'a', 'k', 'i', 'r', 'a'], ['k', 'n', 'o', 'w', '-', 'F', 'E', 'M', '.', 'S', 'G'], []⟩, ⟨['o', 't', 'o'], ['h', 'i', 'm'], [⟨['o', 't', 'o'], ['h', 'i', 'm'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "makir"), ("inference", "does not entail (48)")] }
 
@@ -191,9 +193,11 @@ def ex_14 : Datum :=
     language := "hebr1245"
     primaryText := "morrissey ve-hod-ma'alata makirim"
     glossedTokens := [("morrissey", "Morrissey"), ("ve-hod-ma'alata", "and-her-majesty"), ("makirim", "know-MASC.PL")]
+    glossedWords := [⟨['m', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], ['M', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], [⟨['m', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], ['M', 'o', 'r', 'r', 'i', 's', 's', 'e', 'y'], none⟩]⟩, ⟨['v', 'e', '-', 'h', 'o', 'd', '-', 'm', 'a', '\'', 'a', 'l', 'a', 't', 'a'], ['a', 'n', 'd', '-', 'h', 'e', 'r', '-', 'm', 'a', 'j', 'e', 's', 't', 'y'], [⟨['v', 'e'], ['a', 'n', 'd'], none⟩, ⟨['h', 'o', 'd'], ['h', 'e', 'r'], some '-'⟩, ⟨['m', 'a', '\'', 'a', 'l', 'a', 't', 'a'], ['m', 'a', 'j', 'e', 's', 't', 'y'], some '-'⟩]⟩, ⟨['m', 'a', 'k', 'i', 'r', 'i', 'm'], ['k', 'n', 'o', 'w', '-', 'M', 'A', 'S', 'C', '.', 'P', 'L'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "makir"), ("reading", "collective only")] }
 

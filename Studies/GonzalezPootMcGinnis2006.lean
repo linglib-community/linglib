@@ -3,7 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Agreement.Geometry
+public import Linglib.Morphology.FeatureGeometry
 public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 public import Linglib.Data.Examples.Readers
 
@@ -43,12 +43,6 @@ works no derivation through (A4). We read discharge the same way: an item that d
 [Addressee] discharges [Participant] with it. Were [Participant] left behind, the residue of a
 second-person plural object would match *-en*, which (20) lacks.
 
-## Errata
-
-(A4) lists *-éːš* above *-oʔon*, so strict scansion gives *-éːš -oʔon* where (19) has
-*-oʔon -éːš*. (27) lists them the other way round, and (A4) can too without disturbing the order
-the appendix requires of *-éːš* over *-etš*.
-
 ## References
 
 * [gonzalez-poot-mcginnis-2006]
@@ -62,7 +56,7 @@ the appendix requires of *-éːš* over *-etš*.
 
 namespace GonzalezPootMcGinnis2006
 
-open DistributedMorphology Phi.Geometry
+open DistributedMorphology Morphology.FeatureGeometry
 open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 
@@ -77,8 +71,8 @@ abbrev Argument := Person × numberSystem
 /-- The person features of (26), [±PSE, ±Auth], as the substrate's [±participant, ±author]
 decomposition of a person. -/
 def personFeatures (p : Person) : Finset FeatureVal :=
-  {⟨.participant, decide (.participant ∈ p.toFeatures)⟩,
-    ⟨.author, decide (.author ∈ p.toFeatures)⟩}
+  {⟨.participant, decide (.participant ∈ p.toFeatures Finset.univ)⟩,
+    ⟨.author, decide (.speaker ∈ p.toFeatures Finset.univ)⟩}
 
 /-- Number as the feature [±Pl]. -/
 def number (n : numberSystem) : FeatureVal := ⟨.number, n.1⟩

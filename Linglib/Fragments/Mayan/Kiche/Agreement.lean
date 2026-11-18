@@ -2,7 +2,6 @@ module
 
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
-public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -17,22 +16,14 @@ alignment is ergative in every aspect. The verbal complex runs aspect, Set B, Se
 status suffix, so that Set B precedes the stem and K'iche' is a high-absolutive language. The
 honorific second person agrees as a third person singular, leaving the prefix slot empty, and is
 marked by the enclitics *=la* in the singular and *=alaq* in the plural, after the verb whatever
-their function. The independent pronouns are the Set B forms
-in the first and second persons, *in*, *at*, *oj*, *ix* and the honorific *laal* and *alaq*, and
-*are'* and *a're'* in the third, usually with a determiner. Can Pixabaj's sketch and Mondloch's
-grammar are the sources.
+their function. Can Pixabaj's sketch and Mondloch's grammar are the
+sources; the independent pronouns are in `Fragments/Mayan/Kiche/Pronouns`.
 
 ## Main definitions
 
 * `Kiche.setAExponent`, `Kiche.setBExponent`: the two paradigms.
 * `Kiche.laEncl`, `Kiche.alaqEncl`: the honorific second person enclitics.
 * `Kiche.template`, `Kiche.markerSet`: the verbal complex and the ergative marking.
-* `Kiche.pronouns`: the independent pronouns.
-
-## Main results
-
-* `Kiche.addressee_honorific`: the honorific second person denotes what the nonhonorific one
-  does and agrees as the third person singular.
 
 ## References
 
@@ -81,66 +72,5 @@ def laEncl : List Morphology.Morph := [.encl "la"]
 
 /-- The honorific second person plural enclitic *=alaq*, after the verb in both sets. -/
 def alaqEncl : List Morphology.Morph := [.encl "alaq"]
-
-/-! ### Independent pronouns -/
-
-/-- The honorific grades of the K'iche' second person, lowest first. -/
-inductive Grade where
-  /-- The nonhonorific grade, *at* and *ix*. -/
-  | nonhonorific
-  /-- The honorific grade, *laal* and *alaq*. -/
-  | honorific
-  deriving DecidableEq, Fintype, Repr
-
-instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
-
-/-- The first person singular *in*. -/
-def in_ : PersonalPronoun := { form := "in", person := some .first, number := some .singular }
-
-/-- The second person singular *at*. -/
-def at_ : PersonalPronoun := { form := "at", person := some .second, number := some .singular }
-
-/-- The honorific second person singular *laal*. It agrees as a third person singular and
-denotes the addressee. -/
-def laal : PersonalPronoun :=
-  { form := "laal", person := some .third, number := some .singular, referential := {.addressee} }
-
-/-- The third person singular *are'*, usually with a determiner, *ri are'*. -/
-def are' : PersonalPronoun := { form := "are'", person := some .third, number := some .singular }
-
-/-- The first person plural *oj*. -/
-def oj : PersonalPronoun := { form := "oj", person := some .first, number := some .plural }
-
-/-- The second person plural *ix*. -/
-def ix : PersonalPronoun := { form := "ix", person := some .second, number := some .plural }
-
-/-- The honorific second person plural *alaq*. It agrees as a third person singular and
-denotes the addressee with others. -/
-def alaq : PersonalPronoun :=
-  { form := "alaq", person := some .third, number := some .singular,
-    referential := {.addresseeOthers} }
-
-/-- The third person plural *a're'*, usually with a determiner, *ri a're'*. -/
-def a're' : PersonalPronoun := { form := "a're'", person := some .third, number := some .plural }
-
-/-- The second person singular at each grade. -/
-def addresseeSg : Grade → PersonalPronoun
-  | .nonhonorific => at_
-  | .honorific => laal
-
-/-- The second person plural at each grade. -/
-def addresseePl : Grade → PersonalPronoun
-  | .nonhonorific => ix
-  | .honorific => alaq
-
-/-- The honorific second person denotes what the nonhonorific one does and agrees as the third
-person singular *are'* does. -/
-theorem addressee_honorific :
-    laal.referential = at_.referential ∧ alaq.referential = ix.referential ∧
-      phi laal = phi are' ∧ phi alaq = phi are' := by
-  decide
-
-/-- The independent pronouns. -/
-def pronouns : Finset PersonalPronoun := {in_, at_, laal, are', oj, ix, alaq, a're'}
 
 end Kiche

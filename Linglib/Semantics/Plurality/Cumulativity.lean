@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Relation
 public import Linglib.Core.Data.Set.Functor
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Cumulative predication
@@ -94,7 +94,7 @@ theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Fins
         AlgClosure (Function.uncurry (Relation.Map R ({·}) ({·}))) p →
           p.1.Nonempty ∧ Set.LiftRel R ↑p.1 ↑p.2 from this (x, y)
     intro p h
-    induction h with
+    induction h using AlgClosure.induction with
     | @base p h =>
       obtain ⟨x, y⟩ := p
       change ∃ a b, R a b ∧ ({a} : Finset A) = x ∧ ({b} : Finset B) = y at h

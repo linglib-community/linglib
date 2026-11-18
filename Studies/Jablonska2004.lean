@@ -94,7 +94,7 @@ namespace Verbalizer
 /-- The Aktionsart profile of a bare stem is atelic, lacking a right boundary, Section 2.3; it is
 punctual for the semelfactive, Section 2.3.1, and stative for the statives, which lack a left
 boundary, Section 5. -/
-def profile : Verbalizer → Aspect.VendlerClass
+def profile : Verbalizer → Aspect.AspectualClass
   | semelfactive => .semelfactive
   | stative => .state
   | _ => .activity
@@ -707,12 +707,6 @@ theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
     (a.stem.verb.perfectivity = some .perfective ↔ Perfective a.stem.verbalizer []) := by
   decide
 
-/-- The fragment's Vendler class of a stem, where it records one, is the profile of the stem's
-verbalizer: the statives are states and the semelfactives semelfactive. -/
-theorem stem_vendlerClass : ∀ a ∈ attested ++ starred,
-    a.stem.verb.vendlerClass ∈ [none, some a.stem.verbalizer.profile] := by
-  decide
-
 /-- Every infinitive without the Secondary Imperfective spells out its form: the prefixes, outermost
 first, and the stem are the morphs of the attested word, accepted or starred. The Secondary
 Imperfective replaces the stem's verbalizer, which the fragment's citation forms do not
@@ -724,9 +718,8 @@ theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Wordlist.inf → .
 /-! ### The tests of Section 2.1
 
 The paper tests (im)perfectivity in two ways: a phase verb takes only an imperfective complement,
-and only an imperfective present-tense form has the actual present reading
-(`Aspect.viewpointPrediction`). The perfectivity the model derives for a form predicts the
-judgments of the sentences that test it. -/
+and only an imperfective present-tense form has the actual present reading. The perfectivity the
+model derives for a form predicts the judgments of the sentences that test it. -/
 
 /-- The perfectivity of the derived predicate. -/
 def Analysis.perfectivity (a : Analysis) : Aspect.Perfectivity :=
@@ -759,15 +752,14 @@ theorem tests_wellFormed :
 /-- A phase verb with its complement is accepted exactly when the complement is derived imperfective
 ((33a), (46a)). -/
 theorem phaseTests_judgment : ∀ t ∈ phaseTests,
-    (t.sentence.judgment = .acceptable ↔
-      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
+    (t.sentence.judgment = .acceptable ↔ t.verb.perfectivity = .imperfective) := by
   decide
 
 /-- A present-tense form has the actual present reading exactly when it is derived imperfective
 ((33b), (46b), (80b)). -/
 theorem presentTests_reading : ∀ t ∈ presentTests,
     (t.sentence.readings.lookup "actual present" = some .acceptable ↔
-      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
+      t.verb.perfectivity = .imperfective) := by
   decide
 
 /-! ### The paper's limits

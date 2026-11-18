@@ -95,8 +95,8 @@ def sat (F : TWFrame World T) (V : Atom → T → World → Prop) :
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
-  | .G a,     t, w => □[Tense.toSetRel ⟦Tense.future⟧] (fun t' ↦ F.sat V a t' w) t
-  | .H a,     t, w => □[Tense.toSetRel ⟦Tense.past⟧] (fun t' ↦ F.sat V a t' w) t
+  | .G a,     t, w => □[PointAlgebra.toSetRel ⟦Tense.future⟧] (fun t' ↦ F.sat V a t' w) t
+  | .H a,     t, w => □[PointAlgebra.toSetRel ⟦Tense.past⟧] (fun t' ↦ F.sat V a t' w) t
   | .N a,     t, w => □[F.alt t] (fun w' ↦ F.sat V a t w') w
   | .box a,   t, w => □[.univ] (fun w' ↦ F.sat V a t w') w
 

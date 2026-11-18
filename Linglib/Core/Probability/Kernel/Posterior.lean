@@ -81,6 +81,25 @@ theorem _root_.MeasureTheory.Measure.comp_apply_singleton_ne_zero_of_pair
 
 end PairMarginal
 
+/-- On a type with two points, an integral against a probability measure weighs the value at the
+first by its mass and the value at the second by the rest. -/
+theorem _root_.MeasureTheory.integral_of_pair {A : Type*} [Fintype A] [MeasurableSpace A] [DiscreteMeasurableSpace A]
+    {ν : Measure A} [IsProbabilityMeasure ν] {f : A → ℝ} {a a' : A} (haa' : a ≠ a')
+    (hall : ∀ c, c = a ∨ c = a') :
+    ∫ c, f c ∂ν = ν.real {a} * f a + (1 - ν.real {a}) * f a' := by
+  rw [integral_fintype .of_finite, Fintype.sum_eq_add a a' haa'
+    (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
+    ← measureReal_singleton_add_singleton_of_pair ν haa' (fun c _ ↦ hall c)]
+  simp only [smul_eq_mul]
+  ring
+
+/-- The integral of the indicator of a point, as a function of the point integrated, is the mass
+of the point. -/
+theorem _root_.MeasureTheory.integral_pi_single {X : Type*} [Fintype X] [DecidableEq X] [MeasurableSpace X]
+    [DiscreteMeasurableSpace X] (ν : Measure X) [IsFiniteMeasure ν] (x : X) :
+    ∫ y, (Pi.single y 1 : X → ℝ) x ∂ν = ν.real {x} := by
+  simp [integral_fintype .of_finite, Pi.single_apply]
+
 variable [StandardBorelSpace Ω] [Nonempty Ω]
   (κ : Kernel Ω 𝓧) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
 
@@ -302,6 +321,15 @@ theorem invariant_id_prod_comp_prodMkLeft_posterior :
     Measure.compProd_eq_comp_prod]
 
 end Invariant
+
+/-- The posterior of an observation that is the parameter itself is the point mass at it. -/
+theorem dirac_ae_eq_posterior_id {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
+    [StandardBorelSpace Ω] [Nonempty Ω] (μ : Measure Ω) [IsFiniteMeasure μ] :
+    (Measure.dirac : Ω → Measure Ω) =ᵐ[(Kernel.id : Kernel Ω Ω) ∘ₘ μ]
+      (Kernel.id : Kernel Ω Ω)†μ := by
+  rw [Measure.id_comp]
+  filter_upwards [posterior_id μ] with w hw
+  rw [hw, Kernel.id_apply]
 
 section Const
 

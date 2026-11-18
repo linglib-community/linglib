@@ -24,7 +24,7 @@ def ch7_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.6"), ("triangle", "he is the subject of has and of swum"), ("verb", "HAVE")] }
 
@@ -37,7 +37,7 @@ def ch7_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.6"), ("subject", "meaningless there"), ("verb", "BE")] }
 
@@ -50,7 +50,7 @@ def ch7_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.6"), ("subject", "there"), ("construction", "inversion test for subjecthood")] }
 
@@ -63,7 +63,7 @@ def ch7_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2.6"), ("triangle", "there is the subject of has and of been"), ("verb", "HAVE")] }
 
@@ -76,7 +76,7 @@ def ch7_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("triangle", "he is the subject of keeps and of talking"), ("landmark", "keeps")] }
 
@@ -89,7 +89,7 @@ def ch7_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("landmark", "talking"), ("rule", "a verb's subject stands just before it")] }
 
@@ -102,7 +102,7 @@ def ch7_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("adverb", "never between the subject and its landmark verb")] }
 
@@ -115,7 +115,7 @@ def ch7_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("adverb", "never between the subject and the lower verb")] }
 
@@ -128,7 +128,7 @@ def fig7_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4.5"), ("triangle", "he is the subject of every verb in the valent chain"), ("recursion", "triangles multiplied freely")] }
 

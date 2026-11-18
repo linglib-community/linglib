@@ -30,26 +30,6 @@ of negative polarity items is `Licenses`, read off the substrate's strength map
   unmarked domains, Boolean algebras, which is stronger than the paper's marked domains and
   leaves Definition 2.8's subtyping of marked types aside.
 
-## Errata
-
-* The orders ≪ on relations (p. 710 and its footnote 2) and ≼ on signatures (p. 715) are defined
-  as implication, but Lemma 1.3 and Definitions 1.4, 2.3 and 2.6 take the ≪- or ≼-maximal element
-  to be the most informative one, which is the least in the defined order. Read as printed, every
-  join and projection would be `#` and every composition `•`.
-* The remark under the projection table that `[R]^• = #` for every `R` (p. 715) fails at `≡`,
-  since every function preserves equality (`ProjectivitySignature.project_equiv`).
-* Three cells of the composition table (p. 716) are wrong. Anti-additive after anti-additive is
-  printed antitone but is monotone; anti-multiplicative after multiplicative is printed antitone
-  but is anti-multiplicative; anti-morphic after anti-multiplicative is printed additive but is
-  multiplicative. The first and third printed values fail for complementation, the second is
-  sound but not the most specific.
-* The witness of incompleteness (p. 719), that terms of an additive and of an anti-additive type
-  always stand in `|`, fails: the constant `⊤` function is additive, complementation is
-  anti-additive, and the two are not disjoint.
-* The conclusion of the worked example is stated on p. 720 with *giant squid*, but the
-  introduction (p. 708) and the derivation (pp. 721–722) end at *cephalopod*, as does
-  `derives_squid`.
-
 ## References
 
 * [icard-2012]
@@ -68,16 +48,17 @@ open NaturalLogic NaturalLogic.Relation NaturalLogic.ProjectivitySignature
 The join table (Lemma 1.5), the projection table (Lemma 2.4) and the composition table
 (Lemma 2.7) are the substrate's `join`, `project` and `compose`, computed from rules on single
 constraints and properties; the cells are certified sound in `Logic/Natural/Relation.lean` and
-`Logic/Natural/Projection.lean` and least in `Logic/Natural/Completeness.lean`, and agree with the
-printed ones except where the errata say. -/
+`Logic/Natural/Projection.lean` and least in `Logic/Natural/Completeness.lean`; the cells that
+differ from the printed ones are computed below. -/
 
 example : join .alternation .negation = .forward := rfl
 example : join .alternation .reverse = .alternation := rfl
 example : ∀ R : Relation, 1 * R = R ∧ R * 1 = R := by decide
 example : ∀ R : Relation, ⊤ * R = ⊤ ∧ R * ⊤ = ⊤ := by decide
-example : IsLeast {T : Relation | ∀ x y z : Finset (Fin 3),
-    Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
-    .alternation := Relation.isLeast_join .forward .negation
+example {α : Type*} [DistribLattice α] [BoundedOrder α] [Nontrivial α] :
+    IsLeast {T : Relation | ∀ x y z : α,
+      Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
+      .alternation := Relation.isLeast_join .forward .negation
 
 example : project .forward .antiAdd = .reverse := rfl
 example : project .negation .addMult = .negation := rfl
@@ -104,33 +85,32 @@ example {α : Type*} [BooleanAlgebra α] :
   ProjectivitySignature.compl_soundFor_antiAddMult.comp
     ProjectivitySignature.compl_soundFor_antiAddMult
 
-/-! ### Errata -/
+/-! ### Comparison with the printed tables -/
 
 /-- Read with the printed implication order, the ≪-maximal sound chaining of Definition 1.4 is
 always `#`. -/
-example (R S : Relation) : IsGreatest {T : Relation | ∀ x y z : Finset (Fin 3),
-    R.Holds x y → S.Holds y z → T.Holds x z} ⊤ :=
+example {α : Type*} [Lattice α] [BoundedOrder α] (R S : Relation) :
+    IsGreatest {T : Relation | ∀ x y z : α, R.Holds x y → S.Holds y z → T.Holds x z} ⊤ :=
   ⟨fun _ _ _ _ _ ↦ trivial, fun _ _ ↦ le_top⟩
 
-/-- The printed remark that `•` projects every relation to `#` overshoots at `≡`, since every
-function preserves equality. -/
+/-- `•` projects `≡` to `≡`, since every function preserves equality. -/
 example : project .equiv .all = .equiv := rfl
 
-/-- Anti-additive after anti-additive is monotone; the printed antitone fails for complementation,
-which applied twice is the identity. -/
+/-- Anti-additive after anti-additive is monotone and not antitone: complementation applied twice
+is the identity. -/
 example : (.antiAdd : ProjectivitySignature) * .antiAdd = .mono ∧
     ∃ f g : Bool → Bool, ProjectivitySignature.HoldsFor .antiAdd f ∧
       ProjectivitySignature.HoldsFor .antiAdd g ∧ ¬ ProjectivitySignature.HoldsFor .anti (f ∘ g) :=
   ⟨rfl, compl, compl, by decide⟩
 
-/-- Anti-multiplicative after multiplicative is anti-multiplicative, more specific than the
-printed antitone. -/
+/-- Anti-multiplicative after multiplicative is anti-multiplicative, more specific than
+antitone. -/
 example : (.antiMult : ProjectivitySignature) * .mult = .antiMult ∧
     (.antiMult : ProjectivitySignature) < .anti :=
   ⟨rfl, lt_of_le_of_ne (by decide) (by decide)⟩
 
-/-- Anti-morphic after anti-multiplicative is multiplicative; the printed additive fails for
-complementation after the constant `⊤`, which is the constant `⊥`. -/
+/-- Anti-morphic after anti-multiplicative is multiplicative and not additive: complementation
+after the constant `⊤` is the constant `⊥`. -/
 example : (.antiAddMult : ProjectivitySignature) * .antiMult = .mult ∧
     ∃ f g : Bool → Bool, ProjectivitySignature.HoldsFor .antiAddMult f ∧
       ProjectivitySignature.HoldsFor .antiMult g ∧

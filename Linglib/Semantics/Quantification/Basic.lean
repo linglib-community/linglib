@@ -32,8 +32,8 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 * `no_iff_disjoint`, `no_iff_not_some`: *no* is disjointness, the complement of *some*.
 * `every_univ_iff`, `some_univ_iff`, `no_univ_iff`: with the whole universe as restrictor, the
   three hold of the universe, of the nonempty sets and of the empty set.
-* `square_relations`: with a non-empty restrictor the four stand in all six relations of the
-  square, so its cells (`Aristotelian.Square.cell`) divide the scopes into those covering all of
+* `squareRelations_square`: with a non-empty restrictor the four stand in all six relations of the
+  square, so its vertices (`Aristotelian.Square.triangle`) divide the scopes into those covering all of
   the restrictor, some but not all of it, and none of it.
 
 ## References
@@ -76,13 +76,17 @@ theorem the_iff : the A B ↔ (∃! x, x ∈ A) ∧ A ⊆ B := by
 
 theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota A, x ∈ B :=
   exists_congr fun x ↦ and_congr_left' <|
-    Set.ext_iff.symm.trans <| eq_comm.trans (iota_isPartialInv x A).symm
+    Set.ext_iff.symm.trans mem_iota_iff_eq_singleton.symm
 
-/-- *The `A`* is the lift of `iota A` where `iota A` is defined, and the empty quantifier
-elsewhere ([partee-1987], §3.2). -/
-theorem the_eq_elim (A : Set α) : the A = (iota A).elim ⊥ individual :=
-  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by
-    cases iota A <;> simp [individual]
+/-- *The `A`* is the lift of `iota A` where `iota A` is defined ([partee-1987], §3.2). -/
+theorem the_eq_individual {a : α} (h : a ∈ iota A) : the A = individual a :=
+  funext fun B ↦ propext <| the_iff_exists_mem_iota.trans
+    ⟨fun ⟨_, hx, hB⟩ ↦ Part.mem_unique h hx ▸ hB, fun hB ↦ ⟨a, h, hB⟩⟩
+
+/-- *The `A`* is the empty quantifier where `iota A` is undefined ([partee-1987], §3.2). -/
+theorem the_eq_bot (h : ¬ (iota A).Dom) : the A = ⊥ :=
+  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans
+    ⟨fun ⟨_, hx, _⟩ ↦ h (Part.dom_iff_mem.2 ⟨_, hx⟩), False.elim⟩
 
 theorem every_iff_le : every A B ↔ A ≤ B := .rfl
 
@@ -293,7 +297,7 @@ At a restrictor `A`, the denotations `every A`, `no A`, `Det.some A` and `every�
 of a square in the Boolean algebra `Quantifier α`. Outer negation is the Boolean complement, so the
 diagonals are contradictory at every restrictor. Contrariety, and with it the subalternations
 and subcontrariety, needs existential import: at an empty restrictor `every` and `no` both hold
-vacuously (`a_e_contrary`), and `square_relations` assumes a nonempty one. -/
+vacuously (`a_e_contrary`), and `squareRelations_square` assumes a nonempty one. -/
 
 /-- At a restrictor `A` the four determiners form a square of opposition. -/
 def square (A : Set α) : Aristotelian.Square (Quantifier α) where
@@ -310,13 +314,13 @@ theorem a_e_contrary : every A B → no A B → A = ∅ :=
   fun hA hE ↦ Set.eq_empty_of_forall_notMem fun _ hx ↦ hE hx (hA hx)
 
 /-- With a nonempty restrictor the four determiners stand in all six relations of the square. -/
-theorem square_relations (hA : A.Nonempty) : Aristotelian.SquareRelations (square A) :=
+theorem squareRelations_square (hA : A.Nonempty) : Aristotelian.SquareRelations (square A) :=
   .of_disjoint (funext fun _ ↦ propext <| iff_not_comm.mp no_iff_not_some) rfl <|
     Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hE, hN⟩ ↦
       hA.ne_empty (a_e_contrary hE hN)
 
 theorem subalternation_a_i (hA : A.Nonempty) : every A B → Det.some A B :=
-  (square_relations hA).subalternAI B
+  (squareRelations_square hA).subalternAI B
 
 /-! ### Left monotonicity and smoothness ([peters-westerstahl-2006]) -/
 
@@ -352,16 +356,16 @@ conjunction of monotone quantifiers exactly when it holds at every scope between
 holds, Thijsse's observation reported by [van-benthem-1984]. -/
 theorem satisfiesUniversals_iff {d : Det α} :
     d.SatisfiesUniversals ↔ d.Conservative ∧ d.RightContinuous := by
-  refine and_congr_right fun _ ↦ ⟨fun h A B B₁ B₂ h₁ h₂ hq₁ hq₂ ↦ ?_, fun h A ↦ ?_⟩
+  refine and_congr_right fun _ ↦ ⟨fun h A ↦ ⟨fun B₁ hq₁ B₂ hq₂ B ⟨h₁, h₂⟩ ↦ ?_⟩, fun h A ↦ ?_⟩
   · obtain ⟨Q₁, Q₂, hm₁, hm₂, he⟩ := h A
-    simp only [he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
+    simp only [Set.mem_ofPred_eq, he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
     exact ⟨hm₁.elim (fun hm ↦ hm h₁ hq₁.1) fun hm ↦ hm h₂ hq₂.1,
       hm₂.elim (fun hm ↦ hm h₁ hq₁.2) fun hm ↦ hm h₂ hq₂.2⟩
   · refine ⟨fun B ↦ ∃ B' ≤ B, d A B', fun B ↦ ∃ B', B ≤ B' ∧ d A B',
       .inl fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hB'.trans hBC, hq⟩,
       .inr fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hBC.trans hB', hq⟩, funext fun B ↦ propext ?_⟩
     exact ⟨fun hq ↦ ⟨⟨B, le_rfl, hq⟩, B, le_rfl, hq⟩,
-      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ h A B B₁ B₂ h₁ h₂ hq₁ hq₂⟩
+      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ (h A).out' hq₁ hq₂ ⟨h₁, h₂⟩⟩
 
 theorem satisfiesUniversals_some : (Det.some : Det α).SatisfiesUniversals :=
   satisfiesUniversals_iff.2 ⟨conservative_some, scopeMonotone_some.rightContinuous⟩

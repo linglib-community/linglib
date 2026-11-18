@@ -24,7 +24,7 @@ def katabt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L S"), ("stress", "final"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15")] }
 
@@ -37,7 +37,7 @@ def hajjaan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H S"), ("stress", "final"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77")] }
 
@@ -50,7 +50,7 @@ def gatoo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H"), ("stress", "final"), ("register", "colloquial Cairene"), ("source", "Mitchell 1975, 81")] }
 
@@ -63,7 +63,7 @@ def beetak : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15")] }
 
@@ -76,7 +76,7 @@ def katabta : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 78")] }
 
@@ -89,7 +89,7 @@ def mudarris : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "McCarthy 1979a, 446")] }
 
@@ -102,7 +102,7 @@ def haadaani : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H H L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77")] }
 
@@ -115,7 +115,7 @@ def qattaala : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "even from the preceding heavy")] }
 
@@ -128,7 +128,7 @@ def mudarrisit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "McCarthy 1979a, 446"), ("parity", "even from the preceding heavy")] }
 
@@ -141,7 +141,7 @@ def Padwiyatuhu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "even from the preceding heavy")] }
 
@@ -154,7 +154,7 @@ def fihim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Kenstowicz 1980, 42"), ("parity", "even from the word beginning")] }
 
@@ -167,7 +167,7 @@ def sajaratun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 78"), ("parity", "even from the word beginning")] }
 
@@ -180,7 +180,7 @@ def katabitu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15"), ("parity", "even from the word beginning")] }
 
@@ -193,7 +193,7 @@ def sajaratuhuma : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "even from the word beginning")] }
 
@@ -206,7 +206,7 @@ def Pinkasara : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "odd from the preceding heavy")] }
 
@@ -219,7 +219,7 @@ def Padwiyatuhuma : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "odd from the preceding heavy")] }
 
@@ -232,7 +232,7 @@ def kataba : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "odd from the word beginning")] }
 
@@ -245,7 +245,7 @@ def sajaratuhu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 80"), ("parity", "odd from the word beginning")] }
 

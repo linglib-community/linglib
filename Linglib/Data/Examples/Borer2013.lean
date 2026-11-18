@@ -24,7 +24,7 @@ def ex_118a_dance : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "dance")] }
 
@@ -37,7 +37,7 @@ def ex_118a_jump : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "jump")] }
 
@@ -50,7 +50,7 @@ def ex_118a_walk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "walk")] }
 
@@ -63,7 +63,7 @@ def ex_118a_table : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "table")] }
 
@@ -76,7 +76,7 @@ def ex_118a_chair : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "chair")] }
 
@@ -89,7 +89,7 @@ def ex_118a_wardrobe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "wardrobe")] }
 
@@ -102,7 +102,7 @@ def ex_118a_question : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "question")] }
 
@@ -115,7 +115,7 @@ def ex_118b_dance : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "dance")] }
 
@@ -128,7 +128,7 @@ def ex_118b_jump : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "jump")] }
 
@@ -141,7 +141,7 @@ def ex_118b_walk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "walk")] }
 
@@ -154,7 +154,7 @@ def ex_118b_table : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "table")] }
 
@@ -167,7 +167,7 @@ def ex_118b_chair : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "chair")] }
 
@@ -180,7 +180,7 @@ def ex_118b_wardrobe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "wardrobe")] }
 
@@ -193,7 +193,7 @@ def ex_118b_question : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "question")] }
 
@@ -206,7 +206,7 @@ def ex_118c_dance : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "dance")] }
 
@@ -219,7 +219,7 @@ def ex_118c_jump : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "jump")] }
 
@@ -232,7 +232,7 @@ def ex_118c_walk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "walk")] }
 
@@ -245,7 +245,7 @@ def ex_118c_table : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "table")] }
 
@@ -258,7 +258,7 @@ def ex_118c_chair : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "chair")] }
 
@@ -271,7 +271,7 @@ def ex_118c_wardrobe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "wardrobe")] }
 
@@ -284,7 +284,7 @@ def ex_118c_question : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "question")] }
 
@@ -297,7 +297,7 @@ def ex_119a_mean : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "mean")] }
 
@@ -310,7 +310,7 @@ def ex_119a_green : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "green")] }
 
@@ -323,7 +323,7 @@ def ex_119a_fat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "fat")] }
 
@@ -336,7 +336,7 @@ def ex_119a_tall : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "tall")] }
 
@@ -349,7 +349,7 @@ def ex_119a_smart : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "smart")] }
 
@@ -362,7 +362,7 @@ def ex_119a_wide : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "wide")] }
 
@@ -375,7 +375,7 @@ def ex_119a_big : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "nominal"), ("item", "big")] }
 
@@ -388,7 +388,7 @@ def ex_119b_mean : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "mean")] }
 
@@ -401,7 +401,7 @@ def ex_119b_green : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "green")] }
 
@@ -414,7 +414,7 @@ def ex_119b_fat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "fat")] }
 
@@ -427,7 +427,7 @@ def ex_119b_tall : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "tall")] }
 
@@ -440,7 +440,7 @@ def ex_119b_smart : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "smart")] }
 
@@ -453,7 +453,7 @@ def ex_119b_wide : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "wide")] }
 
@@ -466,7 +466,7 @@ def ex_119b_big : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "big")] }
 
@@ -479,7 +479,7 @@ def ex_119c_mean : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "mean")] }
 
@@ -492,7 +492,7 @@ def ex_119c_green : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "green")] }
 
@@ -505,7 +505,7 @@ def ex_119c_fat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "fat")] }
 
@@ -518,7 +518,7 @@ def ex_119c_tall : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "tall")] }
 
@@ -531,7 +531,7 @@ def ex_119c_smart : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "smart")] }
 
@@ -544,7 +544,7 @@ def ex_119c_wide : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "wide")] }
 
@@ -557,7 +557,7 @@ def ex_119c_big : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "adjectival"), ("item", "big")] }
 
@@ -570,7 +570,7 @@ def fn39_thin : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "thin")] }
 
@@ -583,7 +583,7 @@ def fn39_yellow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("frame", "verbal"), ("item", "yellow")] }
 
@@ -596,7 +596,7 @@ def ex_68_instantiated_pst : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "instant"), ("h1", "CV[N]"), ("h1exp", "-ate"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -609,7 +609,7 @@ def ex_68_instantiated_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "instant"), ("h1", "CV[N]"), ("h1exp", "-ate"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -622,7 +622,7 @@ def ex_68_acidified_pst : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "acid"), ("h1", "CV[N]"), ("h1exp", "-ify"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -635,7 +635,7 @@ def ex_68_acidified_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "acid"), ("h1", "CV[N]"), ("h1exp", "-ify"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -648,7 +648,7 @@ def ex_68_harmonized_pst : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "harmon"), ("h1", "CV[N]"), ("h1exp", "-ize"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -661,7 +661,7 @@ def ex_68_harmonized_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "harmon"), ("h1", "CV[N]"), ("h1exp", "-ize"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "1"), ("choice", "default")] }
 
@@ -674,7 +674,7 @@ def ex_68_fattened_pst : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "fat"), ("h1", "CV[A]"), ("h1exp", "-en"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -687,7 +687,7 @@ def ex_68_fattened_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "fat"), ("h1", "CV[A]"), ("h1exp", "-en"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -700,7 +700,7 @@ def ex_68_encased_pst : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "case"), ("h1", "CV[A/N]"), ("h1exp", "en-"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -713,7 +713,7 @@ def ex_68_encased_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "case"), ("h1", "CV[A/N]"), ("h1exp", "en-"), ("h2", "T-PST"), ("h2exp", "-ed"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -726,7 +726,7 @@ def ex_69_formations_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "form"), ("h1", "CN[V]"), ("h1exp", "-ation"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -739,7 +739,7 @@ def ex_69_formations_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "form"), ("h1", "CN[V]"), ("h1exp", "-ation"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "1"), ("choice", "default")] }
 
@@ -752,7 +752,7 @@ def ex_69_deferments_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "defer"), ("h1", "CN[V]"), ("h1exp", "-ment"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -765,7 +765,7 @@ def ex_69_deferments_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "defer"), ("h1", "CN[V]"), ("h1exp", "-ment"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -778,7 +778,7 @@ def ex_69_sisterhoods_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "sister"), ("h1", "CN[N]"), ("h1exp", "-hood"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -791,7 +791,7 @@ def ex_69_referrals_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "refer"), ("h1", "CN[V]"), ("h1exp", "-al"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -804,7 +804,7 @@ def ex_69_referrals_functor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "refer"), ("h1", "CN[V]"), ("h1exp", "-al"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -817,7 +817,7 @@ def ex_69_abilities_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "able"), ("h1", "CN[A]"), ("h1exp", "-ity"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -830,7 +830,7 @@ def ex_69_weaknesses_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "weak"), ("h1", "CN[A]"), ("h1exp", "-ness"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -843,7 +843,7 @@ def ex_69_readings_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "read"), ("h1", "ING"), ("h1exp", "-ing"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -856,7 +856,7 @@ def ex_69_fellowships_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "fellow"), ("h1", "SHIP"), ("h1exp", "-ship"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -869,7 +869,7 @@ def ex_69_writers_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "write"), ("h1", "ER"), ("h1exp", "-er"), ("h2", "CL-PL"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -882,7 +882,7 @@ def ex_126_kindest : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "kind"), ("h1", "A"), ("h1exp", ""), ("h2", "SUPL"), ("h2exp", "-est"), ("target", "2"), ("choice", "default")] }
 
@@ -895,7 +895,7 @@ def ex_126_greenest : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "green"), ("h1", "A"), ("h1exp", ""), ("h2", "SUPL"), ("h2exp", "-est"), ("target", "2"), ("choice", "default")] }
 
@@ -908,7 +908,7 @@ def ex_126_fattest : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "fat"), ("h1", "A"), ("h1exp", ""), ("h2", "SUPL"), ("h2exp", "-est"), ("target", "2"), ("choice", "default")] }
 
@@ -921,7 +921,7 @@ def ex_126_smarter : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "smart"), ("h1", "A"), ("h1exp", ""), ("h2", "CMPR"), ("h2exp", "-er"), ("target", "2"), ("choice", "default")] }
 
@@ -934,7 +934,7 @@ def ex_126_brighter : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "bright"), ("h1", "A"), ("h1exp", ""), ("h2", "CMPR"), ("h2exp", "-er"), ("target", "2"), ("choice", "default")] }
 
@@ -947,7 +947,7 @@ def ex_126_sharper : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "sharp"), ("h1", "A"), ("h1exp", ""), ("h2", "CMPR"), ("h2exp", "-er"), ("target", "2"), ("choice", "default")] }
 
@@ -960,7 +960,7 @@ def ex_131a_clarify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "clar"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -973,7 +973,7 @@ def ex_131a_humidify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "humid"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -986,7 +986,7 @@ def ex_131a_uglify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "ugl"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -999,7 +999,7 @@ def ex_131a_simplify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "simpl"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1012,7 +1012,7 @@ def ex_131a_falsify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "fals"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1025,7 +1025,7 @@ def ex_131a_purify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "pur"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1038,7 +1038,7 @@ def ex_131a_densify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "dens"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1051,7 +1051,7 @@ def ex_131a_frenchify : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "french"), ("h1", "CV[A]"), ("h1exp", "-ify"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1064,7 +1064,7 @@ def ex_131b_enable : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "able"), ("h1", "CV[A]"), ("h1exp", "en-"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1077,7 +1077,7 @@ def ex_131b_endear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "dear"), ("h1", "CV[A]"), ("h1exp", "en-"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1090,7 +1090,7 @@ def ex_131b_enlarge : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "large"), ("h1", "CV[A]"), ("h1exp", "en-"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1103,7 +1103,7 @@ def ex_131b_enrich : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "rich"), ("h1", "CV[A]"), ("h1exp", "en-"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1116,7 +1116,7 @@ def ex_131b_ensure : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "xsm"), ("root", "sure"), ("h1", "CV[A]"), ("h1exp", "en-"), ("target", "1"), ("choice", "rootSelected")] }
 
@@ -1129,7 +1129,7 @@ def ex_71a_instantiated : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "INSTANT"), ("h1", "v"), ("h1exp", "-ate"), ("h2", "tense"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -1142,7 +1142,7 @@ def ex_71a_acidified : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "ACID"), ("h1", "v"), ("h1exp", "-ify"), ("h2", "tense"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -1155,7 +1155,7 @@ def ex_71a_fattened : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "FAT"), ("h1", "v"), ("h1exp", "-en"), ("h2", "tense"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -1168,7 +1168,7 @@ def ex_71b_ran : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "RUN"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", ""), ("target", "2"), ("choice", "rootSelected")] }
 
@@ -1181,7 +1181,7 @@ def ex_71b_bent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "BEND"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", "-t"), ("target", "2"), ("choice", "rootSelected")] }
 
@@ -1194,7 +1194,7 @@ def ex_71b_walked : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "WALK"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", "-ed"), ("target", "2"), ("choice", "default")] }
 
@@ -1207,7 +1207,7 @@ def ex_72a_formations : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "FORM"), ("h1", "n"), ("h1exp", "-ation"), ("h2", "number"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -1220,7 +1220,7 @@ def ex_72a_deferments : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "DEFER"), ("h1", "n"), ("h1exp", "-ment"), ("h2", "number"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -1233,7 +1233,7 @@ def ex_72a_sisterhoods : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "SISTER"), ("h1", "n"), ("h1exp", "-hood"), ("h2", "number"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 
@@ -1246,7 +1246,7 @@ def ex_72b_geese : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "GOOSE"), ("h1", "n"), ("h1exp", ""), ("h2", "number"), ("h2exp", ""), ("target", "2"), ("choice", "rootSelected")] }
 
@@ -1259,7 +1259,7 @@ def ex_72b_oxen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "OX"), ("h1", "n"), ("h1exp", ""), ("h2", "number"), ("h2exp", "-en"), ("target", "2"), ("choice", "rootSelected")] }
 
@@ -1272,7 +1272,7 @@ def ex_72b_books : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("representation", "dm"), ("root", "BOOK"), ("h1", "n"), ("h1exp", ""), ("h2", "number"), ("h2exp", "-s"), ("target", "2"), ("choice", "default")] }
 

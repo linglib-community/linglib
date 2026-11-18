@@ -24,7 +24,7 @@ def fear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "fearType"), ("verbType", "fear"), ("subject", "experiencer")] }
 
@@ -37,7 +37,7 @@ def frighten : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("subject", "stimulus")] }
 
@@ -50,7 +50,7 @@ def episode : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The bats swooped out of the cave and Agnes feared them.", .ungrammatical)]
+    contrasts := [("The bats swooped out of the cave and Agnes feared them.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
@@ -63,7 +63,7 @@ def stageLevel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Agnes feared Bartholomew yesterday in the kitchen.", .ungrammatical)]
+    contrasts := [("Agnes feared Bartholomew yesterday in the kitchen.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
@@ -76,7 +76,7 @@ def exp1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("phenomenon", "durationRating"), ("experiment", "1")] }
 
@@ -89,7 +89,7 @@ def exp2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.1"), ("phenomenon", "causationJudgment"), ("experiment", "2")] }
 
@@ -100,9 +100,11 @@ def ex_2a : Datum :=
     language := "nucl1643"
     primaryText := "Taro-wa koomori-o kowagat-ta."
     glossedTokens := [("Taro-wa", "Taro-TOPIC"), ("koomori-o", "bat-ACC"), ("kowagat-ta", "fear-PAST")]
+    glossedWords := [⟨['T', 'a', 'r', 'o', '-', 'w', 'a'], ['T', 'a', 'r', 'o', '-', 'T', 'O', 'P', 'I', 'C'], [⟨['T', 'a', 'r', 'o'], ['T', 'a', 'r', 'o'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P', 'I', 'C'], some '-'⟩]⟩, ⟨['k', 'o', 'o', 'm', 'o', 'r', 'i', '-', 'o'], ['b', 'a', 't', '-', 'A', 'C', 'C'], [⟨['k', 'o', 'o', 'm', 'o', 'r', 'i'], ['b', 'a', 't'], none⟩, ⟨['o'], ['A', 'C', 'C'], some '-'⟩]⟩, ⟨['k', 'o', 'w', 'a', 'g', 'a', 't', '-', 't', 'a'], ['f', 'e', 'a', 'r', '-', 'P', 'A', 'S', 'T'], [⟨['k', 'o', 'w', 'a', 'g', 'a', 't'], ['f', 'e', 'a', 'r'], none⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "fearType"), ("verbType", "fear")] }
 
@@ -113,9 +115,11 @@ def ex_2b : Datum :=
     language := "nucl1643"
     primaryText := "Koomori-wa Taro-o kowagar-ase-ta."
     glossedTokens := [("Koomori-wa", "bat-TOPIC"), ("Taro-o", "Taro-ACC"), ("kowagar-ase-ta", "fear-CAUS-PAST")]
+    glossedWords := [⟨['K', 'o', 'o', 'm', 'o', 'r', 'i', '-', 'w', 'a'], ['b', 'a', 't', '-', 'T', 'O', 'P', 'I', 'C'], [⟨['K', 'o', 'o', 'm', 'o', 'r', 'i'], ['b', 'a', 't'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P', 'I', 'C'], some '-'⟩]⟩, ⟨['T', 'a', 'r', 'o', '-', 'o'], ['T', 'a', 'r', 'o', '-', 'A', 'C', 'C'], [⟨['T', 'a', 'r', 'o'], ['T', 'a', 'r', 'o'], none⟩, ⟨['o'], ['A', 'C', 'C'], some '-'⟩]⟩, ⟨['k', 'o', 'w', 'a', 'g', 'a', 'r', '-', 'a', 's', 'e', '-', 't', 'a'], ['f', 'e', 'a', 'r', '-', 'C', 'A', 'U', 'S', '-', 'P', 'A', 'S', 'T'], [⟨['k', 'o', 'w', 'a', 'g', 'a', 'r'], ['f', 'e', 'a', 'r'], none⟩, ⟨['a', 's', 'e'], ['C', 'A', 'U', 'S'], some '-'⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("causativeAffix", "sase")] }
 
@@ -129,7 +133,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "fear")] }
 
@@ -143,7 +147,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "frighten")] }
 
@@ -157,7 +161,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "attitude")] }
 
@@ -171,7 +175,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "episode")] }
 
@@ -184,7 +188,7 @@ def exp9q : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9")] }
 
@@ -197,7 +201,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.3"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 

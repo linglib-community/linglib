@@ -12,7 +12,7 @@
     "translation": "Ravi knows whether Anu will go or not.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -34,7 +34,7 @@
     "translation": "Did Mary buy a book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -57,7 +57,7 @@
     "translation": "Tanaka knows whether Mary bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
@@ -78,7 +78,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -140,7 +140,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -198,7 +198,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "The question is, [it's raining↑].", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -240,7 +240,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -260,7 +260,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "She said, \"It's raining↓\"", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -282,7 +282,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"],
@@ -306,7 +306,7 @@
     "translation": "Tanaka knows what Mary bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -330,7 +330,7 @@
     "translation": "Intended: Ravi knows whether Anu will go.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "ravi ja:nta: hai ki anu ja:egi:.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -356,7 +356,7 @@
     "translation": "The teacher asked Anu if she will drink tea.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -381,7 +381,7 @@
     "translation": "The question is whether the new arrangement will prove effective.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -406,7 +406,7 @@
     "translation": "Whether she will go or not depends on her mood.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -426,7 +426,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -446,7 +446,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -469,7 +469,7 @@
     "translation": "What is your name, again?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -492,7 +492,7 @@
     "translation": "Intended: [I used to know but now I've forgotten, so] I want to know your name, please remind me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.3"],
@@ -512,7 +512,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1.1"],
@@ -532,7 +532,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1.1"],
@@ -552,7 +552,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1.1"],
@@ -572,7 +572,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Everybody wants to know [did I succeed in buying chocolate for Winifred↑].", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -597,7 +597,7 @@
     "translation": "Anu wants to know whether you'll drink tea.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -620,7 +620,7 @@
     "translation": "Intended: Anu knows whether you'll drink tea.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -641,7 +641,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -662,7 +662,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -684,7 +684,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -710,7 +710,7 @@
     "translation": "Nobody knows, did Tito meet with Stalin?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -735,7 +735,7 @@
     "translation": "Does anyone know, did Tito meet with Stalin?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -756,7 +756,7 @@
     "translation": "",
     "context": "Speaker A is writing evaluation letters and asks a colleague (44a).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -776,7 +776,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mary wants to know [did Sue leave early↑].", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -798,7 +798,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"],
@@ -818,7 +818,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"],
@@ -838,7 +838,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"],
@@ -859,7 +859,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"],
@@ -881,7 +881,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I have forgotten [was Henry a communist↑].", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -904,7 +904,7 @@
     "translation": "",
     "context": "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neutral", "judgment": "acceptable"},
       {"name": "biased", "judgment": "acceptable"}
@@ -927,7 +927,7 @@
     "translation": "",
     "context": "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neutral", "judgment": "unacceptable"},
       {"name": "biased", "judgment": "acceptable"}
@@ -952,7 +952,7 @@
     "translation": "Do you drink wine? / You drink wine?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neutral", "judgment": "acceptable"},
       {"name": "biased", "judgment": "acceptable"}
@@ -977,7 +977,7 @@
     "translation": "Do you drink wine? / You drink wine?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neutral", "judgment": "acceptable"},
       {"name": "biased", "judgment": "acceptable"}
@@ -1000,7 +1000,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1020,7 +1020,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1040,7 +1040,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1060,7 +1060,7 @@
     "translation": "Do you drink wine (or not)?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1080,7 +1080,7 @@
     "translation": "The question is, [do you drink wine (or not)]?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1100,7 +1100,7 @@
     "translation": "[Whether she will drink wine (or not)] depends on whether she has to work tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1122,7 +1122,7 @@
     "translation": "Will Anu go (or not)?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1145,7 +1145,7 @@
     "translation": "Ravi wants to know, will Anu go (or not)?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.4"],
@@ -1168,7 +1168,7 @@
     "translation": "Intended: Ravi knows whether Anu will go.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "ravi ja:nta: hai [ki anu ja:egi: ya: nahĩ:]", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1190,7 +1190,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"],
@@ -1210,7 +1210,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mueller wanted to know [did Russia interfere in the 2016 election↑].", "judgment": "acceptable"}
     ],
     "readings": [],

@@ -24,7 +24,7 @@ def ch1_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
@@ -37,7 +37,7 @@ def ch1_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
@@ -50,7 +50,7 @@ def ch1_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
@@ -63,7 +63,7 @@ def ch1_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
@@ -76,7 +76,7 @@ def ch1_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "lower"), ("hypothetical", "yes")] }
 
@@ -89,7 +89,7 @@ def ch1_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "higher"), ("hypothetical", "yes")] }
 
@@ -102,7 +102,7 @@ def ch1_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
@@ -115,7 +115,7 @@ def ch1_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
@@ -128,7 +128,7 @@ def ch2_19 : Datum :=
     glossedTokens := []
     context := "A new tax was introduced to discourage rich people from collecting cars. The tax rate per car increases if someone owns 10 or more cars, and increases yet again for people who own 100 or more. Ann is looking at the tax paperwork of someone who claims to own 98 cars."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsExact"), ("actualValue", "98")] }
 
@@ -141,7 +141,7 @@ def ch2_20 : Datum :=
     glossedTokens := []
     context := "Ann just read a newspaper report on how insanely rich Sam Bankman-Fried is. Among other things, the report claims that he owns 98 Teslas for his personal use."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsInexact"), ("actualValue", "98")] }
 
@@ -155,7 +155,7 @@ def ch2_164a : Datum :=
     glossedTokens := []
     context := "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")] }
 
@@ -168,7 +168,7 @@ def ch2_164b : Datum :=
     glossedTokens := []
     context := "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")] }
 
@@ -181,7 +181,7 @@ def ch6_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "tens")] }
 
@@ -194,7 +194,7 @@ def ch6_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "units")] }
 
@@ -207,7 +207,7 @@ def ch6_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "quarterHours")] }
 
@@ -220,7 +220,7 @@ def ch6_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "minutes")] }
 
@@ -233,7 +233,7 @@ def ch7_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bert was there.", .acceptable)]
+    contrasts := [("Bert was there.", .acceptable)]
     readings := []
     paperFeatures := [("chapter", "7"), ("phenomenon", "conjunctionMaximality")] }
 

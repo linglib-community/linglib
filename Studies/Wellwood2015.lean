@@ -6,7 +6,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Data.Examples.Wellwood2015
 public import Studies.Bresnan1973

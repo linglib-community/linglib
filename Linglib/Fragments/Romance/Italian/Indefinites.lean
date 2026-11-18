@@ -34,17 +34,23 @@ def chiunque : IndefinitePronoun := { form := "chiunque", ontology := .person }
 
 /-- The *qualche*-series. -/
 def qualcheSeries : IndefinitePronoun.Series :=
-  ⟨"qualche-", {qualcuno, ⟨{ form := "qualche cosa" }, .thing⟩, ⟨{ form := "qualcosa" }, .thing⟩,
-    ⟨{ form := "in qualche luogo" }, .place⟩, ⟨{ form := "qualche volta" }, .time⟩,
-    ⟨{ form := "in qualche modo" }, .manner⟩, ⟨{ form := "qualche" }, .determiner⟩}⟩
+  ⟨"qualche-", {qualcuno, { form := "qualche cosa", ontology := .thing },
+    { form := "qualcosa", ontology := .thing },
+    { form := "in qualche luogo", ontology := .place },
+    { form := "qualche volta", ontology := .time },
+    { form := "in qualche modo", ontology := .manner },
+    { form := "qualche", ontology := .determiner }}⟩
 
 /-- The *nessuno*-series. -/
 def nessunoSeries : IndefinitePronoun.Series :=
-  ⟨"nessuno", {nessuno, ⟨{ form := "niente" }, .thing⟩, ⟨{ form := "nulla" }, .thing⟩,
-    ⟨{ form := "in nessun luogo" }, .place⟩, ⟨{ form := "nessuno" }, .determiner⟩}⟩
+  ⟨"nessuno", {nessuno, { form := "niente", ontology := .thing },
+    { form := "nulla", ontology := .thing },
+    { form := "in nessun luogo", ontology := .place },
+    { form := "nessuno", ontology := .determiner }}⟩
 
 /-- The *-unque* series, which has no member for a thing, a time or a manner. -/
 def unqueSeries : IndefinitePronoun.Series :=
-  ⟨"-unque", {chiunque, ⟨{ form := "dovunque" }, .place⟩, ⟨{ form := "qualunque" }, .determiner⟩}⟩
+  ⟨"-unque", {chiunque, { form := "dovunque", ontology := .place },
+    { form := "qualunque", ontology := .determiner }}⟩
 
 end Italian.Indefinites

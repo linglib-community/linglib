@@ -72,6 +72,9 @@ variable {Srt : Type u} [PartialOrder Srt]
 /-- A species is a maximally specific sort, a minimal element of the sort hierarchy. -/
 abbrev IsSpecies (σ : Srt) : Prop := IsMin σ
 
+instance [Fintype Srt] [DecidableLE Srt] (σ : Srt) : Decidable (IsSpecies σ) :=
+  inferInstanceAs (Decidable (∀ b, b ≤ σ → σ ≤ b))
+
 /-! ### Signatures from feature declarations -/
 
 section Decl

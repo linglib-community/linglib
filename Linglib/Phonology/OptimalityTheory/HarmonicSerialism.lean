@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Dynamics.FixedPoints.Basic
 
@@ -181,10 +181,10 @@ variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 
 /-- The optimal set of one GEN/EVAL round: the winners of the tableau of `gen c` under the
 durable ranking. -/
-def stepOptimum : Finset C := (Tableau.ofList (D.gen c) D.ranking).optimal
+def stepOptimum : Finset C := Constraint.eval (D.gen c) D.ranking
 
 @[simp] theorem stepOptimum_of_empty_gen (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
-  simp [stepOptimum, Tableau.optimal, h]
+  exact Finset.subset_empty.1 (h ▸ Constraint.eval_subset)
 
 /-! ### Convergence -/
 
@@ -203,8 +203,8 @@ with no intermediate combinator. Simp-normalized toward `Converged`. -/
   simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
 /-- GEN-restriction to the faithful candidate forces convergence. -/
-theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c :=
-  Tableau.optimal_singleton h
+theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
+  rw [Converged, stepOptimum, h, Constraint.eval_singleton]
 
 /-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied
 `pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,

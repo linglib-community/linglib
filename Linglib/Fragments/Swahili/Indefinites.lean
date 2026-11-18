@@ -31,15 +31,18 @@ def mtuYeYote : IndefinitePronoun := { mtu with form := mtu.form ++ " ye yote" }
 
 /-- The generic nouns used as indefinites. -/
 def genericNounSeries : IndefinitePronoun.Series :=
-  ⟨"generic noun", {mtu, ⟨{ form := "neno" }, .thing⟩, ⟨{ form := "kitu" }, .thing⟩,
-    ⟨{ form := "mahali" }, .place⟩, ⟨{ form := "wakati" }, .time⟩,
-    ⟨{ form := "-moja" }, .determiner⟩}⟩
+  ⟨"generic noun", {mtu, { form := "neno", ontology := .thing },
+    { form := "kitu", ontology := .thing },
+    { form := "mahali", ontology := .place }, { form := "wakati", ontology := .time },
+    { form := "-moja", ontology := .determiner }}⟩
 
 /-- The *CL-o CL-ote* series. -/
 def oOteSeries : IndefinitePronoun.Series :=
-  ⟨"CL-o CL-ote", {mtuYeYote, ⟨{ form := "kitu cho chote" }, .thing⟩,
-    ⟨{ form := "neno lo lote" }, .thing⟩, ⟨{ form := "mahali po pote" }, .place⟩,
-    ⟨{ form := "wakati wo wote" }, .time⟩, ⟨{ form := "kwa njia yo yote" }, .manner⟩,
-    ⟨{ form := "vyo vyote" }, .manner⟩}⟩
+  ⟨"CL-o CL-ote", {mtuYeYote, { form := "kitu cho chote", ontology := .thing },
+    { form := "neno lo lote", ontology := .thing },
+    { form := "mahali po pote", ontology := .place },
+    { form := "wakati wo wote", ontology := .time },
+    { form := "kwa njia yo yote", ontology := .manner },
+    { form := "vyo vyote", ontology := .manner }}⟩
 
 end Swahili.Indefinites

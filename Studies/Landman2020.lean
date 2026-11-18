@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Closure
-public import Mathlib.Order.SupIndep
+public import Linglib.Semantics.Mereology.Count
 
 /-!
 # Landman (2020): Iceberg Semantics for Mass Nouns and Count Nouns
@@ -20,7 +20,6 @@ from the base of its head, so modification, pluralization and numerals preserve 
 * `sumClosure`: the closure `*X` of a set under arbitrary sums, as a closure operator.
 * `Generates X Y`: `X` generates `Y` under sum.
 * `atomsIn Z`, `Atomistic Z`: the `Z`-atoms and atomisticity relative to `Z`.
-* `card Z x`: the number of `Z`-parts of `x`.
 * `ISet`, with `ISet.IsCount`, `ISet.IsMass`, `ISet.IsNeat` and `ISet.IsMess`.
 * `ISet.restrict`: the Head principle; `ISet.sep`, `ISet.plur` and `ISet.number` are its instances
   for modifiers, the plural and numerals.
@@ -29,9 +28,10 @@ from the base of its head, so modification, pluralization and numerals preserve 
 ## Implementation notes
 
 Landman works in a complete Boolean algebra. The definitions need only a complete lattice and the
-counting results only the frame law, so they are stated at those levels. `card` is total; its
-presupposition that the base is disjoint is a hypothesis of the theorems about it, as is `⊥ ∉ Z`,
-without which `⊥` would count as a base element. The pottery and ironware models take items to be
+counting results only the frame law, so they are stated at those levels. Cardinality relative to
+a base is the substrate's `Mereology.count`, which is total; its presupposition that the base is
+disjoint is a hypothesis of the theorems about it, as is `⊥ ∉ Z`, without which `⊥` would count
+as a base element. The pottery and ironware models take items to be
 singletons of a power set.
 
 ## TODO
@@ -49,7 +49,7 @@ disjointness) and the i-objects that interpret definite DPs are not formalized.
 
 namespace Landman2020
 
-open Set
+open Set Mereology
 
 variable {B : Type*}
 
@@ -144,7 +144,7 @@ theorem atomistic_iff_generates : Atomistic Z ↔ Generates (atomsIn Z) Z := by
   refine ⟨fun h ↦ .of_subset (fun _ ha ↦ ha.1.1) fun b hb ↦ ?_, fun h b hb ↦ ?_⟩
   · exact ⟨_, inter_subset_right, h b hb⟩
   · obtain ⟨Y, hY, rfl⟩ := h.subset_sumClosure hb
-    exact (sSup_le fun _ ha ↦ ha.1).antisymm
+    exact (sSup_le (s := Iic _ ∩ _) fun _ ha ↦ ha.1).antisymm
       (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
 
 theorem atomsIn_eq_of_pairwiseDisjoint (hZ : Z.PairwiseDisjoint id) : atomsIn Z = Z \ {⊥} :=
@@ -187,10 +187,8 @@ The distribution set of `x` relative to `Z` is `Iic x ∩ Z`, the book's `(x] �
 
 theorem sSup_Iic_inter (hx : x ∈ sumClosure Z) : sSup (Iic x ∩ Z) = x := by
   obtain ⟨Y, hY, rfl⟩ := hx
-  exact (sSup_le fun _ h ↦ h.1).antisymm (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
-
-/-- `card Z x` is the cardinality of `x` relative to `Z`, the number of its `Z`-parts. -/
-noncomputable def card (Z : Set B) (x : B) : ℕ := (Iic x ∩ Z).ncard
+  exact (sSup_le (s := Iic _ ∩ _) fun _ h ↦ h.1).antisymm
+    (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
 
 end CompleteLattice
 
@@ -199,20 +197,6 @@ section Frame
 variable [Order.Frame B] {Y Z : Set B} {x z : B} (hZ : Z.PairwiseDisjoint id) (hbot : ⊥ ∉ Z)
 include hZ
 
-theorem le_sSup_iff_mem (hz : z ∈ Z) (hz0 : z ≠ ⊥) (hY : Y ⊆ Z) : z ≤ sSup Y ↔ z ∈ Y := by
-  refine ⟨fun h ↦ ?_, le_sSup⟩
-  by_contra hzY
-  exact hz0 (le_bot_iff.1 (hZ.sSupIndep.disjoint_sSup hz hY hzY le_rfl h))
-
-include hbot
-
-theorem Iic_sSup_inter (hY : Y ⊆ Z) : Iic (sSup Y) ∩ Z = Y :=
-  Set.ext fun _ ↦ ⟨fun ⟨h, hz⟩ ↦ (le_sSup_iff_mem hZ hz (fun h0 ↦ hbot (h0 ▸ hz)) hY).1 h,
-    fun h ↦ ⟨le_sSup h, hY h⟩⟩
-
-theorem sSup_injOn : InjOn sSup (𝒫 Z) :=
-  fun Y hY Y' hY' h ↦ by rw [← Iic_sSup_inter hZ hbot hY, h, Iic_sSup_inter hZ hbot hY']
-
 /-- Over a disjoint base without `⊥`, the sums of base elements are order-isomorphic to the sets of
 base elements, as the elements of a complete atomic Boolean algebra are to the sets of its
 atoms. -/
@@ -220,19 +204,12 @@ def sumClosureOrderIso : sumClosure Z ≃o 𝒫 Z where
   toFun x := ⟨Iic x.1 ∩ Z, inter_subset_right⟩
   invFun Y := ⟨sSup Y.1, sSup_mem_sumClosure Y.2⟩
   left_inv x := Subtype.ext (sSup_Iic_inter x.2)
-  right_inv Y := Subtype.ext (Iic_sSup_inter hZ hbot Y.2)
+  right_inv Y := Subtype.ext (hZ.sSupIndep.Iic_sSup_inter hbot Y.2)
   map_rel_iff' {x x'} := by
     refine ⟨fun h ↦ ?_, fun h ↦ inter_subset_inter_left Z (Iic_subset_Iic.2 h)⟩
     change x.1 ≤ x'.1
     rw [← sSup_Iic_inter x.2, ← sSup_Iic_inter x'.2]
     exact sSup_le_sSup h
-
-/-- Over a disjoint base without `⊥`, a sum counts as many as the base elements it sums. -/
-theorem card_sSup (hY : Y ⊆ Z) : card Z (sSup Y) = Y.ncard := by
-  rw [card, Iic_sSup_inter hZ hbot hY]
-
-theorem card_of_mem (hz : z ∈ Z) : card Z z = 1 := by
-  simpa using card_sSup hZ hbot (singleton_subset_iff.2 hz)
 
 end Frame
 
@@ -368,7 +345,7 @@ theorem plur_singular (Z : Set B) : (singular Z).plur = ofBase Z :=
 /-- The numeral schema keeps the body elements whose cardinality relative to the base satisfies
 the number predicate `N`. -/
 noncomputable def number (N : ℕ → Prop) (P : ISet B) : ISet B :=
-  P.sep fun x ↦ N (card P.base x)
+  P.sep fun x ↦ N (count P.base x)
 
 end CompleteLattice
 
@@ -378,15 +355,15 @@ variable [Order.Frame B] {Z : Set B} {x : B} (hZ : Z.PairwiseDisjoint id) (hbot 
 include hZ hbot
 
 theorem sep_singular (p : B → Prop) : (singular Z).sep p = singular {z ∈ Z | p z} :=
-  ISet.ext rfl (Iic_sSup_inter hZ hbot (sep_subset _ _))
+  ISet.ext rfl (hZ.sSupIndep.Iic_sSup_inter hbot (sep_subset _ _))
 
 theorem mem_number_ofBase (N : ℕ → Prop) :
     x ∈ (number N (ofBase Z)).body ↔ ∃ Y ⊆ Z, N Y.ncard ∧ sSup Y = x := by
   refine ⟨fun ⟨⟨Y, hY, hx⟩, hN⟩ ↦ ⟨Y, hY, ?_, hx⟩, fun ⟨Y, hY, hN, hx⟩ ↦ ⟨⟨Y, hY, hx⟩, ?_⟩⟩
-  · change N (card Z x) at hN
-    rwa [← hx, card_sSup hZ hbot hY] at hN
-  · change N (card Z x)
-    rwa [← hx, card_sSup hZ hbot hY]
+  · change N (count Z x) at hN
+    rwa [← hx, count_sSup hZ.sSupIndep hbot hY] at hN
+  · change N (count Z x)
+    rwa [← hx, count_sSup hZ.sSupIndep hbot hY]
 
 /-- *Three white cats* denotes the sums of three white cats (§5.4). -/
 theorem mem_number_plur_sep_singular (p : B → Prop) (N : ℕ → Prop) :

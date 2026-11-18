@@ -35,12 +35,12 @@ namespace Telugu.Adpositions
 
 /-- *lō* 'in'. -/
 def lō : Adposition :=
-  { morphs := [.free "lō"], linearization := {.post}, functions := {.loc},
+  { morphs := [.free "lō"], linearization := {.post}, functions := {.spatial none .place},
     complements := {some .np} }
 
 /-- *nunci* 'from'. -/
 def nunci : Adposition :=
-  { morphs := [.encl "nunci"], linearization := {.post}, functions := {.abl},
+  { morphs := [.encl "nunci"], linearization := {.post}, functions := {.spatial none .source},
     complements := {some .np} }
 
 /-- The postpositions. -/

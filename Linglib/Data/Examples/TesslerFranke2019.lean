@@ -24,7 +24,7 @@ def happy : Datum :=
     glossedTokens := []
     context := "Bare positive of the happy/unhappy quadruplet. Baseline against which the three negated forms are compared."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "positive"), ("inner_neg", "none"), ("cost", "0"), ("equivalent_to_positive", "true")] }
 
@@ -37,7 +37,7 @@ def unhappy : Datum :=
     glossedTokens := []
     context := "Figure 3: 'unhappy' could signal either contradictory negation ¬H ([un- [happy]], x ≤ θ1) or contrary negation H̃ ([unhappy], x ≤ θ2). In isolation (Experiment 1) morphological antonyms and negated positives (unhappy, not happy) receive the same ratings."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "negative"), ("inner_neg", "morphological"), ("cost", "2"), ("equivalent_to_positive", "false")] }
 
@@ -50,7 +50,7 @@ def not_happy : Datum :=
     glossedTokens := []
     context := "Figure 3: 'not happy' could signal either contradictory negation ¬H ([not [happy]], x ≤ θ1) or contrary negation H̃ ([not happy], x ≤ θ2). In isolation (Experiment 1) negated positives and morphological antonyms (not happy, unhappy) receive the same ratings."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "notPositive"), ("inner_neg", "syntactic"), ("cost", "3"), ("equivalent_to_positive", "false")] }
 
@@ -63,7 +63,7 @@ def not_unhappy : Datum :=
     glossedTokens := []
     context := "The paper's central observation: 'not unhappy' does NOT reduce to 'happy'. The inner morphological negation is contrary, so 'not unhappy' covers the gap region between the negative and positive thresholds, where 'happy' is false."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "notNegative"), ("inner_neg", "morphological"), ("cost", "5"), ("equivalent_to_positive", "false")] }
 

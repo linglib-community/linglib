@@ -12,7 +12,7 @@
     "translation": "The host introduced John to Cathy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "goal", "judgment": "acceptable"}
     ],
@@ -36,7 +36,7 @@
     "translation": "Hanako also bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"}
     ],
@@ -61,7 +61,7 @@
     "translation": "It's the used car that Anna sold (not the new one).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "adjective", "judgment": "acceptable"}
     ],
@@ -86,7 +86,7 @@
     "translation": "Hanako bought books and also bought magazines.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"}
     ],
@@ -112,7 +112,7 @@
     "translation": "Peter read Hamlet in the garden, rather than swim.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"}
     ],
@@ -137,7 +137,7 @@
     "translation": "It's raining and the wind is blowing, too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -161,7 +161,7 @@
     "translation": "Hayashi-san hit Jiro.",
     "context": "Answer to 'What happened?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -186,7 +186,7 @@
     "translation": "This woman ate fish.",
     "context": "Answer to 'What did that woman do?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"}
     ],
@@ -211,7 +211,7 @@
     "translation": "Salima also bakes kulcha.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"},
       {"name": "predicate", "judgment": "acceptable"}
@@ -237,7 +237,7 @@
     "translation": "Taro also ate octopus.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"},
       {"name": "object", "judgment": "acceptable"}
@@ -262,7 +262,7 @@
     "translation": "Taro also ate octopus.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"},
       {"name": "object", "judgment": "acceptable"}
@@ -288,7 +288,7 @@
     "translation": "Her husband goes to wash his hands, too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"},
       {"name": "sentence", "judgment": "acceptable"}
@@ -314,7 +314,7 @@
     "translation": "Kunga also gives food to dogs.",
     "context": "Kunga's a very good person. She prays at the temple every day.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"}
     ],
@@ -339,7 +339,7 @@
     "translation": "Kunga also gives food to dogs.",
     "context": "Kunga's a very good person. She prays at the temple every day.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "marginal"}
     ],
@@ -363,7 +363,7 @@
     "translation": "Taro played piano, too.",
     "context": "At yesterday's party, not only did Hanako dance, but ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -387,7 +387,7 @@
     "translation": "Taro played piano, too.",
     "context": "At yesterday's party, not only did Hanako dance, but ...",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "marginal"}
     ],
@@ -412,7 +412,7 @@
     "translation": "He could only give gifts to children.",
     "context": "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"}
     ],
@@ -437,7 +437,7 @@
     "translation": "He could only give gifts to children.",
     "context": "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "marginal"}
     ],
@@ -462,7 +462,7 @@
     "translation": "I put the books on the shelves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "theme", "judgment": "acceptable"},
       {"name": "predicate", "judgment": "acceptable"}
@@ -488,7 +488,7 @@
     "translation": "I put the books on the shelves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "goal", "judgment": "acceptable"},
       {"name": "predicate", "judgment": "ungrammatical"}
@@ -513,7 +513,7 @@
     "translation": "Abdul reads the child a book.",
     "context": "Q: What does Abdul do?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "acceptable"}
     ],
@@ -537,7 +537,7 @@
     "translation": "Abdul reads the child a book.",
     "context": "Q: What does Abdul do?",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "predicate", "judgment": "marginal"}
     ],
@@ -561,7 +561,7 @@
     "translation": "The dog ate the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -585,7 +585,7 @@
     "translation": "The dog ate the meat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -609,7 +609,7 @@
     "translation": "Linda was looking for Jana.",
     "context": "Q: What's new?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "unacceptable"},
       {"name": "object", "judgment": "acceptable"}
@@ -634,7 +634,7 @@
     "translation": "Somebody was looking for Jana.",
     "context": "Q: What's new?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -659,7 +659,7 @@
     "translation": "Someone played piano, too.",
     "context": "At yesterday's party, not only did Hanako dance a dance, but ...",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "unacceptable"}
     ],
@@ -684,7 +684,7 @@
     "translation": "Someone played piano, too.",
     "context": "At yesterday's party, not only did Hanako dance a dance, but ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -710,7 +710,7 @@
     "translation": "Robbers have stolen from me!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -735,7 +735,7 @@
     "translation": "The men caught wild animals!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sentence", "judgment": "acceptable"}
     ],
@@ -758,7 +758,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "acceptable"}
     ],
@@ -780,7 +780,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "ungrammatical"}
     ],
@@ -802,7 +802,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "acceptable"}
     ],
@@ -824,7 +824,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "ungrammatical"}
     ],
@@ -846,7 +846,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "acceptable"}
     ],
@@ -871,7 +871,7 @@
     "translation": "and because of these things, too",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "phrase", "judgment": "acceptable"}
     ],
@@ -897,7 +897,7 @@
     "translation": "I wonder whose mother's friend's sister he married.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "acceptable"}
     ],
@@ -919,7 +919,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wh", "judgment": "acceptable"}
     ],

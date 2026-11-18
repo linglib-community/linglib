@@ -24,7 +24,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -37,7 +37,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("frame", "transitive")] }
 
@@ -50,7 +50,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("frame", "intransitive")] }
 
@@ -63,7 +63,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "punch"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -76,7 +76,7 @@ def ex_11b_tr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "punch"), ("frame", "transitive")] }
 
@@ -89,7 +89,7 @@ def ex_11b_intr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "punch"), ("frame", "intransitive")] }
 
@@ -102,7 +102,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thump"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -115,7 +115,7 @@ def ex_12b_tr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thump"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -128,7 +128,7 @@ def ex_12b_intr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thump"), ("frame", "intransitive")] }
 
@@ -141,7 +141,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -154,7 +154,7 @@ def ex_13b_tr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("frame", "transitive")] }
 
@@ -167,7 +167,7 @@ def ex_13b_intr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("frame", "intransitive")] }
 
@@ -180,7 +180,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "freeze"), ("frame", "transitive")] }
 
@@ -193,7 +193,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "freeze"), ("frame", "intransitive")] }
 
@@ -206,7 +206,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "freeze"), ("adjective", "solid"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -219,7 +219,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "freeze"), ("adjective", "solid"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -232,7 +232,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrub"), ("frame", "transitive")] }
 
@@ -245,7 +245,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrub"), ("frame", "intransitive")] }
 
@@ -258,7 +258,7 @@ def ex_16c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrub"), ("adjective", "clean"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -271,7 +271,7 @@ def ex_16d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrub"), ("adjective", "clean"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -284,7 +284,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -297,7 +297,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -310,7 +310,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "slam"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -323,7 +323,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "smack"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -336,7 +336,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "fling"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -349,7 +349,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yank"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -362,7 +362,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -375,7 +375,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cut"), ("adjective", "open"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -388,7 +388,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cut"), ("adjective", "open"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -401,7 +401,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sew"), ("adjective", "shut"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -414,7 +414,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -427,7 +427,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -440,7 +440,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -453,7 +453,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thrash"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
@@ -466,7 +466,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "kick"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
@@ -479,7 +479,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "brush"), ("adjective", "free"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -492,7 +492,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "brush"), ("adjective", "free"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -505,7 +505,7 @@ def ex_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wipe"), ("adjective", "free"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -518,7 +518,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wipe"), ("adjective", "free"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -531,7 +531,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wrench"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -544,7 +544,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
@@ -557,7 +557,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "smack"), ("adjective", "flat"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -570,7 +570,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pat"), ("adjective", "flat"), ("sense", "other"), ("frame", "transitive")] }
 
@@ -583,7 +583,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pat"), ("adjective", "flat"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -596,7 +596,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "paint"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -609,7 +609,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "paint"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -622,7 +622,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wire"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -635,7 +635,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -648,7 +648,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -661,7 +661,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "lever"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -674,7 +674,7 @@ def ex_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nudge"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -687,7 +687,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "oil"), ("adjective", "flat"), ("sense", "spatial"), ("frame", "intransitive")] }
 
@@ -700,7 +700,7 @@ def ex_57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yank"), ("adjective", "bald"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -713,7 +713,7 @@ def ex_58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "firm"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -726,7 +726,7 @@ def ex_59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "smooth"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -739,7 +739,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "punch"), ("adjective", "senseless"), ("sense", "other"), ("frame", "intransitive")] }
 
@@ -752,7 +752,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
@@ -765,7 +765,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nail"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "transitive")] }
 
@@ -778,7 +778,7 @@ def ex_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nail"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "manipulated")] }
 
@@ -791,7 +791,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "manipulated")] }
 
@@ -804,7 +804,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
@@ -817,7 +817,7 @@ def ex_79 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "machine")] }
 
@@ -830,7 +830,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "slam"), ("frame", "directed motion"), ("theme", "projectile")] }
 
@@ -843,7 +843,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("frame", "directed motion"), ("theme", "projectile")] }
 
@@ -856,7 +856,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bang"), ("frame", "directed motion"), ("theme", "animate")] }
 
@@ -869,7 +869,7 @@ def ex_85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("frame", "directed motion"), ("theme", "natural force")] }
 
@@ -882,7 +882,7 @@ def ex_85c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "smack"), ("frame", "directed motion"), ("theme", "machine")] }
 

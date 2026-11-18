@@ -15,13 +15,6 @@ calculus is [sound](##soundness) and [complete](##completeness) for models with 
 valuation. His frames are Thomason's, but his models drop Thomason's condition on assignments, so
 [an atom's historical necessity is valid for Thomason and unprovable in `TW`](##not_provable_imp_N).
 
-## Errata
-
-* The paper offers `TW` as the axiomatization missing for the T × W logic semantically defined by
-  Thomason (p. 241), and defines its frames "as in" his, but Definition 1.2 has no counterpart of
-  his Definition 7, so the logic axiomatized is not the one his definitions give
-  (`not_provable_imp_N`).
-
 ## TODO
 
 * `completeness`: von Kutschera's proof builds, from the maximal consistent sets of `TW`, a

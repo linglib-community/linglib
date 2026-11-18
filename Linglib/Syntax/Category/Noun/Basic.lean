@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Gender.Assignment
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Option
@@ -9,27 +9,25 @@ public import Mathlib.Data.Finset.Option
 # Noun
 
 The noun as a lexical entry: its citation form and its gloss, everything a noun of any
-language carries. A proper name extends the entry with the gender it restricts its referent to,
-where it does, and projects as a third-person `PROPN` token; it is its own type rather than a
-flag on the noun, since a name has no countability or plural and the syntax projects it as a
-different head. A language with gender extends the entry with the controller gender in its own
-carrier, the gender the language's assignment rules give the noun, and with the gender the noun
-restricts its referents to where it does, as *mother* and *father* do, the facet every semantic
-core distinguishing masculine from feminine reads; the facets particular rules read besides,
-animacy, rationality, declension class or accent, are the fields of the fragments' further
-extensions. Whether a noun's gender is natural is a question about its language's semantic rules
-(`Gender.IsNatural`). A classified noun records the ways a numeral counts it:
+language carries, with the gender it restricts its referents to where it does, as *mother* and
+*father* do, the facet every semantic core distinguishing masculine from feminine reads. A
+proper name projects as a third-person `PROPN` token; it is its own type rather than a flag on
+the noun, since a name has no countability or plural and the syntax projects it as a different
+head. A language with gender extends the entry with the controller gender in its own carrier,
+the gender the language's assignment rules give the noun; the facets particular rules read
+besides, animacy, rationality, declension class or accent, are the fields of the fragments'
+further extensions. Whether a noun's gender is natural is a question about its language's
+semantic rules (`GenderedNoun.IsNatural`). A classified noun records the ways a numeral counts it:
 without a classifier, as in *three cups*, or with one, as in Mandarin *sān běn shū* 'three CL
 book'. A noun that no numeral counts in either way, such as *milk*, is counted only through a
 measure word, as in *three cups of milk*, and a count noun is one some numeral counts.
 
 ## Main definitions
 
-* `Noun`: the noun entry.
-* `ProperName`: the entry of a name, with the gender it restricts its referent to and its `Word`
-  token.
-* `GenderedNoun G`: the entry with its controller gender over the carrier `G` and the gender it
-  restricts its referents to.
+* `Noun`: the noun entry, with the gender it restricts its referents to.
+* `ProperName`: the entry of a name, with its `Word` token.
+* `GenderedNoun G`: the entry with its controller gender over the carrier `G`.
+* `GenderedNoun.IsNatural`: the noun's gender is the one assigned to its referents' gender.
 * `ClassifiedNoun C`: the entry with the ways a numeral counts it, over the carrier `C` of
   classifiers.
 * `ClassifiedNoun.IsCount`, `ClassifiedNoun.IsBareCount`, `ClassifiedNoun.classifiers`: some
@@ -58,18 +56,20 @@ all.
 
 @[expose] public section
 
-/-- A noun entry records a citation form and a gloss. -/
+/-- A noun entry records a citation form, a gloss, and the gender the noun restricts its
+referents to, where it does. -/
 structure Noun where
   /-- The citation form. -/
   form : String
   /-- The gloss. -/
   gloss : String
+  /-- The gender the noun restricts its referents to, where it does: *mother* and *father*
+  restrict one, *vrač* 'doctor' and *sibling* none. -/
+  referentGender : Option ReferentGender := none
   deriving DecidableEq, Repr
 
-/-- A proper name is a noun that names its referent, restricted to a gender where it is. -/
-structure ProperName extends Noun where
-  /-- The gender the name restricts its referent to, where it does. -/
-  referentGender : Option ReferentGender := none
+/-- A proper name is a noun that names its referent. -/
+structure ProperName extends Noun
   deriving DecidableEq, Repr
 
 /-- The word token of a name is a third-person `PROPN`, masculine or feminine by the gender it
@@ -79,15 +79,16 @@ def ProperName.toWord (n : ProperName) : Morphology.Word :=
     features := Morphology.Features.of (person := some .third)
       (gender := n.referentGender.map ReferentGender.toUD) }
 
-/-- A noun with its controller gender over the carrier `G` and the gender it restricts its
-referents to, where it does. -/
+/-- A noun with its controller gender over the carrier `G`. -/
 structure GenderedNoun (G : Type*) extends Noun where
   /-- The controller gender, the agreements the noun takes. -/
   gender : G
-  /-- The gender the noun restricts its referents to, where it does: *vrač* 'doctor' and
-  *sibling* restrict none. -/
-  referentGender : Option ReferentGender := none
   deriving DecidableEq, Repr
+
+/-- A noun's gender is natural under `f`, the gender the language assigns each referent gender,
+when it is the one assigned to the gender the noun restricts its referents to. -/
+abbrev GenderedNoun.IsNatural {G : Type*} (f : ReferentGender → G) (n : GenderedNoun G) : Prop :=
+  Gender.IsNatural (Option.map f) (·.referentGender) GenderedNoun.gender n
 
 /-- A noun with the ways a numeral counts it, over the carrier `C` of the language's
 classifiers. -/

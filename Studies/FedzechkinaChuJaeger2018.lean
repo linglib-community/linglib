@@ -161,8 +161,8 @@ theorem fig1_yieldDist_eq :
     fig1Vos.yieldDist 0 5 = 5 ∧ fig1Vos.yieldDist 0 1 = 1 := by
   decide +kernel
 
-theorem fig1_projection_length :
-    (fig1Sov.projection 4).length = 4 ∧ (fig1Sov.projection 0).length = 1 := by
+theorem fig1_card_yield :
+    (fig1Sov.yield 4).toFinset.card = 4 ∧ (fig1Sov.yield 0).toFinset.card = 1 := by
   decide +kernel
 
 /-! ### Two events and their symmetric difference -/

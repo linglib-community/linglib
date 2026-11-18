@@ -43,7 +43,6 @@ gender-mismatch corpus counts are described in prose.
 namespace PatelGroszGrosz2017
 
 open scoped Denotes
-open DefiniteDescription (Restrictor)
 
 /-- The pragmatic effects that license the strong-article series (§5): the speaker's
 emotional engagement with the referent, disambiguation away from the most prominent
@@ -104,18 +103,22 @@ theorem german_weakAndStrong :
 
 section Divergence
 
-variable {E W : Type} {R : Restrictor E W} {i : ℕ} {g : ℕ → E} {s : W}
+variable {E W : Type} {R : ((ℕ → E) → W → Set E)} {i : ℕ} {g : ℕ → E} {s : W}
 
 theorem der_er_can_diverge {y : E} (hi : g i ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g i) :
-    ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s ≠
-      ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s := by
+    Definite.ofStrength .uniqueness R i g s ≠
+      Definite.ofStrength .familiarity R i g s := by
   obtain ⟨hw, hs⟩ := Schwarz2009.weak_eq_none_strong_eq_some hi hy hne
-  exact fun h ↦ Option.some_ne_none _ ((hs.symm.trans h.symm).trans hw)
+  intro h
+  have hm : g i ∈ Definite.unique R g s := by
+    rw [show Definite.unique R g s = Definite.anaphoric R i g s from h]
+    exact hs
+  exact Part.notMem_none _ (hw ▸ hm)
 
 theorem der_eq_er_of_unique (hUniq : ∀ y ∈ R g s, y = g i) :
-    ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s =
-      ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s :=
-  DefiniteDescription.denote_anaphoric_eq_unique_of_forall_eq R i g s hUniq
+    Definite.ofStrength .familiarity R i g s =
+      Definite.ofStrength .uniqueness R i g s :=
+  Definite.anaphoric_eq_unique_of_forall_eq hUniq
 
 end Divergence
 

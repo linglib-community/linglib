@@ -63,7 +63,6 @@ namespace Newman2024
 
 open scoped List
 open Minimalist (Cat)
-open Core.Order (TreePath)
 
 /-! ### Feature-driven Merge -/
 
@@ -389,7 +388,7 @@ theorem ditransitives_licensed :
 /-- In the binding configuration of a tree, `a` commands `b` when every maximal projection
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
-def configuration (t : XTree) : Binding.Configuration TreePath where
+def configuration (t : XTree) : Binding.Configuration GornAddress where
   commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ ¬ RoseTree.CCommands t b a
   domain _ := Set.univ
 
@@ -397,7 +396,7 @@ instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
   inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
-def leafPaths (t : XTree) : List (Leaf × TreePath) :=
+def leafPaths (t : XTree) : List (Leaf × GornAddress) :=
   t.positionedTerminals.map fun x ↦ (x.2.2, x.1)
 
 /-- The leaf `x` can bind the leaf `y` in `t`. -/
@@ -673,11 +672,11 @@ instance (s : Finset Feature) (done : List ι) (a : ι) : Decidable (S.Possible 
 /-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's bleeding
 over the unchecked features and the operations done. -/
 def Bleeds (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  RuleInteraction.Bleeds (fun st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
+  Phonology.Bleeds (fun st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
     (fun st ↦ S.Possible st.1 st.2 b) (s, done)
 
 instance (s : Finset Feature) (done : List ι) (a b : ι) : Decidable (S.Bleeds s done a b) :=
-  inferInstanceAs (Decidable (RuleInteraction.Bleeds _ _ (s, done)))
+  inferInstanceAs (Decidable (Phonology.Bleeds _ _ (s, done)))
 
 /-- Weak Economy does not compare two operations when either would bleed the other. -/
 def Exempt (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=

@@ -10,7 +10,7 @@ public import Linglib.Fragments.Latin.Gender
 public import Linglib.Fragments.Chichewa.Gender
 public import Linglib.Fragments.CoastalMarind.Gender
 public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Syntax.Agreement.Resolution
+public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Data.Examples.Corbett1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

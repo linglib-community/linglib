@@ -31,7 +31,7 @@ namespace Turkish.Adpositions
 
 /-- *-(y)lA* 'with', in the company of someone or by means of something. -/
 def ile : Adposition :=
-  { morphs := [.encl "(y)lA"], linearization := {.post}, functions := {.com, .inst},
+  { morphs := [.encl "(y)lA"], linearization := {.post}, functions := {.comitative, .instrumental},
     complements := {some .np} }
 
 end Turkish.Adpositions

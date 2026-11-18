@@ -9,7 +9,7 @@
     "translation": "",
     "context": "The wh-phrase raised out of its criterial position, the specifier of the interrogative C.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "criterialRaised"]
@@ -27,7 +27,7 @@
     "translation": "",
     "context": "The subject raised from the specifier of v*P to the specifier of T.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "subject"]
@@ -45,7 +45,7 @@
     "translation": "",
     "context": "The subject moved on from the specifier of T to the matrix clause, with the complementizer present.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "subjectExtracted"]
@@ -63,7 +63,7 @@
     "translation": "",
     "context": "Raising to object: the embedded subject raised to the specifier of the root expect.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "objectRaised"]
@@ -81,7 +81,7 @@
     "translation": "",
     "context": "The raised object extracted further to the matrix clause.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "objectExtracted"]
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "The subject extracted with the complementizer deleted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["structure", "subjectExtractedNoC"]

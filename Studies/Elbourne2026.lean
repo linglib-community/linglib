@@ -7,7 +7,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Powerset
@@ -36,13 +36,6 @@ differ in their two orders](##exists_not_commute_former), a difference of scope 
   binders; Scope Economy (7) is not represented.
 * *Agent* and *Theme* are the relations of an `ArgumentStructure.ThematicFrame`, and `CUL` is a
   function from events to times.
-
-## Errata
-
-* (54) gives *local* a compulsory `E_R`, which by the account of (42) keeps it from standing
-  alone after the copula, as in *This bar is local*; the optional ⟨`E_R`⟩ of *cute* would not.
-* The feature left on little v after (20) is named `i⟨et,t⟩` in the text; it is `i⟨eit,it⟩`, as
-  in (8) and in the tree.
 
 ## References
 

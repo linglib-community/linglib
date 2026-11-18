@@ -32,7 +32,7 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
   Directed Change Linking Rule, "The argument of a verb that corresponds to the entity undergoing
   the directed change described by that verb is its direct internal argument" ((24), p. 146), is
   read as the causative alternation, a direction of motion, or a scale along which a verb that is
-  not a state measures change (`Verb.changeScale`). The Directed Change rule takes precedence, as
+  not a verb of attitude measures change (`Verb.changeScale`). The Directed Change rule takes precedence, as
   the book argues (§4.2), so *run* with a directional phrase is unaccusative though its runner
   acts.
 * The classifications are not exhaustive: an entry without a voice, a directed change or a

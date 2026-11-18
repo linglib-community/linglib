@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.MunozPerez2026
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -110,7 +110,7 @@ theorem not_hasSemantics (a : Option Category) :
 /-- The bundle condition of the fission rule holds of an applicative head that is
 [+PART, +SING]. -/
 def IsFissionApplicable (c : Category) : Prop :=
-  .participant ∈ c.toFeatures ∧ c.IsSingular
+  .participant ∈ c.toFeatures Finset.univ ∧ c.IsSingular
 
 instance : DecidablePred IsFissionApplicable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -309,16 +309,14 @@ theorem causer_reading_rows : ∀ e ∈ Examples.all,
 
 /-- A person case constraint sees the persons of the two clitics, and *me* and *nos* have the
 same person, so no such constraint separates *me le* from *nos le*. -/
-theorem isLicit_me_iff_nos (g : PCC.Grammar) :
-    (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
-        PCC.IsLicit g ⟨io, do_⟩) ↔
-      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos.person,
-        PCC.IsLicit g ⟨io, do_⟩ :=
+theorem restriction_me_iff_nos (R : Clause.Scenario Person → Prop) :
+    (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person, R ⟨io, do_⟩) ↔
+      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos.person, R ⟨io, do_⟩ :=
   Iff.rfl
 
 theorem weak_pcc_bans :
     ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
-      ¬ PCC.IsLicit PCC.weakGrammar ⟨io, do_⟩ := by
+      ¬ PCC.Weak ⟨io, do_⟩ := by
   decide
 
 theorem fission_separates :

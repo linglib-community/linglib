@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
@@ -12,10 +12,9 @@ public import Linglib.Data.Examples.Languages
 
 Similar consonants of an output stand in correspondence, demanded by CORR constraints ranked by
 similarity, and IDENT-CC constraints require correspondents to agree, so intervening segments are
-neutral. A candidate is a correspondence: input and output aligned position by position, and the
-consonants of the output corresponding among themselves, read left to right. The directional
-IDENT-CC constraints are MAX and DEP of [nasal] along that relation, as the paper frames them, and
-IDENT-OI(nas) is DEP of [nasal] from input to output.
+neutral. A candidate is an output whose consonants are coindexed, input and output being
+coindexed position by position. The directional IDENT-CC constraints read the corresponding
+pairs of the output left to right, and IDENT-OI(nas) is DEP of [nasal] from input to output.
 
 ## Implementation notes
 
@@ -128,89 +127,122 @@ theorem AtLeast.mono {k k' : Fin 4} {a b : Seg} (h : AtLeast k a b) (hk : k ≤ 
 def consonants (w : List Seg) : List ℕ :=
   (List.range w.length).filter fun i ↦ (w.getD i .vocoid).IsConsonant
 
-/-- An output candidate: the output string, aligned position by position with the input, and
-the correspondence relation among its consonants as coindexed pairs of positions, each written
-left position first. -/
-structure Cand where
-  out : List Seg
-  corr : List (ℕ × ℕ)
-  deriving DecidableEq, Repr
+/-- An output candidate: the output string, each segment with the indices it bears on its
+correspondence with the other consonants of the output. -/
+abbrev Cand := List (Correspondence.Segment Seg)
 
-/-- The correspondence of a candidate to an input: input and output correspond position by
-position, and the consonants of the output correspond as the candidate coindexes them, each pair
-read left to right. -/
-def Cand.correspondence (input : List Seg) (c : Cand) : Correspondence BinaryRole Seg :=
-  .ofPairs (fun | .lhs => input | .rhs => c.out) fun
-    | .lhs, .rhs | .rhs, .lhs => Correspondence.diagonalPairs input.length
-    | .rhs, .rhs => c.corr
-    | .lhs, .lhs => []
+/-- The string `w` with the positions of each block of `P` coindexed, a block of one position
+bearing no index. -/
+def coindex (w : List Seg) (P : List (List ℕ)) : Cand :=
+  w.zipIdx.map fun x ↦
+    ⟨x.1, ((P.filter (1 < ·.length)).zipIdx.filter fun b ↦ x.2 ∈ b.1).map (·.2)⟩
+
+/-- The coindexation of a candidate with an input: input and output are coindexed position by
+position, and each output segment bears toward the output the indices of the candidate. -/
+def Cand.correspondence (input : List Seg) (c : Cand) :
+    Correspondence.Coindexation BinaryRole Seg where
+  form
+    | .lhs => input.zipIdx.map fun x ↦ (x.1, fun | .rhs => [x.2] | .lhs => [])
+    | .rhs => c.zipIdx.map fun x ↦ (x.1.seg, fun | .lhs => [x.2] | .rhs => x.1.indices)
+
+/-- The pairs of the members of a list, the earlier member first. -/
+def precedencePairs {β : Type*} : List β → List (β × β)
+  | [] => []
+  | x :: l => l.map (x, ·) ++ precedencePairs l
+
+/-- The pairs of segments of the output, the left one first, with the indices they bear toward
+the output. -/
+def outputPairs (c : Correspondence.Coindexation BinaryRole Seg) :
+    List (Correspondence.Segment Seg × Correspondence.Segment Seg) :=
+  precedencePairs (c.toward .rhs .rhs)
 
 /-- CORR at stratum `k` of the nasal correspondence hierarchy (47): a violation for each pair of
 output consonants at least as similar as the stratum, left first, that do not correspond. -/
-def corr (k : Fin 4) : Constraint (Correspondence BinaryRole Seg) := fun c ↦
-  let C := Finset.univ.filter fun i : Fin (c.form .rhs).length ↦ (c.form .rhs)[i].IsConsonant
-  ((C ×ˢ C).filter fun p ↦ p.1 < p.2 ∧ AtLeast k (c.form .rhs)[p.1] (c.form .rhs)[p.2] ∧
-    p ∉ c.edge .rhs .rhs).card
+def corr (k : Fin 4) : Constraint (Correspondence.Coindexation BinaryRole Seg) := fun c ↦
+  (outputPairs c).countP fun p ↦ p.1.seg.IsConsonant ∧ p.2.seg.IsConsonant ∧
+    AtLeast k p.1.seg p.2.seg ∧ ¬ p.1.Corresponds p.2
 
-/-- IDENT-CLCR(nas) (51a): MAX of [nasal] along the correspondence of the output read left to
-right, a violation for each nasal with an oral correspondent to its right. -/
-def identCLCR : Constraint (Correspondence BinaryRole Seg) :=
-  (·.maxViolFeature Seg.IsNasal .rhs .rhs)
+/-- IDENT-CLCR(nas) (51a): a violation for each nasal of the output with an oral correspondent
+to its right. -/
+def identCLCR : Constraint (Correspondence.Coindexation BinaryRole Seg) := fun c ↦
+  (outputPairs c).countP fun p ↦ p.1.Corresponds p.2 ∧ p.1.seg.IsNasal ∧ ¬ p.2.seg.IsNasal
 
-/-- IDENT-CRCL(nas) (51b): DEP of [nasal] along the correspondence of the output read left to
-right, a violation for each nasal with an oral correspondent to its left. -/
-def identCRCL : Constraint (Correspondence BinaryRole Seg) :=
-  (·.depViolFeature Seg.IsNasal .rhs .rhs)
+/-- IDENT-CRCL(nas) (51b): a violation for each nasal of the output with an oral correspondent
+to its left. -/
+def identCRCL : Constraint (Correspondence.Coindexation BinaryRole Seg) := fun c ↦
+  (outputPairs c).countP fun p ↦ p.1.Corresponds p.2 ∧ ¬ p.1.seg.IsNasal ∧ p.2.seg.IsNasal
 
-/-- IDENT-OI(nas): DEP of [nasal] from input to output, a violation for each segment nasal in the
-output but not in the input. -/
-def identOI : Constraint (Correspondence BinaryRole Seg) :=
+/-- IDENT-OI(nas) (10b): DEP of [nasal] from the input to the output, a violation for each
+output nasal whose input correspondent is oral. -/
+def identOI : Constraint (Correspondence.Coindexation BinaryRole Seg) :=
   (·.depViolFeature Seg.IsNasal .lhs .rhs)
 
 /-- The nasal correspondence hierarchy with IDENT-OI(nas) interpolated below stratum `k`, under
 the IDENT-CC constraints `top` and above `bottom`. -/
-def hierarchy (top : List (Constraint (Correspondence BinaryRole Seg))) (k : Fin 4)
-    (bottom : List (Constraint (Correspondence BinaryRole Seg))) :
-    List (Constraint (Correspondence BinaryRole Seg)) :=
+def hierarchy (top : List (Constraint (Correspondence.Coindexation BinaryRole Seg))) (k : Fin 4)
+    (bottom : List (Constraint (Correspondence.Coindexation BinaryRole Seg))) :
+    List (Constraint (Correspondence.Coindexation BinaryRole Seg)) :=
   top ++ ((List.finRange 4).map corr).insertIdx (k.val + 1) identOI ++ bottom
 
 /-- The Ngbaka ranking (57b): both directional IDENT-CC constraints undominated and
 IDENT-OI(nas) below the homorganic nasal–prenasal stratum. -/
-def ngbaka : List (Constraint (Correspondence BinaryRole Seg)) :=
+def ngbaka : List (Constraint (Correspondence.Coindexation BinaryRole Seg)) :=
   hierarchy [identCLCR, identCRCL] 1 []
 
 /-- The Kikongo ranking (57a): IDENT-CLCR undominated, IDENT-OI(nas) below every stratum, and
 IDENT-CRCL at the bottom. -/
-def kikongo : List (Constraint (Correspondence BinaryRole Seg)) :=
+def kikongo : List (Constraint (Correspondence.Coindexation BinaryRole Seg)) :=
   hierarchy [identCLCR] 3 [identCRCL]
 
 /-! ### Faithfulness and correspondence -/
 
-theorem isFaithfulness_identCLCR : Correspondence.IsFaithfulness identCLCR := fun s ↦ by
-  simp [identCLCR, Correspondence.maxViolFeature, Correspondence.identity]
+theorem mem_of_mem_precedencePairs {β : Type*} {l : List β} {p : β × β}
+    (h : p ∈ precedencePairs l) : p.1 ∈ l ∧ p.2 ∈ l := by
+  induction l with
+  | nil => simp [precedencePairs] at h
+  | cons x l ih =>
+    rcases List.mem_append.1 h with h | h
+    · obtain ⟨y, hy, rfl⟩ := List.mem_map.1 h
+      exact ⟨List.mem_cons_self, List.mem_cons_of_mem _ hy⟩
+    · exact ⟨List.mem_cons_of_mem _ (ih h).1, List.mem_cons_of_mem _ (ih h).2⟩
 
-theorem isFaithfulness_identCRCL : Correspondence.IsFaithfulness identCRCL := fun s ↦ by
-  simp [identCRCL, Correspondence.depViolFeature, Correspondence.identity]
+/-- No two segments of the output of the fully faithful candidate correspond. -/
+private theorem not_corresponds_of_mem_outputPairs_identity {s : List Seg}
+    {p : Correspondence.Segment Seg × Correspondence.Segment Seg}
+    (hp : p ∈ outputPairs (.identity s)) : ¬ p.1.Corresponds p.2 := by
+  have h := (mem_of_mem_precedencePairs hp).1
+  rw [Correspondence.Coindexation.toward_identity_self] at h
+  obtain ⟨a, -, ha⟩ := List.mem_map.1 h
+  simp [Correspondence.Segment.Corresponds, ← ha]
 
-theorem isFaithfulness_identOI : Correspondence.IsFaithfulness identOI := fun s ↦ by
-  rw [identOI, Correspondence.identity, Correspondence.depViolFeature_of_diagonal _ _ _ _
-    (Correspondence.parallel_edge_lhs_rhs s s)]
-  induction s with
-  | nil => rfl
-  | cons a s ih => simpa [List.countP_cons] using ih
+theorem isFaithfulness_identCLCR : Correspondence.Coindexation.IsFaithfulness identCLCR :=
+  fun _ ↦ List.countP_eq_zero.2 fun _ hp ↦ by
+    simp [not_corresponds_of_mem_outputPairs_identity hp]
+
+theorem isFaithfulness_identCRCL : Correspondence.Coindexation.IsFaithfulness identCRCL :=
+  fun _ ↦ List.countP_eq_zero.2 fun _ hp ↦ by
+    simp [not_corresponds_of_mem_outputPairs_identity hp]
+
+theorem isFaithfulness_identOI : Correspondence.Coindexation.IsFaithfulness identOI := fun s ↦ by
+  rw [identOI, Correspondence.Coindexation.depViolFeature,
+    Correspondence.Coindexation.toward_identity (by decide),
+    Correspondence.Coindexation.toward_identity (by decide)]
+  exact Correspondence.maxViolFeature_indexed_self _ s
 
 /-- CORR is neither faithfulness, since the fully faithful candidate of two identical nasals
 violates it, nor markedness, since two candidates with the same output can differ on it: it
 demands correspondence itself. -/
-theorem not_isFaithfulness_corr (k : Fin 4) : ¬ Correspondence.IsFaithfulness (corr k) := by
+theorem not_isFaithfulness_corr (k : Fin 4) :
+    ¬ Correspondence.Coindexation.IsFaithfulness (corr k) := by
   have : ∀ k, corr k (.identity [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]) ≠ 0 := by
     decide
   exact fun h ↦ this k (h _)
 
-theorem not_isMarkedness_corr (k : Fin 4) : ¬ Correspondence.IsMarkedness .rhs (corr k) := by
+theorem not_isMarkedness_corr (k : Fin 4) :
+    ¬ Correspondence.Coindexation.IsMarkedness .rhs (corr k) := by
   let w : List Seg := [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]
-  have : ∀ k, corr k ((⟨w, []⟩ : Cand).correspondence []) ≠
-      corr k ((⟨w, [(0, 2)]⟩ : Cand).correspondence []) := by
+  have : ∀ k, corr k ((coindex w []).correspondence []) ≠
+      corr k ((coindex w [[0, 2]]).correspondence []) := by
     decide
   exact fun h ↦ this k (h rfl)
 
@@ -229,18 +261,15 @@ def partitions : List ℕ → List (List (List ℕ))
     (partitions xs).flatMap fun P ↦
       ([x] :: P) :: (List.range P.length).map fun i ↦ P.modify i (x :: ·)
 
-/-- The coindexed pairs of a partition, left position first. -/
-def corrOf (P : List (List ℕ)) : List (ℕ × ℕ) :=
-  P.flatMap fun b ↦ b.flatMap fun i ↦ (b.filter (i < ·)).map (i, ·)
-
 /-- GEN: every output under every coindexation of the consonants. -/
 def gen (input : List Seg) : List Cand :=
-  (outputs input).flatMap fun o ↦ (partitions (consonants input)).map fun P ↦ ⟨o, corrOf P⟩
+  (outputs input).flatMap fun o ↦ (partitions (consonants input)).map fun P ↦ coindex o P
 
-/-- The tableau of an input under a ranking, over GEN, each candidate evaluated as its
-correspondence to the input. -/
-def tableau (ranking : List (Constraint (Correspondence BinaryRole Seg))) (input : List Seg) :=
-  Tableau.ofList (gen input).toFinset (ranking.map (·.comap (Cand.correspondence input)))
+/-- The optimal candidates of an input under a ranking, over GEN, each candidate evaluated as
+its correspondence to the input. -/
+def optimal (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg)))
+    (input : List Seg) : Finset Cand :=
+  Constraint.evalOn (Cand.correspondence input) (gen input).toFinset ranking
 
 /-! ### The typology of the cut -/
 
@@ -248,33 +277,33 @@ def tableau (ranking : List (Constraint (Correspondence BinaryRole Seg))) (input
 def pair (a b : Seg) : List Seg := [a, .vocoid, b]
 
 /-- Both directional IDENT-CC constraints undominated and IDENT-OI(nasal) below stratum `k`. -/
-def cut (k : Fin 4) : List (Constraint (Correspondence BinaryRole Seg)) :=
+def cut (k : Fin 4) : List (Constraint (Correspondence.Coindexation BinaryRole Seg)) :=
   hierarchy [identCLCR, identCRCL] k []
 
 /-- The typology: a nasal followed by an oral consonant agrees with it, the two corresponding,
 exactly when the pair is at least as similar as the cut below which IDENT-OI(nasal) sits;
 otherwise the input surfaces faithfully with no correspondence. -/
 theorem winner_eq (k : Fin 4) (p : Place) (b : Seg) (hb : b.IsConsonant) (hn : ¬ b.IsNasal) :
-    (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
-      {if AtLeast k (.stop p .nasal) b then ⟨[.stop p .nasal, .vocoid, b.nasalize], [(0, 2)]⟩
-        else ⟨pair (.stop p .nasal) b, []⟩} := by
+    optimal (cut k) (pair (.stop p .nasal) b) =
+      {if AtLeast k (.stop p .nasal) b then coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]
+        else coindex (pair (.stop p .nasal) b) []} := by
   revert k p b; decide +kernel
 
 /-- Demoting IDENT-OI(nasal) only widens the agreeing class: a pair that agrees at a cut agrees
 at every lower cut. -/
 theorem agree_of_le {k k' : Fin 4} (hk : k ≤ k') (p : Place) (b : Seg) (hb : b.IsConsonant)
     (hn : ¬ b.IsNasal)
-    (h : (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
-      {⟨[.stop p .nasal, .vocoid, b.nasalize], [(0, 2)]⟩}) :
-    (tableau (cut k') (pair (.stop p .nasal) b)).optimal =
-      {⟨[.stop p .nasal, .vocoid, b.nasalize], [(0, 2)]⟩} := by
+    (h : optimal (cut k) (pair (.stop p .nasal) b) =
+      {coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]}) :
+    optimal (cut k') (pair (.stop p .nasal) b) =
+      {coindex [.stop p .nasal, .vocoid, b.nasalize] [[0, 2]]} := by
   rw [winner_eq k p b hb hn] at h
   rw [winner_eq k' p b hb hn]
   split_ifs at h ⊢ <;>
     first
     | rfl
     | exact absurd (AtLeast.mono ‹AtLeast k _ _› hk) ‹¬ AtLeast k' _ _›
-    | exact absurd (Finset.singleton_inj.mp h) (by simp)
+    | exact absurd (Finset.singleton_inj.mp h) (by simp [coindex, pair])
 
 /-! ### The rows -/
 
@@ -306,13 +335,13 @@ def parse : List Char → List Seg
 
 /-- The words of a language as the fixed points of its grammar: some optimal candidate has the
 input as its output. -/
-def IsFixedPoint (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
-    Prop :=
-  ∃ c ∈ (tableau ranking w).optimal, c.out = w
+def IsFixedPoint (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg)))
+    (w : List Seg) : Prop :=
+  ∃ c ∈ optimal ranking w, c.map (·.seg) = w
 
-instance (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
+instance (ranking : List (Constraint (Correspondence.Coindexation BinaryRole Seg))) (w : List Seg) :
     Decidable (IsFixedPoint ranking w) :=
-  inferInstanceAs (Decidable (∃ c ∈ (tableau ranking w).optimal, c.out = w))
+  inferInstanceAs (Decidable (∃ c ∈ optimal ranking w, c.map (·.seg) = w))
 
 /-- The Ngbaka words of the rows, with their judgments. -/
 def ngbakaData : List (List Seg × Judgment) :=
@@ -320,8 +349,8 @@ def ngbakaData : List (List Seg × Judgment) :=
     (parse r.primaryText.toList, r.judgment)
 
 theorem ngbaka_tableaux :
-    (tableau ngbaka (parse "naⁿdɛ".toList)).optimal = {⟨parse "nanɛ".toList, [(0, 2)]⟩} ∧
-      (tableau ngbaka (parse "maᵑga".toList)).optimal = {⟨parse "maᵑga".toList, []⟩} := by
+    optimal ngbaka (parse "naⁿdɛ".toList) = {coindex (parse "nanɛ".toList) [[0, 2]]} ∧
+      optimal ngbaka (parse "maᵑga".toList) = {coindex (parse "maᵑga".toList) []} := by
   decide +kernel
 
 /-- The morpheme structure constraint: a word of the rows is well formed exactly when it is a
@@ -364,18 +393,20 @@ instance (w : List Seg) : Decidable (NoCluster w) := inferInstanceAs (Decidable 
 consonants, some optimal candidate of the Kikongo ranking has the map's output. -/
 theorem kikongo_grammar :
     ∀ d ∈ kikongoData, (consonants d.1).length ≤ 4 → NoCluster d.1 →
-      ∃ c ∈ (tableau kikongo d.1).optimal, c.out = harmonize d.1 := by
+      ∃ c ∈ optimal kikongo d.1, c.map (·.seg) = harmonize d.1 := by
   decide +kernel
 
 /-- *tum-idi*: the suffix consonant nasalizes and corresponds with the nasal. -/
 theorem tumidi :
-    (tableau kikongo (parse "tum-idi".toList)).optimal = {⟨parse "tum-ini".toList, [(2, 4)]⟩} := by
+    optimal kikongo (parse "tum-idi".toList) =
+      {coindex (parse "tum-ini".toList) [[2, 4]]} := by
   decide +kernel
 
 /-- *nik-ulu*: the voiceless stop is neutral, agreeing with nothing and corresponding with
 nothing, while the approximant nasalizes. -/
 theorem nikulu :
-    (tableau kikongo (parse "nik-ulu".toList)).optimal = {⟨parse "nik-unu".toList, [(0, 4)]⟩} := by
+    optimal kikongo (parse "nik-ulu".toList) =
+      {coindex (parse "nik-unu".toList) [[0, 4]]} := by
   decide +kernel
 
 /-- The paper's candidates for *kudumuk-ila*: the voiced stop, nasal, and suffix consonant
@@ -388,19 +419,19 @@ def kudumukila : List Cand :=
   let m := Seg.stop .labial .nasal
   let n := Seg.stop .coronal .nasal
   let v := Seg.vocoid
-  [⟨[k, v, d, v, m, v, k, v, n, v], [(2, 4), (2, 8), (4, 8)]⟩,
-   ⟨[k, v, n, v, m, v, k, v, n, v], [(2, 4), (2, 8), (4, 8)]⟩,
-   ⟨[k, v, n, v, m, v, k, v, .approximant, v], [(2, 4)]⟩,
-   ⟨[k, v, d, v, m, v, k, v, n, v], [(4, 8)]⟩,
-   ⟨[k, v, d, v, m, v, k, v, .approximant, v], [(2, 8)]⟩,
-   ⟨[k, v, d, v, m, v, k, v, .approximant, v], [(2, 4), (2, 8), (4, 8)]⟩]
+  [coindex [k, v, d, v, m, v, k, v, n, v] [[2, 4, 8]],
+   coindex [k, v, n, v, m, v, k, v, n, v] [[2, 4, 8]],
+   coindex [k, v, n, v, m, v, k, v, .approximant, v] [[2, 4]],
+   coindex [k, v, d, v, m, v, k, v, n, v] [[4, 8]],
+   coindex [k, v, d, v, m, v, k, v, .approximant, v] [[2, 8]],
+   coindex [k, v, d, v, m, v, k, v, .approximant, v] [[2, 4, 8]]]
 
 /-- The direction of agreement: with IDENT-CLCR above IDENT-OI(nasal) and IDENT-CRCL below
 it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
 stays oral. -/
 theorem kudumukila_winner :
-    (Tableau.ofList kudumukila.toFinset
-      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList))))).optimal =
+    Constraint.eval kudumukila.toFinset
+      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList)))) =
       {kudumukila[0]} := by
   decide +kernel
 

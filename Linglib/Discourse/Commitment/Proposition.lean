@@ -18,7 +18,7 @@ are the canonical model in which commitments vary from world to world.
 
 ## Main definitions
 
-* `Commitment.committed O k φ`: `k⊢φ`.
+* `k ⊢[O] φ`: the commitment proposition `k⊢φ`, the core of `φ` along `O k`.
 * `Commitment.perform O k φ`: the performative update by `k`'s commitment to `φ`.
 * `Commitment.ofSets P`: the accessibility of the public commitment sets `P`.
 * `Commitment.Index κ F`: a fact with a non-empty commitment set for each holder, with its
@@ -26,9 +26,8 @@ are the canonical model in which commitments vary from world to world.
 
 ## Main results
 
-* `Commitment.committed_perform_self`: after the performative update `k⊢φ` holds everywhere.
-* `Commitment.committed_iInter`: a commitment to each of a family of propositions is a commitment
-  to their conjunction.
+* `Commitment.committed_perform`: after the performative update by `φ`, `k⊢ψ` holds where
+  `k⊢(φ → ψ)` held, so `k⊢φ` holds everywhere.
 * `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
   committed to both `φ` and `¬φ`, so `k⊢¬φ` entails the refusal `¬k⊢φ`.
 * `Commitment.committed_ofSets`: a public commitment holds everywhere or nowhere.
@@ -42,6 +41,7 @@ are the canonical model in which commitments vary from world to world.
 * [M. Krifka, *Performative updates and the modeling of speech acts* (2024)][krifka-2024a]
 * [T. van der Leer, *Commitments, beliefs and expectations in conversation*
   (2026)][van-der-leer-2026]
+* [T. Yamada, *Dynamic Logic of Propositional Commitments* (2012)][yamada-2012]
 -/
 
 @[expose] public section
@@ -54,33 +54,18 @@ open scoped SetRel
 variable {κ W : Type*} (O : κ → SetRel W W) (k : κ) (φ ψ : Set W)
 
 /-- The proposition `k⊢φ` holds at the worlds all of whose `O k`-successors are `φ`-worlds, where
-`k` is committed to `φ`. -/
-def committed : Set W := (O k).core φ
+`k` is committed to `φ`: the core of `φ` along `O k`. -/
+scoped notation:50 k:51 " ⊢[" O "] " φ:51 => SetRel.core (O k) φ
 
 /-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
-leaves every other accessibility unchanged ([van-der-leer-2026] Definition 4). -/
-def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
+leaves every other accessibility unchanged ([yamada-2012]'s update by an act of asserting,
+[van-der-leer-2026] Definition 4). -/
+def perform : κ → SetRel W W := fun k' ↦ (O k').restrictRange {v | k' = k → v ∈ φ}
 
 variable {O k φ ψ} {k' : κ}
 
-@[simp] theorem mem_committed {w : W} : w ∈ committed O k φ ↔ ∀ ⦃v⦄, w ~[O k] v → v ∈ φ := .rfl
-
-theorem committed_mono (h : φ ⊆ ψ) : committed O k φ ⊆ committed O k ψ :=
-  SetRel.core_subset_core h
-
-theorem committed_inter : committed O k (φ ∩ ψ) = committed O k φ ∩ committed O k ψ :=
-  SetRel.core_inter _ _ _
-
-@[simp] theorem committed_univ : committed O k Set.univ = Set.univ := SetRel.core_univ
-
-theorem committed_iInter {ι : Sort*} (φ : ι → Set W) :
-    committed O k (⋂ i, φ i) = ⋂ i, committed O k (φ i) := by
-  ext
-  simp only [mem_committed, Set.mem_iInter]
-  exact ⟨fun h i _ hv ↦ h hv i, fun h _ hv i ↦ h i hv⟩
-
 theorem disjoint_committed_compl [IsSerial (O k)] :
-    Disjoint (committed O k φ) (committed O k φᶜ) :=
+    Disjoint (k ⊢[O] φ) (k ⊢[O] φᶜ) :=
   Set.disjoint_left.2 fun w h h' ↦
     let ⟨_, hv⟩ := IsSerial.serial (R := O k) w
     h' hv (h hv)
@@ -88,13 +73,25 @@ theorem disjoint_committed_compl [IsSerial (O k)] :
 @[simp] theorem mem_perform {p : W × W} :
     p ∈ perform O k φ k' ↔ p ∈ O k' ∧ (k' = k → p.2 ∈ φ) := .rfl
 
-theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := fun _ h ↦ h.1
+theorem perform_self : perform O k φ k = (O k).restrictRange φ :=
+  Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun h ↦ h rfl, fun h _ ↦ h⟩
+
+theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := SetRel.restrictRange_subset
 
 theorem perform_of_ne (h : k' ≠ k) : perform O k φ k' = O k' :=
   Set.ext fun _ ↦ ⟨And.left, fun hp ↦ ⟨hp, (absurd · h)⟩⟩
 
-@[simp] theorem committed_perform_self : committed (perform O k φ) k φ = Set.univ :=
-  Set.eq_univ_of_forall fun _ _ h ↦ h.2 rfl
+/-- After the performative update by `φ`, `k⊢ψ` holds where `k⊢(φ → ψ)` held before
+([yamada-2012]'s reduction axiom for the asserter's own commitments). -/
+theorem committed_perform : (k ⊢[perform O k φ] ψ) = (k ⊢[O] (φᶜ ∪ ψ)) := by
+  rw [perform_self, SetRel.core_restrictRange]
+
+theorem committed_perform_of_ne (h : k' ≠ k) :
+    (k' ⊢[perform O k φ] ψ) = (k' ⊢[O] ψ) := by
+  rw [perform_of_ne h]
+
+@[simp] theorem committed_perform_self : (k ⊢[perform O k φ] φ) = Set.univ := by
+  rw [committed_perform, Set.compl_union_self, SetRel.core_univ]
 
 theorem perform_mono (h : φ ⊆ ψ) (k' : κ) : perform O k φ k' ⊆ perform O k ψ k' :=
   fun _ hp ↦ ⟨hp.1, fun e ↦ h (hp.2 e)⟩
@@ -104,16 +101,29 @@ theorem perform_perform : perform (perform O k φ) k ψ = perform O k (φ ∩ ψ
     simp only [mem_perform, Set.mem_inter_iff]
     tauto
 
-theorem perform_eq_self_iff : perform O k φ = O ↔ committed O k φ = Set.univ := by
-  refine ⟨fun h ↦ by rw [← committed_perform_self (O := O), h], fun h ↦ ?_⟩
-  funext k'
-  refine Set.ext fun p ↦ ⟨And.left, fun hp ↦ ⟨hp, fun e ↦ ?_⟩⟩
-  subst e
-  exact Set.eq_univ_iff_forall.1 h p.1 hp
+theorem perform_comm : perform (perform O k φ) k' ψ = perform (perform O k' ψ) k φ :=
+  funext fun _ ↦ Set.ext fun _ ↦
+    ⟨fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩, fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩⟩
 
-instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') where
-  trans _ _ _ h₁ h₂ := ⟨(O k').trans h₁.1 h₂.1, h₂.2⟩
+/-- The performative update is the greatest family inside `O` in which `k⊢φ` holds everywhere. -/
+theorem le_perform_iff {O' : κ → SetRel W W} :
+    O' ≤ perform O k φ ↔ O' ≤ O ∧ (k ⊢[O'] φ) = Set.univ :=
+  ⟨fun h ↦ ⟨fun k' ↦ (h k').trans (perform_subset k'),
+      Set.eq_univ_of_forall fun _ _ hv ↦ (h k hv).2 rfl⟩,
+    fun h k' p hp ↦ ⟨h.1 k' hp, fun e ↦ by
+      subst e
+      exact Set.eq_univ_iff_forall.1 h.2 p.1 hp⟩⟩
+
+theorem perform_eq_self_iff : perform O k φ = O ↔ (k ⊢[O] φ) = Set.univ :=
+  ⟨fun h ↦ (le_perform_iff.1 h.ge).2,
+    fun h ↦ le_antisymm (fun k' ↦ perform_subset k') (le_perform_iff.2 ⟨le_rfl, h⟩)⟩
+
+instance {R : SetRel W W} [IsK45Frame R] : IsK45Frame (R.restrictRange φ) where
+  trans _ _ _ h₁ h₂ := ⟨R.trans h₁.1 h₂.1, h₂.2⟩
   eucl _ _ _ h₁ h₂ := ⟨IsEuclidean.eucl _ _ _ h₁.1 h₂.1, h₂.2⟩
+
+instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') :=
+  inferInstanceAs (IsK45Frame ((O k').restrictRange _))
 
 /-! ### Public commitment sets -/
 
@@ -127,7 +137,7 @@ instance : IsK45Frame (ofSets P k) where
   trans _ _ _ _ h := h
   eucl _ _ _ _ h := h
 
-theorem committed_ofSets : committed (ofSets P) k φ = {_w | P k ⊆ φ} := rfl
+theorem committed_ofSets : (k ⊢[ofSets P] φ) = {_w | P k ⊆ φ} := rfl
 
 theorem perform_ofSets : perform (ofSets P) k φ = ofSets fun k' ↦ {v ∈ P k' | k' = k → v ∈ φ} :=
   rfl
@@ -175,7 +185,7 @@ instance : IsK45Frame (access (F := F) k) where
   eucl _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2.symm⟩
 
 theorem committed_access_preimage (φ : Set F) :
-    committed access k (fact ⁻¹' φ) = {w : Index κ F | w.commitmentSet k ⊆ φ} :=
+    (k ⊢[access] (fact ⁻¹' φ)) = {w : Index κ F | w.commitmentSet k ⊆ φ} :=
   Set.ext fun w ↦ ⟨fun h x hx ↦ h (b := ⟨x, w.commitmentSet, w.commitmentSet_nonempty⟩) ⟨hx, rfl⟩,
     fun h _ hv ↦ h hv.1⟩
 

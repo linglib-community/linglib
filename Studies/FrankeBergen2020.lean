@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Pragmatics.Probabilistic.Uniform
+public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Data.List.ProdSigma
 public import Mathlib.Tactic.DeriveFintype
@@ -80,19 +80,19 @@ instance : MeasurableSpace World := ⊤
 instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
 /-- The world with only N-type aliens (each drank none). -/
-def wN : World := ⟨{.E}, Finset.singleton_nonempty _⟩
+def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
 /-- The world with N-type and S-type aliens. -/
-def wNS : World := ⟨{.E, .IO}, by decide +kernel⟩
+def wNS : World := ⟨{.none, .someNotAll}, by decide +kernel⟩
 /-- The world with N-type and A-type aliens. -/
-def wNA : World := ⟨{.E, .A}, by decide +kernel⟩
+def wNA : World := ⟨{.none, .all}, by decide +kernel⟩
 /-- The world with all three alien types. -/
-def wNSA : World := ⟨{.E, .IO, .A}, by decide +kernel⟩
+def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide +kernel⟩
 /-- The world with only S-type aliens (each drank some but not all). -/
-def wS : World := ⟨{.IO}, Finset.singleton_nonempty _⟩
+def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
 /-- The world with S-type and A-type aliens. -/
-def wSA : World := ⟨{.IO, .A}, by decide +kernel⟩
+def wSA : World := ⟨{.someNotAll, .all}, by decide +kernel⟩
 /-- The world with only A-type aliens (each drank all). -/
-def wA : World := ⟨{.A}, Finset.singleton_nonempty _⟩
+def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
 
 instance : Nonempty World := ⟨wN⟩
 
@@ -228,7 +228,7 @@ def matrixAlts (u : Utterance) : List AltSentence :=
   u.outer.altCandidates ×ˢ u.inner.altCandidates
 
 /-- After EXH enrichment, when licensed, inner *some* is conjoined with its not-all implicature
-and holds at the `IO` vertex exactly; Exh(none) and Exh(all) are vacuous. -/
+and holds at the `someNotAll` vertex exactly; Exh(none) and Exh(all) are vacuous. -/
 def enrichedSat (qi : AristQuant) (p : Parse) (t : Triangle) : Prop :=
   (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t < ⊤)
 
@@ -280,36 +280,36 @@ the world's alien-type set, not a truth vector. -/
 
 -- Table 1, fn. 7
 theorem table1_nn : ∀ (p : Parse) (w : World),
-    exhMeaning p .nn w ↔ (.E ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
+    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 -- Table 1
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
-      if .inner ∈ p then .IO ∉ w ∧ (.matrix ∈ p → w ≠ wN)
+      if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
       else w = wN := by decide +kernel
 
 -- Table 1
 theorem table1_na : ∀ (p : Parse) (w : World),
-    exhMeaning p .na w ↔ (.A ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
+    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 -- Table 1
 theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
-      (.E ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
+      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- Table 1 gives SS five row-groups, according to which of inner, outer and matrix EXH the parse
 contains. -/
 theorem table1_ss : ∀ (p : Parse) (w : World),
     exhMeaning p .ss w ↔
-      if .inner ∈ p then .IO ∈ w ∧ (.outer ∈ p → w ≠ wS)
-      else if .outer ∈ p then .E ∈ w ∧ w ≠ wN
+      if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
+      else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
       else if .matrix ∈ p then w = wNS
       else w ≠ wN := by decide +kernel
 
 -- Table 1
 theorem table1_sa : ∀ (p : Parse) (w : World),
     exhMeaning p .sa w ↔
-      (.A ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
+      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 -- Table 1
 theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
@@ -318,7 +318,7 @@ theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN :
 theorem table1_as : ∀ (p : Parse) (w : World),
     exhMeaning p .as w ↔
       if .inner ∈ p then w = wS
-      else .E ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
+      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
 -- Table 1
 theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
@@ -359,7 +359,7 @@ def ext (p : Parse) (u : Utterance) : Finset World :=
 
 /-- The literal listener under a parse (eq. 5) is uniform on the extension of the utterance. -/
 noncomputable abbrev literal (p : Parse) : Kernel Utterance World :=
-  RSA.listener (uniformOn Set.univ) (RSA.truthful fun u ↦ (ext p u : Set World))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (ext p u : Set World))
 
 /-- The speaker under a parse (eq. 7) knows the world and addresses that parse's literal
 listener. -/
@@ -376,7 +376,7 @@ def giSem (cl : Utterance × Parse) : Finset World := ext cl.2 cl.1
 
 /-- The GI speaker (eq. 21a) chooses an utterance together with a parse. -/
 noncomputable abbrev giSpeaker (α : ℝ) : Kernel World (Utterance × Parse) :=
-  RSA.speaker α 0 (RSA.listener (uniformOn Set.univ) (RSA.truthful fun c ↦ (giSem c : Set World)))
+  RSA.speaker α 0 (RSA.literalListener (uniformOn Set.univ) (fun c ↦ (giSem c : Set World)))
     Measure.dirac
 
 /-- The GI listener (eq. 21b) hears the utterance of the speaker's choice and infers the world
@@ -414,7 +414,7 @@ def liSem (cl : Utterance × LIParse) : Finset World := ext cl.2.toParse cl.1
 
 /-- The LI speaker (eq. 18a) chooses an utterance together with a matrix-free parse. -/
 noncomputable abbrev liSpeaker (α : ℝ) : Kernel World (Utterance × LIParse) :=
-  RSA.speaker α 0 (RSA.listener (uniformOn Set.univ) (RSA.truthful fun c ↦ (liSem c : Set World)))
+  RSA.speaker α 0 (RSA.literalListener (uniformOn Set.univ) (fun c ↦ (liSem c : Set World)))
     Measure.dirac
 
 /-- The LI listener (eq. 18b), marginalized to worlds. -/
@@ -513,7 +513,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
       = (speaker ∅ α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
           | .lit, hl => absurd rfl hl
-          | .oi, _ => RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _
+          | .oi, _ => RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _
               (by decide +kernel : wNA ∉ ext LULex.oi.toParse .ss)
     _ < (speaker LULex.oi.toParse α wNS).real {.ss} := by
         rw [RSA.speaker_uniformOn_dirac_real_singleton_of_profile_replicate
@@ -559,7 +559,7 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
   calc (∑ w : World, (speaker pM α w).real {.ss})
       = (speaker pM α wNS).real {.ss} :=
         Fintype.sum_eq_single wNS fun w hw ↦
-          RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ fun hmem ↦
+          RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _ fun hmem ↦
             hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
         RSA.speaker_real_singleton_lt_one (nofun : Utterance.sn ≠ Utterance.ss)

@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := "Background: what will be the future departmental hires?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "conditionalConsequent"), ("reading", "exclusive")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := "Background: what will be the future departmental hires?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "conditionalAntecedent"), ("reading", "inclusive")] }
 
@@ -50,7 +50,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "everyScope"), ("reading", "exclusive")] }
 
@@ -63,7 +63,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "universalRestrictor"), ("reading", "inclusive")] }
 
@@ -76,7 +76,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "positiveQuantifierScope"), ("reading", "exclusive")] }
 
@@ -89,7 +89,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "nobody"), ("reading", "inclusive")] }
 
@@ -102,7 +102,7 @@ def ex12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "matrix"), ("reading", "exclusive")] }
 
@@ -115,7 +115,7 @@ def ex12d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "negation"), ("reading", "inclusive")] }
 
@@ -128,7 +128,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "We are aware that Sue and Mary can only be hired together. We discussed it at length. And at this point, ... we all agreed to hire them both."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "nobody"), ("reading", "exclusive"), ("forced", "true")] }
 
@@ -141,7 +141,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "or"), ("position", "negation"), ("reading", "inclusive")] }
 
@@ -154,7 +154,7 @@ def ex15ia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "conditionalConsequent")] }
 
@@ -167,7 +167,7 @@ def ex15ib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "conditionalAntecedent")] }
 
@@ -180,7 +180,7 @@ def ex15iia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "everyScope")] }
 
@@ -193,7 +193,7 @@ def ex15iib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "universalRestrictor")] }
 
@@ -206,7 +206,7 @@ def ex15iiia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "positiveQuantifierScope")] }
 
@@ -219,7 +219,7 @@ def ex15iiib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "nobody")] }
 
@@ -232,7 +232,7 @@ def ex16ia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "conditionalConsequent")] }
 
@@ -245,7 +245,7 @@ def ex16ib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "conditionalAntecedent")] }
 
@@ -258,7 +258,7 @@ def ex16iia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "everyScope")] }
 
@@ -271,7 +271,7 @@ def ex16iib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "universalRestrictor")] }
 
@@ -284,7 +284,7 @@ def ex16iiia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "positiveQuantifierScope")] }
 
@@ -297,7 +297,7 @@ def ex16iiib : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "nobody")] }
 
@@ -310,7 +310,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "matrix")] }
 
@@ -323,7 +323,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "matrix")] }
 
@@ -336,7 +336,7 @@ def ex21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "doubtVerb")] }
 
@@ -349,7 +349,7 @@ def ex21d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "doubtVerb")] }
 
@@ -362,7 +362,7 @@ def ex70ai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "modalPossibility")] }
 
@@ -375,7 +375,7 @@ def ex70aii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "modalPossibility")] }
 
@@ -388,7 +388,7 @@ def ex70ci : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "any"), ("position", "imperative")] }
 
@@ -401,7 +401,7 @@ def ex70cii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "ever"), ("position", "imperative")] }
 
@@ -414,7 +414,7 @@ def ex70di : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "alcuno"), ("position", "doubtVerb")] }
 
@@ -427,7 +427,7 @@ def ex70dii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "alcuno"), ("position", "modalPossibility")] }
 
@@ -440,7 +440,7 @@ def ex70ei : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "qualsiasi"), ("position", "negation")] }
 
@@ -453,7 +453,7 @@ def ex70eii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "qualsiasi"), ("position", "modalPossibility")] }
 

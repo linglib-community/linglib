@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2
 
@@ -78,7 +78,7 @@ rather than built into the domain of `realizes`.
 
 namespace Roberts2023
 
-open HistoricalAlternatives Modality Quantifier Filter Kaplan
+open HistoricalAlternatives Modality Quantifier Filter
 
 variable {W T E : Type*}
 
@@ -88,16 +88,16 @@ variable {W T E : Type*}
 goal, highest priority first. Goal-relative preference (52), the paper's first pass, is the
 lexicographic order on profiles: `profile G c < profile G c'` when `c'` realizes the first goal
 on which they differ. -/
-def profile (G : List (Index W T → Prop)) (c : Index W T) : List Prop := G.map (· c)
+def profile (G : List (Set (Index W T))) (c : Index W T) : List Prop := G.map (c ∈ ·)
 
 /-- Goal-relative preference refines Kratzer's ordering: a circumstance realizing every goal
 another realizes has at least as good a profile. -/
-theorem profile_le_of_atLeastAsGoodAs {G : List (Index W T → Prop)} {c c' : Index W T}
+theorem profile_le_of_atLeastAsGoodAs {G : List (Set (Index W T))} {c c' : Index W T}
     (h : c ≤[{p | p ∈ G}] c') : profile G c' ≤ profile G c :=
   List.Forall₂.le <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
     List.forall₂_same.2 h
 
-theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Index W T}
+theorem profile_lt_of_strictlyBetter {G : List (Set (Index W T))} {c c' : Index W T}
     (h : (c <[{p | p ∈ G}] c')) : profile G c' < profile G c :=
   List.Forall₂.lt_of_ne
     (List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <| List.forall₂_same.2 h.1)
@@ -108,7 +108,7 @@ theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Ind
 section Semantics
 
 variable [Preorder T] (history : HistoricalAlternatives W T)
-  (g : Index W T → List (Index W T → Prop))
+  (g : Index W T → List (Set (Index W T)))
 
 /-- The timely future circumstances of a circumstance (50): its possible futures at which the
 goals held at it remain in force. -/
@@ -140,7 +140,7 @@ def applic (c : Index W T) : Set (Index W T) :=
 circumstance `a` comes, at a timely later time in the same world, to realize `P`. -/
 def realizes (c : Index W T) : Prop :=
   ∀ c' ∈ applic history g f P a c,
-    ∃ t', c'.time < t' ∧ P (c'.world, t') a ∧ (c'.world, t') ∈ timelyFut history g c'
+    ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c'
 
 variable {history g f P a}
 
@@ -150,7 +150,7 @@ theorem applic_future (hf : IsFuturate history g f P a) {c c' : Index W T}
   ⟨h₁, h₂⟩
 
 theorem realizes_time_lt {c c' : Index W T} (h : realizes history g f P a c)
-    (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P (c'.world, t') a :=
+    (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a :=
   let ⟨t', ht, hP, _⟩ := h c' hc'
   ⟨t', ht, hP⟩
 
@@ -164,16 +164,16 @@ theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
     (hnP : ¬ P c₂ a) (hlt : (c₂ <[{p | p ∈ g c'}] c₁)) : c' ∉ applic history g f P a c :=
   not_mem_applic h₁ h₂ hP hnP (profile_lt_of_strictlyBetter hlt)
 
-theorem applic_restrict_subset (q : Index W T → Prop) (c : Index W T) :
+theorem applic_restrict_subset (q : Set (Index W T)) (c : Index W T) :
     applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
   fun _ h ↦ ⟨Background.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
 
-theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
+theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Set (Index W T)) :
     IsFuturate history g (f.restrict q) P a :=
   fun c c' h ↦ hf c c' (Background.accessibleWorlds_anti (Set.subset_insert _ _) h)
 
 theorem realizes_restrict {c : Index W T} (h : realizes history g f P a c)
-    (q : Index W T → Prop) : realizes history g (f.restrict q) P a c :=
+    (q : Set (Index W T)) : realizes history g (f.restrict q) P a c :=
   fun c' hc' ↦ h c' (applic_restrict_subset q c hc')
 
 end Semantics
@@ -188,7 +188,7 @@ structure Scoreboard (I W T : Type*) where
   /-- The questions under discussion, the immediate one first. -/
   qud : List (Question (Index W T))
   /-- Each interlocutor's evident goals, highest priority first. -/
-  goals : I → List (Index W T → Prop)
+  goals : I → List (Set (Index W T))
 
 /-- The denotation of a root sentence: a proposition, a question, or a property indexed to
 the addressee, an imperative's realization conditions. -/
@@ -204,7 +204,7 @@ variable {I : Type*}
 
 /-- The illocutionary force linking principle (56): the default force of a root sentence,
 assertion, interrogation or direction, is fixed by the type of its denotation. -/
-def Denotation.defaultForce : Denotation I W T → Discourse.SpeechAct.Force
+def Denotation.defaultForce : Denotation I W T → SpeechAct.Force
   | .proposition _ => .assertion
   | .question _ => .question
   | .property _ => .directive
@@ -227,7 +227,7 @@ realization by `i` to `i`'s goals, below those already held. -/
 def accept : Denotation I W T → Scoreboard I W T
   | .proposition p => K.assert p
   | .question q => { K with qud := q :: K.qud }
-  | .property P => { K with goals := Function.update K.goals i (K.goals i ++ [(P · i)]) }
+  | .property P => { K with goals := Function.update K.goals i (K.goals i ++ [{c | P c i}]) }
 
 variable (p : Set (Index W T)) (P : Index W T → I → Prop)
 
@@ -240,7 +240,7 @@ variable (p : Set (Index W T)) (P : Index W T → I → Prop)
 @[simp] theorem accept_property_qud : (K.accept i (.property P)).qud = K.qud := rfl
 
 @[simp] theorem accept_property_goals :
-    (K.accept i (.property P)).goals i = K.goals i ++ [(P · i)] := by
+    (K.accept i (.property P)).goals i = K.goals i ++ [{c | P c i}] := by
   simp [accept]
 
 @[simp] theorem accept_property_goals_of_ne {j : I} (hj : j ≠ i) :
@@ -250,7 +250,7 @@ variable (p : Set (Index W T)) (P : Index W T → I → Prop)
 /-- Deontic force is pragmatic: once `i` accepts a direction, among circumstances alike with
 respect to `i`'s prior goals one in which `i` realizes the property is preferred to one in
 which `i` does not. -/
-theorem accept_prefers {c c' : Index W T} (h : ∀ p ∈ K.goals i, p c ↔ p c')
+theorem accept_prefers {c c' : Index W T} (h : ∀ p ∈ K.goals i, c ∈ p ↔ c' ∈ p)
     (hc : P c i) (hc' : ¬ P c' i) :
     profile ((K.accept i (.property P)).goals i) c' <
       profile ((K.accept i (.property P)).goals i) c := by
@@ -273,12 +273,12 @@ theorem nobody_livesOn (addr : Set E) : Quantifier.LivesOn (nobody addr) addr :=
   Det.conservative_no.livesOn addr
 
 theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
-    {g : Index W T → List (Index W T → Prop)} {f : Background (Index W T)}
+    {g : Index W T → List (Set (Index W T))} {f : Background (Index W T)}
     {addr : Set E}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
-    (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)
-    (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr (move c)) x c) (hy : y ∈ addr) :
-    ∃ t', c'.time < t' ∧ ¬ move (c'.world, t') y ∧ (c'.world, t') ∈ timelyFut history g c' :=
+    (h : realizes history g f (fun c _ ↦ nobody addr {y | move c y}) x c)
+    (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr {y | move c y}) x c) (hy : y ∈ addr) :
+    ∃ t', c'.time < t' ∧ ¬ move ⟨c'.world, t'⟩ y ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c' :=
   let ⟨t', ht, hP, hfut⟩ := h c' hc'
   ⟨t', ht, hP hy, hfut⟩
 

@@ -212,7 +212,7 @@ theorem substantive_precedes_contextual :
 
 /-- Fusion of adjacent Tns and Agr, then insertion by the Subset Principle. -/
 def tnsAgrSpellout : Spellout (Finset Feature) String where
-  modules := [tnsAgrFusion.applyFirstAdjacent]
+  postsyntax := tnsAgrFusion.applyFirstAdjacent
   insert n := (suffix n).toList
 
 theorem plays_pf : tnsAgrSpellout.pf [tns false false, agr true] = [["-z"]] := by

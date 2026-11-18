@@ -15,9 +15,9 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
@@ -1714,10 +1714,10 @@ theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined 
 
 -- Fact 2
 theorem not_satisfied_ssubset_insert_compl :
-    Preorder.satisfied (· ∈ ·) ({(· = true)} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) {(· = true)} true ∧
-      ¬ Preorder.satisfied (· ∈ ·) (insert (· = false) {(· = true)} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) (insert (· = false) {(· = true)}) true := by
+    Preorder.satisfied (· ∈ ·) ({{true}} : Set (Set Bool)) false ⊂
+        Preorder.satisfied (· ∈ ·) {{true}} true ∧
+      ¬ Preorder.satisfied (· ∈ ·) ({{false}, {true}} : Set (Set Bool)) false ⊂
+        Preorder.satisfied (· ∈ ·) {{false}, {true}} true := by
   refine ⟨⟨fun a ⟨ha, h⟩ ↦ ?_, fun h ↦ Bool.false_ne_true (h ⟨rfl, rfl⟩).2⟩,
     fun h ↦ Bool.noConfusion (h.1 ⟨Set.mem_insert _ _, rfl⟩).2⟩
   obtain rfl := ha

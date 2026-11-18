@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.Storment2026
 public import Linglib.Fragments.Setswana.Basic
 public import Linglib.Syntax.Agreement.Bundle
@@ -49,7 +50,7 @@ verb form.
 namespace Storment2026
 
 open Minimalist SyntacticObject
-open Minimalist.Probe (depthFirst depth)
+open Minimalist.Probe (depthFirst)
 
 /-! ### The derivation (§2, §4) -/
 
@@ -148,7 +149,7 @@ def vpSteps : List Step :=
   | some c => [.em .right c.token, .em .left p.themeTok]
 
 /-- The VP. -/
-def vp : Option LinearizedSyntacticObject := (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
+def vp : Option PlanarSyntacticObject := (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
 
 /-- The vP: the VP, v, the agent on the left and any VP-external element on the right. -/
 def vP : Derivation :=
@@ -243,10 +244,10 @@ unordered sisters finds both, while depth-first search still finds the theme alo
 theorem search_finds_theme :
     (∃ t ∈ (ex122.tStage .vpMovement).externalize?,
       t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
-        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op}) ∧
+        t.goalsBy (t.leafProbe .D) t₀ (·.val.depth) = {↑op}) ∧
     ∃ t ∈ (ex26.tStage .vpMovement).externalize?,
       t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
-        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op, ↑ex26.agentTok} := by
+        t.goalsBy (t.leafProbe .D) t₀ (·.val.depth) = {↑op, ↑ex26.agentTok} := by
   decide +kernel
 
 /-! ### Agreement (§3.1)
@@ -338,7 +339,7 @@ def phi (x : LexicalItem.Token) : Bundle :=
   if x = p.themeTok then themePhi else if x = p.agentTok then p.agentPhi else ⊥
 
 /-- The φ-features at a position of `t`, those of the token there. -/
-def phiAt (t : LinearizedSyntacticObject) (q : t.val.Positions) : Bundle :=
+def phiAt (t : PlanarSyntacticObject) (q : t.toRoseTree.Positions) : Bundle :=
   (t.termAt q).token?.elim ⊥ p.phi
 
 /-- The stage at which T probes. -/
@@ -351,8 +352,9 @@ open scoped PartialUnify in
 depth-first search agrees with (118). -/
 def value (c : Construction) (P : Finset Dimension) : WithTop Bundle :=
   ((p.probeStage c).externalize?.map fun t ↦
-    (Finset.univ.filter fun q ↦ ∃ a : t.val.Positions, t.termAt a = ↑t₀ ∧
-      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.val.CCommands a x} (depthFirst ·.val)
+    (Finset.univ.filter fun q ↦ ∃ a : t.toRoseTree.Positions, t.termAt a = ↑t₀ ∧
+      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.toRoseTree.CCommands a x} (depthFirst
+          ·.val)
         q).sup fun q ↦ (p.phiAt t q : WithTop Bundle)).getD ⊤
 
 /-- The values T may end with (59): halting at the first goal bearing φ, or searching past a

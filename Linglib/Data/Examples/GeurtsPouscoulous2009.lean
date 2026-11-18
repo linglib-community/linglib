@@ -25,7 +25,7 @@ def t1_simple : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("embedding", "simple"), ("rate1a", "93"), ("rate1b", "94")] }
 
@@ -39,7 +39,7 @@ def t1_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("embedding", "all"), ("rate1a", "27"), ("rate1b", "none")] }
 
@@ -53,7 +53,7 @@ def t1_must : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("embedding", "must"), ("rate1a", "3"), ("rate1b", "none")] }
 
@@ -67,7 +67,7 @@ def t1_think : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("embedding", "think"), ("rate1a", "50"), ("rate1b", "65")] }
 
@@ -81,7 +81,7 @@ def t1_want : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("embedding", "want"), ("rate1a", "none"), ("rate1b", "32")] }
 
@@ -94,7 +94,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("embedding", "simple"), ("inferenceRate", "62"), ("verificationRate", "34")] }
 
@@ -108,7 +108,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "all"), ("trial", "none"), ("verificationRate", "100"), ("predictedRate", "0"), ("inferenceRate", "46"), ("exp4Yes", "95"), ("exp4No", "5"), ("exp4Both", "0")] }
 
@@ -122,7 +122,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "moreThanOne"), ("trial", "none"), ("verificationRate", "100"), ("predictedRate", "0"), ("inferenceRate", "62"), ("exp4Yes", "100"), ("exp4No", "0"), ("exp4Both", "0")] }
 
@@ -136,7 +136,7 @@ def ex27_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "exactlyTwo"), ("trial", "A"), ("verificationRate", "100"), ("predictedRate", "0"), ("inferenceRate", "50"), ("exp4Yes", "86"), ("exp4No", "5"), ("exp4Both", "9")] }
 
@@ -150,7 +150,7 @@ def ex27_b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "exactlyTwo"), ("trial", "B"), ("verificationRate", "0"), ("predictedRate", "100"), ("inferenceRate", "50"), ("exp4Yes", "9"), ("exp4No", "77"), ("exp4Both", "14")] }
 
@@ -164,7 +164,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "notAll"), ("trial", "none"), ("verificationRate", "4"), ("predictedRate", "0"), ("inferenceRate", "58"), ("exp4Yes", "9"), ("exp4No", "86"), ("exp4Both", "5")] }
 
@@ -178,7 +178,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("quantifier", "notMoreThanOne"), ("trial", "none"), ("verificationRate", "4"), ("predictedRate", "0"), ("inferenceRate", "46"), ("exp4Yes", "9"), ("exp4No", "91"), ("exp4Both", "0")] }
 
@@ -191,7 +191,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("role", "ambiguousControl"), ("exp4Both", "82")] }
 
@@ -204,7 +204,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("role", "ambiguousControl"), ("exp4Both", "73")] }
 
@@ -217,7 +217,7 @@ def ex29c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("role", "ambiguousControl"), ("exp4Both", "59")] }
 
@@ -230,7 +230,7 @@ def ex29d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("role", "ambiguousControl"), ("exp4Both", "77")] }
 
@@ -243,7 +243,7 @@ def ex29e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("role", "ambiguousControl"), ("exp4Both", "59")] }
 
@@ -256,7 +256,7 @@ def ex31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "none"), ("embedding", "think")] }
 
@@ -269,7 +269,7 @@ def ex35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "none"), ("embedding", "all")] }
 

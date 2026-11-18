@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Data.Examples.Theiler2021
 
@@ -178,24 +178,24 @@ section Flip
 
 variable {W : Type*}
 
-open Discourse.SpeechAct (Force)
+open SpeechAct (Force)
 
 /-- The recipient of information in a move of Table 1 is the participant other than its source,
 the epistemic authority: the speaker of a question and the hearer of an assertion. Table 1 has
 no other moves. -/
-def recipient (f : Force) : Option Discourse.Role := f.authority.map .other
+def recipient (f : Force) : Option SpeechAct.Role := f.authority.map .other
 
 /-- The modalized felicity condition (73), for a move with a recipient: the speaker considers it
 possible that `φ`, that learning an instantiation of the highlighted property is a precondition
 for proceeding, holds necessarily for the recipient, over the interlocutors' doxastic
 accessibility relations. -/
-def Felicity (acc : Discourse.Role → SetRel W W) (f : Force) (φ : W → Prop) :
+def Felicity (acc : SpeechAct.Role → SetRel W W) (f : Force) (φ : W → Prop) :
     Option (W → Prop) :=
   (recipient f).map fun r ↦ ◇[acc .speaker] (□[acc r] φ)
 
 /-- In a question the recipient is the speaker, and over a doxastic frame possible necessity is
 necessity: the modalized condition is the felicity condition (19). -/
-theorem felicity_question (acc : Discourse.Role → SetRel W W) [IsKD45Frame (acc .speaker)]
+theorem felicity_question (acc : SpeechAct.Role → SetRel W W) [IsKD45Frame (acc .speaker)]
     (φ : W → Prop) : Felicity acc .question φ = some (□[acc .speaker] φ) :=
   congrArg some <| funext fun _ ↦ propext (diamond_box_iff (acc .speaker))
 

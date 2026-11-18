@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Long"), ("strategy", "full")] }
 
@@ -64,7 +64,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full")] }
 
@@ -77,7 +77,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Situ"), ("strategy", "inSitu")] }
 
@@ -90,7 +90,7 @@ def ex4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu")] }
 
@@ -103,7 +103,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "Wh-Partial"), ("strategy", "partial")] }
 
@@ -116,7 +116,7 @@ def ex6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial")] }
 
@@ -129,7 +129,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "full"), ("island", "complexNP")] }
 
@@ -142,7 +142,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
@@ -155,7 +155,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
@@ -166,9 +166,11 @@ def ex17a : Datum :=
     language := "stan1306"
     primaryText := "Kamu sayang perempuan yang Ali fikir yang telah makan apa?"
     glossedTokens := [("Kamu", "you"), ("sayang", "love"), ("perempuan", "woman"), ("yang", "that"), ("Ali", "Ali"), ("fikir", "thinks"), ("yang", "that"), ("telah", "already"), ("makan", "eat"), ("apa", "what")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['y', 'o', 'u'], [⟨['K', 'a', 'm', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['s', 'a', 'y', 'a', 'n', 'g'], ['l', 'o', 'v', 'e'], [⟨['s', 'a', 'y', 'a', 'n', 'g'], ['l', 'o', 'v', 'e'], none⟩]⟩, ⟨['p', 'e', 'r', 'e', 'm', 'p', 'u', 'a', 'n'], ['w', 'o', 'm', 'a', 'n'], [⟨['p', 'e', 'r', 'e', 'm', 'p', 'u', 'a', 'n'], ['w', 'o', 'm', 'a', 'n'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], [⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['f', 'i', 'k', 'i', 'r'], ['t', 'h', 'i', 'n', 'k', 's'], [⟨['f', 'i', 'k', 'i', 'r'], ['t', 'h', 'i', 'n', 'k', 's'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], [⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'e', 'l', 'a', 'h'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['t', 'e', 'l', 'a', 'h'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩, ⟨['a', 'p', 'a'], ['w', 'h', 'a', 't'], [⟨['a', 'p', 'a'], ['w', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
@@ -179,9 +181,11 @@ def ex17b : Datum :=
     language := "stan1306"
     primaryText := "Kamu sayang perempuan yang Ali fikir apa yang telah makan?"
     glossedTokens := [("Kamu", "you"), ("sayang", "love"), ("perempuan", "woman"), ("yang", "that"), ("Ali", "Ali"), ("fikir", "thinks"), ("apa", "what"), ("yang", "that"), ("telah", "already"), ("makan", "eat")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['y', 'o', 'u'], [⟨['K', 'a', 'm', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['s', 'a', 'y', 'a', 'n', 'g'], ['l', 'o', 'v', 'e'], [⟨['s', 'a', 'y', 'a', 'n', 'g'], ['l', 'o', 'v', 'e'], none⟩]⟩, ⟨['p', 'e', 'r', 'e', 'm', 'p', 'u', 'a', 'n'], ['w', 'o', 'm', 'a', 'n'], [⟨['p', 'e', 'r', 'e', 'm', 'p', 'u', 'a', 'n'], ['w', 'o', 'm', 'a', 'n'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], [⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['f', 'i', 'k', 'i', 'r'], ['t', 'h', 'i', 'n', 'k', 's'], [⟨['f', 'i', 'k', 'i', 'r'], ['t', 'h', 'i', 'n', 'k', 's'], none⟩]⟩, ⟨['a', 'p', 'a'], ['w', 'h', 'a', 't'], [⟨['a', 'p', 'a'], ['w', 'h', 'a', 't'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], [⟨['y', 'a', 'n', 'g'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'e', 'l', 'a', 'h'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['t', 'e', 'l', 'a', 'h'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
@@ -192,9 +196,11 @@ def ex19 : Datum :=
     language := "mand1415"
     primaryText := "Ni renwei Lisi daodi xihuan shenme?"
     glossedTokens := [("Ni", "you"), ("renwei", "think"), ("Lisi", "Lisi"), ("daodi", "THE-HELL"), ("xihuan", "like"), ("shenme", "what")]
+    glossedWords := [⟨['N', 'i'], ['y', 'o', 'u'], [⟨['N', 'i'], ['y', 'o', 'u'], none⟩]⟩, ⟨['r', 'e', 'n', 'w', 'e', 'i'], ['t', 'h', 'i', 'n', 'k'], [⟨['r', 'e', 'n', 'w', 'e', 'i'], ['t', 'h', 'i', 'n', 'k'], none⟩]⟩, ⟨['L', 'i', 's', 'i'], ['L', 'i', 's', 'i'], [⟨['L', 'i', 's', 'i'], ['L', 'i', 's', 'i'], none⟩]⟩, ⟨['d', 'a', 'o', 'd', 'i'], ['T', 'H', 'E', '-', 'H', 'E', 'L', 'L'], []⟩, ⟨['x', 'i', 'h', 'u', 'a', 'n'], ['l', 'i', 'k', 'e'], [⟨['x', 'i', 'h', 'u', 'a', 'n'], ['l', 'i', 'k', 'e'], none⟩]⟩, ⟨['s', 'h', 'e', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], [⟨['s', 'h', 'e', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu")] }
 
@@ -207,7 +213,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("role", "subject")] }
 
@@ -220,7 +226,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject")] }
 
@@ -233,7 +239,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
@@ -246,7 +252,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 

@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"]
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"]
@@ -46,7 +46,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"]
@@ -64,7 +64,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.3"]
@@ -75,7 +75,7 @@
   {
     "id": "dalrympleetal1998_ex109",
     "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(109)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "John and Bill are taller than each other.",
     "discourseSegments": [],
@@ -83,7 +83,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.3"]
@@ -102,7 +102,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.3"]

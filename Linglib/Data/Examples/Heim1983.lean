@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "there is a king")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "the king has a son")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "there is a king"), ("filtered", "the king has a son")] }
 
@@ -63,7 +63,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("presupposes", "someone with children has twins"), ("gazdar", "nothing"), ("kp", "as reported")] }
 
@@ -76,7 +76,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("presupposes", "nothing"), ("gazdar", "John has children"), ("kp", "nothing")] }
 
@@ -89,7 +89,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("presupposes", "every nation has a king"), ("kp", "every nation has a king")] }
 
@@ -102,7 +102,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("global", "France has a king"), ("local", "either France has no king or he didn't come")] }
 
@@ -115,7 +115,7 @@ def ex23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("presupposes", "everyone has a king"), ("kp", "nothing")] }
 
@@ -128,7 +128,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("cooper", "every nation has a king"), ("lernerZimmermann", "some nation has a king")] }
 
@@ -141,7 +141,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("kp", "some fat man had a bicycle"), ("presupposes", "every fat man had a bicycle, unless accommodated")] }
 

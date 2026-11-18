@@ -41,7 +41,7 @@ variable {α : Type*}
 private theorem ncard_pair_eq (C A : Set α) (R : α → α → Prop)
     (huniq : ∀ x y y', y ∈ A → R x y → y' ∈ A → R x y' → y = y') (P : α → α → Prop) :
     {p : α × α | (p.1 ∈ C ∧ p.2 ∈ A ∧ R p.1 p.2) ∧ P p.1 p.2}.ncard =
-      {x | (x ∈ C ∧ dom A R x) ∧ ∃ y ∈ A, R x y ∧ P x y}.ncard :=
+      {x | (x ∈ C ∧ dom (· ∈ A) R x) ∧ ∃ y ∈ A, R x y ∧ P x y}.ncard :=
   Set.ncard_congr (fun p _ ↦ p.1)
     (fun ⟨_, y⟩ ⟨⟨hC, hA, hR⟩, hP⟩ ↦ ⟨⟨hC, y, hA, hR⟩, y, hA, hR, hP⟩)
     (by
@@ -56,11 +56,11 @@ theorem symmetric_iff_possessor_dominant (C A B : Set α) (R : α → α → Pro
     most {p : α × α | p.1 ∈ C ∧ p.2 ∈ A ∧ R p.1 p.2} {p | p.2 ∈ B} ↔
       Poss most C Det.some R A B := by
   have h₁ : ({p : α × α | p.1 ∈ C ∧ p.2 ∈ A ∧ R p.1 p.2} ∩ {p | p.2 ∈ B}).ncard =
-      (C ∩ {x | dom A R x} ∩ {x | Det.some (π A R x) B}).ncard :=
+      (C ∩ {x | dom (· ∈ A) R x} ∩ {x | Det.some (π A (fun x ↦ {y | R x y}) x) B}).ncard :=
     (ncard_pair_eq C A R huniq fun _ y ↦ y ∈ B).trans <| congrArg _ <| Set.ext fun _ ↦
       and_congr_right' <| exists_congr fun _ ↦ and_assoc.symm
   have h₂ : ({p : α × α | p.1 ∈ C ∧ p.2 ∈ A ∧ R p.1 p.2} \ {p | p.2 ∈ B}).ncard =
-      ((C ∩ {x | dom A R x}) \ {x | Det.some (π A R x) B}).ncard :=
+      ((C ∩ {x | dom (· ∈ A) R x}) \ {x | Det.some (π A (fun x ↦ {y | R x y}) x) B}).ncard :=
     (ncard_pair_eq C A R huniq fun _ y ↦ y ∉ B).trans <| congrArg _ <| Set.ext fun x ↦ by
       constructor
       · rintro ⟨⟨hC, hdom⟩, y, hA, hR, hnB⟩

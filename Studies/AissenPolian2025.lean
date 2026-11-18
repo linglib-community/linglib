@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.AissenPolian2025
 public import Linglib.Data.Examples.Readers
@@ -40,7 +40,7 @@ over which `stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
 
 namespace AissenPolian2025
 
-open Minimalist SyntacticObject LinearizedSyntacticObject
+open Minimalist SyntacticObject PlanarSyntacticObject
 
 /-! ### Probes -/
 
@@ -59,23 +59,23 @@ def secondaryWh : HorizonSetting := ⟨.D, none⟩
 
 /-- `target` is invisible in `t` to a probe with setting `p` on `probe` when an occurrence of it
 lies behind its horizon for an occurrence of the probe. -/
-def Invisible (p : HorizonSetting) (t : LinearizedSyntacticObject)
+def Invisible (p : HorizonSetting) (t : PlanarSyntacticObject)
     (probe target : SyntacticObject) : Prop :=
-  ∃ a q : t.val.Positions,
+  ∃ a q : t.toRoseTree.Positions,
     t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut headIndex? t a.val
 
-instance (p : HorizonSetting) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+instance (p : HorizonSetting) (t : PlanarSyntacticObject) (probe target : SyntacticObject) :
     Decidable (Invisible p t probe target) := by
   unfold Invisible; infer_instance
 
-theorem not_invisible_of_horizon_none (t : LinearizedSyntacticObject)
+theorem not_invisible_of_horizon_none (t : PlanarSyntacticObject)
     (probe target : SyntacticObject) {p : HorizonSetting} (hp : p.horizon = none) :
     ¬ Invisible p t probe target := by
   obtain ⟨head, _⟩ := p
   subst hp
   simp [Invisible]
 
-theorem dProbe_sees_through (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+theorem dProbe_sees_through (t : PlanarSyntacticObject) (probe target : SyntacticObject) :
     ¬ Invisible dProbeT t probe target ∧ ¬ Invisible dProbeAppl t probe target ∧
       ¬ Invisible secondaryWh t probe target :=
   ⟨not_invisible_of_horizon_none _ _ _ rfl, not_invisible_of_horizon_none _ _ _ rfl,
@@ -83,60 +83,60 @@ theorem dProbe_sees_through (t : LinearizedSyntacticObject) (probe target : Synt
 
 /-! ### The structures -/
 
-def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
-def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
-def V₀ : LinearizedSyntacticObject := .leaf ⟨.of .V [.N], 3⟩
-def v₀ : LinearizedSyntacticObject := .leaf ⟨.of .v [.V], 4⟩
-def Appl₀ : LinearizedSyntacticObject := .leaf ⟨.of .Appl [.V], 5⟩
-def P₀ : LinearizedSyntacticObject := .leaf ⟨.of .P [.N], 6⟩
-def Psr : LinearizedSyntacticObject := .leaf ⟨.of .D [], 7⟩
-def Psm : LinearizedSyntacticObject := .leaf ⟨.of .N [], 8⟩
-def D₀ : LinearizedSyntacticObject := .leaf ⟨.of .D [.N], 9⟩
-def Agt : LinearizedSyntacticObject := .leaf ⟨.of .D [], 10⟩
-def SubjD : LinearizedSyntacticObject := .leaf ⟨.of .D [], 11⟩
-def SubjN : LinearizedSyntacticObject := .leaf ⟨.of .N [], 12⟩
-def ThemeD : LinearizedSyntacticObject := .leaf ⟨.of .D [], 13⟩
-def ThemeN : LinearizedSyntacticObject := .leaf ⟨.of .N [], 14⟩
-def Pivot : LinearizedSyntacticObject := .leaf ⟨.of .N [], 15⟩
+def C₀ : PlanarSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
+def T₀ : PlanarSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
+def V₀ : PlanarSyntacticObject := .leaf ⟨.of .V [.N], 3⟩
+def v₀ : PlanarSyntacticObject := .leaf ⟨.of .v [.V], 4⟩
+def Appl₀ : PlanarSyntacticObject := .leaf ⟨.of .Appl [.V], 5⟩
+def P₀ : PlanarSyntacticObject := .leaf ⟨.of .P [.N], 6⟩
+def Psr : PlanarSyntacticObject := .leaf ⟨.of .D [], 7⟩
+def Psm : PlanarSyntacticObject := .leaf ⟨.of .N [], 8⟩
+def D₀ : PlanarSyntacticObject := .leaf ⟨.of .D [.N], 9⟩
+def Agt : PlanarSyntacticObject := .leaf ⟨.of .D [], 10⟩
+def SubjD : PlanarSyntacticObject := .leaf ⟨.of .D [], 11⟩
+def SubjN : PlanarSyntacticObject := .leaf ⟨.of .N [], 12⟩
+def ThemeD : PlanarSyntacticObject := .leaf ⟨.of .D [], 13⟩
+def ThemeN : PlanarSyntacticObject := .leaf ⟨.of .N [], 14⟩
+def Pivot : PlanarSyntacticObject := .leaf ⟨.of .N [], 15⟩
 
 /-- A non-specific possessive, `{Psr, Psm}`. -/
-def PossP : LinearizedSyntacticObject := {Psr, Psm}
+def PossP : PlanarSyntacticObject := {Psr, Psm}
 
 /-- A specific possessive, `{D⁰, PossP}`. -/
-def DP : LinearizedSyntacticObject := {D₀, PossP}
+def DP : PlanarSyntacticObject := {D₀, PossP}
 
 /-- A locative PP over a non-specific possessive, `{P, PossP}`. -/
-def PP : LinearizedSyntacticObject := {P₀, PossP}
+def PP : PlanarSyntacticObject := {P₀, PossP}
 
 /-- (9c) with a non-specific possessive S_O. -/
-def unaccPossP : LinearizedSyntacticObject := {T₀, {V₀, PossP}}
+def unaccPossP : PlanarSyntacticObject := {T₀, {V₀, PossP}}
 
 /-- (9c) with a specific possessive S_O. -/
-def unaccDP : LinearizedSyntacticObject := {T₀, {V₀, DP}}
+def unaccDP : PlanarSyntacticObject := {T₀, {V₀, DP}}
 
 /-- (9a) with a non-specific possessive O. -/
-def transPossP : LinearizedSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
+def transPossP : PlanarSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
 
 /-- (29) the raising applicative under T⁰. -/
-def raisingAppl : LinearizedSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
+def raisingAppl : PlanarSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
 
 /-- (9b) with a locative PP, for a specific or a non-specific S_A. -/
-def unerg (subj : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def unerg (subj : PlanarSyntacticObject) : PlanarSyntacticObject :=
   {T₀, {subj, {v₀, {V₀, PP}}}}
 
 /-- (71) theme over locative, for a specific or a non-specific theme: path verbs, locative
 existentials and locative copulas. -/
-def themeLoc (theme : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def themeLoc (theme : PlanarSyntacticObject) : PlanarSyntacticObject :=
   {T₀, {V₀, {theme, PP}}}
 
 /-- (83) the experiencer PP merged above the theme. -/
-def experiencer : LinearizedSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
+def experiencer : PlanarSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
 
 /-- (40a) an existential with a bare pivot. -/
-def existential : LinearizedSyntacticObject := {T₀, {V₀, Pivot}}
+def existential : PlanarSyntacticObject := {T₀, {V₀, Pivot}}
 
 /-- The clause under C⁰. -/
-def cp (tp : LinearizedSyntacticObject) : LinearizedSyntacticObject := {C₀, tp}
+def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := {C₀, tp}
 
 /-! ### Nominal opacity -/
 
@@ -155,15 +155,15 @@ theorem dp_opaque_verb_visible : Invisible nominalOpacity (cp unaccDP) C₀ D₀
   decide +kernel
 
 /-- C⁰'s wh-probe, satisfied by the wh-possessor. -/
-def whProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
+def whProbe (t : PlanarSyntacticObject) : Probe t.toRoseTree.Positions :=
   .relativized fun q ↦ decide (t.termAt q = ↑Psr)
 
 /-- What C⁰'s wh-probe finds, searching short of its horizon at N⁰. -/
-def whGoals (t : LinearizedSyntacticObject) : Finset SyntacticObject :=
+def whGoals (t : PlanarSyntacticObject) : Finset SyntacticObject :=
   t.goalsUnder (whProbe t) C₀ (nominalOpacity.cut headIndex? t)
 
 /-- The possessor raised to Spec,TP out of a non-specific S_O. -/
-def psrRaised : LinearizedSyntacticObject := {Psr, unaccPossP}
+def psrRaised : PlanarSyntacticObject := {Psr, unaccPossP}
 
 theorem wh_needs_raising : (cp unaccPossP).goals (whProbe _) C₀ = {↑Psr} ∧
     whGoals (cp unaccPossP) = ∅ ∧ whGoals (cp psrRaised) = {↑Psr} := by
@@ -173,7 +173,7 @@ theorem wh_needs_raising : (cp unaccPossP).goals (whProbe _) C₀ = {↑Psr} ∧
 
 /-- The goals an [EPP:D] probe on the head `h` of `t` can attract: the D leaves at the positions
 `h` c-commands that no other such leaf asymmetrically c-commands. -/
-def dGoals (t : LinearizedSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
+def dGoals (t : PlanarSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
   t.goals (t.leafProbe .D) h
 
 theorem unacc_possP_psr_closest : dGoals unaccPossP T₀ = {↑Psr} := by decide +kernel
@@ -205,7 +205,7 @@ inductive JudgmentType
 
 /-- A clause is categorical when T⁰'s [EPP:D] probe finds a goal to raise to Spec,TP, the
 ψ-subject, and thetic when it finds none. -/
-def judgment (t : LinearizedSyntacticObject) (h : SyntacticObject) : JudgmentType :=
+def judgment (t : PlanarSyntacticObject) (h : SyntacticObject) : JudgmentType :=
   if (dGoals t h).Nonempty then .categorical else .thetic
 
 theorem existential_thetic : judgment existential T₀ = .thetic := by decide +kernel

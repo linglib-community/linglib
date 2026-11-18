@@ -7,23 +7,22 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Assignment
 
 /-!
 # The denotation of a pronoun
 
-This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes a
-`Nominal` whose selector is the value of the entry's index under the assignment, and whose intrinsic
-presupposition is that the resolved referent lies in the entry's φ-domain (`PersonalPronoun.phiDom`,
-`PersonalPronoun.denote`). The φ-domain is the intersection of `Person.dom` at the context of
-utterance with `Number.dom` and `Gender.dom` at the entry's referential person and number and its
-gender. The selector does not vary with the world of evaluation
-(`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is the account
-Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding is abstraction
-over the assignment (`Λ[n]`), and, as Sauerland proposes, an absent or unmarked
-feature restricts nothing.
+This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes the
+`Definite` that is the value of the entry's index under the assignment where that value lies in
+the entry's φ-domain, and nothing elsewhere (`PersonalPronoun.phiDom`, `PersonalPronoun.denote`).
+The φ-domain is the intersection of `Person.dom` at the context of utterance with `Number.dom`
+and `Gender.dom` at the entry's referential person and number and its gender. The denotation
+does not vary with the world of evaluation (`PersonalPronoun.isRigid_denote`), so a pronoun
+refers directly. This is the account Büring surveys: one denotation serves the bound, anaphoric
+and deictic uses, binding is abstraction over the assignment (`Λ[n]`), and, as Sauerland
+proposes, an absent or unmarked feature restricts nothing.
 
 ## Implementation notes
 
@@ -31,7 +30,7 @@ The φ-domain reads the entry's referential person and number
 (`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`), not its agreement
 features, so a polite pronoun that agrees as third plural presupposes its addressee
 (`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
-of the context of utterance (`Kaplan.Context`), and the female and the inanimate referents
+of the context of utterance (`SpeechAct.Context`), and the female and the inanimate referents
 are the gender of referents the entity domain comes equipped with (`Gendered`).
 
 ## References
@@ -42,7 +41,7 @@ are the gender of referents the entity domain comes equipped with (`Gendered`).
 
 @[expose] public section
 
-open Kaplan
+open SpeechAct
 
 namespace PersonalPronoun
 
@@ -67,12 +66,9 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
 
-/-- A pronoun denotes the nominal whose selector is the value `g i` of its index, always defined
-under a total assignment, and whose intrinsic presupposition is that the resolved
-referent `g i` lies in the φ-domain. -/
-def denote : Nominal (ℕ → E) W E where
-  presup g _ := g i ∈ e.phiDom c
-  selector g _ := some (g i)
+/-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
+nothing elsewhere. -/
+def denote : Definite (ℕ → E) W E := .var i (e.phiDom c)
 
 universe u
 
@@ -80,19 +76,18 @@ universe u
 arguments of its domain. -/
 instance : Denotes PersonalPronoun
     (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
-      Nominal (ℕ → E) W E) :=
+      Definite (ℕ → E) W E) :=
   ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩
 
-@[simp] theorem denote_presup (g : ℕ → E) (w : W) :
-    (e.denote i c).presup g w = (g i ∈ e.phiDom c) :=
-  rfl
+@[simp] theorem denote_dom (g : ℕ → E) (w : W) :
+    (e.denote i c g w).Dom ↔ g i ∈ e.phiDom c :=
+  Iff.rfl
 
-@[simp] theorem denote_selector (g : ℕ → E) (w : W) :
-    (e.denote i c).selector g w = some (g i) :=
-  rfl
+@[simp] theorem mem_denote {g : ℕ → E} {w : W} {x : E} :
+    x ∈ e.denote i c g w ↔ g i ∈ e.phiDom c ∧ g i = x :=
+  Definite.mem_var
 
-theorem isRigid_denote_selector (g : ℕ → E) :
-    IsRigid ((e.denote i c).selector g) :=
-  isRigid_const _
+theorem isRigid_denote (g : ℕ → E) : IsRigid (e.denote (W := W) i c g) :=
+  Function.IsConst.const _
 
 end PersonalPronoun

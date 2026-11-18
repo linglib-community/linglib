@@ -24,7 +24,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("same woman", .acceptable), ("possibly different women", .unacceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("same woman", .acceptable), ("possibly different women", .acceptable)]
     paperFeatures := [] }
 

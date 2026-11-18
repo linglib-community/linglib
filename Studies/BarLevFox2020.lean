@@ -355,7 +355,8 @@ private theorem FreeChoiceWitnesses.exists_both :
 theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
     (R.preimage a ∩ R.preimage b) \ R.preimage (a ∩ b) := by
   rw [fcAlts, exhIEII_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both,
-    Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ preimage_mono Set.subset_union_left h.1]
+    Set.inter_assoc,
+    Set.inter_eq_right.2 (Set.inter_subset_left.trans (preimage_mono Set.subset_union_left))]
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/

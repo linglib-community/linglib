@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "pluralQ"), ("dependent", "bare")] }
 
@@ -37,7 +37,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "singularQ"), ("dependent", "bare")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "pluralQ"), ("dependent", "cardinal")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "nonQ"), ("dependent", "cardinal")] }
 
@@ -76,7 +76,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "pluralQ"), ("dependent", "bare")] }
 
@@ -89,7 +89,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "pluralQ"), ("dependent", "bare")] }
 
@@ -102,7 +102,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "singularQ"), ("dependent", "bare")] }
 
@@ -115,7 +115,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licensor", "singularQ"), ("dependent", "bare")] }
 

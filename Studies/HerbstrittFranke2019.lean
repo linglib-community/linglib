@@ -4,7 +4,8 @@ public import Linglib.Core.InformationTheory.Hellinger
 public import Linglib.Core.Probability.Distributions.Hypergeometric
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Data.Examples.HerbstrittFranke2019
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty
@@ -168,20 +169,20 @@ section Listener
 variable (θ : Thresholds) (P : Measure State)
 
 /-- The literal listener of (15) conditions the prior on the expression's extension. -/
-noncomputable def L0 : Kernel SimpleExpr State := RSA.listener P (truthful θ.ext)
+noncomputable def L0 : Kernel SimpleExpr State := RSA.literalListener P θ.ext
 
-instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (RSA.listener _ (truthful _)))
+instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
 instance (m : SimpleExpr) : IsZeroOrProbabilityMeasure (L0 θ P m) :=
-  inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.listener _ (truthful _) m))
+  inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.literalListener _ _ m))
 
 theorem isProbabilityMeasure_L0 [IsFiniteMeasure P] {m : SimpleExpr} (h : P (θ.ext m) ≠ 0) :
     IsProbabilityMeasure (L0 θ P m) :=
-  ⟨listener_truthful_apply_univ P θ.ext h⟩
+  ⟨literalListener_apply_univ P θ.ext h⟩
 
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     L0 θ P m {s} = 0 :=
-  listener_truthful_apply_singleton_of_notMem P θ.ext h
+  literalListener_apply_singleton_of_notMem P θ.ext h
 
 theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     (L0 θ P m).real {s} = 0 := by
@@ -189,7 +190,7 @@ theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
 
 theorem L0_real_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
     (L0 θ P m).real {s} = P.real {s} / P.real (θ.ext m) :=
-  listener_truthful_real_singleton P θ.ext h
+  literalListener_real_singleton P θ.ext h
 
 end Listener
 
@@ -425,7 +426,7 @@ theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ 
 (24), the marginal of the joint prior, on the expression's extension. -/
 noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
     Kernel (Outer × Inner) (Obs × Access) :=
-  RSA.listener (joint P A).snd (truthful fun m : Outer × Inner ↦ θ.complex P m.1 m.2)
+  RSA.literalListener (joint P A).snd fun m : Outer × Inner ↦ θ.complex P m.1 m.2
 
 end ComplexThresholds
 

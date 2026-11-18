@@ -24,7 +24,7 @@ def gs1984_i_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John.", .acceptable), ("Professor Jones, John; professor Williams, William; professor Peters, Peter ...", .acceptable), ("His best one.", .acceptable)]
+    contrasts := [("John.", .acceptable), ("Professor Jones, John; professor Williams, William; professor Peters, Peter ...", .acceptable), ("His best one.", .acceptable)]
     readings := [("wh-wide-scope", .acceptable), ("pair-list", .acceptable), ("functional", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def gs1984_i_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("His worst one.", .acceptable), ("Professor Jones, John; professor Williams, William; professor Peters, Peter ...", .unacceptable)]
+    contrasts := [("His worst one.", .acceptable), ("Professor Jones, John; professor Williams, William; professor Peters, Peter ...", .unacceptable)]
     readings := [("functional", .acceptable), ("pair-list", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def gs1984_i_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh-wide-scope", .acceptable), ("choice", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def gs1984_i_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-all", .acceptable), ("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def gs1984_i_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Mary.", .acceptable), ("The girl from next door.", .acceptable), ("A redhead.", .acceptable)]
+    contrasts := [("Mary.", .acceptable), ("The girl from next door.", .acceptable), ("A redhead.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def gs1984_v_29 : Datum :=
     glossedTokens := []
     context := "Asked by an Italian tourist in your home-town."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def gs1984_v_37 : Datum :=
     glossedTokens := []
     context := "The questioner knows who their father is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "complete-pragmatic")] }
 
@@ -115,7 +115,7 @@ def gs1984_v_38 : Datum :=
     glossedTokens := []
     context := "The questioner has the information that Joop Zoetemelk ended second in the Tour de France of 1979."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "complete-pragmatic")] }
 
@@ -128,7 +128,7 @@ def gs1984_v_39 : Datum :=
     glossedTokens := []
     context := "The questioner wrongly believes that Joop Zoetemelk was the winner in 1979."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "complete-pragmatic")] }
 
@@ -141,7 +141,7 @@ def gs1984_v_40 : Datum :=
     glossedTokens := []
     context := "Asked by the salesmanager of a client; the property applies to a single member of her staff."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answer", "complete-pragmatic")] }
 
@@ -154,7 +154,7 @@ def gs1984_v_41 : Datum :=
     glossedTokens := []
     context := "The questioner knows that Prof. A. is bound to be the last one to send in his contribution."
     judgment := .acceptable
-    alternatives := [("At least from Prof. A.", .acceptable)]
+    contrasts := [("At least from Prof. A.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def gs1984_v_43 : Datum :=
     glossedTokens := []
     context := "Prof. A. is also always the first to accept an invitation to attend a conference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def gs1984_vi_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John.", .acceptable), ("Professor Jones, Bill; professor Williams, Mary; and professor Peters, John.", .acceptable)]
+    contrasts := [("John.", .acceptable), ("Professor Jones, Bill; professor Williams, Mary; and professor Peters, John.", .acceptable)]
     readings := [("wh-wide-scope", .acceptable), ("pair-list", .acceptable)]
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def gs1984_vi_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh-wide-scope", .acceptable), ("pair-list", .acceptable), ("term-wide-scope", .acceptable)]
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def gs1984_vi_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh-wide-scope", .acceptable), ("pair-list", .acceptable), ("term-wide-scope", .acceptable)]
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def gs1984_vi_12 : Datum :=
     glossedTokens := []
     context := "John loves Suzy; Mary loves Suzy and Bill."
     judgment := .acceptable
-    alternatives := [("Suzy and Bill.", .acceptable), ("John, Suzy.", .acceptable), ("Mary, Suzy and Bill.", .acceptable)]
+    contrasts := [("Suzy and Bill.", .acceptable), ("John, Suzy.", .acceptable), ("Mary, Suzy and Bill.", .acceptable)]
     readings := [("wh-wide-scope", .acceptable), ("choice", .acceptable)]
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def gs1984_vi_17 : Datum :=
     glossedTokens := []
     context := "John loves Suzy; Mary loves Suzy and Bill."
     judgment := .acceptable
-    alternatives := [("Suzy.", .acceptable), ("John, Suzy; and Mary, Suzy and Bill.", .acceptable)]
+    contrasts := [("Suzy.", .acceptable), ("John, Suzy; and Mary, Suzy and Bill.", .acceptable)]
     readings := [("wh-wide-scope", .acceptable), ("pair-list", .acceptable)]
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def gs1984_vi_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("A watch.", .acceptable), ("Bill, a watch and a ball; Peter, a book and a pen.", .acceptable)]
+    contrasts := [("A watch.", .acceptable), ("Bill, a watch and a ball; Peter, a book and a pen.", .acceptable)]
     readings := [("wh-wide-scope", .acceptable), ("choice", .acceptable)]
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def gs1984_vi_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("pair-list", .unacceptable), ("choice", .unacceptable)]
     paperFeatures := [("termMonotonicity", "decreasing")] }
 
@@ -271,7 +271,7 @@ def gs1984_vi_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("pair-list", .unacceptable), ("choice", .unacceptable)]
     paperFeatures := [("termMonotonicity", "decreasing")] }
 
@@ -284,7 +284,7 @@ def gs1984_vi_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wh-wide-scope", .acceptable), ("choice", .acceptable), ("term-widest-scope", .acceptable)]
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def gs1984_vi_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -310,7 +310,7 @@ def gs1984_vi_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [] }
 
@@ -323,7 +323,7 @@ def gs1984_vi_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [] }
 
@@ -336,7 +336,7 @@ def gs1984_vi_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [] }
 
@@ -349,7 +349,7 @@ def gs1984_vi_5_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Not in the drawer.", .acceptable), ("Nowhere.", .acceptable)]
+    contrasts := [("Not in the drawer.", .acceptable), ("Nowhere.", .acceptable)]
     readings := [("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -362,7 +362,7 @@ def gs1984_vi_5_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-all", .acceptable), ("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -375,7 +375,7 @@ def gs1984_vi_5_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-all", .acceptable), ("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -388,7 +388,7 @@ def gs1984_vi_5_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [] }
 
@@ -401,7 +401,7 @@ def gs1984_vi_5_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable), ("choice", .acceptable)]
     paperFeatures := [] }
 
@@ -414,7 +414,7 @@ def gs1984_vi_5_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bel lives in the wood, and Nap lives near the lake", .acceptable), ("In the wood, and near the lake.", .acceptable)]
+    contrasts := [("Bel lives in the wood, and Nap lives near the lake", .acceptable), ("In the wood, and near the lake.", .acceptable)]
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable), ("mention-two", .acceptable), ("choice", .acceptable)]
     paperFeatures := [] }
 
@@ -427,7 +427,7 @@ def gs1984_vi_5_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("humanSubject", "true")] }
 
@@ -440,7 +440,7 @@ def gs1984_vi_5_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("humanSubject", "true")] }
 
@@ -453,7 +453,7 @@ def gs1984_vi_5_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("humanSubject", "true")] }
 
@@ -466,7 +466,7 @@ def gs1984_vi_5_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .unacceptable), ("mention-all", .acceptable)]
     paperFeatures := [("humanSubject", "false")] }
 
@@ -479,7 +479,7 @@ def gs1984_vi_5_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .unacceptable), ("mention-all", .acceptable)]
     paperFeatures := [("humanSubject", "false")] }
 
@@ -492,7 +492,7 @@ def gs1984_vi_5_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .unacceptable), ("mention-all", .acceptable)]
     paperFeatures := [("humanSubject", "false")] }
 
@@ -505,7 +505,7 @@ def gs1984_vi_5_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .unacceptable), ("mention-all", .acceptable)]
     paperFeatures := [("humanSubject", "false")] }
 
@@ -518,7 +518,7 @@ def gs1984_vi_5_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [] }
 

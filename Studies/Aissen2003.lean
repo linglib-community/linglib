@@ -6,7 +6,7 @@ public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 
 /-!
 # Aissen (2003): Differential Object Marking: Iconicity vs. Economy
@@ -341,13 +341,13 @@ def starZero (ℓ : L) : Constraint (L × Bool) :=
   Constraint.binary (fun c ↦ c.1 = ℓ ∧ c.2 = false)
 
 /-- The iconicity subhierarchy of a scale (most prominent level first) with
-    \*STRUC_C interpolated at position `k`. -/
+\*STRUC_C interpolated at position `k`. -/
 def interpolation (levels : List L) (k : Nat) : List (Constraint (L × Bool)) :=
   (levels.map starZero).insertIdx k starStruc
 
 /-- Whether the case-marked parse wins for an object at level `ℓ`. -/
 def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
-  decide ((Tableau.ofList {(ℓ, true), (ℓ, false)} ranking).optimal
+  decide (Constraint.eval {(ℓ, true), (ℓ, false)} ranking
     = {(ℓ, true)})
 
 theorem tableaux_1_2 :

@@ -49,13 +49,6 @@ an infinite universe the finitary closure is strictly smaller than the conservat
 quantifiers count with. Canonical witnesses of each size are initial segments of a fixed
 enumeration (`segment`), which nest, unlike arbitrarily chosen subsets.
 
-## Errata
-
-* PROP 14(c) and its gloss say that the cardinal functions are always a proper subset of the
-  existential ones. On a universe of one individual the two classes coincide
-  (`cardinalSubalgebra_eq_of_subsingleton`), so `cardinalSubalgebra_lt` assumes two
-  individuals.
-
 ## TODO
 
 * Footnote 10(b): on an infinite universe `CARD ⊊ E-Det ⊓ LOG`, witnessed by the paper's `f₀`.
@@ -177,9 +170,10 @@ theorem card_nested [Fintype α] : Nat.card (Nested α) = 3 ^ Fintype.card α :=
     Nat.card_eq_fintype_card, Fintype.card_fin]
 
 theorem card_consDet [Fintype α] : Nat.card (ConsDet α) = 2 ^ 3 ^ Fintype.card α := by
-  rw [Nat.card_congr conservativeOrderIso.toEquiv]
-  change Nat.card (Nested α → Prop) = _
-  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_nested]
+  classical
+  have := Fintype.ofEquiv _ (nestedEquivFin3 (α := α)).symm
+  rw [Nat.card_congr conservativeOrderIso.toEquiv, Nat.card_eq_fintype_card, Fintype.card_set,
+    ← Nat.card_eq_fintype_card, card_nested]
 
 theorem mk_consDet :
     _root_.Cardinal.mk (ConsDet α) =
@@ -286,7 +280,8 @@ theorem intersective_noBut (a : α) : Intersective (noBut a) := fun R T R' T' h 
 correspondence is an isomorphism onto the type ⟨1⟩ quantifiers, the possible NP denotations
 (PROP 15). -/
 def existentialOrderIso : existentialSubalgebra (α := α) ≃o Quantifier α :=
-  invariantsOrderIso (s := fun T ↦ (Set.univ, T)) fun T ↦ Set.univ_inter T
+  (invariantsOrderIso (s := fun T ↦ (Set.univ, T)) fun T ↦ Set.univ_inter T).trans
+    Set.memOrderIso
 
 theorem card_existential [Fintype α] :
     Nat.card (existentialSubalgebra (α := α)) = 2 ^ 2 ^ Fintype.card α := by

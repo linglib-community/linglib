@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Rudin2025b
 public import Linglib.Data.Examples.Readers
 
@@ -46,14 +46,6 @@ view that it denotes a proposition and on the view that it denotes a question al
   material at a volume, its "events of linguistic production of a particular kind"; *assert* and
   *claim* require an assertion, the property its discussion of them invokes. Interrogative grunts
   are not represented.
-
-## Errata
-
-* The content postulates (66) and (80) are printed as biconditionals, but the prose glosses only
-  the left-to-right direction. Read right to left, (80) makes every event an asking with every
-  question as its content, so under (86) every reenactment is an asking and the paper's own (60),
-  a quoted falling declarative under *say*, is
-  [contradictory](##not_report_say_of_printed). `not_report` uses the left-to-right reading.
 
 ## References
 
@@ -125,35 +117,35 @@ instance : DecidablePred (Material.Linguistic (W := W)) := fun m ↦ by
 
 /-- Uttering a sentence that denotes `D` raises `D` as an issue and, unless the tune is rising,
 commits the speaker to the informative content of `D`. -/
-def utter (D : Question W) : Bool → Table Discourse.Role W → Table Discourse.Role W
+def utter (D : Question W) : Bool → Table SpeechAct.Role W → Table SpeechAct.Role W
   | true, K => K.push D
   | false, K => (K.commit .speaker D.info).push D
 
 -- (83)
-theorem utter_ofSet_false (p : Set W) (K : Table Discourse.Role W) :
+theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W) :
     utter (ofSet p) false K = K.assert .speaker p := by
   rw [utter, info_ofSet]
   rfl
 
 -- (85)
-theorem utter_polar_true (p : Set W) (K : Table Discourse.Role W) :
+theorem utter_polar_true (p : Set W) (K : Table SpeechAct.Role W) :
     utter (polar p) true K = K.polarQuestion p := rfl
 
 /-- The context update of a performance is that of the sentence it utters, if any. -/
-def Performance.update : Performance W → Table Discourse.Role W → Table Discourse.Role W
+def Performance.update : Performance W → Table SpeechAct.Role W → Table SpeechAct.Role W
   | ⟨.utterance D rising, _⟩ => utter D rising
   | _ => id
 
 /-- A performance is an asking when in every context it raises an issue without committing its
 speaker to anything that resolves it. -/
 def Performance.Asking (u : Performance W) : Prop :=
-  ∀ K : Table Discourse.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
+  ∀ K : Table SpeechAct.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
     ∀ q ∈ (u.update K).discourseCommitments .speaker, q ∈ i → q ∈ K.discourseCommitments .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to that alternative. -/
 def Performance.Assertion (u : Performance W) : Prop :=
-  ∀ K : Table Discourse.Role W, ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
+  ∀ K : Table SpeechAct.Role W, ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
     q ∈ (u.update K).discourseCommitments .speaker
 
 namespace Performance

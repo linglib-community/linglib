@@ -24,7 +24,7 @@ def ex01 : Datum :=
     glossedTokens := []
     context := "Showcases that the underlined past tense \"were\" need not be interpreted as semantically past — the meal time is in the future of utterance, not the past."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("uninterpreted-past (SOT)", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex02 : Datum :=
     glossedTokens := []
     context := "Past tense \"was\" inside the future-complement \"would buy\" — the alive-time is the future buying time, not the saying-time and not the utterance time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("alive-at-buying (later-than-saying)", .acceptable), ("alive-at-saying", .acceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex03 : Datum :=
     glossedTokens := []
     context := "Multi-embedded SOT with two underlined past forms (\"was\", \"got\") both referring to future-of-utterance times."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("pregnancy-at-knowing (future-of-utterance)", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex05 : Datum :=
     glossedTokens := []
     context := "The past tense \"went\" need not refer to a time before the utterance time: will shifts the evaluation time into the future and the embedded past takes us back from there, so the past cannot be analyzed as a pronoun."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("going-to-Harvard before the marrying time, not necessarily before utterance", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := "Uttered at, say, 11 o'clock. John self-locates at 10 o'clock; his belief is not that the time of utterance is 10."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se (John self-locates at 10)", .acceptable), ("indexical (John thinks 11 is 10)", .marginal)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := "Embedded present-under-present. John self-locates at a time when he has a headache."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de se (headache at John's now)", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := "Relative clause past tense under a matrix past. The relative-clause tense can be zero-bound (simultaneous with buying) or independently past."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (alive-at-buying, zero tense in RC)", .acceptable), ("independent past (alive-before-buying, past in RC)", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("RC zero-tense (alive-at-buying)", .acceptable), ("RC past-tense (alive-at-saying)", .acceptable)]
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := "Sickness is at yesterday (between thought-time two-days-ago and utterance). \"Would\" makes the relative future-from-thought reachable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sickness yesterday, after the self-located thought time (de se)", .acceptable)]
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := "Without \"would\", the embedded past forces sickness at the thought-time (two days ago), which conflicts with the adverbial \"yesterday\"."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("sickness-at-thought-time", .ungrammatical)]
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := "Past matrix with present embedded. Embedded present can be de re about a present state of Mary that the past ultrasound picture is about."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de re on present state", .marginal)]
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := "Ogihara-style paraphrase that makes the temporal de re explicit."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de re on present state (explicit)", .acceptable)]
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := "Looking at churches in Italy, no previous discourse. English simple past acceptable out of the blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")] }
 
@@ -191,9 +191,11 @@ def ex40b : Datum :=
     language := "stan1295"
     primaryText := "Wer baute diese Kirche? Borromini baute diese Kirche."
     glossedTokens := [("Wer", "Who"), ("baute", "built"), ("diese", "this"), ("Kirche", "church"), ("Borromini", "Borromini"), ("baute", "built"), ("diese", "this"), ("Kirche", "church")]
+    glossedWords := [⟨['W', 'e', 'r'], ['W', 'h', 'o'], [⟨['W', 'e', 'r'], ['W', 'h', 'o'], none⟩]⟩, ⟨['b', 'a', 'u', 't', 'e'], ['b', 'u', 'i', 'l', 't'], [⟨['b', 'a', 'u', 't', 'e'], ['b', 'u', 'i', 'l', 't'], none⟩]⟩, ⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], [⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], none⟩]⟩, ⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], [⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], none⟩]⟩, ⟨['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], ['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], [⟨['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], ['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], none⟩]⟩, ⟨['b', 'a', 'u', 't', 'e'], ['b', 'u', 'i', 'l', 't'], [⟨['b', 'a', 'u', 't', 'e'], ['b', 'u', 'i', 'l', 't'], none⟩]⟩, ⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], [⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], none⟩]⟩, ⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], [⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")] }
 
@@ -204,9 +206,11 @@ def ex40c : Datum :=
     language := "stan1295"
     primaryText := "Wer hat diese Kirche gebaut? Borromini hat diese Kirche gebaut."
     glossedTokens := [("Wer", "Who"), ("hat", "has"), ("diese", "this"), ("Kirche", "church"), ("gebaut", "built"), ("Borromini", "Borromini"), ("hat", "has"), ("diese", "this"), ("Kirche", "church"), ("gebaut", "built")]
+    glossedWords := [⟨['W', 'e', 'r'], ['W', 'h', 'o'], [⟨['W', 'e', 'r'], ['W', 'h', 'o'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], [⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], none⟩]⟩, ⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], [⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], none⟩]⟩, ⟨['g', 'e', 'b', 'a', 'u', 't'], ['b', 'u', 'i', 'l', 't'], [⟨['g', 'e', 'b', 'a', 'u', 't'], ['b', 'u', 'i', 'l', 't'], none⟩]⟩, ⟨['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], ['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], [⟨['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], ['B', 'o', 'r', 'r', 'o', 'm', 'i', 'n', 'i'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], [⟨['d', 'i', 'e', 's', 'e'], ['t', 'h', 'i', 's'], none⟩]⟩, ⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], [⟨['K', 'i', 'r', 'c', 'h', 'e'], ['c', 'h', 'u', 'r', 'c', 'h'], none⟩]⟩, ⟨['g', 'e', 'b', 'a', 'u', 't'], ['b', 'u', 'i', 'l', 't'], [⟨['g', 'e', 'b', 'a', 'u', 't'], ['b', 'u', 'i', 'l', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")] }
 
@@ -219,7 +223,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := "English simple past in a relative clause inside a future matrix. Felicitous even without a contextually salient past interval."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple past")] }
 
@@ -230,9 +234,11 @@ def ex41b : Datum :=
     language := "stan1295"
     primaryText := "Wir werden jeden Brief beantworten, den wir bekamen."
     glossedTokens := [("Wir", "We"), ("werden", "will"), ("jeden", "every"), ("Brief", "letter"), ("beantworten", "answer"), ("den", "that"), ("wir", "we"), ("bekamen", "received")]
+    glossedWords := [⟨['W', 'i', 'r'], ['W', 'e'], [⟨['W', 'i', 'r'], ['W', 'e'], none⟩]⟩, ⟨['w', 'e', 'r', 'd', 'e', 'n'], ['w', 'i', 'l', 'l'], [⟨['w', 'e', 'r', 'd', 'e', 'n'], ['w', 'i', 'l', 'l'], none⟩]⟩, ⟨['j', 'e', 'd', 'e', 'n'], ['e', 'v', 'e', 'r', 'y'], [⟨['j', 'e', 'd', 'e', 'n'], ['e', 'v', 'e', 'r', 'y'], none⟩]⟩, ⟨['B', 'r', 'i', 'e', 'f'], ['l', 'e', 't', 't', 'e', 'r'], [⟨['B', 'r', 'i', 'e', 'f'], ['l', 'e', 't', 't', 'e', 'r'], none⟩]⟩, ⟨['b', 'e', 'a', 'n', 't', 'w', 'o', 'r', 't', 'e', 'n'], ['a', 'n', 's', 'w', 'e', 'r'], [⟨['b', 'e', 'a', 'n', 't', 'w', 'o', 'r', 't', 'e', 'n'], ['a', 'n', 's', 'w', 'e', 'r'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], [⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['w', 'i', 'r'], ['w', 'e'], [⟨['w', 'i', 'r'], ['w', 'e'], none⟩]⟩, ⟨['b', 'e', 'k', 'a', 'm', 'e', 'n'], ['r', 'e', 'c', 'e', 'i', 'v', 'e', 'd'], [⟨['b', 'e', 'k', 'a', 'm', 'e', 'n'], ['r', 'e', 'c', 'e', 'i', 'v', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Präteritum")] }
 
@@ -243,9 +249,11 @@ def ex41c : Datum :=
     language := "stan1295"
     primaryText := "Wir werden jeden Brief beantworten, den wir bekommen haben."
     glossedTokens := [("Wir", "We"), ("werden", "will"), ("jeden", "every"), ("Brief", "letter"), ("beantworten", "answer"), ("den", "that"), ("wir", "we"), ("bekommen", "gotten"), ("haben", "have")]
+    glossedWords := [⟨['W', 'i', 'r'], ['W', 'e'], [⟨['W', 'i', 'r'], ['W', 'e'], none⟩]⟩, ⟨['w', 'e', 'r', 'd', 'e', 'n'], ['w', 'i', 'l', 'l'], [⟨['w', 'e', 'r', 'd', 'e', 'n'], ['w', 'i', 'l', 'l'], none⟩]⟩, ⟨['j', 'e', 'd', 'e', 'n'], ['e', 'v', 'e', 'r', 'y'], [⟨['j', 'e', 'd', 'e', 'n'], ['e', 'v', 'e', 'r', 'y'], none⟩]⟩, ⟨['B', 'r', 'i', 'e', 'f'], ['l', 'e', 't', 't', 'e', 'r'], [⟨['B', 'r', 'i', 'e', 'f'], ['l', 'e', 't', 't', 'e', 'r'], none⟩]⟩, ⟨['b', 'e', 'a', 'n', 't', 'w', 'o', 'r', 't', 'e', 'n'], ['a', 'n', 's', 'w', 'e', 'r'], [⟨['b', 'e', 'a', 'n', 't', 'w', 'o', 'r', 't', 'e', 'n'], ['a', 'n', 's', 'w', 'e', 'r'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], [⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['w', 'i', 'r'], ['w', 'e'], [⟨['w', 'i', 'r'], ['w', 'e'], none⟩]⟩, ⟨['b', 'e', 'k', 'o', 'm', 'm', 'e', 'n'], ['g', 'o', 't', 't', 'e', 'n'], [⟨['b', 'e', 'k', 'o', 'm', 'm', 'e', 'n'], ['g', 'o', 't', 't', 'e', 'n'], none⟩]⟩, ⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Perfekt")] }
 
@@ -258,7 +266,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := "RC past \"caught\" can have either an anaphoric reading (relative to the dream-time) or an independent backward-shifted reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anaphoric (caught-before-dreaming)", .acceptable), ("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 
@@ -269,9 +277,11 @@ def ex42b : Datum :=
     language := "stan1295"
     primaryText := "Hans träumte davon, einen Fisch zu essen, den er selber fing."
     glossedTokens := [("Hans", "Hans"), ("träumte", "dreamed"), ("davon", "of it"), ("einen", "a"), ("Fisch", "fish"), ("zu", "to"), ("essen", "eat"), ("den", "that"), ("er", "he"), ("selber", "himself"), ("fing", "caught")]
+    glossedWords := [⟨['H', 'a', 'n', 's'], ['H', 'a', 'n', 's'], [⟨['H', 'a', 'n', 's'], ['H', 'a', 'n', 's'], none⟩]⟩, ⟨['t', 'r', 'ä', 'u', 'm', 't', 'e'], ['d', 'r', 'e', 'a', 'm', 'e', 'd'], [⟨['t', 'r', 'ä', 'u', 'm', 't', 'e'], ['d', 'r', 'e', 'a', 'm', 'e', 'd'], none⟩]⟩, ⟨['d', 'a', 'v', 'o', 'n'], ['o', 'f', ' ', 'i', 't'], [⟨['d', 'a', 'v', 'o', 'n'], ['o', 'f', ' ', 'i', 't'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'n'], ['a'], [⟨['e', 'i', 'n', 'e', 'n'], ['a'], none⟩]⟩, ⟨['F', 'i', 's', 'c', 'h'], ['f', 'i', 's', 'h'], [⟨['F', 'i', 's', 'c', 'h'], ['f', 'i', 's', 'h'], none⟩]⟩, ⟨['z', 'u'], ['t', 'o'], [⟨['z', 'u'], ['t', 'o'], none⟩]⟩, ⟨['e', 's', 's', 'e', 'n'], ['e', 'a', 't'], [⟨['e', 's', 's', 'e', 'n'], ['e', 'a', 't'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], [⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['e', 'r'], ['h', 'e'], [⟨['e', 'r'], ['h', 'e'], none⟩]⟩, ⟨['s', 'e', 'l', 'b', 'e', 'r'], ['h', 'i', 'm', 's', 'e', 'l', 'f'], [⟨['s', 'e', 'l', 'b', 'e', 'r'], ['h', 'i', 'm', 's', 'e', 'l', 'f'], none⟩]⟩, ⟨['f', 'i', 'n', 'g'], ['c', 'a', 'u', 'g', 'h', 't'], [⟨['f', 'i', 'n', 'g'], ['c', 'a', 'u', 'g', 'h', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .unacceptable)]
     paperFeatures := [] }
 
@@ -282,9 +292,11 @@ def ex42c : Datum :=
     language := "stan1295"
     primaryText := "Hans träumte davon, einen Fisch zu essen, den er selber gefangen hatte."
     glossedTokens := [("Hans", "Hans"), ("träumte", "dreamed"), ("davon", "of it"), ("einen", "a"), ("Fisch", "fish"), ("zu", "to"), ("essen", "eat"), ("den", "that"), ("er", "he"), ("selber", "himself"), ("gefangen", "caught"), ("hatte", "had")]
+    glossedWords := [⟨['H', 'a', 'n', 's'], ['H', 'a', 'n', 's'], [⟨['H', 'a', 'n', 's'], ['H', 'a', 'n', 's'], none⟩]⟩, ⟨['t', 'r', 'ä', 'u', 'm', 't', 'e'], ['d', 'r', 'e', 'a', 'm', 'e', 'd'], [⟨['t', 'r', 'ä', 'u', 'm', 't', 'e'], ['d', 'r', 'e', 'a', 'm', 'e', 'd'], none⟩]⟩, ⟨['d', 'a', 'v', 'o', 'n'], ['o', 'f', ' ', 'i', 't'], [⟨['d', 'a', 'v', 'o', 'n'], ['o', 'f', ' ', 'i', 't'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'n'], ['a'], [⟨['e', 'i', 'n', 'e', 'n'], ['a'], none⟩]⟩, ⟨['F', 'i', 's', 'c', 'h'], ['f', 'i', 's', 'h'], [⟨['F', 'i', 's', 'c', 'h'], ['f', 'i', 's', 'h'], none⟩]⟩, ⟨['z', 'u'], ['t', 'o'], [⟨['z', 'u'], ['t', 'o'], none⟩]⟩, ⟨['e', 's', 's', 'e', 'n'], ['e', 'a', 't'], [⟨['e', 's', 's', 'e', 'n'], ['e', 'a', 't'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], [⟨['d', 'e', 'n'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['e', 'r'], ['h', 'e'], [⟨['e', 'r'], ['h', 'e'], none⟩]⟩, ⟨['s', 'e', 'l', 'b', 'e', 'r'], ['h', 'i', 'm', 's', 'e', 'l', 'f'], [⟨['s', 'e', 'l', 'b', 'e', 'r'], ['h', 'i', 'm', 's', 'e', 'l', 'f'], none⟩]⟩, ⟨['g', 'e', 'f', 'a', 'n', 'g', 'e', 'n'], ['c', 'a', 'u', 'g', 'h', 't'], [⟨['g', 'e', 'f', 'a', 'n', 'g', 'e', 'n'], ['c', 'a', 'u', 'g', 'h', 't'], none⟩]⟩, ⟨['h', 'a', 't', 't', 'e'], ['h', 'a', 'd'], [⟨['h', 'a', 't', 't', 'e'], ['h', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 

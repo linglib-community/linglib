@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "Past-shifted (backward-shifted) reading: the embedded `was` (in 'he was in the laboratory') is anaphoric to the time of the crime introduced in the first sentence. Time of the defendant being in the laboratory precedes the jurors' believing time. Abusch's diagnostic for the Independent Theory's anaphoric account of embedded past tense."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("past-shifted (defendant in lab before jurors' believing)", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := "Simultaneous reading. The embedded `was raining` is anaphoric to the matrix `believed`, yielding a reading where the raining is co-temporal with the believing. Abusch's contrast with (1): both readings derived by the Independent Theory via anaphora to different antecedents."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (raining at believing time)", .acceptable), ("past-shifted (raining before believing)", .acceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex3_ULC : Datum :=
     glossedTokens := []
     context := "Upper Limit Constraint (ULC) foil. The Independent Theory would predict a forward-shifted reading (the attack co-temporal with the later opening, hence after the thinking) via anaphora to the previous sentence's time of opening, paraphrasable as 'When I open the door, a burglar will attack me'. This reading is UNAVAILABLE: embedded past cannot denote a time later than the matrix event. Motivates the §7 ULC."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("past-shifted (attack before thinking)", .acceptable), ("forward-shifted (attack co-temporal with later opening, after thinking)", .ungrammatical)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex8_doubleAccess : Datum :=
     glossedTokens := []
     context := "Double-access (present-under-past). The pregnancy must include BOTH the utterance time and John's believing time. The embedded present cannot have a purely future-shifted reading (despite the future-orientation usually available to present tense). Analyzed in §12 by de re interpretation of the embedded present."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("double-access (pregnancy includes utterance + believing)", .acceptable), ("forward-shifted (pregnancy later than the believing)", .ungrammatical)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forward-shifted (attack after thinking, co-temporal with the opening)", .acceptable)]
     paperFeatures := [("configuration", "would under past"), ("reading", "forward-shifted")] }
 
@@ -89,7 +89,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backward-shifted (a previous Tuesday)", .acceptable), ("forward-shifted (the Tuesday after last Monday)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")] }
 
@@ -102,7 +102,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("backward-shifted, narrow scope (some time before the believing)", .acceptable), ("forward-shifted, narrow scope", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")] }
 
@@ -115,7 +115,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (loving at the marrying, after the believing)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")] }
 
@@ -128,7 +128,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (meal at the saying, three days after the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")] }
 
@@ -141,7 +141,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "backward-shifted")] }
 
@@ -154,7 +154,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forward-shifted (the thunderstorm after the believing)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "forward-shifted")] }
 
@@ -167,7 +167,7 @@ def ex47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "future-directed acquaintance"), ("source", "Bonomi")] }
 
@@ -180,7 +180,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow scope (interest at the seminar, after the utterance)", .acceptable), ("wide scope (a specific topic; interest before the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("sensitivity", "logical scope")] }
 
@@ -193,7 +193,7 @@ def ex60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("meeting before the marrying (locally licensed)", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")] }
 
@@ -206,7 +206,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("loving before the marrying", .acceptable), ("simultaneous (loving at the marrying)", .unacceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")] }
 
@@ -219,7 +219,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("meeting before the marrying, possibly after the utterance", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("operator", "will as evaluation-time shifter")] }
 
@@ -232,7 +232,7 @@ def ex69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "double access"), ("complement", "not true at either time")] }
 
@@ -245,7 +245,7 @@ def ex81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("phenomenon", "double access"), ("alternative", "simultaneous past")] }
 

@@ -31,10 +31,9 @@ but *af* 'off' is also a preposition, and the complement of a non-spatial prepos
 ## Implementation notes
 
 * The values an entry marks are those of the uses its docstring lists: *voor* marks a place,
-  'in front of', a time, 'before', and a beneficiary, 'for'. The spatial values are computed
-  from the directions, by the case that expresses a direction with no localization
-  (`Case.ofDir`), since the grammar does not record the localization; *door* marks a cause
-  and a means besides its spatial uses, and its agent use has no comparative value. The
+  'in front of', a time, 'before', and a beneficiary, 'for'. The spatial functions are computed
+  from the directions, with no localization, since the grammar does not record it; *door* marks
+  a cause and a means besides its spatial uses, and its agent use is not recorded. The
   grammar's complement types are the root's, a *te*-infinitive counting as a clause.
 * The direction of a position records the grammar's classification of the use as locational or
   directional and, for a directional use, whether the complement is the endpoint, the starting
@@ -78,32 +77,32 @@ def Adposition.bare (a : Adposition) : Adposition :=
   { a with complements := insert none a.complements }
 
 /-- `a.marks c` is `a` marking `c` as well. -/
-def Adposition.marks (a : Adposition) (c : Case) : Adposition :=
+def Adposition.marks (a : Adposition) (c : Case.Function) : Adposition :=
   { a with functions := insert c a.functions }
 
 namespace Adpositions
 
 /-- `preposition form functions` is the preposition over a noun phrase marking `functions`, with
 no spatial use. -/
-def preposition (form : String) (functions : Finset Case) : Adposition :=
+def preposition (form : String) (functions : Finset Case.Function) : Adposition :=
   { morphs := [.free form], linearization := {.pre}, functions, complements := {some .np} }
 
 /-- `locational form` is the locational preposition over a noun phrase. -/
 def locational (form : String) : Adposition :=
-  { preposition form {Case.ofDir .place} with
+  { preposition form {.spatial none .place} with
     direction := fun | .pre => some .place | _ => none }
 
 /-- `directional form d ls` is the adposition over a noun phrase denoting a path in direction `d`
 in each of the positions `ls`, by default a preposition. -/
 def directional (form : String) (d : Spatial.Path.Direction)
     (ls : Finset _root_.Adposition.Linearization := {.pre}) : Adposition :=
-  { preposition form {Case.ofDir d} with
+  { preposition form {.spatial none d} with
     linearization := ls, direction := fun l ↦ if l ∈ ls then some d else none }
 
 /-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
 before its complement and denotes a path in direction `d` after it. -/
 def ambipositional (form : String) (d : Spatial.Path.Direction) : Adposition :=
-  { preposition form {Case.ofDir .place, Case.ofDir d} with
+  { preposition form {.spatial none .place, .spatial none d} with
     linearization := {.pre, .post},
     direction := fun | .pre => some .place | .post => some d | _ => none }
 
@@ -111,7 +110,7 @@ def ambipositional (form : String) (d : Spatial.Path.Direction) : Adposition :=
 denoting a path in direction `d`, or locational when `d` is `.place`. -/
 def circumposition (first second : String) (d : Spatial.Path.Direction) : Adposition :=
   { morphs := [.free first, .free second], linearization := {.circum},
-    functions := {Case.ofDir d}, complements := {some .np},
+    functions := {.spatial none d}, complements := {some .np},
     direction := fun | .circum => some d | _ => none }
 
 
@@ -160,13 +159,13 @@ hele jaar door* 'throughout the year'. It takes a finite clause in *doordat* 'be
 *te*-infinitive, *door hard te werken* 'by working hard', is the particle of *door lopen* 'keep
 walking', and is the second part of *onder … door* and *tussen … door*. -/
 def door : Adposition :=
-  ({ ((ambipositional "door" .route).marks .caus).marks .inst with
+  ({ ((ambipositional "door" .route).marks .cause).marks .instrumental with
     complements := {some .np, some .clause} } : Adposition).bare
 
 /-- *in* 'in' is locational before its complement and denotes a goal path after it, *de sloot
 in* 'into the ditch' and the temporal *het nieuwe jaar in* 'into the new year', and is the
 particle of *iets in brengen* 'introduce something'. -/
-def in_ : Adposition := ((ambipositional "in" .goal).marks .tem).bare
+def in_ : Adposition := ((ambipositional "in" .goal).marks .temporal).bare
 
 /-- *langs* 'along' is locational before its complement, *de ladder ligt langs de muur* 'the
 ladder lies along the wall', denotes a route after it, *het huis langs* 'along the house', and
@@ -184,7 +183,7 @@ def naast : Adposition := locational "naast"
 sit around the table', denotes a route after it, *de hoek om* 'around the corner', and is used
 without its complement, *Jan doet een das om* 'Jan puts on a scarf'. It is also temporal, 'at',
 and marks a purpose. -/
-def om : Adposition := ((ambipositional "om" .route).marks .tem).bare
+def om : Adposition := ((ambipositional "om" .route).marks .temporal).bare
 
 /-- *onder* 'under' is a locational preposition, *de bal ligt onder de kast* 'the ball lies
 under the cupboard', and the first part of *onder … door*. -/
@@ -193,7 +192,7 @@ def onder : Adposition := locational "onder"
 /-- *op* 'on' is locational before its complement and denotes a goal path after it, *op de berg*
 'on the mountain' against *de berg op* 'up the mountain', and is used without its complement,
 *Jan zet een hoed op* 'Jan puts a hat on'. It is also temporal. -/
-def op : Adposition := ((ambipositional "op" .goal).marks .tem).bare
+def op : Adposition := ((ambipositional "op" .goal).marks .temporal).bare
 
 /-- *over* 'across', the grammar's first *over*, denotes a route before its complement and
 after it, *het grasveld over* 'across the lawn', and is the first part of *over … heen*. -/
@@ -210,7 +209,7 @@ def rond : Adposition := ambipositional "rond" .route
 /-- *tegen* 'against' is a locational preposition, *de ladder ligt tegen de muur* 'the ladder
 lies against the wall', also temporal, 'towards', and the first part of *tegen … aan*, *tegen
 … in* and *tegen … op*. -/
-def tegen : Adposition := (locational "tegen").marks .tem
+def tegen : Adposition := (locational "tegen").marks .temporal
 
 /-- *tegenover* 'opposite' is a locational preposition. -/
 def tegenover : Adposition := locational "tegenover"
@@ -219,27 +218,27 @@ def tegenover : Adposition := locational "tegenover"
 a part of the path, also temporally, and takes an adpositional phrase as well as a noun
 phrase, as *van* does. -/
 def tot : Adposition :=
-  { (directional "tot" .goal).marks .tem with complements := {some .np, some .pp} }
+  { (directional "tot" .goal).marks .temporal with complements := {some .np, some .pp} }
 
 /-- *tussen* 'between' is a locational preposition, *de lamp staat tussen twee vazen* 'the
 lamp stands between two vases', also temporal, and the first part of *tussen … in* and
 *tussen … door*. -/
-def tussen : Adposition := (locational "tussen").marks .tem
+def tussen : Adposition := (locational "tussen").marks .temporal
 
 /-- *uit* 'out of' is locational before its complement in the grammar's classification and
 denotes a source path after it, *de auto uit* 'out of the car' and the temporal *dag in dag
 uit* 'day in day out', and is used without its complement, which it then cannot take. -/
-def uit : Adposition := ((ambipositional "uit" .source).marks .tem).bare
+def uit : Adposition := ((ambipositional "uit" .source).marks .temporal).bare
 
 /-- *van* 'from' denotes a path whose starting point is its complement, *Jan reed van Utrecht
 naar Groningen* 'Jan drove from Utrecht to Groningen', and takes an adpositional phrase, *van
 boven de kast* 'from above the cupboard'. It also marks a possessor, 'of', and is the first
 part of *van … af*. -/
 def van : Adposition :=
-  { (directional "van" .source).marks .gen with complements := {some .np, some .pp} }
+  { (directional "van" .source).marks .possessor with complements := {some .np, some .pp} }
 
 /-- *vanaf* 'from' denotes a path whose starting point is its complement, also temporally. -/
-def vanaf : Adposition := (directional "vanaf" .source).marks .tem
+def vanaf : Adposition := (directional "vanaf" .source).marks .temporal
 
 /-- *vanuit* 'from out of' denotes a path whose starting point is its complement. -/
 def vanuit : Adposition := directional "vanuit" .source
@@ -253,7 +252,7 @@ koekjes zijn voor jou* 'the biscuits are for you', it takes an adpositional phra
 het eten* 'for after dinner', and an adjective phrase, *voor hoe lang* 'for how long', and it
 takes a finite clause in *voordat* 'before'. -/
 def voor : Adposition :=
-  { ((locational "voor").marks .tem).marks .ben with
+  { ((locational "voor").marks .temporal).marks .beneficiary with
     complements := {some .np, some .pp, some .ap, some .clause} }
 
 /-- *voorbij* 'past' denotes a path on which its complement lies, before its complement and
@@ -285,7 +284,7 @@ def onderDoor : Adposition := circumposition "onder" "door" .route
 
 /-- *tussen … door* 'through, between', *tussen de bomen door lopen* 'walk between the trees',
 and the temporal *tussen twee lessen door* 'in between two lessons'. -/
-def tussenDoor : Adposition := (circumposition "tussen" "door" .route).marks .tem
+def tussenDoor : Adposition := (circumposition "tussen" "door" .route).marks .temporal
 
 /-- *over … heen* 'over, across', *over het hek heen springen* 'jump over the fence'. -/
 def overHeen : Adposition := circumposition "over" "heen" .route
@@ -307,29 +306,29 @@ def tussenIn : Adposition := circumposition "tussen" "in" .place
 
 /-- *na* 'after' is temporal and takes a finite clause in *nadat* 'after' and a *te*-infinitive,
 *na zijn vader gekust te hebben* 'after having kissed his father'. -/
-def na : Adposition := { preposition "na" {.tem} with complements := {some .np, some .clause} }
+def na : Adposition := { preposition "na" {.temporal} with complements := {some .np, some .clause} }
 
 /-- *tijdens* 'during' is temporal and resists R-pronominalization, *tijdens de oorlog* 'during
 the war' but not *er tijdens*. -/
-def tijdens : Adposition := { preposition "tijdens" {.tem} with rPronoun := false }
+def tijdens : Adposition := { preposition "tijdens" {.temporal} with rPronoun := false }
 
 /-- *met* 'with' marks an instrument or a companion, *Jan speelt met de pop* 'Jan plays with
 the doll', and heads the absolute construction over a subject and its predicate, *met Jan
 ziek* 'with Jan ill'. -/
 def met : Adposition :=
-  { preposition "met" {.inst, .com} with complements := {some .np, some .smallClause} }
+  { preposition "met" {.instrumental, .comitative} with complements := {some .np, some .smallClause} }
 
 /-- *zonder* 'without' takes a *te*-infinitive, *zonder iets te vragen* 'without asking
 anything', heads an absolute construction like *met*, and resists R-pronominalization. -/
 def zonder : Adposition :=
-  { preposition "zonder" {.abess} with
+  { preposition "zonder" {.abessive} with
     complements := {some .np, some .clause, some .smallClause}, rPronoun := false }
 
 /-- *dankzij* 'thanks to' resists R-pronominalization. -/
-def dankzij : Adposition := { preposition "dankzij" {.caus} with rPronoun := false }
+def dankzij : Adposition := { preposition "dankzij" {.cause} with rPronoun := false }
 
 /-- *namens* 'on behalf of' resists R-pronominalization. -/
-def namens : Adposition := { preposition "namens" {.ben} with rPronoun := false }
+def namens : Adposition := { preposition "namens" {.beneficiary} with rPronoun := false }
 
 /-- *ondanks* 'despite' resists R-pronominalization. -/
 def ondanks : Adposition := { preposition "ondanks" ∅ with rPronoun := false }
@@ -338,13 +337,13 @@ def ondanks : Adposition := { preposition "ondanks" ∅ with rPronoun := false }
 def ongeacht : Adposition := { preposition "ongeacht" ∅ with rPronoun := false }
 
 /-- *vanwege* 'because of' resists R-pronominalization. -/
-def vanwege : Adposition := { preposition "vanwege" {.caus} with rPronoun := false }
+def vanwege : Adposition := { preposition "vanwege" {.cause} with rPronoun := false }
 
 /-- *volgens* 'according to' resists R-pronominalization. -/
 def volgens : Adposition := { preposition "volgens" ∅ with rPronoun := false }
 
 /-- *wegens* 'because of' resists R-pronominalization. -/
-def wegens : Adposition := { preposition "wegens" {.caus} with rPronoun := false }
+def wegens : Adposition := { preposition "wegens" {.cause} with rPronoun := false }
 
 /-! ### The inventory -/
 
@@ -356,10 +355,10 @@ def inventory : List Adposition :=
    vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
    na, tijdens, met, zonder, dankzij, namens, ondanks, ongeacht, vanwege, volgens, wegens]
 
-/-- A direction is recorded only at a position the entry takes, and the case that expresses it is
-among the values the entry marks. -/
+/-- A direction is recorded only at a position the entry takes, and it is among the functions
+the entry marks. -/
 theorem mem_of_mem_direction : ∀ a ∈ inventory, ∀ l, ∀ d ∈ a.direction l,
-    l ∈ a.linearization ∧ Case.ofDir d ∈ a.functions := by
+    l ∈ a.linearization ∧ .spatial none d ∈ a.functions := by
   decide
 
 /-- The entries with a spatial use are the spatial ones. -/

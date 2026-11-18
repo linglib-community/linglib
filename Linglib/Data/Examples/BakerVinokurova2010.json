@@ -12,7 +12,7 @@
     "translation": "I came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -36,7 +36,7 @@
     "translation": "Masha's father saw the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -64,7 +64,7 @@
     "translation": "Masha gave Misha a horse.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -89,7 +89,7 @@
     "translation": "Erel bought the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -115,7 +115,7 @@
     "translation": "Masha sent her father a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -140,7 +140,7 @@
     "translation": "Erel bought a book/books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -167,7 +167,7 @@
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -193,7 +193,7 @@
     "translation": "Masha ate porridge quickly.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -219,7 +219,7 @@
     "translation": "Masha ate porridge quickly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -245,7 +245,7 @@
     "translation": "I gave Masha books/a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -273,7 +273,7 @@
     "translation": "I gave the book to Masha.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -300,7 +300,7 @@
     "translation": "I gave the book to Masha.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -327,7 +327,7 @@
     "translation": "I gave Masha books/a book intentionally.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -355,7 +355,7 @@
     "translation": "I gave Masha books/a book intentionally.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -383,7 +383,7 @@
     "translation": "Some robbers raided the village.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -408,7 +408,7 @@
     "translation": "Masha hungers.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -431,7 +431,7 @@
     "translation": "Masha hungers.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -454,7 +454,7 @@
     "translation": "Masha hungers.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -477,7 +477,7 @@
     "translation": "You lack a car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -503,7 +503,7 @@
     "translation": "Sardaana made Aisen cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -528,7 +528,7 @@
     "translation": "Sardaana made Aisen cry.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -554,7 +554,7 @@
     "translation": "Misha made Masha eat the soup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -580,7 +580,7 @@
     "translation": "Misha made Masha eat soup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "causative"],
@@ -606,7 +606,7 @@
     "translation": "I broke the chair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -631,7 +631,7 @@
     "translation": "The cup broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -656,7 +656,7 @@
     "translation": "The cup broke.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -680,7 +680,7 @@
     "translation": "The cup was broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -704,7 +704,7 @@
     "translation": "The cup was broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -728,7 +728,7 @@
     "translation": "The book was read.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -753,7 +753,7 @@
     "translation": "The cup was intentionally broken with a hammer.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -780,7 +780,7 @@
     "translation": "The cup was broken intentionally with a hammer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -807,7 +807,7 @@
     "translation": "The letter was sent to Masha.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -832,7 +832,7 @@
     "translation": "The letter was sent to Masha.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -857,7 +857,7 @@
     "translation": "Masha was sent a letter.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -884,7 +884,7 @@
     "translation": "Masha hired a herder for the cow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "agentiveNominal"],
@@ -909,7 +909,7 @@
     "translation": "The manager of the company came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "agentiveNominal"],
@@ -934,7 +934,7 @@
     "translation": "The death of the cow does not surprise me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "eventNominal"],
@@ -959,7 +959,7 @@
     "translation": "Masha hired a cowherd.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "agentiveNominal"],
@@ -985,7 +985,7 @@
     "translation": "A giver of medicine to children is over there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "agentiveNominal"],
@@ -1012,7 +1012,7 @@
     "translation": "I hoped that you would win today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1037,7 +1037,7 @@
     "translation": "I heard you won today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1062,7 +1062,7 @@
     "translation": "Keskil became sad that Aisen is not coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1087,7 +1087,7 @@
     "translation": "Masha returned (for fear) that Misha would fall sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1113,7 +1113,7 @@
     "translation": "Sargy was promised that nobody would return.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1139,7 +1139,7 @@
     "translation": "It became clear today at the meeting that Masha will go to Moscow next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1164,7 +1164,7 @@
     "translation": "It became clear today at the meeting that Masha will go to Moscow next year.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1188,7 +1188,7 @@
     "translation": "It became necessary for Aisen to buy a car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1212,7 +1212,7 @@
     "translation": "It became necessary for Aisen to buy a car.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1236,7 +1236,7 @@
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1261,7 +1261,7 @@
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1287,7 +1287,7 @@
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1312,7 +1312,7 @@
     "translation": "It is hot around the barn.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "pp"],
@@ -1336,7 +1336,7 @@
     "translation": "This made the children happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1363,7 +1363,7 @@
     "translation": "Misha put papers in the case carefully.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1389,7 +1389,7 @@
     "translation": "This makes a child happy.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1416,7 +1416,7 @@
     "translation": "Misha carefully put a paper/papers in the case.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1442,7 +1442,7 @@
     "translation": "a time when flowers bloom",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1469,7 +1469,7 @@
     "translation": "a cup that Masha drinks tea from",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1497,7 +1497,7 @@
     "translation": "a time when the flowers suddenly bloom",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1524,7 +1524,7 @@
     "translation": "a cup that Masha drinks tea from",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1552,7 +1552,7 @@
     "translation": "a time when the flowers suddenly bloom",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1580,7 +1580,7 @@
     "translation": "the horse that Masha's father bought",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "relative"],
@@ -1607,7 +1607,7 @@
     "translation": "The children were given horses.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -1633,7 +1633,7 @@
     "translation": "The children were given horses.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -1659,7 +1659,7 @@
     "translation": "The horses were given to Masha.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -1685,7 +1685,7 @@
     "translation": "The horses were given to Masha.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -1711,7 +1711,7 @@
     "translation": "a rumor that Misha will come",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "nounComplement"],
@@ -1735,7 +1735,7 @@
     "translation": "a rumor that you came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "nounComplement"],
@@ -1759,7 +1759,7 @@
     "translation": "a rumor that you came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "nounComplement"],
@@ -1783,7 +1783,7 @@
     "translation": "a rumor that you came",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "nounComplement"],
@@ -1807,7 +1807,7 @@
     "translation": "Aisen's father",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "possessive"],
@@ -1830,7 +1830,7 @@
     "translation": "Aisen's father",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "possessive"],
@@ -1853,7 +1853,7 @@
     "translation": "the management of the company",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "eventNominal"],
@@ -1878,7 +1878,7 @@
     "translation": "Masha's managing the company",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "eventNominal"],
@@ -1905,7 +1905,7 @@
     "translation": "Masha's managing the company",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "eventNominal"],
@@ -1931,7 +1931,7 @@
     "translation": "The children need milk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1958,7 +1958,7 @@
     "translation": "The children need milk.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "clause"],
@@ -1985,7 +1985,7 @@
     "translation": "Chairs were broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],
@@ -2009,7 +2009,7 @@
     "translation": "Chairs were broken.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "passive"],

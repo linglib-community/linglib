@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "deontic")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "deontic")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "deontic")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "deontic")] }
 
@@ -76,7 +76,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "epistemic")] }
 
@@ -89,7 +89,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "epistemic")] }
 
@@ -102,7 +102,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "epistemic")] }
 
@@ -115,7 +115,7 @@ def ex_2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "epistemic")] }
 

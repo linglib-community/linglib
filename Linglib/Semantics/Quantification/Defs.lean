@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Core.Order.AntiAdditive
 
@@ -217,10 +218,9 @@ def AlmostConnected (d : Det α) : Prop := ∀ A B C, d A B → d A C ∨ d C B
 /-- A determiner denotation is circular when `d A B` and `d B C` give `d C A`. -/
 def Circular (d : Det α) : Prop := ∀ A B C, d A B → d B C → d C A
 
-/-- A determiner denotation is right continuous when `d A B₁`, `d A B₂` and `B₁ ⊆ B ⊆ B₂` give
-`d A B`, so that every set of scopes `{B | d A B}` is order-connected. -/
-def RightContinuous (d : Det α) : Prop :=
-  ∀ A B B₁ B₂, B₁ ⊆ B → B ⊆ B₂ → d A B₁ → d A B₂ → d A B
+/-- A determiner denotation is right continuous when every set of scopes `{B | d A B}` is
+order-connected, so that `d A B₁`, `d A B₂` and `B₁ ⊆ B ⊆ B₂` give `d A B`. -/
+def RightContinuous (d : Det α) : Prop := ∀ A, {B | d A B}.OrdConnected
 
 /-- A determiner denotation is scope-intersective when `d A B` and `d A C` give `d A (B ∩ C)`. -/
 def ScopeIntersective (d : Det α) : Prop := ∀ A B C, d A B → d A C → d A (B ∩ C)

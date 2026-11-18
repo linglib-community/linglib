@@ -14,7 +14,7 @@
     "translation": "Mary met John before he climbed to the top of the mountain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"},
       {"name": "before-finish", "judgment": "unacceptable"}
@@ -40,7 +40,7 @@
     "translation": "Mary met John after he was single.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after-finish", "judgment": "acceptable"},
       {"name": "after-start", "judgment": "unacceptable"}
@@ -67,7 +67,7 @@
     "translation": "Mary met John before he climbed to the top of the mountain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"}
     ],
@@ -94,7 +94,7 @@
     "translation": "Mary met John before he climbed to the top of the mountain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-finish", "judgment": "acceptable"}
     ],
@@ -121,7 +121,7 @@
     "translation": "She left before he swept the floor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"}
     ],
@@ -147,7 +147,7 @@
     "translation": "She left before he swept the floor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-finish", "judgment": "acceptable"}
     ],

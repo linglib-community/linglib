@@ -21,7 +21,7 @@
     "translation": "John didn't wash the car carefully either.",
     "context": "Antecedent: Bill-wa teineini kuruma-o araw-anak-atta 'Bill didn't wash the car carefully'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -91,7 +91,7 @@
     "translation": "Bill washed the car carefully, but John didn't wash the car carefully.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -141,7 +141,7 @@
     "translation": "Hanako did not wash the car carefully.",
     "context": "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -191,7 +191,7 @@
     "translation": "Hanako does not write papers with Word.",
     "context": "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -245,7 +245,7 @@
     "translation": "Of course, Hanako does not buy comic books with her research fund.",
     "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -299,7 +299,7 @@
     "translation": "Hanako did not wash the car.",
     "context": "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -353,7 +353,7 @@
     "translation": "Hanako does not write papers.",
     "context": "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -411,7 +411,7 @@
     "translation": "Of course, Hanako does not buy comic books.",
     "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -465,7 +465,7 @@
     "translation": "Hanako did not wash the car either.",
     "context": "Taroo and Hanako both did careless work. Antecedent: Taroo-wa teineini kuruma-o araw-anak-atta 'Taroo did not wash the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -519,7 +519,7 @@
     "translation": "Hanako does not write papers.",
     "context": "Taroo and Hanako do not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kak-ana-i 'Taroo does not write papers with Word'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -577,7 +577,7 @@
     "translation": "Of course, Hanako does not buy comic books with her research fund either.",
     "context": "Antecedent: Taroo-wa kenkyuuhi-de manga-o kaw-ana-i 'Taroo does not buy comic books with his research fund'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -635,7 +635,7 @@
     "translation": "But Hanako did not wipe the windows.",
     "context": "Taroo and Hanako washed a car together: Taroo the body, then Hanako the windows. Taroo was thorough, Hanako not. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -693,7 +693,7 @@
     "translation": "But his teacher did not write his comments on the paper.",
     "context": "Taroo gave his paper to his advisor expecting comments with the Comments feature of Word, but the advisor does not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kai-ta 'Taroo wrote the paper with Word'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -759,7 +759,7 @@
     "translation": "On the other hand, I don't think that Hanako quit.",
     "context": "Antecedent: Boku-wa [Taroo-wa [pro baka-da kara] kaisya-o yame-ta to] omottei-ru 'I think that Taroo quit the company because he was a fool'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -809,7 +809,7 @@
     "translation": "The bus didn't come on time.",
     "context": "Antecedent: Densya-wa zikandoorini ki-ta 'The train came on time'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -863,7 +863,7 @@
     "translation": "Hanako did not submit the homework.",
     "context": "Antecedent: Taroo-wa {zikandoorini / okurete} syukudai-o dasi-ta 'Taroo submitted the homework on time / late'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -917,7 +917,7 @@
     "translation": "But he did not wipe the windows.",
     "context": "Taroo washed his car, meaning to wipe the windows after the body, but felt tired. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -975,7 +975,7 @@
     "translation": "He does not revise his students' papers.",
     "context": "Taroo writes his own papers and looks at his students' papers every day. Antecedent: Taroo-wa Word-de zibun-no ronbun-o kak-u 'Taroo writes his own papers with Word'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1029,7 +1029,7 @@
     "translation": "Hanako did not wash the car.",
     "context": "Taroo and Hanako washed their parents' cars to get an allowance. But Taroo was thorough in his work while Hanako was not. Antecedent: Kuruma-o Taroo-wa teineini arat-ta 'Taroo washed the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1083,7 +1083,7 @@
     "translation": "Hanako did not wash the car either.",
     "context": "Both did careless work. Antecedent: Kuruma-o Taroo-wa teineini araw-anak-atta.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1141,7 +1141,7 @@
     "translation": "But Hanako did not wipe the windows.",
     "context": "Antecedent: Syatai-o Taroo-wa teineini arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1203,7 +1203,7 @@
     "translation": "No, I didn't wash that car carefully.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1265,7 +1265,7 @@
     "translation": "No, that car, I didn't wash carefully.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1327,7 +1327,7 @@
     "translation": "No, I didn't wash this car carefully.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no? 'Did you wash this car carefully?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1389,7 +1389,7 @@
     "translation": "No, this car, I didn't wash carefully.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1451,7 +1451,7 @@
     "translation": "Yes, I didn't wash this car.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1513,7 +1513,7 @@
     "translation": "Yes, this car, I didn't wash.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1575,7 +1575,7 @@
     "translation": "No, I didn't wash this car.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",
@@ -1637,7 +1637,7 @@
     "translation": "No, this car, I didn't wash.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "null adjunct",

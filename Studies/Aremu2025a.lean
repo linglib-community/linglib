@@ -8,7 +8,7 @@ public import Linglib.Fragments.Yoruba.Relativization
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Reflex
 public import Studies.BrananErlewine2023
 
@@ -30,13 +30,6 @@ a modal that its associate scopes below](##split_scope).
   alternatives](##exclusive_reaches_eq), our reading of p. 170.
 * Resumption as a last resort (p. 115) is applied to the local subject too, which p. 108 argues
   from islands.
-
-## Errata
-
-* Ch. 5 (50) over the printed alternatives (56) [makes (57-a) false](##rows_won) and has (59)
-  presuppose what p. 173 denies; ch. 4 (47) sides with (50), and no other entry is given.
-* Pp. 167–168 count concord against a quantifier analysis, but [it entails the double
-  reading](##double_of_concord), so truth values cannot show that.
 
 ## TODO
 
@@ -61,7 +54,7 @@ a modal that its associate scopes below](##split_scope).
 
 namespace Aremu2025a
 
-open Core.Order Reflex OrderDual Focus Set Minimalist Minimalist.LinearizedSyntacticObject
+open Reflex OrderDual Focus Set Minimalist Minimalist.PlanarSyntacticObject
 open BrananErlewine2023 (LeftAlignedOn prominent xp)
 
 /-! ### Derivations -/
@@ -117,24 +110,24 @@ def subjectDP : Site → LexicalItem.Token
   | _ => focusDP
 
 /-- A clause, ch. 1 (27). -/
-def tp (s : LexicalItem.Token) (vp : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def tp (s : LexicalItem.Token) (vp : PlanarSyntacticObject) : PlanarSyntacticObject :=
   s * (tense * (asp * (s * (littleV * vp))))
 
 /-- The clause holding the site of the focus. -/
-def inner : Associate → Site → LinearizedSyntacticObject
+def inner : Associate → Site → PlanarSyntacticObject
   | .subject, s => tp (subjectDP s) (lexicalV * otherDP)
   | .object, _ => tp otherDP (lexicalV * focusDP)
 
 /-- A clause with the site of the focus in a conjunct. -/
-def coordinated : Associate → Site → LinearizedSyntacticObject
+def coordinated : Associate → Site → PlanarSyntacticObject
   | .subject, s =>
-    let c : LinearizedSyntacticObject := subjectDP s * (ati * conjunct)
+    let c : PlanarSyntacticObject := subjectDP s * (ati * conjunct)
     c * (tense * (asp * (c * (littleV * (lexicalV * otherDP)))))
   | .object, _ => tp otherDP (lexicalV * (focusDP * (ati * conjunct)))
 
 /-- The clause below the focus head; a moving focus stops at the edge of a complement. -/
-def body (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
-  let embed (c : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def body (d : Domain) (a : Associate) (s : Site) : PlanarSyntacticObject :=
+  let embed (c : PlanarSyntacticObject) : PlanarSyntacticObject :=
     tp matrixDP (matrixV * (if FocusMoves a s then focusDP * (wipe * c) else wipe * c))
   match d with
   | .matrix => inner a s
@@ -145,17 +138,17 @@ def body (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
   | .adjunct => tp matrixDP ((before * inner a s) * (lexicalV * otherDP))
 
 /-- A focus in place under the silent head (201), any other in Spec,FocP (187), (190). -/
-def sentence (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
+def sentence (d : Domain) (a : Associate) (s : Site) : PlanarSyntacticObject :=
   if s = .inSitu then nullFoc * body d a s else focusDP * (ni * body d a s)
 
 /-- The island heads of (175), (184)–(186), (191), (192). -/
 def islandHeads : List LexicalItem.Token := [rel, before, ati]
 
 /-- No link is too short (183), and none leaves an island. -/
-def Derivable (t : LinearizedSyntacticObject) : Prop :=
+def Derivable (t : PlanarSyntacticObject) : Prop :=
   ObeysAntiLocality .raising t ∧ ¬ CrossesIsland .raising t focusDP (· ∈ islandHeads)
 
-instance (t : LinearizedSyntacticObject) : Decidable (Derivable t) :=
+instance (t : PlanarSyntacticObject) : Decidable (Derivable t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Resumption is the last resort where a gap is prohibited (p. 115). -/
@@ -170,7 +163,7 @@ theorem subject_too_close :
   decide +kernel
 
 /-- The derivation a row records. -/
-def derivationOf? (r : Datum) : Option LinearizedSyntacticObject := do
+def derivationOf? (r : Datum) : Option PlanarSyntacticObject := do
   let d ← r.parse? "domain" [("matrix", Domain.matrix), ("complement", .complement),
     ("focusClause", .focusClause), ("relative", .relative), ("adjunct", .adjunct),
     ("coordinate", .coordinate)]
@@ -197,27 +190,27 @@ theorem extraction_over_ni :
 Constituents are positions by grammatical function in `[subject [verb object adjunct]]`, ordered by
 containment. -/
 
-def clause : TreePath := ⟨[]⟩
-def subject : TreePath := ⟨[0]⟩
-def vp : TreePath := ⟨[1]⟩
-def verb : TreePath := ⟨[1, 0]⟩
-def object : TreePath := ⟨[1, 1]⟩
-def adjunct : TreePath := ⟨[1, 2]⟩
+def clause : GornAddress := ⟨[]⟩
+def subject : GornAddress := ⟨[0]⟩
+def vp : GornAddress := ⟨[1]⟩
+def verb : GornAddress := ⟨[1, 0]⟩
+def object : GornAddress := ⟨[1, 1]⟩
+def adjunct : GornAddress := ⟨[1, 2]⟩
 
 /-- The positions the rows name. -/
-def positionNames : List (String × TreePath) :=
+def positionNames : List (String × GornAddress) :=
   [("clause", clause), ("subject", subject), ("vp", vp), ("verb", verb), ("object", object),
     ("adjunct", adjunct)]
 
 /-- The phrases Branan and Erlewine's rule aligns. -/
-def clausePhrases : List TreePath :=
+def clausePhrases : List GornAddress :=
   prominent (.node .v [xp .D "S", .node .V [.terminal .V "V", xp .D "O", xp .P "A"]]) []
 
 /-- A subject, or a non-subject, whose focus behaves alike (p. 110). -/
-def Associate.ofPosition (m : TreePath) : Associate :=
+def Associate.ofPosition (m : GornAddress) : Associate :=
   if m = Aremu2025a.subject then .subject else .object
 
-theorem siteOf_ofPosition_eq_pronoun_iff {m : TreePath} :
+theorem siteOf_ofPosition_eq_pronoun_iff {m : GornAddress} :
     siteOf .matrix (.ofPosition m) = .pronoun ↔ m = subject := by
   by_cases hm : m = subject
   · subst hm; exact iff_of_true (by decide +kernel) rfl
@@ -226,13 +219,13 @@ theorem siteOf_ofPosition_eq_pronoun_iff {m : TreePath} :
 /-- An answer to a question. -/
 structure Answer where
   /-- The logical focus. -/
-  focus : TreePath
+  focus : GornAddress
   /-- What it fronts before *ni*. -/
-  fronted : Option TreePath
+  fronted : Option GornAddress
   /-- The number of the focus, which a resumptive agrees with. -/
   number : Number := .singular
 
-variable {a : Answer} {m : TreePath}
+variable {a : Answer} {m : GornAddress}
 
 namespace Answer
 
@@ -241,11 +234,11 @@ def pronoun (a : Answer) : Option PersonalPronoun :=
   Yoruba.Pronouns.pastPresentSubject .third a.number
 
 /-- The resumptive of a fronted subject. -/
-def resumptive (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
+def resumptive (a : Answer) : Finset (Reflex GornAddressᵒᵈ) :=
   (a.pronoun.map fun r ↦ .morpheme (toDual subject) [.free r.form]).toFinset
 
 /-- A fronted constituent is followed by *ni*, and resumed where a gap is out or else displaced. -/
-def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
+def reflexes (a : Answer) : Finset (Reflex GornAddressᵒᵈ) :=
   match a.fronted with
   | none => ∅
   | some m => {.morpheme (toDual m) [.free Yoruba.ni.form]} ∪
@@ -329,7 +322,7 @@ theorem licensed_antiPiedPipes_iff :
         (by decide +kernel : ∀ x ∈ clausePhrases, x.LeftAligned subject → x = subject) x
           (List.mem_of_find?_eq_some hx) hxy
       obtain rfl := (BrananErlewine2023.le_of_mem_leftmost hx).lt_or_eq.resolve_left
-        fun hlt ↦ hc.not_ge (TreePath.le_parent_of_lt hlt)
+        fun hlt ↦ hc.not_ge (GornAddress.le_parent_of_lt hlt)
       exact ⟨hf, hm⟩
   · rintro ⟨hf, hs⟩
     refine ⟨⟨fun h ↦ absurd (hf.symm.trans h) (by decide), fun m hm ↦ ?_⟩, subject, hs,
@@ -350,7 +343,7 @@ theorem not_perceptible : ¬ Perceptible fun a : {a : Answer // a.Licensed} ↦ 
   fun h ↦ Finset.not_nonempty_empty (h ⟨{ focus := object, fronted := none }, by decide +kernel⟩)
 
 /-- The relativizable position of a constituent. -/
-def relativePosition? (m : TreePath) : Option Relativization.Position :=
+def relativePosition? (m : GornAddress) : Option Relativization.Position :=
   if m = subject then some .subject
   else if m = object then some .directObject
   else if m = adjunct then some .oblique
@@ -388,7 +381,7 @@ theorem exclusive_eq_true_iff {W : Type*} {P : ι → Set W} {w : W} (hP : ∀ j
   simp
 
 theorem holds_subset_holds {j : ι} (h : holds i ⊆ (holds j : Set (Set ι))) : j = i := by
-  simpa using h (mem_singleton i)
+  simpa using h (a := {i}) (mem_singleton i)
 
 /-- Something at or above `i` holds. -/
 def reaches [Preorder ι] (i : ι) : Set (Set ι) := {w | ∃ j ∈ w, i ≤ j}

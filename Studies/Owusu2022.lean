@@ -65,40 +65,40 @@ variable {S E ι : Type*}
 
 /-- Closing the choice function below negation, as free existential closure must allow for
 (51), gives the narrow reading (50). -/
-theorem closure_below_negation_iff {N VP : E → Prop} (hN : ∃ x, N x) :
-    (¬ ∃ f : ChoiceFunction E, VP (f N)) ↔ ¬ Det.some N VP :=
-  not_congr (ChoiceFunction.exists_apply_iff_some hN VP)
+theorem closure_below_negation_iff {N : Set E} {VP : E → Prop} (hN : N.Nonempty) :
+    (¬ ∃ f : ChoiceFunction E, VP (f N)) ↔ ¬ ∃ x ∈ N, VP x :=
+  not_congr (ChoiceFunction.exists_apply_iff_of_nonempty hN VP)
 
 /-- Under negation, the free function of (67) gives the narrow reading for every predicate iff its
 pick is the restrictor's only member at the situation. -/
-theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → E → Prop}
-    (hP : ∃ x, P s x) :
-    (∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ Det.some (P s) VP) ↔ ∀ x, P s x → x = f s (P s) :=
-  (forall_congr' fun _ ↦ not_iff_not).trans ((f s).forall_apply_iff_some_iff hP)
+theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → Set E}
+    (hP : (P s).Nonempty) :
+    (∀ VP : Set E, f s (P s) ∉ VP ↔ ¬ Det.some (P s) VP) ↔ P s = {f s (P s)} :=
+  (forall_congr' fun _ ↦ not_iff_not).trans ((f s).forall_apply_mem_iff_some_iff hP)
 
 /-! ### Conditionals -/
 
 /-- Closing the choice function above a conditional gives the wide reading of (60). -/
-theorem closure_above_conditional_iff {N A : E → Prop} {p : Prop} (hN : ∃ x, N x) :
-    (∃ f : ChoiceFunction E, A (f N) → p) ↔ ∃ x, N x ∧ (A x → p) :=
-  ChoiceFunction.exists_apply_iff_some hN fun x ↦ A x → p
+theorem closure_above_conditional_iff {N : Set E} {A : E → Prop} {p : Prop} (hN : N.Nonempty) :
+    (∃ f : ChoiceFunction E, A (f N) → p) ↔ ∃ x ∈ N, (A x → p) :=
+  ChoiceFunction.exists_apply_iff_of_nonempty hN fun x ↦ A x → p
 
 /-! ### *biara* -/
 
 section Every
 
-variable {B : E → Prop} {R : ι → E → Prop}
+variable {B : Set E} {R : ι → E → Prop}
 
 /-- With the individual index free, some function makes (55a) true exactly when one book was
 read by every woman. -/
-theorem wide_iff (hB : ∃ x, B x) :
-    (∃ f : ChoiceFunction E, ∀ z, R z (f B)) ↔ Det.some B fun x ↦ ∀ z, R z x :=
-  ChoiceFunction.exists_apply_iff_some hB fun x ↦ ∀ z, R z x
+theorem wide_iff (hB : B.Nonempty) :
+    (∃ f : ChoiceFunction E, ∀ z, R z (f B)) ↔ ∃ x ∈ B, ∀ z, R z x :=
+  ChoiceFunction.exists_apply_iff_of_nonempty hB fun x ↦ ∀ z, R z x
 
 /-- With the individual index bound by *biara*, some function makes (55b) true iff every woman read
 a book (24). -/
-theorem functional_iff (hB : ∃ x, B x) :
-    (∃ F : ι → ChoiceFunction E, ∀ z, R z (F z B)) ↔ ∀ z, Det.some B (R z) :=
+theorem functional_iff (hB : B.Nonempty) :
+    (∃ F : ι → ChoiceFunction E, ∀ z, R z (F z B)) ↔ ∀ z, ∃ x ∈ B, R z x :=
   ChoiceFunction.exists_pi_apply_iff (fun _ ↦ hB) R
 
 end Every
@@ -107,21 +107,21 @@ end Every
 
 section DownwardEntailing
 
-variable {Wrote Submitted : ι → E → Prop}
+variable {Wrote : ι → Set E} {Submitted : ι → E → Prop}
 
 /-- With the index free, some function makes (57a) true iff every student wrote a paper they did not
 submit, given distinct papers. -/
-theorem ex57_free_iff [Nonempty E] (hW : ∀ x, ∃ y, Wrote x y)
+theorem ex57_free_iff [Nonempty E] (hW : ∀ x, (Wrote x).Nonempty)
     (hinj : Function.Injective Wrote) :
     (∃ f : ChoiceFunction E, ∀ x, ¬ Submitted x (f (Wrote x))) ↔
-      ∀ x, Det.some (Wrote x) (¬ Submitted x ·) :=
+      ∀ x, ∃ y ∈ Wrote x, ¬ Submitted x y :=
   ChoiceFunction.exists_forall_apply_iff_of_injective hinj hW fun x y ↦ ¬ Submitted x y
 
 /-- With the index bound by *biara*, some function makes (57b) true exactly when every student
 wrote a paper they did not submit. -/
-theorem ex57_bound_iff (hW : ∀ x, ∃ y, Wrote x y) :
+theorem ex57_bound_iff (hW : ∀ x, (Wrote x).Nonempty) :
     (∃ F : ι → ChoiceFunction E, ∀ x, ¬ Submitted x (F x (Wrote x))) ↔
-      ∀ x, Det.some (Wrote x) (¬ Submitted x ·) :=
+      ∀ x, ∃ y ∈ Wrote x, ¬ Submitted x y :=
   ChoiceFunction.exists_pi_apply_iff hW fun x y ↦ ¬ Submitted x y
 
 end DownwardEntailing
@@ -139,21 +139,22 @@ inductive Student where
 abbrev Paper := Student × Fin 3
 
 /-- A student wrote their own three papers. -/
-def Wrote (x : Student) (p : Paper) : Prop := p.1 = x
+def Wrote (x : Student) : Set Paper := {p | p.1 = x}
 
 /-- Each student submitted two of their papers, all but the last. -/
 def Submitted (x : Student) (p : Paper) : Prop := p.1 = x ∧ p.2 ≠ 2
 
-instance : DecidableRel Wrote := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
+instance (x : Student) : DecidablePred (· ∈ Wrote x) := fun _ ↦
+  inferInstanceAs (Decidable (_ = _))
 
 instance : DecidableRel Submitted := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-private theorem wrote_nonempty (x : Student) : ∃ p, Wrote x p := ⟨(x, 0), rfl⟩
+private theorem wrote_nonempty (x : Student) : (Wrote x).Nonempty := ⟨(x, 0), rfl⟩
 
 private theorem wrote_injective : Function.Injective Wrote :=
-  fun x _ h ↦ (congrFun h (x, 0)).mp rfl
+  fun x _ h ↦ (Set.ext_iff.1 h (x, 0)).mp rfl
 
-private theorem kept : ∀ x, Det.some (Wrote x) (¬ Submitted x ·) :=
+private theorem kept : ∀ x, ∃ p ∈ Wrote x, ¬ Submitted x p :=
   fun x ↦ ⟨(x, 2), rfl, fun h ↦ h.2 rfl⟩
 
 /-- In (58), some function makes (57a) true. -/
@@ -167,7 +168,7 @@ theorem bound :
 
 /-- In (58) the narrow reading of (57), that no student submitted any paper they wrote, is
 false. -/
-theorem not_narrow : ¬ ∀ x, ¬ Det.some (Wrote x) (Submitted x) :=
+theorem not_narrow : ¬ ∀ x, ¬ ∃ p ∈ Wrote x, Submitted x p :=
   fun h ↦ h .alan ⟨(.alan, 0), rfl, rfl, by decide⟩
 
 end Scenario58

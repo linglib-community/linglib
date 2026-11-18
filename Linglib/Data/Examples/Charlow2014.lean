@@ -24,7 +24,7 @@ def ex4_1a : Datum :=
     glossedTokens := []
     context := "A single rich relative has put the speaker in her will, though the speaker may not know who."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > if", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex4_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀ > if", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex4_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("¬∃ > if", .unacceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex4_2a : Datum :=
     glossedTokens := []
     context := "Teachers vary with students but not with books."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no > ∃ > every (intermediate)", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex4_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > no (pronoun bound)", .unacceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex4_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a book > not > a famous linguist", .unacceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex4_18b : Datum :=
     glossedTokens := []
     context := "For some relative of mine, if some persuasive lawyer or other visits them, I'll inherit a house; continue with 'she lives in Highland Park'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a relative > if > a lawyer", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex4_23a : Datum :=
     glossedTokens := []
     context := "Bill either hopes de dicto that someone hires a maid, or hopes de dicto that someone hires a cook."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("or > hopes, indefinites de dicto", .acceptable)]
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex4_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("and > hopes", .unacceptable)]
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex4_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("either everyone ate a steak, or everyone ate a hamburger (or > every > a)", .acceptable)]
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex4_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every farmer beats every donkey or horse he owns", .acceptable)]
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex5_7a : Datum :=
     glossedTokens := []
     context := "Sloppy reading of the elided pronoun: we won't have to invite Bill."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("sloppy (him = Bill)", .acceptable)]
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex5_22 : Datum :=
     glossedTokens := []
     context := "'they' refers to the senators who supported the filibuster."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex5_23 : Datum :=
     glossedTokens := []
     context := "'they' refers to the senators who admire Cruz."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex5_27b : Datum :=
     glossedTokens := []
     context := "Reply to 'John only introduced BILL to Mary' at a party where Mary met only Bill and Sue also met only Bill."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("also > SUE > only > BILL", .acceptable)]
     paperFeatures := [] }
 

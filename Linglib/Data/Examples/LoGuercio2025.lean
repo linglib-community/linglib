@@ -24,7 +24,7 @@ def outOfBlue_epithet : Datum :=
     glossedTokens := []
     context := "Out of the blue, no prior mention of any epithet construction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "outOfBlue")] }
 
@@ -37,7 +37,7 @@ def priorMention_epithet : Datum :=
     glossedTokens := []
     context := "Single conjoined utterance; the ACI target is the first conjunct's bare `John`."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (first conjunct)"), ("expressionType", "epithet"), ("licensingMechanism", "priorMention")] }
 
@@ -50,7 +50,7 @@ def subconstituent_epithet : Datum :=
     glossedTokens := []
     context := "Single sentence; the epithet construction occurs as a subconstituent making the alternative for the matrix `John` available."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (matrix subject)"), ("expressionType", "epithet"), ("licensingMechanism", "subconstituent")] }
 
@@ -61,9 +61,11 @@ def outOfBlue_honorific : Datum :=
     language := "stan1288"
     primaryText := "Diego entró."
     glossedTokens := [("Diego", "Diego"), ("entró", "entered")]
+    glossedWords := [⟨['D', 'i', 'e', 'g', 'o'], ['D', 'i', 'e', 'g', 'o'], [⟨['D', 'i', 'e', 'g', 'o'], ['D', 'i', 'e', 'g', 'o'], none⟩]⟩, ⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], [⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Out-of-the-blue Spanish utterance; no prior contextual relevance of *don/doña*."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "honorific"), ("licensingMechanism", "outOfBlue"), ("language", "Spanish")] }
 
@@ -74,9 +76,11 @@ def contrastive_honorific : Datum :=
     language := "stan1288"
     primaryText := "Primero entró Donato. Después entró Don Pedro."
     glossedTokens := [("Primero", "first"), ("entró", "entered"), ("Donato", "Donato"), ("Después", "afterwards"), ("entró", "entered"), ("Don", "HON.M"), ("Pedro", "Pedro")]
+    glossedWords := [⟨['P', 'r', 'i', 'm', 'e', 'r', 'o'], ['f', 'i', 'r', 's', 't'], [⟨['P', 'r', 'i', 'm', 'e', 'r', 'o'], ['f', 'i', 'r', 's', 't'], none⟩]⟩, ⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], [⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['D', 'o', 'n', 'a', 't', 'o'], ['D', 'o', 'n', 'a', 't', 'o'], [⟨['D', 'o', 'n', 'a', 't', 'o'], ['D', 'o', 'n', 'a', 't', 'o'], none⟩]⟩, ⟨['D', 'e', 's', 'p', 'u', 'é', 's'], ['a', 'f', 't', 'e', 'r', 'w', 'a', 'r', 'd', 's'], [⟨['D', 'e', 's', 'p', 'u', 'é', 's'], ['a', 'f', 't', 'e', 'r', 'w', 'a', 'r', 'd', 's'], none⟩]⟩, ⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], [⟨['e', 'n', 't', 'r', 'ó'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['D', 'o', 'n'], ['H', 'O', 'N', '.', 'M'], [⟨['D', 'o', 'n'], ['H', 'O', 'N', '.', 'M'], none⟩]⟩, ⟨['P', 'e', 'd', 'r', 'o'], ['P', 'e', 'd', 'r', 'o'], [⟨['P', 'e', 'd', 'r', 'o'], ['P', 'e', 'd', 'r', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Two-segment discourse; the second segment uses honorific *Don* while the first uses bare name *Donato*."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Donato (first segment)"), ("expressionType", "honorific"), ("licensingMechanism", "priorMention"), ("language", "Spanish")] }
 
@@ -89,7 +93,7 @@ def outOfBlue_appositive : Datum :=
     glossedTokens := []
     context := "Out-of-the-blue; no prior appositive construction in discourse."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "appositive"), ("licensingMechanism", "outOfBlue")] }
 
@@ -102,7 +106,7 @@ def priorMention_appositive : Datum :=
     glossedTokens := []
     context := "Two-segment discourse; the second segment's `, a doctor,` appositive makes the same-shape appositive a contextually-relevant alternative for `Diego`."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Diego (first segment)"), ("expressionType", "appositive"), ("licensingMechanism", "priorMention")] }
 
@@ -115,7 +119,7 @@ def outOfBlue_suppAdverb : Datum :=
     glossedTokens := []
     context := "Out-of-the-blue assertion with no supplementary-adverb construction in discourse."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "outOfBlue")] }
 
@@ -128,7 +132,7 @@ def priorMention_suppAdverb : Datum :=
     glossedTokens := []
     context := "Conjoined utterance; the second conjunct's `luckily,` makes the parallel adverb-modified variant available for the first conjunct."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "priorMention")] }
 
@@ -141,7 +145,7 @@ def priorMention_emotiveMarker : Datum :=
     glossedTokens := []
     context := "Conjoined utterance; second conjunct's emotive marker `Alas/Wow!` parallels the first conjunct."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "emotiveMarker"), ("licensingMechanism", "priorMention")] }
 
@@ -154,7 +158,7 @@ def registerBlocking : Datum :=
     glossedTokens := []
     context := "Both *bastard* and *motherfucker* are lexical items in the substitution source, with *motherfucker* CI-stronger; the prediction would be an ACI ¬(speaker believes John is a motherfucker)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "register"), ("registerContrast", "bastard~motherfucker")] }
 
@@ -167,7 +171,7 @@ def disjunction_independent_of_assertion : Datum :=
     glossedTokens := []
     context := "Test of independence-of-assertion: the CI-stronger conjunctive variant has different at-issue content from the disjunctive utterance, yet the ACI still arises."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "María"), ("expressionType", "epithet"), ("aciProperty", "independentOfAssertion")] }
 
@@ -180,7 +184,7 @@ def DE_aci_survives : Datum :=
     glossedTokens := []
     context := "Downward-entailing embedding under `doubt`; tests whether DE blocks ACI computation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan"), ("expressionType", "epithet"), ("aciProperty", "unaffectedByDE")] }
 
@@ -193,7 +197,7 @@ def cancellation : Datum :=
     glossedTokens := []
     context := "Tests cancellability of the ACI ¬(speaker believes Juan is a bastard) triggered by the prior-mention configuration."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("aciStatus", "cancelled"), ("aciProperty", "cancellable")] }
 

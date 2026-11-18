@@ -49,12 +49,6 @@ cluster, the time clauses are held and the time they join the matrix
 * The model ranks cluster orders. Why both languages break down from Level 3 on, the paper's
   second open question (p. 261), is not modelled.
 
-## Errata
-
-* Table 5's German/Participle NP2 cell is 0.67, while Table 4 gives 1.07 − 0.38 = 0.69; every
-  other cell of Table 5 is the difference of the Table 4 cells
-  (`errorDifference_eq_sub_iff`).
-
 ## References
 
 * [bach-brown-marslen-wilson-1986]
@@ -310,7 +304,7 @@ theorem errorDifference_lt_np3_iff (g : Group) (hg : g ≠ .dutch) (k : NounPhra
   cases g <;> cases k <;> simp_all [advantage, errorDifference, NounPhrase.verb, Decimal.toRat] <;>
     norm_num
 
--- Errata: Table 5 is Table 4's Paraphrase minus Test score in every cell but one
+-- Table 5 is Table 4's Paraphrase minus Test score in every cell but one
 theorem errorDifference_eq_sub_iff (g : Group) (k : NounPhrase) :
     (errorDifference g k).difference.toRat =
         (comprehensionByNP g k).para.toRat - (comprehensionByNP g k).test.toRat ↔

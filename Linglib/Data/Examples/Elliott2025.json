@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "Boys b1 and b2 are only singing, b3 is only dancing, and no other boys are singing or dancing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive scope over the disjunction", "judgment": "acceptable"}
     ],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "Three boys sneezed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true in the context", "judgment": "unacceptable"}
     ],
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "No boys sneezed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true in the context", "judgment": "acceptable"}
     ],
@@ -92,7 +92,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∃ > if..then > Dist", "judgment": "acceptable"},
       {"name": "∃ > Dist > if..then", "judgment": "unacceptable"}
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∀ > if..then", "judgment": "unacceptable"}
     ],
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no > if..then", "judgment": "unacceptable"}
     ],
@@ -156,7 +156,7 @@
     "translation": "",
     "context": "James plays a two-ball roulette variant, betting on any two numbers and winning if both balls land on them; the croupier has rigged the wheel so the balls land on two predetermined numbers.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∃ > if..then (exceptional existential scope)", "judgment": "acceptable"}
     ],
@@ -177,7 +177,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"]
@@ -196,7 +196,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.1"]

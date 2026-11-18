@@ -24,7 +24,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -48,9 +48,11 @@ def ex_11a : Datum :=
     language := "poli1260"
     primaryText := "Kelnerki rozmawiały o przystojnym chłopcu."
     glossedTokens := [("Kelnerki", "waitresses"), ("rozmawiały", "talked"), ("o", "about"), ("przystojnym", "handsome-LOC"), ("chłopcu", "boy-LOC")]
+    glossedWords := [⟨['K', 'e', 'l', 'n', 'e', 'r', 'k', 'i'], ['w', 'a', 'i', 't', 'r', 'e', 's', 's', 'e', 's'], [⟨['K', 'e', 'l', 'n', 'e', 'r', 'k', 'i'], ['w', 'a', 'i', 't', 'r', 'e', 's', 's', 'e', 's'], none⟩]⟩, ⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'y'], ['t', 'a', 'l', 'k', 'e', 'd'], [⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'y'], ['t', 'a', 'l', 'k', 'e', 'd'], none⟩]⟩, ⟨['o'], ['a', 'b', 'o', 'u', 't'], [⟨['o'], ['a', 'b', 'o', 'u', 't'], none⟩]⟩, ⟨['p', 'r', 'z', 'y', 's', 't', 'o', 'j', 'n', 'y', 'm'], ['h', 'a', 'n', 'd', 's', 'o', 'm', 'e', '-', 'L', 'O', 'C'], []⟩, ⟨['c', 'h', 'ł', 'o', 'p', 'c', 'u'], ['b', 'o', 'y', '-', 'L', 'O', 'C'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "handsome"), ("construction", "unsplit")] }
 
@@ -61,9 +63,11 @@ def ex_11b : Datum :=
     language := "poli1260"
     primaryText := "O przystojnym kelnerki rozmawiały chłopcu."
     glossedTokens := [("O", "about"), ("przystojnym", "handsome-LOC"), ("kelnerki", "waitresses"), ("rozmawiały", "talked"), ("chłopcu", "boy-LOC")]
+    glossedWords := [⟨['O'], ['a', 'b', 'o', 'u', 't'], [⟨['O'], ['a', 'b', 'o', 'u', 't'], none⟩]⟩, ⟨['p', 'r', 'z', 'y', 's', 't', 'o', 'j', 'n', 'y', 'm'], ['h', 'a', 'n', 'd', 's', 'o', 'm', 'e', '-', 'L', 'O', 'C'], []⟩, ⟨['k', 'e', 'l', 'n', 'e', 'r', 'k', 'i'], ['w', 'a', 'i', 't', 'r', 'e', 's', 's', 'e', 's'], [⟨['k', 'e', 'l', 'n', 'e', 'r', 'k', 'i'], ['w', 'a', 'i', 't', 'r', 'e', 's', 's', 'e', 's'], none⟩]⟩, ⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'y'], ['t', 'a', 'l', 'k', 'e', 'd'], [⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'y'], ['t', 'a', 'l', 'k', 'e', 'd'], none⟩]⟩, ⟨['c', 'h', 'ł', 'o', 'p', 'c', 'u'], ['b', 'o', 'y', '-', 'L', 'O', 'C'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "handsome"), ("construction", "NP-split")] }
 
@@ -74,9 +78,11 @@ def ex_13b : Datum :=
     language := "poli1260"
     primaryText := "Do doliny weszliśmy rozległej."
     glossedTokens := [("Do", "to"), ("doliny", "valley-GEN"), ("weszliśmy", "enter-PST.1ST.PL"), ("rozległej", "large-GEN")]
+    glossedWords := [⟨['D', 'o'], ['t', 'o'], [⟨['D', 'o'], ['t', 'o'], none⟩]⟩, ⟨['d', 'o', 'l', 'i', 'n', 'y'], ['v', 'a', 'l', 'l', 'e', 'y', '-', 'G', 'E', 'N'], []⟩, ⟨['w', 'e', 's', 'z', 'l', 'i', 'ś', 'm', 'y'], ['e', 'n', 't', 'e', 'r', '-', 'P', 'S', 'T', '.', '1', 'S', 'T', '.', 'P', 'L'], []⟩, ⟨['r', 'o', 'z', 'l', 'e', 'g', 'ł', 'e', 'j'], ['l', 'a', 'r', 'g', 'e', '-', 'G', 'E', 'N'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "large"), ("construction", "NP-split")] }
 
@@ -87,9 +93,11 @@ def ex_14b : Datum :=
     language := "poli1260"
     primaryText := "Z prezydentem rozmawiała byłym."
     glossedTokens := [("Z", "with"), ("prezydentem", "president-INSTR"), ("rozmawiała", "talk-PST.3RD.F.SG"), ("byłym", "former-INSTR")]
+    glossedWords := [⟨['Z'], ['w', 'i', 't', 'h'], [⟨['Z'], ['w', 'i', 't', 'h'], none⟩]⟩, ⟨['p', 'r', 'e', 'z', 'y', 'd', 'e', 'n', 't', 'e', 'm'], ['p', 'r', 'e', 's', 'i', 'd', 'e', 'n', 't', '-', 'I', 'N', 'S', 'T', 'R'], []⟩, ⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'a'], ['t', 'a', 'l', 'k', '-', 'P', 'S', 'T', '.', '3', 'R', 'D', '.', 'F', '.', 'S', 'G'], []⟩, ⟨['b', 'y', 'ł', 'y', 'm'], ['f', 'o', 'r', 'm', 'e', 'r', '-', 'I', 'N', 'S', 'T', 'R'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "former"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -100,9 +108,11 @@ def ex_15b : Datum :=
     language := "poli1260"
     primaryText := "biedny"
     glossedTokens := [("biedny", "poor")]
+    glossedWords := [⟨['b', 'i', 'e', 'd', 'n', 'y'], ['p', 'o', 'o', 'r'], [⟨['b', 'i', 'e', 'd', 'n', 'y'], ['p', 'o', 'o', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "poor"), ("sense", "not rich"), ("construction", "NP-split")] }
 
@@ -113,9 +123,11 @@ def ex_16a : Datum :=
     language := "poli1260"
     primaryText := "biedny"
     glossedTokens := [("biedny", "poor")]
+    glossedWords := [⟨['b', 'i', 'e', 'd', 'n', 'y'], ['p', 'o', 'o', 'r'], [⟨['b', 'i', 'e', 'd', 'n', 'y'], ['p', 'o', 'o', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "poor"), ("sense", "pitiful"), ("construction", "NP-split")] }
 
@@ -128,7 +140,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +153,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a giant, but an exceptionally small one", .acceptable)]
     paperFeatures := [] }
 
@@ -154,7 +166,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +179,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -178,9 +190,11 @@ def ex_12a : Datum :=
     language := "poli1260"
     primaryText := "Włamano się do nowego sklepu."
     glossedTokens := [("Włamano", "broke-in-NEUT.SG"), ("się", "REFL"), ("do", "to"), ("nowego", "new-GEN"), ("sklepu", "store-GEN")]
+    glossedWords := [⟨['W', 'ł', 'a', 'm', 'a', 'n', 'o'], ['b', 'r', 'o', 'k', 'e', '-', 'i', 'n', '-', 'N', 'E', 'U', 'T', '.', 'S', 'G'], []⟩, ⟨['s', 'i', 'ę'], ['R', 'E', 'F', 'L'], [⟨['s', 'i', 'ę'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['d', 'o'], ['t', 'o'], [⟨['d', 'o'], ['t', 'o'], none⟩]⟩, ⟨['n', 'o', 'w', 'e', 'g', 'o'], ['n', 'e', 'w', '-', 'G', 'E', 'N'], []⟩, ⟨['s', 'k', 'l', 'e', 'p', 'u'], ['s', 't', 'o', 'r', 'e', '-', 'G', 'E', 'N'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "new"), ("construction", "unsplit")] }
 
@@ -191,9 +205,11 @@ def ex_12b : Datum :=
     language := "poli1260"
     primaryText := "Do sklepu włamano się nowego."
     glossedTokens := [("Do", "to"), ("sklepu", "store-GEN"), ("włamano", "broke-in-NEUT.SG"), ("się", "REFL"), ("nowego", "new-GEN")]
+    glossedWords := [⟨['D', 'o'], ['t', 'o'], [⟨['D', 'o'], ['t', 'o'], none⟩]⟩, ⟨['s', 'k', 'l', 'e', 'p', 'u'], ['s', 't', 'o', 'r', 'e', '-', 'G', 'E', 'N'], []⟩, ⟨['w', 'ł', 'a', 'm', 'a', 'n', 'o'], ['b', 'r', 'o', 'k', 'e', '-', 'i', 'n', '-', 'N', 'E', 'U', 'T', '.', 'S', 'G'], []⟩, ⟨['s', 'i', 'ę'], ['R', 'E', 'F', 'L'], [⟨['s', 'i', 'ę'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['n', 'o', 'w', 'e', 'g', 'o'], ['n', 'e', 'w', '-', 'G', 'E', 'N'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "new"), ("construction", "NP-split")] }
 
@@ -204,9 +220,11 @@ def ex_13a : Datum :=
     language := "poli1260"
     primaryText := "Do rozległej weszliśmy doliny."
     glossedTokens := [("Do", "to"), ("rozległej", "large-GEN"), ("weszliśmy", "enter-PST.1ST.PL"), ("doliny", "valley-GEN")]
+    glossedWords := [⟨['D', 'o'], ['t', 'o'], [⟨['D', 'o'], ['t', 'o'], none⟩]⟩, ⟨['r', 'o', 'z', 'l', 'e', 'g', 'ł', 'e', 'j'], ['l', 'a', 'r', 'g', 'e', '-', 'G', 'E', 'N'], []⟩, ⟨['w', 'e', 's', 'z', 'l', 'i', 'ś', 'm', 'y'], ['e', 'n', 't', 'e', 'r', '-', 'P', 'S', 'T', '.', '1', 'S', 'T', '.', 'P', 'L'], []⟩, ⟨['d', 'o', 'l', 'i', 'n', 'y'], ['v', 'a', 'l', 'l', 'e', 'y', '-', 'G', 'E', 'N'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "large"), ("construction", "NP-split")] }
 
@@ -217,9 +235,11 @@ def ex_14a : Datum :=
     language := "poli1260"
     primaryText := "Z byłym rozmawiała prezydentem."
     glossedTokens := [("Z", "with"), ("byłym", "former-INSTR"), ("rozmawiała", "talk-PST.3RD.F.SG"), ("prezydentem", "president-INSTR")]
+    glossedWords := [⟨['Z'], ['w', 'i', 't', 'h'], [⟨['Z'], ['w', 'i', 't', 'h'], none⟩]⟩, ⟨['b', 'y', 'ł', 'y', 'm'], ['f', 'o', 'r', 'm', 'e', 'r', '-', 'I', 'N', 'S', 'T', 'R'], []⟩, ⟨['r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'ł', 'a'], ['t', 'a', 'l', 'k', '-', 'P', 'S', 'T', '.', '3', 'R', 'D', '.', 'F', '.', 'S', 'G'], []⟩, ⟨['p', 'r', 'e', 'z', 'y', 'd', 'e', 'n', 't', 'e', 'm'], ['p', 'r', 'e', 's', 'i', 'd', 'e', 'n', 't', '-', 'I', 'N', 'S', 'T', 'R'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "former"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -232,7 +252,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +265,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a midget, but an exceptionally large one", .acceptable)]
     paperFeatures := [] }
 
@@ -258,7 +278,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -271,7 +291,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +304,7 @@ def ex_15c_generous : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "generous"), ("class", "intersective"), ("construction", "NP-split")] }
 
@@ -297,7 +317,7 @@ def ex_15c_pretty : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "pretty"), ("class", "intersective"), ("construction", "NP-split")] }
 
@@ -310,7 +330,7 @@ def ex_15c_healthy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "healthy"), ("class", "intersective"), ("construction", "NP-split")] }
 
@@ -323,7 +343,7 @@ def ex_15c_Chinese : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "Chinese"), ("class", "intersective"), ("construction", "NP-split")] }
 
@@ -336,7 +356,7 @@ def ex_15c_talkative : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "talkative"), ("class", "intersective"), ("construction", "NP-split")] }
 
@@ -349,7 +369,7 @@ def ex_15d_skillful : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "skillful"), ("class", "subsective"), ("construction", "NP-split")] }
 
@@ -362,7 +382,7 @@ def ex_15d_recent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "recent"), ("class", "subsective"), ("construction", "NP-split")] }
 
@@ -375,7 +395,7 @@ def ex_15d_good : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "good"), ("class", "subsective"), ("construction", "NP-split")] }
 
@@ -388,7 +408,7 @@ def ex_15d_typical : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "typical"), ("class", "subsective"), ("construction", "NP-split")] }
 
@@ -401,7 +421,7 @@ def ex_15e_counterfeit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "counterfeit"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -414,7 +434,7 @@ def ex_15e_past : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "past"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -427,7 +447,7 @@ def ex_15e_spurious : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "spurious"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -440,7 +460,7 @@ def ex_15e_imaginary : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "imaginary"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -453,7 +473,7 @@ def ex_15e_fictitious : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "fictitious"), ("class", "privative"), ("construction", "NP-split")] }
 
@@ -466,7 +486,7 @@ def ex_16b_alleged : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "alleged"), ("class", "modal"), ("construction", "NP-split")] }
 
@@ -479,7 +499,7 @@ def ex_16b_potential : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "potential"), ("class", "modal"), ("construction", "NP-split")] }
 
@@ -492,7 +512,7 @@ def ex_16b_predicted : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "predicted"), ("class", "modal"), ("construction", "NP-split")] }
 
@@ -505,7 +525,7 @@ def ex_16b_disputed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "disputed"), ("class", "modal"), ("construction", "NP-split")] }
 

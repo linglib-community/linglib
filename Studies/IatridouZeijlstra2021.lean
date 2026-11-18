@@ -89,7 +89,7 @@ namespace IatridouZeijlstra2021
 
 open Aspect NonemptyInterval Exhaustification
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-! ### Domain alternatives and exhaustification -/
 
@@ -105,17 +105,12 @@ def domainAlternatives (p : V → Set (NonemptyInterval T)) (τ : NonemptyInterv
 
 theorem exh_domainAlternatives_eq_self (hp : ∀ v, IsLowerSet (p v)) :
     exh (domainAlternatives p τ) {v | τ ∈ p v} = {v | τ ∈ p v} :=
-  exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
+  exh_image_Iic_of_antitone (f := fun τ' ↦ {v | τ' ∈ p v}) (fun _ _ h v hv ↦ hp v h hv) τ
 
 theorem mem_exh_domainAlternatives_iff
     (hp : ∀ τ₁ τ₂, {v | τ₁ ∈ p v} ⊆ {v | τ₂ ∈ p v} ↔ τ₁ ≤ τ₂) {v : V} :
-    v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v := by
-  simp only [mem_exh, domainAlternatives, Set.forall_mem_image, Set.mem_Iic, Set.mem_ofPred_eq,
-    hp]
-  refine and_congr_right fun _ ↦ ⟨fun h τ' hlt hv ↦ hlt.not_ge (h hlt.le hv), fun h τ' hle hv ↦ ?_⟩
-  obtain rfl | hlt := hle.eq_or_lt
-  · exact le_rfl
-  · exact absurd hv (h τ' hlt)
+    v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v :=
+  mem_exh_image_Iic_iff (f := fun τ' ↦ {v | τ' ∈ p v}) hp
 
 end Exhaustification
 
@@ -268,7 +263,7 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
     · obtain ⟨s, hs⟩ := exists_lt τ.fst
       exact ⟨s, hs, fun e hP hlt ↦ (hE.subset ⟨hP, hlt⟩).elim⟩
     · obtain ⟨m, ⟨_, hm⟩, hmax⟩ :=
-        Set.exists_max_image _ (fun e ↦ (Event.τ e).fst) (hfin.subset fun _ he ↦ he.1) hne
+        Set.exists_max_image _ (fun e ↦ (Event.τ e).fst) (hfin.sep _) hne
       obtain ⟨s, hms, hs⟩ := exists_between hm
       exact ⟨s, hs, fun e hP hlt ↦ (hmax e ⟨hP, hlt⟩).trans_lt hms⟩
   obtain ⟨e, hP, hse, hlt⟩ := event_near_lb h hs
@@ -379,10 +374,10 @@ theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
 temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
 entails the punctual *until* of [giannakidou-2002], the event at `t₀` included. -/
 theorem eventiveUntil_of_exceptive {t₀ : T}
-    (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ (· = t₀) fun t ↦ ∃ e, P w e ∧ t ∈ Event.τ e) :
+    (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ {t₀} {t | ∃ e, P w e ∧ t ∈ Event.τ e}) :
     Giannakidou2002.eventiveUntil P w t₀ := by
   have key : ∀ t, (∃ e, P w e ∧ t ∈ Event.τ e) ↔ t = t₀ := fun t ↦ by
-    simpa using congrFun (Quantifier.Exceptive.isExceptionSet_no_iff.1 h) t
+    simpa using Set.ext_iff.1 (Quantifier.Exceptive.isExceptionSet_no_iff.1 h) t
   exact ⟨(key t₀).2 rfl,
     fun e hP ↦ ((key _).1 ⟨e, hP, mem_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩⟩).ge⟩
 

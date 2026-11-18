@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after-start", "judgment": "acceptable"},
       {"name": "after-finish", "judgment": "acceptable"}
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"},
       {"name": "before-finish", "judgment": "unacceptable"}
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"},
       {"name": "before-finish", "judgment": "acceptable"}
@@ -75,7 +75,7 @@
     "translation": "",
     "context": "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after-start", "judgment": "unacceptable"},
       {"name": "after-finish", "judgment": "acceptable"}
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "change of state", "judgment": "acceptable"}
     ],
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "completive", "judgment": "acceptable"}
     ],
@@ -139,7 +139,7 @@
     "translation": "",
     "context": "(27a) Alex read one of his own articles to Jessica in full; by the fifteen-minute mark, Jessica voiced her annoyance.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1a"],
@@ -162,7 +162,7 @@
     "translation": "",
     "context": "(27b) Alex read his article during the first fifteen minutes, which annoyed Jessica the whole time.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1a"],
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "(27a) or (27b).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1a"],
@@ -206,7 +206,7 @@
     "translation": "",
     "context": "(27a) or (27b).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1a"],
@@ -226,7 +226,7 @@
     "translation": "",
     "context": "(28) Hector started building the tent at 8:55pm, and the tent was fully set up at 9pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1b"],
@@ -250,7 +250,7 @@
     "translation": "",
     "context": "(28) Hector started building the tent at 8:55pm, and the tent was fully set up five minutes after Emma made the bet.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1b"],
@@ -271,7 +271,7 @@
     "translation": "",
     "context": "(28), both endings.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1b"],
@@ -294,7 +294,7 @@
     "translation": "",
     "context": "(28), both endings.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1b"],
@@ -314,7 +314,7 @@
     "translation": "",
     "context": "(29a) Hector pulled out the camping equipment at 4pm and the tent was fully up by 4:30pm; Emma had become irritable when the wind started (2pm) and regained her composure at 4:30pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -336,7 +336,7 @@
     "translation": "",
     "context": "(29b) Same as (29a), but Emma became irritable when Hector had to start over at 4:15pm and regained her composure at 4:30pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -362,7 +362,7 @@
     "translation": "",
     "context": "(29b).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -385,7 +385,7 @@
     "translation": "",
     "context": "(30a) Jessica voiced her annoyance at first, but by the fifteen-minute mark had given up and decided to tolerate Alex.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "3"],
@@ -408,7 +408,7 @@
     "translation": "",
     "context": "(30b) Jessica tolerated Alex during the first fifteen minutes, then snapped.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "3"],
@@ -429,7 +429,7 @@
     "translation": "",
     "context": "(30a) or (30b).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "3"],
@@ -452,7 +452,7 @@
     "translation": "",
     "context": "(31a) Lara felt fear towards the dog 10–10:15am; Dave felt regretful from 10:05 until Lara regained her composure at 10:15.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "4"],
@@ -478,7 +478,7 @@
     "translation": "",
     "context": "(31b) Same as (31a), but Dave's regret lasted for many days.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "4"],
@@ -500,7 +500,7 @@
     "translation": "",
     "context": "(31c) Lara smoked a cigarette outside 9:50–9:55am; Dave passed by at 9:56, smelled the smoke, and felt regretful.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "4"],
@@ -522,7 +522,7 @@
     "translation": "",
     "context": "(31c).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "4"],
@@ -542,7 +542,7 @@
     "translation": "",
     "context": "Ben was exposed to a virus at 6pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "became sick during 6–7pm", "judgment": "acceptable"}
     ],
@@ -563,7 +563,7 @@
     "translation": "",
     "context": "Ben was exposed to a virus at 6pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "within"],
@@ -583,7 +583,7 @@
     "translation": "",
     "context": "Hector bought a burrito at 6pm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "within"],
@@ -605,7 +605,7 @@
     "translation": "She left before he swept the floor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-start", "judgment": "acceptable"},
       {"name": "before-finish", "judgment": "unacceptable"}
@@ -630,7 +630,7 @@
     "translation": "She left before he swept the floor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "before-finish", "judgment": "acceptable"}
     ],

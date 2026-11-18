@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Jones is in the ER with poisoning symptoms; the investigation team is figuring out which chemical was used. One shrewd member suggests that, given the symptoms, he must have taken arsenic. The boss then says (1a) and the follow-up (1b) 'So, it looks like he did take arsenic' in a row: an Anderson conditional arguing FOR the truth of its antecedent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "anderson"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "Same scenario as (1). The O-marked (simple-past indicative / present) counterpart of (1a).",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "anderson"],
@@ -51,7 +51,7 @@
     "translation": "If John were playing now, the outcome of the game would still be uncertain.",
     "context": "John, an ace player, has recently left the team for better pay. The team weakens considerably after losing their mainstay, and their defeat in today's game is already certain during the first half. A fan who is currently watching the game says the following.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "fake-past"],
@@ -76,7 +76,7 @@
     "translation": "If Jones had taken arsenic last night, he would show exactly the same symptoms as he is now showing.",
     "context": "Uttered in the context in (1) — the Anderson scenario.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -105,7 +105,7 @@
     "translation": "You're right. If Jones had left Manila two days ago, he would have passed exactly the same immigration gate that he actually passed yesterday, exactly at the same time as he actually did it.",
     "context": "Jones is a fugitive who reportedly entered Korea via Incheon yesterday; the team infers the country he flew from. The consequent event lies overtly in the past (adverbial kinoo 'yesterday'), yet Non-Past is still required.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).",
         "judgment": "unacceptable"
@@ -135,7 +135,7 @@
     "translation": "If Jones drank arsenic yesterday, he would show such symptoms as he actually shows now.",
     "context": "Uttered in the context in (1) — the Anderson scenario.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "flv"],
@@ -184,7 +184,7 @@
     "translation": "If John came tomorrow, the party would be fun, but probably he won't come tomorrow, I think.",
     "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
         "judgment": "unacceptable"
@@ -215,7 +215,7 @@
     "translation": "If John comes tomorrow, the party atmosphere would get lively, but I think he won't come tomorrow.",
     "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.",
         "judgment": "unacceptable"

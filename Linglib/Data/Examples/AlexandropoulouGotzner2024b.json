@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "My apartment is small", "judgment": "acceptable"}
     ],
@@ -34,7 +34,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "My apartment is large", "judgment": "unacceptable"}
     ],
@@ -59,7 +59,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is dirty", "judgment": "acceptable"}
     ],
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is clean", "judgment": "acceptable"}
     ],
@@ -109,7 +109,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is small", "judgment": "unacceptable"}
     ],
@@ -134,7 +134,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is large", "judgment": "unacceptable"}
     ],
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is dirty", "judgment": "unacceptable"}
     ],
@@ -185,7 +185,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is filthy", "judgment": "unacceptable"},
       {"name": "The apartment is dirty", "judgment": "unacceptable"}
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The apartment is large but not gigantic", "judgment": "acceptable"}
     ],
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "My apartment is small", "judgment": "acceptable"}
     ],
@@ -262,7 +262,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "My apartment is neither large nor small", "judgment": "acceptable"}
     ],

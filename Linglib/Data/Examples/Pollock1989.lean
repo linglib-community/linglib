@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -50,7 +50,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
@@ -63,7 +63,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
@@ -76,7 +76,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -89,7 +89,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -102,7 +102,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -115,7 +115,7 @@ def ex4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -128,7 +128,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
@@ -141,7 +141,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
@@ -154,7 +154,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "false")] }
 
@@ -167,7 +167,7 @@ def ex5d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "false")] }
 
@@ -180,7 +180,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -193,7 +193,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -206,7 +206,7 @@ def ex11a_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -219,7 +219,7 @@ def ex11a_inv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
@@ -232,7 +232,7 @@ def ex11b_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -245,7 +245,7 @@ def ex11b_inv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
@@ -258,7 +258,7 @@ def ex11c_adv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -271,7 +271,7 @@ def ex11c_fq : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
@@ -284,7 +284,7 @@ def ex11d_adv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -297,7 +297,7 @@ def ex11d_fq : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
@@ -310,7 +310,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -323,7 +323,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -336,7 +336,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -349,7 +349,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -362,7 +362,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -375,7 +375,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -388,7 +388,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -401,7 +401,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
@@ -414,7 +414,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -427,7 +427,7 @@ def ex24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -440,7 +440,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -453,7 +453,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
@@ -466,7 +466,7 @@ def ex29c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
@@ -479,7 +479,7 @@ def ex37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -492,7 +492,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -505,7 +505,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
@@ -518,7 +518,7 @@ def ex39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
@@ -531,7 +531,7 @@ def ex39d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 

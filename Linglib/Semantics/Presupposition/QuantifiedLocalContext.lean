@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Presupposition.LocalContext
 public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Logic.Trivalent.Deployment
 
 /-!
 # Local contexts in quantified sentences
@@ -41,8 +42,9 @@ presupposition is required.
 ## Implementation notes
 
 The domain is a finite type, the same at every world, and the quantifier is the same at every
-world. A predicate's denotation is a set of world–individual pairs, the two-place intension of the
-appendix of Local Contexts.
+world. A restrictor is a set of individuals at each world. The denotation of the gap is a set of
+world–individual pairs, so that the local context of the position is the least set of pairs the
+truth value depends on (`Set.DependsOn`).
 
 ## References
 
@@ -61,56 +63,101 @@ variable {W E : Type*}
 
 /-- The truth set of `(Q A. _)`, as a function of the denotation of its scope, is the set of worlds
 at which `q` holds of the restrictor and of the scope's individuals there. -/
-def scopeTruth (q : NumberTree) (A : W → E → Prop) (d : Set (W × E)) : Set W :=
-  {w | q.toDet (A w) fun e ↦ (w, e) ∈ d}
+def scopeTruth (q : NumberTree) (A : W → Set E) (d : Set (W × E)) : Set W :=
+  {w | q.toDet (A w) (Prod.mk w ⁻¹' d)}
 
 /-- The truth set of `(Q _. B)` as a function of the denotation of its restrictor. -/
-def restrictorTruth (q : NumberTree) (B : W → E → Prop) (d : Set (W × E)) : Set W :=
-  {w | q.toDet (fun e ↦ (w, e) ∈ d) (B w)}
+def restrictorTruth (q : NumberTree) (B : W → Set E) (d : Set (W × E)) : Set W :=
+  {w | q.toDet (Prod.mk w ⁻¹' d) (B w)}
 
-theorem dependsOn_slice_iff {w v : W} {e : E} {g : (E → Prop) → Prop} :
-    DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) {(v, e)}ᶜ ↔
-      (v = w → DependsOn g {e}ᶜ) := by
-  refine ⟨fun h hv D D' hD ↦ ?_, fun h d d' hd ↦ ?_⟩
+theorem dependsOn_slice_iff {β : Type*} {w v : W} {e : E} {g : Set E → β} :
+    Set.DependsOn (fun d : Set (W × E) ↦ g (Prod.mk w ⁻¹' d)) {(v, e)}ᶜ ↔
+      (v = w → Set.DependsOn g {e}ᶜ) := by
+  simp only [Set.dependsOn_compl_singleton_iff]
+  refine ⟨fun h hv X ↦ ?_, fun h d ↦ ?_⟩
   · subst hv
-    have := h (x := {p | p.1 = v ∧ D p.2}) (y := {p | p.1 = v ∧ D' p.2}) fun ⟨u, x⟩ hux ↦ by
-      by_cases hu : u = v
-      · subst hu
-        exact congrArg (u = u ∧ ·) (hD x fun hx ↦ hux (by rw [hx]; rfl))
-      · exact propext ⟨fun h ↦ (hu h.1).elim, fun h ↦ (hu h.1).elim⟩
-    simpa using this
+    have := h (Prod.mk v '' X)
+    rwa [show Prod.mk v ⁻¹' (Prod.mk v '' X \ {(v, e)}) = X \ {e} from by ext x; simp,
+      Set.preimage_image_eq _ (Prod.mk_right_injective v)] at this
   · by_cases hv : v = w
     · subst hv
-      exact h rfl fun x hx ↦ hd (v, x) fun h' ↦ hx (Prod.ext_iff.1 h').2
-    · exact congrArg g (funext fun x ↦ hd (w, x) fun h' ↦ hv (Prod.ext_iff.1 h').1.symm)
+      rw [show Prod.mk v ⁻¹' (d \ {(v, e)}) = Prod.mk v ⁻¹' d \ {e} from by ext x; simp]
+      exact h rfl _
+    · rw [show Prod.mk w ⁻¹' (d \ {(v, e)}) = Prod.mk w ⁻¹' d from by ext x; simp [Ne.symm hv]]
 
-theorem dependsOn_slice [Finite E] (w : W) (g : (E → Prop) → Prop) :
-    ∃ s : Set (W × E), s.Finite ∧ DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) s :=
-  ⟨{w} ×ˢ Set.univ, (Set.finite_singleton w).prod Set.finite_univ,
-    fun _ _ hd ↦ congrArg g (funext fun x ↦ hd (w, x) ⟨rfl, trivial⟩)⟩
+theorem dependsOn_slice [Finite E] {β : Type*} (w : W) (g : Set E → β) :
+    ∃ s : Set (W × E), s.Finite ∧ Set.DependsOn (fun d ↦ g (Prod.mk w ⁻¹' d)) s :=
+  ⟨_, Set.finite_univ.image _, (Set.dependsOn_univ g).comp_preimage _⟩
 
 /-- A trigger in the nuclear scope that presupposes `P` and asserts `a` is transparent at `a` iff at
 each world of the context the quantifier gives one value to every scope that agrees with `a` on
 the individuals that satisfy `P` there. -/
-theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → E → Prop} {C : Set W}
+theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → Set E} {C : Set W}
     {P a : Set (W × E)} :
-    TransparentAt C {scopeTruth q A} P a ↔ ∀ w ∈ C, ∀ D D' : E → Prop,
-      (∀ e, (w, e) ∈ P → (D e ↔ (w, e) ∈ a)) → (∀ e, (w, e) ∈ P → (D' e ↔ (w, e) ∈ a)) →
+    TransparentAt C {scopeTruth q A} P a ↔ ∀ w ∈ C, ∀ D D' : Set E,
+      (∀ e, (w, e) ∈ P → (e ∈ D ↔ (w, e) ∈ a)) → (∀ e, (w, e) ∈ P → (e ∈ D' ↔ (w, e) ∈ a)) →
         (q.toDet (A w) D ↔ q.toDet (A w) D') := by
   classical
   simp only [transparentAt_iff, Set.mem_singleton_iff, forall_eq]
   refine ⟨fun h w hw D D' hD hD' ↦ ?_, fun h d d' hd hd' w hw ↦ ?_⟩
-  · let ext (D : E → Prop) : Set (W × E) := {p | if p.1 = w then D p.2 else p ∈ a}
-    have hext {D : E → Prop} (hD : ∀ e, (w, e) ∈ P → (D e ↔ (w, e) ∈ a)) :
+  · let ext (D : Set E) : Set (W × E) := {p | if p.1 = w then p.2 ∈ D else p ∈ a}
+    have hpre (D : Set E) : Prod.mk w ⁻¹' ext D = D := by ext e; simp [ext]
+    have hext {D : Set E} (hD : ∀ e, (w, e) ∈ P → (e ∈ D ↔ (w, e) ∈ a)) :
         P ⊓ ext D = P ⊓ a := Set.ext fun ⟨u, e⟩ ↦ and_congr_right fun hp ↦ by
       by_cases hu : u = w
       · subst hu; simpa [ext] using hD e hp
       · simp [ext, hu]
-    simpa [scopeTruth, ext] using h _ _ (hext hD) (hext hD') w hw
+    simpa [scopeTruth, hpre] using h _ _ (hext hD) (hext hD') w hw
   · have agree {d : Set (W × E)} (hd : P ⊓ d = P ⊓ a) (e : E) (hp : (w, e) ∈ P) :
         (w, e) ∈ d ↔ (w, e) ∈ a := by
       simpa [hp] using congrArg ((w, e) ∈ ·) hd
-    exact h w hw (fun e ↦ (w, e) ∈ d) (fun e ↦ (w, e) ∈ d') (agree hd) (agree hd')
+    exact h w hw (Prod.mk w ⁻¹' d) (Prod.mk w ⁻¹' d') (agree hd) (agree hd')
+
+/-! ### Deployment -/
+
+open Trivalent in
+/-- A trigger in the nuclear scope is transparent at its assertion iff the quantifier deployed on
+the trigger's trivalent meaning is defined at every world of the context. -/
+theorem transparentAt_scopeTruth_iff_deployQuantifier {q : NumberTree} {A : W → Set E}
+    {C : Set W} (p : W × E → Trivalent) :
+    TransparentAt C {scopeTruth q A} (gapExt p)ᶜ (posExt p) ↔
+      ∀ w ∈ C, deployQuantifier (q.toDet (A w)) (fun e ↦ p (w, e)) ≠ .undefined := by
+  rw [transparentAt_scopeTruth_iff]
+  refine forall₂_congr fun w _ ↦ ?_
+  rw [deployQuantifier_ne_undefined_iff]
+  have key (D : Set E) : (∀ e, (w, e) ∈ (gapExt p)ᶜ → (e ∈ D ↔ (w, e) ∈ posExt p)) ↔
+      D ∈ interval fun e ↦ p (w, e) := by
+    change (∀ e, p (w, e) ≠ .undefined → (e ∈ D ↔ p (w, e) = .true)) ↔
+      (∀ e, p (w, e) = .true → e ∈ D) ∧ ∀ e, e ∈ D → ¬ p (w, e) = .false
+    refine ⟨fun h ↦ ⟨fun e he ↦ (h e (he ▸ by decide)).2 he, fun e hD hn ↦ ?_⟩,
+      fun h e hdef ↦ ⟨fun hD ↦ ?_, h.1 e⟩⟩
+    · exact absurd (hn.symm.trans ((h e (hn ▸ by decide)).1 hD)) (by decide)
+    · rcases (p (w, e)).trichotomy with hf | hd | ht
+      exacts [absurd hf (h.2 e hD), absurd hd hdef, ht]
+  exact ⟨fun h X hX Y hY ↦ h X Y ((key X).2 hX) ((key Y).2 hY),
+    fun h D D' hD hD' ↦ h D ((key D).1 hD) D' ((key D').1 hD')⟩
+
+open Trivalent in
+/-- A presupposition of the nuclear scope is transparent iff the deployed quantifier is defined
+at every world of the context whatever a trigger with that presupposition asserts. -/
+theorem transparent_scopeTruth_iff_forall_deployQuantifier {q : NumberTree} {A : W → Set E}
+    {C : Set W} {P : Set (W × E)} :
+    Transparent C {scopeTruth q A} P ↔ ∀ p : W × E → Trivalent, (gapExt p)ᶜ = P →
+      ∀ w ∈ C, deployQuantifier (q.toDet (A w)) (fun e ↦ p (w, e)) ≠ .undefined := by
+  classical
+  rw [transparent_iff_forall_transparentAt]
+  refine ⟨fun h p hp ↦ ?_, fun h a ↦ ?_⟩
+  · subst hp
+    exact (transparentAt_scopeTruth_iff_deployQuantifier p).1 (h (posExt p))
+  · have hgap : (gapExt fun x ↦ if x ∈ P then ofProp (x ∈ a) else .undefined)ᶜ = P := by
+      ext x
+      by_cases hx : x ∈ P <;> simp [hx]
+    have hpos : posExt (fun x ↦ if x ∈ P then ofProp (x ∈ a) else .undefined) = P ⊓ a := by
+      ext x
+      by_cases hx : x ∈ P <;> simp [hx]
+    have := (transparentAt_scopeTruth_iff_deployQuantifier _).2 (h _ hgap)
+    rw [hgap, hpos] at this
+    exact fun f hf d hd ↦ this f hf d (by rw [hd, ← inf_assoc, inf_idem])
 
 section Finite
 
@@ -120,23 +167,23 @@ variable [Finite E] (q : NumberTree) {C : Set W}
 
 /-- The local context of the nuclear scope of `(Q A. _)` is the individuals of the restrictor, at
 the worlds of the context where `q` is not constant on the row of the restrictor's size. -/
-theorem isLocalContext_scopeTruth (A : W → E → Prop) (C : Set W) :
+theorem isLocalContext_scopeTruth (A : W → Set E) (C : Set W) :
     IsLocalContext C {scopeTruth q A}
-      {p | p.1 ∈ C ∧ A p.1 p.2 ∧ ¬ q.ConstantOnRow {x | A p.1 x}.ncard} := by
+      {p | p.1 ∈ C ∧ p.2 ∈ A p.1 ∧ ¬ q.ConstantOnRow (A p.1).ncard} := by
   convert isLocalContext_of_dependsOn (C := C) (env := {scopeTruth q A}) fun f hf w _ ↦
     (Set.mem_singleton_iff.1 hf) ▸ dependsOn_slice w (q.toDet (A w)) using 1
   ext ⟨v, e⟩
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
-  change _ ↔ ∃ w ∈ C, ¬ DependsOn (fun d : Set (W × E) ↦ q.toDet (A w) fun x ↦ (w, x) ∈ d) _
+  change _ ↔ ∃ w ∈ C, ¬ Set.DependsOn (fun d : Set (W × E) ↦ q.toDet (A w) (Prod.mk w ⁻¹' d)) _
   simp only [dependsOn_slice_iff, NumberTree.dependsOn_toDet_compl_singleton_iff, not_imp]
   exact ⟨fun ⟨hv, ha, hc⟩ ↦ ⟨v, hv, rfl, ha, hc⟩, fun ⟨_, hw, rfl, ha, hc⟩ ↦ ⟨hw, ha, hc⟩⟩
 
 /-- A presupposition triggered in the nuclear scope projects universally over the restrictor. It
 is transparent iff at each world of the context where `q` is not constant on the row of the
 restrictor's size, every individual of the restrictor satisfies it. -/
-theorem transparent_scopeTruth_iff {A : W → E → Prop} {P : Set (W × E)} :
+theorem transparent_scopeTruth_iff {A : W → Set E} {P : Set (W × E)} :
     Transparent C {scopeTruth q A} P ↔
-      ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard → ∀ e, A w e → (w, e) ∈ P := by
+      ∀ w ∈ C, ¬ q.ConstantOnRow (A w).ncard → ∀ e ∈ A w, (w, e) ∈ P := by
   rw [← (isLocalContext_scopeTruth q A C).satisfied_iff_transparent,
     satisfied_iff (isLocalContext_scopeTruth q A C)]
   exact ⟨fun h w hw hc e he ↦ h ⟨hw, he, hc⟩, fun h ⟨w, e⟩ ⟨hw, he, hc⟩ ↦ h w hw hc e he⟩

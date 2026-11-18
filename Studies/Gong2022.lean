@@ -160,7 +160,7 @@ def ditransitive : Derivation :=
 def casesOf (g : CaseAssigners) (d : Derivation) (datIO : Bool) :
     Option (LexicalItem.Token → FeatureSlot (Case × Case.Mechanism)) :=
   d.externalize?.map fun t ↦
-    g.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
+    g.assignOn .raising t complementDomain IsPhaseHead
       (fun x ↦ if datIO && x = goalD then .valued .dat else .unvalued) [subjD, objD, goalD]
 
 /-- The cases of the Mongolian ditransitive. -/

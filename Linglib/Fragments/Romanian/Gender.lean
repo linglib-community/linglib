@@ -37,18 +37,18 @@ structure Noun extends GenderedNoun Value where
   animacy : Animacy
   deriving DecidableEq, Repr
 
-def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .male⟩, .human⟩
-def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, some .female⟩, .human⟩
-def scaun : Noun := ⟨⟨⟨"scaun", "chair"⟩, .neut, none⟩, .inanimate⟩
-def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, some .female⟩, .human⟩
-def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, some .male⟩, .human⟩
-def usa : Noun := ⟨⟨⟨"uşă", "door"⟩, .fem, none⟩, .inanimate⟩
-def perete : Noun := ⟨⟨⟨"perete", "wall"⟩, .masc, none⟩, .inanimate⟩
-def masa : Noun := ⟨⟨⟨"masă", "table"⟩, .fem, none⟩, .inanimate⟩
-def nuc : Noun := ⟨⟨⟨"nuc", "walnut tree"⟩, .masc, none⟩, .inanimate⟩
-def prun : Noun := ⟨⟨⟨"prun", "plum tree"⟩, .masc, none⟩, .inanimate⟩
-def frigider : Noun := ⟨⟨⟨"frigider", "refrigerator"⟩, .neut, none⟩, .inanimate⟩
-def televizor : Noun := ⟨⟨⟨"televizor", "television"⟩, .neut, none⟩, .inanimate⟩
+def barbat : Noun := ⟨⟨⟨"bărbat", "man", some .male⟩, .masc⟩, .human⟩
+def fata : Noun := ⟨⟨⟨"fată", "girl", some .female⟩, .fem⟩, .human⟩
+def scaun : Noun := ⟨⟨⟨"scaun", "chair", none⟩, .neut⟩, .inanimate⟩
+def femeie : Noun := ⟨⟨⟨"femeie", "woman", some .female⟩, .fem⟩, .human⟩
+def baiat : Noun := ⟨⟨⟨"băiat", "boy", some .male⟩, .masc⟩, .human⟩
+def usa : Noun := ⟨⟨⟨"uşă", "door", none⟩, .fem⟩, .inanimate⟩
+def perete : Noun := ⟨⟨⟨"perete", "wall", none⟩, .masc⟩, .inanimate⟩
+def masa : Noun := ⟨⟨⟨"masă", "table", none⟩, .fem⟩, .inanimate⟩
+def nuc : Noun := ⟨⟨⟨"nuc", "walnut tree", none⟩, .masc⟩, .inanimate⟩
+def prun : Noun := ⟨⟨⟨"prun", "plum tree", none⟩, .masc⟩, .inanimate⟩
+def frigider : Noun := ⟨⟨⟨"frigider", "refrigerator", none⟩, .neut⟩, .inanimate⟩
+def televizor : Noun := ⟨⟨⟨"televizor", "television", none⟩, .neut⟩, .inanimate⟩
 
 def allNouns : List Noun :=
   [barbat, fata, scaun, femeie, baiat, usa, perete, masa, nuc, prun, frigider, televizor]

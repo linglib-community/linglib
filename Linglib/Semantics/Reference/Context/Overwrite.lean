@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Monster
 public import Mathlib.Data.Finset.Piecewise
 public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Tactic.DeriveFintype
@@ -24,9 +25,10 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 * `Context.Coord`, `Context.equivPi`: the coordinates of a context, and the context as a function
   on them.
 * `Context.overwrite s c i`: `c` with the coordinates in `s` taken from `i`.
+* `Context.Coord.ofRole`: the coordinate holding a discourse role.
 * `Context.localDepth ss k`: the position of the last of the overwrites `ss` that takes `k`.
 * `shiftyOp s`: the shifty operator, evaluating its argument at the context overwritten from the
-  index, Kaplan's `shiftBy (overwrite s)`.
+  index, `Character.shiftBy (overwrite s)`.
 
 ## Main results
 
@@ -47,7 +49,7 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 
 universe u
 
-namespace Kaplan.Context
+namespace SpeechAct.Context
 
 variable {W E P T : Type u} {α : Type*}
 
@@ -119,6 +121,21 @@ theorem overwrite_overwrite : overwrite t (overwrite s c i) i = overwrite (s ∪
   split_ifs <;> tauto
 
 end overwrite
+
+/-! ### The coordinates of the discourse roles -/
+
+/-- The coordinate holding a discourse role, the agent coordinate for the speaker and the
+addressee coordinate for the addressee. -/
+def Coord.ofRole : SpeechAct.Role ↪ Coord where
+  toFun
+    | .speaker => .agent
+    | .addressee => .addressee
+  inj' a b h := by cases a <;> cases b <;> first | rfl | cases h
+
+/-- Overwriting replaces the holder of a role exactly when it takes the role's coordinate. -/
+theorem holder_overwrite (s : Finset Coord) (c i : Context W E P T) (r : SpeechAct.Role) :
+    (overwrite s c i).holder r = if Coord.ofRole r ∈ s then i.holder r else c.holder r := by
+  cases r <;> rfl
 
 /-! ### Expressions reading some coordinates -/
 
@@ -193,11 +210,11 @@ theorem apply_foldl_overwrite {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {
       rw [apply_overwrite_of_disjoint hf (by simpa using hk), ih, List.take_append_of_le_length
         (by simpa using localDepth_le_length (ops.map Prod.fst) k)]
 
-end Kaplan.Context
+end SpeechAct.Context
 
-namespace Kaplan
+namespace Character
 
-open Context
+open SpeechAct Context
 
 variable {W E P T : Type u} {α : Type*}
 
@@ -224,4 +241,4 @@ value of its complement. -/
 theorem diag_shiftyOp : (shiftyOp s χ).diag id = χ.diag id := by
   ext; simp
 
-end Kaplan
+end Character

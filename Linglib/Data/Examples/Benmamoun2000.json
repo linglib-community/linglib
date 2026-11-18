@@ -12,7 +12,7 @@
     "translation": "The students study.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -31,7 +31,7 @@
     "translation": "The students do not study.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "benmamoun2000_1a"]
@@ -52,7 +52,7 @@
     "translation": "The students left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -71,7 +71,7 @@
     "translation": "The students did not go",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "benmamoun2000_2a"]
@@ -92,7 +92,7 @@
     "translation": "The students will go.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The source prints the subject ṭ-ṭullabu.",
@@ -111,7 +111,7 @@
     "translation": "The students will not go.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "benmamoun2000_3a"]

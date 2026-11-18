@@ -132,6 +132,17 @@ theorem NonfinalSubinterval.not_finalSubinterval (h : i₁.NonfinalSubinterval i
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
 
+theorem pure_le_iff {a : α} : pure a ≤ i₁ ↔ a ∈ i₁ :=
+  .rfl
+
+/-- A point has no proper subinterval. -/
+theorem IsPoint.isMin (h : i₁.IsPoint) : IsMin i₁ := fun i hle ↦
+  le_def.2 ⟨i.fst_le_snd.trans ((le_def.1 hle).2.trans_eq h.symm),
+    h.symm.trans_le ((le_def.1 hle).1.trans i.fst_le_snd)⟩
+
+theorem During.not_isPoint (h : i₁.During i₂) : ¬ i₂.IsPoint :=
+  fun hp ↦ ((h.1.trans_le i₁.fst_le_snd).trans h.2).ne hp
+
 theorem During.not_precedes (h : i₁.During i₂) : ¬ i₁.Precedes i₂ :=
   fun h' ↦ lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h')
 
@@ -166,9 +177,25 @@ theorem Precedes.not_overlaps (h : i₁.Precedes i₂) : ¬ i₁.Overlaps i₂ :
 
 end Preorder
 
+/-- The intervals without a proper subinterval are the points. -/
+theorem isMin_iff_isPoint {α : Type*} [PartialOrder α] {i : NonemptyInterval α} :
+    IsMin i ↔ i.IsPoint :=
+  ⟨fun h ↦ le_antisymm i.fst_le_snd
+    (le_def.1 (h (pure_le_iff.2 (mem_def.2 ⟨le_rfl, i.fst_le_snd⟩)))).2, IsPoint.isMin⟩
+
 section LinearOrder
 
 variable {α : Type*} [LinearOrder α] {i₁ i₂ : NonemptyInterval α}
+
+/-- No part of an interval precedes another exactly when it starts no earlier than the other. -/
+theorem forall_le_not_precedes_iff : (∀ k ≤ i₁, ¬ k.Precedes i₂) ↔ i₂.fst ≤ i₁.fst :=
+  ⟨fun h ↦ not_lt.1 (h (.pure i₁.fst) (le_def.2 ⟨le_rfl, i₁.fst_le_snd⟩)),
+    fun h k hk hlt ↦ (h.trans ((le_def.1 hk).1.trans k.fst_le_snd)).not_gt hlt⟩
+
+/-- No part of an interval follows another exactly when it ends no later than the other. -/
+theorem forall_le_not_precedes_iff' : (∀ k ≤ i₁, ¬ i₂.Precedes k) ↔ i₁.snd ≤ i₂.snd :=
+  ⟨fun h ↦ not_lt.1 (h (.pure i₁.snd) (le_def.2 ⟨i₁.fst_le_snd, le_rfl⟩)),
+    fun h k hk hlt ↦ ((k.fst_le_snd.trans (le_def.1 hk).2).trans h).not_gt hlt⟩
 
 theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
   rw [lt_iff_le_not_ge]

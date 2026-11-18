@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Interval.Set.Disjoint
 public import Mathlib.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Index
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
 
@@ -51,7 +51,7 @@ determines its alternatives, the classes of its historical equivalence.
 
 @[expose] public section
 
-open Set Kaplan
+open Set
 open scoped Denotes
 open scoped SetRel
 open scoped ModalLogic
@@ -67,7 +67,7 @@ variable {W T : Type*}
 /-- The metaphysical modal base of [condoravdi-2002] is the relation curried, giving at a world
 and time the worlds that share the world's history up to that time. -/
 abbrev metaphysicalBase (history : HistoricalAlternatives W T) : W → T → Set W :=
-  Function.curry history
+  fun w t ↦ history ⟨w, t⟩
 
 /-! ### Bases oriented by a tense cell
 
@@ -79,12 +79,12 @@ Klecha's doxastic and circumstantial bases to the nonfuture and the future. -/
 section Oriented
 
 variable (history : HistoricalAlternatives W T) (s : Index W T) {s' : Index W T}
-  {C : Finset Ordering}
+  {C : PointAlgebra}
 
 /-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
 with the times standing to the index's time in a position of `C`. -/
-def orientedBase [LT T] (C : Finset Ordering) : Set (Index W T) :=
-  history s ×ˢ {t | s.time ~[Tense.toSetRel C] t}
+def orientedBase [LT T] (C : PointAlgebra) : Set (Index W T) :=
+  {s' | s'.world ∈ history s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time}
 
 /-- The historical modal base, the alternatives at times at or after the index's own, the past
 fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
@@ -92,7 +92,7 @@ abbrev historicalBase [LT T] : Set (Index W T) := orientedBase history s Tense.n
 
 /-- The actual-history base, [klecha-2016]'s doxastic base, the alternatives at times at or
 before the index's own. -/
-abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧ᶜ
+abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s Tense.nonfuture
 
 /-- The future-history base, [klecha-2016]'s circumstantial base, the alternatives at times
 strictly after the index's own. -/
@@ -101,24 +101,25 @@ abbrev futureHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦T
 variable {history s}
 
 theorem mem_orientedBase [LT T] :
-    s' ∈ orientedBase history s C ↔ s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time :=
+    s' ∈ orientedBase history s C ↔
+      s'.world ∈ history s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time :=
   Iff.rfl
 
 /-- On linear time the time of a situation in an oriented base stands to the index's time in a
 position of the cell. -/
 theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
     compare s'.time s.time ∈ C :=
-  Tense.mem_toSetRel_iff.1 h.2
+  PointAlgebra.mem_toSetRel_iff.1 h.2
 
 theorem mem_historicalBase [PartialOrder T] :
     s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time := by
-  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, Tense.toSetRel_sup, Set.mem_union,
-    Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
+  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, PointAlgebra.toSetRel_sup,
+    Set.mem_union, Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
 
 theorem mem_actualHistoryBase [PartialOrder T] :
     s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time := by
-  rw [mem_orientedBase, ← Tense.past_sup_present, Tense.toSetRel_sup, Set.mem_union,
-    Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
+  rw [mem_orientedBase, Tense.nonfuture_eq_past_sup_present, PointAlgebra.toSetRel_sup,
+    Set.mem_union, Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
 
 theorem mem_futureHistoryBase [Preorder T] :
     s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time := by
@@ -134,15 +135,15 @@ theorem time_lt_of_mem_futureHistoryBase [Preorder T] (h : s' ∈ futureHistoryB
     s.time < s'.time :=
   (mem_futureHistoryBase.1 h).2
 
-theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
+theorem orientedBase_sup [LT T] (C D : PointAlgebra) :
     orientedBase history s (C ⊔ D) = orientedBase history s C ∪ orientedBase history s D := by
   ext
-  simp only [mem_orientedBase, Tense.toSetRel_sup, Set.mem_union, and_or_left]
+  simp only [mem_orientedBase, PointAlgebra.toSetRel_sup, Set.mem_union, and_or_left]
 
 /-- On linear time the actual and future bases together hold the alternatives at all times. -/
 theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
-    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
-  rw [← orientedBase_sup, compl_sup_eq_top]
+    actualHistoryBase history s ∪ futureHistoryBase history s = Index.world ⁻¹' history s := by
+  rw [← orientedBase_sup, Tense.nonfuture_eq_compl_future, compl_sup_eq_top]
   ext
   simp [mem_orientedBase]
 
@@ -167,14 +168,14 @@ def alternatives : HistoricalAlternatives W T := fun i ↦ {v | F.sim i.time i.w
 
 variable {F}
 
-@[simp] theorem mem_alternatives : v ∈ F.alternatives (w, t) ↔ F.sim t w v := Iff.rfl
+@[simp] theorem mem_alternatives : v ∈ F.alternatives ⟨w, t⟩ ↔ F.sim t w v := Iff.rfl
 
-theorem mem_alternatives_self : w ∈ F.alternatives (w, t) := (F.sim t).iseqv.refl w
+theorem mem_alternatives_self : w ∈ F.alternatives ⟨w, t⟩ := (F.sim t).iseqv.refl w
 
 /-- Historical equivalence partitions the worlds, so an alternative of a world has the same
 alternatives as the world. -/
-theorem alternatives_eq_of_mem (h : v ∈ F.alternatives (w, t)) :
-    F.alternatives (v, t) = F.alternatives (w, t) :=
+theorem alternatives_eq_of_mem (h : v ∈ F.alternatives ⟨w, t⟩) :
+    F.alternatives ⟨v, t⟩ = F.alternatives ⟨w, t⟩ :=
   Set.ext fun _ ↦ ⟨(F.sim t).iseqv.trans h, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm h)⟩
 
 end Temporal.TWFrame
@@ -189,7 +190,7 @@ variable {W T : Type*}
 each of its worlds agree on it ([condoravdi-2002]). Past and present issues are settled, and
 future ones need not be. -/
 def settled (history : HistoricalAlternatives W T) (cg : Set W) (t : T) (P : W → Prop) : Prop :=
-  ∀ w ∈ cg, ∀ w' ∈ history (w, t), (P w ↔ P w')
+  ∀ w ∈ cg, ∀ w' ∈ history ⟨w, t⟩, (P w ↔ P w')
 
 /-- A modal base meets the diversity condition of [condoravdi-2002] for a property when some
 common-ground world sees worlds disagreeing on it. -/
@@ -199,7 +200,7 @@ def diverse (MB : W → T → Set W) (cg : Set W) (t : T) (P : W → Prop) : Pro
 /-- A settled property is not diverse over a modal base within the metaphysical one, so
 metaphysical readings of possibility modals are blocked for settled properties. -/
 theorem settled_not_diverse {history : HistoricalAlternatives W T} {MB : W → T → Set W}
-    {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history (w, t))
+    {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history ⟨w, t⟩)
     (h : settled history cg t P) : ¬ diverse MB cg t P :=
   fun ⟨w, hw, w', hw', w'', hw'', hP, hnP⟩ ↦
     hnP ((h w hw w'' (hMB w hw hw'')).mp ((h w hw w' (hMB w hw hw')).mpr hP))

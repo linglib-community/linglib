@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Two-dimensional presupposition
@@ -176,6 +177,15 @@ def negFactive (believes : (W → Prop) → W → Prop) : TwoDim (W → Prop) (W
 
 @[simp] theorem negFactive_notAtIssue (believes : (W → Prop) → W → Prop) :
     (p.negFactive believes).notAtIssue = fun w ↦ p.notAtIssue w ∧ p.atIssue w := rfl
+
+/-- Under a complement that presupposes nothing, the negative factive is the negation of the
+factive sentence. -/
+theorem toTrivalent_negFactive (believes : (W → Prop) → W → Prop) (h : ∀ w, p.notAtIssue w) :
+    (negFactive p believes).toTrivalent = (Presupposition.factive believes p.atIssue)ᶜ := by
+  rw [Presupposition.factive, Trivalent.compl_condEvent, toTrivalent_eq_condEvent]
+  congr 1
+  funext w
+  simp [h w]
 
 end Trivalent
 

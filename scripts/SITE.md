@@ -34,7 +34,7 @@ needs it:
   in the middle, where the file sits in the library at right. Readers scan and jump.
 - A page's headline declarations are open cards. Every other declaration is a one-line row that
   opens in place. A study's headlines are its theorems with a docstring. A theory file's are the
-  declarations its module docstring links to outside `Implementation notes`, `TODO`, `Errata`,
+  declarations its module docstring links to outside `Implementation notes`, `TODO`,
   `Notation` and `References`, as a mathlib header names a file's main definitions and results; a
   docstring linking to none falls back on the theorems with a docstring.
 - A theory page's title is its docstring's first heading, with the `import` and the namespace under

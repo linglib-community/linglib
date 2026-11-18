@@ -34,19 +34,6 @@ sharpened to what its Table 6 supports.
 * Table 1 yields five rival genitive singulars and a realization-space of 25600 class
   candidates where pp. 445–446 count six and 46,080 on richer data than Table 1.
 
-## Errata
-
-* (12) prints the product of the marginals where conditional entropy has the joint, and no minus
-  sign; (14) and Table 2 are the standard quantity.
-* The prose before (13) gives the genitive singulars of the three classes with accusative plural
-  *-a* as two *-o* and one *-∅*. In Table 1 they are two *-u* and one *-os*, the same proportions.
-* (15) and (17) average with weight `1 / |C|`, which gives 0.629 bits for the nominative singular
-  column; Table 2's 0.719 divides by `|C| - 1`. The last line of (18) drops the weights.
-* Table 2 prints `H(VOC.SG | NOM.PL)` as 0.591. It is 0.594, as it must be since the accusative and
-  vocative singular predict each other, and as the printed row mean 0.411 requires.
-* The text after (18) and Table 3 print the grand average as 0.644 bits, and `2^0.644 = 1.56`.
-  Table 2 prints 0.664, and the exact value is 0.664.
-
 ## TODO
 
 * Table 5's average entropies and the tone system's realization count are computed on the

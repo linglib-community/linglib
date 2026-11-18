@@ -47,15 +47,16 @@ that reads rows imports it beside its data module. Quick key reference:
 | `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"`; only `[A-Za-z0-9_-]` (a CLDF identifier: write `(3.1)` as `3_1`, a prime as `_prime`) |
 | `source` | `{bibkey, paperLabel}` | **originating** paper (e.g. `geach-1962` for the donkey) |
 | `reportedIn` | `{bibkey, paperLabel}` or `null` | citing paper whose file holds the row, when different from `source` |
-| `method` | one of `introspection, elicitation, corpus, experiment, description`, optional | how the example and its judgment were obtained, where it differs from the paper's method in `contributions.csv` (see Methods) |
+| `method` | one of `elicitation, corpus, experiment, description, unclassified`, optional | how the example and its judgment were obtained, where it differs from the paper's method in `contributions.csv` (see Methods) |
 | `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English; must be in `languages.csv`; `""` only for a constructed string of no language (a formal-language pattern) |
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
+| `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
-| `alternatives` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
+| `contrasts` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
@@ -70,6 +71,51 @@ Translations are English, so there is no metalanguage field. CLDF's
 aligned by construction, and morpheme alignment is a property of the pairs.
 Printed results (ratings, rates, statistics) go to `Data/Statistics/`, not
 `paperFeatures`.
+
+## Typed features
+
+A column whose values form a closed set is declared, not left as strings. The data file is then
+an object `{"features": [...], "examples": [...]}`, and each feature names a `paperFeatures` key,
+the Lean `type` of its values, the `lean` name of its reader and its `levels`:
+
+```json
+{"key": "antecedent", "lean": "antecedent", "type": "Antecedent",
+ "doc": "The subject antecedents the paper compares.",
+ "levels": [{"name": "atomic", "label": "atomic", "doc": "a singular noun phrase ..."}, ...]}
+```
+
+The generator emits the type as an enum in `<AuthorYear>.Examples` with its reader
+(`Examples.antecedent : Datum → Option Examples.Antecedent`, or a `List` for a feature declared
+`"multiple": true`), and rejects a row whose value is not a declared level, a key that repeats
+without `multiple`, and a declared key no row records. A study defines its analysis as functions
+on the enum and writes no table of labels, so a value that drifts fails when the module is
+generated instead of leaving a theorem vacuous. `Rakosi2020.json` and `Angelopoulos2026.json` are
+examples.
+
+Declare a column when the paper's own taxonomy is finite: its constructions, conditions,
+diagnostics, classes. Leave as a string a column that names a lexical entry by its form (a verb,
+a particle), which a study matches against a fragment's inventory, and a number, which
+`Datum.nat?` reads. A column that restates what the gloss line shows (the person and number of a
+verb, the case of a noun) is not recorded at all: read it off the gloss
+(`GlossedWord.features`).
+
+### Typed readings
+
+The readings a paper tests are declared the same way when they form a closed set, under a
+top-level `readings` key beside `features`:
+
+```json
+"readings": {"lean": "reading", "type": "Reading", "doc": "The readings the paper tests.",
+             "levels": [{"name": "boundVariable", "label": "bound variable", "doc": "..."}, ...]}
+```
+
+The generator emits the enum, its `label` and a reader
+`Examples.reading : Datum → Examples.Reading → Option Judgment`, and rejects a row that judges a
+reading not declared, a row that judges one twice, and a level no row judges. A study then writes
+`Examples.reading e .boundVariable` where it wrote `e.readings.lookup "bound variable"`, and maps
+its own reading type into the enum by a total function (`AghaJeretic2026.forceReading`). A paper
+whose readings are open-ended, paraphrases or scope orders over arbitrary operators, leaves them
+as strings.
 
 ## Languages
 
@@ -89,15 +135,15 @@ code, otherwise the language; a family code only for a claim about the family.
 
 ## Methods
 
-A row records how the example and its judgment were obtained, as `Datum.method`: by the author's
-introspection, by elicitation from native-speaker consultants, from a corpus (a text, a corpus or
-the web), from an experiment that measured the judgment, or cited from a grammar or dictionary that
-does not say (`description`). It is evidence of different kinds: an attested example is no
-evidence that its alternatives are impossible, and a consultant's or an experiment's judgment is
-not the author's. `contributions.csv` gives each data file's method, or `unclassified` where no
-one has yet read the paper for it, and a row's `method` key overrides it; the generator rejects a
-data file with no row there. A paper is classified when it is audited, from its own statement of
-where its data come from; `unclassified` is never guessed away.
+A row records how the example and its judgment were obtained, as `Datum.method`, where the
+source names one of four ways: elicitation from native-speaker consultants, a corpus (a text, a
+corpus or the web), an experiment that measured the judgment, or citation from a grammar or
+dictionary that does not say (`description`). It is evidence of different kinds: an attested
+example is no evidence that other forms are impossible, and an experiment measures what a
+consultant reports. `contributions.csv` gives each data file's method, or `unclassified` where
+none of the four is recorded, and a row's `method` key overrides it, `unclassified` included; the
+generator rejects a data file with no row there. A paper is classified when it is audited, from
+its own statement of where its data come from.
 
 ## CLDF export
 
@@ -126,7 +172,7 @@ Lean module does not carry the key; the CLDF export does, as `Verified`.
 prints with slashes, parentheses or stars (`kto-nibud'/kto-libo`, `some (*any)`) packs several
 sentences: write each variant as its own row with its own `judgment` and `paperFeatures`,
 sharing the `paperLabel`, when the variants differ in what the paper classifies; keep a
-contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
+contrast the paper does not classify in `contrasts`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
 The mark `%` says that speakers differ without saying how, and is the judgment `variable`; a row
 records who accepts the example, a variety or a stage, as a paper feature where the source says.
@@ -165,12 +211,30 @@ Quick reference:
 - Subscript indices for coreference (`Mary₁ ... her₁`) — not yet
   representable in the schema; `comment` field for now
 
+### Alignment
+
+The generator emits each row's gloss line as `Datum.glossedWords`, modelled on `pyigt`'s
+`GlossedWord` and `GlossedMorpheme`: a word with its gloss and, when the two are segmented alike
+by the same separators (`-`, `=`, and `~` for reduplication), the pairs of a morpheme and its
+gloss. A study reads morphemes and category labels from it without splitting a string in the
+kernel. The generator also records the example's `LGR_Conformance` as the CLDF export derives
+it: `MORPHEME_ALIGNED` when every word is segmented as its gloss is and some word is segmented,
+otherwise `WORD_ALIGNED`.
+
+A word the source prints with a different segmentation than its gloss (`képet` glossed
+`picture-ACC`) is transcribed as printed. It has no morphemes (`GlossedWord.IsValid` fails) but
+keeps its category labels and lexical gloss (`GlossedWord.labels`, `GlossedWord.features`).
+
+Two departures from `pyigt`: a morpheme's form drops only the punctuation of `scripts/lgr.py`,
+so that an apostrophe stays inside a word, and a word that is not valid has no morpheme pairs
+where `pyigt` keeps those before the mismatch.
+
 ## File-format style
 
 Pretty-printed JSON, but **compact `glossedTokens`**: pack 3–4
 `[surface, gloss]` pairs per line so the IGT alignment can be read at a
 glance instead of scrolling through one-pair-per-line. Other arrays
-(`discourseSegments`, `alternatives`, `readings`) get one element per line
+(`discourseSegments`, `contrasts`, `readings`) get one element per line
 for diff-friendliness — those entries are usually long strings or
 structured objects.
 
@@ -216,9 +280,19 @@ aimed at. Known gaps:
   (Bakay et al. 2026, syntactic minimal pairs).
 - **Paradigm clusters** where N sentences only mean something together
   (Reinhart's (11a)–(11d)).
-- **Typed columns**: `paperFeatures` values are strings that each study
-  reads through its own table of labels (`parse?`), so a value the table
-  omits is skipped silently rather than rejected when the module is
-  generated.
+- **Declared abbreviations.** A gloss element counts as a category label when it has no
+  lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
+  work list its own abbreviations; a data file would declare them and the generator would check
+  its labels against the standard list and the declared ones.
+- **Readings into a collection.** `Datum.Fits` and `Datum.Checks` take a reader into `Option`.
+  A column that names a lexical entry is matched against a `Finset` inventory, so such a
+  theorem is written with a bounded quantifier over the inventory and carries no coverage
+  count; a fit over `Option`, `List` and `Finset` readers alike would cover it.
+- **Typed features in the CLDF export.** A declared feature is a CLDF parameter with its codes,
+  but the export writes every feature into the custom JSON column `Paper_Features`. Whether the
+  declared ones fit CLDF's `ParameterTable` and `CodeTable` for values attached to an example
+  is to be checked against the specification before anything is written.
+- **Adoption of typed features.** Most data files predate them and their studies read closed
+  columns through `parse?` tables; a column is declared when its study is next audited.
 
 Extensions land when a consuming study demands them.

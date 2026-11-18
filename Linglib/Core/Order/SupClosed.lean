@@ -19,9 +19,11 @@ exactly when the points sent there are sup-closed.
 
 ## Main results
 
+* `supClosure_induction`: induction on the sup-closure of a set.
 * `mem_supClosure_image`, `mem_infClosure_image`: membership in the closure of an image.
 * `Set.mem_supClosure_image`, `Set.mem_infClosure_image`: the same for a family of sets.
 * `sInf_supClosure`, `sSup_infClosure`: the closures keep the infimum and the supremum.
+* `infClosure_union`: the inf-closure of a union.
 * `IsLowerSet.exists_isGreatest_iff`: a finite lower set has a greatest element iff it is
   nonempty and sup-closed.
 * `exists_isLeast_range_inter_iff`: the same for the least value of an order-reversing embedding.
@@ -34,6 +36,17 @@ variable {ι α : Type*}
 section SemilatticeSup
 
 variable [SemilatticeSup α] {f : ι → α} {s : Set ι} {a : α}
+
+/-- An induction principle for the sup-closure: a property that holds of the members of a set and
+is preserved by joins holds throughout its sup-closure. -/
+@[elab_as_elim]
+theorem supClosure_induction {s : Set α} {p : (a : α) → a ∈ supClosure s → Prop}
+    (mem : ∀ a (ha : a ∈ s), p a (subset_supClosure ha))
+    (sup : ∀ a b (ha : a ∈ supClosure s) (hb : b ∈ supClosure s), p a ha → p b hb →
+      p (a ⊔ b) (supClosed_supClosure ha hb))
+    {a : α} (ha : a ∈ supClosure s) : p a ha :=
+  (supClosure_min (t := {a | ∃ h : a ∈ supClosure s, p a h}) (fun a ha ↦ ⟨_, mem a ha⟩)
+    (fun a ⟨ha, hpa⟩ b ⟨hb, hpb⟩ ↦ ⟨_, sup a b ha hb hpa hpb⟩) ha).2
 
 @[to_dual]
 theorem mem_supClosure_image :
@@ -50,8 +63,9 @@ end SemilatticeSup
 
 @[to_dual]
 theorem sInf_supClosure [CompleteLattice α] (s : Set α) : sInf (supClosure s) = sInf s :=
-  le_antisymm (sInf_le_sInf subset_supClosure) <| le_sInf <| supClosure_min
-    (fun _ ↦ sInf_le) fun _ ha _ _ ↦ le_sup_of_le_left ha
+  le_antisymm (sInf_le_sInf subset_supClosure) <| le_sInf fun _ hb ↦
+    supClosure_min (t := {b | sInf s ≤ b}) (fun _ ↦ sInf_le)
+      (fun _ ha _ _ ↦ le_sup_of_le_left ha) hb
 
 /-! ### Greatest elements of lower sets -/
 
@@ -113,6 +127,36 @@ theorem exists_isLeast_range_inter_iff [Finite α] (hf : ∀ a b, f a ≤ f b �
   exact ⟨a, (isLeast_range_inter_iff hf).1 h⟩
 
 end Greatest
+
+section Lattice
+
+variable [Lattice α]
+
+/-- The inf-closure of a union consists of the two inf-closures and the meets across them. -/
+theorem infClosure_union (s t : Set α) :
+    infClosure (s ∪ t) =
+      infClosure s ∪ infClosure t ∪ Set.image2 (· ⊓ ·) (infClosure s) (infClosure t) := by
+  refine (infClosure_min ?_ ?_).antisymm (Set.union_subset (Set.union_subset
+    (infClosure_mono Set.subset_union_left) (infClosure_mono Set.subset_union_right)) ?_)
+  · exact Set.union_subset (fun a ha ↦ .inl (.inl (subset_infClosure ha)))
+      fun a ha ↦ .inl (.inr (subset_infClosure ha))
+  · have hs := infClosed_infClosure (s := s)
+    have ht := infClosed_infClosure (s := t)
+    rintro _ ((ha | hb) | ⟨a, ha, b, hb, rfl⟩) _ ((ha' | hb') | ⟨a', ha', b', hb', rfl⟩)
+    · exact .inl (.inl (hs ha ha'))
+    · exact .inr ⟨_, ha, _, hb', rfl⟩
+    · exact .inr ⟨_, hs ha ha', _, hb', inf_assoc ..⟩
+    · exact .inr ⟨_, ha', _, hb, inf_comm ..⟩
+    · exact .inl (.inr (ht hb hb'))
+    · exact .inr ⟨_, ha', _, ht hb hb', inf_left_comm ..⟩
+    · exact .inr ⟨_, hs ha ha', _, hb, inf_right_comm ..⟩
+    · exact .inr ⟨_, ha, _, ht hb hb', (inf_assoc ..).symm⟩
+    · exact .inr ⟨_, hs ha ha', _, ht hb hb', inf_inf_inf_comm ..⟩
+  · rintro _ ⟨a, ha, b, hb, rfl⟩
+    exact infClosed_infClosure (infClosure_mono Set.subset_union_left ha)
+      (infClosure_mono Set.subset_union_right hb)
+
+end Lattice
 
 namespace Set
 

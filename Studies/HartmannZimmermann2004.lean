@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.FinCases
 public import Linglib.Core.Logic.Function.FactorsThrough
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Basic
@@ -65,7 +65,6 @@ namespace HartmannZimmermann2004
 
 open Exhaustification Reflex
 open OptimalityTheory (Constraint)
-open OptimalityTheory (Tableau)
 
 /-! ## The marking system (§4.1, §5.2, §6.2) -/
 
@@ -146,32 +145,39 @@ its audibility is the blocked elision cascade
 (`prosodic_reflex_audible`). -/
 
 /-- A minimal prosodic word. -/
-def ω : Prosody.Tree := .node .om [.node .syl []]
+def ω : Prosody.Tree := .om [.σ]
 
 /-- V and O wrapped into one φ. -/
-def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
+def wrapped : Prosody.Tree := .iota [.ph [ω, ω]]
 
 /-- O separated into its own φ. -/
 def separated : Prosody.Tree :=
-  .node .iota [.node .ph [ω], .node .ph [ω]]
+  .iota [.ph [ω], .ph [ω]]
+
+-- Both candidates are layered intonational phrases, and neither has a recursive φ.
+theorem candidates_isUtterance :
+    Prosody.IsUtterance wrapped ∧ Prosody.IsUtterance separated ∧
+      Prosody.nonrecursivity .ph wrapped = 0 ∧ Prosody.nonrecursivity .ph separated = 0 := by
+  decide
 
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
-  Constraint.alignLeft.comap fun t ↦ ([(1, 2)], Prosody.levelSpans .ph t)
+  Constraint.alignLeft.comap fun t ↦ ([⟨(1, 2), by decide⟩], Prosody.levelSpans .ph t)
 
 /-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length
 
 theorem focused_parse_separates :
-    (Tableau.ofList {wrapped, separated} [alignFocus, starPhi]).optimal
+    Constraint.eval {wrapped, separated} [alignFocus, starPhi]
       = {separated} := by decide
 
 theorem neutral_parse_wraps :
-    (Tableau.ofList {wrapped, separated} [starPhi]).optimal
+    Constraint.eval {wrapped, separated} [starPhi]
       = {wrapped} := by decide
 
 theorem separated_edge_wrapped_internal :
-    (0, 2) ∉ Prosody.levelSpans .ph separated ∧ (0, 2) ∈ Prosody.levelSpans .ph wrapped := by
+    ⟨(0, 2), by decide⟩ ∉ Prosody.levelSpans .ph separated ∧
+      ⟨(0, 2), by decide⟩ ∈ Prosody.levelSpans .ph wrapped := by
   decide
 
 -- (25) [kidda-1985]

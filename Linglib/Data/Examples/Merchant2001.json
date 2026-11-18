@@ -13,7 +13,7 @@
     "translation": "He wants to flatter someone, but they don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Er will jemandem schmeicheln, aber sie wissen nicht, wen.", "judgment": "ungrammatical"}
     ],
     "readings": [],

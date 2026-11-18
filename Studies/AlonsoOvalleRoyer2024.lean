@@ -2,9 +2,9 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.EventRelativity
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Fragments.Mayan.Chuj.Verbs
 public import Linglib.Fragments.Mayan.Chuj.Voice
@@ -51,18 +51,6 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
   antecedents or under pretended ignorance; the unremarkable readings and the predicative uses
   (§5) are row data.
 
-## Errata
-
-* With the noun's extension closed under sums (fn. 14), the modal component of (59) holds only if
-  the anchor projects a world where the whole domain satisfies the scope, as the gloss "maybe all
-  did" of (22) has it. It then predicts (22) false in (23a), where the speaker knows that not
-  everyone danced, and (37), (41) and (82) false in (38a), (42a) and (49), where the agent is to
-  choose one at random; the paper judges all four acceptable. Restricted to atoms, the component
-  predicts them.
-* (75) and (92) write `agent(y)(e)`, the actual event, for `agent(y)(e′)`.
-* The discussion of (39) cites (40c) for the scenario in which it rained everywhere, which is
-  (40b).
-
 ## TODO
 
 * Under an overt possibility modal *un N qualsiasi* has an epistemic reading (Chierchia's
@@ -90,7 +78,7 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
 
 namespace AlonsoOvalleRoyer2024
 
-open Finset ModalLogic Exhaustification Discourse.SpeechAct
+open Finset ModalLogic Exhaustification SpeechAct
 open Modality (EventBinder)
 
 /-! ### The schema (59) -/
@@ -144,7 +132,7 @@ theorem mem_sums_iff {y : Finset ι} : y ∈ sums ↔ Mereology.AlgClosure (· �
     rw [cons_eq_insert, insert_eq, ← sup_eq_union]
     exact .sum (.base (by simp)) ih
   · intro hy
-    induction hy with
+    induction hy using Mereology.AlgClosure.induction with
     | base h => obtain ⟨a, -, rfl⟩ := mem_map.1 h; exact singleton_nonempty a
     | sum _ _ ih _ => exact ih.mono le_sup_left
 
@@ -441,7 +429,7 @@ def clauseOf (row : Datum) : List GlossedWord :=
 
 /-- A word bears a reflex on the verb when its morphs include the reflex's marker. -/
 def Bears (w : GlossedWord) : Reflex Mayan.Host → Prop
-  | .morpheme .verb ms => ∀ m ∈ ms, m.form.toList ∈ w.morphs.map (·.1)
+  | .morpheme .verb ms => ∀ m ∈ ms, m.form.toList ∈ w.morphs
   | _ => False
 
 instance (w : GlossedWord) : DecidablePred (Bears w) := fun x ↦ by
@@ -487,8 +475,7 @@ instance (v : Verb) : Decidable (Volitional v) := by unfold Volitional; infer_in
 
 /-- A row's sentence is negated when one of its words is glossed as negation. -/
 def Negated (row : Datum) : Prop :=
-  ∃ w ∈ row.glossedWords,
-    Morphology.Features.ofLabels w.labels .polarity = (UD.Polarity.Neg : Flat _)
+  ∃ w ∈ row.glossedWords, w.features .polarity = (UD.Polarity.Neg : Flat _)
 
 instance (row : Datum) : Decidable (Negated row) := by unfold Negated; infer_instance
 

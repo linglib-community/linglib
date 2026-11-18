@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ArgumentSelection
-public import Linglib.Fragments.English.Verbs.Basic
+public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Data.Examples.Dowty1991
 public import Studies.Cruse1973
 public import Linglib.Data.Examples.Readers
@@ -28,8 +28,7 @@ others. The incremental theme homomorphism of §6 and the material of §11 are n
 The telicity axis of Table 1 is the telicity of the predicate, not an entailment of the ten: a
 change of state may be indefinite and atelic, as in *dim the lights* (p. 568), and a holistic
 theme's definite change in stages (p. 569) has no entailment of its own, so a non-agentive
-change of state falls in the unaccusative cell or the unstable one by its telicity. A verb entry
-supplies it from its aspectual class.
+change of state falls in the unaccusative cell or the unstable one by its telicity.
 
 ## References
 
@@ -92,12 +91,15 @@ theorem cruse_volitive_is_volition_alone :
 
 variable (p q : EntailmentProfile)
 
-/-- The hierarchies of (36) follow from the selection principle over the canonical role profiles. -/
+/-- The hierarchies of (36) follow from the selection principle over the typical role profiles:
+Agent outranks Instrument and Experiencer, each of them outranks Patient, and Patient is selected
+as direct object over Goal. The braces of (36) leave Instrument and Experiencer unordered, so the
+statement is two chains. -/
 theorem hierarchies :
-    Outranks (ThetaRole.canonicalProfile .agent) (ThetaRole.canonicalProfile .instrument) ∧
-      Outranks (ThetaRole.canonicalProfile .instrument) (ThetaRole.canonicalProfile .patient) ∧
-      Outranks (ThetaRole.canonicalProfile .experiencer)
-        (ThetaRole.canonicalProfile .patient) ∧
+    (([.agent, .instrument, .patient] : List ThetaRole).map ThetaRole.canonicalProfile).Pairwise
+        Outranks ∧
+      (([.agent, .experiencer, .patient] : List ThetaRole).map
+        ThetaRole.canonicalProfile).Pairwise Outranks ∧
       DirectObjectOver (ThetaRole.canonicalProfile .patient)
         (ThetaRole.canonicalProfile .goal) := by
   decide
@@ -260,15 +262,6 @@ theorem intransClass_changeOfState :
       intransClass {.changeOfState} .telic = .unaccusative := by
   decide
 
-/-- The class Table 1 assigns to an intransitive verb entry, by the profile the entry records for
-its sole argument and the telicity of its aspectual class. -/
-def verbClass (v : Verb) : Option IntransClass :=
-  return intransClass (← v.slotProfile? .external) (← v.vendlerClass).telicity
-
-theorem verbClass_run_arrive :
-    verbClass English.Verbs.run.toVerb = some .unergative ∧
-      verbClass English.Verbs.arrive.toVerb = some .unaccusative := by
-  decide
 
 /-! ### The substrate's templates against the paper's attributions -/
 

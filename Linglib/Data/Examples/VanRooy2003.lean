@@ -24,7 +24,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referential: that man over there", .acceptable), ("descriptive: the greatest boxer ever", .acceptable)]
     paperFeatures := [("type", "identification question")] }
 
@@ -37,7 +37,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "The questioner wants a newspaper and can walk to the station or to the palace; in one world both sell it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some: at least at the station", .acceptable)]
     paperFeatures := [("type", "mention-some"), ("regions", "{u,w},{v,w}")] }
 
@@ -50,7 +50,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "explicitly non-exhaustive")] }
 
@@ -63,7 +63,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "embedded mention-some")] }
 
@@ -76,7 +76,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "contextual domain")] }
 
@@ -89,7 +89,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "contextual domain")] }
 
@@ -102,7 +102,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "maximal")] }
 
@@ -115,7 +115,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "minimal")] }
 
@@ -128,7 +128,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := "The newspaper is sold at the station and at the palace; the best place is the station in one world, the palace in another, and either in a third."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some: {u,w},{v,w}", .acceptable)]
     paperFeatures := [("type", "mention-some")] }
 
@@ -141,7 +141,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complete address, to send a letter", .acceptable), ("the city, to decide on a visit", .acceptable)]
     paperFeatures := [("type", "granularity")] }
 
@@ -154,7 +154,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := "Either John or Bill did it, and the killer wears a blue or a green mask; who wears which is unknown."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("by name: {{u,v},{w,x}}", .acceptable), ("by mask: {{u,w},{v,x}}", .acceptable)]
     paperFeatures := [("type", "conceptual cover")] }
 
@@ -167,7 +167,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "The spiderman scenario of (22)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "conceptual cover")] }
 
@@ -180,7 +180,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "undefined"), ("felicity", "infelicitous")] }
 
@@ -193,7 +193,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "Asked by an artist making a life-size sculpture of a polar bear."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("type", "degree question"), ("reading", "mention-some")] }
 
@@ -206,7 +206,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "A Lennon autograph makes the others irrelevant, and a Harrison autograph makes a Starr autograph irrelevant."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("scalar: one resolving answer per Beatle", .acceptable)]
     paperFeatures := [("type", "scalar question")] }
 

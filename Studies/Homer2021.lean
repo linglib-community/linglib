@@ -61,14 +61,6 @@ impossible … not*, a derivation of this file.
   clausal spine. A constituent below the position of the subject denotes a proposition for each
   value of its trace, and the modal base is the worlds in which someone did something.
 
-## Errata
-
-* The strengthened meaning conjoins the negation of the weakest alternative asymmetrically entailing
-  the constituent, which is undefined when there is none: under *not … or* and in every
-  constituent without a scalar term. Such a constituent is left as it is, as by Krifka's rule.
-  The alternatives of a constituent without a scalar term are given as its meaning rather than
-  the singleton of it.
-
 ## TODO
 
 * The entanglement of *some* with itself and of *any* with itself, and *at most five people sold
@@ -699,7 +691,7 @@ theorem monotone_impossibleSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
   · exact fun _ _ _ ↦ le_rfl
   all_goals first
     | exact monotone_subject_right.comp monotone_did₂_fun
-    | exact monotone_subject_left _
+    | exact monotone_subject_left fun x ↦ did₂ x someOne
 
 theorem antitone_impossibleSubjObj_env_zero (k : ℕ) :
     Antitone ((impossibleSubjObj obj subj).env 0 (k + 3)) ∧
@@ -854,7 +846,7 @@ theorem monotone_notSureSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
   interval_cases j <;> fin_cases i
   all_goals first
     | exact monotone_subject_right.comp monotone_did₂_fun
-    | exact monotone_subject_left _
+    | exact monotone_subject_left fun x ↦ did₂ x someOne
 
 theorem antitone_notSureSubjObj_env_zero (k : ℕ) :
     Antitone ((notSureSubjObj obj subj).env 0 (k + 3)) ∧

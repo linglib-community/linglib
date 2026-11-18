@@ -334,6 +334,32 @@ theorem isLeftSubsequential_id : IsLeftSubsequential (id : List α → List α) 
 theorem isRightSubsequential_id : IsRightSubsequential (id : List α → List α) :=
   List.revConj_id (α := α) ▸ isLeftSubsequential_id.revConj
 
+/-! ### Rotation -/
+
+/-- The transducer that moves the first symbol of a word to its end: it holds the first symbol
+back, copies the rest, and writes the held symbol when the word ends. -/
+def SubsequentialTransducer.rotate (α : Type*) : SubsequentialTransducer (Option α) α α where
+  start := none
+  step
+    | none, a => some a
+    | some b, _ => some b
+  output
+    | none, _ => []
+    | some _, a => [a]
+  finalOutput := Option.toList
+
+theorem SubsequentialTransducer.runFrom_rotate_some (b : α) (xs : List α) :
+    (rotate α).runFrom (some b) xs = xs ++ [b] := by
+  induction xs with
+  | nil => rfl
+  | cons a xs ih => exact congrArg (a :: ·) ih
+
+@[simp] theorem SubsequentialTransducer.run_rotate (xs : List α) :
+    (rotate α).run xs = xs.rotate 1 := by
+  cases xs with
+  | nil => rfl
+  | cons a xs => exact (runFrom_rotate_some a xs).trans (by simp)
+
 /-! ### Closure under composition -/
 
 /-- Left-subsequential functions are closed under composition, by

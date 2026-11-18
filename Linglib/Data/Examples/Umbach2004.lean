@@ -24,7 +24,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "semantic independence"), ("construction", "coordination")] }
 
@@ -37,7 +37,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("port as a drink", .acceptable), ("port as a harbour", .questionable)]
     paperFeatures := [("condition", "common integrator"), ("construction", "coordination")] }
 
@@ -50,7 +50,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "semantic independence"), ("construction", "focus")] }
 
@@ -63,7 +63,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("condition", "common integrator"), ("construction", "focus")] }
 
@@ -76,7 +76,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "A: Mary made the salad, and Anna made the hamburgers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "contrastive"), ("exclusion", "instead")] }
 
@@ -89,7 +89,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := "Things have changed at the Miller family."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "contrastive"), ("exclusion", "instead"), ("presupposition", "someone went shopping")] }
 
@@ -102,7 +102,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := "Things have changed at the Miller family."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "only-phrase"), ("exclusion", "in addition"), ("presupposition", "Ronald went shopping")] }
 
@@ -115,7 +115,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "verb phrase"), ("contrast", "activity")] }
 
@@ -128,7 +128,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "subject"), ("contrast", "person")] }
 
@@ -141,7 +141,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and"), ("answer", "confirm+confirm")] }
 
@@ -154,7 +154,7 @@ def ex_17c : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+confirm")] }
 
@@ -167,7 +167,7 @@ def ex_17d : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "deny+deny")] }
 
@@ -180,7 +180,7 @@ def ex_17e : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+deny")] }
 
@@ -193,7 +193,7 @@ def ex_17f : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+deny"), ("negation", "implicit")] }
 
@@ -206,7 +206,7 @@ def ex_17g : Datum :=
     glossedTokens := []
     context := "Adam: Did John clean up his room and wash the dishes?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "deny+confirm")] }
 
@@ -219,7 +219,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "but"), ("contrast", "simple"), ("exclusion", "in addition")] }
 
@@ -232,7 +232,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("focus", "only-phrase"), ("exclusion", "in addition")] }
 
@@ -245,7 +245,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("contrast", "simple"), ("alternatives", "individuals")] }
 
@@ -258,7 +258,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("contrast", "double")] }
 
@@ -271,7 +271,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "correction"), ("conjuncts", "non-sentential")] }
 
@@ -284,7 +284,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "correction"), ("connective", "sondern")] }
 
@@ -297,7 +297,7 @@ def ex_23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "contrast")] }
 
@@ -310,7 +310,7 @@ def ex_23d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "correction"), ("connective", "sondern")] }
 
@@ -323,7 +323,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "Did John go to Berlin and also to Paris?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "contrast"), ("counterfactual", "John might have gone to Berlin in addition to Paris")] }
 
@@ -336,7 +336,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := "Did John go to Berlin?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "correction"), ("counterfactual", "he might have gone to Berlin instead of Paris")] }
 
@@ -349,7 +349,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "correction"), ("exclusion", "instead")] }
 
@@ -362,7 +362,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relation", "contrast"), ("exclusion", "in addition")] }
 

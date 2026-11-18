@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.MonoidAlgebra.Multiset
 public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
@@ -243,14 +244,24 @@ theorem toFinsupp_of' (F : Forest T) :
 theorem smul_of' (F : Forest T) (r : R) : r • of' F = single F r := by
   ext; simp [toFinsupp_of']
 
+variable (R T) in
+/-- The forests in the Connes–Kreimer algebra, as a monoid homomorphism from forests under
+disjoint union: the basis embedding of the monoid algebra carried along `toFinsuppAlgEquiv`. -/
+def of : Multiplicative (Forest T) →* ConnesKreimer R T :=
+  (toFinsuppAlgEquiv (R := R) (T := T)).symm.toMonoidHom.comp (AddMonoidAlgebra.of R (Forest T))
+
+@[simp] theorem of_apply (F : Multiplicative (Forest T)) : of R T F = of' F.toAdd := rfl
+
+theorem of'_eq_of (F : Forest T) : (of' F : ConnesKreimer R T) = of R T (.ofAdd F) := rfl
+
 @[simp] theorem of'_zero :
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
-  ext (by simp [toFinsupp_of', AddMonoidAlgebra.one_def])
+  map_one (of R T)
 
 @[simp] theorem of'_add (F G : Forest T) :
     (of' (R := R) (F + G) : ConnesKreimer R T)
       = of' (R := R) F * of' (R := R) G :=
-  ext (by simp [toFinsupp_of', AddMonoidAlgebra.single_mul_single])
+  map_mul (of R T) (.ofAdd F) (.ofAdd G)
 
 @[simp] theorem of'_singleton (t : T) :
     (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
@@ -260,9 +271,8 @@ theorem smul_of' (F : Forest T) (r : R) : r • of' F = single F r := by
   rw [← Multiset.singleton_add, of'_add, of'_singleton]
 
 theorem prod_map_ofTree (F : Forest T) : (F.map (ofTree (R := R))).prod = of' F := by
-  induction F using Multiset.induction with
-  | empty => simp
-  | cons t F ih => rw [Multiset.map_cons, Multiset.prod_cons, ih, of'_cons]
+  simpa [Function.comp_def] using
+    (map_multiset_prod (of R T) (F.map fun t ↦ Multiplicative.ofAdd ({t} : Forest T))).symm
 
 /-! ### Coefficients -/
 
@@ -298,22 +308,21 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
+/-- The sum of the basis vectors of a multiset of forests is the multiset in the monoid algebra. -/
+theorem sum_map_of' (s : Multiset (Forest T)) :
+    (s.map (of' (R := R))).sum = ⟨AddMonoidAlgebra.ofMultiset R s⟩ := by
+  refine toFinsupp_injective ?_
+  rw [← toFinsuppAlgEquiv_apply, map_multiset_sum, Multiset.map_map]
+  rfl
+
 theorem coeff_sum_map_of' [DecidableEq T] (s : Multiset (Forest T)) (F : Forest T) :
     ((s.map (of' (R := R))).sum).coeff F = s.count F := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons G s ih =>
-    rw [Multiset.map_cons, Multiset.sum_cons, coeff_add, ih, coeff_of', Multiset.count_cons]
-    split_ifs <;> subst_vars <;> simp_all [add_comm]
+  rw [sum_map_of', coeff_def, AddMonoidAlgebra.coeff_ofMultiset]
 
 theorem sum_map_of'_injective [CharZero R] :
-    Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum := by
-  classical
-  intro s t h
-  ext F
-  have := congrArg (coeff · F) h
-  simp only [coeff_sum_map_of'] at this
-  exact_mod_cast this
+    Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum :=
+  fun s t h ↦ AddMonoidAlgebra.ofMultiset_injective R <|
+    congrArg toFinsupp ((sum_map_of' s).symm.trans (h.trans (sum_map_of' t)))
 
 variable (R) in
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/

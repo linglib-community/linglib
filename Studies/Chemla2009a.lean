@@ -55,32 +55,33 @@ scope of `q` in one step when, for some Boolean combination of the restrictor an
 presupposition, the instance of its condition at that combination entails in every model that every
 individual of the restrictor satisfies the presupposition. -/
 def OneStep (q : NumberTree) : Prop :=
-  ∃ φ : Prop → Prop → Prop, ∀ (W E : Type) [Finite E] (A : W → E → Prop) (P : Set (W × E)) (w : W),
-    (w ∈ scopeTruth q A (P ⊓ {x | φ (A x.1 x.2) (x ∈ P)}) ↔
-      w ∈ scopeTruth q A {x | φ (A x.1 x.2) (x ∈ P)}) → ∀ e, A w e → (w, e) ∈ P
+  ∃ φ : Prop → Prop → Prop, ∀ (W E : Type) [Finite E] (A : W → Set E) (P : Set (W × E)) (w : W),
+    (w ∈ scopeTruth q A (P ⊓ {x | φ (x.2 ∈ A x.1) (x ∈ P)}) ↔
+      w ∈ scopeTruth q A {x | φ (x.2 ∈ A x.1) (x ∈ P)}) → ∀ e ∈ A w, (w, e) ∈ P
 
 section OneStep
 
 variable {q : NumberTree}
 
-private theorem ncard_eq_add {E : Type} [Finite E] (A B : E → Prop) :
-    {e | A e}.ncard = {e | A e ∧ B e}.ncard + {e | A e ∧ ¬ B e}.ncard :=
-  (ncard_inter_add_ncard_sdiff_eq_ncard {e | A e} {e | B e}).symm
+private theorem ncard_eq_add {E : Type} [Finite E] (A B : Set E) :
+    A.ncard = {e | e ∈ A ∧ e ∈ B}.ncard + {e | e ∈ A ∧ e ∉ B}.ncard :=
+  (ncard_inter_add_ncard_sdiff_eq_ncard A B).symm
 
-private theorem forall_mem_of_ncard_eq_zero {W E : Type} [Finite E] {A : W → E → Prop}
-    {P : Set (W × E)} {w : W} (h : {e | A w e ∧ (w, e) ∉ P}.ncard = 0) :
-    ∀ e, A w e → (w, e) ∈ P := fun e he ↦ by
+private theorem forall_mem_of_ncard_eq_zero {W E : Type} [Finite E] {A : W → Set E}
+    {P : Set (W × E)} {w : W} (h : {e | e ∈ A w ∧ (w, e) ∉ P}.ncard = 0) :
+    ∀ e ∈ A w, (w, e) ∈ P := fun e he ↦ by
   rw [ncard_eq_zero] at h
   by_contra hP
   exact (eq_empty_iff_forall_notMem.1 h) e ⟨he, hP⟩
 
-private theorem mem_scopeTruth {W E : Type} {A : W → E → Prop} {d : Set (W × E)} {w : W} :
-    w ∈ scopeTruth q A d ↔ q {e | A w e ∧ (w, e) ∉ d}.ncard {e | A w e ∧ (w, e) ∈ d}.ncard :=
+private theorem mem_scopeTruth {W E : Type} {A : W → Set E} {d : Set (W × E)} {w : W} :
+    w ∈ scopeTruth q A d ↔
+      q {e | e ∈ A w ∧ (w, e) ∉ d}.ncard {e | e ∈ A w ∧ (w, e) ∈ d}.ncard :=
   .rfl
 
 private theorem model_iff {a b : ℕ} (D : Set (Unit × (Fin a ⊕ Fin b))) (d : Set (Fin a ⊕ Fin b))
     (hD : ∀ x, x ∈ D ↔ x.2 ∈ d) :
-    () ∈ scopeTruth q (fun _ _ ↦ True) D ↔ q dᶜ.ncard d.ncard := by
+    () ∈ scopeTruth q (fun _ ↦ univ) D ↔ q dᶜ.ncard d.ncard := by
   obtain rfl : D = {x | x.2 ∈ d} := ext hD
   change q (univ \ d).ncard (univ ∩ d).ncard ↔ _
   rw [univ_inter, ← compl_eq_univ_sdiff]
@@ -106,7 +107,7 @@ theorem oneStep_iff :
         (hd : ∀ e, e ∈ d ↔ φ True (e ∈ range Sum.inl)) :
         ¬ (q (range Sum.inl ∩ d)ᶜ.ncard (range Sum.inl ∩ d).ncard ↔ q dᶜ.ncard d.ncard) := by
       intro h
-      have := hφ Unit (Fin a ⊕ Fin b) (fun _ _ ↦ True) {x | x.2 ∈ range Sum.inl} ()
+      have := hφ Unit (Fin a ⊕ Fin b) (fun _ ↦ univ) {x | x.2 ∈ range Sum.inl} ()
         ((model_iff _ _ fun x ↦ by simp [hd]).trans (h.trans (model_iff _ _ fun x ↦ by
           simp [hd]).symm)) (.inr ⟨0, hb⟩) trivial
       simp at this
@@ -123,18 +124,18 @@ theorem oneStep_iff :
   · rintro (h | h)
     · refine ⟨fun _ p ↦ ¬ p, fun W E _ A P w hw ↦ forall_mem_of_ncard_eq_zero ?_⟩
       by_contra hk
-      have hw : q {e | A w e}.ncard 0 ↔ q {e | A w e ∧ (w, e) ∈ P}.ncard
-          {e | A w e ∧ (w, e) ∉ P}.ncard := by
+      have hw : q (A w).ncard 0 ↔ q {e | e ∈ A w ∧ (w, e) ∈ P}.ncard
+          {e | e ∈ A w ∧ (w, e) ∉ P}.ncard := by
         simpa [mem_scopeTruth] using hw
-      rw [ncard_eq_add (A w) fun e ↦ (w, e) ∈ P] at hw
+      rw [ncard_eq_add (A w) {e | (w, e) ∈ P}] at hw
       exact iff_not_self (hw.trans (h _ _ (Nat.pos_of_ne_zero hk)))
     · refine ⟨fun _ _ ↦ True, fun W E _ A P w hw ↦ forall_mem_of_ncard_eq_zero ?_⟩
       by_contra hk
-      have hw : q {e | A w e ∧ (w, e) ∉ P}.ncard {e | A w e ∧ (w, e) ∈ P}.ncard ↔
-          q 0 {e | A w e}.ncard := by
+      have hw : q {e | e ∈ A w ∧ (w, e) ∉ P}.ncard {e | e ∈ A w ∧ (w, e) ∈ P}.ncard ↔
+          q 0 (A w).ncard := by
         simpa [mem_scopeTruth] using hw
-      rw [ncard_eq_add (A w) fun e ↦ (w, e) ∉ P] at hw
-      simp only [not_not] at hw
+      rw [ncard_eq_add (A w) {e | (w, e) ∉ P}] at hw
+      simp only [mem_ofPred_eq, not_not] at hw
       exact iff_not_self (hw.symm.trans (h _ _ (Nat.pos_of_ne_zero hk)))
 
 end OneStep

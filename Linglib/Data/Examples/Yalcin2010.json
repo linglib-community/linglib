@@ -9,7 +9,7 @@
     "translation": "",
     "context": "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -69,7 +69,7 @@
     "translation": "",
     "context": "A fair coin has been biased with a thin piece of tape, so that it is just slightly more likely to land heads than tails, and flipped.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6"],
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "probably > everyone", "judgment": "acceptable"},
       {"name": "everyone > probably", "judgment": "unacceptable"}
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8"],
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8"],

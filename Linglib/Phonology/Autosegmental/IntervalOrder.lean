@@ -29,7 +29,7 @@ order admits.
 * `IsNonCrossing.of_intervals`: overlaps of intervals placed in tier order are non-crossing.
 * `AR.HasIntervalOrder.noCrossing`: a representation with an interval order obeys the NCC.
 * `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`: on a forest of tiers the converse holds,
-  and `AR.noCrossing_iff_hasIntervalOrder` on two tiers in particular.
+  and `AR.noCrossing_iff_hasIntervalOrder_of_card_le_two` on at most two tiers.
 * `AR.exists_noCrossing_not_hasIntervalOrder`: on a cycle of three tiers it fails.
 
 ## Implementation notes
@@ -97,11 +97,12 @@ theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos →
 lines would make the order of their tiers a `2 + 2`. -/
 theorem HasIntervalOrder.noCrossing (h : X.HasIntervalOrder) : X.NoCrossing := by
   obtain ⟨r, hr, htier, hadj⟩ := h
-  refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ ?_
+  refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ ?_
   by_contra! hgt
-  rcases hr.two_plus_two (htier i (show (⟨p, hp⟩ : Fin _) < ⟨p', hp'⟩ from hlt))
-    (htier j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) with h | h
-  exacts [hadj h₁ h, hadj h₂.symm h]
+  rcases hr.two_plus_two
+    (htier i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
+    (htier j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt)) with h | h
+  exacts [hadj h₁.adj h, hadj h₂.symm.adj h]
 
 /-- Intervals place the tiers of `s`: in order along each tier, with the lines among them
 overlaps. -/
@@ -183,11 +184,11 @@ theorem noCrossing_iff_hasIntervalOrder_of_isAcyclic [Finite ι] {G : SimpleGrap
       @hleaf ⟨i, Finset.mem_of_mem_erase hi⟩ hi' ⟨j, Finset.mem_of_mem_erase hj⟩ hj'
   rwa [Finset.coe_erase, Set.insert_sdiff_singleton, Set.insert_eq_of_mem hℓ] at this
 
-/-- On two tiers, which always form a forest, a representation obeys the No-Crossing
+/-- On at most two tiers, which always form a forest, a representation obeys the No-Crossing
 Constraint iff it has an interval order. -/
-theorem noCrossing_iff_hasIntervalOrder {τ : Bool → Type*} {X : AR τ} :
+theorem noCrossing_iff_hasIntervalOrder_of_card_le_two [Finite ι] (h : ENat.card ι ≤ 2) :
     X.NoCrossing ↔ X.HasIntervalOrder :=
-  noCrossing_iff_hasIntervalOrder_of_isAcyclic (G := ⊤) (.of_card_le_two (by simp))
+  noCrossing_iff_hasIntervalOrder_of_isAcyclic (G := ⊤) (.of_card_le_two h)
     fun _ _ ↦ fst_ne_of_adj
 
 /-- On a cycle of three tiers the converse fails: with each tier's first position linked to the

@@ -238,7 +238,7 @@
       "translation": "Elena said that she has visited Brazil.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "I Elena ipe pu eçi episkefti tin Vrazilia.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -265,7 +265,7 @@
       "translation": "Elena regretted that she quit.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "I Elena metanjose oti paretiθike.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -291,7 +291,7 @@
       "translation": "I disagree with something.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -314,7 +314,7 @@
       "translation": "I disagree that we should invest.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -339,7 +339,7 @@
       "translation": "I disagree with the idea that we should invest.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -363,7 +363,7 @@
       "translation": "I regret for something.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -385,7 +385,7 @@
       "translation": "I regret that I stayed.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -409,7 +409,7 @@
       "translation": "I regret for staying.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["diagnostic", "P-ban"],
@@ -435,7 +435,7 @@
       "translation": "This rumor is true/mistaken.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Afti i fimi ine lanθasmeni.", "judgment": "acceptable"}
       ],
       "readings": [],
@@ -460,7 +460,7 @@
       "translation": "This situation is true/mistaken.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Afti i katastasi ine lanθasmeni.", "judgment": "unacceptable"}
       ],
       "readings": [],
@@ -485,7 +485,7 @@
       "translation": "Such rumors/ideas/warnings/beliefs/hypotheses/theories do not happen often.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Tetjes iδees δen simvenun sixna.", "judgment": "unacceptable"},
         {"form": "Tetjes proiδopiisis δen simvenun sixna.", "judgment": "unacceptable"},
         {"form": "Tetjes pepiθisis δen simvenun sixna.", "judgment": "unacceptable"},
@@ -514,7 +514,7 @@
       "translation": "Such situations/cases do not happen often.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Tetjes katastasis δen simvenun sixna.", "judgment": "acceptable"}
       ],
       "readings": [],
@@ -540,7 +540,7 @@
       "translation": "She believes that he understands the situation.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "To pistevi pu katalaveni tin katastasi.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -567,7 +567,7 @@
       "translation": "She regretted that they would never see each other again.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "To metanjose oti δen θa ksanavlepodan pote.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -595,7 +595,7 @@
       "translation": "Maria explained well that the Earth is round.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "explanans", "judgment": "acceptable"}
       ],
@@ -624,7 +624,7 @@
       "translation": "Maria explained the fact that the Earth is round.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "explanandum", "judgment": "acceptable"}
       ],
@@ -653,7 +653,7 @@
       "translation": "Maria explained well that the Earth is round.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [
         {"name": "explanans", "judgment": "acceptable"}
       ],
@@ -682,7 +682,7 @@
       "translation": "That the Earth is round was explained to Donata.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Oti i Ji ine stroɟili eksijiθike tis δonatas.", "judgment": "ungrammatical"}
       ],
       "readings": [
@@ -711,7 +711,7 @@
       "translation": "That you have friends shows a lot about you.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "oti"],
@@ -734,7 +734,7 @@
       "translation": "That you have friends shows a lot about you.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "pu"],
@@ -757,7 +757,7 @@
       "translation": "They did not like that they left without an update.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "areso"],
@@ -781,7 +781,7 @@
       "translation": "That they left without an update, they did not like.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "areso"],
@@ -805,7 +805,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "θimose apotoma pu apoliun prosopiko.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -832,7 +832,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Metanjose efkola pu aɣorase mavro pukamiso.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -859,7 +859,7 @@
       "translation": "She knew (*easily) that she must change strategy.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Iksere efkola oti prepi na alaksi stratijiki.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -889,7 +889,7 @@
       "translation": "People do not understand/realize easily that descriptive rules are different from prescriptive ones.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Arketos kosmos δen katalaveni (efkola) oti i periɣrafiki kanones ine δjaforetiki apo tus riθmistikus.", "judgment": "acceptable"}
       ],
       "readings": [],
@@ -917,7 +917,7 @@
       "translation": "I remember, with difficulty, that you talked to Mary.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "thimame"],
@@ -942,7 +942,7 @@
       "translation": "I remember, with difficulty, that you talked to Mary.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "thimame_perception"],
@@ -967,7 +967,7 @@
       "translation": "",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "θimose mesa se pede lepta pu psifistike o nomos.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -991,7 +991,7 @@
       "translation": "She heard the rumor/idea/news/fact that the earth is round.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Akuse ti fimi pu i Ji ine stroɟili.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -1014,7 +1014,7 @@
       "translation": "It concerns the case/circumstance/situation that the father is absent.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [
+      "contrasts": [
         {"form": "Afora tin periptosi oti o pateras ine apon.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -1037,7 +1037,7 @@
       "translation": "The belief that masks are obligatory again is true/mistaken.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "oti"],
@@ -1058,7 +1058,7 @@
       "translation": "Their sadness that Maria left is true/mistaken.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "pu"],
@@ -1079,7 +1079,7 @@
       "translation": "They remember that the cat had eaten the fish but the cat had actually not eaten it.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "thimame"],
@@ -1101,7 +1101,7 @@
       "translation": "They remember that the cat had eaten the fish but the cat had actually not eaten it.",
       "context": "",
       "judgment": "unacceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["verb", "thimame_perception"],
@@ -1126,7 +1126,7 @@
       "translation": "It had happened that we make a mistake.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [
+      "contrasts": [
         {"form": "Içe simvi pu kanume laθos.", "judgment": "ungrammatical"}
       ],
       "readings": [],
@@ -1151,7 +1151,7 @@
       "translation": "That you have friends shows a lot about you.",
       "context": "",
       "judgment": "acceptable",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "oti"],
@@ -1175,7 +1175,7 @@
       "translation": "That you have friends shows a lot about you.",
       "context": "",
       "judgment": "ungrammatical",
-      "alternatives": [],
+      "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["complementizer", "pu"],

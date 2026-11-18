@@ -24,7 +24,7 @@ def iai2001_ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "anteriority")] }
 
@@ -37,7 +37,7 @@ def iai2001_ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "universal"), ("adverbial", "since"), ("predicate", "stative")] }
 
@@ -50,7 +50,7 @@ def iai2001_ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "experiential")] }
 
@@ -63,7 +63,7 @@ def iai2001_ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of result")] }
 
@@ -76,7 +76,7 @@ def iai2001_ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of recent past")] }
 
@@ -89,7 +89,7 @@ def iai2001_ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
@@ -102,7 +102,7 @@ def iai2001_ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
@@ -115,7 +115,7 @@ def iai2001_ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("tense", "past and future perfect"), ("point", "RB set by tense")] }
 
@@ -128,7 +128,7 @@ def iai2001_ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("He has had brown eyes.", .ungrammatical)]
+    contrasts := [("He has had brown eyes.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "individual-level stative"), ("adverbial", "required")] }
 
@@ -141,7 +141,7 @@ def iai2001_ex9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "stage-level stative"), ("reading", "not universal")] }
 
@@ -154,7 +154,7 @@ def iai2001_ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "perfect of recent past")] }
 
@@ -165,9 +165,11 @@ def iai2001_ex13B : Datum :=
     language := "bulg1262"
     primaryText := "Tja e bila bolna."
     glossedTokens := [("Tja", "she"), ("e", "is"), ("bila", "been"), ("bolna", "sick")]
+    glossedWords := [⟨['T', 'j', 'a'], ['s', 'h', 'e'], [⟨['T', 'j', 'a'], ['s', 'h', 'e'], none⟩]⟩, ⟨['e'], ['i', 's'], [⟨['e'], ['i', 's'], none⟩]⟩, ⟨['b', 'i', 'l', 'a'], ['b', 'e', 'e', 'n'], [⟨['b', 'i', 'l', 'a'], ['b', 'e', 'e', 'n'], none⟩]⟩, ⟨['b', 'o', 'l', 'n', 'a'], ['s', 'i', 'c', 'k'], [⟨['b', 'o', 'l', 'n', 'a'], ['s', 'i', 'c', 'k'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "A: I haven't seen Mary in a while. Where is she?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "no perfect of recent past")] }
 
@@ -180,7 +182,7 @@ def iai2001_ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("She was sick lately.", .ungrammatical)]
+    contrasts := [("She was sick lately.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the present perfect")] }
 
@@ -191,9 +193,11 @@ def iai2001_ex14d : Datum :=
     language := "bulg1262"
     primaryText := "Tja beše bolna naposleduk."
     glossedTokens := [("Tja", "she"), ("beše", "was"), ("bolna", "sick"), ("naposleduk", "lately")]
+    glossedWords := [⟨['T', 'j', 'a'], ['s', 'h', 'e'], [⟨['T', 'j', 'a'], ['s', 'h', 'e'], none⟩]⟩, ⟨['b', 'e', 'š', 'e'], ['w', 'a', 's'], [⟨['b', 'e', 'š', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['b', 'o', 'l', 'n', 'a'], ['s', 'i', 'c', 'k'], [⟨['b', 'o', 'l', 'n', 'a'], ['s', 'i', 'c', 'k'], none⟩]⟩, ⟨['n', 'a', 'p', 'o', 's', 'l', 'e', 'd', 'u', 'k'], ['l', 'a', 't', 'e', 'l', 'y'], [⟨['n', 'a', 'p', 'o', 's', 'l', 'e', 'd', 'u', 'k'], ['l', 'a', 't', 'e', 'l', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Tja e bila bolna naposleduk.", .ungrammatical)]
+    contrasts := [("Tja e bila bolna naposleduk.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the past in Bulgarian")] }
 
@@ -206,7 +210,7 @@ def iai2001_ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "progressive"), ("reading", "not universal")] }
 
@@ -219,7 +223,7 @@ def iai2001_ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I am sick since yesterday.", .ungrammatical), ("I was sick since 1990.", .ungrammatical)]
+    contrasts := [("I am sick since yesterday.", .ungrammatical), ("I was sick since 1990.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since is perfect-level")] }
 
@@ -232,7 +236,7 @@ def iai2001_ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "universal and existential")] }
 
@@ -245,7 +249,7 @@ def iai2001_ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "existential only")] }
 
@@ -258,7 +262,7 @@ def iai2001_ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "universal and existential")] }
 
@@ -271,7 +275,7 @@ def iai2001_ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
@@ -284,7 +288,7 @@ def iai2001_ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level for under perfect-level since"), ("reading", "existential")] }
 
@@ -297,7 +301,7 @@ def iai2001_ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for"), ("readings", "universal if perfect-level, existential if eventuality-level")] }
 
@@ -310,7 +314,7 @@ def iai2001_ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "ambiguous")] }
 
@@ -323,7 +327,7 @@ def iai2001_ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
@@ -336,7 +340,7 @@ def iai2001_ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since, sentence-initial"), ("reading", "existential")] }
 
@@ -349,7 +353,7 @@ def iai2001_ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Emma is always tall.", .ungrammatical), ("Emma was always tall.", .ungrammatical)]
+    contrasts := [("Emma is always tall.", .ungrammatical), ("Emma was always tall.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "perfect-level always"), ("predicate", "individual-level")] }
 
@@ -362,7 +366,7 @@ def iai2001_ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "always with since"), ("predicate", "individual-level")] }
 
@@ -375,7 +379,7 @@ def iai2001_ex27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level always"), ("predicate", "stage-level")] }
 
@@ -388,7 +392,7 @@ def iai2001_ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("point", "PTS is not the E-R interval"), ("LB", "1991"), ("event", "fall 1993")] }
 
@@ -399,9 +403,11 @@ def iai2001_ex30 : Datum :=
     language := "mode1248"
     primaryText := "Eχo panta zisi stin Athina."
     glossedTokens := [("Eχo", "have.1SG"), ("panta", "always"), ("zisi", "lived"), ("stin", "in.the"), ("Athina", "Athens")]
+    glossedWords := [⟨['E', 'χ', 'o'], ['h', 'a', 'v', 'e', '.', '1', 'S', 'G'], [⟨['E', 'χ', 'o'], ['h', 'a', 'v', 'e', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['p', 'a', 'n', 't', 'a'], ['a', 'l', 'w', 'a', 'y', 's'], [⟨['p', 'a', 'n', 't', 'a'], ['a', 'l', 'w', 'a', 'y', 's'], none⟩]⟩, ⟨['z', 'i', 's', 'i'], ['l', 'i', 'v', 'e', 'd'], [⟨['z', 'i', 's', 'i'], ['l', 'i', 'v', 'e', 'd'], none⟩]⟩, ⟨['s', 't', 'i', 'n'], ['i', 'n', '.', 't', 'h', 'e'], [⟨['s', 't', 'i', 'n'], ['i', 'n', '.', 't', 'h', 'e'], none⟩]⟩, ⟨['A', 't', 'h', 'i', 'n', 'a'], ['A', 't', 'h', 'e', 'n', 's'], [⟨['A', 't', 'h', 'i', 'n', 'a'], ['A', 't', 'h', 'e', 'n', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("reading", "universal unavailable"), ("participle", "perfective")] }
 
@@ -412,9 +418,11 @@ def iai2001_ex31 : Datum :=
     language := "mode1248"
     primaryText := "Eχtisa ena spiti mesa se ena χrono."
     glossedTokens := [("Eχtisa", "build.PST.PFV.1SG"), ("ena", "a"), ("spiti", "house"), ("mesa", "in"), ("se", ""), ("ena", "one"), ("χrono", "year")]
+    glossedWords := [⟨['E', 'χ', 't', 'i', 's', 'a'], ['b', 'u', 'i', 'l', 'd', '.', 'P', 'S', 'T', '.', 'P', 'F', 'V', '.', '1', 'S', 'G'], [⟨['E', 'χ', 't', 'i', 's', 'a'], ['b', 'u', 'i', 'l', 'd', '.', 'P', 'S', 'T', '.', 'P', 'F', 'V', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['e', 'n', 'a'], ['a'], [⟨['e', 'n', 'a'], ['a'], none⟩]⟩, ⟨['s', 'p', 'i', 't', 'i'], ['h', 'o', 'u', 's', 'e'], [⟨['s', 'p', 'i', 't', 'i'], ['h', 'o', 'u', 's', 'e'], none⟩]⟩, ⟨['m', 'e', 's', 'a'], ['i', 'n'], [⟨['m', 'e', 's', 'a'], ['i', 'n'], none⟩]⟩, ⟨['s', 'e'], [], []⟩, ⟨['e', 'n', 'a'], ['o', 'n', 'e'], [⟨['e', 'n', 'a'], ['o', 'n', 'e'], none⟩]⟩, ⟨['χ', 'r', 'o', 'n', 'o'], ['y', 'e', 'a', 'r'], [⟨['χ', 'r', 'o', 'n', 'o'], ['y', 'e', 'a', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Eχtisa ena spiti γιa ena χrono.", .ungrammatical)]
+    contrasts := [("Eχtisa ena spiti γιa ena χrono.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "perfective, bounded")] }
 
@@ -425,9 +433,11 @@ def iai2001_ex32 : Datum :=
     language := "mode1248"
     primaryText := "Eχtiza to spiti γιa ena χrono."
     glossedTokens := [("Eχtiza", "build.PST.IPFV.1SG"), ("to", "the"), ("spiti", "house"), ("γιa", "for"), ("ena", "one"), ("χrono", "year")]
+    glossedWords := [⟨['E', 'χ', 't', 'i', 'z', 'a'], ['b', 'u', 'i', 'l', 'd', '.', 'P', 'S', 'T', '.', 'I', 'P', 'F', 'V', '.', '1', 'S', 'G'], [⟨['E', 'χ', 't', 'i', 'z', 'a'], ['b', 'u', 'i', 'l', 'd', '.', 'P', 'S', 'T', '.', 'I', 'P', 'F', 'V', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['s', 'p', 'i', 't', 'i'], ['h', 'o', 'u', 's', 'e'], [⟨['s', 'p', 'i', 't', 'i'], ['h', 'o', 'u', 's', 'e'], none⟩]⟩, ⟨['γ', 'ι', 'a'], ['f', 'o', 'r'], [⟨['γ', 'ι', 'a'], ['f', 'o', 'r'], none⟩]⟩, ⟨['e', 'n', 'a'], ['o', 'n', 'e'], [⟨['e', 'n', 'a'], ['o', 'n', 'e'], none⟩]⟩, ⟨['χ', 'r', 'o', 'n', 'o'], ['y', 'e', 'a', 'r'], [⟨['χ', 'r', 'o', 'n', 'o'], ['y', 'e', 'a', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Eχtiza to spiti mesa se ena χrono.", .ungrammatical)]
+    contrasts := [("Eχtiza to spiti mesa se ena χrono.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "imperfective, unbounded")] }
 
@@ -438,9 +448,11 @@ def iai2001_ex33 : Datum :=
     language := "mode1248"
     primaryText := "O γιannis aγapise tin Maria to 1981."
     glossedTokens := [("O", "the"), ("γιannis", "Jannis"), ("aγapise", "love.PST.PFV.3SG"), ("tin", "the"), ("Maria", "Mary"), ("to", "in"), ("1981", "1981")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['γ', 'ι', 'a', 'n', 'n', 'i', 's'], ['J', 'a', 'n', 'n', 'i', 's'], [⟨['γ', 'ι', 'a', 'n', 'n', 'i', 's'], ['J', 'a', 'n', 'n', 'i', 's'], none⟩]⟩, ⟨['a', 'γ', 'a', 'p', 'i', 's', 'e'], ['l', 'o', 'v', 'e', '.', 'P', 'S', 'T', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], [⟨['a', 'γ', 'a', 'p', 'i', 's', 'e'], ['l', 'o', 'v', 'e', '.', 'P', 'S', 'T', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['t', 'i', 'n'], ['t', 'h', 'e'], [⟨['t', 'i', 'n'], ['t', 'h', 'e'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'y'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'y'], none⟩]⟩, ⟨['t', 'o'], ['i', 'n'], [⟨['t', 'o'], ['i', 'n'], none⟩]⟩, ⟨['1', '9', '8', '1'], ['1', '9', '8', '1'], [⟨['1', '9', '8', '1'], ['1', '9', '8', '1'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.1"), ("aspect", "perfective on a stative is inchoative")] }
 
@@ -451,9 +463,11 @@ def iai2001_ex34 : Datum :=
     language := "mode1248"
     primaryText := "O γιannis eχi aγapisi tin Maria."
     glossedTokens := [("O", "the"), ("γιannis", "Jannis"), ("eχi", "has.3SG"), ("aγapisi", "loved"), ("tin", "the"), ("Maria", "Mary")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['γ', 'ι', 'a', 'n', 'n', 'i', 's'], ['J', 'a', 'n', 'n', 'i', 's'], [⟨['γ', 'ι', 'a', 'n', 'n', 'i', 's'], ['J', 'a', 'n', 'n', 'i', 's'], none⟩]⟩, ⟨['e', 'χ', 'i'], ['h', 'a', 's', '.', '3', 'S', 'G'], [⟨['e', 'χ', 'i'], ['h', 'a', 's', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['a', 'γ', 'a', 'p', 'i', 's', 'i'], ['l', 'o', 'v', 'e', 'd'], [⟨['a', 'γ', 'a', 'p', 'i', 's', 'i'], ['l', 'o', 'v', 'e', 'd'], none⟩]⟩, ⟨['t', 'i', 'n'], ['t', 'h', 'e'], [⟨['t', 'i', 'n'], ['t', 'h', 'e'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'y'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.1"), ("reading", "existential only"), ("participle", "perfective")] }
 
@@ -464,9 +478,11 @@ def iai2001_ex35 : Datum :=
     language := "bulg1262"
     primaryText := "Marija e obiknala Ivan."
     glossedTokens := [("Marija", "Maria"), ("e", "is"), ("obiknala", "love.PFV.PTCP"), ("Ivan", "Ivan")]
+    glossedWords := [⟨['M', 'a', 'r', 'i', 'j', 'a'], ['M', 'a', 'r', 'i', 'a'], [⟨['M', 'a', 'r', 'i', 'j', 'a'], ['M', 'a', 'r', 'i', 'a'], none⟩]⟩, ⟨['e'], ['i', 's'], [⟨['e'], ['i', 's'], none⟩]⟩, ⟨['o', 'b', 'i', 'k', 'n', 'a', 'l', 'a'], ['l', 'o', 'v', 'e', '.', 'P', 'F', 'V', '.', 'P', 'T', 'C', 'P'], [⟨['o', 'b', 'i', 'k', 'n', 'a', 'l', 'a'], ['l', 'o', 'v', 'e', '.', 'P', 'F', 'V', '.', 'P', 'T', 'C', 'P'], none⟩]⟩, ⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], [⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Marija vinagi e obiknala Ivan.", .ungrammatical), ("Marija e obiknala Ivan ot 1980 nasam.", .ungrammatical)]
+    contrasts := [("Marija vinagi e obiknala Ivan.", .ungrammatical), ("Marija e obiknala Ivan ot 1980 nasam.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "existential only"), ("participle", "perfective")] }
 
@@ -477,9 +493,11 @@ def iai2001_ex36 : Datum :=
     language := "bulg1262"
     primaryText := "Marija vinagi e običala Ivan."
     glossedTokens := [("Marija", "Maria"), ("vinagi", "always"), ("e", "is"), ("običala", "love.IPFV.PTCP"), ("Ivan", "Ivan")]
+    glossedWords := [⟨['M', 'a', 'r', 'i', 'j', 'a'], ['M', 'a', 'r', 'i', 'a'], [⟨['M', 'a', 'r', 'i', 'j', 'a'], ['M', 'a', 'r', 'i', 'a'], none⟩]⟩, ⟨['v', 'i', 'n', 'a', 'g', 'i'], ['a', 'l', 'w', 'a', 'y', 's'], [⟨['v', 'i', 'n', 'a', 'g', 'i'], ['a', 'l', 'w', 'a', 'y', 's'], none⟩]⟩, ⟨['e'], ['i', 's'], [⟨['e'], ['i', 's'], none⟩]⟩, ⟨['o', 'b', 'i', 'č', 'a', 'l', 'a'], ['l', 'o', 'v', 'e', '.', 'I', 'P', 'F', 'V', '.', 'P', 'T', 'C', 'P'], [⟨['o', 'b', 'i', 'č', 'a', 'l', 'a'], ['l', 'o', 'v', 'e', '.', 'I', 'P', 'F', 'V', '.', 'P', 'T', 'C', 'P'], none⟩]⟩, ⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], [⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "imperfective")] }
 
@@ -490,9 +508,11 @@ def iai2001_ex39 : Datum :=
     language := "bulg1262"
     primaryText := "Az sum pila vinoto ot sutrinta nasam."
     glossedTokens := [("Az", "I"), ("sum", "am"), ("pila", "drink.NEUT.PTCP"), ("vinoto", "the.wine"), ("ot", "from"), ("sutrinta", "this.morning"), ("nasam", "towards.now")]
+    glossedWords := [⟨['A', 'z'], ['I'], [⟨['A', 'z'], ['I'], none⟩]⟩, ⟨['s', 'u', 'm'], ['a', 'm'], [⟨['s', 'u', 'm'], ['a', 'm'], none⟩]⟩, ⟨['p', 'i', 'l', 'a'], ['d', 'r', 'i', 'n', 'k', '.', 'N', 'E', 'U', 'T', '.', 'P', 'T', 'C', 'P'], [⟨['p', 'i', 'l', 'a'], ['d', 'r', 'i', 'n', 'k', '.', 'N', 'E', 'U', 'T', '.', 'P', 'T', 'C', 'P'], none⟩]⟩, ⟨['v', 'i', 'n', 'o', 't', 'o'], ['t', 'h', 'e', '.', 'w', 'i', 'n', 'e'], [⟨['v', 'i', 'n', 'o', 't', 'o'], ['t', 'h', 'e', '.', 'w', 'i', 'n', 'e'], none⟩]⟩, ⟨['o', 't'], ['f', 'r', 'o', 'm'], [⟨['o', 't'], ['f', 'r', 'o', 'm'], none⟩]⟩, ⟨['s', 'u', 't', 'r', 'i', 'n', 't', 'a'], ['t', 'h', 'i', 's', '.', 'm', 'o', 'r', 'n', 'i', 'n', 'g'], [⟨['s', 'u', 't', 'r', 'i', 'n', 't', 'a'], ['t', 'h', 'i', 's', '.', 'm', 'o', 'r', 'n', 'i', 'n', 'g'], none⟩]⟩, ⟨['n', 'a', 's', 'a', 'm'], ['t', 'o', 'w', 'a', 'r', 'd', 's', '.', 'n', 'o', 'w'], [⟨['n', 'a', 's', 'a', 'm'], ['t', 'o', 'w', 'a', 'r', 'd', 's', '.', 'n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "neutral")] }
 
@@ -505,7 +525,7 @@ def iai2001_ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("aspect", "the English perfect of a telic is bounded")] }
 
@@ -518,7 +538,7 @@ def iai2001_ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "activity, nonprogressive"), ("reading", "universal unavailable")] }
 
@@ -531,7 +551,7 @@ def iai2001_ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "telic, nonprogressive"), ("reading", "universal unavailable")] }
 
@@ -542,9 +562,11 @@ def iai2001_ex45 : Datum :=
     language := "mode1248"
     primaryText := "Eχi kivernisi apo to 1990 meχri tora."
     glossedTokens := [("Eχi", "has.3SG"), ("kivernisi", "governed"), ("apo", "from"), ("to", "the"), ("1990", "1990"), ("meχri", "until"), ("tora", "now")]
+    glossedWords := [⟨['E', 'χ', 'i'], ['h', 'a', 's', '.', '3', 'S', 'G'], [⟨['E', 'χ', 'i'], ['h', 'a', 's', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['k', 'i', 'v', 'e', 'r', 'n', 'i', 's', 'i'], ['g', 'o', 'v', 'e', 'r', 'n', 'e', 'd'], [⟨['k', 'i', 'v', 'e', 'r', 'n', 'i', 's', 'i'], ['g', 'o', 'v', 'e', 'r', 'n', 'e', 'd'], none⟩]⟩, ⟨['a', 'p', 'o'], ['f', 'r', 'o', 'm'], [⟨['a', 'p', 'o'], ['f', 'r', 'o', 'm'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['1', '9', '9', '0'], ['1', '9', '9', '0'], [⟨['1', '9', '9', '0'], ['1', '9', '9', '0'], none⟩]⟩, ⟨['m', 'e', 'χ', 'r', 'i'], ['u', 'n', 't', 'i', 'l'], [⟨['m', 'e', 'χ', 'r', 'i'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['t', 'o', 'r', 'a'], ['n', 'o', 'w'], [⟨['t', 'o', 'r', 'a'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("reading", "throughout with a bounded activity ending at RB")] }
 
@@ -557,7 +579,7 @@ def iai2001_ex47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test"), ("feature", "unbounded")] }
 
@@ -570,7 +592,7 @@ def iai2001_ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test passed by a progressive"), ("feature", "unbounded")] }
 
@@ -581,9 +603,11 @@ def iai2001_ex49a : Datum :=
     language := "bulg1262"
     primaryText := "Ivan pisa pismoto kogato Maria vleze v stajata."
     glossedTokens := [("Ivan", "Ivan"), ("pisa", "write.NEUT.PST"), ("pismoto", "the.letter"), ("kogato", "when"), ("Maria", "Maria"), ("vleze", "entered"), ("v", "in"), ("stajata", "the.room")]
+    glossedWords := [⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], [⟨['I', 'v', 'a', 'n'], ['I', 'v', 'a', 'n'], none⟩]⟩, ⟨['p', 'i', 's', 'a'], ['w', 'r', 'i', 't', 'e', '.', 'N', 'E', 'U', 'T', '.', 'P', 'S', 'T'], [⟨['p', 'i', 's', 'a'], ['w', 'r', 'i', 't', 'e', '.', 'N', 'E', 'U', 'T', '.', 'P', 'S', 'T'], none⟩]⟩, ⟨['p', 'i', 's', 'm', 'o', 't', 'o'], ['t', 'h', 'e', '.', 'l', 'e', 't', 't', 'e', 'r'], [⟨['p', 'i', 's', 'm', 'o', 't', 'o'], ['t', 'h', 'e', '.', 'l', 'e', 't', 't', 'e', 'r'], none⟩]⟩, ⟨['k', 'o', 'g', 'a', 't', 'o'], ['w', 'h', 'e', 'n'], [⟨['k', 'o', 'g', 'a', 't', 'o'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], none⟩]⟩, ⟨['v', 'l', 'e', 'z', 'e'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], [⟨['v', 'l', 'e', 'z', 'e'], ['e', 'n', 't', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['v'], ['i', 'n'], [⟨['v'], ['i', 'n'], none⟩]⟩, ⟨['s', 't', 'a', 'j', 'a', 't', 'a'], ['t', 'h', 'e', '.', 'r', 'o', 'o', 'm'], [⟨['s', 't', 'a', 'j', 'a', 't', 'a'], ['t', 'h', 'e', '.', 'r', 'o', 'o', 'm'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Ivan pišeše pismoto kogato Maria vleze v stajata.", .acceptable)]
+    contrasts := [("Ivan pišeše pismoto kogato Maria vleze v stajata.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4"), ("test", "the neutral fails Vlach's test"), ("feature", "unbounded")] }
 

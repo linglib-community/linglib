@@ -1,6 +1,9 @@
 module
 
+public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Disjoint
 public import Mathlib.Tactic.DeriveFintype
@@ -119,26 +122,72 @@ theorem le_iff {R R' : Relation} :
 instance : DecidableLE Relation := fun _ _ ↦
   decidable_of_iff _ le_iff.symm
 
+/-- A primitive relation as one of the seven: `⊑`, `⊒`, `|` and `⌣` are the relations asserting a
+single constraint, and the others are their conjunctions. -/
+def Atom.toRelation : Atom → Relation
+  | .le => .forward
+  | .ge => .reverse
+  | .disjoint => .alternation
+  | .codisjoint => .cover
+
+@[simp] theorem constraints_toRelation : ∀ a : Atom, a.toRelation.constraints = {a} := by decide
+
+/-- A relation asserts the primitive relations it entails. -/
+theorem mem_constraints_iff_le {R : Relation} {a : Atom} :
+    a ∈ R.constraints ↔ R ≤ a.toRelation := by
+  rw [le_iff, constraints_toRelation, Finset.singleton_subset_iff]
+
 instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
-/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
-and `z` guarantee, when there is one (`Relation.Atom.Holds.join`):
-`≤` and `≥` are transitive, disjointness is inherited downward and codisjointness upward, and,
-in a distributive lattice, `x` disjoint from `y` and `y` codisjoint with `z` give `x ≤ z`. -/
-def Atom.join : Atom → Atom → Option Atom
-  | .le, .le => some .le
-  | .ge, .ge => some .ge
-  | .le, .disjoint => some .disjoint
-  | .disjoint, .ge => some .disjoint
-  | .ge, .codisjoint => some .codisjoint
-  | .codisjoint, .le => some .codisjoint
-  | .disjoint, .codisjoint => some .le
-  | .codisjoint, .disjoint => some .ge
-  | _, _ => none
+namespace Atom
 
-private theorem Atom.join_assoc :
+/-- The polarity of the first argument when a constraint between elements of a Boolean lattice is
+read as an inequality between the arguments or their complements: `x ≤ y` and `x ≤ yᶜ` take `x`
+itself, `xᶜ ≤ yᶜ` and `xᶜ ≤ y` its complement. -/
+def src : Atom → Polarity
+  | .le | .disjoint => .positive
+  | .ge | .codisjoint => .negative
+
+/-- The polarity of the second argument in a constraint read as an inequality. -/
+def tgt : Atom → Polarity
+  | .le | .codisjoint => .positive
+  | .ge | .disjoint => .negative
+
+/-- The constraint saying that the first argument with polarity `m` is below the second with
+polarity `q`. -/
+def ofPolarities : Polarity → Polarity → Atom
+  | .positive, .positive => .le
+  | .positive, .negative => .disjoint
+  | .negative, .positive => .codisjoint
+  | .negative, .negative => .ge
+
+theorem ofPolarities_injective : Function.Injective2 ofPolarities := by
+  unfold Function.Injective2; decide
+
+@[simp] theorem ofPolarities_src_tgt : ∀ a : Atom, ofPolarities a.src a.tgt = a := by decide
+
+@[simp] theorem src_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).src = m := by decide
+
+@[simp] theorem tgt_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).tgt = q := by decide
+
+/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
+and `z` guarantee, when there is one (`Relation.Atom.Holds.join`): read as inequalities, the two
+chain by transitivity when they take `y` with the same polarity. So `≤` and `≥` are transitive,
+disjointness is inherited downward and codisjointness upward, and `x` disjoint from `y` and `y`
+codisjoint with `z` give `x ≤ z`. -/
+def join (a b : Atom) : Option Atom :=
+  if a.tgt = b.src then some (ofPolarities a.src b.tgt) else none
+
+/-- The constraint in the order dual: `≤` and `≥` exchange, as do disjointness and
+codisjointness. -/
+def dual (a : Atom) : Atom := ofPolarities (.negative * a.src) (.negative * a.tgt)
+
+end Atom
+
+/-- The atom rule is associative. -/
+theorem Atom.join_assoc :
     ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
   decide
 
@@ -149,8 +198,10 @@ composition, which [maccartney-manning-2009] call join after the database operat
 lattice join.
 Each cell is sound (`Relation.Holds.join`) and is the least
 sound relation (`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as [icard-2012]'s
-Definition 1.4 requires. Exact composition is a union of the seven relations on 17 of the 49 cells
-([maccartney-manning-2009] §3), and this gives the best single relation there. -/
+Definition 1.4 requires. On a Boolean lattice it is relational composition (`Relation.toSetRel_mul`
+in `Logic/Natural/Completeness.lean`), the middle term ranging over every element;
+[maccartney-manning-2009]'s relations exclude one another and the elements `⊥` and `⊤`, and their
+composition is a union of relations on 17 of the 49 cells (§3). -/
 def join (R S : Relation) : Relation :=
   ofAtoms fun c ↦ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c
 
@@ -223,6 +274,40 @@ theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
     simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
       isCompl_iff, le_antisymm_iff]
 
+/-- In a Boolean algebra a constraint is an inequality between its arguments taken with its two
+polarities. -/
+theorem Relation.Atom.holds_iff_complHom_le {α : Type*} [BooleanAlgebra α] {a : Relation.Atom}
+    {x y : α} : a.Holds x y ↔ Polarity.complHom a.src x ≤ Polarity.complHom a.tgt y := by
+  cases a
+  · exact Iff.rfl
+  · exact compl_le_compl_iff_le.symm
+  · exact le_compl_iff_disjoint_right.symm
+  · exact codisjoint_iff_compl_le_right
+
+/-- An injective bounded lattice homomorphism preserves and reflects each constraint. -/
+theorem Relation.Atom.holds_map_iff {F α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
+    [BoundedOrder β] [FunLike F α β] [BoundedLatticeHomClass F α β] {f : F}
+    (hf : Function.Injective f) {a : Relation.Atom} {x y : α} :
+    a.Holds (f x) (f y) ↔ a.Holds x y := by
+  cases a
+  · exact (by rw [← inf_eq_left, ← map_inf, hf.eq_iff, inf_eq_left] : f x ≤ f y ↔ x ≤ y)
+  · exact (by rw [← inf_eq_left, ← map_inf, hf.eq_iff, inf_eq_left] : f y ≤ f x ↔ y ≤ x)
+  · exact (by rw [disjoint_iff, ← map_inf, ← map_bot f, hf.eq_iff, disjoint_iff] :
+      Disjoint (f x) (f y) ↔ Disjoint x y)
+  · exact (by rw [codisjoint_iff, ← map_sup, ← map_top f, hf.eq_iff, codisjoint_iff] :
+      Codisjoint (f x) (f y) ↔ Codisjoint x y)
+
+theorem Relation.holds_toRelation {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
+    {x y : α} : a.toRelation.Holds x y ↔ a.Holds x y := by
+  cases a <;> rfl
+
+/-- An injective bounded lattice homomorphism preserves and reflects each relation. -/
+theorem Relation.holds_map_iff {F α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
+    [BoundedOrder β] [FunLike F α β] [BoundedLatticeHomClass F α β] {f : F}
+    (hf : Function.Injective f) {R : Relation} {x y : α} :
+    R.Holds (f x) (f y) ↔ R.Holds x y := by
+  simp only [Relation.holds_iff, Relation.Atom.holds_map_iff hf]
+
 theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R : Relation}
     {x y : α} : R.converse.Holds x y ↔ R.Holds y x := by
   cases R with
@@ -231,6 +316,19 @@ theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R :
   | negation => exact ⟨IsCompl.symm, IsCompl.symm⟩
   | alternation => exact disjoint_comm
   | cover => exact codisjoint_comm
+
+/-- A constraint holds in the order dual exactly when its dual holds. -/
+theorem Relation.Atom.holds_toDual {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
+    {x y : α} : a.Holds (OrderDual.toDual x) (OrderDual.toDual y) ↔ a.dual.Holds x y := by
+  cases a
+  · exact Iff.rfl
+  · exact Iff.rfl
+  · exact disjoint_toDual_iff
+  · exact codisjoint_toDual_iff
+
+/-- The converse reverses the join. -/
+theorem Relation.converse_mul : ∀ R S : Relation, (R * S).converse = S.converse * R.converse := by
+  decide
 
 instance Relation.Atom.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
     [DecidableEq α] [DecidableLE α] :
@@ -286,7 +384,9 @@ Distributivity is needed for a disjoint pair followed by a codisjoint one, which
 theorem Relation.Atom.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
     {a b c : Relation.Atom} (h : a.join b = some c) {x y z : β} (ha : a.Holds x y)
     (hb : b.Holds y z) : c.Holds x z := by
-  cases a <;> cases b <;> simp only [Relation.Atom.join, reduceCtorEq, Option.some.injEq] at h <;>
+  cases a <;> cases b <;>
+    simp only [Relation.Atom.join, Relation.Atom.src, Relation.Atom.tgt,
+      Relation.Atom.ofPolarities, reduceCtorEq, ite_true, ite_false, Option.some.injEq] at h <;>
     subst h <;> simp only [Relation.Atom.Holds] at ha hb ⊢
   all_goals first
     | exact le_trans ha hb

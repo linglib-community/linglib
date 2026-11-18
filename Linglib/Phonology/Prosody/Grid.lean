@@ -16,33 +16,34 @@ relative prominence.
   property that exactly one column is tallest.
 * `Marks`, `Marks.IsContinuous`, `Grid.rows`: rows of marks, the Continuous Column Constraint,
   and the rendering of a grid as rows.
-* `MarkedGrid`, `Tree.project`: columns that carry a head-spine flag, and the marked grid of a
-  prosodic tree.
-* `Tree.columns`, `Tree.headTerminals`, `Tree.headHeights`, `Tree.IsHeaded`: the grid of a tree,
-  its head terminals, their heights, and the property of having exactly one head terminal.
+* `MarkedGrid`, `MetricalTree.project`: columns that carry a head-spine flag, and the marked
+  grid of a metrical tree.
+* `MetricalTree.columns`, `MetricalTree.headTerminals`, `MetricalTree.headHeights`,
+  `MetricalTree.IsHeaded`: the grid of a tree, its head terminals, their heights, and the
+  property of having exactly one head terminal.
 
 ## Main statements
 
 * `Grid.rows_isContinuous`: every rendered grid satisfies the Continuous Column Constraint.
 * `Grid.isCulminative_of_forall_lt`: a column strictly taller than every other makes a grid
   culminative.
-* `Tree.peak_toProsTree`: the grid of a foot peaks at height two, over its head syllable.
-* `Tree.headHeights_eq_peak`: on a non-recursive headed word, the height of the head terminal is
-  the peak of the grid.
+* `MetricalTree.peak_toProsTree`: the grid of a foot peaks at height two, over its head syllable.
+* `MetricalTree.headHeights_eq_peak`: on a non-recursive headed word, the height of the head
+  terminal is the peak of the grid.
 * `Grid.ofTree_not_injective`: distinct trees can render the same grid.
-* `Tree.not_culminative_under_recursion`: a word recursively dominating a word need not be
+* `MetricalTree.not_culminative_under_recursion`: a word recursively dominating a word need not be
   culminative.
-* `Tree.head_below_peak_under_recursion`, `Tree.head_below_peak_unlayered`: under recursion, or
-  without Layeredness, the peak can be a column other than the head terminal.
+* `MetricalTree.head_below_peak_under_recursion`, `MetricalTree.head_below_peak_unlayered`:
+  under recursion, or without Layeredness, the peak can be a column other than the head terminal.
 
 ## Implementation notes
 
-* `Tree.project` is a fold over the tree built from `MarkedGrid.cell`, `juxtapose`, `promote`,
-  and `clear`; each reader of a tree is computed from its marked grid, and `Tree.columns_node`
-  and its siblings give the recursions on a node.
+* `MetricalTree.project` is a fold over the tree built from `MarkedGrid.cell`, `juxtapose`,
+  `promote`, and `clear`; each reader of a tree is computed from its marked grid, and
+  `MetricalTree.columns_node` and its siblings give the recursions on a node.
 * Absolute heights carry no significance, as Prince notes; the statements concern the
   peak and the relative heights of columns.
-* Culminativity concerns the grid alone and differs from `Tree.IsHeaded`, a unique head
+* Culminativity concerns the grid alone and differs from `MetricalTree.IsHeaded`, a unique head
   terminal: both can hold while the head terminal is not the peak
   (`Tree.head_below_peak_under_recursion`).
 
@@ -297,14 +298,14 @@ end Grid
 
 /-! ### The marked grid of a tree -/
 
-namespace Tree
+namespace MetricalTree
 
 open MarkedGrid Grid
 
 /-- One step of `project` pairs the node's label with its grid, so that a parent can read the
     head flag off each child. -/
-def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
-    Constituent × MarkedGrid Tree :=
+def projectStep (a : Label) (ps : List (Label × MarkedGrid MetricalTree)) :
+    Label × MarkedGrid MetricalTree :=
   (a, if a.level = .syl ∧ ps = [] then cell (.node a [])
       else juxtapose (ps.map fun p => edge p.1.isHead p.2))
 
@@ -312,13 +313,13 @@ def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
     children's grids, promoted across head edges and cleared across the rest, so that heights
     record the relative prominence that the Relative Prominence Projection Rule of
     [liberman-prince-1977] assigns to designated terminal elements. -/
-def project (t : Tree) : MarkedGrid Tree := (t.fold projectStep).2
+def project (t : MetricalTree) : MarkedGrid MetricalTree := (t.fold projectStep).2
 
-private theorem fold_projectStep (t : Tree) :
+private theorem fold_projectStep (t : MetricalTree) :
     t.fold projectStep = (t.value, project t) := by
   cases t with | node a cs => rfl
 
-@[simp] theorem project_node (a : Constituent) (cs : List Tree) :
+@[simp] theorem project_node (a : Label) (cs : List MetricalTree) :
     project (.node a cs) = if a.level = .syl ∧ cs = [] then cell (.node a [])
       else juxtapose (cs.map fun c => edge c.value.isHead (project c)) := by
   conv_lhs => rw [project, RoseTree.fold_node]
@@ -327,17 +328,17 @@ private theorem fold_projectStep (t : Tree) :
 
 /-! ### Reading the grid off a tree -/
 
-variable (t : Tree)
+variable (t : MetricalTree)
 
 /-- The syllable leaves of a tree, left to right: the terminals the grid stands over. -/
-def terminals : List Tree := (project t).terminals
+def terminals : List MetricalTree := (project t).terminals
 
 /-- The column heights of the grid of a tree. -/
 def columns : Grid := (project t).toGrid
 
 /-- The *head terminals* of a tree: the syllable leaves that head edges alone lead to from the
     root (`headTerminal_sound`), the designated terminal elements of [liberman-prince-1977]. -/
-def headTerminals : List Tree := (project t).headTerminals
+def headTerminals : List MetricalTree := (project t).headTerminals
 
 /-- The heights of the columns over the head terminals. -/
 def headHeights : Grid := (project t).headHeights
@@ -360,7 +361,7 @@ theorem _root_.Prosody.Grid.ofTree_isContinuous : Marks.IsContinuous (Grid.ofTre
 Each reader is computed from the marked grid, so on a node it is the juxtaposition of the
 children's readings across head edges. -/
 
-variable (a : Constituent) (cs : List Tree)
+variable (a : Label) (cs : List MetricalTree)
 
 theorem columns_node : columns (.node a cs) = if a.level = .syl ∧ cs = [] then [1]
     else cs.flatMap fun c => (edge c.value.isHead (project c)).toGrid := by
@@ -377,12 +378,12 @@ theorem headTerminals_node : headTerminals (.node a cs) = if a.level = .syl ∧ 
 /-! ### The head terminals are the leaves of all-head descents -/
 
 /-- `leaf` is a head terminal of `t`: it is reached from the root by head edges alone. -/
-inductive IsHeadTerminal : Tree → Tree → Prop
-  | leaf {a : Constituent} (ha : a.level = .syl) : IsHeadTerminal (.node a []) (.node a [])
+inductive IsHeadTerminal : MetricalTree → MetricalTree → Prop
+  | leaf {a : Label} (ha : a.level = .syl) : IsHeadTerminal (.node a []) (.node a [])
   | head {a cs c leaf} : c ∈ cs → c.value.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
-theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
+theorem headTerminal_sound {t leaf : MetricalTree} (h : leaf ∈ headTerminals t) :
     IsHeadTerminal t leaf := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
@@ -402,11 +403,11 @@ The grid of a foot has height `2` over the head syllable and `1` elsewhere
 
 theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     columns (f.toProsTree w) = Foot.toGrid f := by
-  rw [Foot.toProsTree, columns_node, ite_eq_right (by simp [Constituent.level]),
+  rw [Foot.toProsTree, columns_node, ite_eq_right (by simp),
       List.flatMap_map, Foot.toGrid, List.map_eq_flatMap]
   refine List.flatMap_congr fun i _ => ?_
   by_cases hi : i = f.head <;>
-    simp [project_node, Constituent.level, Constituent.isHead, edge,
+    simp [project_node, Constituent.isHead, edge,
       promote, clear, toGrid, cell, hi]
 
 /-- The grid of a foot peaks at `2`, over its head syllable. -/
@@ -428,12 +429,13 @@ directly observable correlate; and under recursion the grid need not be culminat
     render the same grid. -/
 theorem _root_.Prosody.Grid.ofTree_not_injective : ¬ Function.Injective Grid.ofTree :=
   Function.not_injective_iff.mpr
-    ⟨.om [.ft false [.σ 1]], .om [.σ 1], by decide⟩
+    ⟨MetricalTree.om false [.ft false [.σ 1]], MetricalTree.om false [.σ 1], by decide⟩
 
 /-- Recursion can break culminativity: a word recursively dominating another word, each heading
     its own syllable, has two equally tall columns and no unique peak. -/
-theorem not_culminative_under_recursion : ∃ t : Tree, IsWord t ∧ ¬ IsCulminative (columns t) :=
-  ⟨.om [.ft true [.σ 1 true], .om [.ft true [.σ 1 true]]], by decide⟩
+theorem not_culminative_under_recursion :
+    ∃ t : MetricalTree, IsWord t ∧ ¬ IsCulminative (columns t) :=
+  ⟨MetricalTree.om false [.ft true [.σ 1 true], .om false [.ft true [.σ 1 true]]], by decide⟩
 
 /-! ### The peak of a word is its head terminal
 
@@ -441,15 +443,16 @@ On a non-recursive headed word the column over the head terminal is the peak of 
 (`headHeights_eq_peak`), so that the main stress falls on a syllable that already bears stress,
 as [hayes-1995] §3.4.2 (C) observes of the Continuous Column Constraint. -/
 
-private theorem height_word_child_le {ch : Tree}
-    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) : ch.height ≤ 2 := by
+private theorem height_word_child_le {ch : MetricalTree}
+    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = []))
+    (hn : ch.value.level = .ft → ∀ d ∈ ch.children, d.value.level ≠ .ft) : ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     rw [RoseTree.height_node]
     have : (chcs.map RoseTree.height).foldr max 0 ≤ 1 :=
       List.max_le_of_forall_le _ _ fun x hx => by
         obtain ⟨⟨cl, ccs⟩, hc, rfl⟩ := List.mem_map.mp hx
-        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc
+        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc (hn hfoot.1 _ hc)
         simp only [RoseTree.children_node] at hcs
         subst hcs
         exact le_of_eq rfl
@@ -458,7 +461,7 @@ private theorem height_word_child_le {ch : Tree}
     simp only [RoseTree.children_node] at hcs; subst hcs
     exact Nat.le_succ_of_le (le_of_eq rfl)
 
-private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.height := by
+private theorem toGrid_bounds {t : MetricalTree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.height := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
     rw [columns_node, ite_eq_left ⟨ha, rfl⟩, RoseTree.height_node]
@@ -480,13 +483,14 @@ private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c �
       have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
       by_cases hs : x.onSpine <;> simp [hs] <;> omega
 
-theorem headHeights_sublist_columns (t : Tree) : (headHeights t).Sublist (columns t) :=
+theorem headHeights_sublist_columns (t : MetricalTree) : (headHeights t).Sublist (columns t) :=
   List.filter_sublist.map _
 
-theorem headHeight_le_peak {t : Tree} {h : ℕ} (hh : h ∈ headHeights t) : h ≤ peak (columns t) :=
+theorem headHeight_le_peak {t : MetricalTree} {h : ℕ} (hh : h ∈ headHeights t) :
+    h ≤ peak (columns t) :=
   le_peak ((headHeights_sublist_columns t).subset hh)
 
-theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
+theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid MetricalTree} {c : ℕ}
     (hc : c ∈ (edge h b).toGrid) : c ∈ b.toGrid ∨ c ∈ (edge h b).headHeights := by
   cases h with
   | false => exact .inl (by simpa using hc)
@@ -501,7 +505,7 @@ theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
     · simp only [Bool.not_eq_true] at hs
       exact .inl (List.mem_map.mpr ⟨x, hx, by simp [hs]⟩)
 
-theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
+theorem col_le_two_or_head {t : MetricalTree} (hw : IsWord t) (hr : noRec t = 0) :
     ∀ c ∈ columns t, c ≤ 2 ∨ c ∈ headHeights t := by
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, hchild⟩ := isWord_children hw hr
@@ -510,12 +514,13 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
-  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)))
+  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)
+      (nonrecursivity_eq_zero_iff.1 (noRec_eq_zero_iff.1 hr _) ch (.of_mem_children hch))))
   · refine .inr ?_
     rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩
 
-theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
+theorem two_le_head {t : MetricalTree} (hw : IsWord t) (hr : noRec t = 0)
     {h : ℕ} (hh : h ∈ headHeights t) : 2 ≤ h := by
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, _⟩ := isWord_children hw hr
@@ -529,8 +534,8 @@ theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
   · exact absurd hh List.not_mem_nil
 
 /-- On a non-recursive headed word, the height of the head terminal is the peak of the grid. -/
-theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : noRec t = 0) :
-    headHeights t = [peak (columns t)] := by
+theorem headHeights_eq_peak {t : MetricalTree} (hw : IsWord t) (hh : IsHeaded t)
+    (hr : noRec t = 0) : headHeights t = [peak (columns t)] := by
   obtain ⟨v, hv⟩ := List.length_eq_one_iff.mp hh
   have hvmem : v ∈ headHeights t := by rw [hv]; exact List.mem_singleton_self v
   have hge : peak (columns t) ≤ v := by
@@ -545,14 +550,14 @@ theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : n
     source. -/
 theorem head_below_peak_under_recursion :
     ∃ t, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t) ∧ headHeights t ≠ [peak (columns t)] :=
-  ⟨.om [.σ 1 true, .om [.ft true [.σ 1 true]]], by decide⟩
+  ⟨MetricalTree.om false [.σ 1 true, .om false [.ft true [.σ 1 true]]], by decide⟩
 
 /-- Without Layeredness, on a tree that is not a word, the peak can likewise be a column other
     than the head terminal. -/
 theorem head_below_peak_unlayered :
     ∃ t, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ headHeights t ≠ [peak (columns t)] :=
-  ⟨.om [.ph [.ft true [.σ 1 true]], .σ 1 true], by decide⟩
+  ⟨MetricalTree.om false [.ph false [.ft true [.σ 1 true]], .σ 1 true], by decide⟩
 
-end Tree
+end MetricalTree
 
 end Prosody

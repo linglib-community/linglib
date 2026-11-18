@@ -4,6 +4,7 @@ public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Fragments.Finnish.Declension
 public import Linglib.Fragments.Finnish.Infinitives
 public import Linglib.Fragments.Finnish.Possession
+public import Linglib.Morphology.Realization
 
 /-!
 # Finnish morphotactics
@@ -274,6 +275,11 @@ plural, and in the nominative plural the -t that realizes both. -/
 def endings (num : numberSystem) (c : Case) : List (Σ σ, Exponent σ) :=
   Number.elim numberSystem [⟨_, .case c⟩]
     (if c = .nom then [⟨_, .nominativePlural⟩] else [⟨_, .plural⟩, ⟨_, .case c⟩]) (n := num)
+
+/-- The forms of a stem in a number and a case, as a realization: the index is the stem and the
+contexts are the numbers with the cases. -/
+def realization : Morphology.Realization (List Segment) (numberSystem × Case) (List Segment) :=
+  ⟨fun w (num, c) ↦ (realize w (endings num c)).toFinset⟩
 
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his

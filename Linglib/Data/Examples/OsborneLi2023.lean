@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := "Coordinate subject; pronoun in PP complement. CRDC predicts marginality of co-valuing `him` with `Max` (conjunct valent of the subject coordinate structure)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("him = Max (co-valued)", .questionable), ("him = external referent", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;Max"), ("paperSection", "1"), ("paperMeanScore", "2.38"), ("paperNRespondents", "60")] }
 
@@ -37,7 +37,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("himself = John", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "2"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")] }
 
@@ -50,7 +50,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := "Co-valuing `him` with `John` (conjunct valent of subject coordinate structure). Same CRDC structure as (2a) with masculine antecedent."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("him = John (co-valued)", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "2"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")] }
 
@@ -63,7 +63,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := "`both ... and ...` coordinator; pronoun as object of `love`. `both` forces the distributive reading, which blocks co-valuing `him` with `John` under Safir's Coargument Dependency Constraint (CDC)."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("him = John", .ungrammatical)]
     paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "2"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")] }
 
@@ -76,7 +76,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := "Coordinate subject; pronoun in raising-to-object position. CRDC applies: `him` is a full valent of `consider` (raising-to-object); `Bill` is a conjunct valent of the coordinate subject. Co-valuation is marginal."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("him = Bill", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "2"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")] }
 
@@ -89,7 +89,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := "Non-coordinate baseline; reflexive licensed by Condition A. CRDC is silent (no coordination); the example is fully acceptable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("himself = Max", .acceptable)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "himself;Max"), ("paperSection", "3"), ("paperMeanScore", "1.28"), ("paperNRespondents", "60")] }
 
@@ -102,7 +102,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := "Non-coordinate baseline; co-valuing `him` with local subject `Max` violates Condition B (not CRDC, which is silent here)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("him = Max", .questionable), ("him = external referent", .acceptable)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "him;Max"), ("paperSection", "3"), ("paperMeanScore", "2.92"), ("paperNRespondents", "60")] }
 
@@ -115,7 +115,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := "Coordinate subject; possessive pronoun inside object PP. Possessives embed the conjunct-valent referent inside a further DP, weakening CRDC's marginality prediction."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("his = Max", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "his;Max"), ("anaphorType", "possessive"), ("paperSection", "3"), ("paperMeanScore", "1.20"), ("paperNRespondents", "60")] }
 
@@ -128,7 +128,7 @@ def ex11e : Datum :=
     glossedTokens := []
     context := "Coordinate subject; name repeated as object. Condition C is in play, not CRDC; the co-valued reading is available."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("object Max = subject Max (co-valued)", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "Max;Max"), ("anaphorType", "R-expression"), ("paperSection", "3"), ("paperMeanScore", "1.47"), ("paperNRespondents", "100")] }
 
@@ -141,7 +141,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := "Subject-to-subject raising over an experiencer PP. `her` is a full valent of `appear`; `Hillary` is a conjunct valent of the raised subject coordinate structure. CRDC predicts marginality of co-valuation."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("her = Hillary", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-with-experiencer"), ("coVValuedPair", "her;Hillary"), ("paperSection", "3"), ("paperMeanScore", "2.68"), ("paperNRespondents", "60")] }
 
@@ -154,7 +154,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := "Coordinate *object*, not coordinate subject. `himself` is a conjunct valent of a full valent of `talked`; co-valuation with the full-valent subject `John` is the reverse direction of CRDC (conjunct anaphor of full antecedent), which CRDC explicitly permits."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("himself = John", .acceptable)]
     paperFeatures := [("coordinateObject", "true"), ("coVValuedPair", "himself;John"), ("paperSection", "3"), ("paperMeanScore", "1.14"), ("paperNRespondents", "60")] }
 
@@ -167,7 +167,7 @@ def ex25c : Datum :=
     glossedTokens := []
     context := "Non-coordinate Condition B violation. Co-valuing `her` with local subject `Jane` is straightforwardly ungrammatical. CRDC is silent (no coordination)."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("her = Jane", .ungrammatical)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "her;Jane"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "40")] }
 
@@ -180,7 +180,7 @@ def ex28d : Datum :=
     glossedTokens := []
     context := "Raising-to-object with coordinate object; `him` is a conjunct valent of the embedded subject. Co-valuing `him` with matrix-subject `John` (a full valent of `expected`) is acceptable — the reverse CRDC direction (conjunct anaphor of full antecedent)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("him = John", .acceptable)]
     paperFeatures := [("coordinateObject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "1.40"), ("paperNRespondents", "60")] }
 
@@ -193,7 +193,7 @@ def ex55a : Datum :=
     glossedTokens := []
     context := "Coordinate-subject CRDC configuration, but a structural counterexample: speakers accept co-valuation of `her` with `Sophy` despite CRDC's marginality prediction. Paper discusses this as a candidate exception (Section 6)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("her = Sophy", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "her;Sophy"), ("paperSection", "6"), ("isCounterexample", "true"), ("paperMeanScore", "1.43"), ("paperNRespondents", "40")] }
 

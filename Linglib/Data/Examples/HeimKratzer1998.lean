@@ -24,7 +24,7 @@ def ch5_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("relative", "restrictive")] }
 
@@ -37,7 +37,7 @@ def ch5_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("relative", "nonrestrictive")] }
 
@@ -50,7 +50,7 @@ def ch7_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("quantifier", "subject")] }
 
@@ -63,7 +63,7 @@ def ch7_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("quantifier", "object")] }
 
@@ -76,7 +76,7 @@ def ch7_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("readings", "some > every; every > some")] }
 

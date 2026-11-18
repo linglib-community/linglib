@@ -24,7 +24,7 @@ def cant_possible : Datum :=
     glossedTokens := []
     context := "Flat-footed conjunction of 'possible phi' with 'can't phi', embedded under suppose."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "cant_possible_contradiction"), ("modal", "cant")] }
 
@@ -37,7 +37,7 @@ def phil_dinner : Datum :=
     glossedTokens := []
     context := "Phil has cooked the dinner, checking all the food himself, and knows it is ready."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
@@ -50,7 +50,7 @@ def meryl_dinner : Datum :=
     glossedTokens := []
     context := "Phil had to step out and instructed Meryl to turn the peas off when they are done and take the chicken out when the temperature is right; she does both and has seen that the table is set, but wonders whether Phil was planning to make anything else, e.g. a salad."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 

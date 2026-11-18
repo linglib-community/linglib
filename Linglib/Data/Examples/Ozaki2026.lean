@@ -24,7 +24,7 @@ def ex1_acc : Datum :=
     glossedTokens := []
     context := "The source of the departure verb marked accusative."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "alternation")] }
 
@@ -37,7 +37,7 @@ def ex1_abl : Datum :=
     glossedTokens := []
     context := "The source of the departure verb marked ablative."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "alternation")] }
 
@@ -50,7 +50,7 @@ def ex9_acc : Datum :=
     glossedTokens := []
     context := "Ellipsis of the accusative source under the overt adjunct suguni 'quickly': the continuation (10), 'Hanako exited the ticket gate quickly, but she took time to exit the station', is not contradictory, so the elided-source reading is available and the source is an argument by the generalization of Funakoshi (2016)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "acc"), ("diagnostic", "ellipsis")] }
 
@@ -63,7 +63,7 @@ def ex9_abl : Datum :=
     glossedTokens := []
     context := "Ellipsis of the ablative source under the overt adjunct suguni 'quickly'; the continuation (10) is not contradictory, so the source is an argument whatever its marking."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "abl"), ("diagnostic", "ellipsis")] }
 
@@ -76,7 +76,7 @@ def ex13_acc : Datum :=
     glossedTokens := []
     context := "Long-distance scrambling of the accusative source out of the embedded clause, available to arguments but not adjuncts (Saito 1985)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "scrambling")] }
 
@@ -89,7 +89,7 @@ def ex13_abl : Datum :=
     glossedTokens := []
     context := "Long-distance scrambling of the ablative source out of the embedded clause."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "scrambling")] }
 
@@ -102,7 +102,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := "The passive with dative marking on the leaver: an indirect passive, the construction available to unaccusatives, not a direct passive."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "indirect_passive")] }
 
@@ -115,7 +115,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := "The direct passive, diagnosed by niyotte in place of the dative marker (Jo and Seo 2023), which only a verb with thematic Voice can undergo."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "direct_passive")] }
 
@@ -128,7 +128,7 @@ def ex26_acc : Datum :=
     glossedTokens := []
     context := "The accusative wh-adjunct nani-o 'what-ACC' in its 'why' reading (Kurafuji 1997), available with unergatives and transitives but not with unaccusatives."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "nani_o")] }
 
@@ -141,7 +141,7 @@ def ex26_abl : Datum :=
     glossedTokens := []
     context := "The accusative wh-adjunct in its 'why' reading with the ablative source: unavailable as with unaccusatives."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "nani_o")] }
 

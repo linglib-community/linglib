@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "progressive"), ("verb", "lengthen"), ("telic", "no")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "progressive"), ("verb", "straighten"), ("telic", "yes")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "for"), ("verb", "cool"), ("telic", "no")] }
 
@@ -63,7 +63,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "in"), ("verb", "cool"), ("telic", "yes")] }
 
@@ -76,7 +76,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "almost"), ("verb", "lengthen"), ("telic", "yes"), ("boundSource", "context")] }
 
@@ -89,7 +89,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("test", "almost"), ("verb", "lengthen"), ("telic", "no"), ("boundSource", "none")] }
 
@@ -102,7 +102,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("verb", "lengthen"), ("differenceValue", "some amount"), ("telic", "no")] }
 
@@ -115,7 +115,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("verb", "lengthen"), ("differenceValue", "5 inches"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -128,7 +128,7 @@ def ex10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -141,7 +141,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -154,7 +154,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -167,7 +167,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -180,7 +180,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -193,7 +193,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -206,7 +206,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -219,7 +219,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "straighten"), ("modifier", "completely"), ("boundSource", "completely"), ("telic", "yes")] }
 
@@ -232,7 +232,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "dry"), ("modifier", "completely"), ("boundSource", "completely"), ("telic", "yes")] }
 
@@ -245,7 +245,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "straighten"), ("modifier", "completely"), ("telic", "yes")] }
 
@@ -258,7 +258,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "dry"), ("modifier", "completely"), ("telic", "yes")] }
 
@@ -271,7 +271,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "broaden"), ("modifier", "significantly"), ("boundSource", "significantly"), ("telic", "yes")] }
 
@@ -284,7 +284,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "broaden"), ("modifier", "significantly"), ("telic", "yes")] }
 
@@ -297,7 +297,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "broaden"), ("modifier", "significantly"), ("telic", "yes")] }
 
@@ -310,7 +310,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "broaden"), ("modifier", "slightly"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -323,7 +323,7 @@ def ex24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "broaden"), ("modifier", "slightly"), ("telic", "no")] }
 
@@ -336,7 +336,7 @@ def ex24c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "broaden"), ("modifier", "slightly"), ("telic", "no")] }
 
@@ -349,7 +349,7 @@ def ex25a_straight : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "straight"), ("range", "closed")] }
 
@@ -362,7 +362,7 @@ def ex25a_empty : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "empty"), ("range", "closed")] }
 
@@ -375,7 +375,7 @@ def ex25a_dry : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "dry"), ("range", "closed")] }
 
@@ -388,7 +388,7 @@ def ex25b_long : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "long"), ("range", "open")] }
 
@@ -401,7 +401,7 @@ def ex25b_wide : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "wide"), ("range", "open")] }
 
@@ -414,7 +414,7 @@ def ex25b_short : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "short"), ("range", "open")] }
 
@@ -427,7 +427,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "straighten"), ("range", "closed"), ("boundSource", "scale"), ("telic", "yes")] }
 
@@ -440,7 +440,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "dry"), ("range", "closed"), ("boundSource", "scale"), ("telic", "yes")] }
 
@@ -453,7 +453,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "lengthen"), ("range", "open"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -466,7 +466,7 @@ def ex27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "slow"), ("range", "open"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -479,7 +479,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lengthen"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -492,7 +492,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lower"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -505,7 +505,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -518,7 +518,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lower"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -531,7 +531,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lengthen"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -544,7 +544,7 @@ def ex30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lower"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -557,7 +557,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -570,7 +570,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lower"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -583,7 +583,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "lengthen"), ("boundSource", "context"), ("cancellable", "yes")] }
 
@@ -596,7 +596,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "straighten"), ("boundSource", "scale"), ("cancellable", "yes")] }
 
@@ -609,7 +609,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "straighten"), ("boundSource", "completely"), ("cancellable", "no")] }
 
@@ -622,7 +622,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "widen"), ("boundSource", "measure"), ("cancellable", "no")] }
 
@@ -635,7 +635,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "in"), ("verb", "cool"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -648,7 +648,7 @@ def ex34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "for"), ("verb", "cool"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -661,7 +661,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "in"), ("verb", "cool"), ("modifier", "completely"), ("telic", "yes")] }
 
@@ -674,7 +674,7 @@ def ex35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "for"), ("verb", "cool"), ("modifier", "completely"), ("telic", "yes")] }
 
@@ -687,7 +687,7 @@ def ex36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "eat"), ("verbClass", "consumption"), ("cancellable", "yes")] }
 
@@ -700,7 +700,7 @@ def ex37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "in"), ("verb", "eat"), ("verbClass", "consumption"), ("telic", "yes")] }
 
@@ -713,7 +713,7 @@ def ex37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "for"), ("verb", "eat"), ("verbClass", "consumption"), ("telic", "no")] }
 
@@ -726,7 +726,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "run"), ("verbClass", "motion"), ("boundSource", "measure"), ("cancellable", "no")] }
 
@@ -739,7 +739,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "run"), ("verbClass", "motion"), ("boundSource", "context"), ("cancellable", "yes")] }
 
@@ -752,7 +752,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "draw"), ("verbClass", "creation"), ("boundSource", "measure"), ("cancellable", "no")] }
 
@@ -765,7 +765,7 @@ def ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "draw"), ("verbClass", "creation"), ("boundSource", "context"), ("cancellable", "yes")] }
 
@@ -778,7 +778,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -791,7 +791,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "measure"), ("telic", "yes")] }
 
@@ -804,7 +804,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "in"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -817,7 +817,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "for"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "none"), ("telic", "no")] }
 
@@ -830,7 +830,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "progressive"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "context"), ("telic", "yes")] }
 
@@ -843,7 +843,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "progressive"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "none"), ("telic", "no")] }
 

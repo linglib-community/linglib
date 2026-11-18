@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "The speaker has exactly one rich relative who has put the speaker in her will, though the speaker may not know who she is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > if", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀ > if", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∀ > ∃ > 3", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("2 > if, both deaths in the antecedent", .acceptable), ("2 > each > if", .unacceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃lawyer > if > ∃relative", .acceptable), ("∃relative > if > ∃lawyer", .acceptable), ("∃relative > ∃lawyer > if", .acceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃syntactician > ∀ > ∃condition > 3", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex47 : Datum :=
     glossedTokens := []
     context := "Every grad is taking the semantics seminar, and the grads like different papers on indefinites."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃seminar > ∀ > ∃paper > if", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀, pronoun bound by everybody", .acceptable)]
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > ∀, pronoun bound by every boy", .unacceptable)]
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("∃ > no, pronoun bound by no candidate", .unacceptable)]
     paperFeatures := [] }
 

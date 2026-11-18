@@ -24,7 +24,7 @@ def ex_41_kii_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "agency"), ("possessed", "kiʻi")] }
 
@@ -37,7 +37,7 @@ def ex_41_kii_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "kiʻi")] }
 
@@ -50,7 +50,7 @@ def ex_41_hale_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "hale")] }
 
@@ -63,7 +63,7 @@ def ex_41_hale_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "hale")] }
 
@@ -76,7 +76,7 @@ def ex_41_ake_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "body"), ("possessed", "ake")] }
 
@@ -89,7 +89,7 @@ def ex_41_ake_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "ake")] }
 
@@ -102,7 +102,7 @@ def ex_41_makua_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "makua")] }
 
@@ -115,7 +115,7 @@ def ex_41_makua_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "makua")] }
 
@@ -128,7 +128,7 @@ def ex_43_hale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "inanimate"), ("possessed", "hale")] }
 
@@ -141,7 +141,7 @@ def ex_43_ia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "inanimate"), ("possessed", "iʻa")] }
 
@@ -154,7 +154,7 @@ def ex_43_hua : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "inanimate"), ("possessed", "hua")] }
 
@@ -167,7 +167,7 @@ def ex_44_lima : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "body"), ("possessed", "lima")] }
 
@@ -180,7 +180,7 @@ def ex_44_puuwai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "body"), ("possessed", "puʻuwai")] }
 
@@ -193,7 +193,7 @@ def ex_44_lauoho : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "body"), ("possessed", "lauoho")] }
 
@@ -206,7 +206,7 @@ def ex_44_mimi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "body"), ("possessed", "mimi")] }
 
@@ -219,7 +219,7 @@ def ex_44_makuahine : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "makuahine")] }
 
@@ -232,7 +232,7 @@ def ex_44_kupuna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "kupuna")] }
 
@@ -245,7 +245,7 @@ def ex_44_kaikaina : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "kaikaina")] }
 
@@ -258,7 +258,7 @@ def ex_44_alii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "aliʻi")] }
 
@@ -271,7 +271,7 @@ def ex_44_kanaka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "kin"), ("possessed", "kanaka")] }
 
@@ -284,7 +284,7 @@ def ex_44_inoa_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "agency"), ("possessed", "inoa")] }
 
@@ -297,7 +297,7 @@ def ex_44_kii_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "agency"), ("possessed", "kiʻi")] }
 
@@ -310,7 +310,7 @@ def ex_44_mele_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "agency"), ("possessed", "mele")] }
 
@@ -323,7 +323,7 @@ def ex_44_inoa_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "inoa")] }
 
@@ -336,7 +336,7 @@ def ex_44_kii_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "kiʻi")] }
 
@@ -349,7 +349,7 @@ def ex_44_mele_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "mele")] }
 
@@ -362,7 +362,7 @@ def ex_44_wahine : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "wahine")] }
 
@@ -375,7 +375,7 @@ def ex_44_haumana : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "haumāna")] }
 
@@ -388,7 +388,7 @@ def ex_44_malihini : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "instigated"), ("possessed", "malihini")] }
 
@@ -401,7 +401,7 @@ def ex_44_keiki : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "offspring"), ("possessed", "keiki")] }
 
@@ -414,7 +414,7 @@ def ex_44_moopuna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "offspring"), ("possessed", "moʻopuna")] }
 
@@ -427,7 +427,7 @@ def ex_44_hua : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "offspring"), ("possessed", "hua")] }
 
@@ -440,7 +440,7 @@ def ex_45_kala : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "kālā")] }
 
@@ -453,7 +453,7 @@ def ex_45_puaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "puaʻa")] }
 
@@ -466,7 +466,7 @@ def ex_45_pakaukau : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "pākaukau")] }
 
@@ -479,7 +479,7 @@ def ex_45_pahuhau : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "pahu hau")] }
 
@@ -492,7 +492,7 @@ def ex_45_koi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "koʻi")] }
 
@@ -505,7 +505,7 @@ def ex_45_kopa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "kopa")] }
 
@@ -518,7 +518,7 @@ def ex_45_pia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "pia")] }
 
@@ -531,7 +531,7 @@ def ex_45_pahi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "pahi")] }
 
@@ -544,7 +544,7 @@ def ex_45_kalo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "kalo")] }
 
@@ -557,7 +557,7 @@ def ex_45_moena : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "moena")] }
 
@@ -570,7 +570,7 @@ def ex_45_penalehelehe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "pena lehelehe")] }
 
@@ -583,7 +583,7 @@ def ex_45_mamalu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "māmalu")] }
 
@@ -596,7 +596,7 @@ def ex_45_papale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "pāpale")] }
 
@@ -609,7 +609,7 @@ def ex_45_hale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "hale")] }
 
@@ -622,7 +622,7 @@ def ex_45_lio : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "lio")] }
 
@@ -635,7 +635,7 @@ def ex_45_mokupuni : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "mokupuni")] }
 
@@ -648,7 +648,7 @@ def ex_45_lei : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "lei")] }
 
@@ -661,7 +661,7 @@ def ex_45_uluna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "uluna")] }
 
@@ -674,7 +674,7 @@ def ex_45_papaheenalu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "papa heʻe nalu")] }
 
@@ -687,7 +687,7 @@ def ex_45_wailukini : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "wai lūkini")] }
 
@@ -700,7 +700,7 @@ def ex_46_lole_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "lole")] }
 
@@ -713,7 +713,7 @@ def ex_46_lole_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "lole")] }
 
@@ -726,7 +726,7 @@ def ex_46_pua_o : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "pua")] }
 
@@ -739,7 +739,7 @@ def ex_46_pua_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "a"), ("relationship", "ownership"), ("possessed", "pua")] }
 
@@ -752,7 +752,7 @@ def ex_47_fij_taba : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "ke"), ("relationship", "agency"), ("possessed", "i-taba")] }
 
@@ -765,7 +765,7 @@ def ex_47_fij_waqa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "no"), ("relationship", "location"), ("possessed", "waqa")] }
 
@@ -778,7 +778,7 @@ def ex_47_fij_vale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "no"), ("relationship", "location"), ("possessed", "vale")] }
 
@@ -791,7 +791,7 @@ def ex_47_fij_isulu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "no"), ("relationship", "location"), ("possessed", "i-sulu")] }
 
@@ -804,7 +804,7 @@ def ex_47_fij_idabedabe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "no"), ("relationship", "location"), ("possessed", "i-dabedabe")] }
 
@@ -817,7 +817,7 @@ def ex_47_kii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "agency"), ("possessed", "kiʻi")] }
 
@@ -830,7 +830,7 @@ def ex_47_waa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "waʻa")] }
 
@@ -843,7 +843,7 @@ def ex_47_hale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "hale")] }
 
@@ -856,7 +856,7 @@ def ex_47_lole : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "lole")] }
 
@@ -869,7 +869,7 @@ def ex_47_noho : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "noho")] }
 

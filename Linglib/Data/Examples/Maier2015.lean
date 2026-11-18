@@ -24,7 +24,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := "The presupposition of stop, that Fred had been beating his wife, is filtered: it is not the speaker's."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "stop")] }
 
@@ -37,7 +37,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := "The presupposition of too is filtered by the belief."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "too")] }
 
@@ -50,7 +50,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := "The presupposition of too finds no antecedent in the belief and projects."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "hope;believe"), ("trigger", "too")] }
 
@@ -63,7 +63,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := "A representational attitude without a preference component is parasitic on belief in the same way."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;imagine"), ("trigger", "too")] }
 
@@ -76,7 +76,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := "The reverse order does not filter."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "imagine;believe"), ("trigger", "too")] }
 

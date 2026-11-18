@@ -332,30 +332,30 @@ theorem donkeyPronoun_agree : donkeyPronoun.IsTrue M ↔ donkey.IsTrue M :=
 
 /-! ### Subordination and accessibility geometry -/
 
--- Def. 1.4.10, Def. 2.1.2
+-- Def. 2.1.2
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
-  .impAnte (c := donkeyCons) (by simp [donkey])
+  ⟨.imp donkeyAnte donkeyCons, by simp [donkey], [], by simp⟩
 
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
-  .impCons (a := donkeyAnte) (by simp [donkey])
+  ⟨.imp donkeyAnte donkeyCons, by simp [donkey], [donkeyAnte], by simp⟩
 
 -- Def. 2.1.3
 theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
-  ⟨[donkeyCons, donkeyAnte, donkey], .single (.impCons (by simp [donkey])), by simp⟩
+  .antecedent .refl (by simp [donkey]) .refl
 
 theorem donkey_not_consequent_accessible : ¬ AccessibleTo donkey donkeyCons donkeyAnte := by
+  rw [accessibleTo_iff_exists_occurrence]
   rintro ⟨bs, h, hmem⟩
-  rw [Occurrence, ← DRS.mem_occurrences_iff] at h
-  simp only [DRS.occurrences, donkey, Condition.occurrencesList, Condition.occurrences_imp,
-    List.append_nil, List.mem_cons, List.mem_append, Prod.mk.injEq] at h
-  rcases h with ⟨-, h⟩ | (⟨rfl, -⟩ | h) | ⟨-, h⟩ | h
-  · simpa [donkeyAnte] using congrArg DRS.referents h
-  · rcases List.mem_cons.1 hmem with h | h
+  have key : donkey.occurrences [] =
+      [ [donkey], [donkeyAnte, donkey], [donkeyCons, donkeyAnte, donkey] ] := rfl
+  rw [Occurrence, ← DRS.mem_occurrences_iff, key] at h
+  simp only [List.mem_cons, List.cons.injEq, List.not_mem_nil, or_false] at h hmem
+  rcases h with ⟨h, -⟩ | ⟨-, rfl⟩ | ⟨h, -⟩
+  · exact absurd (congrArg DRS.referents h) (by decide)
+  · rcases hmem with h | h
     · exact absurd (congrArg DRS.referents h) (by decide)
-    · simpa [donkeyCons] using congrArg DRS.conditions (List.mem_singleton.1 h)
-  · simp [donkeyAnte, Condition.occurrencesList, Condition.occurrences] at h
-  · simpa [donkeyAnte, donkeyCons] using congrArg DRS.referents h
-  · simp [donkeyCons, Condition.occurrencesList, Condition.occurrences] at h
+    · simpa [donkeyCons, donkey] using congrArg DRS.conditions (List.mem_singleton.1 h)
+  · exact absurd (congrArg DRS.referents h) (by decide)
 
 /-! ### Model evaluation: the donkey conditional in concrete models
 

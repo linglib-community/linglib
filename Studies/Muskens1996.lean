@@ -36,7 +36,7 @@ update monoid lifted pointwise, so conjoined verb phrases and noun phrases multi
 
 namespace Muskens1996
 
-open DynamicSemantics Update SetRel RegisterStructure
+open DynamicSemantics Update SetRel RegisterStructure AntidomainMonoid
 
 variable {R S E : Type*}
 
@@ -74,11 +74,11 @@ def indef (u : R) : DynPred S E → DynQuant S E :=
 
 /-- The universal, `everyⁿ ↝ λP'λP[|([uₙ|]; P'(uₙ)) ⇒ P(uₙ)]`. -/
 def every (u : R) : DynPred S E → DynQuant S E :=
-  fun P' P ↦ test (impl (randomAssign u ○ P' (val u)) (P (val u)))
+  fun P' P ↦ dimp (randomAssign u ○ P' (val u)) (P (val u))
 
 /-- The negative determiner, `noⁿ ↝ λP'λP[|not([uₙ|]; P'(uₙ); P(uₙ))]`. -/
 def no (u : R) : DynPred S E → DynQuant S E :=
-  fun P' P ↦ test (neg (randomAssign u ○ (P' (val u) ○ P (val u))))
+  fun P' P ↦ ∼(randomAssign u ○ (P' (val u) ○ P (val u)))
 
 end Determiners
 
@@ -89,11 +89,11 @@ def who : DynPred S E → DynPred S E → DynPred S E :=
 
 /-- Auxiliary negation, `doesn't ↝ λPλQ[|not Q(P)]`. -/
 def doesnt : DynPred S E → DynQuant S E → Update S :=
-  fun P Q ↦ test (neg (Q P))
+  fun P Q ↦ ∼(Q P)
 
 /-- The conditional, `if ↝ λpq[|p ⇒ q]`. -/
 def ifThen : Update S → Update S → Update S :=
-  fun p q ↦ test (impl p q)
+  fun p q ↦ dimp p q
 
 /-! ### The paper's derivations -/
 
@@ -117,7 +117,7 @@ theorem text_eq_box [DecidableEq R] (h : u₁ ≠ u₂) (man woman : Set E) (ado
   have : (text u₁ u₂ man woman adores abhors : Update S) =
       box {u₁} (val u₁ ⁻¹' man) ○ box {u₂} (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ○
         box (∅ : Finset R) {i | val u₂ i ~[abhors] val u₁ i} := by
-    simp only [text, indef, ofStatic, ofStatic₂, Function.eval, box_singleton, dexists, box_empty,
+    simp only [text, indef, ofStatic, ofStatic₂, Function.eval, box_singleton, box_empty,
       ← test_comp_test, comp_assoc]
   rw [this, box_comp_box (by simpa using fun hu ↦ h.symm (dimSet_preimage_val_subset u₁ man hu)),
     box_comp_box (by simp), Finset.union_empty]
@@ -143,7 +143,7 @@ theorem dom_everyNarrow (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel 
     (everyNarrow u₁ u₂ girl boy adores : Update S).dom =
       {_i | ∀ x₁ ∈ girl, ∃ x₂ ∈ boy, x₁ ~[adores] x₂} := by
   ext
-  simp [everyNarrow, every, impl, core_comp, core_randomAssign, core_test,
+  simp [everyNarrow, every, dimp_eq, core_comp, core_randomAssign, core_test,
     val_extend_of_ne _ _ _ _ h, or_iff_not_imp_left]
 
 /-- The `∃∀` reading of (33) comes from (35), with the indefinite's referent available to a later
@@ -152,7 +152,7 @@ theorem dom_everyWide (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel E 
     (everyWide u₁ u₂ girl boy adores : Update S).dom =
       {_i | ∃ x₂ ∈ boy, ∀ x₁ ∈ girl, x₁ ~[adores] x₂} := by
   ext
-  simp [everyWide, every, impl, core_comp, core_randomAssign, core_test,
+  simp [everyWide, every, dimp_eq, core_comp, core_randomAssign, core_test,
     val_extend_of_ne _ _ _ _ h.symm, or_iff_not_imp_left]
 
 /-- "If a¹ man bores a² woman she₂ ignores him₁." ((4), translated as the box (6)). -/
@@ -166,7 +166,7 @@ theorem dom_conditional (h : u₁ ≠ u₂) (man woman : Set E) (bores ignores :
     (conditional u₁ u₂ man woman bores ignores : Update S).dom =
       {_i | ∀ x₁ x₂, x₁ ∈ man ∧ x₂ ∈ woman ∧ x₁ ~[bores] x₂ → x₂ ~[ignores] x₁} := by
   ext
-  simp [conditional, impl, core_comp, core_randomAssign, core_test, val_extend_of_ne _ _ _ _ h]
+  simp [conditional, dimp_eq, core_comp, core_randomAssign, core_test, val_extend_of_ne _ _ _ _ h]
   grind
 
 /-- "A² cat catches a¹ fish and eats it₁." ((52), decorated as tree (56)). The conjoined VPs are
@@ -209,7 +209,9 @@ theorem dom_npCoord_no (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admire
       {i | ∃ x₂, (¬∃ x₁ ∈ girl, john ~[admires] x₁) ∧ x₂ ∈ boy ∧ x₂ ~[loves] val u₁ i ∧
         john ~[admires] x₂} := by
   ext
-  simp [npCoordNo, mem_randomAssign, val_extend_of_ne _ _ _ _ h, and_assoc]
+  simp only [npCoordNo, Set.mem_ofPred_eq]
+  simp [mem_randomAssign, val_extend_of_ne _ _ _ _ h, and_assoc]
+  exact and_comm
 
 /-- "Bill¹ and Sue² own a³ donkey." ((66)), with the conjoined names applied pointwise. -/
 def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) : Update S :=
@@ -221,7 +223,7 @@ theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRe
       box {u₃} (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
         box {u₃} (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i}) := by
   simp only [reassignment, name, Function.const_apply, Pi.mul_apply, mul_def, Function.eval,
-    ofStatic₂, indef, ofStatic, box_singleton, dexists, ← test_comp_test, comp_assoc]
+    ofStatic₂, indef, ofStatic, box_singleton, ← test_comp_test, comp_assoc]
 
 /-- The truth conditions (68) of (66). -/
 theorem dom_reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
@@ -242,7 +244,7 @@ theorem reassignment_ne_merge [Nonempty S] {u₃ : R} {bill sue : E} {donkey : S
   have hi : i ∈ (reassignment u₃ bill sue donkey owns : Update S).dom := by
     rw [dom_reassignment]
     exact ⟨hb, hs⟩
-  rw [heq, box_singleton, dom_dexists, dom_test] at hi
+  rw [heq, box_singleton, dom_randomAssign_comp, dom_test] at hi
   obtain ⟨_, ⟨hd, hbo⟩, -, hso⟩ := hi
   simp only [Set.mem_preimage, Set.mem_ofPred_eq, val_extend_self] at hd hbo hso
   exact h ⟨_, hd, hbo, hso⟩

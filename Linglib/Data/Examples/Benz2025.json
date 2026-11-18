@@ -12,7 +12,7 @@
     "translation": "The observation of the night sky took three hours.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reading", "Event"],
@@ -37,7 +37,7 @@
     "translation": "The astronomer's observations are lost forever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "concrete object", "judgment": "acceptable"},
       {"name": "result", "judgment": "acceptable"},
@@ -66,7 +66,7 @@
     "translation": "His observation that planets move changed the science.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["reading", "Content"],
@@ -90,7 +90,7 @@
     "translation": "He hammered the metal flat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "transitive"],
@@ -113,7 +113,7 @@
     "translation": "He shoots his opponent dead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "transitive"],
@@ -137,7 +137,7 @@
     "translation": "Hans broke the stick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "obligatorily transitive"],
@@ -160,7 +160,7 @@
     "translation": "The water froze solid.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "unaccusative"],
@@ -184,7 +184,7 @@
     "translation": "They were embarrassed sick/dead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "inherently reflexive"],
@@ -208,7 +208,7 @@
     "translation": "They robbed us poor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sie haben uns arm be-raubt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -236,7 +236,7 @@
     "translation": "They shot him dead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sie haben ihn tot er-schossen", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -264,7 +264,7 @@
     "translation": "Hans broke the stick broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hans hat den Stock kaputt zer-brochen", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -291,7 +291,7 @@
     "translation": "She wiped the table dry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sie hat den Tisch trocken ab-gewischt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -318,7 +318,7 @@
     "translation": "The baby spat up on me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Das Baby hat mich nass an-gespuckt", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -342,7 +342,7 @@
     "translation": "intended: stop trusting",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outer", "pfx"],
@@ -361,7 +361,7 @@
     "translation": "intended: ride in on a bike",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outer", "prt"],
@@ -380,7 +380,7 @@
     "translation": "intended: cut off into strips",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outer", "pfx"],
@@ -399,7 +399,7 @@
     "translation": "choose",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outer", "prt"],
@@ -421,7 +421,7 @@
     "translation": "She worked herself to complete exhaustion",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["outer", "rsp"],
@@ -440,7 +440,7 @@
     "translation": "selling",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "infinitive"],
@@ -460,7 +460,7 @@
     "translation": "introducing, importing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "infinitive"],
@@ -480,7 +480,7 @@
     "translation": "awake kissing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "infinitive"],
@@ -500,7 +500,7 @@
     "translation": "introduction",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "ung"],
@@ -520,7 +520,7 @@
     "translation": "painting",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "ung"],
@@ -540,7 +540,7 @@
     "translation": "intended: painting",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "ung"],
@@ -560,7 +560,7 @@
     "translation": "attempted: flat hammering",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "ung"],
@@ -580,7 +580,7 @@
     "translation": "attempted: awake kissing",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "ung"],
@@ -600,7 +600,7 @@
     "translation": "running around aimlessly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "geE"],
@@ -620,7 +620,7 @@
     "translation": "kissing awake",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "geE"],
@@ -640,7 +640,7 @@
     "translation": "hammering flat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "geE"],
@@ -660,7 +660,7 @@
     "translation": "intended: painting",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["nominalization", "geE"],

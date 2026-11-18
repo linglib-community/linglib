@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "shifted", "judgment": "acceptable"}
@@ -37,7 +37,7 @@
     "translation": "Bernhard said that Junko had been sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "unacceptable"}
@@ -64,7 +64,7 @@
     "translation": "Bernhard said that Junko was sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -115,7 +115,7 @@
     "translation": "Satoshi left before Junko came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -140,7 +140,7 @@
     "translation": "Satoshi left after Junko came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],
@@ -165,7 +165,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -209,7 +209,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],
@@ -234,7 +234,7 @@
     "translation": "Junko was in her room when Satoshi came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "episodic", "judgment": "acceptable"}
     ],
@@ -261,7 +261,7 @@
     "translation": "Junko was in her room whenever Satoshi came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "habitual", "judgment": "acceptable"}
     ],
@@ -288,7 +288,7 @@
     "translation": "Ania said that Marcin was sick.",
     "context": "Ania said: \"Marcin is sick\".",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -314,7 +314,7 @@
     "translation": "Ania said that Marcin had been sick.",
     "context": "Ania said: \"Marcin was sick\".",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted", "judgment": "acceptable"},
       {"name": "simultaneous", "judgment": "unacceptable"}
@@ -341,7 +341,7 @@
     "translation": "Ania said that it would rain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "posterior", "judgment": "acceptable"}
     ],
@@ -367,7 +367,7 @@
     "translation": "Ania came to the party before Marcin left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -392,7 +392,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -417,7 +417,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -439,7 +439,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "root"],
@@ -459,7 +459,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "root"],
@@ -479,7 +479,7 @@
     "translation": "",
     "context": "I met you in Amherst at 3:00 p.m., and you said \"Satoshi left here at 10:00 a.m. this morning\".",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "veridical", "judgment": "acceptable"},
       {"name": "nonveridical", "judgment": "acceptable"}
@@ -530,7 +530,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "veridical", "judgment": "acceptable"}
     ],
@@ -554,7 +554,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -580,7 +580,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -610,7 +610,7 @@
     "translation": "I saw Lisa after she said she would leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -640,7 +640,7 @@
     "translation": "I saw Lisa before she said she would leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -666,7 +666,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],
@@ -688,7 +688,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "before"],
@@ -713,7 +713,7 @@
     "translation": "Junko left after she said she would.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "unacceptable"}
@@ -743,7 +743,7 @@
     "translation": "I encountered Satoshi in Amherst before you said he had left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "unacceptable"}
@@ -773,7 +773,7 @@
     "translation": "I met Satoshi when Junko said that he left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "upstairs", "judgment": "acceptable"},
       {"name": "downstairs", "judgment": "acceptable"}
@@ -803,7 +803,7 @@
     "translation": "Junko lost her key where Satoshi usually parked his car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "habitual", "judgment": "acceptable"}
     ],
@@ -830,7 +830,7 @@
     "translation": "Junko lost her key where Satoshi parked his car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "episodic", "judgment": "acceptable"}
     ],
@@ -856,7 +856,7 @@
     "translation": "Those who had a habit of coming every week were Hanako and Taroo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "habitual", "judgment": "acceptable"}
     ],
@@ -882,7 +882,7 @@
     "translation": "Those who happened to come every week were Hanako and Taroo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "episodic", "judgment": "acceptable"}
     ],
@@ -908,7 +908,7 @@
     "translation": "Junko will come to Berlin tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "future", "judgment": "acceptable"}
     ],
@@ -933,7 +933,7 @@
     "translation": "Ania came to the party after Marcin left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],
@@ -958,7 +958,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "after"],

@@ -314,13 +314,17 @@ of predicates under `Set`'s order. -/
 instance instSetPi {E : Type*} [DecidableEq ι] : CylindricAlgebra ι (Set (ι → E)) where
   cyl i t := {g | ∃ e, update g i e ∈ t}
   diag i j := {g | g i = g j}
-  cyl_bot := cyl_bot (A := (ι → E) → Prop)
-  le_cyl := le_cyl (A := (ι → E) → Prop)
-  cyl_inf_cyl := cyl_inf_cyl (A := (ι → E) → Prop)
-  cyl_comm := cyl_comm (A := (ι → E) → Prop)
-  diag_self := diag_self (A := (ι → E) → Prop)
-  cyl_diag_inf_diag := cyl_diag_inf_diag (A := (ι → E) → Prop)
-  disjoint_cyl_diag_inf := disjoint_cyl_diag_inf (A := (ι → E) → Prop)
+  cyl_bot i := Set.ext fun g ↦ iff_of_eq (congrFun (cyl_bot (A := (ι → E) → Prop) i) g)
+  le_cyl i t := le_cyl (A := (ι → E) → Prop) i (· ∈ t)
+  cyl_inf_cyl i s t :=
+    Set.ext fun g ↦ iff_of_eq (congrFun (cyl_inf_cyl (A := (ι → E) → Prop) i (· ∈ s) (· ∈ t)) g)
+  cyl_comm i j t :=
+    Set.ext fun g ↦ iff_of_eq (congrFun (cyl_comm (A := (ι → E) → Prop) i j (· ∈ t)) g)
+  diag_self i := Set.ext fun g ↦ iff_of_eq (congrFun (diag_self (A := (ι → E) → Prop) i) g)
+  cyl_diag_inf_diag hij hik :=
+    Set.ext fun g ↦ iff_of_eq (congrFun (cyl_diag_inf_diag (A := (ι → E) → Prop) hij hik) g)
+  disjoint_cyl_diag_inf hij t := Set.disjoint_left.2 fun g h₁ h₂ ↦
+    (disjoint_cyl_diag_inf (A := (ι → E) → Prop) hij (· ∈ t)).le_bot g ⟨h₁, h₂⟩
 
 @[simp]
 theorem mem_cyl {E : Type*} [DecidableEq ι] {t : Set (ι → E)} {g : ι → E} :

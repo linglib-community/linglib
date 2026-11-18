@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Reciprocal
 public import Studies.HeimLasnikMay1991
 public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
+public import Linglib.Syntax.Case.Basic
 public import Linglib.Semantics.Plurality.Groups
 
 /-!
@@ -316,28 +316,28 @@ variable {base : RoleList} {o : EntailmentProfile}
 
 /-- [kayne-1975]'s causative generalization (section 3.3): under *faire*, the causee of an
 object-taking predicate is introduced by dative *à*; an intransitive's causee stays bare. -/
-def causeeRegion (r : RoleList) : CaseRegion :=
-  if r.objectProfile.isSome then .dative else .accAbs
+def causeeCase (r : RoleList) : Case :=
+  if r.objectProfile.isSome then .dat else .acc
 
 /-- Keeping the transitive grid predicts a dative causee and reciprocalization a bare one, and
 French decides for reciprocalization ((25a) against (25d)). -/
 theorem causative_diagnostic (ho : base.objectProfile = some o) :
-    causeeRegion (reciprocalize base) = .accAbs ∧ causeeRegion base = .dative :=
-  ⟨rfl, by simp [causeeRegion, ho]⟩
+    causeeCase (reciprocalize base) = .acc ∧ causeeCase base = .dat :=
+  ⟨rfl, by simp [causeeCase, ho]⟩
 
 /-- The case of a depictive construing with the Theme (section 3.1), accusative if the internal role
 sits on an object (17) and nominative if it sits on the subject. -/
-def themeDepictiveRegion (r : RoleList) : CaseRegion :=
-  if r.objectProfile.isSome then .accAbs else .nomErg
+def themeDepictiveCase (r : RoleList) : Case :=
+  if r.objectProfile.isSome then .acc else .nom
 
 /-- With *se* the theme-oriented depictive is nominative (18), and licitly so since the
 reciprocalized subject bears the object's Proto-Patient entailments; the object-clitic grid predicts
 accusative. -/
 theorem depictive_diagnostic (ho : base.objectProfile = some o) (hp : o.protoPatient.Nonempty) :
-    themeDepictiveRegion (reciprocalize base) = .nomErg ∧
+    themeDepictiveCase (reciprocalize base) = .nom ∧
       (reciprocalize base).subjectProfile.protoPatient.Nonempty ∧
-      themeDepictiveRegion base = .accAbs := by
-  refine ⟨rfl, ?_, by simp [themeDepictiveRegion, ho]⟩
+      themeDepictiveCase base = .acc := by
+  refine ⟨rfl, ?_, by simp [themeDepictiveCase, ho]⟩
   rw [reciprocalize_subjectProfile ho]
   exact hp.mono (EntailmentProfile.protoPatient_mono Finset.subset_union_right)
 

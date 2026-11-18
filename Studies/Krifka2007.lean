@@ -2,7 +2,8 @@ module
 
 public import Linglib.Data.Statistics.Krifka2007
 public import Linglib.Pragmatics.Bidirectional
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Semantics.Degree.Granularity
 public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Mathlib.Probability.UniformOn
@@ -127,8 +128,8 @@ def economy (c : Numeral → ℕ) (p : Numeral × Reading) : ℕ :=
   | .approximate => if ∃ n, Nat.dist n.value p.1.value ≤ 2 ∧ c n < c p.1 then 1 else 0
 
 /-- The paper's tableau ranks truthfulness above economy, over both words on both readings. -/
-def reportTableau (c : Numeral → ℕ) (v : ℕ) : Tableau (Numeral × Reading) 2 :=
-  Tableau.ofList {(.forty, .approximate), (.forty, .precise), (.thirtyNine, .approximate),
+def reports (c : Numeral → ℕ) (v : ℕ) : Finset (Numeral × Reading) :=
+  Constraint.eval {(.forty, .approximate), (.forty, .precise), (.thirtyNine, .approximate),
     (.thirtyNine, .precise)} [inRange v, economy c]
 
 private theorem economy_eq {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) :
@@ -150,9 +151,9 @@ private theorem economy_eq {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) 
 /-- With *forty* the cheaper word, a true value of 39 is reported as *forty* read approximately
 or *thirty-nine* read precisely, and a true value of 40 as *forty* on either reading. -/
 theorem winners_of_true_value {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) :
-    (reportTableau c 39).optimal = {(.forty, .approximate), (.thirtyNine, .precise)} ∧
-      (reportTableau c 40).optimal = {(.forty, .approximate), (.forty, .precise)} := by
-  unfold reportTableau
+    reports c 39 = {(.forty, .approximate), (.thirtyNine, .precise)} ∧
+      reports c 40 = {(.forty, .approximate), (.forty, .precise)} := by
+  unfold reports
   rw [economy_eq h]
   decide
 
@@ -225,7 +226,7 @@ variable {W : Finset ℕ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} 
 
 /-- The speaker chooses the scale of width `w` and reports the scale point nearest the value as
 `n`. -/
-def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
+noncomputable def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
   {w} ×ˢ (nearestMultiple ((w : ℕ) : ℝ) ⁻¹' {(n : ℝ)})
 
 theorem measure_reportedOn_of_dvd [SFinite ν]

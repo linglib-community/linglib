@@ -121,7 +121,7 @@ variable (q : NumberTree)
 theorem usable_iff_reading_of {S : Display → Trivalent} {δ : Designation}
     (htrue : ∀ d, S d = .true → reading q d δ) (hfalse : ∀ d, S d = .false → ¬ reading q d δ)
     (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ Trivalent.ofProp b) = .true)
-    {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ})
+    {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Determines {d | reading q d δ})
     (d : Display) : Homogeneity.usable Q S d ↔ reading q d δ := by
   have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
   exact ⟨fun ⟨⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
@@ -132,7 +132,7 @@ theorem usable_iff_reading_of {S : Display → Trivalent} {δ : Designation}
 variable [DecidableRel q]
 
 theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
-    (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
+    (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Determines {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
   refine usable_iff_reading_of q (fun d' h ↦ ?_) (fun d' h ↦ ?_) (fun c h ↦ ?_) h₁ h₂ d
   · rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff] at h
@@ -336,7 +336,9 @@ theorem krizChemla_asymmetry_of_existential :
 
 section BarLev
 
-open BarLev2021 (atLeast IsReading)
+open BarLev2021 (atom)
+open Exhaustification (atLeastTrue mem_atLeastTrue IsPrunedReading
+  isPrunedReading_polar_atLeastTrue)
 
 variable {α : Type*} (x : Finset α)
 
@@ -351,7 +353,7 @@ variable [DecidableEq α]
 
 /-- The questions (12) and (13) in the model whose worlds are the sets of presents opened. -/
 def Context.question (ctx : Context) : Setoid (Finset α) :=
-  Setoid.polar (atLeast x x BarLev2021.holds (ctx.threshold x))
+  Setoid.polar (atLeastTrue x (atom BarLev2021.holds) (ctx.threshold x))
 
 end
 
@@ -370,10 +372,11 @@ private theorem threshold_le (hx : x.Nonempty) (ctx : Context) : ctx.threshold x
 variable [DecidableEq α]
 
 theorem isReading_question (hx : x.Nonempty) (ctx : Context) :
-    IsReading x x BarLev2021.holds (ctx.question x)
-      (atLeast x x BarLev2021.holds (ctx.threshold x)) :=
-  BarLev2021.isReading_polar_atLeast_holds x x (threshold_pos hx ctx) (by
-    rw [Finset.inter_self]; exact threshold_le hx ctx)
+    IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑x)) (⋃ a ∈ x, atom BarLev2021.holds a)
+      (ctx.question x)
+      (atLeastTrue x (atom BarLev2021.holds) (ctx.threshold x)) :=
+  isPrunedReading_polar_atLeastTrue (BarLev2021.separating_holds x) (threshold_pos hx ctx)
+    (threshold_le hx ctx)
 
 /-- A boy's nine presents, the objects of a cell. -/
 def nine : Finset ℕ := Finset.range 9
@@ -388,10 +391,11 @@ theorem designated_cell (ctx : Context) (n : ℕ) :
 /-- The reading pruning selects for a boy's presents under the context's question holds of the
 presents he opened exactly when the context's standard designates his cell. -/
 theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
-    (hr : IsReading nine nine BarLev2021.holds (ctx.question nine) r) (w : Finset ℕ) :
+    (hr : IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑nine))
+      (⋃ a ∈ nine, atom BarLev2021.holds a) (ctx.question nine) r) (w : Finset ℕ) :
     w ∈ r ↔ ctx.designation.threshold ≤ (cell (nine ∩ w).card) := by
-  rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), BarLev2021.mem_atLeast,
-    BarLev2021.count_holds, Finset.inter_self, designated_cell]
+  rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), mem_atLeastTrue,
+    BarLev2021.trueCount_holds, designated_cell]
 
 theorem barePlural_holds_eq_cell (w : Finset ℕ) :
     Homogeneity.barePlural BarLev2021.holds nine w = cell (nine ∩ w).card := by

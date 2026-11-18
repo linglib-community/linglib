@@ -26,11 +26,6 @@ everywhere](##Model.everywhere_iff).
 * Belief is necessity along a doxastic accessibility relation. Only the properties of stages vary
   with the world; the realization relation and the name of a kind are rigid.
 
-## Errata
-
-* The progressive, p. 450, prints `R(x, y)`, its arguments reversed from pp. 449 and 451.
-* The translation of (135c), p. 454, prints `R(x, d)` with `x` free, for `R(z, d)`.
-
 ## TODO
 
 * The anaphora facts of §1.5 and §2.2 need a dynamic layer.
@@ -143,7 +138,8 @@ lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn* (119). -/
 theorem mem_image_of_mem_image (hk : M.RealizedByInstances inst k)
     (hk' : M.RealizedByInstances inst k') (hsub : ∀ ⦃x⦄, x ~[inst] k → x ~[inst] k')
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
-  (mem_image_iff hk' P).2 <| ((mem_image_iff hk P).1 hP).mono (Set.inter_subset_inter_left _ hsub)
+  (mem_image_iff hk' P).2 <| ((mem_image_iff hk P).1 hP).mono
+    (Set.inter_subset_inter_left _ fun _ hx ↦ hsub hx)
 
 /-- A kind is everywhere exactly when at every place some of its instances are there, the
 universal over places outscoping the existential in *Dogs are everywhere* (135c). -/

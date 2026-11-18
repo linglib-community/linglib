@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "pluralQ"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "singularQ"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "pluralQ"],
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "nonQ"],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "pluralQ"],
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "pluralQ"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "singularQ"],
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licensor", "singularQ"],

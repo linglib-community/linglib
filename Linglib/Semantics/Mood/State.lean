@@ -227,60 +227,43 @@ theorem semiconj_inquire (q : Setoid W) :
 
 /-- Answerhood holds of `p` when `p` is constant on the part of each inquiry cell inside the
 context set. Unlike `boxCs` and `boxLe` it is not upward monotone in `p`. -/
-def boxAns (c : State W) (p : W → Prop) : Prop :=
-  ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry w v → (p w ↔ p v)
+def boxAns (c : State W) (p : W → Prop) : Prop := c.inquiry.DeterminesOn {w | p w} c.info
 
 /-- A state settles `p` exactly when its issue entails the polar question whether `p` relative to
 the context set. -/
 theorem boxAns_iff_le_relativeTo (c : State W) (p : W → Prop) :
-    c.boxAns p ↔ Question.fromSetoid c.inquiry ≤ (Question.polar {w | p w}).relativeTo c.info := by
-  rw [Question.le_def]
-  refine ⟨fun h s hs ↦ ?_, fun h w v hw hv hwv ↦ ?_⟩
-  · rw [Question.mem_props, Question.mem_fromSetoid] at hs
-    rw [Question.mem_props, Question.mem_relativeTo, Question.mem_polar]
-    by_cases hp : ∃ x ∈ c.info ∩ s, p x
-    · obtain ⟨x, hx, hpx⟩ := hp
-      exact Or.inl fun y hy ↦ (h x y hx.1 hy.1 (hs x hx.2 y hy.2)).1 hpx
-    · exact Or.inr fun y hy hpy ↦ hp ⟨y, hy, hpy⟩
-  · have hs : ({w, v} : Set W) ∈ Question.fromSetoid c.inquiry := by
-      rw [Question.mem_fromSetoid]
-      rintro x (rfl | rfl) y (rfl | rfl)
-      exacts [c.inquiry.refl' _, hwv, c.inquiry.symm' hwv, c.inquiry.refl' _]
-    have := h hs
-    rw [Question.mem_props, Question.mem_relativeTo, Question.mem_polar] at this
-    rcases this with hsub | hsub
-    · exact iff_of_true (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
-    · exact iff_of_false (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
+    c.boxAns p ↔ Question.fromSetoid c.inquiry ≤ (Question.polar {w | p w}).relativeTo c.info :=
+  Question.determinesOn_iff_fromSetoid_le_relativeTo _ _ _
 
-theorem boxAns_of_decides (c : State W) {p : W → Prop} (h : c.inquiry.Decides {w | p w}) :
-    c.boxAns p :=
-  fun _ _ _ _ hwv ↦ h.iff hwv
+theorem boxAns_of_determines (c : State W) {p : W → Prop}
+    (h : c.inquiry.Determines {w | p w}) : c.boxAns p :=
+  h.determinesOn _
 
-theorem boxAns_iff_decides {c : State W} (h : c.info = Set.univ) (p : W → Prop) :
-    c.boxAns p ↔ c.inquiry.Decides {w | p w} := by
-  rw [boxAns_iff_le_relativeTo, h, Question.relativeTo_univ, Question.decides_iff_fromSetoid_le]
+theorem boxAns_iff_determines {c : State W} (h : c.info = Set.univ) (p : W → Prop) :
+    c.boxAns p ↔ c.inquiry.Determines {w | p w} := by
+  rw [boxAns, h, Setoid.determinesOn_univ]
 
 theorem boxAns_anti {c₁ c₂ : State W} (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxAns p → c₁.boxAns p :=
-  fun hbox w v hw hv hwv ↦ hbox w v (h.1.1 hw) (h.1.1 hv) (h.2 hwv)
+  fun hbox ↦ (hbox.mono h.1.1).mono_left h.2
 
 /-! The propositions a state settles are closed under the Boolean connectives. -/
 
 theorem boxAns_not (c : State W) (p : W → Prop) :
     c.boxAns p → c.boxAns (fun w ↦ ¬ p w) :=
-  fun hp w v hw hv hwv ↦ not_congr (hp w v hw hv hwv)
+  Setoid.DeterminesOn.compl
 
 theorem boxAns_and (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w ∧ q w) :=
-  fun hp hq w v hw hv hwv ↦ and_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
+  Setoid.DeterminesOn.inter
 
 theorem boxAns_or (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w ∨ q w) :=
-  fun hp hq w v hw hv hwv ↦ or_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
+  Setoid.DeterminesOn.union
 
 theorem boxAns_imp (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w → q w) :=
-  fun hp hq w v hw hv hwv ↦ imp_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
+  fun hp hq _ hw _ hv hwv ↦ imp_congr (hp hw hv hwv) (hq hw hv hwv)
 
 /-! ### Answerhood is not informational necessity -/
 
@@ -295,7 +278,7 @@ def sepProp : Bool → Prop := fun w ↦ w = false
 
 theorem boxAns_not_reducible_to_boxCs :
     ∃ (c : State Bool) (p : Bool → Prop), c.boxAns p ∧ ¬ c.toOrderedInformationState.boxCs p :=
-  ⟨sepInquiry, sepProp, fun w v _ _ hwv ↦ by rw [show w = v from hwv],
+  ⟨sepInquiry, sepProp, Setoid.bot_determines.determinesOn _,
     fun h ↦ Bool.noConfusion (h true trivial)⟩
 
 end State

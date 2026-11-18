@@ -9,7 +9,7 @@
     "translation": "Taroo bought more umbrellas than Hanako did",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "amount_comparative"]
@@ -28,7 +28,7 @@
     "translation": "Taroo bought a longer umbrella than Hanako did",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "degree_comparative"]
@@ -46,7 +46,7 @@
     "translation": "This shelf is taller than that door is wide",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "subcomparative"]
@@ -64,7 +64,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "subcomparative"]
@@ -82,7 +82,7 @@
     "translation": "John bought a book that is more expensive than the book that nobody bought",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negative_island"]
@@ -100,7 +100,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negative_island"]

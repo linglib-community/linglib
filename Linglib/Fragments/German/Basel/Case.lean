@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.German.Determiners
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Basel German case
@@ -51,6 +52,15 @@ def Case.label : Case → _root_.Case
   | nom => .nom
   | acc => .acc
   | dat => .dat
+
+/-- The functions a case marks: the dative also marks the possessor (§193). -/
+def Case.functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .possessor}
+  | c => c.label.functions
+
+theorem Case.label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
+  cases c <;> decide
 
 /-- The forms of the definite article (§83): *der* in the masculine and *s* in the neuter
 nominative and accusative singular, *d* or *die* in the feminine singular and the plural, *em*

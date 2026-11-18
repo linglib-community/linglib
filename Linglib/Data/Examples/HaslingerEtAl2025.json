@@ -45,7 +45,7 @@
     "translation": "Each dog just ate a total of three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -122,7 +122,7 @@
     "translation": "The dogs just each ate a total of three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -195,7 +195,7 @@
     "translation": "All the dogs just ate a total of three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -268,7 +268,7 @@
     "translation": "Three dogs just ate a total of three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -341,7 +341,7 @@
     "translation": "The dogs just ate a total of three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -414,7 +414,7 @@
     "translation": "The dogs have just eaten three sausages each.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -483,7 +483,7 @@
     "translation": "Every dog just ate three sausages.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -556,7 +556,7 @@
     "translation": "The dogs have just eaten three sausages each.",
     "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -626,7 +626,7 @@
     "translation": "There are two magnets in each of the boxes!",
     "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -688,7 +688,7 @@
     "translation": "There are two magnets in every box!",
     "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -762,7 +762,7 @@
     "translation": "The volunteers have two dogs each on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -836,7 +836,7 @@
     "translation": "The volunteers have two dogs each on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -906,7 +906,7 @@
     "translation": "Every volunteer has two dogs on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -979,7 +979,7 @@
     "translation": "Five volunteers have two dogs (each) on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Who are leaving early?", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "unacceptable"}
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -192,7 +192,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -215,7 +215,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -238,7 +238,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -261,7 +261,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "acceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -284,7 +284,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -307,7 +307,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "singular answer", "judgment": "unacceptable"},
       {"name": "plural answer", "judgment": "acceptable"}
@@ -353,7 +353,7 @@
     "translation": "but I don't remember who.",
     "context": "One of my friends called",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "pero no me acuerdo quiénes", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -377,7 +377,7 @@
     "translation": "but I don't remember who.",
     "context": "At least one person called",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "pero no me acuerdo quiénes", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -402,7 +402,7 @@
     "translation": "but I don't remember who.",
     "context": "Several friends called",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "pero no me acuerdo quién", "judgment": "questionable"}
     ],
     "readings": [],
@@ -429,7 +429,7 @@
     "translation": "Juan doesn't know which friends will come to the party",
     "context": "Juan is expecting at least one friend to come to the party.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Juan no sabe quiénes van a venir a la fiesta", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -453,7 +453,7 @@
     "translation": "Who was there at the party?",
     "context": "A context that does not satisfy existence.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "¿Quiénes hay en la fiesta?", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -478,7 +478,7 @@
     "translation": "Juan doesn't know who will come to the party",
     "context": "Juan is expecting at least one of his friends to come with him to the party.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "atLeastOne"],
@@ -500,7 +500,7 @@
     "translation": "Juan doesn't know which friends will come to the party.",
     "context": "Juan is expecting at least one friend to come to the party, but two or more might come.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Juan no sabe qué amigo van a venir", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -524,7 +524,7 @@
     "translation": "Who is in there?",
     "context": "Mary and John arrive at their apartment, where there is supposed to be no one. They hear two people whispering inside. Mary asks:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "¿Quiénes está ahí?", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -550,7 +550,7 @@
     "translation": "Who entered the room?",
     "context": "The speaker isn't certain if anyone entered the room, but if someone did, it was at least two people.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "¿Quénes entraron en la habitación?", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -574,7 +574,7 @@
     "translation": "Who formed a group?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "two-group answer", "judgment": "acceptable"}
     ],
@@ -597,7 +597,7 @@
     "translation": "Who gathered in the playground?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"]
@@ -617,7 +617,7 @@
     "translation": "Who formed a group?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"]
@@ -637,7 +637,7 @@
     "translation": "Who weighs 300kg?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive answer", "judgment": "acceptable"},
       {"name": "collective answer", "judgment": "unacceptable"}
@@ -661,7 +661,7 @@
     "translation": "Who drank 40 beers together?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "¿Quién bebió 40 cervezas juntos?", "judgment": "unacceptable"}
     ],
     "readings": [],

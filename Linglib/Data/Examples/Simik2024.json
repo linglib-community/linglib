@@ -11,7 +11,7 @@
     "translation": "Has Marek cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interPPQ"],
@@ -33,7 +33,7 @@
     "translation": "Hasn't Marek cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interNPQ"],
@@ -55,7 +55,7 @@
     "translation": "Marek has cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declPPQ"],
@@ -77,7 +77,7 @@
     "translation": "Marek hasn't cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declNPQ"],
@@ -100,7 +100,7 @@
     "translation": "Has Marek cleaned the third floor too?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interPPQ"],
@@ -123,7 +123,7 @@
     "translation": "Hasn't Marek cleaned the third floor too?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interNPQ"],
@@ -146,7 +146,7 @@
     "translation": "Marek has cleaned the third floor too?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declPPQ"],
@@ -169,7 +169,7 @@
     "translation": "Marek hasn't cleaned the third floor too?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declNPQ"],
@@ -191,7 +191,7 @@
     "translation": "Has Marek cleaned the third floor?",
     "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interPPQ"],
@@ -213,7 +213,7 @@
     "translation": "Hasn't Marek cleaned the third floor?",
     "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interNPQ"],
@@ -235,7 +235,7 @@
     "translation": "Marek has cleaned the third floor?",
     "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declPPQ"],
@@ -257,7 +257,7 @@
     "translation": "Marek hasn't cleaned the third floor?",
     "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declNPQ"],
@@ -279,7 +279,7 @@
     "translation": "Has Marek cleaned the third floor?",
     "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interPPQ"],
@@ -301,7 +301,7 @@
     "translation": "Has Marek cleaned the third floor?",
     "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interNPQ"],
@@ -323,7 +323,7 @@
     "translation": "Marek has cleaned the third floor?",
     "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declPPQ"],
@@ -345,7 +345,7 @@
     "translation": "Marek hasn't cleaned the third floor?",
     "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declNPQ"],
@@ -367,7 +367,7 @@
     "translation": "Has Marek cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interPPQ"],
@@ -390,7 +390,7 @@
     "translation": "Hasn't Marek cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "interNPQ"],
@@ -413,7 +413,7 @@
     "translation": "Marek has cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declPPQ"],
@@ -436,7 +436,7 @@
     "translation": "Marek hasn't cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "declNPQ"],
@@ -460,7 +460,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -480,7 +480,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -500,7 +500,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -520,7 +520,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -543,7 +543,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -563,7 +563,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -583,7 +583,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -603,7 +603,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -626,7 +626,7 @@
     "translation": "Did Emperor Justinian I live up to eighty years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -646,7 +646,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -666,7 +666,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -686,7 +686,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -709,7 +709,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -733,7 +733,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -754,7 +754,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -774,7 +774,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -797,7 +797,7 @@
     "translation": "Did Emperor Justinian I live up to eighty years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -818,7 +818,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -839,7 +839,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -860,7 +860,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -881,7 +881,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -901,7 +901,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -924,7 +924,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -948,7 +948,7 @@
     "translation": "Did Emperor Justinian I not live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -969,7 +969,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -989,7 +989,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -1009,7 +1009,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -1029,7 +1029,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -1052,7 +1052,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -1076,7 +1076,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -1100,7 +1100,7 @@
     "translation": "Didn't Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1121,7 +1121,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -1142,7 +1142,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -1162,7 +1162,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -1185,7 +1185,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -1209,7 +1209,7 @@
     "translation": "Did Emperor Justinian I not live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "clauseInitialParticle"],
@@ -1233,7 +1233,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1254,7 +1254,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1275,7 +1275,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -1295,7 +1295,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbMovement"],
@@ -1318,7 +1318,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1339,7 +1339,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1360,7 +1360,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -1380,7 +1380,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "declarative"],
@@ -1403,7 +1403,7 @@
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1424,7 +1424,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "verbAttachedParticle"],
@@ -1445,7 +1445,7 @@
     "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "intonation"],
@@ -1467,7 +1467,7 @@
     "translation": "Doesn't Max have some objections?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -1489,7 +1489,7 @@
     "translation": "Doesn't Max have any objections?",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -1512,7 +1512,7 @@
     "translation": "Does Max have some objections, by any chance?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -1535,7 +1535,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -1558,7 +1558,7 @@
     "translation": "Does Max have some objections, by any chance?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "positive"],

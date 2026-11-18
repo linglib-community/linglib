@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the telling overlaps the missing", "judgment": "acceptable"},
       {"name": "anteriority: the missing precedes the telling", "judgment": "acceptable"}
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the pregnancy overlaps John's now", "judgment": "acceptable"},
       {"name": "anteriority: the pregnancy precedes John's now", "judgment": "acceptable"}
@@ -47,7 +47,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "double access: the pregnancy contains the believing time and the utterance time", "judgment": "acceptable"},
       {"name": "nonpast: the pregnancy overlaps John's now only", "judgment": "ungrammatical"}
@@ -66,7 +66,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the pregnancy overlaps the finding out", "judgment": "acceptable"}
     ],
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "double access: the pregnancy contains the finding out and the utterance time", "judgment": "unacceptable"}
     ],
@@ -108,7 +108,7 @@
     "translation": "A week ago, Dan decided that in ten days, at breakfast, he would tell his mother that he misses her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the telling overlaps the missing", "judgment": "acceptable"}
     ],
@@ -132,7 +132,7 @@
     "translation": "A week ago, Dan decided that in ten days, at breakfast, he would tell his mother that he missed her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "anteriority: the missing precedes the telling", "judgment": "acceptable"},
       {"name": "nonpast: the telling overlaps the missing", "judgment": "ungrammatical"}
@@ -154,7 +154,7 @@
     "translation": "In 1963 Kostas told us that Maria is pregnant.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the pregnancy overlaps the telling", "judgment": "acceptable"}
     ],
@@ -175,7 +175,7 @@
     "translation": "In 1963 Kostas told us that Maria was pregnant.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "nonpast: the pregnancy overlaps the telling", "judgment": "acceptable"}
     ],

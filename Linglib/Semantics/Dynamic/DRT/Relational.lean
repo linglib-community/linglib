@@ -19,7 +19,7 @@ boxes. A DRS is true under an input when some output is related to it.
 
 ## Main statements
 
-* `DRT.verifies_neg_toRel`: complex conditions are the connectives of `Update` on these relations.
+* `DRT.verifies_neg_toRel`: complex conditions are domains and cores of these relations.
 * `DRT.DRS.toRel_merge`: under freshness, `merge` denotes composition, by `Update.box_comp_box`.
 * `DRT.DRS.trueRel_iff_exists_verifies`: on a reuse-free DRS, truth agrees with partial embeddings.
 
@@ -38,7 +38,7 @@ constant discourse referents, which the DRSs here do not have.
 
 open FirstOrder FirstOrder.Language
 open DynamicSemantics (Update RegisterStructure)
-open DynamicSemantics.Update (neg impl disj box box_comp_box mem_box_iff)
+open DynamicSemantics.Update (box box_comp_box mem_box_iff)
 open SetRel
 
 namespace DRT
@@ -70,18 +70,20 @@ theorem DRS.trueRel_iff_exists_extends (K : DRS L V) (a : V → M) :
 
 /-! ### The connectives (SEM2) -/
 
-/-- A negated sub-DRS is the spine's `neg` of its box relation. -/
+/-- A negated sub-DRS is verified where its box relation has no output. -/
 theorem verifies_neg_toRel (K : DRS L V) (f : V → M) :
-    VerifiesConditionTotal f (.neg K) ↔ f ∈ neg (DRS.toRel K) := by
-  simp only [verifiesTotal_neg, DynamicSemantics.Update.mem_neg, DRS.toRel_iff]
+    VerifiesConditionTotal f (.neg K) ↔ f ∈ (DRS.toRel K : Update (V → M)).domᶜ := by
+  simp only [verifiesTotal_neg, Set.mem_compl_iff, mem_dom, DRS.toRel_iff]
 
 theorem verifies_imp_toRel (a c : DRS L V) (f : V → M) :
-    VerifiesConditionTotal f (.imp a c) ↔ f ∈ impl (DRS.toRel a) (DRS.toRel c) := by
-  simp only [verifiesTotal_imp, DynamicSemantics.Update.mem_impl, DRS.toRel_iff, and_imp]
+    VerifiesConditionTotal f (.imp a c) ↔
+      f ∈ (DRS.toRel a).core (DRS.toRel c : Update (V → M)).dom := by
+  simp only [verifiesTotal_imp, mem_core, mem_dom, DRS.toRel_iff, and_imp]
 
 theorem verifies_dis_toRel (l r : DRS L V) (f : V → M) :
-    VerifiesConditionTotal f (.dis l r) ↔ f ∈ disj (DRS.toRel l) (DRS.toRel r) := by
-  simp only [verifiesTotal_dis, DynamicSemantics.Update.mem_disj, DRS.toRel_iff]
+    VerifiesConditionTotal f (.dis l r) ↔
+      f ∈ (DRS.toRel l).dom ∪ (DRS.toRel r : Update (V → M)).dom := by
+  simp only [verifiesTotal_dis, Set.mem_union, mem_dom, DRS.toRel_iff]
 
 /-! ### Truth -/
 

@@ -124,7 +124,7 @@ theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.pronouns,
+theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.personal,
     HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
   decide
 

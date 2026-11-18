@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BonehDoron2013
 public import Linglib.Semantics.Genericity.Normality
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
 public import Studies.IatridouEtAl2001
@@ -36,16 +36,6 @@ time, and *would* is Gen with a restriction and an interval from the context.
   setting the left boundary of its span. With *used to* the chapter reads *since then* as a
   reference interval stretching to the perspective time.
 
-## Errata
-
-* The denotations (18) and (19) make (42c) true in its context (`usedTo_hab_of_single_trip`).
-  Its falsity rests on an assumption the chapter states only in prose in §6.3.2, that a property
-  characterizes an interval only if the interval is extended and the property is actualized at
-  both of its ends (`Characterizes`).
-* The second disjunct of (22b), `∃Q Gen(P_C, Q, i_C, w)`, holds of every restriction through the
-  empty restrictor, since Gen (21) has no existential import, so (22b) does not constrain the
-  context.
-
 ## TODO
 
 * Telling (2c) from (2d) by (22b) needs Gen to presuppose that its restrictor is nonempty.
@@ -74,7 +64,7 @@ open Aspect (UNBOUNDED PERF durative)
 open Modality (Background simpleNecessity)
 open scoped Denotes
 
-variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-! ### Hab and Gen, (12)–(22) -/
 
@@ -127,20 +117,20 @@ variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p 
 /-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
 precedes, the perspectival past. -/
 def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ (Allen.toSetRel Allen.precedes).preimage (A w)
+  fun w ↦ (IntervalAlgebra.toSetRel .precedes).preimage (A w)
 
 /-- *Used to*, (18): the retrospective over the imperfective (19a). -/
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   retro (UNBOUNDED P)
 
-theorem usedTo_eq_image : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).image
-    ((Allen.toSetRel Allen.le).image (τ '' {e | P w e})) := by
-  rw [usedTo, retro, Allen.toSetRel_inv, SetRel.image_inv, Aspect.unbounded_eq_image]
+theorem usedTo_eq_image : usedTo P w = (IntervalAlgebra.toSetRel IntervalAlgebra.precedes⁻¹).image
+    ((IntervalAlgebra.toSetRel .le).image (τ '' {e | P w e})) := by
+  rw [usedTo, retro, IntervalAlgebra.toSetRel_inv, SetRel.image_inv, Aspect.unbounded_eq_image]
 
 /-- The composite of the retrospective and the imperfective: the state began before the
 perspective time, and may have ended at any time after that. -/
 theorem comp_retro_imperfective :
-    Allen.comp (Allen.inv Allen.precedes) Allen.le = Finset.univ.filter (·.fstFst = .gt) := by
+    IntervalAlgebra.le * IntervalAlgebra.precedes⁻¹ = .ofPred (·.fstFst = .gt) := by
   decide +kernel
 
 /-- *Used to* says only that a state began before the perspective time, which the state may
@@ -149,24 +139,24 @@ theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fs
   constructor
   · intro h
     rw [usedTo_eq_image] at h
-    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := Allen.image_toSetRel_subset_comp _ h
-    rw [Allen.mem_toSetRel, comp_retro_imperfective] at h
-    exact ⟨e, hP, compare_gt_iff_gt.1 (Finset.mem_filter.1 h).2⟩
+    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := IntervalAlgebra.image_toSetRel_subset_mul _ h
+    rw [IntervalAlgebra.mem_toSetRel, comp_retro_imperfective] at h
+    exact ⟨e, hP, compare_gt_iff_gt.1 (IntervalAlgebra.mem_ofPred.1 h)⟩
   · rintro ⟨e, hP, hlt⟩
     exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩,
-      Allen.mem_toSetRel.2 (Allen.relation_mem_precedes.2 hlt)⟩
+      IntervalAlgebra.mem_toSetRel.2 (IntervalAlgebra.relation_mem_precedes.2 hlt)⟩
 
 /-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
 theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
   fun ⟨i, hi, hp⟩ ↦
     NonemptyInterval.Precedes.not_overlaps
-      (Allen.relation_mem_precedes.1 (Allen.mem_toSetRel.1 hp)) (h i hi)
+      (IntervalAlgebra.relation_mem_precedes.1 (IntervalAlgebra.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two
 form the scale of (32). -/
-theorem usedTo_of_universal (h : (w, t) ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
+theorem usedTo_of_universal (h : ⟨w, t⟩ ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
     .pure t ∈ usedTo P w :=
   let ⟨_, ⟨hlt, hd⟩, _⟩ := h
   let ⟨e, hle, hP⟩ := hd (Set.mem_Iic.2 le_rfl)
@@ -184,7 +174,7 @@ to* does not, (35). -/
 theorem perspective_rows {e : E} (he : P w e) (h₀ : (τ e).fst < t₀) (h₁ : t₀ ≤ t)
     (h₂ : t ≤ (τ e).snd) :
     (.pure t ∈ usedTo P w ∧ .pure t ∈ UNBOUNDED P w ↔ Examples.ex30.judgment = .acceptable) ∧
-    ((w, t) ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
+    (⟨w, t⟩ ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
       Examples.ex33a.judgment = .acceptable) ∧
     (.pure t ∈ retro (fun w ↦ {i | i.fst = t₀ ∧ i.snd = t} ∩ UNBOUNDED P w) w ↔
       Examples.ex33b.judgment = .acceptable) ∧
@@ -283,12 +273,12 @@ restriction, so that *would*, Gen over the trips by (22), is true, (42b); *used 
 (42c), once its reference interval must be characterized by actual trips. -/
 theorem actualization_rows :
     (habit ∈ UNBOUNDED (Hab gnomic indicating bus) false ↔
-      Examples.ex42a.feature? "truthValue" = some "true") ∧
+      Examples.ex42a.verdict = some true) ∧
     ((∃ s, τ s = habit ∧ Hab gnomic indicating toWork false s) ∧
         Gen τ gnomic byBus toWork habit false ↔
-      Examples.ex42b.feature? "truthValue" = some "true") ∧
+      Examples.ex42b.verdict = some true) ∧
     (.pure 5 ∈ retro (fun w ↦ {i | Characterizes bus w i} ∩ UNBOUNDED (Hab gnomic indicating bus) w)
-        false ↔ Examples.ex42c.feature? "truthValue" = some "true") := by
+        false ↔ Examples.ex42c.verdict = some true) := by
   refine ⟨iff_of_true ⟨habit, le_rfl, hab_of_single_trip.1⟩ (by decide),
     iff_of_true ⟨⟨habit, rfl, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩,
       gen_iff.2 fun _ _ h ↦ .of_forall fun _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩

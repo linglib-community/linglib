@@ -172,7 +172,7 @@
   },
   {
    "name": "Significance",
-   "doc": "A printed significance mark; the thresholds differ between tables (*** is .001 in Table 1 and .0001 in Tables 3 and 5).",
+   "doc": "A printed significance mark of the two Tukey tables, Tables 1 and 3, where *** is significance at .0001.",
    "levels": [
     {
      "name": "threeStars",
@@ -643,9 +643,9 @@
   {
    "name": "pairwise1a",
    "structure": "PairwiseA",
-   "doc": "Tukey pairwise comparisons of the projectivity means of the Experiment 1a contents; *** at .001",
-   "locator": "the Tukey table of the Exp. 1a Results (tab:pairwise in the authors' LaTeX); *** is significance at .001, ** at .01, * at .05, . marginal at .1",
-   "verified": "text-layer",
+   "doc": "Tukey pairwise comparisons of the projectivity means of the Experiment 1a contents; *** at .0001",
+   "locator": "the Tukey table of the Exp. 1a Results, Table 1 (tab:pairwise in the authors' LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1",
+   "verified": "page-image",
    "columns": [
     {
      "name": "first",
@@ -850,8 +850,8 @@
    "name": "pairwise1b",
    "structure": "PairwiseB",
    "doc": "Tukey pairwise comparisons of the projectivity means of the Experiment 1b complements; *** at .0001",
-   "locator": "the Tukey table of the Exp. 1b Results (tab:pairwise-1b in the authors' LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1",
-   "verified": "text-layer",
+   "locator": "the Tukey table of the Exp. 1b Results, Table 3 (tab:pairwise-1b in the authors' LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1",
+   "verified": "page-image",
    "columns": [
     {
      "name": "first",

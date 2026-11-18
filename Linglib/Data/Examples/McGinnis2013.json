@@ -11,7 +11,7 @@
     "translation": "He/she saw you (pl).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -39,7 +39,7 @@
     "translation": "They saw you (sg).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -66,7 +66,7 @@
     "translation": "They saw you (pl).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -93,7 +93,7 @@
     "translation": "They saw you (pl).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -121,7 +121,7 @@
     "translation": "She/he saw you (sg).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -148,7 +148,7 @@
     "translation": "I saw them.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "1"],
@@ -175,7 +175,7 @@
     "translation": "We saw him/her/it/them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "1"],
@@ -203,7 +203,7 @@
     "translation": "I saw them.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "1"],
@@ -231,7 +231,7 @@
     "translation": "I saw him/her/it/them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "1"],
@@ -258,7 +258,7 @@
     "translation": "... that he/she see you (sg)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -286,7 +286,7 @@
     "translation": "... that he/she see you (pl)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -314,7 +314,7 @@
     "translation": "... that he/she see you (pl)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -343,7 +343,7 @@
     "translation": "... that he/she see you (pl)",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -372,7 +372,7 @@
     "translation": "You (pl) saw us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "2"],
@@ -400,7 +400,7 @@
     "translation": "He/she saw me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -427,7 +427,7 @@
     "translation": "He/she saw us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -454,7 +454,7 @@
     "translation": "He/she saw us.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],
@@ -482,7 +482,7 @@
     "translation": "They saw us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subjPerson", "3"],

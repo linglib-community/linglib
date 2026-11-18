@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "some")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "all")] }
 
@@ -50,7 +50,7 @@ def fk_all : Datum :=
     glossedTokens := []
     context := "Farmer Brown opened boxes 1 and 2, each visibly containing two red foam cubes, and looked into box 3, whose contents the participant cannot see; asked whether Farmer Brown knows what is in box 3, the participant answered yes. Asked afterwards: Do you think there are red cubes in this box (box 3)?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "all"), ("boxesSeen", "3"), ("expectedResponse", "yes")] }
 
@@ -64,7 +64,7 @@ def fk_some : Datum :=
     glossedTokens := []
     context := "Farmer Brown opened boxes 1 and 2, each visibly containing two red foam cubes, and looked into box 3, whose contents the participant cannot see; asked whether Farmer Brown knows what is in box 3, the participant answered yes. Asked afterwards: Do you think there are red cubes in this box (box 3)?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "3"), ("expectedResponse", "no")] }
 
@@ -78,7 +78,7 @@ def pk_some : Datum :=
     glossedTokens := []
     context := "Farmer Brown opened boxes 1 and 2, each visibly containing two red foam cubes, and did not look into box 3, whose contents the participant cannot see; asked whether Farmer Brown knows what is in box 3, the participant answered no. Asked afterwards: Do you think there are red cubes in this box (box 3)?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "2"), ("expectedResponse", "dontKnow")] }
 

@@ -1,13 +1,14 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Yakut (Sakha) case
 
 Sakha has eight cases: nominative, accusative, genitive, dative, ablative, instrumental,
-comitative and partitive. The genitive is homophonous with the nominative except after a
+comitative and partitive. There is no locative: the dative expresses location, and the old
+locative suffix marks the partitive. The genitive is homophonous with the nominative except after a
 third-person possessive suffix. [baker-vinokurova-2010]'s account of how the structural cases
 are assigned is in `Studies/BakerVinokurova2010.lean`. The suffixes are [stachowski-menz-1998]'s
 (p. 421), who count no genitive and add a comparative in *-TĀγAr*; the comitative is *-LĪn*, after
@@ -60,6 +61,17 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | com => .com
   | part => .part
+
+/-- The functions a case marks: the dative has taken over the function of the old
+locative ([stachowski-menz-1998] p. 421). -/
+def Case.functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .spatial none .place}
+  | abl => {.spatial none .source}
+  | c => c.label.functions
+
+theorem Case.label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
+  cases c <;> decide
 
 /-- The suffixes of a case. -/
 def Case.exponents : Case → List Morphology.Morph

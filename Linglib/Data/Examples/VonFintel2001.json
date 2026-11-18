@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection: no five dollars without mowing", "judgment": "questionable"},
       {"name": "strengthening: the five dollars are not free for the taking", "judgment": "acceptable"}
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "conditional perfection"]
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "conditional perfection"]
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "conditional perfection"]
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection", "judgment": "unacceptable"},
       {"name": "strengthening: the object is not necessarily not Polyglas", "judgment": "acceptable"}
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "An information-seeking dialogue on whether the cactus is an Astrophytum.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection", "judgment": "unacceptable"},
       {"name": "strengthening: it is not settled that the cactus is not an Astrophytum", "judgment": "acceptable"}
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection", "judgment": "unacceptable"}
     ],
@@ -156,7 +156,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection", "judgment": "unacceptable"}
     ],
@@ -177,7 +177,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection", "judgment": "unacceptable"},
       {"name": "strengthening: it is not settled that John will be replaced", "judgment": "acceptable"}
@@ -199,7 +199,7 @@
     "translation": "",
     "context": "Uttered by the wealthy aunt of an uninspired C-average high school student.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection: the student must avoid an A", "judgment": "unacceptable"},
       {"name": "strengthening: no $5 for another C", "judgment": "acceptable"}
@@ -221,7 +221,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "not only some but all", "judgment": "acceptable"},
       {"form": "not only John but John and Mary", "judgment": "acceptable"}
     ],
@@ -244,7 +244,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "not only John but only John", "judgment": "unacceptable"},
       {"form": "not only John but John and not Mary", "judgment": "unacceptable"}
     ],
@@ -267,7 +267,7 @@
     "translation": "",
     "context": "A sign on public transportation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection: only the disabled or the over-70 may sit here", "judgment": "acceptable"}
     ],
@@ -292,7 +292,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exhaustive: Robin and Hilary and nobody else", "judgment": "acceptable"}
     ],
@@ -316,7 +316,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exhaustive: Robin comes only if there is vegetarian food", "judgment": "acceptable"}
     ],
@@ -341,7 +341,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Q: Will the TV work if it is humid? A: Yes, the TV will work if it is humid.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -368,7 +368,7 @@
     "translation": "",
     "context": "Implicit question: what of current interest follows from John's being in Amherst today?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "perfection: he is home late only if in Amherst", "judgment": "unacceptable"}
     ],
@@ -393,7 +393,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exhaustive", "judgment": "unacceptable"}
     ],
@@ -417,7 +417,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "relativized perfection: a call before midnight will not upset her about its time", "judgment": "acceptable"},
       {"name": "full perfection: nothing but a call after midnight upsets her", "judgment": "unacceptable"}

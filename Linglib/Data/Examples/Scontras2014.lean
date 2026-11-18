@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "selection")] }
 
@@ -37,7 +37,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pound"), ("nounClass", "measureTerm"), ("diagnostic", "quantifier")] }
 
@@ -50,7 +50,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "quantifier")] }
 
@@ -63,7 +63,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "quantifier")] }
 
@@ -76,7 +76,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "slice"), ("nounClass", "atomizer"), ("diagnostic", "modifier")] }
 
@@ -89,7 +89,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "pound"), ("nounClass", "measureTerm"), ("diagnostic", "modifier")] }
 
@@ -102,7 +102,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bucket"), ("nounClass", "containerNoun"), ("diagnostic", "-ful"), ("reading", "container")] }
 
@@ -115,7 +115,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "bucket"), ("nounClass", "containerNoun"), ("diagnostic", "-ful"), ("reading", "measure")] }
 
@@ -128,7 +128,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "-ful"), ("reading", "container")] }
 
@@ -141,7 +141,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "-ful"), ("reading", "measure")] }
 
@@ -154,7 +154,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "-ful"), ("reading", "atomizing")] }
 
@@ -167,7 +167,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "-ful"), ("reading", "atomizing")] }
 
@@ -180,7 +180,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "they"), ("reading", "container")] }
 
@@ -193,7 +193,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "they"), ("reading", "measure")] }
 
@@ -206,7 +206,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "they"), ("reading", "container")] }
 
@@ -219,7 +219,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "they"), ("reading", "measure")] }
 
@@ -232,7 +232,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "they"), ("reading", "atomizing")] }
 
@@ -245,7 +245,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "they"), ("reading", "atomizing")] }
 
@@ -258,7 +258,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "singularAgreement"), ("reading", "container")] }
 
@@ -271,7 +271,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "singularAgreement"), ("reading", "measure")] }
 
@@ -284,7 +284,7 @@ def ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "singularAgreement"), ("reading", "container")] }
 
@@ -297,7 +297,7 @@ def ex17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "singularAgreement"), ("reading", "measure")] }
 
@@ -310,7 +310,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "singularAgreement"), ("reading", "atomizing")] }
 
@@ -323,7 +323,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "singularAgreement"), ("reading", "atomizing")] }
 
@@ -336,7 +336,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "each"), ("reading", "container")] }
 
@@ -349,7 +349,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "each"), ("reading", "measure")] }
 
@@ -362,7 +362,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "each"), ("reading", "container")] }
 
@@ -375,7 +375,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "each"), ("reading", "measure")] }
 
@@ -388,7 +388,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "each"), ("reading", "atomizing")] }
 
@@ -401,7 +401,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "each"), ("reading", "atomizing")] }
 
@@ -414,7 +414,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "intransitive")] }
 
@@ -427,7 +427,7 @@ def ex80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 
@@ -440,7 +440,7 @@ def ex80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 
@@ -453,7 +453,7 @@ def ex80c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 

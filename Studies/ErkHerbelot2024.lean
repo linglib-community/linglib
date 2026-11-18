@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.Distributions.PolyaUrn
+public import Linglib.Core.Probability.Combinatorics.PolyaUrn
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn

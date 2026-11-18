@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implies: you may have coffee and you may have tea", .acceptable)]
     paperFeatures := [("section", "1")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implies: it might be here and it might be there", .acceptable)]
     paperFeatures := [("section", "1")] }
 
@@ -50,7 +50,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential: either no bathroom, or a bathroom in a funny place", .acceptable)]
     paperFeatures := [("section", "2.1")] }
 
@@ -63,7 +63,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := "It is known that if Ethan is married, he is married to a man."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -76,7 +76,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "It is known that if Ethan is married, he is married to a man."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -89,7 +89,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -102,7 +102,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -115,7 +115,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -128,7 +128,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := [("John owns a shirt, and it's in the wardrobe.", .questionable)]
+    contrasts := [("John owns a shirt, and it's in the wardrobe.", .questionable)]
     readings := []
     paperFeatures := [("section", "2.1")] }
 
@@ -141,7 +141,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := "Wondering how Gennaro paid for dinner."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential: consistent with a credit card he did not pay with", .acceptable), ("universal: every credit card was used to pay", .unacceptable)]
     paperFeatures := [("section", "2.1")] }
 
@@ -154,7 +154,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: it's possible that there's no bathroom in this house", .acceptable), ("entails: it's possible that there's a bathroom in this house in a surprising place", .acceptable)]
     paperFeatures := [("section", "2.2")] }
 
@@ -167,7 +167,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: you may include no appendix", .acceptable), ("entails: you may include an appendix kept to a single page", .acceptable), ("entails: you may keep it to a single page", .unacceptable)]
     paperFeatures := [("section", "2.2")] }
 
@@ -180,7 +180,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -193,7 +193,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -206,7 +206,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := "Answering: Does Kafuku own no car?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -219,7 +219,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.2")] }
 
@@ -232,7 +232,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := "Gennaro has a credit card that he paid with and another that he did not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the context", .acceptable)]
     paperFeatures := [("section", "3.4.2")] }
 
@@ -245,7 +245,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5")] }
 
@@ -258,7 +258,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5")] }
 
@@ -271,7 +271,7 @@ def ex_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: there might be coffee and there might be tea", .acceptable)]
     paperFeatures := [("section", "3.6")] }
 
@@ -284,7 +284,7 @@ def ex_85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: no coffee is possible and no tea is possible", .acceptable)]
     paperFeatures := [("section", "3.6")] }
 
@@ -297,7 +297,7 @@ def ex_110 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: it's possible there's no bathroom, and it's possible there's a bathroom upstairs", .acceptable)]
     paperFeatures := [("section", "5.1")] }
 
@@ -310,7 +310,7 @@ def ex_114 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: some student read The Master and Margarita", .acceptable), ("entails: some student read The White Guard", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
@@ -323,7 +323,7 @@ def ex_116 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: some student didn't read a novel", .acceptable), ("entails: some student read a novel and wrote a report on it", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
@@ -336,7 +336,7 @@ def ex_118 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2")] }
 
@@ -349,7 +349,7 @@ def ex_126 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("entails: if there's no bathroom, this house needs to be renovated", .acceptable), ("entails: if there's a bathroom upstairs, this house needs to be renovated", .acceptable)]
     paperFeatures := [("section", "5.3")] }
 
@@ -362,7 +362,7 @@ def ex_129 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("negative free choice with anaphora", .acceptable)]
     paperFeatures := [("section", "5.4")] }
 

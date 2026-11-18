@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "articles"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativePronouns"],
@@ -47,7 +47,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativePronouns"],
@@ -66,7 +66,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "havePerfect"],
@@ -85,7 +85,7 @@
     "translation": "I have written",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "havePerfect"],
@@ -104,7 +104,7 @@
     "translation": "I have written",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "havePerfect"],
@@ -125,7 +125,7 @@
     "translation": "I have received",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "havePerfect"],
@@ -144,7 +144,7 @@
     "translation": "after",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "havePerfect"],
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "nominativeExperiencers"],
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "nominativeExperiencers"],
@@ -201,7 +201,7 @@
     "translation": "Terry got hit by a snowball",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "participialPassive"],
@@ -220,7 +220,7 @@
     "translation": "melt (tr.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "anticausativeProminence"],
@@ -239,7 +239,7 @@
     "translation": "change (intr.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "anticausativeProminence"],
@@ -258,7 +258,7 @@
     "translation": "The mother is washing the child's hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "dativeExternalPossessors"],
@@ -277,7 +277,7 @@
     "translation": "Someone broke his arm (lit. on him).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "dativeExternalPossessors"],
@@ -296,7 +296,7 @@
     "translation": "Nobody comes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "negativeIndefinitesWithoutVerbalNegation"],
@@ -315,7 +315,7 @@
     "translation": "Nobody (lit. not) comes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "negativeIndefinitesWithoutVerbalNegation"],
@@ -334,7 +334,7 @@
     "translation": "Nobody comes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "negativeIndefinitesWithoutVerbalNegation"],
@@ -353,7 +353,7 @@
     "translation": "Not I have seen nobody.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "negativeIndefinitesWithoutVerbalNegation"],
@@ -372,7 +372,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -391,7 +391,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -410,7 +410,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -429,7 +429,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -448,7 +448,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -467,7 +467,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -486,7 +486,7 @@
     "translation": "as Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -505,7 +505,7 @@
     "translation": "as pretty as you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -524,7 +524,7 @@
     "translation": "EQUATIVE Z with X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -543,7 +543,7 @@
     "translation": "equally Z as X",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "relativeBasedEquative"],
@@ -562,7 +562,7 @@
     "translation": "you (pl.) work",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "strictAgreement"],
@@ -581,7 +581,7 @@
     "translation": "you work",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "strictAgreement"],
@@ -600,7 +600,7 @@
     "translation": "I/you/he bite(s)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "strictAgreement"],
@@ -619,7 +619,7 @@
     "translation": "reflexive / intensifier",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "intensifierReflexiveDifferentiation"],
@@ -638,7 +638,7 @@
     "translation": "reflexive / intensifier",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "intensifierReflexiveDifferentiation"],
@@ -657,7 +657,7 @@
     "translation": "reflexive / intensifier",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "intensifierReflexiveDifferentiation"],
@@ -676,7 +676,7 @@
     "translation": "reflexive / intensifier",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "intensifierReflexiveDifferentiation"],
@@ -697,7 +697,7 @@
     "translation": "Hushang saw himself",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "intensifierReflexiveDifferentiation"],
@@ -718,7 +718,7 @@
     "translation": "the dog is bigger than the cat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "comparativeMarking"],
@@ -737,7 +737,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "comitativeInstrumentalSyncretism"],
@@ -756,7 +756,7 @@
     "translation": "neither A nor B",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["feature", "negativeCoordination"],

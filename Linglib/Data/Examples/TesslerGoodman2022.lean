@@ -24,7 +24,7 @@ def tg2022_tall_basketball : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "superordinate")] }
 
@@ -37,7 +37,7 @@ def tg2022_short_basketball : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "subordinate")] }
 
@@ -50,7 +50,7 @@ def tg2022_tall_jockey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "subordinate")] }
 
@@ -63,7 +63,7 @@ def tg2022_short_jockey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "superordinate")] }
 

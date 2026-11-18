@@ -24,7 +24,7 @@ def ex10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "only John"), ("npi", "ever, any")] }
 
@@ -37,7 +37,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := "Iatridou (p.c.) example relayed by von Fintel."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "since"), ("npi", "any")] }
 
@@ -50,7 +50,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sandy is surprised that Robin ever ate kale.", .acceptable)]
+    contrasts := [("Sandy is surprised that Robin ever ate kale.", .acceptable)]
     readings := []
     paperFeatures := [("licenser", "amazed/surprised"), ("npi", "ever")] }
 
@@ -63,7 +63,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Sandy regrets that Robin bought any car.", .acceptable)]
+    contrasts := [("Sandy regrets that Robin bought any car.", .acceptable)]
     readings := []
     paperFeatures := [("licenser", "sorry/regret"), ("npi", "any")] }
 
@@ -76,7 +76,7 @@ def ex70a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("If he has ever told a lie, he must go to confession.", .acceptable), ("If you had left any later, you would have missed the plane.", .acceptable)]
+    contrasts := [("If he has ever told a lie, he must go to confession.", .acceptable), ("If you had left any later, you would have missed the plane.", .acceptable)]
     readings := []
     paperFeatures := [("licenser", "conditional antecedent"), ("npi", "any, ever")] }
 
@@ -89,7 +89,7 @@ def ex75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("licenser", "superlative"), ("npi", "ever")] }
 

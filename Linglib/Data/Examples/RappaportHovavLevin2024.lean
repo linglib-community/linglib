@@ -25,7 +25,7 @@ def rhl2024_11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -38,7 +38,7 @@ def rhl2024_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -51,7 +51,7 @@ def rhl2024_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "natural phenomenon"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -64,7 +64,7 @@ def rhl2024_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
@@ -77,7 +77,7 @@ def rhl2024_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -90,7 +90,7 @@ def rhl2024_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("surfaceSlot", "subject")] }
 
@@ -103,7 +103,7 @@ def rhl2024_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -116,7 +116,7 @@ def rhl2024_83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "funnel"), ("sense", "instrument"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
@@ -129,7 +129,7 @@ def rhl2024_83b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "mop"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
@@ -143,7 +143,7 @@ def rhl2024_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -157,7 +157,7 @@ def rhl2024_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -171,7 +171,7 @@ def rhl2024_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -184,7 +184,7 @@ def rhl2024_25d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -197,7 +197,7 @@ def rhl2024_25f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -210,7 +210,7 @@ def rhl2024_75b_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -223,7 +223,7 @@ def rhl2024_75a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -236,7 +236,7 @@ def rhl2024_75a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -250,7 +250,7 @@ def rhl2024_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -264,7 +264,7 @@ def rhl2024_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -277,7 +277,7 @@ def rhl2024_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject")] }
 
@@ -290,7 +290,7 @@ def rhl2024_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("causerSlot", "subject")] }
 
@@ -303,7 +303,7 @@ def rhl2024_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("surfaceSlot", "subject")] }
 
@@ -316,7 +316,7 @@ def rhl2024_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("surfaceSlot", "subject")] }
 
@@ -329,7 +329,7 @@ def rhl2024_23 : Datum :=
     glossedTokens := []
     context := "Utah sweeps it [=the gun] under the bed with his foot."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("causerSlot", "subject")] }
 
@@ -343,7 +343,7 @@ def rhl2024_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -357,7 +357,7 @@ def rhl2024_24c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -370,7 +370,7 @@ def rhl2024_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -383,7 +383,7 @@ def rhl2024_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -396,7 +396,7 @@ def rhl2024_28c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -409,7 +409,7 @@ def rhl2024_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -423,7 +423,7 @@ def rhl2024_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -437,7 +437,7 @@ def rhl2024_29c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -450,7 +450,7 @@ def rhl2024_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -463,7 +463,7 @@ def rhl2024_30a_no_dp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -476,7 +476,7 @@ def rhl2024_30a_no_pp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject")] }
 
@@ -489,7 +489,7 @@ def rhl2024_30d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -502,7 +502,7 @@ def rhl2024_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -516,7 +516,7 @@ def rhl2024_62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -530,7 +530,7 @@ def rhl2024_68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -543,7 +543,7 @@ def rhl2024_87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -557,7 +557,7 @@ def rhl2024_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -570,7 +570,7 @@ def rhl2024_33a_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject")] }
 
@@ -583,7 +583,7 @@ def rhl2024_33c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "machine"), ("moverSlot", "subject"), ("path", "pp")] }
 
@@ -597,7 +597,7 @@ def rhl2024_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "animate"), ("moverSlot", "subject"), ("path", "pp")] }
 
@@ -610,7 +610,7 @@ def rhl2024_34_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "animate"), ("moverSlot", "subject")] }
 
@@ -623,7 +623,7 @@ def rhl2024_62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -637,7 +637,7 @@ def rhl2024_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -650,7 +650,7 @@ def rhl2024_66c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -664,7 +664,7 @@ def rhl2024_66d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -677,7 +677,7 @@ def rhl2024_67a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -690,7 +690,7 @@ def rhl2024_67b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -703,7 +703,7 @@ def rhl2024_68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -717,7 +717,7 @@ def rhl2024_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
@@ -731,7 +731,7 @@ def rhl2024_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -745,7 +745,7 @@ def rhl2024_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
@@ -759,7 +759,7 @@ def rhl2024_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -773,7 +773,7 @@ def rhl2024_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -787,7 +787,7 @@ def rhl2024_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -801,7 +801,7 @@ def rhl2024_38d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -815,7 +815,7 @@ def rhl2024_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -829,7 +829,7 @@ def rhl2024_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -843,7 +843,7 @@ def rhl2024_39c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -857,7 +857,7 @@ def rhl2024_39d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
@@ -871,7 +871,7 @@ def rhl2024_40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
@@ -885,7 +885,7 @@ def rhl2024_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 

@@ -25,7 +25,7 @@ def haiDimenticato : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8.10")] }
 
@@ -39,7 +39,7 @@ def ceNessuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8.10")] }
 
@@ -53,7 +53,7 @@ def ceNiente : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8.10")] }
 
@@ -67,7 +67,7 @@ def nonCredo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -81,7 +81,7 @@ def senzaNiente : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -95,7 +95,7 @@ def senzaDentroNessuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -109,7 +109,7 @@ def nonHaAlcun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -123,7 +123,7 @@ def nonHoVistoAlcuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -137,7 +137,7 @@ def senzaAlcuno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9.11")] }
 
@@ -151,7 +151,7 @@ def nonGlieloDaro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.16")] }
 
@@ -165,7 +165,7 @@ def haiMaiLetto : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.16")] }
 
@@ -179,7 +179,7 @@ def piuDolce : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.16")] }
 
@@ -193,7 +193,7 @@ def affattoSparito : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.17")] }
 
@@ -207,7 +207,7 @@ def affattoFascista : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.17")] }
 
@@ -221,7 +221,7 @@ def piuCheMai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "16.7")] }
 
@@ -235,7 +235,7 @@ def nonEArrivato : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -249,7 +249,7 @@ def nonHoAmato : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -263,7 +263,7 @@ def nonVidiNiente : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -277,7 +277,7 @@ def nonLHoMai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -291,7 +291,7 @@ def neancheAScuola : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -305,7 +305,7 @@ def nemmenoInSogno : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -319,7 +319,7 @@ def nessunoEMai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "18.5")] }
 
@@ -333,7 +333,7 @@ def senzaIncontrare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "19.1")] }
 

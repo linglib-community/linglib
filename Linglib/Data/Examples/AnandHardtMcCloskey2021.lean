@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "She will resign")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "100452"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "the new approach saves time"), ("correlate", "time"), ("correlate_type", "mass/range"), ("kind", "merger"), ("paraphrase", "the new approach saves"), ("main_predicate", "saves")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "15397"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("tag", "e_type"), ("e_type_span", "one of the kids")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("minimal antecedent (4)", .acceptable), ("larger antecedent (5): those thousands upon thousands of people clustered around that box, listening", .acceptable)]
     paperFeatures := [("corpus_id", "36225"), ("remnant", "to what"), ("position", "embedded"), ("qembedder", "matter"), ("antecedent", "thousands upon thousands of people ... listening"), ("antecedent_status", "discontinuous"), ("paraphrase", "those thousands upon thousands of people were listening"), ("mismatch", "new_words"), ("new_words", "copula")] }
 
@@ -76,7 +76,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "57485"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "the mortality pattern ... to be so abrupt and sudden from women"), ("antecedent_status", "discontinuous"), ("paraphrase", "the mortality pattern was so abrupt and sudden from women"), ("mismatch", "tense"), ("mismatch_detail", "finiteness")] }
 
@@ -89,7 +89,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "100549"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("correlate", "some difference"), ("kind", "merger")] }
 
@@ -102,7 +102,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "100447"), ("remnant", "which way"), ("position", "embedded"), ("qembedder", "say"), ("kind", "sprouting")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("absolute number of employees", .acceptable), ("comparative: how many more (9)", .acceptable)]
     paperFeatures := [("corpus_id", "44148"), ("remnant", "how many"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "say"), ("tag", "remnant_ellipsis")] }
 
@@ -128,7 +128,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "144127"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "I said yes"), ("antecedent_status", "cataphoric")] }
 
@@ -141,7 +141,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("A lot of people, I don't know for what reason they are telling lies, are telling lies.", .questionable)]
+    contrasts := [("A lot of people, I don't know for what reason they are telling lies, are telling lies.", .questionable)]
     readings := []
     paperFeatures := [("corpus_id", "57184"), ("remnant", "for what reason"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "A lot of people ... are telling lies"), ("antecedent_status", "interpolated")] }
 
@@ -154,7 +154,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "125447"), ("remnant", "how long"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "that part of the sky ... remained dark for a few seconds"), ("antecedent_status", "discontinuous"), ("paraphrase", "that part of the sky remained dark for")] }
 
@@ -167,7 +167,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "157514"), ("remnant", "in what way"), ("semantic_type", "manner"), ("position", "root"), ("antecedent_status", "coordination"), ("paraphrase", "do you hold them accountable"), ("tag", "ignore")] }
 
@@ -180,7 +180,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "53758"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "say"), ("antecedent_status", "coordination"), ("paraphrase", "Messier has demanded a trade"), ("tag", "ignore")] }
 
@@ -193,7 +193,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "104061"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent_status", "missing"), ("conventionalized", "how much")] }
 
@@ -206,7 +206,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "283235"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent_status", "missing")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "19606"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "root"), ("antecedent_status", "missing"), ("conventionalized", "how much")] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "29529"), ("remnant", "what slowdown"), ("position", "root"), ("antecedent_status", "missing"), ("tag", "echoq"), ("interpretation", "negative existential")] }
 
@@ -245,7 +245,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("remnant", "why not"), ("position", "root"), ("why_not", "free_modal")] }
 
@@ -258,7 +258,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("remnant", "why not"), ("position", "root"), ("why_not", "anaphoric"), ("antecedent", "Frank doesn't believe in minimalism")] }
 
@@ -271,7 +271,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "95457"), ("remnant", "why not"), ("position", "root"), ("why_not", "free_modal"), ("antecedent_status", "missing")] }
 
@@ -284,7 +284,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "241354"), ("remnant", "why not"), ("position", "root"), ("why_not", "free_modal"), ("antecedent_status", "missing")] }
 
@@ -297,7 +297,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "103083"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "root"), ("antecedent_status", "missing"), ("why", "situational")] }
 
@@ -310,7 +310,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "109969"), ("remnant", "why"), ("semantic_type", "reason"), ("antecedent_status", "missing"), ("why", "situational")] }
 
@@ -323,7 +323,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "125278"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Ronnie spending six months in some kind of 'school for boys'"), ("paraphrase", "Ronnie spent six months in some kind of school for boys"), ("mismatch", "tense"), ("mismatch_detail", "gerund antecedent")] }
 
@@ -336,7 +336,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "72508"), ("remnant", "by whom"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "it must have been written"), ("paraphrase", "it was written"), ("mismatch", "tense"), ("mismatch_detail", "modal auxiliary dropped")] }
 
@@ -349,7 +349,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "48694"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "care"), ("antecedent", "are people watching this"), ("paraphrase", "people were watching this"), ("mismatch", "tense"), ("mismatch_detail", "quotation perspective")] }
 
@@ -362,7 +362,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "15852"), ("remnant", "to what extent"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "I'd support him in his efforts and be an investor"), ("paraphrase", "I will support him in his efforts and be an investor"), ("mismatch", "tense"), ("mismatch_detail", "sequence of tense")] }
 
@@ -375,7 +375,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "211474"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "They enter a room"), ("paraphrase", "they entered that room"), ("mismatch", "tense"), ("mismatch_detail", "historical present")] }
 
@@ -388,7 +388,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "138058"), ("remnant", "for how long"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Rob and Mike both still fish"), ("paraphrase", "they {will, might, could, ...} fish"), ("mismatch", "tense"), ("mismatch_detail", "present antecedent, modal or future paraphrase")] }
 
@@ -401,7 +401,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(i) he modal raise the minimum wage", .acceptable), ("(ii) he favored raising the minimum wage", .acceptable)]
     paperFeatures := [("corpus_id", "15642"), ("remnant", "by how much"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "he ... raising the minimum wage"), ("antecedent_status", "discontinuous"), ("paraphrase", "he modal raise the minimum wage"), ("mismatch", "modality")] }
 
@@ -414,7 +414,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("(i) this year's exports modal slow", .acceptable), ("(ii) this year's exports are likely to slow", .acceptable)]
     paperFeatures := [("corpus_id", "54079"), ("remnant", "by how much"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "this year's exports ... to slow"), ("antecedent_status", "discontinuous"), ("paraphrase", "this year's exports modal slow"), ("mismatch", "modality")] }
 
@@ -427,7 +427,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "23721"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "root"), ("antecedent", "to get your student on line"), ("paraphrase", "modal you get your student on line"), ("mismatch", "modality"), ("mismatch_detail", "nonfinite antecedent")] }
 
@@ -440,7 +440,7 @@ def ex_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "30594"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "to push ahead"), ("paraphrase", "Oz Chairman Robert Kory modal push ahead"), ("mismatch", "modality"), ("mismatch_detail", "nonfinite antecedent")] }
 
@@ -453,7 +453,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "142535"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent", "Turn at the next corner"), ("paraphrase", "I modal turn at the next corner"), ("mismatch", "modality"), ("mismatch_detail", "imperative antecedent")] }
 
@@ -466,7 +466,7 @@ def ex_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "47922"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Never pay cash"), ("paraphrase", "you modal never pay cash"), ("mismatch", "modality"), ("mismatch_detail", "imperative antecedent")] }
 
@@ -479,7 +479,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "F50"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "reveal"), ("antecedent", "it should have happened"), ("paraphrase", "it modal have happened"), ("mismatch", "modality"), ("mismatch_detail", "ability/possibility modal")] }
 
@@ -492,7 +492,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "205304"), ("remnant", "which one"), ("position", "root"), ("antecedent", "Would you sign my ball"), ("paraphrase", "modal I sign"), ("mismatch", "modality"), ("mismatch_detail", "closest to should")] }
 
@@ -505,7 +505,7 @@ def ex_30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "71495"), ("remnant", "how many"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "enough users opt out"), ("paraphrase", "users modal opt out"), ("mismatch", "modality"), ("mismatch_detail", "necessity modal from the conditional")] }
 
@@ -518,7 +518,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "143606"), ("remnant", "where"), ("semantic_type", "locative"), ("position", "embedded"), ("qembedder", "specify"), ("antecedent", "new power plants in the region"), ("antecedent_status", "small clause"), ("paraphrase", "those new power plants modal be in the region"), ("mismatch", "modality"), ("mismatch_detail", "possibility modal, subclausal antecedent")] }
 
@@ -531,7 +531,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "124186"), ("remnant", "for how long"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "the burglar back"), ("antecedent_status", "small clause"), ("paraphrase", "the burglar modal be back"), ("mismatch", "modality"), ("mismatch_detail", "possibility modal, subclausal antecedent")] }
 
@@ -544,7 +544,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "99992"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Coach O'Leary doesn't do things"), ("paraphrase", "Coach O'Leary did those things"), ("mismatch", "polarity"), ("polarity_context", "without adjunct"), ("reversal", "negative to positive")] }
 
@@ -557,7 +557,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "111174"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Steve Jobs will let it be a boring MacWorld"), ("paraphrase", "Steve Jobs will let it be not a boring MacWorld"), ("mismatch", "polarity"), ("polarity_context", "neg-raising"), ("reversal", "positive to negative")] }
 
@@ -570,7 +570,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "22987"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "explain"), ("antecedent", "Do it"), ("paraphrase", "you did not do it"), ("mismatch", "polarity"), ("polarity_context", "disjunction"), ("reversal", "positive to negative")] }
 
@@ -583,7 +583,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "99105"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent", "Iraq is ready to give full, final and complete disclosure"), ("paraphrase", "Iraq is not ready to give full, final and complete disclosure"), ("mismatch", "polarity"), ("polarity_context", "doubt"), ("reversal", "positive to negative")] }
 
@@ -596,7 +596,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "91594"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "being scared"), ("antecedent_status", "cataphoric"), ("paraphrase", "I was not scared"), ("mismatch", "polarity"), ("polarity_context", "remember"), ("reversal", "positive to negative")] }
 
@@ -609,7 +609,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "41116"), ("remnant", "what"), ("semantic_type", "entity"), ("position", "root"), ("antecedent", "money can't be said to have determined the outcome"), ("paraphrase", "can be said to have determined the outcome"), ("mismatch", "polarity"), ("polarity_context", "QUD with then"), ("reversal", "negative to positive")] }
 
@@ -622,7 +622,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "152316"), ("remnant", "how many times"), ("semantic_type", "degree"), ("position", "root"), ("antecedent", "that doesn't mean all the time"), ("paraphrase", "does it mean"), ("mismatch", "polarity"), ("polarity_context", "QUD with then"), ("reversal", "negative to positive")] }
 
@@ -635,7 +635,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "123640"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "They obviously haven't tried any cases in a long time"), ("paraphrase", "they modal try cases"), ("mismatch", "polarity"), ("polarity_context", "don't know how"), ("reversal", "negative to positive")] }
 
@@ -648,7 +648,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "132033"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Republicans cannot compete with Clinton"), ("paraphrase", "they modal compete with Clinton"), ("mismatch", "polarity"), ("polarity_context", "don't know how"), ("reversal", "negative to positive")] }
 
@@ -661,7 +661,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "138872"), ("remnant", "what decade"), ("position", "root"), ("antecedent", "America was once a better place"), ("paraphrase", "was America a better place in"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
@@ -674,7 +674,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "138731"), ("remnant", "what night"), ("position", "root"), ("antecedent", "they're going to place it"), ("paraphrase", "are they going to place it on"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
@@ -687,7 +687,7 @@ def ex_37c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "195676"), ("remnant", "what period"), ("position", "root"), ("antecedent", "he thought it was a period piece"), ("paraphrase", "DO YOU THINK it IS a piece from"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
@@ -700,7 +700,7 @@ def ex_37d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "89932"), ("remnant", "which firm"), ("semantic_type", "classificatory"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "his father had also been a mutual fund manager"), ("paraphrase", "his father had been a mutual fund manager at"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
@@ -713,7 +713,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "176498"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "a presidential race"), ("antecedent_status", "nominal"), ("paraphrase", "a presidential race modal be"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
@@ -726,7 +726,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "76117"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "a full recovery"), ("antecedent_status", "nominal"), ("paraphrase", "a full recovery modal be"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
@@ -739,7 +739,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "15811"), ("remnant", "how soon"), ("position", "embedded"), ("antecedent", "A cut"), ("antecedent_status", "nominal"), ("paraphrase", "there modal be a cut"), ("mismatch", "new_words"), ("new_words", "existential")] }
 
@@ -752,7 +752,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "135056"), ("remnant", "to what end"), ("position", "root"), ("antecedent", "a long costly court battle"), ("antecedent_status", "nominal"), ("paraphrase", "modal there be a long costly court battle"), ("mismatch", "new_words"), ("new_words", "existential")] }
 
@@ -765,7 +765,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "72082"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "see"), ("antecedent", "lights still on"), ("antecedent_status", "small clause"), ("paraphrase", "lights were still on"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
@@ -778,7 +778,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("corpus_id", "72698"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "a couple of major league teams in Japan, one in Seoul and one in Hawaii"), ("antecedent_status", "cataphoric"), ("paraphrase", "there modal be a couple of major league teams in Japan, one in Seoul, and one in Hawaii"), ("mismatch", "new_words"), ("new_words", "existential")] }
 

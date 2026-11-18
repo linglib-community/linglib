@@ -5,30 +5,37 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Category.Numeral.Composition
-public import Mathlib.Data.List.MinMax
+public import Linglib.Syntax.Category.Numeral.Grammar
+public import Linglib.Fragments.English.Numerals
+public import Linglib.Fragments.Welsh.Numerals
 
 /-!
 # Hurford (2007): A performed practice explains a linguistic universal
 
 This file formalizes Hurford's explanation of the Packing Strategy by the practice of counting.
-A counter goes as far as the recited sequence allows, sets what has been counted aside as a group,
-gathers the groups into one of the next base up once there are enough of them, and counts the
-groups and the remainder the same way. `count` computes the outcome over a language's list of
-bases, and the numerals the Packing Strategy admits are exactly the ones counting produces.
-Hurford's English, Mixtec and Hawaiian illustrations are packed and their starred rearrangements
-are not, while English *twenty one hundred*, one of his rare exceptions, is attested but rejected.
-
-## Main definitions
-
-* `count`: counting with a list of bases
+A counter moves one object at a time and says the next numeral, guided by two maxims: go as far as
+the recited sequence allows before setting a group aside, and gather what has been counted into
+one group whenever the language has a word for a group of that size. Neither maxim compares the
+numeral with any other, yet [each move keeps the numeral
+packed](##Numeral.Number.Packed.next), so [counting reaches the numeral that dividing by the
+highest multiplier builds](##deleteOne_count). English *twenty one hundred*, one of Hurford's
+rare exceptions, is rejected, and [counting forward from *two thousand and ninety nine* does not
+reach it](##English.next_twoThousandNinetyNine).
 
 ## Implementation notes
 
-The trees use the 1975 grammar of `Numeral`, so a DIGIT is a tally and a PHRASE of a bare M is
-`[one M]`. English *million* is the base-power M of value `10 ^ 6`, since the Packing Strategy
-compares only values. The Mixtec bases are the three of the example and the Hawaiian ones the
-seven Hurford lists.
+The English and Welsh numerals are built from the words of the fragments; the Mixtec and
+Hawaiian ones are numerals over numbers, with the three multipliers of the Mixtec example and
+the seven Hurford lists for Hawaiian. A counter says a single group as the bare multiplier, so
+counting is compared with other numerals up to whether *one* is pronounced. `count` at 0 is the
+junk value *one*.
+
+## TODO
+
+The French illustration, *soixante-dix* over \**cinquante vingt*, needs a lexicon whose
+well-formed PHRASEs exclude *septante*, which a list of multipliers does not express. The starred
+and unstarred numerals are typed here as trees rather than read from `Data/Examples` rows, and
+the Mixtec and Hawaiian words have no fragment.
 
 ## References
 
@@ -42,178 +49,309 @@ namespace Hurford2007
 
 open Numeral Number
 
+universe u
+
+variable {α : Type u} (v : α → ℕ) (D M : List α)
+
 /-! ### Counting -/
 
-/-- `count L v` counts `v` objects with the bases `L`. When every base exceeds `v` it recites the
-counting sequence up to `v`; otherwise it sets aside as many groups of the highest base that fits
-as possible, and counts the groups and the remainder the same way. -/
-def count (L : List M) (v : ℕ) : Number :=
-  match h : (L.filter (·.value ≤ v)).argmax M.value with
-  | none => .tally (v - 1)
+/-- `amass v M x e` is one group of a multiplier of `x` objects, when there is such a multiplier,
+and otherwise `e`, Hurford's maxim "Minimize the number of entities you are dealing with". -/
+def amass (x : ℕ) (e : Number α) : Number α :=
+  (M.find? (v · = x)).elim e fun m ↦ .phrase (.base m)
+
+/-- `next v D M e` is the numeral a counter at `e` reaches by moving one more object. The counter
+says the next word of the recited sequence `D`; past the groups set aside the object opens a
+remainder, and a remainder that fills a group of its own adds one to the count of groups, the
+maxim "Go as far as you can with the resources you have". The outcome is amassed at every
+level. -/
+def next : Number α → Number α
+  | .digit d => amass v M (v d + 1) ((D[v d]?).elim (.digit d) .digit)
+  | .phrase p => amass v M (p.value v + 1) ((D[0]?).elim (.phrase p) fun o ↦ .add p (.digit o))
+  | .add (.base m) r => amass v M (v m + r.value v + 1) <|
+      if r.value v + 1 = v m then
+        .phrase (.mul (amass v M 2 ((D[1]?).elim (.digit m) .digit)) m)
+      else .add (.base m) (next r)
+  | .add (.mul n m) r => amass v M (n.value v * v m + r.value v + 1) <|
+      if r.value v + 1 = v m then .phrase (.mul (next n) m) else .add (.mul n m) (next r)
+
+/-- `count v D M x` is the numeral reached by counting `x` objects one at a time, starting from
+the first word of the recited sequence. -/
+def count [Inhabited α] (x : ℕ) : Number α :=
+  (next v D M)^[x - 1] (.digit (D.getI 0))
+
+variable {v D M} {x : ℕ} {e : Number α}
+
+/-- A numeral a counter may hold for `x` objects: packed, generated and of value `x`. -/
+private def Holds (e : Number α) (x : ℕ) : Prop :=
+  e.Packed v M ∧ e.Generated D M ∧ e.value v = x
+
+private theorem holds_amass (he : (∀ m ∈ M, v m ≠ x) → Holds (v := v) (D := D) (M := M) e x) :
+    Holds (v := v) (D := D) (M := M) (amass v M x e) x := by
+  unfold amass
+  cases h : M.find? (v · = x) with
+  | none => exact he fun m hm ↦ by simpa using List.find?_eq_none.1 h m hm
   | some m =>
-    have hm : m.value ≤ v := by simpa using (List.mem_filter.1 (List.argmax_mem h)).2
-    if v % m.value = 0 then .phrase (.mk (count L (v / m.value)) m)
-    else .phraseAnd (.mk (count L (v / m.value)) m) (count L (v % m.value))
-termination_by v
-decreasing_by
-  all_goals have := m.one_lt_value
-  · exact Nat.div_lt_self (by omega) this
-  · exact Nat.div_lt_self (by omega) this
-  · exact (Nat.mod_lt _ (by omega)).trans_le hm
+    have hm := List.mem_of_find?_eq_some h
+    have hx : v m = x := by simpa using List.find?_some h
+    exact ⟨isHighestUnder_self hm, hm, hx⟩
 
-/-- Counting reaches a packed numeral for every positive number. -/
-theorem packed_count (L : List M) {v : ℕ} (hv : 0 < v) :
-    (count L v).Packed {m | m ∈ L} ∧ (count L v).value = v := by
-  induction v using Nat.strong_induction_on with
-  | _ v ih =>
-  rw [count]
-  split
-  · next h =>
-    have hlow : ∀ m ∈ L, v < m.value := fun m hm ↦ by
-      have := List.argmax_eq_none.1 h
-      by_contra hmv
-      have : m ∈ L.filter (·.value ≤ v) := List.mem_filter.2 ⟨hm, by simpa using hmv⟩
-      simp_all
-    exact ⟨packed_tally_iff.2 fun m hm ↦ by have := hlow m hm; omega, by simp; omega⟩
-  · next m h =>
-    have hmL := List.mem_filter.1 (List.argmax_mem h)
-    have hmv : m.value ≤ v := by simpa using hmL.2
-    have hm : m.IsHighestUnder {m | m ∈ L} v := M.isHighestUnder_iff.2 ⟨hmL.1, hmv,
-      fun m' hm' hv' ↦ List.le_of_mem_argmax (List.mem_filter.2 ⟨hm', by simpa using hv'⟩) h⟩
-    have h1 := m.one_lt_value
-    have ihn := ih (v / m.value) (Nat.div_lt_self hv h1) (Nat.div_pos hmv (by omega))
-    split_ifs with hr
-    · exact packed_phrase hm (Nat.dvd_of_mod_eq_zero hr) ihn.1 ihn.2
-    · have ihr := ih (v % m.value) ((Nat.mod_lt _ (by omega)).trans_le hmv) (by omega)
-      exact packed_phraseAnd hm ihn.1 ihn.2 ihr.1 ihr.2
+private theorem holds_digit (hS : IsSystem v D M) (hx : ∀ m ∈ M, x + 1 < v m) :
+    Holds (v := v) (D := D) (M := M) ((D[x]?).elim e .digit) (x + 1) := by
+  obtain ⟨m₀, hm₀, hm₀D⟩ := hS.exists_value_le
+  have hk : x < D.length := by have := hx m₀ hm₀; omega
+  rw [List.getElem?_eq_getElem hk]
+  exact ⟨fun m hm ↦ by rw [hS.value_getElem]; exact hx m hm, List.getElem_mem hk,
+    hS.value_getElem x hk⟩
 
-/-- Over bases with distinct values, the numerals the Packing Strategy admits are exactly the ones
-counting produces. -/
-theorem packed_iff_eq_count {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} :
-    e.Packed {m | m ∈ L} ↔ e = count L e.value := by
-  obtain ⟨hc, hcv⟩ := packed_count L e.value_pos
-  exact ⟨fun he ↦ he.eq_of_value_eq hL hc hcv.symm, fun he ↦ he ▸ hc⟩
+private theorem holds_next (hS : IsSystem v D M) :
+    ∀ {e : Number α}, e.Packed v M → e.Generated D M →
+      Holds (v := v) (D := D) (M := M) (next v D M e) (e.value v + 1)
+  | .digit d, hp, _ => holds_amass fun hne ↦ holds_digit hS fun m hm ↦
+      lt_of_le_of_ne (hp m hm) (hne m hm).symm
+  | .phrase p, hp, hg => holds_amass fun hne ↦ by
+    have hm := Phrase.Packed.isHighestUnder hp
+    have hone := holds_digit (e := .phrase p) (x := 0) hS fun m hm ↦ hS.one_lt_value m hm
+    obtain ⟨m₀, hm₀, hm₀D⟩ := hS.exists_value_le
+    have hk : 0 < D.length := by have := hS.one_lt_value m₀ hm₀; omega
+    rw [List.getElem?_eq_getElem hk] at hone ⊢
+    obtain ⟨hop, hog, hov⟩ := hone
+    have hov : v D[0] = 1 := hov
+    exact ⟨⟨hp, hop, by simpa [Number.value, hov] using hm.succ hne,
+      by simpa [Number.value, hov] using hS.one_lt_value _ hm.mem⟩, ⟨hg, hog⟩,
+      by simp [Number.value, hov]⟩
+  | .add (.base m) r, ⟨hpb, hr, (hm : IsHighestUnder v M (v m + r.value v) m),
+      (hlt : r.value v < v m)⟩, ⟨gm, gr⟩ => holds_amass fun hne ↦ by
+    have hm' := hm.succ hne
+    split_ifs with h
+    · have h2 : Holds (v := v) (D := D) (M := M)
+          (amass v M 2 ((D[1]?).elim (.digit m) .digit)) 2 :=
+        holds_amass fun hne2 ↦ holds_digit hS fun m' hm' ↦
+          lt_of_le_of_ne (hS.one_lt_value m' hm') (hne2 m' hm').symm
+      obtain ⟨h2p, h2g, h2v⟩ := h2
+      refine ⟨⟨?_, h2p⟩, ⟨h2g, gm⟩, ?_⟩
+      · rw [h2v]; rwa [show v m + r.value v + 1 = 2 * v m by omega] at hm'
+      · simp only [Number.value, Phrase.value, h2v]; omega
+    · obtain ⟨hnp, hng, hnv⟩ := holds_next hS hr gr
+      exact ⟨⟨hpb, hnp, by simpa [Phrase.value, Phrase.head, hnv, Nat.add_assoc] using hm',
+        by simp only [hnv, Phrase.head]; omega⟩, ⟨gm, hng⟩,
+        by simp only [Number.value, Phrase.value, hnv]; omega⟩
+  | .add (.mul n m) r, ⟨⟨hpm, hn⟩, hr,
+      (hm : IsHighestUnder v M (n.value v * v m + r.value v) m), (hlt : r.value v < v m)⟩,
+      ⟨⟨gn, gm⟩, gr⟩ => holds_amass fun hne ↦ by
+    have hm' := hm.succ hne
+    split_ifs with h
+    · obtain ⟨hnp, hng, hnv⟩ := holds_next hS hn gn
+      refine ⟨⟨?_, hnp⟩, ⟨hng, gm⟩, ?_⟩
+      · rw [hnv]
+        rwa [show n.value v * v m + r.value v + 1 = (n.value v + 1) * v m by
+          rw [Nat.add_one_mul]; omega] at hm'
+      · simp only [Number.value, Phrase.value, hnv, Nat.add_one_mul]; omega
+    · obtain ⟨hnp, hng, hnv⟩ := holds_next hS hr gr
+      exact ⟨⟨⟨hpm, hn⟩, hnp, by simpa [Phrase.value, Phrase.head, hnv, Nat.add_assoc] using hm',
+        by simp only [hnv, Phrase.head]; omega⟩, ⟨⟨gn, gm⟩, hng⟩,
+        by simp only [Number.value, Phrase.value, hnv]; omega⟩
 
-theorem count_eq_of_packed {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} {v : ℕ}
-    (he : e.Packed {m | m ∈ L}) (hv : e.value = v) : count L v = e :=
-  hv ▸ ((packed_iff_eq_count hL).1 he).symm
+/-- Counting preserves the Packing Strategy: a counter at a packed numeral who moves one more
+object, guided only by the two maxims, reaches a packed numeral. -/
+theorem _root_.Numeral.Number.Packed.next (hS : IsSystem v D M) (hp : e.Packed v M)
+    (hg : e.Generated D M) : (next v D M e).Packed v M :=
+  (holds_next hS hp hg).1
 
-/-- `digit d` is the tally of `d` marks. -/
-abbrev digit (d : ℕ) : Number := .tally (d - 1)
+theorem _root_.Numeral.Number.Generated.next (hS : IsSystem v D M) (hp : e.Packed v M)
+    (hg : e.Generated D M) : (next v D M e).Generated D M :=
+  (holds_next hS hp hg).2.1
+
+theorem value_next (hS : IsSystem v D M) (hp : e.Packed v M) (hg : e.Generated D M) :
+    (next v D M e).value v = e.value v + 1 :=
+  (holds_next hS hp hg).2.2
+
+section count
+
+variable [Inhabited α]
+
+private theorem holds_count (hS : IsSystem v D M) (hx : 0 < x) :
+    Holds (v := v) (D := D) (M := M) (count v D M x) x := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one.2 hx
+  induction k with
+  | zero =>
+    have := holds_digit (e := .digit default) (x := 0) hS fun m hm ↦ hS.one_lt_value m hm
+    obtain ⟨m₀, hm₀, hm₀D⟩ := hS.exists_value_le
+    have hk : 0 < D.length := by have := hS.one_lt_value m₀ hm₀; omega
+    rw [List.getElem?_eq_getElem hk] at this
+    simpa [count, List.getI_eq_getElem _ hk] using this
+  | succ k ih =>
+    obtain ⟨hp, hg, hv⟩ := ih k.succ_pos
+    have := holds_next hS hp hg
+    rw [hv] at this
+    rwa [count, Nat.add_sub_cancel, Function.iterate_succ_apply']
+
+theorem packed_count (hS : IsSystem v D M) (hx : 0 < x) : (count v D M x).Packed v M :=
+  (holds_count hS hx).1
+
+theorem generated_count (hS : IsSystem v D M) (hx : 0 < x) : (count v D M x).Generated D M :=
+  (holds_count hS hx).2.1
+
+theorem value_count (hS : IsSystem v D M) (hx : 0 < x) : (count v D M x).value v = x :=
+  (holds_count hS hx).2.2
+
+/-- Counting `x` objects one at a time reaches the numeral that dividing `x` by the highest
+multiplier that fits builds from the top down, up to whether *one* is pronounced. -/
+theorem deleteOne_count (hS : IsSystem v D M) (hx : 0 < x) :
+    (count v D M x).deleteOne v = ofValue v D M x := by
+  rw [← (packed_count hS hx).ofValue_value hS (generated_count hS hx), value_count hS hx]
+
+theorem _root_.Numeral.Number.Packed.deleteOne_count_value (hS : IsSystem v D M)
+    (hp : e.Packed v M) (hg : e.Generated D M) :
+    (count v D M (e.value v)).deleteOne v = e.deleteOne v := by
+  rw [deleteOne_count hS (value_pos hS hg), hp.ofValue_value hS hg]
+
+end count
 
 /-! ### English -/
 
 namespace English
 
-/-- *hundred* is the M of value `10 ^ 2`. -/
-abbrev hundred : M := .tenPow 1
+open _root_.English.Numerals
 
-/-- *thousand* is the M of value `10 ^ 3`. -/
-abbrev thousand : M := .tenPow 2
+/-- The English numerals over the words of the fragment. -/
+abbrev Num := Number Numeral
 
-/-- *million* is the M of value `10 ^ 6`. [hurford-1975] builds it on *thousand*, with (31),
-p. 35, raising the exponent by one in American English. -/
-abbrev million : M := .tenPow 5
-
-/-- The English bases are *ten*, *hundred*, *thousand* and *million*. -/
-def bases : List M := [.ten, hundred, thousand, million]
-
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
+theorem isSystem : IsSystem Numeral.value digits multipliers :=
+  ⟨by decide, by decide, by decide, by decide⟩
 
 /-- *five million, two thousand, six hundred* is `[[five million] [[two thousand] [six hundred]]]`.
 -/
-def fiveMillionTwoThousandSixHundred : Number :=
-  .phraseAnd (.mk (digit 5) million)
-    (.phraseAnd (.mk (digit 2) thousand) (.phrase (.mk (digit 6) hundred)))
+def fiveMillionTwoThousandSixHundred : Num :=
+  .add (.mul (.digit five) million) (.add (.mul (.digit two) thousand)
+    (.phrase (.mul (.digit six) hundred)))
 
 /-- \**six hundred, two thousand, five million* packs the same PHRASEs the other way round. -/
-def sixHundredTwoThousandFiveMillion : Number :=
-  .phraseAnd (.mk (digit 6) hundred)
-    (.phraseAnd (.mk (digit 2) thousand) (.phrase (.mk (digit 5) million)))
+def sixHundredTwoThousandFiveMillion : Num :=
+  .add (.mul (.digit six) hundred) (.add (.mul (.digit two) thousand)
+    (.phrase (.mul (.digit five) million)))
 
 /-- *six hundred thousand* is `[[six hundred] thousand]`. -/
-def sixHundredThousand : Number :=
-  .phrase (.mk (.phrase (.mk (digit 6) hundred)) thousand)
+def sixHundredThousand : Num :=
+  .phrase (.mul (.phrase (.mul (.digit six) hundred)) thousand)
 
 /-- \**six thousand hundred* is `[[six thousand] hundred]`. -/
-def sixThousandHundred : Number :=
-  .phrase (.mk (.phrase (.mk (digit 6) thousand)) hundred)
+def sixThousandHundred : Num :=
+  .phrase (.mul (.phrase (.mul (.digit six) thousand)) hundred)
+
+/-- *ninety nine* is `[[nine ten] nine]`. -/
+def ninetyNine : Num := .add (.mul (.digit nine) ten) (.digit nine)
+
+/-- *two thousand and ninety nine* is `[[two thousand] [ninety nine]]`. -/
+def twoThousandNinetyNine : Num := .add (.mul (.digit two) thousand) ninetyNine
+
+/-- \**twenty hundred and ninety nine* is `[[twenty hundred] [ninety nine]]`. -/
+def twentyHundredNinetyNine : Num :=
+  .add (.mul (.phrase (.mul (.digit two) ten)) hundred) ninetyNine
 
 /-- *two thousand, one hundred* is `[[two thousand] [one hundred]]`. -/
-def twoThousandOneHundred : Number :=
-  .phraseAnd (.mk (digit 2) thousand) (.phrase (.mk (digit 1) hundred))
+def twoThousandOneHundred : Num :=
+  .add (.mul (.digit two) thousand) (.phrase (.mul (.digit one) hundred))
 
 /-- *twenty one hundred* is `[[twenty-one] hundred]`, twenty-one hundreds. -/
-def twentyOneHundred : Number :=
-  .phrase (.mk (.phraseAnd (.mk (digit 2) .ten) (digit 1)) hundred)
+def twentyOneHundred : Num :=
+  .phrase (.mul (.add (.mul (.digit two) ten) (.digit one)) hundred)
 
-theorem count_eq_fiveMillionTwoThousandSixHundred :
-    count bases 5002600 = fiveMillionTwoThousandSixHundred :=
-  count_eq_of_packed injOn_bases (by decide) rfl
+example : (count Numeral.value digits multipliers 5002600).deleteOne Numeral.value =
+    fiveMillionTwoThousandSixHundred.deleteOne Numeral.value :=
+  Packed.deleteOne_count_value (e := fiveMillionTwoThousandSixHundred) isSystem
+    (by decide) (by decide)
 
-example : sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHundred.value := rfl
+example : sixHundredTwoThousandFiveMillion.value Numeral.value =
+    fiveMillionTwoThousandSixHundred.value Numeral.value := by decide
 
-theorem not_packed_sixHundredTwoThousandFiveMillion :
-    ¬ sixHundredTwoThousandFiveMillion.Packed {m | m ∈ bases} := by decide
+example : ¬ sixHundredTwoThousandFiveMillion.Packed Numeral.value multipliers := by decide
 
-theorem count_eq_sixHundredThousand : count bases 600000 = sixHundredThousand :=
-  count_eq_of_packed injOn_bases (by decide) rfl
+example : sixHundredThousand.Packed Numeral.value multipliers := by decide
 
-example : sixThousandHundred.value = sixHundredThousand.value := rfl
+example : sixThousandHundred.value Numeral.value = sixHundredThousand.value Numeral.value := by
+  decide
 
-theorem not_packed_sixThousandHundred : ¬ sixThousandHundred.Packed {m | m ∈ bases} := by decide
+example : ¬ sixThousandHundred.Packed Numeral.value multipliers := by decide
 
-theorem count_eq_twoThousandOneHundred : count bases 2100 = twoThousandOneHundred :=
-  count_eq_of_packed injOn_bases (by decide) rfl
+example : ¬ twentyHundredNinetyNine.Packed Numeral.value multipliers := by decide
 
-example : twentyOneHundred.value = twoThousandOneHundred.value := rfl
+/-- A counter with nine hundreds, nine tens and nine who moves one more object has ten hundreds,
+and gathers them into a *thousand*. -/
+example : next Numeral.value digits multipliers (.add (.mul (.digit nine) hundred) ninetyNine) =
+    .phrase (.base thousand) := by decide
+
+/-- A counter with two tens and nine who moves one more object has three tens. -/
+example : next Numeral.value digits multipliers (.add (.mul (.digit two) ten) (.digit nine)) =
+    .phrase (.mul (.digit three) ten) := by decide
+
+example : twentyOneHundred.value Numeral.value = twoThousandOneHundred.value Numeral.value := by
+  decide
 
 /-- The Packing Strategy rejects *twenty one hundred*, which English allows, one of the rare
 counterexamples to its prediction that each number has a single numeral. -/
-theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed {m | m ∈ bases} := by decide
+theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed Numeral.value multipliers := by
+  decide
+
+/-- Counting forward from *two thousand and ninety nine* gives *two thousand, one hundred*, not
+*twenty one hundred*. -/
+theorem next_twoThousandNinetyNine :
+    next Numeral.value digits multipliers twoThousandNinetyNine =
+      twoThousandOneHundred.deleteOne Numeral.value := by
+  decide
 
 end English
+
+/-! ### Welsh -/
+
+namespace Welsh
+
+open _root_.Welsh.Numerals
+
+/-- *pedwar ar bymtheg*, four on fifteen, is 19. -/
+def nineteen : Number Numeral := .add (.base pymtheg) (.digit pedwar)
+
+/-- The numerals from 16 to 19 are built on *pymtheg*. -/
+example : next Numeral.value digits multipliers (.phrase (.base pymtheg)) =
+    .add (.base pymtheg) (.digit un) := by decide
+
+/-- *ugain* takes over at 20. -/
+example : next Numeral.value digits multipliers nineteen = .phrase (.base ugain) := by decide
+
+/-- After 20 Welsh counts in twenties, not in fifteens. -/
+example : next Numeral.value digits multipliers (.add (.base ugain) nineteen) =
+    .phrase (.mul (.digit dau) ugain) := by decide
+
+end Welsh
 
 /-! ### Mixtec -/
 
 namespace Mixtec
 
-/-- *šiaʼu* is the base 15. -/
-def fifteen : M := .base 15
+/-- The digits of the example run to fourteen. -/
+def digits : List ℕ := List.range' 1 14
 
-/-- *šiko* is the base 20. -/
-def twenty : M := .base 20
+/-- The multipliers of the example are *šiaʼu* 15, *šiko* 20 and *tuu* 400. -/
+def multipliers : List ℕ := [15, 20, 400]
 
-/-- *tuu* is the base 400. -/
-def fourHundred : M := .base 400
-
-/-- The bases of the example are 15, 20 and 400. -/
-def bases : List M := [fifteen, twenty, fourHundred]
-
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
+theorem isSystem : IsSystem id digits multipliers := ⟨by decide, by decide, by decide, by decide⟩
 
 /-- *šiaʼu kuu*, fifteen and four, is 19. -/
-def nineteen : Number := .phraseAnd (.mk .one fifteen) (digit 4)
+def nineteen : Number ℕ := .add (.base 15) (.digit 4)
 
 /-- *šiaʼu kuu tuu šiaʼu kuu šiko šiaʼu kuu*, nineteen four-hundreds, nineteen twenties and
 nineteen, is 7999. -/
-def numeral7999 : Number :=
-  .phraseAnd (.mk nineteen fourHundred) (.phraseAnd (.mk nineteen twenty) nineteen)
+def numeral7999 : Number ℕ := .add (.mul nineteen 400) (.add (.mul nineteen 20) nineteen)
 
-/-- `transposed` has the two Ms of `numeral7999` in each other's places. -/
-def transposed : Number :=
-  .phraseAnd (.mk nineteen twenty) (.phraseAnd (.mk nineteen fourHundred) nineteen)
+/-- `transposed` has the two multipliers of `numeral7999` in each other's places. -/
+def transposed : Number ℕ := .add (.mul nineteen 20) (.add (.mul nineteen 400) nineteen)
 
-/-- The sisters of the recursive NUMBERs are the highest-valued the lexicon allows below the
-value of the dominating node. -/
-theorem count_eq_numeral7999 : count bases 7999 = numeral7999 :=
-  count_eq_of_packed injOn_bases (by decide) rfl
+example : (count id digits multipliers 7999).deleteOne id = numeral7999 :=
+  Packed.deleteOne_count_value (e := numeral7999) isSystem (by decide) (by decide)
 
-example : transposed.value = numeral7999.value := rfl
+example : transposed.value id = numeral7999.value id := by decide
 
-theorem not_packed_transposed : ¬ transposed.Packed {m | m ∈ bases} := by decide
+example : ¬ transposed.Packed id multipliers := by decide
 
 end Mixtec
 
@@ -221,26 +359,27 @@ end Mixtec
 
 namespace Hawaiian
 
-/-- The Hawaiian bases are 10, 20, 40, 400, 4000, 40,000 and 400,000. -/
-def bases : List M :=
-  [.base 10, .base 20, .base 40, .base 400, .base 4000, .base 40000, .base 400000]
+/-- The digits run to nine. -/
+def digits : List ℕ := List.range' 1 9
 
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
+/-- The Hawaiian multipliers are 10, 20, 40, 400, 4000, 40,000 and 400,000. -/
+def multipliers : List ℕ := [10, 20, 40, 400, 4000, 40000, 400000]
+
+theorem isSystem : IsSystem id digits multipliers := ⟨by decide, by decide, by decide, by decide⟩
 
 /-- The numeral for 609,751 is one 400,000, five 40,000s, two 4000s, four 400s, three 40s,
 twenty, ten and one. -/
-def numeral609751 : Number :=
-  .phraseAnd (.mk .one (.base 400000)) <|
-  .phraseAnd (.mk (digit 5) (.base 40000)) <|
-  .phraseAnd (.mk (digit 2) (.base 4000)) <|
-  .phraseAnd (.mk (digit 4) (.base 400)) <|
-  .phraseAnd (.mk (digit 3) (.base 40)) <|
-  .phraseAnd (.mk .one (.base 20)) <|
-  .phraseAnd (.mk .one (.base 10)) .one
+def numeral609751 : Number ℕ :=
+  .add (.mul (.digit 1) 400000) <|
+  .add (.mul (.digit 5) 40000) <|
+  .add (.mul (.digit 2) 4000) <|
+  .add (.mul (.digit 4) 400) <|
+  .add (.mul (.digit 3) 40) <|
+  .add (.base 20) <|
+  .add (.base 10) (.digit 1)
 
-theorem count_eq_numeral609751 : count bases 609751 = numeral609751 :=
-  count_eq_of_packed injOn_bases (by decide) rfl
+example : (count id digits multipliers 609751).deleteOne id = numeral609751.deleteOne id :=
+  Packed.deleteOne_count_value (e := numeral609751) isSystem (by decide) (by decide)
 
 end Hawaiian
 

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Figure 1: the first and third trucks are blue, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neither true nor false in the gap context", "judgment": "acceptable"}
     ],
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "Figure 1: the first and third trucks are blue, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "neither true nor false in the gap context", "judgment": "acceptable"}
     ],
@@ -56,7 +56,7 @@
     "translation": "",
     "context": "Figure 1: the first and third trucks are blue, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "false in the gap context", "judgment": "acceptable"}
     ],
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "Figure 1: the first and third trucks are blue, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true in the gap context", "judgment": "acceptable"}
     ],
@@ -102,7 +102,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "homogeneous", "judgment": "acceptable"},
       {"name": "existential, as (6a)", "judgment": "acceptable"},
@@ -126,7 +126,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "homogeneous", "judgment": "acceptable"},
       {"name": "existential, as (6b)", "judgment": "acceptable"},
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
@@ -170,7 +170,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
@@ -190,7 +190,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "every"],
@@ -210,7 +210,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "every"],
@@ -230,7 +230,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
@@ -250,7 +250,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "all"],
@@ -270,7 +270,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "some but not all, the scalar implicature (9b)", "judgment": "acceptable"}
     ],
@@ -293,7 +293,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "all"],
@@ -314,7 +314,7 @@
     "translation": "The hearts are red.",
     "context": "Figure 3: the first and third hearts are red, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "the"],
@@ -336,7 +336,7 @@
     "translation": "The hearts are not red.",
     "context": "Figure 3: the first and third hearts are red, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "the"],
@@ -358,7 +358,7 @@
     "translation": "The umbrellas are red.",
     "context": "Figure 4: all four umbrellas are red, or all four are blue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "the"],
@@ -379,7 +379,7 @@
     "translation": "The umbrellas are not red.",
     "context": "Figure 4: all four umbrellas are red, or all four are blue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "the"],
@@ -400,7 +400,7 @@
     "translation": "All the hearts are red.",
     "context": "Figure 3: the first and third hearts are red, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "all"],
@@ -422,7 +422,7 @@
     "translation": "Not all the hearts are red.",
     "context": "Figure 3: the first and third hearts are red, the second and fourth yellow.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "all"],
@@ -444,7 +444,7 @@
     "translation": "Some tents are orange.",
     "context": "Figure 5: all four tents are orange.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "some but not all: rejected with the implicature", "judgment": "acceptable"},
       {"name": "literal existential: accepted without the implicature", "judgment": "acceptable"}
@@ -469,7 +469,7 @@
     "translation": "",
     "context": "A few insomniacs are reading in bed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-maximal", "judgment": "acceptable"}
     ],
@@ -492,7 +492,7 @@
     "translation": "",
     "context": "Mary has a house with over a dozen windows and forgot to close just a few of them; Max asks whether the house will be all right in the coming thunderstorm.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-maximal, effectively existential", "judgment": "acceptable"}
     ],

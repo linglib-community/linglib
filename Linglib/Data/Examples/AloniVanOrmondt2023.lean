@@ -24,7 +24,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
@@ -37,7 +37,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("inference", "none")] }
 
@@ -50,7 +50,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "10"), ("inference", "ignorance")] }
 
@@ -63,7 +63,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "11"), ("inference", "none")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "bare"), ("numeral", "3"), ("inference", "exact")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("inference", "none")] }
 
@@ -115,7 +115,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The speaker does not know who", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -128,7 +128,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The speaker does not know how many", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -141,7 +141,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -154,7 +154,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -167,7 +167,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("It is possible that Klaus married with Paul and it is possible that Klaus married with John", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -180,7 +180,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("It is possible that the band has exactly three players and it is possible that the band has more than three players", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
@@ -193,7 +193,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "universal"), ("inference", "obviation")] }
 
@@ -206,7 +206,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Authoritative: it has to be the case that Paprika reads three or more books", .acceptable), ("Epistemic: three or more is such that Paprika has to read that many books", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "necessity"), ("inference", "obviation")] }
 
@@ -219,7 +219,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "5"), ("embedding", "necessity"), ("inference", "obviation"), ("reading", "authoritative")] }
 
@@ -232,7 +232,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "200000"), ("embedding", "necessity"), ("inference", "ignorance"), ("reading", "epistemic")] }
 
@@ -245,7 +245,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
@@ -258,7 +258,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "obviation")] }
 
@@ -271,7 +271,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Authoritative", .acceptable), ("Epistemic", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "necessity"), ("inference", "obviation")] }
 
@@ -284,7 +284,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some woman has two and some woman has three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distribution"), ("knowledge", "full")] }
 
@@ -297,7 +297,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some woman might have two and some woman might have three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distributionEpi"), ("knowledge", "partial")] }
 
@@ -310,7 +310,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Full knowledge: some woman has three and some woman has more than three children", .acceptable), ("Partial information: some woman might have three and some woman might have more than three children", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "universal"), ("inference", "distribution")] }
 
@@ -323,7 +323,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("You are allowed to give a presentation and you are allowed to write a short paper", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "necessity"), ("inference", "boxFreeChoice")] }
 
@@ -336,7 +336,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("You are allowed to read three books and you are allowed to read more", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "necessity"), ("inference", "boxFreeChoice"), ("reading", "authoritative")] }
 
@@ -349,7 +349,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := "All brothers have been married to a woman, and one of them married first a woman and then a man."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some brother has been married to a woman and some brother has been married to a man", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distribution")] }
 
@@ -362,7 +362,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("You may have coffee and you may have tea", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "possibility"), ("inference", "diamondFreeChoice")] }
 
@@ -375,7 +375,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Some woman has two and some woman has three", .unacceptable), ("Some woman in my family might have two children and might have three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "existential"), ("inference", "ignorance")] }
 
@@ -388,7 +388,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Klaus did not marry either of the two", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "negation"), ("inference", "negation")] }
 
@@ -401,7 +401,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "negation"), ("inference", "negation")] }
 
@@ -414,7 +414,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "3"), ("inference", "none")] }
 
@@ -427,7 +427,7 @@ def ex_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("translation", "three ∨ more")] }
 
@@ -440,7 +440,7 @@ def ex_46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("translation", "three ∨ less")] }
 
@@ -453,7 +453,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("translation", "more-than-two")] }
 
@@ -466,7 +466,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("translation", "less-than-two")] }
 
@@ -479,7 +479,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("All of the boys may go to the beach and all of the boys may go to the cinema", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universalPossibility"), ("inference", "universalFreeChoice")] }
 
@@ -492,7 +492,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "negation"), ("inference", "negation")] }
 
@@ -505,7 +505,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "2"), ("embedding", "restrictor")] }
 

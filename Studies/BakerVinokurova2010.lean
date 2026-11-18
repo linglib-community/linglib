@@ -190,7 +190,7 @@ def ditransitiveClause (shifted : Bool) : Derivation :=
     [.em .left subjD, .em .right tense, .em .right comp]⟩
 
 /-- The possessed noun phrase `[D [possessor N]]`. -/
-def possessedNP : LinearizedSyntacticObject :=
+def possessedNP : PlanarSyntacticObject :=
   .merge (.leaf det) (.merge (.leaf possD) (.leaf noun))
 
 /-- A transitive clause whose shifted object is a possessed noun phrase. -/
@@ -221,7 +221,7 @@ def passiveClause (agent goal : Bool) : Derivation :=
 /-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
-    let out := grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
+    let out := grammar.assignOn .raising t complementDomain IsPhaseHead
       (fun x ↦ if x = proD then .absent else .unvalued) xs
     xs.map fun x ↦ (out x).value?.map (·.1)
 

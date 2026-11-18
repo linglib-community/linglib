@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Alternatives.Relevance
+public import Linglib.Semantics.Exhaustification.Relevance
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Presupposition.Context
@@ -36,32 +36,11 @@ exception set](##pex_but_no_eq_true_iff).
   (41b) and (50b) are written. Read literally, (56) compares a domain with every larger set of
   alternatives, and a domain lacking a non-excludable alternative fails it, since adding one
   changes nothing (`exhOnly_inter_excludable`).
-* Relevance over the context is `Alternatives.IsAllowableRestriction` over the subtype of the
+* Relevance over the context is `Exhaustification.IsAllowableRestriction` over the subtype of the
   context, with each *only*-alternative restricted to it by preimage (`onlyCtx`).
-* The ranking (58) of Informativity, `Presupposition.PostAccommodationInformative`, over Weakening
+* The ranking (58) of Informativity, falsity somewhere in the context, over Weakening
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
   `Trivalent.posExt`.
-
-## Errata
-
-* (6b) and (32c) give the excludable alternatives of *Gal was at the party* as those about
-  individuals disjoint from Gal. With the plural alternatives of (12), every alternative other
-  than the prejacent is excludable, *Gal and Tal were at the party* among them
-  (`isInnocentlyExcludable_Ici_iff`, `isInnocentlyExcludable_galTal`); the exhaustive inference
-  is unaffected.
-* (110b) fails with the plural alternatives of (12), on which the strong presupposition (13)
-  rests; [crnic-2026a] shows that singular ones give a weak presupposition. *Someone but Gal* has
-  the excludable alternative *someone but everyone except Gal*, that Gal was there
-  (`isInnocentlyExcludable_but_some`), so `exh` in (109) is not vacuous and the Economy Constraint
-  (108) does not exclude (107) (`judgment_107`).
-* (40), (56) and (58) do not single out the resolution (41) of *Gal is only a grad student*:
-  pruning to *only [postdoc]* satisfies and violates the same constraints, and under negation
-  conveys that Gal is a professor (`pruned_postdoc`). The closure of relevance under the Boolean
-  operations, set aside in fn. 3, does single it out, but only computed over the context: there
-  (41) is the one informative pruning that is an allowable restriction in the sense of
-  [fox-katzir-2011] (`isAllowableRestriction_onlyCtx_iff`), while over all worlds pruning to
-  *only [non-academic]* and *only [postdoc]* is allowable too
-  (`isAllowableRestriction_only_ranks`).
 
 ## TODO
 
@@ -263,13 +242,14 @@ variable {α : Type*} {F : Set (Finset α)} {A X w : Finset α}
 open Quantifier Quantifier.Det
 
 /-- (103b), (109): the determiner `Q` over the restrictor `A` minus the excepted plurality `X`. -/
-def but (Q : Det α) (A X : Finset α) : Set (Finset α) := {w | Q (↑A \ ↑X) ↑w}
+def but (Q : Det α) (A X : Finset α) : Set (Finset α) :=
+  Exceptive.subtraction Q (fun _ ↦ ↑A) (↑) ↑X
 
 -- (102): *no `A` but `X`* is *only* over the pluralities within the restrictor
 theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z ∈ F | Z ⊆ A} X := by
   ext w
   rw [mem_only_of_subset (sep_subset _ _)]
-  simp only [but, mem_ofPred_eq, no, and_imp]
+  simp only [but, Exceptive.mem_subtraction, mem_ofPred_eq, no, and_imp]
   exact ⟨fun h Z _ hZA hZw a ha ↦ by_contra fun haX ↦ h ⟨hZA ha, haX⟩ (hZw ha),
     fun h a ⟨haA, haX⟩ haw ↦ haX (h {a} (hF a haA) (Finset.singleton_subset_iff.2 haA)
       (Finset.singleton_subset_iff.2 haw) (Finset.mem_singleton_self a))⟩
@@ -381,14 +361,14 @@ theorem mem_excludable_party {Y : Finset Guest} :
 
 -- Table 1, (48), (57)
 theorem table_1 :
-    Presupposition.PostAccommodationInformative univ (exhOnly party partyOnly party {gal}) ∧
+    (Trivalent.negExt (exhOnly party partyOnly party {gal})).Nonempty ∧
     Weakening party partyOnly (excludable party partyOnly {gal}) {gal} ∧
     ¬ Weakening party partyOnly {{charlie}} {gal} := by
   have hE : {tal} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
   have hC : {charlie} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
-  refine ⟨Presupposition.postAccommodationInformative_iff.2 ⟨{gal, tal}, mem_univ _, ?_⟩,
+  refine ⟨⟨{gal, tal}, ?_⟩,
     (weakening_iff _ ⟨_, hE⟩ subset_rfl).2 rfl, fun h ↦ ?_⟩
-  · rw [exhOnly_gal, Focus.only_eq_false_iff]
+  · rw [exhOnly_gal, Trivalent.mem_negExt, Focus.only_eq_false_iff]
     simp [partyOnly]
   · have := ((weakening_iff _ (singleton_nonempty _) (singleton_subset_iff.2 hC)).1 h).ge hE
     simp at this
@@ -451,15 +431,14 @@ theorem excludable_ranks :
 assertion, (39), (40), while pruning to *only [non-academic]* leaves the presupposition that Gal is
 an academic, which does not, at the cost of the Weakening Constraint, (41)–(44). -/
 theorem table_2 :
-    ¬ Presupposition.PostAccommodationInformative oneRank (exhOnly ranks ladder ranks {grad}) ∧
-    Presupposition.PostAccommodationInformative oneRank
-      (exhOnly ranks ladder {{nonAcademic}} {grad}) ∧
+    Disjoint oneRank (Trivalent.negExt (exhOnly ranks ladder ranks {grad})) ∧
+    (oneRank ∩ Trivalent.negExt (exhOnly ranks ladder {{nonAcademic}} {grad})).Nonempty ∧
     ¬ Weakening ranks ladder {{nonAcademic}} {grad} := by
   refine ⟨?_, ?_, fun h ↦ ?_⟩
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.disjoint_iff_inter_eq_empty, ← Set.not_nonempty_iff_eq_empty, Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ subset_rfl, mem_only_ladder, mem_ranks, oneRank]
     decide
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge
@@ -469,13 +448,12 @@ theorem table_2 :
 -- Pruning to *only [postdoc]* satisfies and violates the constraints (41) does, and under negation
 -- conveys that Gal is a professor where (41) conveys that she is a postdoc or a professor
 theorem pruned_postdoc :
-    Presupposition.PostAccommodationInformative oneRank
-      (exhOnly ranks ladder {{postdoc}} {grad}) ∧
+    (oneRank ∩ Trivalent.negExt (exhOnly ranks ladder {{postdoc}} {grad})).Nonempty ∧
     ¬ Weakening ranks ladder {{postdoc}} {grad} ∧ ∀ w ∈ oneRank,
       ((exhOnly ranks ladder {{nonAcademic}} {grad} w)ᶜ = .true ↔ w = {postdoc} ∨ w = {professor}) ∧
       ((exhOnly ranks ladder {{postdoc}} {grad} w)ᶜ = .true ↔ w = {professor}) := by
   refine ⟨?_, fun h ↦ ?_, ?_⟩
-  · rw [Presupposition.postAccommodationInformative_iff]
+  · rw [Set.inter_nonempty]
     simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge
@@ -519,12 +497,12 @@ theorem exh_onlyCtx_eq_compl {q r : Rank} (h : [q, r] = [postdoc, professor] ∨
     simp [onlyCtx_subset_onlyCtx_iff] <;> revert w <;> decide
 
 theorem not_exhaustivelyRelevant_onlyCtx {q : Rank} (hq : q = postdoc ∨ q = professor) :
-    ¬ Alternatives.ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic}) (onlyCtx q) := by
+    ¬ Exhaustification.ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic}) (onlyCtx q) := by
   obtain rfl | rfl := hq
-  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{postdoc}, by decide⟩)
+  · refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := ⟨{postdoc}, by decide⟩)
       (v := ⟨{professor}, by decide⟩) ?_ ?_ ?_ <;>
       simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
-  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{professor}, by decide⟩)
+  · refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := ⟨{professor}, by decide⟩)
       (v := ⟨{postdoc}, by decide⟩) ?_ ?_ ?_ <;>
       simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
 
@@ -532,9 +510,9 @@ theorem not_exhaustivelyRelevant_onlyCtx {q : Rank} (hq : q = postdoc ∨ q = pr
 theorem isAllowableRestriction_onlyCtx_iff {R : Set Rank}
     (hR : R = {nonAcademic} ∨ R = {postdoc} ∨ R = {professor} ∨ R = {nonAcademic, postdoc} ∨
       R = {nonAcademic, professor}) :
-    Alternatives.IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R)
+    Exhaustification.IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R)
       (onlyCtx grad) ↔ R = {nonAcademic} := by
-  open Alternatives BooleanSubalgebra in
+  open Exhaustification BooleanSubalgebra in
   have hER (q : Rank) (hq : q ∉ insert grad R)
       (h : ExhaustivelyRelevant (onlyCtx '' insert grad R) (onlyCtx q)) :
       ¬ IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R) (onlyCtx grad) :=
@@ -579,7 +557,7 @@ theorem only_ladder_subset_iff {q r : Rank} :
 
 -- over all worlds, the closure also admits pruning to *only [non-academic]* and *only [postdoc]*
 theorem isAllowableRestriction_only_ranks :
-    Alternatives.IsAllowableRestriction (range fun r ↦ only ranks ladder {r})
+    Exhaustification.IsAllowableRestriction (range fun r ↦ only ranks ladder {r})
       ((fun r ↦ only ranks ladder {r}) '' {grad, nonAcademic, postdoc})
       (only ranks ladder {grad}) := by
   refine ⟨mem_image_of_mem _ (by simp), ?_⟩
@@ -590,7 +568,7 @@ theorem isAllowableRestriction_only_ranks :
     grind
   rw [hinj.mem_set_image] at hq
   obtain rfl : q = professor := by cases q <;> simp_all
-  refine Alternatives.not_exhaustivelyRelevant_of_separates (u := {professor})
+  refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := {professor})
     (v := {grad, postdoc}) ?_ ?_ ?_ <;>
     simp [mem_exh, only_ladder_subset_iff, mem_only_ladder]
 

@@ -139,7 +139,7 @@ def okhniiKe : PersonalPronoun :=
   { form := "okhnii-ke", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {ham, hamraa, hamar, hamnii, tu, toraa, tor, apne, apneKe, tohnii, tohniiKe, apneLog,
     apneLogKe, u, okraa, okar, unkaa, unkar, okhnii, okhniiKe}
 

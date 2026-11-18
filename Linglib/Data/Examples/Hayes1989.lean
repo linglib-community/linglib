@@ -24,7 +24,7 @@ def ex12b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
@@ -37,7 +37,7 @@ def ex12b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
@@ -50,7 +50,7 @@ def ex12b3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
@@ -63,7 +63,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
@@ -76,7 +76,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
@@ -89,7 +89,7 @@ def ex14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
@@ -102,7 +102,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "onset deletion")] }
 
@@ -115,7 +115,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "onset deletion")] }
 
@@ -128,7 +128,7 @@ def ex19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "double flop")] }
 
@@ -141,7 +141,7 @@ def tale : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("type", "vowel loss")] }
 
@@ -154,7 +154,7 @@ def ex27a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "obstruent"), ("gemination", "usual")] }
 
@@ -167,7 +167,7 @@ def ex27a4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "obstruent"), ("gemination", "usual")] }
 
@@ -180,7 +180,7 @@ def ex27b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("dámo ~ dammw-én", .marginal)]
+    contrasts := [("dámo ~ dammw-én", .marginal)]
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "nasal"), ("gemination", "sporadic")] }
 
@@ -193,7 +193,7 @@ def ex27c2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "r"), ("gemination", "never")] }
 
@@ -206,7 +206,7 @@ def ex27d1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "cluster"), ("gemination", "never")] }
 
@@ -219,7 +219,7 @@ def ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("gemination", "never")] }
 
@@ -232,7 +232,7 @@ def ex42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.1"), ("degemination", "yes")] }
 
@@ -245,7 +245,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3.2"), ("type", "glide formation")] }
 
@@ -258,7 +258,7 @@ def ex55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1.7"), ("type", "inverse")] }
 
@@ -271,7 +271,7 @@ def ex57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "onset deletion")] }
 
@@ -284,7 +284,7 @@ def turkish1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "classical")] }
 
@@ -297,7 +297,7 @@ def turkish2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("davul > daːul", .ungrammatical)]
+    contrasts := [("davul > daːul", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "onset deletion")] }
 
@@ -310,7 +310,7 @@ def ex61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("type", "vowel loss")] }
 
@@ -323,7 +323,7 @@ def ex73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("type", "vowel loss")] }
 
@@ -336,7 +336,7 @@ def ex73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("type", "no lengthening")] }
 
@@ -349,7 +349,7 @@ def ex74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("type", "classical"), ("trimoraic", "yes")] }
 
@@ -362,7 +362,7 @@ def ex76a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("length", "V")] }
 
@@ -375,7 +375,7 @@ def ex76b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("length", "Vː")] }
 
@@ -388,7 +388,7 @@ def ex76c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("length", "Vːː"), ("type", "vowel loss")] }
 

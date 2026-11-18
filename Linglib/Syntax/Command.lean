@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Cover
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
@@ -120,6 +121,14 @@ theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
 
+/-- Command within a set of nodes is command in the whole order when every node properly
+dominating a member is a member or dominates every member. -/
+theorem mem_commandRelation_subtype_iff {D : Set α}
+    (hD : ∀ a ∈ D, ∀ x < a, x ∈ D ∨ x ∈ lowerBounds D) (P : Set α) (a b : D) :
+    a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
+  ⟨fun h x hx hxa ↦ (hD a a.2 x hxa).elim (fun hxD ↦ h (a := ⟨x, hxD⟩) hx hxa) fun hxD ↦ hxD b.2,
+    fun h _ hx hxa ↦ h hx hxa⟩
+
 end Preorder
 
 /-! ### Command on trees
@@ -127,29 +136,29 @@ end Preorder
 On an order whose ancestors are linearly ordered a node's command domain is fixed by its mother,
 the node it covers. -/
 
-section LeftLinear
+section ForestOrder
 
-variable [PartialOrder α] [IsLeftLinear α] {P : Set α} {a b c m : α}
+variable [PartialOrder α] [IsForestOrder α] {P : Set α} {a b c m : α}
 
 theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
     a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
-  ⟨fun h _ hx hxa ↦ (IsLeftLinear.comparable_of_le_common (h hx hxa) hcb).resolve_right
+  ⟨fun h _ hx hxa ↦ (IsForestOrder.le_total_of_le_of_le (h hx hxa) hcb).resolve_right
       fun hcx ↦ hca (hcx.trans_lt hxa),
     fun h ↦ mem_commandRelation_of_le h hcb⟩
 
 theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
-  fun _ _ hxa ↦ (IsLeftLinear.le_of_lt_of_covBy ha hxa).trans hb
+  fun _ _ hxa ↦ (IsForestOrder.le_of_lt_of_covBy ha hxa).trans hb
 
 /-- A node whose mother is a generator commands exactly what its mother dominates. -/
 theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
     a ~[commandRelation P] b ↔ m ≤ b :=
-  mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsLeftLinear.le_of_lt_of_covBy ha hx.2⟩
+  mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsForestOrder.le_of_lt_of_covBy ha hx.2⟩
 
 /-- A node whose mother is not a generator commands exactly what its mother commands. -/
 theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
     a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
-    h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
+    h hx ((IsForestOrder.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
 /-- The command relation of `P` is the only relation in which the root commands every node and a
 node commands what its mother dominates or what its mother commands, according as the mother is
@@ -168,7 +177,7 @@ theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsS
     · exact (hnot hm hP b).trans <|
         (ih m hm.lt b).trans (mem_commandRelation_iff_of_covBy hm hP).symm
 
-end LeftLinear
+end ForestOrder
 
 /-! ### Mates -/
 
@@ -212,9 +221,14 @@ theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (h
   (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
     ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
 
+/-- A node commands every node that all its generators properly dominate. -/
+theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
+    a ~[commandRelation P] b :=
+  fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le
+
 theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
-  refine ⟨fun h x hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
+  refine ⟨mem_commandRelation_of_ancestors_subset, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
   refine lt_of_le_of_ne (mem_commandRelation.1 h _ hx.1 hx.2) ?_
   rintro rfl
   exact hba hx.2.le
@@ -278,7 +292,7 @@ end DominanceImage
 
 section DominanceImageTree
 
-variable [PartialOrder α] [IsLeftLinear α] {R : SetRel α α} {a b m : α}
+variable [PartialOrder α] [IsForestOrder α] {R : SetRel α α} {a b m : α}
 
 /-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
 relation between disconnected nodes that relates them both ways. -/
@@ -290,10 +304,10 @@ theorem not_mem_dominanceImage_asymmetrize_of_covBy
   obtain ⟨hn₁, hn₂⟩ := hR hxy
   rcases hxa.eq_or_lt with rfl | hx <;> rcases hyb.eq_or_lt with rfl | hy
   · exact hyx (hab hxy)
-  · exact hn₂ ((IsLeftLinear.le_of_lt_of_covBy hb hy).trans ha.le)
-  · exact hn₁ ((IsLeftLinear.le_of_lt_of_covBy ha hx).trans hb.le)
-  · exact (IsLeftLinear.comparable_of_le_common (IsLeftLinear.le_of_lt_of_covBy ha hx)
-      (IsLeftLinear.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
+  · exact hn₂ ((IsForestOrder.le_of_lt_of_covBy hb hy).trans ha.le)
+  · exact hn₁ ((IsForestOrder.le_of_lt_of_covBy ha hx).trans hb.le)
+  · exact (IsForestOrder.le_total_of_le_of_le (IsForestOrder.le_of_lt_of_covBy ha hx)
+      (IsForestOrder.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
 
 end DominanceImageTree
 
@@ -306,24 +320,24 @@ children, the geometric reading of [reinhart-1976]'s "branching node". -/
 
 section Positions
 
-open Core.Order RoseTree
+open RoseTree
 
-theorem mem_commandRelation_iff_inits (P : Set TreePath) (a b : TreePath) :
+theorem mem_commandRelation_iff_inits (P : Set GornAddress) (a b : GornAddress) :
     a ~[commandRelation P] b ↔
-      ∀ x ∈ a.toList.inits.map TreePath.mk, x ≠ a → x ∈ P → x ≤ b := by
+      ∀ x ∈ a.inits, x ≠ a → x ∈ P → x ≤ b := by
   constructor
   · intro h x hx hne hP
     obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hx
-    exact h hP (lt_of_le_of_ne (TreePath.le_def.mpr ((List.mem_inits _ _).mp hl)) hne)
+    exact h hP (lt_of_le_of_ne (GornAddress.le_def.mpr ((List.mem_inits _ _).mp hl)) hne)
   · intro h x hP hxa
     exact h x (List.mem_map.mpr
-      ⟨x.toList, (List.mem_inits _ _).mpr (TreePath.le_def.mp hxa.le), rfl⟩) hxa.ne hP
+      ⟨x.toList, (List.mem_inits _ _).mpr (GornAddress.le_def.mp hxa.le), rfl⟩) hxa.ne hP
 
-instance (P : Set TreePath) [DecidablePred (· ∈ P)] (a b : TreePath) :
+instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (a b : GornAddress) :
     Decidable (a ~[commandRelation P] b) :=
   decidable_of_iff _ (mem_commandRelation_iff_inits P a b).symm
 
-instance (P : Set TreePath) [DecidablePred (· ∈ P)] (ab : TreePath × TreePath) :
+instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (ab : GornAddress × GornAddress) :
     Decidable (ab ∈ mateRelation P) :=
   inferInstanceAs (Decidable (ab.1 ~[commandRelation P] ab.2 ∧ ab.2 ~[commandRelation P] ab.1))
 
@@ -335,51 +349,87 @@ end PhraseStructure
 
 namespace RoseTree
 
-open Core.Order PhraseStructure
+open PhraseStructure
 open scoped SetRel
 
 variable {β : Type*}
 
 /-- A position of `t` is **branching** when its subtree has at least two children, the
 geometric reading of [reinhart-1976]'s "first branching node". -/
-def IsBranchingAt (t : RoseTree β) (p : TreePath) : Prop :=
+def IsBranchingAt (t : RoseTree β) (p : GornAddress) : Prop :=
   p ∈ positionsWhere (fun s ↦ 2 ≤ s.arity) t
 
-instance (t : RoseTree β) (p : TreePath) : Decidable (t.IsBranchingAt p) :=
+instance (t : RoseTree β) (p : GornAddress) : Decidable (t.IsBranchingAt p) :=
   inferInstanceAs (Decidable (p ∈ positionsWhere _ t))
 
 /-- Barker and Pullum's c-command on the positions of `t`, the command relation its branching
 positions generate. It is reflexive and a position commands what it dominates, unlike
 `RoseTree.CCommands`; it is read off the tree, so decidable. -/
-abbrev cCommand (t : RoseTree β) : SetRel TreePath TreePath :=
+abbrev cCommand (t : RoseTree β) : SetRel GornAddress GornAddress :=
   commandRelation {p | t.IsBranchingAt p}
+
+/-- The branching nodes of the order of positions, the mothers of two distinct nodes, are the
+positions with at least two children. -/
+theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
+    IsBranching p ↔ IsBranchingAt t p.val := by
+  obtain ⟨s, hs⟩ : ∃ s, t[p.val.toList]? = some s := Option.isSome_iff_exists.mp p.2
+  constructor
+  · rintro ⟨⟨⟨la⟩, ha'⟩, ha, ⟨⟨lb⟩, hb'⟩, hb, hab⟩
+    obtain ⟨i, hi⟩ := GornAddress.covBy_iff.mp (Positions.covBy_iff.mp ha)
+    obtain ⟨j, hj⟩ := GornAddress.covBy_iff.mp (Positions.covBy_iff.mp hb)
+    obtain rfl : la = p.val.toList ++ [i] := congrArg GornAddress.toList hi
+    obtain rfl : lb = p.val.toList ++ [j] := congrArg GornAddress.toList hj
+    obtain ⟨s₁, hs₁, hi'⟩ := mem_validPaths_append_singleton_iff.mp ha'
+    obtain ⟨s₂, hs₂, hj'⟩ := mem_validPaths_append_singleton_iff.mp hb'
+    rw [hs, Option.some.injEq] at hs₁ hs₂
+    subst hs₁ hs₂
+    have hij : i ≠ j := fun h ↦ hab (by subst h; rfl)
+    exact ⟨s, hs, show 2 ≤ s.children.length by omega⟩
+  · rintro ⟨s', hs', hlen⟩
+    rw [Option.mem_def, hs, Option.some.injEq] at hs'
+    subst hs'
+    rw [arity] at hlen
+    refine ⟨⟨p.val * .of 0, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+      Positions.covBy_iff.mpr (GornAddress.covBy_iff.mpr ⟨0, rfl⟩),
+      ⟨p.val * .of 1, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+      Positions.covBy_iff.mpr (GornAddress.covBy_iff.mpr ⟨1, rfl⟩), fun h ↦ ?_⟩
+    simpa using congrArg (fun q : t.Positions ↦ q.val.toList) h
+
+/-- The command relation the branching nodes of the order of positions generate is
+`RoseTree.cCommand`. -/
+theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions) :
+    a ~[commandRelation {p | IsBranching p}] b ↔ a.val ~[t.cCommand] b.val := by
+  rw [show {p : t.Positions | IsBranching p} = Subtype.val ⁻¹' {p | IsBranchingAt t p} from
+    Set.ext isBranching_iff_isBranchingAt]
+  exact mem_commandRelation_subtype_iff
+    (fun _ ha _ hxa ↦ .inl (isLowerSet_validPaths t hxa.le ha)) _ a b
 
 /-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
 dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` without dominance. -/
-def CCommands (t : RoseTree β) (a b : TreePath) : Prop :=
+def CCommands (t : RoseTree β) (a b : GornAddress) : Prop :=
   a ~[t.cCommand] b ∧ ¬ a ≤ b ∧ ¬ b ≤ a
 
 instance (t : RoseTree β) : DecidableRel t.CCommands :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-theorem cCommands_iff {t : RoseTree β} {a b : TreePath} :
+theorem cCommands_iff {t : RoseTree β} {a b : GornAddress} :
     t.CCommands a b ↔ a ~[t.cCommand] b ∧ ¬ a ≤ b ∧ ¬ b ≤ a := Iff.rfl
 
 /-- The c-command domain of a position, the positions it c-commands. -/
-def cCommandDomain (t : RoseTree β) (a : TreePath) : Set TreePath := {b | t.CCommands a b}
+def cCommandDomain (t : RoseTree β) (a : GornAddress) : Set GornAddress := {b | t.CCommands a b}
 
-@[simp] theorem mem_cCommandDomain {t : RoseTree β} {a b : TreePath} :
+@[simp] theorem mem_cCommandDomain {t : RoseTree β} {a b : GornAddress} :
     b ∈ t.cCommandDomain a ↔ t.CCommands a b := Iff.rfl
 
-instance (t : RoseTree β) (a b : TreePath) : Decidable (b ∈ t.cCommandDomain a) :=
+instance (t : RoseTree β) (a b : GornAddress) : Decidable (b ∈ t.cCommandDomain a) :=
   inferInstanceAs (Decidable (t.CCommands a b))
 
 /-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
 the positions properly below its parent and not below itself. -/
-theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ ⊥)
+theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : GornAddress} (ha : a ≠ ⊥)
     (hp : IsBranchingAt t a.parent) : CCommands t a b ↔ a.parent < b ∧ ¬ a ≤ b := by
   have hcov : a.parent ⋖ a := by
-    rw [← TreePath.pred_eq_parent]
+    rw [← GornAddress.pred_eq_parent]
     exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha)
   have hcc : a ~[cCommand t] b ↔ a.parent ≤ b := mem_commandRelation_iff_le_of_covBy hcov hp
   rw [CCommands, hcc]
@@ -387,21 +437,21 @@ theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ �
     fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
   exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
 
-theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : TreePath} (hc : m ⋖ c)
+theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : GornAddress} (hc : m ⋖ c)
     (hm : IsBranchingAt t m) : CCommands t c q ↔ m < q ∧ ¬ c ≤ q := by
-  have hpar : c.parent = m := by rw [← TreePath.pred_eq_parent, Order.pred_eq_of_covBy hc]
+  have hpar : c.parent = m := by rw [← GornAddress.pred_eq_parent, Order.pred_eq_of_covBy hc]
   rw [cCommands_iff_parent_lt (ne_bot_of_gt hc.lt) (hpar ▸ hm), hpar]
 
 /-- Between positions neither of which dominates the other, strict closeness under the branching
 positions is asymmetric c-command. -/
-theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreePath}
+theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : GornAddress}
     (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
       t.CCommands a b ∧ ¬ t.CCommands b a := by
   rw [ancestors_ssubset_ancestors_iff hab hba, cCommands_iff, cCommands_iff]
   tauto
 
-theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : TreePath) :
+theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : GornAddress) :
     IsBranchingAt (t.map f) p ↔ IsBranchingAt t p := by
   simp [IsBranchingAt, positionsWhere_map]
 
@@ -409,15 +459,15 @@ theorem cCommand_map {γ : Type*} (f : β → γ) (t : RoseTree β) :
     cCommand (t.map f) = cCommand t := by
   simp only [cCommand, isBranchingAt_map]
 
-theorem cCommands_map {γ : Type*} (f : β → γ) (t : RoseTree β) (a b : TreePath) :
+theorem cCommands_map {γ : Type*} (f : β → γ) (t : RoseTree β) (a b : GornAddress) :
     (t.map f).CCommands a b ↔ t.CCommands a b := by
   rw [cCommands_iff, cCommands_iff, cCommand_map]
 
 section Replace
 
-variable {t new : RoseTree β} {a b c : TreePath}
+variable {t new : RoseTree β} {a b c : GornAddress}
 
-theorem isBranchingAt_replaceAt {x : TreePath} (h : ¬ c ≤ x) :
+theorem isBranchingAt_replaceAt {x : GornAddress} (h : ¬ c ≤ x) :
     IsBranchingAt (t.replaceAt c new) x ↔ IsBranchingAt t x :=
   mem_positionsWhere_replaceAt (fun _ _ _ _ ↦ by simp [arity]) h new
 
@@ -428,7 +478,7 @@ theorem mem_cCommand_replaceAt (h : ¬ c < a) :
 theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
     CCommands (t.replaceAt c new) a b ↔ CCommands t a c := by
   have hlt : ¬ c < a := fun h ↦ hca h.le
-  have hab : ¬ a ≤ b := fun h ↦ (IsLeftLinear.comparable_of_le_common h hcb).elim hac hca
+  have hab : ¬ a ≤ b := fun h ↦ (IsForestOrder.le_total_of_le_of_le h hcb).elim hac hca
   have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
   simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
     hba, hac, hca, not_false_eq_true, and_true]

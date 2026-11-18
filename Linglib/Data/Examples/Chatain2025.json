@@ -1,0 +1,308 @@
+[
+  {
+    "id": "chatain2025_2a",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There isn't a phone-book and it is in the cabinet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "negated antecedent, conjunction"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3a",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There is a phone-book. It is in the cabinet.",
+    "discourseSegments": [
+      "There is a phone-book.",
+      "It is in the cabinet."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "cross-sentential"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3b",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There is a phone-book and it is in the cabinet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "conjunction"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3c",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there isn't a phone-book or it is in the cabinet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "bathroom disjunction"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3d",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If there is a phone-book, it is in the cabinet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "conditional"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3e",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is in the cabinet and there is a phone-book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "conjunction, pronoun first"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3f",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there is a phone-book or it is in the cabinet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "disjunction"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_3g",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(3g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is a phone-book, there is a phone-book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "conditional, pronoun first"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_55c",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(55c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There might be a phone-book. It would be in the cabinet.",
+    "discourseSegments": [
+      "There might be a phone-book.",
+      "It would be in the cabinet."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "modal subordination"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_55d",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(55d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not available at the library now but there is a phone-book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "but-conjunction, pronoun first"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_78a",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(78a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Only nine out of the ten marbles have been found. We're still looking for it.",
+    "discourseSegments": [
+      "Only nine out of the ten marbles have been found.",
+      "We're still looking for it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "no antecedent"]
+    ],
+    "comment": "The second sentence is the one marked infelicitous.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_79a",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(79a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every tourist bought a ticket. Most have already used it.",
+    "discourseSegments": [
+      "Every tourist bought a ticket.",
+      "Most have already used it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "quantificational subordination"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_79b",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(79b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every tourist who bought a ticket has already used it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {"name": "existential", "judgment": "acceptable"},
+      {"name": "universal", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["configuration", "donkey"]
+    ],
+    "comment": "The two readings are given under (102).",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_113b",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(113b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every tourist bought a ticket. Most French tourists have already used it.",
+    "discourseSegments": [
+      "Every tourist bought a ticket.",
+      "Most French tourists have already used it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "quantificational subordination"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chatain2025_113c",
+    "source": {"bibkey": "chatain-2025", "paperLabel": "(113c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every tourist bought a ticket. Most locals have already used it.",
+    "discourseSegments": [
+      "Every tourist bought a ticket.",
+      "Most locals have already used it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["configuration", "quantificational subordination"]
+    ],
+    "comment": "The second sentence is the one marked infelicitous.",
+    "verified": "text-layer"
+  }
+]

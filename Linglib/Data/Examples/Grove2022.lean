@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that Theo has a wetsuit", .acceptable), ("presupposes that Theo has a wetsuit if he has a brother", .questionable)]
     paperFeatures := [("section", "2.1"), ("phenomenon", "provisoProblem"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that Theo has a wetsuit if he is a scuba diver", .acceptable)]
     paperFeatures := [("section", "2"), ("phenomenon", "provisoProblem"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
@@ -50,7 +50,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that John is in bed", .acceptable), ("presupposes that Mary's parents think John is in bed", .questionable)]
     paperFeatures := [("section", "2.1"), ("phenomenon", "trappedTrigger"), ("trigger", "also"), ("filter", "think")] }
 
@@ -63,7 +63,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "provisoProblem"), ("trigger", "stop"), ("filter", "conditional")] }
 
@@ -76,7 +76,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "conditionalReadingContext"), ("trigger", "stop"), ("filter", "conditional")] }
 
@@ -89,7 +89,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "conditionalReadingContext"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
@@ -102,7 +102,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("presupposes that Theo has a wetsuit, his wetsuit de re", .acceptable), ("presupposes that Theo believes he has a wetsuit, his wetsuit de dicto", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
@@ -115,7 +115,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
@@ -128,7 +128,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "hope")] }
 
@@ -141,7 +141,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
@@ -154,7 +154,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "hope")] }
 

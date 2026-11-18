@@ -24,7 +24,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished")] }
 
@@ -37,7 +37,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -50,7 +50,7 @@ def ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "distinguished"), ("whForm", "who"), ("whCategory", "np")] }
 
@@ -63,7 +63,7 @@ def ex7d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
@@ -76,7 +76,7 @@ def ex7e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "distinguished"), ("the", "true")] }
 
@@ -89,7 +89,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -102,7 +102,7 @@ def ex8a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished"), ("whForm", "who"), ("whCategory", "np")] }
 
@@ -115,7 +115,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "distinguished"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
@@ -128,7 +128,7 @@ def ex8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -141,7 +141,7 @@ def ex8d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -154,7 +154,7 @@ def ex8d_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -167,7 +167,7 @@ def ex8e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -180,7 +180,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
@@ -193,7 +193,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
@@ -206,7 +206,7 @@ def ex9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
@@ -219,7 +219,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
@@ -232,7 +232,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
@@ -245,7 +245,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
@@ -258,7 +258,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -271,7 +271,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -284,7 +284,7 @@ def ex11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
@@ -297,7 +297,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
@@ -310,7 +310,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
@@ -323,7 +323,7 @@ def ex12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
@@ -336,7 +336,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
@@ -349,7 +349,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
@@ -362,7 +362,7 @@ def ex13c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
@@ -375,7 +375,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
@@ -388,7 +388,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
@@ -401,7 +401,7 @@ def ex14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
@@ -414,7 +414,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
@@ -427,7 +427,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
@@ -440,7 +440,7 @@ def ex15c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
@@ -453,7 +453,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -466,7 +466,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "np")] }
 
@@ -479,7 +479,7 @@ def ex16c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "np")] }
 
@@ -492,7 +492,7 @@ def ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -505,7 +505,7 @@ def ex17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -518,7 +518,7 @@ def ex17c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
@@ -531,7 +531,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
@@ -544,7 +544,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
@@ -557,7 +557,7 @@ def ex18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
@@ -570,7 +570,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
@@ -583,7 +583,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
@@ -596,7 +596,7 @@ def ex19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
@@ -609,7 +609,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
@@ -622,7 +622,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
@@ -635,7 +635,7 @@ def ex20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
@@ -648,7 +648,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
@@ -661,7 +661,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
@@ -674,7 +674,7 @@ def ex21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
@@ -687,7 +687,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
@@ -700,7 +700,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
@@ -713,7 +713,7 @@ def ex22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
@@ -726,7 +726,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
@@ -739,7 +739,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
@@ -752,7 +752,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
@@ -765,7 +765,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("embedded", "true")] }
 
@@ -778,7 +778,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -791,7 +791,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("embedded", "true")] }
 
@@ -804,7 +804,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
@@ -817,7 +817,7 @@ def ex26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
@@ -830,7 +830,7 @@ def ex26d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -843,7 +843,7 @@ def ex63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "NP")] }
 
@@ -856,7 +856,7 @@ def ex63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "PP")] }
 
@@ -869,7 +869,7 @@ def ex63c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "AP")] }
 
@@ -882,7 +882,7 @@ def ex63d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "AdvP")] }
 
@@ -895,7 +895,7 @@ def ex76a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "NP")] }
 
@@ -908,7 +908,7 @@ def ex76b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "AP")] }
 
@@ -921,7 +921,7 @@ def ex76c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "AdvP")] }
 
@@ -934,7 +934,7 @@ def ex76d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "PP")] }
 
@@ -947,7 +947,7 @@ def ex76e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
@@ -960,7 +960,7 @@ def ex76f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
@@ -973,7 +973,7 @@ def ex86a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("inverted", "true")] }
 
@@ -986,7 +986,7 @@ def ex86b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("inverted", "true")] }
 
@@ -999,7 +999,7 @@ def ex86c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("inverted", "true")] }
 
@@ -1012,7 +1012,7 @@ def ex86d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "AdvP"), ("inverted", "true")] }
 
@@ -1025,7 +1025,7 @@ def ex87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "VP"), ("inverted", "true")] }
 
@@ -1038,7 +1038,7 @@ def ex96a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1051,7 +1051,7 @@ def ex96b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1064,7 +1064,7 @@ def ex96c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1077,7 +1077,7 @@ def ex96d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AdvP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1090,7 +1090,7 @@ def ex96e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "VP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1103,7 +1103,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "headCategory"), ("head", "CP")] }
 
@@ -1116,7 +1116,7 @@ def ex27a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "headCategory"), ("head", "CP"), ("embedded", "true")] }
 
@@ -1129,7 +1129,7 @@ def ex27a_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "headCategory"), ("head", "CP"), ("embedded", "true")] }
 
@@ -1142,7 +1142,7 @@ def ex27a_iiii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "headCategory"), ("head", "CP")] }
 
@@ -1155,7 +1155,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true")] }
 
@@ -1168,7 +1168,7 @@ def ex28a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true"), ("embedded", "true")] }
 
@@ -1181,7 +1181,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "inversion"), ("inverted", "true")] }
 
@@ -1194,7 +1194,7 @@ def ex28b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
@@ -1207,7 +1207,7 @@ def ex28b_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true")] }
 
@@ -1220,7 +1220,7 @@ def ex28b_iiii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true")] }
 
@@ -1233,7 +1233,7 @@ def ex28c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "inversion"), ("inverted", "true")] }
 
@@ -1246,7 +1246,7 @@ def ex28c_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "inversion")] }
 
@@ -1259,7 +1259,7 @@ def ex71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("embedded", "true")] }
 
@@ -1272,7 +1272,7 @@ def ex71a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
@@ -1285,7 +1285,7 @@ def ex71b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion")] }
 
@@ -1298,7 +1298,7 @@ def ex71b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true")] }
 
@@ -1311,7 +1311,7 @@ def ex84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("inverted", "true")] }
 
@@ -1324,7 +1324,7 @@ def ex84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion")] }
 
@@ -1337,7 +1337,7 @@ def ex84c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("embedded", "true")] }
 
@@ -1350,7 +1350,7 @@ def ex84d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
@@ -1363,7 +1363,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "finiteness"), ("finite", "false")] }
 
@@ -1376,7 +1376,7 @@ def ex29a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1389,7 +1389,7 @@ def ex29a_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "finiteness"), ("filler", "AP"), ("finite", "false")] }
 
@@ -1402,7 +1402,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1415,7 +1415,7 @@ def ex29b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "finiteness"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1428,7 +1428,7 @@ def ex71c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1441,7 +1441,7 @@ def ex85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1454,7 +1454,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "independence"), ("embedded", "true")] }
 
@@ -1467,7 +1467,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "independence")] }
 
@@ -1480,7 +1480,7 @@ def ex67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "island")] }
 
@@ -1493,7 +1493,7 @@ def ex74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "island")] }
 
@@ -1506,7 +1506,7 @@ def ex88a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("finite", "false"), ("embedded", "true")] }
 
@@ -1519,7 +1519,7 @@ def ex88b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("embedded", "true")] }
 
@@ -1532,7 +1532,7 @@ def ex88c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("embedded", "true")] }
 

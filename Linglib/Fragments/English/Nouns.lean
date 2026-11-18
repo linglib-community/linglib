@@ -40,12 +40,9 @@ namespace English.Nouns
 
 open Morphology
 
-/-- An English noun is a classified noun over no classifiers, with the gender it restricts its
-referents to and its plural where it has them. -/
+/-- An English noun is a classified noun over no classifiers, with its plural where it has
+one. -/
 structure Noun extends ClassifiedNoun Empty where
-  /-- The gender the noun restricts its referents to, which its pronouns agree with, where it
-  does. -/
-  referentGender : Option ReferentGender := none
   /-- The plural, where the noun has one. -/
   plural : Option String := none
   deriving DecidableEq

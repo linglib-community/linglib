@@ -327,7 +327,7 @@ theorem File.pointAt_eq_pointAt :
     (File.pointAt_le_pointAt.mpr ⟨le_rfl, hw.symm, heq.symm⟩)⟩
 
 /-- The state of a file at the cards `X`. -/
-def File.toState (X : Set ℕ) (c : File M W) : State W ℕ M := File.pointAt X '' c
+noncomputable def File.toState (X : Set ℕ) (c : File M W) : State W ℕ M := File.pointAt X '' c
 
 theorem File.mem_toState {p : Possibility W ℕ (Part M)} :
     p ∈ c.toState X ↔ ∃ gw ∈ c, File.pointAt X gw = p := Iff.rfl

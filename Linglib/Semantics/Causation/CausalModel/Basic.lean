@@ -138,6 +138,17 @@ theorem mem_contexts_update [DecidableEq V] (hu : u ∈ M.contexts s) {c : V} {x
     (hx : M.solve u c = x) : u ∈ M.contexts (Function.update s c (Part.some x)) :=
   update_le_iff.2 ⟨by rw [hx], fun v _ ↦ hu v⟩
 
+/-- Settling a variable the observation leaves open keeps the contexts whose actual world gives it
+that value. -/
+theorem contexts_update [DecidableEq V] {c : V} (hc : s c = ⊥) (x : α c) :
+    M.contexts (Function.update s c (Part.some x)) =
+      (fun u ↦ M.solve u c) ⁻¹' {x} ∩ M.contexts s := by
+  ext u
+  refine ⟨fun h ↦ ?_, fun h ↦ mem_contexts_update h.2 h.1⟩
+  obtain ⟨h₁, h₂⟩ := update_le_iff.1 h
+  exact ⟨(Part.some_le_some.1 h₁).symm, fun v ↦
+    if hv : v = c then by subst hv; exact hc ▸ bot_le else h₂ v hv⟩
+
 end Observation
 
 end CausalModel

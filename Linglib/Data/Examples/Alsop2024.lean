@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .acceptable)]
     paperFeatures := [("logicalForm", "∀x ∈ De [book(x) → ◇read(you,x)]")] }
 
@@ -37,7 +37,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
@@ -50,7 +50,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("any", "npi"), ("environment", "negation")] }
 
@@ -63,7 +63,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("any", "npi"), ("environment", "restrictorOfEvery")] }
 
@@ -76,7 +76,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "episodic")] }
 
@@ -89,7 +89,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "possibilityModal")] }
 
@@ -102,7 +102,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "necessityModal")] }
 
@@ -115,7 +115,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "One of the rules of the card game Canasta is: When a player has two cards that match the top card of the discard pile, she has two options: (i) take all the cards in the discard pile and (ii) take no card from the discard pile (but take the top card of the regular pile instead). Those are her two only options."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
@@ -128,7 +128,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "The local animal shelter has a strict policy of not separating animals from their siblings. Annie goes to the shelter to adopt a cat, and walks into one room with three cats inside."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
@@ -141,7 +141,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
@@ -154,7 +154,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
@@ -167,7 +167,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
@@ -180,7 +180,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := "You are a graduate student only required to take one class per semester. You ask: What classes are we allowed to take in our first year?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .acceptable)]
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := "You are an undergraduate student required to take four classes per semester. You ask: What classes are we allowed to take in our first year?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
@@ -206,7 +206,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "Annie goes to the shelter to adopt a cat; the shelter employee speaks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("implicature", "cancelled"), ("state", "only2")] }
 
@@ -219,7 +219,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "Out of the blue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not every", .questionable)]
     paperFeatures := [("prior", "uniform")] }
 
@@ -232,7 +232,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := "You are a part-time student who is forbidden from taking more than one class in a semester. Your university offers hundreds of classes each semester. You ask: What classes are we allowed to take in our first year?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not two", .acceptable), ("not three", .acceptable), ("not every", .acceptable)]
     paperFeatures := [("state", "only1")] }
 
@@ -245,7 +245,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "anyAndEvery")] }
 
@@ -258,7 +258,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "anyAndEvery")] }
 
@@ -271,7 +271,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := "A restaurant sign."
     judgment := .acceptable
-    alternatives := [("We reserve the right to refuse to serve anyone and everyone.", .unacceptable)]
+    contrasts := [("We reserve the right to refuse to serve anyone and everyone.", .unacceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "You are one of three siblings. Your mother returns from a business trip with three souvenirs and presents them to just you first."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not every", .unacceptable)]
     paperFeatures := [("implicature", "cancelled")] }
 
@@ -297,7 +297,7 @@ def ex_31_mayS : Datum :=
     glossedTokens := []
     context := "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("utterance", "mayS"), ("parses", "3")] }
 
@@ -310,7 +310,7 @@ def ex_31_mayP : Datum :=
     glossedTokens := []
     context := "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("utterance", "mayP"), ("parses", "3")] }
 
@@ -323,7 +323,7 @@ def ex_31_mayAny : Datum :=
     glossedTokens := []
     context := "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exclusiveness", .acceptable), ("not every", .questionable)]
     paperFeatures := [("utterance", "mayAny"), ("parses", "2"), ("prior", "uniform")] }
 
@@ -336,7 +336,7 @@ def ex_31_mayEvery : Datum :=
     glossedTokens := []
     context := "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("utterance", "mayEvery"), ("parses", "4")] }
 
@@ -349,7 +349,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := "This year, Chris decides to spend the summer at his grandmother's house. His first day there, his grandmother pulls him aside to discuss his responsibilities for the summer. She shows him a list of chores she has written down."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable), ("may but not must", .unacceptable)]
     paperFeatures := [("revisedViabilityConstraint", "cancelled")] }
 

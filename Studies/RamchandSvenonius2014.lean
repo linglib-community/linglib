@@ -34,14 +34,6 @@ since Cinque puts the volitional head of *intentionally* above anterior tense.
   pragmatic one §5.4 assigns it. An adverb here modifies one sort; *easily* (58), which §5.3 lets
   modify either of two, is not a row.
 
-## Errata
-
-* §5.1 puts epistemic adverbials above anything that modifies the situation, where §5.4 puts
-  *probably* among the situation modifiers; with the former, the acceptable (61) would not compose
-  (`composes_61_iff`).
-* §4.1 says the passive head prevents the merge of V-INIT, yet the trees (1) and (36), the head
-  movement of §1 and the strict order of §4.1 put V-INIT above V-PASS in passives.
-
 ## TODO
 
 * Wiltschko's fourth zone, point of view, between the event and the situation, which §3 declines.

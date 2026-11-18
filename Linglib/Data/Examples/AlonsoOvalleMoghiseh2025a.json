@@ -12,7 +12,7 @@
     "translation": "Nobody answered a question.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -34,7 +34,7 @@
     "translation": "Mary has to marry a doctor — any doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -57,7 +57,7 @@
     "translation": "Monica met a friend.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "vreun"],
@@ -81,7 +81,7 @@
     "translation": "María married some doctor or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -101,7 +101,7 @@
     "translation": "María married some doctor or other, namely Dr. Smith.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -124,7 +124,7 @@
     "translation": "Juan bought a random book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "un NP cualquiera"],
@@ -146,7 +146,7 @@
     "translation": "I bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -168,7 +168,7 @@
     "translation": "Forood bought a book yesterday, namely The Iliad.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -192,7 +192,7 @@
     "translation": "Forood bought a book yesterday: a novel and a poetry book.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -212,7 +212,7 @@
     "translation": "Forood bought some book yesterday, a novel and a poetry book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -233,7 +233,7 @@
     "translation": "I bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek"],
@@ -254,7 +254,7 @@
     "translation": "I bought two books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "numeral -i"],
@@ -275,7 +275,7 @@
     "translation": "I bought two books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "numeral"],
@@ -296,7 +296,7 @@
     "translation": "Forood bought some books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i plural"],
@@ -317,7 +317,7 @@
     "translation": "I bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "bare -i"],
@@ -339,7 +339,7 @@
     "translation": "I doubt that Forood has watched any movies.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -362,7 +362,7 @@
     "translation": "If Forood reads a book, he gets a gift.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -384,7 +384,7 @@
     "translation": "Forood did not buy any book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -403,7 +403,7 @@
     "translation": "I have not read any book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -422,7 +422,7 @@
     "translation": "I didn't read any book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -444,7 +444,7 @@
     "translation": "Forood can buy a book — any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -467,7 +467,7 @@
     "translation": "Forood must buy a book and he can buy any book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -490,7 +490,7 @@
     "translation": "Forood might have bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -513,7 +513,7 @@
     "translation": "Forood must have bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -533,7 +533,7 @@
     "translation": "Mary has to marry some doctor or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -557,7 +557,7 @@
     "context": "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek"],
@@ -581,7 +581,7 @@
     "context": "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -604,7 +604,7 @@
     "translation": "…but he cannot buy b1.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
@@ -626,7 +626,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek"],
@@ -650,7 +650,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -674,7 +674,7 @@
     "context": "There are only five books (b1–b5). The speaker is convinced that Forood hasn't bought b4 or b5, but for all he knows Forood could have bought any of the other books, or even none.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -697,7 +697,7 @@
     "translation": "…but he hasn't bought b1.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
@@ -719,7 +719,7 @@
     "context": "There are only five books (b1–b5). The speaker is convinced that Forood has bought a book, but knows that he hasn't bought b4 or b5.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -742,7 +742,7 @@
     "translation": "Forood bought a book yesterday.",
     "context": "Forood wanted to buy The Iliad and did so. He wouldn't have bought any other book.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -766,7 +766,7 @@
     "translation": "A: Forood bought a book yesterday. B: Which one?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -786,7 +786,7 @@
     "translation": "A: Forood bought some book yesterday. B: Which one?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -809,7 +809,7 @@
     "translation": "Some student called. Guess who?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -832,7 +832,7 @@
     "translation": "Forood bought a book yesterday. Guess what?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -852,7 +852,7 @@
     "translation": "John cheated. Therefore a student in your class is a cheater.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -876,7 +876,7 @@
     "translation": "Forood bought The Iliad. Therefore, Forood has bought a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -899,7 +899,7 @@
     "translation": "A: Forood bought a book yesterday. B: How many?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -920,7 +920,7 @@
     "translation": "A: Yesterday, Forood bought some books. B: How many?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -945,7 +945,7 @@
     "translation": "If Forood buys any book, he pays $10, but if he buys two, he pays $15.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -969,7 +969,7 @@
     "translation": "I doubt that Forood must buy any books, …he must buy Oblomov.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -992,7 +992,7 @@
     "translation": "…and that he is allowed to buy at most three books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["role", "continuation"],
@@ -1014,7 +1014,7 @@
     "translation": "Forood can buy some book or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -1037,7 +1037,7 @@
     "translation": "Maria bought some book or other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -1062,7 +1062,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
@@ -1086,7 +1086,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
@@ -1110,7 +1110,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -1134,7 +1134,7 @@
     "context": "There are only five books (b1–b5). Forood is required to buy two books, and any book is a permissible option.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -1157,7 +1157,7 @@
     "translation": "…and that he is not allowed to buy more than one book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["role", "continuation"]
@@ -1179,7 +1179,7 @@
     "translation": "I doubt that Forood must buy any books, …he must buy two.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -1199,7 +1199,7 @@
     "translation": "Forood might have bought a book, …and that he couldn't have bought exactly one book.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
@@ -1222,7 +1222,7 @@
     "translation": "There must be a book in the box.",
     "context": "There is a box on the desk. Forood doesn't know what the box contains.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "You see! There is one book", "judgment": "acceptable"},
       {"name": "You see! There are three books", "judgment": "unacceptable"}
@@ -1250,7 +1250,7 @@
     "translation": "Forood must have bought a book, …and that it is possible that he has bought one book or two books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],

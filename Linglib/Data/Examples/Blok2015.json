@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -98,7 +98,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -164,7 +164,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -186,7 +186,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -209,7 +209,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -232,7 +232,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -254,7 +254,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -276,7 +276,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -298,7 +298,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -320,7 +320,7 @@
     "translation": "",
     "context": "Eggs can be bought in half-dozen cartons only.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -342,7 +342,7 @@
     "translation": "",
     "context": "Eggs can be bought in half-dozen cartons only.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -364,7 +364,7 @@
     "translation": "",
     "context": "Eggs can be bought in half-dozen cartons only.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -386,7 +386,7 @@
     "translation": "",
     "context": "Eggs can be bought in half-dozen cartons only.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -408,7 +408,7 @@
     "translation": "",
     "context": "Cakes are sold per slice, with 12 slices in a cake.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -430,7 +430,7 @@
     "translation": "",
     "context": "Cakes are sold per slice, with 12 slices in a cake.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -452,7 +452,7 @@
     "translation": "",
     "context": "Cakes are sold per slice, with 12 slices in a cake.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -474,7 +474,7 @@
     "translation": "",
     "context": "Cakes are sold per slice, with 12 slices in a cake.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "up to"],
@@ -496,7 +496,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "at most"],
@@ -521,7 +521,7 @@
     "translation": "At most five students have to show up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "maximaal"],
@@ -547,7 +547,7 @@
     "translation": "Up to five students have to show up.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "tot"],

@@ -707,13 +707,13 @@ inductive Localization where
 
 end Spatial
 
-namespace Event
-
 /-- The spatial trace of an event domain `E`, which sends each event to the path its theme
 traverses. -/
 class SpatialTrace (E : Type*) (Loc : outParam Type*) where
   /-- The path traversed in an event. -/
   σ : E → Spatial.Path Loc
+
+namespace Event
 
 export SpatialTrace (σ)
 

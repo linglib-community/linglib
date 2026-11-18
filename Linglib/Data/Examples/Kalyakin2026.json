@@ -13,7 +13,7 @@
     "translation": "Patimat warmed up the food, and Ashura did too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -35,7 +35,7 @@
     "translation": "The teacher didn’t calm Musa down, but ABDULLAH, he did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"],
@@ -58,7 +58,7 @@
     "translation": "The teacher calmed Musa down, but PATIMAT, he didn’t.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"],
@@ -80,7 +80,7 @@
     "translation": "The teacher calmed Musa down, and the principal did too.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -102,7 +102,7 @@
     "translation": "The apples turned red, and the tomatoes did too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -124,7 +124,7 @@
     "translation": "The teacher calmed Murad, and the principal did too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -145,7 +145,7 @@
     "translation": "The teacher calmed Murad, and the principal calmed him, too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -167,7 +167,7 @@
     "translation": "The teacher calmed Murad, and the principal did too.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -189,7 +189,7 @@
     "translation": "The teacher calmed Murad down, but RASUL, he didn’t.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"],
@@ -211,7 +211,7 @@
     "translation": "Murad opened the door, and then Rasul did open the door again.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "repetitive", "judgment": "acceptable"}
     ],
@@ -239,7 +239,7 @@
     "translation": "The wind blew the door shut, no one opened it. Finally, Rasul opened the door again.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "restitutive", "judgment": "acceptable"}
     ],
@@ -261,7 +261,7 @@
     "translation": "The boy jumped, and the girl did too.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "manner"]
@@ -283,7 +283,7 @@
     "translation": "Murad ran, and Musa did too.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "manner"]
@@ -305,7 +305,7 @@
     "translation": "The boy sneezes, and so does the girl.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "manner"]
@@ -329,7 +329,7 @@
     "translation": "Has the water warmed up? I warmed it up.",
     "context": "Inchoative antecedent, causative target.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -353,7 +353,7 @@
     "translation": "Have you warmed up the water? It warmed up (on its own).",
     "context": "Causative antecedent, inchoative target.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -374,7 +374,7 @@
     "translation": "Patimat warmed up the food, and Ashura did too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -399,7 +399,7 @@
     "translation": "Has the water warmed up? I warmed it up.",
     "context": "Intransitive antecedent, causativized intransitive target.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -423,7 +423,7 @@
     "translation": "Has Rasul warmed up the water? Musa made him do it.",
     "context": "Transitive antecedent, causativized transitive target.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -449,7 +449,7 @@
     "translation": "Has Rasul warmed up the water? Musa made him do it.",
     "context": "Transitive antecedent, causativized transitive target.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -472,7 +472,7 @@
     "translation": "Bashir is engaged in repairing houses, and so is Musa.",
     "context": "Transitive antecedent, antipassive target.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -494,7 +494,7 @@
     "translation": "Bashir is engaged in repairing houses, and so is Musa.",
     "context": "Antipassive antecedent, antipassive target.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]
@@ -515,7 +515,7 @@
     "translation": "Patimat warmed up the food, and the water warmed up too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "state"]

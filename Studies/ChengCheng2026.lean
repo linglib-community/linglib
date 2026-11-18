@@ -25,8 +25,8 @@ noun phrase.
 ## TODO
 
 * §5.4 attributes the idiosyncrasy of *dǎ*+N to a First Phase defined by *dǎ*, but the noun's
-  root is not local to *dǎ*. Whether it belongs to idioms below Voice (`ComplexHead.IdiomLocal`)
-  or to the noun, which (68) bears on, needs sourced data on *diànhuà*.
+  root is not local to *dǎ*. Whether it belongs to idioms below Voice (level zero of the agentive
+  heads) or to the noun, which (68) bears on, needs sourced data on *diànhuà*.
 * Whether *dǎ-yíng* (22) admits the potential infix, the mark of a resultative in footnote 20,
   needs a sourced judgment.
 * The independence claims of §3 beyond `subsetPrinciple_v`, and the light verbs of §6.3.
@@ -47,7 +47,7 @@ namespace ChengCheng2026
 open DistributedMorphology DistributedMorphology.RootCategorization
 open Morphology hiding Feature
 open Harley2017 (Feature)
-open PhraseStructure Core.Order
+open PhraseStructure
 
 /-! ### Three heads -/
 
@@ -132,17 +132,17 @@ namespace Combination
 
 /-- The structure of a combination; for *dǎ*+R, the adjunction structure (50). -/
 def tree : Combination → Tree Cat Unit
-  | root => Attachment.modifier.tree lexicon
+  | root => (Configuration.modifier lexicon).tree
   | noun => nounTree
 
 /-- The position of *dǎ*. -/
-def daPos : Combination → TreePath
-  | root => ⟨[0, 1]⟩
+def daPos : Combination → GornAddress
+  | root => (Configuration.modifier lexicon).head
   | noun => ⟨[0]⟩
 
 /-- The position of the root after *dǎ*. -/
-def rootPos : Combination → TreePath
-  | root => RootCategorization.rootPos
+def rootPos : Combination → GornAddress
+  | root => (Configuration.modifier lexicon).root
   | noun => ⟨[1, 0, 0]⟩
 
 /-- *dǎ* and the root after it lie in one complex head. -/
@@ -154,7 +154,8 @@ end Combination
 
 /-- Under either attachment, *dǎ* and the root lie in one complex head. -/
 theorem x0At_tree_lexicon (a : Attachment) :
-    x0At (a.tree lexicon) ⟨[0, 1]⟩ = x0At (a.tree lexicon) RootCategorization.rootPos := by
+    x0At (a.configuration lexicon).tree (a.configuration lexicon).head =
+      x0At (a.configuration lexicon).tree (a.configuration lexicon).root := by
   cases a <;> rfl
 
 /-- The combination a datum tests, and whether its form separates *dǎ* from what follows it. -/

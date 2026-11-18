@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Fragments.English.Adjectives
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Nouwen (2024): The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers
@@ -95,10 +96,10 @@ def sem (E : Λ → Set S) (l : Λ) : Message → Set S
 /-- The literal listener at a latent parameter conditions the prior on the truth of the
 message. -/
 noncomputable def L0 (P : Measure S) (E : Λ → Set S) (l : Λ) : Kernel Message S :=
-  listener P (truthful fun u ↦ sem E l u)
+  literalListener P (fun u ↦ sem E l u)
 
 instance (P : Measure S) (E : Λ → Set S) (l : Λ) : IsFiniteKernel (L0 P E l) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The speaker at a state and a latent parameter soft-maximizes the literal listener's log
 probability of the state minus the cost of the message. -/
@@ -115,13 +116,13 @@ variable (P : Measure S) [IsFiniteMeasure P] (E : Λ → Set S) (α c : ℝ)
 
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) (l : Λ) (u : Message) :
     S1 P E α c (s, l) {u} ≠ 0 ↔ s ∈ sem E l u ∧ P {s} ≠ 0 :=
-  speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
+  speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
 
 variable {P E α}
 
 theorem S1_congr (hα : 0 < α) {s t : S} {l : Λ} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (hsl : s ∈ E l) (htl : t ∈ E l) : S1 P E α c (t, l) = S1 P E α c (s, l) :=
-  speaker_listener_truthful_dirac_congr hα _ P (sem E l) hs ht fun u ↦ by
+  speaker_literalListener_dirac_congr hα _ P (sem E l) hs ht fun u ↦ by
     cases u <;> simp [sem, hsl, htl]
 
 theorem S1_real_positive_le (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0) {l : Λ}
@@ -271,8 +272,9 @@ theorem update_eq_self [IsProbabilityMeasure P] (hα : 0 < α) (hE : Assertable 
     le_antisymm (update_mul_le_mul c hα fun l ↦ h l s t)
       (update_mul_le_mul c hα fun l ↦ h l t s)
   have hsum := Finset.sum_congr (s₁ := Finset.univ) rfl fun t _ ↦ key t
-  rw [← Finset.mul_sum, ← Finset.sum_mul, sum_measureReal_singleton_eq_one,
-    sum_measureReal_singleton_eq_one, mul_one, one_mul] at hsum
+  rw [← Finset.mul_sum, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
+    probReal_univ, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, mul_one, one_mul]
+    at hsum
   exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).mp hsum
 
 /-! ### Positive forms of measure functions -/

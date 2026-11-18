@@ -24,9 +24,10 @@ def fool : Datum :=
     glossedTokens := []
     context := "Said to O'Leary, who is a fool. Daniels, who is no fool, is standing nearby and thinks he is the one addressed."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def meter : Datum :=
   { id := "stalnaker1978_meter"
@@ -37,9 +38,10 @@ def meter : Datum :=
     glossedTokens := []
     context := "Said by an authority fixing the reference of 'one meter' by means of a certain metal bar."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def holmes : Datum :=
   { id := "stalnaker1978_holmes"
@@ -50,9 +52,10 @@ def holmes : Datum :=
     glossedTokens := []
     context := "Said in the actual world by a speaker who has heard three rumors about the origin of the Sherlock Holmes stories and does not know which is true."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def all : List Datum := [fool, meter, holmes]
 

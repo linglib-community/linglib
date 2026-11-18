@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 
 /-!
 # Berent et al. (2016): The double identity of linguistic doubling
@@ -29,7 +29,7 @@ predictions hold under both rankings.
 
 * `Parse`: a name as a single morpheme or as a base followed by its copy.
 * `ocp`, `dep`: the OCP within each morpheme, and DEP against the taught base.
-* `Level`, `tableau`: the level of analysis, and the competition it induces between a
+* `Level`, `optimal`: the level of analysis, and the competition it induces between a
   doubled name and its control.
 * `SpokenLanguage`, `SpokenLanguage.Licenses`: the meanings a language marks
   morphologically and by reduplication, and the two transfer conditions on a morphological
@@ -88,7 +88,7 @@ theorem surface_reduplicated (base : List α) :
 /-- The correspondence diagram of a parse against an input treats a simplex name as all
 stem, and the copy of a reduplicated name as its reduplicant. -/
 def correspondence (input : List α) :
-    Parse α → Correspondence ReduplicationRole α
+    Parse α → Correspondence.Coindexation ReduplicationRole α
   | simplex form => .reduplication input form []
   | reduplicated base => .reduplication input base base
 
@@ -126,13 +126,17 @@ def dep (base : Option (List α)) : Constraint (Parse α) := fun p ↦
 
 @[simp] theorem dep_some_simplex (b form : List α) :
     dep (some b) (.simplex form) = form.length - b.length :=
-  Correspondence.depViol_of_diagonal (.reduplication b form []) .input .base
-    (Correspondence.reduplication_edge _ _ _ (by decide))
+  (congrArg₂ Correspondence.Segment.maxViol
+    (Correspondence.Coindexation.toward_ofStrings _ _ _)
+    (Correspondence.Coindexation.toward_ofStrings _ _ _)).trans
+      (Correspondence.maxViol_indexed form b)
 
 @[simp] theorem dep_some_reduplicated (b base : List α) :
     dep (some b) (.reduplicated base) = base.length - b.length :=
-  Correspondence.depViol_of_diagonal (.reduplication b base base) .input .base
-    (Correspondence.reduplication_edge _ _ _ (by decide))
+  (congrArg₂ Correspondence.Segment.maxViol
+    (Correspondence.Coindexation.toward_ofStrings _ _ _)
+    (Correspondence.Coindexation.toward_ofStrings _ _ _)).trans
+      (Correspondence.maxViol_indexed base b)
 
 variable [DecidableEq α]
 
@@ -150,33 +154,34 @@ def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).su
 
 /-! ### The competition between a doubled name and its control -/
 
-/-- The OCP and DEP against the input of the level. -/
-def con (x : α) (l : Level) : ConstraintSet (Parse α) (Fin 2) := ![ocp, dep (l.input x)]
+/-- The marks of a parse on the OCP and on DEP against the input of the level. -/
+def marks (x : α) (l : Level) (p : Parse α) : Fin 2 → ℕ := ![ocp p, dep (l.input x) p]
 
-/-- The competition between XX and XY at a level, under a ranking of the OCP and DEP. -/
-def tableau (x y : α) (l : Level) (r : Ranking (Fin 2) 2) : Tableau (Parse α) 2 :=
-  .ofRanking (con x l) r (candidates x y l)
+/-- The winners of the competition between XX and XY at a level, under a ranking of the OCP and
+DEP. -/
+def optimal (x y : α) (l : Level) (r : Ranking (Fin 2)) : Finset (Parse α) :=
+  r.optimal (marks x l) (candidates x y l)
 
 /-- At the phonological level the control wins under either ranking, because doubling is
 identity within a morpheme, which the OCP bans. -/
-theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
-    (tableau x y .phonology r).optimal = {.simplex [x, y]} := by
-  refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
+theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2)) :
+    optimal x y .phonology r = {.simplex [x, y]} := by
+  refine Ranking.Enumeration.optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
   simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
   rintro d (rfl | rfl) hd
   · exact absurd rfl hd
-  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input, h]
+  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, marks, Level.input, h]
 
 /-- At the morphological level the reduplicative parse wins under either ranking, because it
 escapes the OCP and adds nothing to the base, while the control violates DEP. -/
-theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
-    (tableau x y .morphology r).optimal = {.reduplicated [x]} := by
-  refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
+theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2)) :
+    optimal x y .morphology r = {.reduplicated [x]} := by
+  refine Ranking.Enumeration.optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
   simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
   rintro d (rfl | rfl | rfl) hd
   · exact absurd rfl hd
-  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input, h]
-  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input]
+  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, marks, Level.input, h]
+  · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, marks, Level.input]
 
 /-! ### Transfer from the spoken language -/
 
@@ -231,8 +236,8 @@ end SpokenLanguage
 /-- Doubling is preferred exactly for the meanings the spoken language licenses, in that
 the winner surfaces as XX when the meaning is licensed and as XY otherwise. -/
 theorem exists_optimal_surface_iff [DecidableEq M] (l : SpokenLanguage M) (f : M) (h : x ≠ y)
-    (r : Ranking (Fin 2) 2) :
-    (∃ p ∈ (tableau x y (l.level f) r).optimal, p.surface = [x, x]) ↔ l.Licenses f := by
+    (r : Ranking (Fin 2)) :
+    (∃ p ∈ optimal x y (l.level f) r, p.surface = [x, x]) ↔ l.Licenses f := by
   unfold SpokenLanguage.level
   split_ifs with hf
   · simp [optimal_morphology h, hf, Parse.surface, Parse.morphemes]
@@ -270,9 +275,9 @@ theorem licenses_not_monotone :
       english.Licenses .plural ∧ ¬ hebrew.Licenses .plural := by
   decide
 
-theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2) 2) :
-    ((∃ p ∈ (tableau x y (english.level f) r).optimal, p.surface = [x, x]) ↔ f = .plural) ∧
-      ((∃ p ∈ (tableau x y (hebrew.level f) r).optimal, p.surface = [x, x]) ↔
+theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2)) :
+    ((∃ p ∈ optimal x y (english.level f) r, p.surface = [x, x]) ↔ f = .plural) ∧
+      ((∃ p ∈ optimal x y (hebrew.level f) r, p.surface = [x, x]) ↔
         f = .diminutive) := by
   rw [exists_optimal_surface_iff _ _ h, exists_optimal_surface_iff _ _ h,
     english_licenses_iff, hebrew_licenses_iff]

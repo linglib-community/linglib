@@ -49,14 +49,6 @@ one](##MeinhardtEtAl2024.exists_isWeaklyDeterministic_not_isNonInteractingBimach
   letter-to-letter machines also compute, none of them non-interacting: non-interaction is a
   property of the machine, not of the map.
 
-## Errata
-
-* Def. 3(a) and Def. 6 quantify over every output, not every change. As printed, Def. 6 fails at
-  line (d) of the paper's own Maasai machine in Fig. 8, where a recessive vowel with `q1` on both
-  sides stays itself and moving either state alone to `q2` changes it, and [no machine of the kind
-  here computes Maasai under it](##MeinhardtEtAl2024.run_ne_maasai_of_forall_output_iff). Both are
-  read here over changes, as Def. 5 and the paper's prose ("licensed") read them.
-
 ## TODO
 
 * Word-valued cells do not exclude Tutrugbu or plateauing through `IsUnboundedCircumambient` alone.
@@ -476,11 +468,11 @@ Tutrugbu's conditional blocking, the paper's (3), is unbounded circumambient (De
 semiambient and no non-interacting bimachine computes it. -/
 
 -- Def. 3
-theorem tutrugbu_not_isSemiambient : ¬ IsSemiambient McCollumEtAl2020.tutrugbu.map :=
+theorem tutrugbu_not_isSemiambient : ¬ IsSemiambient McCollumEtAl2020.tutrugbu :=
   not_isSemiambient_of_isUnboundedCircumambient McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
 theorem tutrugbu_not_isNonInteractingBimachineComputable :
-    ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu.map :=
+    ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu :=
   not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient
     McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
@@ -492,14 +484,14 @@ Lamont, O'Hara and Smith that §5.2 and Fig. 12 take up: their first pass is len
 alphabet-preserving and still tells the second pass what lies beyond its reach. -/
 
 theorem utp_not_isNonInteractingBimachineComputable :
-    ¬ IsNonInteractingBimachineComputable Tone.utp.map :=
+    ¬ IsNonInteractingBimachineComputable (Tone.utp Tone.AssociationState.H) :=
   not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient
-    Tone.utp.isUnboundedCircumambient
+    (Tone.utp_isUnboundedCircumambient (b := .O) (by decide))
 
 theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
     ∃ f : List Tone.AssociationState → List Tone.AssociationState,
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
-  ⟨Tone.utp.map, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
+  ⟨Tone.utp .H, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
     utp_not_isNonInteractingBimachineComputable⟩
 
 /-! ### A bounded two-sided rule

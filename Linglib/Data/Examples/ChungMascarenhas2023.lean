@@ -22,9 +22,11 @@ def cm2024_1_korean_conditional_eval : Datum :=
     language := "kore1280"
     primaryText := "John-un cip-ey iss-∅-eya toy-n-ta."
     glossedTokens := [("John-un", "John-TOP"), ("cip-ey", "home-DAT"), ("iss-∅-eya", "COP-PRES-only.if"), ("toy-n-ta", "EVAL-PRES-DECL")]
+    glossedWords := [⟨['J', 'o', 'h', 'n', '-', 'u', 'n'], ['J', 'o', 'h', 'n', '-', 'T', 'O', 'P'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩, ⟨['u', 'n'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['c', 'i', 'p', '-', 'e', 'y'], ['h', 'o', 'm', 'e', '-', 'D', 'A', 'T'], [⟨['c', 'i', 'p'], ['h', 'o', 'm', 'e'], none⟩, ⟨['e', 'y'], ['D', 'A', 'T'], some '-'⟩]⟩, ⟨['i', 's', 's', '-', '∅', '-', 'e', 'y', 'a'], ['C', 'O', 'P', '-', 'P', 'R', 'E', 'S', '-', 'o', 'n', 'l', 'y', '.', 'i', 'f'], [⟨['i', 's', 's'], ['C', 'O', 'P'], none⟩, ⟨['∅'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['e', 'y', 'a'], ['o', 'n', 'l', 'y', '.', 'i', 'f'], some '-'⟩]⟩, ⟨['t', 'o', 'y', '-', 'n', '-', 't', 'a'], ['E', 'V', 'A', 'L', '-', 'P', 'R', 'E', 'S', '-', 'D', 'E', 'C', 'L'], [⟨['t', 'o', 'y'], ['E', 'V', 'A', 'L'], none⟩, ⟨['n'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['t', 'a'], ['D', 'E', 'C', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Korean conditional evaluative construction: -(e)ya 'only-if' + toy- 'EVAL/suffice'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "koreanComposition"), ("construction", "conditional-evaluative")] }
 
@@ -38,7 +40,7 @@ def cm2024_4_linda_original : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Linda is a bank teller.", .acceptable), ("Linda is a bank teller and she is active in the feminist movement.", .acceptable)]
+    contrasts := [("Linda is a bank teller.", .acceptable), ("Linda is a bank teller and she is active in the feminist movement.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "conjunctionFallacy"), ("empiricalDomain", "epistemic")] }
 
@@ -51,7 +53,7 @@ def cm2024_15a_minersBlockNeither : Datum :=
     glossedTokens := []
     context := "Ten miners trapped in shaft A or shaft B (unknown which). Blocking A: 10 saved if in A, 0 if in B. Blocking B: 0/10. Blocking neither: 9 saved either way."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought")] }
 
@@ -64,7 +66,7 @@ def cm2024_15b_minersBlockA : Datum :=
     glossedTokens := []
     context := "Same miners scenario as (15a). Conditional on miners-in-A info."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought"), ("conditional", "info-sensitive")] }
 
@@ -77,7 +79,7 @@ def cm2024_25a_minersMust : Datum :=
     glossedTokens := []
     context := "Same miners scenario as (15a)."
     judgment := .acceptable
-    alternatives := [("We mustn't block either path.", .acceptable), ("We must / have to refrain from blocking either path.", .acceptable), ("We cannot block either path.", .acceptable)]
+    contrasts := [("We mustn't block either path.", .acceptable), ("We must / have to refrain from blocking either path.", .acceptable), ("We cannot block either path.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must")] }
 
@@ -90,7 +92,7 @@ def cm2024_25b_minersMustA : Datum :=
     glossedTokens := []
     context := "Same miners scenario as (15a)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must"), ("prediction", "thresholdShift")] }
 
@@ -103,7 +105,7 @@ def cm2024_29b_modal_linda : Datum :=
     glossedTokens := []
     context := "Following the Linda description (cm2024_4_linda_original)."
     judgment := .acceptable
-    alternatives := [("Linda must be a bank teller.", .acceptable)]
+    contrasts := [("Linda must be a bank teller.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "modalConjunctionFallacy"), ("empiricalDomain", "epistemic")] }
 
@@ -116,7 +118,7 @@ def cm2024_35_jack_description : Datum :=
     glossedTokens := []
     context := "Panel of psychologists interviewed 30 engineers and 70 lawyers (or 70/30 in reversed condition); descriptions written about each. Jack's description shown to subjects."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("empiricalDomain", "epistemic")] }
 
@@ -129,7 +131,7 @@ def cm2024_36_jack_must_engineer : Datum :=
     glossedTokens := []
     context := "Following the Jack description (cm2024_35_jack_description)."
     judgment := .acceptable
-    alternatives := [("Jack must be a lawyer.", .acceptable)]
+    contrasts := [("Jack must be a lawyer.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("modalForce", "must")] }
 
@@ -142,7 +144,7 @@ def cm2024_49a_cold : Datum :=
     glossedTokens := []
     context := "John absent; speaker reasoning about why."
     judgment := .acceptable
-    alternatives := [("He must be dead.", .unacceptable)]
+    contrasts := [("He must be dead.", .unacceptable)]
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must")] }
 
@@ -155,7 +157,7 @@ def cm2024_54a_grammatical_mistake : Datum :=
     glossedTokens := []
     context := "Deontic; speaker prescribing impossible standard."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must"), ("modalType", "deontic")] }
 
@@ -168,7 +170,7 @@ def cm2024_55a_bushwick_helicopter : Datum :=
     glossedTokens := []
     context := "Teleological; multiple alternative means available."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "have-to"), ("modalType", "teleological")] }
 
@@ -181,7 +183,7 @@ def cm2024_60a_kim_marry_pat : Datum :=
     glossedTokens := []
     context := "Kim will only inherit the considerable fortune their parents left them if they get married. They can marry anyone they like, the condition is simply that Kim be married in order to inherit. Suppose Kim is planning on marrying Pat."
     judgment := .acceptable
-    alternatives := [("Kim must marry PAT in order to inherit.", .acceptable)]
+    contrasts := [("Kim must marry PAT in order to inherit.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "focusContrast"), ("modalForce", "must")] }
 
@@ -194,7 +196,7 @@ def cm2024_63_billy_rain : Datum :=
     glossedTokens := []
     context := "Billy has direct perceptual evidence (looking at rain)."
     judgment := .unacceptable
-    alternatives := [("It's raining.", .acceptable)]
+    contrasts := [("It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "vfgFelicity"), ("modalForce", "must"), ("modalType", "epistemic")] }
 

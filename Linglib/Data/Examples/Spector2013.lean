@@ -25,7 +25,7 @@ def ex30a : Datum :=
     context := "The age requirement for voting in the USA is that voters be 18 years old or more."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -39,7 +39,7 @@ def ex30b : Datum :=
     context := "There is a maximal age but no minimal age for being eligible to the Fields medal."
     judgment := .unacceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -52,7 +52,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := "In answer to (36a): We need four chairs. Who could provide us with that?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -66,7 +66,7 @@ def ex39 : Datum :=
     context := "The minimal age required for voting is 18."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 
@@ -80,7 +80,7 @@ def ex40 : Datum :=
     context := "The minimal height for being hired in the military is 6 feet."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2")] }
 

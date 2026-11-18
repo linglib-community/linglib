@@ -39,18 +39,6 @@ least](##familiar_mostFrequent).
 * Japanese *kare*, listed under activated, is a stressed pronoun here, since the paper takes
   Japanese to have no unstressed personal pronoun.
 
-## Errata
-
-* The indefinite article is listed among the forms whose required status differs across
-  languages, but Table 1 and the paper's own discussion of the article give it the same status,
-  type identifiable, in Chinese, English and Spanish; [only the demonstrative determiners
-  differ](##required_eq_of_forall_ne_demonstrativeN).
-* The share of in-focus referents coded by the most restrictive form is said to range from 71%
-  (Russian) to 87% (English), but Japanese, with 87 of 125, [codes a smaller share than
-  Russian](##japanese_lt_russian).
-* The share of familiar full noun phrases that are bare in Japanese is printed as 59%, but Table 4
-  gives 63 of 108, [under 58.5%](##japanese_bare_share).
-
 ## References
 
 * [gundel-hedberg-zacharski-1993]
@@ -62,7 +50,7 @@ least](##familiar_mostFrequent).
 
 namespace GundelHedbergZacharski1993
 
-open Discourse
+open SpeechAct
 
 /-! ### The Givenness Hierarchy -/
 

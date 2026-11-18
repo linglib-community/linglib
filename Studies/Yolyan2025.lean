@@ -2,7 +2,6 @@ module
 
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Subregular.BMRS
-public import Linglib.Phonology.Tone.Surfacing
 public import Linglib.Data.Wordlist.Yolyan2025
 public import Studies.McCollumEtAl2020
 
@@ -39,7 +38,7 @@ conjunctive dual ⊘ of §6.3 (Def. 6.5) expresses Sour Grapes exactly (`sourGra
 * The head types of the two programs are unconstrained, which only strengthens the negative
   results. The exclusion uses the `d = 0` instance of the witness, since one-sidedness is global
   rather than window-bounded.
-* Bemba spreading is a `Tone.Surfacing` instance built from the paper's characterization: a
+* Bemba spreading is stated by which units surface H, from the paper's characterization: a
   high spreads to the word end when no high follows it, and onto the next two tone-bearing
   units when one does. Unlike plateauing, the surface set is not convex and the map is neither
   monotone nor idempotent. The words of Example 2.11 are in `Data/Wordlist/Yolyan2025.json`, their
@@ -235,7 +234,7 @@ theorem sourGrapes_not_bmrsWeaklyDeterministic :
 
 -- Example 2.12, Prop. 5.5
 theorem tutrugbu_not_bmrsWeaklyDeterministic :
-    ¬ IsBmrsWeaklyDeterministic McCollumEtAl2020.tutrugbu.map :=
+    ¬ IsBmrsWeaklyDeterministic McCollumEtAl2020.tutrugbu :=
   not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient
     McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
@@ -260,15 +259,13 @@ instance (w : List BTone) (i : ℕ) : Decidable (bembaSurfaces w i) := by
   unfold bembaSurfaces
   infer_instance
 
-/-- Bemba high-tone spreading is a surfacing process. -/
-def bemba : Tone.Surfacing BTone where
-  hi := .H
-  lo := .L
-  Surfaces := bembaSurfaces
-  hi_ne_lo := by decide
-  lt_length h := h.1
-  surfaces_of_hi h := ⟨(List.getElem?_eq_some_iff.mp h).1, .inl h⟩
-  decSurfaces _ _ := inferInstance
+/-- Bemba high-tone spreading writes H at the units that surface H and L at the others. -/
+def bemba (w : List BTone) : List BTone :=
+  w.mapIdx fun i _ ↦ if bembaSurfaces w i then .H else .L
+
+theorem getElem?_bemba (w : List BTone) (i : ℕ) :
+    (bemba w)[i]? = w[i]?.map fun _ ↦ if bembaSurfaces w i then BTone.H else BTone.L := by
+  simp [bemba, List.getElem?_mapIdx]
 
 /-- `toneOf c` is the tone of the vowel letter `c`, high under an acute and low otherwise; any
 other character is no vowel. -/
@@ -285,7 +282,7 @@ def ofAnalysis (a : Wordlist.Analysis) : Option (List BTone × List BTone) :=
   if u.length = s.length then some (u, s) else none
 
 -- Example 2.11
-theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
+theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, bemba p.1 = p.2 := by
   decide
 
 /-- All words of Example 2.11 but the second of (b), whose surface lengthens a vowel, keep their
@@ -322,13 +319,22 @@ private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
 -- Prop. 5.4
-theorem bemba_isUnboundedCircumambient : IsUnboundedCircumambient bemba.map :=
-  bemba.isUnboundedCircumambient_of_flanks (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3)
-    (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ bembaSurfaces_flankWord_HL)
-    (fun d ↦ not_bembaSurfaces_flankWord_LL) (fun d ↦ not_bembaSurfaces_flankWord_HH)
+theorem bemba_isUnboundedCircumambient : IsUnboundedCircumambient bemba :=
+  .of_flanks (fill := .L) (xOn := .H) (yOn := .L) (xOff := .L) (yOff := .H)
+    (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3) (fun d ↦ by omega) (fun d ↦ by omega)
+    (fun d ↦ by
+      rw [getElem?_bemba, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_left bembaSurfaces_flankWord_HL]
+      decide)
+    (fun d ↦ by
+      rw [getElem?_bemba, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right not_bembaSurfaces_flankWord_LL])
+    (fun d ↦ by
+      rw [getElem?_bemba, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right not_bembaSurfaces_flankWord_HH])
 
 -- Prop. 5.4
-theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
+theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba :=
   not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient bemba_isUnboundedCircumambient
 
 /-! ### LHOL stress as a simultaneous application (§5.2)

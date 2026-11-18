@@ -11,7 +11,7 @@
     "translation": "The dog wants to cross the road.",
     "context": "Out of the blue; the bare noun read as definite.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -35,7 +35,7 @@
     "translation": "That dog wants to cross the road.",
     "context": "Out of the blue; na-CL-N as the demonstrative description.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -61,7 +61,7 @@
     "translation": "The car was intercepted by the police because there wasn't a sticker on the license plate.",
     "context": "Part-whole bridging from 'car' to its license plate.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -91,7 +91,7 @@
     "translation": "There are a boy and a girl sitting in the classroom. I met the boy yesterday.",
     "context": "Anaphoric reference to a boy introduced by an indefinite in the previous sentence.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "wo zuotian yudao nansheng.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -119,7 +119,7 @@
     "translation": "The bike was in the backyard. I planned to wipe that seat.",
     "context": "Part-whole bridging: the minimal situation with the bike contains a unique seat.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -147,7 +147,7 @@
     "translation": "Yesterday I bought the book. I really want to meet that author.",
     "context": "Relational bridging: the author is not contained in the situation of buying the book, so situational uniqueness cannot resolve reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -170,7 +170,7 @@
     "translation": "child of someone",
     "context": "The de-possessive diagnostic for relational nouns.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "relational"],
@@ -191,7 +191,7 @@
     "translation": "person of someone",
     "context": "The de-possessive diagnostic for relational nouns.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "sortal"],
@@ -212,7 +212,7 @@
     "translation": "flower of someone",
     "context": "The de-possessive diagnostic for relational nouns.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "sortal"],
@@ -237,7 +237,7 @@
     "translation": "Chen Haoran parked his bike in the backyard, and then his dog scratched that seat.",
     "context": "Study 1 target item (bike, seat): the seat is uniquely identified as a part of the bike.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -263,7 +263,7 @@
     "translation": "Chen Yue bought a CD last week, and every day she dreams about obtaining an autograph from the singer.",
     "context": "Study 1 target item (CD, singer): one-to-one association; the singer is not physically contained in the CD.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -288,7 +288,7 @@
     "translation": "Zhou Yuxuan has a painting hanging at home, but he doesn't know that painter.",
     "context": "Study 1 item REL2 (painting, painter), the only item where demonstratives were rated significantly higher than bare nouns (p = 0.02).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.",
         "judgment": "acceptable"
@@ -319,7 +319,7 @@
     "translation": "Lin Zixuan bought a car, but he quickly discovered that someone had stolen the steering wheel.",
     "context": "Study 1 item PW1 (car, steering wheel), where bare nouns were rated significantly higher than demonstratives (p = 0.00134).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.",
         "judgment": "acceptable"
@@ -352,7 +352,7 @@
     "translation": "Wang Yawen is using the computer. She found that the screen seemed to have broken all of a sudden.",
     "context": "Study 3 production item: the background sentence introduces 'computer'; participants choose the nominal form filling the blank.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -382,7 +382,7 @@
     "translation": "Wang Yawen is using the computer. She found that that screen seemed to have broken all of a sudden.",
     "context": "Study 3 production item, demonstrative option in the part-whole condition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -411,7 +411,7 @@
     "translation": "Wang Yawen is using the computer. She found that the charger seemed to have broken all of a sudden.",
     "context": "Study 3 production item, relational condition: the computer is the relatum of the relational noun 'charger'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -441,7 +441,7 @@
     "translation": "Wang Yawen is using the computer. She found that that charger seemed to have broken all of a sudden.",
     "context": "Study 3 production item, demonstrative option in the relational condition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -471,7 +471,7 @@
     "translation": "Wang Yawen is using a computer. She found that the computer seemed to break all of a sudden.",
     "context": "Study 3 SN control: a singular indefinite antecedent; the blank is filled by the same noun (bare or with na).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Wang Yawen zhengzai yong yi tai diannao; ta faxian na tai diannao haoxiang turan huai le.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -505,7 +505,7 @@
     "translation": "Wang Yawen is using two computers. She found that the computer seemed to break all of a sudden.",
     "context": "Study 3 PN control: a plural indefinite antecedent, where neither singular form was expected to be chosen.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.",
         "judgment": "acceptable"
@@ -541,7 +541,7 @@
     "translation": "Wang Yawen is using the computer. She found that the computer seemed to break all of a sudden.",
     "context": "Study 3 RN control: a bare-noun antecedent repeated in the test sentence.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Wang Yawen zhengzai yong diannao; ta faxian na tai diannao haoxiang turan huai le.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -574,7 +574,7 @@
     "translation": "Wang Yawen was just working. She found that the computer seemed to break all of a sudden.",
     "context": "Study 3 NN control: no nominal antecedent; a computer cannot be uniquely identified from the working situation.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.",
         "judgment": "acceptable"
@@ -614,7 +614,7 @@
     "translation": "Wang Yawen likes to collect books. Every time she finds a novel that she likes, she eventually realizes that she has read another story written by the author.",
     "context": "Study 4 target: the bridged noun is the lexically relational zuozhe 'author', covarying with the novel.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -646,7 +646,7 @@
     "translation": "Wang Yawen likes to collect books. Every time she finds a novel that she likes, she eventually realizes that she has read another story written by that author.",
     "context": "Study 4 target: demonstrative with the relational noun.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -678,7 +678,7 @@
     "translation": "Wang Yawen likes to collect books. Every time she finds a novel that she likes, she eventually realizes that she has read another story written by the novelist.",
     "context": "Study 4 target: the bridged noun is the non-relational xiaoshuo-jia 'novelist', which fails the de diagnostic.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "bare"],
@@ -710,7 +710,7 @@
     "translation": "Wang Yawen likes to collect books. Every time she finds a novel that she likes, she eventually realizes that she has read another story written by that novelist.",
     "context": "Study 4 target: demonstrative with the non-relational noun.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "naCL"],
@@ -742,7 +742,7 @@
     "translation": "Wang Yawen likes to collect books. She found a novel that she likes. She eventually realizes that she has read another story written by that novelist.",
     "context": "The intersentential version of the Study 4 item, reported in a footnote.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.",
         "judgment": "acceptable"
@@ -770,7 +770,7 @@
     "translation": "the owner of a cat",
     "context": "The de diagnostic used to classify Study 4 nouns.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "relational"],
@@ -791,7 +791,7 @@
     "translation": "the person of a cat",
     "context": "The de diagnostic used to classify Study 4 nouns.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "sortal"],
@@ -812,7 +812,7 @@
     "translation": "the author of that novel",
     "context": "Norming study (n = 8) rating the naturalness of de-constructions.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "relational"],
@@ -835,7 +835,7 @@
     "translation": "the novelist of that novel",
     "context": "Norming study (n = 8) rating the naturalness of de-constructions.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "sortal"],
@@ -857,7 +857,7 @@
     "translation": "The moon has risen.",
     "context": "The unique moon; the demonstrative variant is degraded.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "na ge yueliang sheng shang lai le.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -883,7 +883,7 @@
     "translation": "",
     "context": "Part-whole bridging from 'house' to its roof; the continuation introduces no second roof.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "the"],
@@ -907,7 +907,7 @@
     "translation": "",
     "context": "Part-whole bridging with a demonstrative; no reason to extend the situation to another roof.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "that"],
@@ -928,7 +928,7 @@
     "translation": "",
     "context": "Study 2 target: English translation of the Study 1 (bike, seat) item with a definite description.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "the"],
@@ -949,7 +949,7 @@
     "translation": "",
     "context": "Study 2 target, demonstrative description in the part-whole condition.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "that"],
@@ -969,7 +969,7 @@
     "translation": "",
     "context": "Study 2 target: English translation of the Study 1 (CD, singer) item with a demonstrative description.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "that"],
@@ -990,7 +990,7 @@
     "translation": "",
     "context": "Study 2 target, definite description in the relational condition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "the"],
@@ -1011,7 +1011,7 @@
     "translation": "",
     "context": "Study 2 item REL1 (novel, author), one of two items without a significant definite vs demonstrative difference (p = 0.189).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Lucas read a novel yesterday, and if possible, he really wants to meet that author.",
         "judgment": "acceptable"
@@ -1037,7 +1037,7 @@
     "translation": "",
     "context": "Study 2 item REL3 (movie, director), the other item without a significant difference (p = 0.124).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ryan watched a movie last week, and he believed that he ran into that director after the movie.",
         "judgment": "acceptable"
@@ -1067,7 +1067,7 @@
     "translation": "",
     "context": "B's 'the author' is intended as the author of the featured book; A rejects it because the book-author relation fails, although the person B met is an author.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "the"],
@@ -1089,7 +1089,7 @@
     "translation": "",
     "context": "Said while pointing to a poster of the movie.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["definite_form", "that"],
@@ -1111,7 +1111,7 @@
     "translation": "",
     "context": "The of-diagnostic for relational nouns.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "relational"],
@@ -1130,7 +1130,7 @@
     "translation": "",
     "context": "The of-diagnostic for relational nouns.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun_arity", "sortal"],

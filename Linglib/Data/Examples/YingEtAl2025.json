@@ -10,7 +10,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Possibility"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Possibility"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Probability"]
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Probability"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Compositionality"]
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Compositionality"]
@@ -124,7 +124,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Knowledge"]
@@ -143,7 +143,7 @@
     "translation": "",
     "context": "A player in the Doors, Keys and Gems gridworld; the sentence describes the player's beliefs about the contents of the boxes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["factor", "Knowledge"]

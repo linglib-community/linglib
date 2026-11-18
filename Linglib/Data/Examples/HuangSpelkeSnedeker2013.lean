@@ -24,7 +24,7 @@ def huang2013_ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("term", "two"), ("reading", "exact")] }
 
@@ -37,7 +37,7 @@ def huang2013_ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("term", "two"), ("reading", "lower-bounded")] }
 
@@ -50,7 +50,7 @@ def huang2013_ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "some"), ("reading", "some but not all"), ("implicature", "calculated")] }
 
@@ -63,7 +63,7 @@ def huang2013_ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "some"), ("reading", "lower-bounded"), ("implicature", "cancelled")] }
 
@@ -76,7 +76,7 @@ def huang2013_ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "all"), ("role", "stronger alternative to (3)")] }
 
@@ -89,7 +89,7 @@ def huang2013_ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "some"), ("environment", "restrictor of a universal"), ("reading", "lower-bounded")] }
 
@@ -102,7 +102,7 @@ def huang2013_ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "two"), ("environment", "restrictor of a universal"), ("reading", "exact")] }
 
@@ -115,7 +115,7 @@ def huang2013_ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "everybody"), ("phenomenon", "implicit domain restriction")] }
 
@@ -128,7 +128,7 @@ def huang2013_exp1_some : Datum :=
     glossedTokens := []
     context := "Two open boxes showing Cookie Monster's and Big Bird's shares of a set of cookies, and a covered box."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.2"), ("term", "some"), ("task", "covered box"), ("trials", "some(NONE,SOME), some(SOME,ALL), some(NONE,ALL)")] }
 
@@ -141,7 +141,7 @@ def huang2013_exp1_two : Datum :=
     glossedTokens := []
     context := "Two open boxes containing sets of fish, and a covered box."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1.2"), ("term", "two"), ("task", "covered box"), ("trials", "two(1,2), two(2,3V5), two(1,3V5)")] }
 
@@ -154,7 +154,7 @@ def huang2013_exp2_giveN_some : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("term", "some"), ("task", "Give-N")] }
 
@@ -167,7 +167,7 @@ def huang2013_exp2_giveN_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("term", "all"), ("task", "Give-N")] }
 
@@ -180,7 +180,7 @@ def huang2013_exp3_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.2"), ("term", "all"), ("task", "covered box"), ("trials", "all(NONE,ALL), all(SOME,ALL), all(SOME,NONE)")] }
 
@@ -193,7 +193,7 @@ def huang2013_exp4_two : Datum :=
     glossedTokens := []
     context := "Cookie Monster has 1 of 4 cookies in one open box and 3 of 4 in the other; the third box is covered."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1.2"), ("term", "two"), ("task", "covered box"), ("trials", "two(1,3)")] }
 
@@ -206,7 +206,7 @@ def huang2013_s62_some : Datum :=
     glossedTokens := []
     context := "A girl with 2 of 4 socks and a girl with 3 of 3 soccer balls."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "some"), ("task", "visual world"), ("ambiguity", "some of the soc-")] }
 
@@ -219,7 +219,7 @@ def huang2013_s62_three : Datum :=
     glossedTokens := []
     context := "A girl with 3 socks and a girl with 2 soccer balls."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "three"), ("task", "visual world"), ("role", "lower-bound control")] }
 
@@ -232,7 +232,7 @@ def huang2013_s62_two : Datum :=
     glossedTokens := []
     context := "A girl with 2 socks and a girl with 3 soccer balls."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "two"), ("task", "visual world"), ("role", "upper-bound probe")] }
 

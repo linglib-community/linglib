@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
+public import Linglib.Processing.LanguageModel.Tight
 public import Linglib.Core.Probability.Kernel.Softmax
 
 /-!
@@ -104,7 +104,7 @@ theorem isTight_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞) :
     (softmaxModel d).IsTight := by
   refine (softmaxModel d).isTight_of_le_next_none
-    (f := fun t ↦ ENNReal.ofReal (exp (-f t)) / Fintype.card (Option α)) (fun u ↦ ?_) ?_
+    (c := fun t ↦ ENNReal.ofReal (exp (-f (t + 1))) / Fintype.card (Option α)) (fun u ↦ ?_) ?_
   · refine le_trans ?_ (le_next_softmaxModel hd u none)
     gcongr
     exact hf u

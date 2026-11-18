@@ -11,7 +11,7 @@
     "translation": "José has played football (we saw it)",
     "context": "The speaker saw José play.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
@@ -33,7 +33,7 @@
     "translation": "José has played football (we heard it)",
     "context": "The speaker heard the noise of a game but could not see it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
@@ -55,7 +55,7 @@
     "translation": "José has played football (we infer it from visual evidence)",
     "context": "The football and José's boots are gone and crowds return from the ground.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
@@ -77,7 +77,7 @@
     "translation": "José has played football (we assume this on the basis of what we already know)",
     "context": "José is out on a Sunday afternoon, when he usually plays.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
@@ -99,7 +99,7 @@
     "translation": "José has played football (we were told)",
     "context": "Someone told the speaker.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
@@ -121,7 +121,7 @@
     "translation": "The minister is reportedly sick",
     "context": "Said by somebody told about the sickness.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
@@ -143,7 +143,7 @@
     "translation": "I have obviously slept",
     "context": "Said by somebody who has just woken up.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
@@ -165,7 +165,7 @@
     "translation": "She is, as I hear, playing well",
     "context": "Said by somebody listening to her play.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
@@ -188,7 +188,7 @@
     "translation": "Many girls and boys were swimming (I saw them)",
     "context": "The speaker saw them.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
@@ -211,7 +211,7 @@
     "translation": "It (the field) might be completely destroyed (I infer)",
     "context": "The speaker infers it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
@@ -234,7 +234,7 @@
     "translation": "You make my daughter cry too much (they tell me)",
     "context": "The speaker was told.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
@@ -258,7 +258,7 @@
     "translation": "Varsken apparently first tortured Shushanik on 8th January",
     "context": "A past action the speaker did not witness but assumes from a present result or a report.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "perfect"],
@@ -280,7 +280,7 @@
     "translation": "They think that the dragon would seem to have come down into our field (not very likely)",
     "context": "Reported information the speaker distances themself from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],

@@ -54,8 +54,8 @@ namespace Det
 
 /-- `Q.toDet α` holds of `(A, B)` iff the structure `(α, A, B)` is in the class `Q`. -/
 def toDet (Q : Det.{u}) (α : Type u) : Quantifier.Det α :=
-  fun A B ↦
-    ⟦(⟨α, monadic.structure ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure)⟧ ∈ Q
+  fun A B ↦ ⟦(⟨α, monadic.structure ![(· ∈ A), (· ∈ B)]⟩ :
+    Bundled.{u} (Language.monadic (Fin 2)).Structure)⟧ ∈ Q
 
 /-- Every realized Lindström quantifier is permutation invariant, derived from its isomorphism
 closure rather than stipulated on the denotation. -/
@@ -137,7 +137,7 @@ private theorem forall_cell_iff {γ : Type*} (f : ∀ {σ : Type u}, Set σ → 
 
 private theorem preimage_unaryType (A B : Set α)
     (S : (Language.monadic (Fin 2)).Relations 1 → Prop) :
-    @unaryType _ α (monadic.structure ![A, B]) ⁻¹' {S} =
+    @unaryType _ α (monadic.structure ![(· ∈ A), (· ∈ B)]) ⁻¹' {S} =
       {x | (x ∈ A ↔ S (.pred 0)) ∧ (x ∈ B ↔ S (.pred 1))} :=
   Set.ext fun x ↦ (unaryType_monadic_structure_eq_iff x S).trans Fin.forall_fin_two
 
@@ -147,8 +147,8 @@ theorem Det.toDet_iff_of_mk_eq (Q : Det.{u})
     (h₁ : #↥(A ∩ B) = #↥(A' ∩ B')) (h₂ : #↥(A \ B) = #↥(A' \ B'))
     (h₃ : #↥(B \ A) = #↥(B' \ A')) (h₄ : #↥(A ∪ B)ᶜ = #↥(A' ∪ B')ᶜ) :
     Q.toDet α A B ↔ Q.toDet β A' B' :=
-  Q.is_equiv_invariant <| (@nonempty_equiv_iff_mk_eq _ _ α β (monadic.structure ![A, B])
-    (monadic.structure ![A', B'])).2 fun S ↦ by
+  Q.is_equiv_invariant <| (@nonempty_equiv_iff_mk_eq _ _ α β
+    (monadic.structure ![(· ∈ A), (· ∈ B)]) (monadic.structure ![(· ∈ A'), (· ∈ B')])).2 fun S ↦ by
       rw [preimage_unaryType, preimage_unaryType]
       exact (forall_cell_iff (fun s ↦ #↥s)).2 ⟨h₁, h₂, h₃, h₄⟩ _ _
 
@@ -191,8 +191,8 @@ private theorem min_encard_eq_iff [Finite α] [Finite β] (n : ℕ) (s : Set α)
 /-- Finite structures for two predicates are `n`-equivalent exactly when they are alike up to
 `n`. -/
 theorem elementarilyEquivalentUpTo_iff_alikeUpTo [Finite α] [Finite β] {n : ℕ} :
-    @ElementarilyEquivalentUpTo _ n α β (monadic.structure ![A, B])
-      (monadic.structure ![A', B']) ↔ AlikeUpTo n A B A' B' := by
+    @ElementarilyEquivalentUpTo _ n α β (monadic.structure ![(· ∈ A), (· ∈ B)])
+      (monadic.structure ![(· ∈ A'), (· ∈ B')]) ↔ AlikeUpTo n A B A' B' := by
   rw [elementarilyEquivalentUpTo_monadic_structure_iff, AlikeUpTo]
   simp only [← min_encard_eq_iff n]
   rw [← forall_cell_iff fun s ↦ min (n : ℕ∞) s.encard]
@@ -200,7 +200,7 @@ theorem elementarilyEquivalentUpTo_iff_alikeUpTo [Finite α] [Finite β] {n : �
   exact ⟨fun h p q ↦ h ![p, q], fun h S ↦ h (S 0) (S 1)⟩
 
 private theorem exists_eq_structure {M : Type u} (S : (Language.monadic (Fin 2)).Structure M) :
-    ∃ A B : Set M, S = monadic.structure ![A, B] := by
+    ∃ A B : Set M, S = monadic.structure ![(· ∈ A), (· ∈ B)] := by
   refine ⟨{a | S.RelMap (.pred 0) ![a]}, {a | S.RelMap (.pred 1) ![a]}, ?_⟩
   conv_lhs => rw [monadic.eq_structure S]
   congr 1
@@ -227,7 +227,7 @@ theorem Det.Family.foDefinable_iff_exists_alikeUpTo {F : Det.Family.{u}} :
       AlikeUpTo n A B A' B' → F α A B → F β A' B' := by
   constructor
   · rintro ⟨φ, rfl⟩
-    exact ⟨φ.qr, fun α β _ _ A B A' B' h ↦
+    exact ⟨φ.quantifierRank, fun α β _ _ A B A' B' h ↦
       (elementarilyEquivalentUpTo_iff_alikeUpTo.2 h φ le_rfl).1⟩
   · rintro ⟨n, hn⟩
     obtain ⟨φ, hφ⟩ : (Language.monadic (Fin 2)).FODefinable {M | Finite M}
@@ -240,7 +240,7 @@ theorem Det.Family.foDefinable_iff_exists_alikeUpTo {F : Det.Family.{u}} :
         have : Finite N := hN
         exact ⟨this, hn A B A' B' (elementarilyEquivalentUpTo_iff_alikeUpTo.1 hMN) h⟩⟩
     refine ⟨φ, funext fun α ↦ funext fun hα ↦ funext fun A ↦ funext fun B ↦ propext ?_⟩
-    exact (hφ ⟨α, monadic.structure ![A, B]⟩ hα).symm.trans
+    exact (hφ ⟨α, monadic.structure ![(· ∈ A), (· ∈ B)]⟩ hα).symm.trans
       ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hα, h⟩⟩
 
 /-- A tree of numbers is first-order definable on the finite models exactly when it reaches a

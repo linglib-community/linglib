@@ -24,7 +24,7 @@ def past_perfect : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Past Perfect"), ("structure", "E—R—S")] }
 
@@ -37,7 +37,7 @@ def simple_past : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past"), ("structure", "R, E—S")] }
 
@@ -50,7 +50,7 @@ def present_perfect : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present Perfect"), ("structure", "E—S, R")] }
 
@@ -63,7 +63,7 @@ def present : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present"), ("structure", "S, R, E")] }
 
@@ -76,7 +76,7 @@ def simple_future : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future"), ("structure", "S, R—E")] }
 
@@ -89,7 +89,7 @@ def future_perfect : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Future Perfect"), ("structure", "S—E—R")] }
 
@@ -102,7 +102,7 @@ def past_perfect_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Past Perfect, Extended"), ("structure", "E—R—S")] }
 
@@ -115,7 +115,7 @@ def simple_past_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past, Extended"), ("structure", "R, E—S")] }
 
@@ -128,7 +128,7 @@ def present_perfect_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present Perfect, Extended"), ("structure", "E—S, R")] }
 
@@ -141,7 +141,7 @@ def present_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present, Extended"), ("structure", "S, R, E")] }
 
@@ -154,7 +154,7 @@ def simple_future_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future, Extended"), ("structure", "S, R—E")] }
 
@@ -167,7 +167,7 @@ def future_perfect_extended : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Future Perfect, Extended"), ("structure", "S—E—R")] }
 
@@ -180,7 +180,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Past Perfect"), ("form", "Simple Past"), ("form", "Simple Past"), ("link", "when"), ("link", "when"), ("structure", "E—R—S"), ("structure", "R, E—S"), ("structure", "R, E—S")] }
 
@@ -193,7 +193,7 @@ def ex_1_has_come : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Past Perfect"), ("form", "Present Perfect"), ("link", "when")] }
 
@@ -206,7 +206,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present Perfect"), ("form", "Simple Future"), ("link", "which"), ("structure", "E—S, R"), ("structure", "S, R—E")] }
 
@@ -219,7 +219,7 @@ def ex_2_did_not_decide : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past"), ("form", "Simple Future"), ("link", "which")] }
 
@@ -232,7 +232,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past"), ("form", "Conditional"), ("link", "that"), ("structure", "R, E—S"), ("structure", "R—S, E")] }
 
@@ -245,7 +245,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present"), ("form", "Present Perfect"), ("link", "now that"), ("adverb", "now"), ("structure", "S, R, E"), ("structure", "E—S, R")] }
 
@@ -258,7 +258,7 @@ def ex_4_mailed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Present"), ("form", "Simple Past"), ("link", "now that"), ("adverb", "now")] }
 
@@ -271,7 +271,7 @@ def telephoned : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past"), ("form", "Simple Past"), ("link", "before")] }
 
@@ -284,7 +284,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Past"), ("form", "Simple Past"), ("form", "Present"), ("link", "when"), ("link", "than"), ("structure", "R, E—S"), ("structure", "R, E—S"), ("structure", "S, R, E")] }
 
@@ -297,7 +297,7 @@ def now_shall_go : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future"), ("adverb", "now"), ("structure", "S, R—E")] }
 
@@ -310,7 +310,7 @@ def shall_go_tomorrow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future"), ("adverb", "tomorrow"), ("structure", "S—R, E")] }
 
@@ -323,7 +323,7 @@ def photograph : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future"), ("form", "Present"), ("link", "when"), ("pointOfSpeech", "neglected")] }
 
@@ -336,7 +336,7 @@ def record : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "Simple Future"), ("form", "Present Perfect"), ("link", "when"), ("pointOfSpeech", "neglected")] }
 

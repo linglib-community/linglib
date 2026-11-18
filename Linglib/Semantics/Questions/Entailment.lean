@@ -17,8 +17,8 @@ entails exactly the questions all its alternatives resolve (`IsNormal.le_iff_for
 and between normal questions entailment is inclusion of each alternative in an alternative
 (`IsNormal.le_iff_forall_alt_exists_alt`). A polar question entails exactly the questions both
 its answers resolve (`polar_le_iff`), and so no polar question but itself and the tautology
-(`polar_le_polar_iff`). The propositions a question decides, those whose polar question it
-entails, form a Boolean subalgebra (`Question.decided`).
+(`polar_le_polar_iff`). The propositions a question determines, those whose polar question it
+entails, form a Boolean subalgebra (`Question.determined`).
 
 The entailment of [groenendijk-stokhof-1984], which [roberts-2012] adopts as her (8), asks
 instead that answering the first question yield a complete answer to the second,
@@ -90,7 +90,7 @@ theorem polar_le_polar_iff {p q : Set W} :
   · rw [(Set.subset_compl_comm.mp hp).antisymm hpc, polar_compl]; exact Or.inl rfl
   · rw [Set.compl_univ_iff.mp (hcover hp hpc), polar_empty]; exact Or.inr rfl
 
-/-- A question that decides two propositions decides their intersection: a state settling
+/-- A question that determines two propositions determines their intersection: a state settling
 whether `p` and whether `q` settles whether both. -/
 theorem le_polar_inter {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
     Q ≤ polar (p ∩ q) := fun σ hσ ↦ by
@@ -105,9 +105,9 @@ theorem le_polar_union {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
   rw [← polar_compl, Set.compl_union]
   exact le_polar_inter (by rwa [polar_compl]) (by rwa [polar_compl])
 
-/-- The propositions a question decides, those whose polar question it entails, form a Boolean
+/-- The propositions a question determines, those whose polar question it entails, form a Boolean
 subalgebra of the propositions. -/
-def decided (Q : Question W) : BooleanSubalgebra (Set W) where
+def determined (Q : Question W) : BooleanSubalgebra (Set W) where
   carrier := {p | Q ≤ polar p}
   supClosed' _ hp _ hq := le_polar_union hp hq
   infClosed' _ hp _ hq := le_polar_inter hp hq
@@ -117,7 +117,7 @@ def decided (Q : Question W) : BooleanSubalgebra (Set W) where
     rw [polar_empty]
     exact le_top
 
-@[simp] theorem mem_decided {p : Set W} : p ∈ Q.decided ↔ Q ≤ polar p := Iff.rfl
+@[simp] theorem mem_determined {p : Set W} : p ∈ Q.determined ↔ Q ≤ polar p := Iff.rfl
 
 /-! ### Complete-answer entailment -/
 

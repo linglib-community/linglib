@@ -24,7 +24,7 @@ def positive_tall : Datum :=
     glossedTokens := []
     context := "Entails Adam's height exceeds the standard for tallness."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "positive"), ("evaluative", "true")] }
 
@@ -37,7 +37,7 @@ def positive_short : Datum :=
     glossedTokens := []
     context := "Entails Adam's height is below the standard for shortness."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "negative"), ("evaluative", "true")] }
 
@@ -50,7 +50,7 @@ def comparative_tall : Datum :=
     glossedTokens := []
     context := "True even if both Adam and Doug are short."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "positive"), ("evaluative", "false")] }
 
@@ -63,7 +63,7 @@ def comparative_short : Datum :=
     glossedTokens := []
     context := "True even if both Adam and Doug are tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "negative"), ("evaluative", "false")] }
 
@@ -76,7 +76,7 @@ def equative_tall : Datum :=
     glossedTokens := []
     context := "Does not presuppose that either is tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "positive"), ("evaluative", "false")] }
 
@@ -89,7 +89,7 @@ def equative_short : Datum :=
     glossedTokens := []
     context := "Presupposes both Adam and Doug are short."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "negative"), ("evaluative", "true")] }
 
@@ -102,7 +102,7 @@ def mp_tall : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "positive"), ("evaluative", "false")] }
 
@@ -115,7 +115,7 @@ def mp_short : Datum :=
     glossedTokens := []
     context := "Measure phrases do not combine with negative-polar adjectives."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "negative")] }
 
@@ -128,7 +128,7 @@ def question_tall : Datum :=
     glossedTokens := []
     context := "Felicitous regardless of Adam's height."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "positive"), ("evaluative", "false")] }
 
@@ -141,7 +141,7 @@ def question_short : Datum :=
     glossedTokens := []
     context := "Presupposes Adam is short."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "negative"), ("evaluative", "true")] }
 
@@ -154,7 +154,7 @@ def demonstrative_tall : Datum :=
     glossedTokens := []
     context := "A and B are looking at Adam, so his exact height is salient; acceptable after both 'Adam's really short' and 'Adam's really tall' ((17)-(18))."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degreeDemonstrative"), ("polarity", "positive"), ("evaluative", "false")] }
 
@@ -167,7 +167,7 @@ def demonstrative_short : Datum :=
     glossedTokens := []
     context := "A and B are looking at Adam, so his exact height is salient; acceptable after 'Adam's really short' and infelicitous after 'Adam's really tall' ((17)-(18))."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degreeDemonstrative"), ("polarity", "negative"), ("evaluative", "true")] }
 

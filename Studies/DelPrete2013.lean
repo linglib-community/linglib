@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Genericity.Normality
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Del Prete (2013): Imperfectivity and habituality in Italian

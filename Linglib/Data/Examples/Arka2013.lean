@@ -22,11 +22,13 @@ def ex_3 : Datum :=
     language := "indo1316"
     primaryText := "Dia datang."
     glossedTokens := [("Dia", "3s"), ("datang", "come")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
-    readings := [("S/he came.", .acceptable), ("S/he is coming.", .acceptable), ("S/he will come.", .acceptable)]
-    paperFeatures := [("tam", "contextual")] }
+    contrasts := []
+    readings := [("past", .acceptable), ("present", .acceptable), ("future", .acceptable)]
+    paperFeatures := [] }
 
 def ex_4a : Datum :=
   { id := "arka2013_4a"
@@ -35,11 +37,13 @@ def ex_4a : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (besok)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("besok", "tomorrow")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], [⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("frame", "S<E-R"), ("adjunct", "besok")] }
+    paperFeatures := [("frame", "S<E-R")] }
 
 def ex_4b : Datum :=
   { id := "arka2013_4b"
@@ -48,11 +52,13 @@ def ex_4b : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (kemarin)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("kemarin", "yesterday")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("frame", "E-R<S"), ("adjunct", "kemarin")] }
+    paperFeatures := [("frame", "E-R<S")] }
 
 def ex_4c : Datum :=
   { id := "arka2013_4c"
@@ -61,11 +67,13 @@ def ex_4c : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (sekarang)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("sekarang", "now")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], [⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("frame", "E-R-S"), ("adjunct", "sekarang")] }
+    paperFeatures := [("frame", "E-R-S")] }
 
 def ex_5a : Datum :=
   { id := "arka2013_5a"
@@ -74,11 +82,13 @@ def ex_5a : Datum :=
     language := "indo1316"
     primaryText := "Dia sudah pergi (sekarang)."
     glossedTokens := [("Dia", "3s"), ("sudah", "PERF"), ("pergi", "go"), ("sekarang", "now")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], [⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], none⟩]⟩, ⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], [⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], none⟩]⟩, ⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], [⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("frame", "E<S,R")] }
+    paperFeatures := [("frame", "E<S,R")] }
 
 def ex_5b : Datum :=
   { id := "arka2013_5b"
@@ -87,11 +97,13 @@ def ex_5b : Datum :=
     language := "indo1316"
     primaryText := "Dia sudah pergi kemarin."
     glossedTokens := [("Dia", "3s"), ("sudah", "PERF"), ("pergi", "go"), ("kemarin", "yesterday")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], [⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], none⟩]⟩, ⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], [⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], none⟩]⟩, ⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("frame", "E<R<S"), ("adjunct", "kemarin")] }
+    paperFeatures := [("frame", "E<R<S")] }
 
 def ex_6a : Datum :=
   { id := "arka2013_6a"
@@ -100,11 +112,13 @@ def ex_6a : Datum :=
     language := "indo1316"
     primaryText := "Ali (sedang) me-mukul-i kepala=nya sendiri."
     glossedTokens := [("Ali", "A."), ("sedang", "PROG"), ("me-mukul-i", "AV.hit-I"), ("kepala=nya", "head=3sg.poss"), ("sendiri", "self")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', '.'], [⟨['A', 'l', 'i'], ['A', '.'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', '-', 'm', 'u', 'k', 'u', 'l', '-', 'i'], ['A', 'V', '.', 'h', 'i', 't', '-', 'I'], []⟩, ⟨['k', 'e', 'p', 'a', 'l', 'a', '=', 'n', 'y', 'a'], ['h', 'e', 'a', 'd', '=', '3', 's', 'g', '.', 'p', 'o', 's', 's'], [⟨['k', 'e', 'p', 'a', 'l', 'a'], ['h', 'e', 'a', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 's', 'g', '.', 'p', 'o', 's', 's'], some '='⟩]⟩, ⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], [⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "applicative -i")] }
+    paperFeatures := [] }
 
 def ex_6b : Datum :=
   { id := "arka2013_6b"
@@ -113,11 +127,13 @@ def ex_6b : Datum :=
     language := "indo1316"
     primaryText := "Ali (sedang) me-mukul-mukul kepala=nya sendiri."
     glossedTokens := [("Ali", "Ali"), ("sedang", "PROG"), ("me-mukul-mukul", "AV.hit-RED"), ("kepala=nya", "head=3sg.poss"), ("sendiri", "self")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', '-', 'm', 'u', 'k', 'u', 'l', '-', 'm', 'u', 'k', 'u', 'l'], ['A', 'V', '.', 'h', 'i', 't', '-', 'R', 'E', 'D'], []⟩, ⟨['k', 'e', 'p', 'a', 'l', 'a', '=', 'n', 'y', 'a'], ['h', 'e', 'a', 'd', '=', '3', 's', 'g', '.', 'p', 'o', 's', 's'], [⟨['k', 'e', 'p', 'a', 'l', 'a'], ['h', 'e', 'a', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 's', 'g', '.', 'p', 'o', 's', 's'], some '='⟩]⟩, ⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], [⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "reduplication")] }
+    paperFeatures := [] }
 
 def ex_7 : Datum :=
   { id := "arka2013_7"
@@ -126,11 +142,13 @@ def ex_7 : Datum :=
     language := "indo1316"
     primaryText := "Ali tidak masuk-masuk ke rumah."
     glossedTokens := [("Ali", "Ali"), ("tidak", "NEG"), ("masuk-masuk", "enter-RED"), ("ke", "to"), ("rumah", "house")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['t', 'i', 'd', 'a', 'k'], ['N', 'E', 'G'], [⟨['t', 'i', 'd', 'a', 'k'], ['N', 'E', 'G'], none⟩]⟩, ⟨['m', 'a', 's', 'u', 'k', '-', 'm', 'a', 's', 'u', 'k'], ['e', 'n', 't', 'e', 'r', '-', 'R', 'E', 'D'], [⟨['m', 'a', 's', 'u', 'k'], ['e', 'n', 't', 'e', 'r'], none⟩, ⟨['m', 'a', 's', 'u', 'k'], ['R', 'E', 'D'], some '-'⟩]⟩, ⟨['k', 'e'], ['t', 'o'], [⟨['k', 'e'], ['t', 'o'], none⟩]⟩, ⟨['r', 'u', 'm', 'a', 'h'], ['h', 'o', 'u', 's', 'e'], [⟨['r', 'u', 'm', 'a', 'h'], ['h', 'o', 'u', 's', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("marking", "reduplication"), ("meaning", "unrealised expectation")] }
+    paperFeatures := [] }
 
 def ex_8 : Datum :=
   { id := "arka2013_8"
@@ -139,11 +157,13 @@ def ex_8 : Datum :=
     language := "indo1316"
     primaryText := "Dia makan sambil menonton TV."
     glossedTokens := [("Dia", "3s"), ("makan", "eat"), ("sambil", "while"), ("menonton", "AV.watch"), ("TV", "TV")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩, ⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], [⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'o', 'n', 't', 'o', 'n'], ['A', 'V', '.', 'w', 'a', 't', 'c', 'h'], [⟨['m', 'e', 'n', 'o', 'n', 't', 'o', 'n'], ['A', 'V', '.', 'w', 'a', 't', 'c', 'h'], none⟩]⟩, ⟨['T', 'V'], ['T', 'V'], [⟨['T', 'V'], ['T', 'V'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aspect", "progressive"), ("tam", "contextual")] }
+    paperFeatures := [] }
 
 def ex_10 : Datum :=
   { id := "arka2013_10"
@@ -152,11 +172,13 @@ def ex_10 : Datum :=
     language := "indo1316"
     primaryText := "Mereka (akan) datang."
     glossedTokens := [("Mereka", "3p"), ("akan", "FUT"), ("datang", "come")]
+    glossedWords := [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("frame", "S<E-R"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [("frame", "S<E-R")] }
 
 def ex_11a : Datum :=
   { id := "arka2013_11a"
@@ -165,11 +187,13 @@ def ex_11a : Datum :=
     language := "indo1316"
     primaryText := "Mereka ingin [datang besok]."
     glossedTokens := [("Mereka", "3p"), ("ingin", "want"), ("datang", "come"), ("besok", "tomorrow")]
+    glossedWords := [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['i', 'n', 'g', 'i', 'n'], ['w', 'a', 'n', 't'], [⟨['i', 'n', 'g', 'i', 'n'], ['w', 'a', 'n', 't'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], [⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Mereka ingin [akan datang besok].", .ungrammatical)]
+    contrasts := [("Mereka ingin [akan datang besok].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "ingin")] }
+    paperFeatures := [] }
 
 def ex_11c : Datum :=
   { id := "arka2013_11c"
@@ -178,24 +202,28 @@ def ex_11c : Datum :=
     language := "indo1316"
     primaryText := "Saya tahu [bahwa mereka akan datang]."
     glossedTokens := [("Saya", "1s"), ("tahu", "know"), ("bahwa", "that"), ("mereka", "3p"), ("akan", "FUT"), ("datang", "come")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['t', 'a', 'h', 'u'], ['k', 'n', 'o', 'w'], [⟨['t', 'a', 'h', 'u'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['b', 'a', 'h', 'w', 'a'], ['t', 'h', 'a', 't'], [⟨['b', 'a', 'h', 'w', 'a'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['m', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("matrix", "tahu"), ("subordinator", "bahwa")] }
+    paperFeatures := [] }
 
 def ex_12a : Datum :=
   { id := "arka2013_12a"
     source := ⟨"arka-2013", "(12a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Dia akan/sudah/sedang makan."
-    glossedTokens := [("Dia", "3s"), ("akan/sudah/sedang", "FUT/PERF/PROG"), ("makan", "eat")]
+    primaryText := "Dia akan makan."
+    glossedTokens := [("Dia", "3s"), ("akan", "FUT"), ("makan", "eat")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := [("Dia sudah makan.", .acceptable), ("Dia sedang makan.", .acceptable)]
     readings := []
-    paperFeatures := [("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_12b : Datum :=
   { id := "arka2013_12b"
@@ -204,11 +232,13 @@ def ex_12b : Datum :=
     language := "indo1316"
     primaryText := "Saya menyuruh dia [makan]."
     glossedTokens := [("Saya", "1s"), ("menyuruh", "AV.ask"), ("dia", "3s"), ("makan", "eat")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['m', 'e', 'n', 'y', 'u', 'r', 'u', 'h'], ['A', 'V', '.', 'a', 's', 'k'], [⟨['m', 'e', 'n', 'y', 'u', 'r', 'u', 'h'], ['A', 'V', '.', 'a', 's', 'k'], none⟩]⟩, ⟨['d', 'i', 'a'], ['3', 's'], [⟨['d', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya menyuruh dia [akan/sudah/sedang makan].", .ungrammatical)]
+    contrasts := [("Saya menyuruh dia [akan makan].", .ungrammatical), ("Saya menyuruh dia [sudah makan].", .ungrammatical), ("Saya menyuruh dia [sedang makan].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "menyuruh")] }
+    paperFeatures := [] }
 
 def ex_13a : Datum :=
   { id := "arka2013_13a"
@@ -217,11 +247,13 @@ def ex_13a : Datum :=
     language := "indo1316"
     primaryText := "Orang itu mendorong saya [ _ jatuh]."
     glossedTokens := [("Orang", "person"), ("itu", "that"), ("mendorong", "AV.push"), ("saya", "1s"), ("jatuh", "fall")]
+    glossedWords := [⟨['O', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['O', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'n', 'd', 'o', 'r', 'o', 'n', 'g'], ['A', 'V', '.', 'p', 'u', 's', 'h'], [⟨['m', 'e', 'n', 'd', 'o', 'r', 'o', 'n', 'g'], ['A', 'V', '.', 'p', 'u', 's', 'h'], none⟩]⟩, ⟨['s', 'a', 'y', 'a'], ['1', 's'], [⟨['s', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['j', 'a', 't', 'u', 'h'], ['f', 'a', 'l', 'l'], [⟨['j', 'a', 't', 'u', 'h'], ['f', 'a', 'l', 'l'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Orang itu mendorong saya [ _ akan/sedang/sudah jatuh].", .ungrammatical)]
+    contrasts := [("Orang itu mendorong saya [ _ akan jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sedang jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sudah jatuh].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "mendorong")] }
+    paperFeatures := [] }
 
 def ex_14a : Datum :=
   { id := "arka2013_14a"
@@ -230,11 +262,13 @@ def ex_14a : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (sambil) menangis."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("sambil", "while"), ("menangis", "AV.cry")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], [⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['A', 'V', '.', 'c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['A', 'V', '.', 'c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
+    contrasts := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("adjunct", "sambil")] }
+    paperFeatures := [] }
 
 def ex_15a : Datum :=
   { id := "arka2013_15a"
@@ -243,11 +277,13 @@ def ex_15a : Datum :=
     language := "indo1316"
     primaryText := "Saya belajar [menembak]."
     glossedTokens := [("Saya", "1s"), ("belajar", "study"), ("menembak", "AV.shoot")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], [⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], none⟩]⟩, ⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], [⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya belajar bisa [menembak].", .ungrammatical)]
+    contrasts := [("Saya belajar bisa [menembak].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "belajar")] }
+    paperFeatures := [] }
 
 def ex_15c : Datum :=
   { id := "arka2013_15c"
@@ -256,11 +292,13 @@ def ex_15c : Datum :=
     language := "indo1316"
     primaryText := "Saya belajar agar (bisa) menembak."
     glossedTokens := [("Saya", "1s"), ("belajar", "study"), ("agar", "so.that"), ("bisa", "able"), ("menembak", "AV.shoot")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], [⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], none⟩]⟩, ⟨['a', 'g', 'a', 'r'], ['s', 'o', '.', 't', 'h', 'a', 't'], [⟨['a', 'g', 'a', 'r'], ['s', 'o', '.', 't', 'h', 'a', 't'], none⟩]⟩, ⟨['b', 'i', 's', 'a'], ['a', 'b', 'l', 'e'], [⟨['b', 'i', 's', 'a'], ['a', 'b', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], [⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("withAux", "acceptable"), ("subordinator", "agar")] }
+    paperFeatures := [] }
 
 def ex_18a : Datum :=
   { id := "arka2013_18a"
@@ -270,11 +308,13 @@ def ex_18a : Datum :=
     language := "indo1316"
     primaryText := "...di jalan banyak sapi yang sedang memakan rumput."
     glossedTokens := [("di", "at"), ("jalan", "road"), ("banyak", "plenty"), ("sapi", "cow"), ("yang", "REL"), ("sedang", "PROG"), ("memakan", "AV.eat"), ("rumput", "grass")]
+    glossedWords := [⟨['d', 'i'], ['a', 't'], [⟨['d', 'i'], ['a', 't'], none⟩]⟩, ⟨['j', 'a', 'l', 'a', 'n'], ['r', 'o', 'a', 'd'], [⟨['j', 'a', 'l', 'a', 'n'], ['r', 'o', 'a', 'd'], none⟩]⟩, ⟨['b', 'a', 'n', 'y', 'a', 'k'], ['p', 'l', 'e', 'n', 't', 'y'], [⟨['b', 'a', 'n', 'y', 'a', 'k'], ['p', 'l', 'e', 'n', 't', 'y'], none⟩]⟩, ⟨['s', 'a', 'p', 'i'], ['c', 'o', 'w'], [⟨['s', 'a', 'p', 'i'], ['c', 'o', 'w'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['R', 'E', 'L'], [⟨['y', 'a', 'n', 'g'], ['R', 'E', 'L'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', 'm', 'a', 'k', 'a', 'n'], ['A', 'V', '.', 'e', 'a', 't'], [⟨['m', 'e', 'm', 'a', 'k', 'a', 'n'], ['A', 'V', '.', 'e', 'a', 't'], none⟩]⟩, ⟨['r', 'u', 'm', 'p', 'u', 't'], ['g', 'r', 'a', 's', 's'], [⟨['r', 'u', 'm', 'p', 'u', 't'], ['g', 'r', 'a', 's', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("voice", "AV")] }
+    paperFeatures := [] }
 
 def ex_18b : Datum :=
   { id := "arka2013_18b"
@@ -286,9 +326,9 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("voice", "passive")] }
+    paperFeatures := [] }
 
 def ex_34a : Datum :=
   { id := "arka2013_34a"
@@ -297,11 +337,13 @@ def ex_34a : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', tanya=nya."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("tanya=nya", "ask=NYA")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'a', 'n', 'y', 'a', '=', 'n', 'y', 'a'], ['a', 's', 'k', '=', 'N', 'Y', 'A'], [⟨['t', 'a', 'n', 'y', 'a'], ['a', 's', 'k'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
-    readings := [("he asked", .acceptable), ("he will ask", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    contrasts := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_34b : Datum :=
   { id := "arka2013_34b"
@@ -310,11 +352,13 @@ def ex_34b : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', tanya=nya nanti."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("tanya=nya", "ask=NYA"), ("nanti", "later")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'a', 'n', 'y', 'a', '=', 'n', 'y', 'a'], ['a', 's', 'k', '=', 'N', 'Y', 'A'], [⟨['t', 'a', 'n', 'y', 'a'], ['a', 's', 'k'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩, ⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], [⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("nominalised", "true"), ("axis", "future"), ("adjunct", "nanti")] }
+    contrasts := []
+    readings := [("future", .acceptable)]
+    paperFeatures := [] }
 
 def ex_34d : Datum :=
   { id := "arka2013_34d"
@@ -323,11 +367,13 @@ def ex_34d : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', dia akan (ber)tanya (nanti)."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("dia", "3"), ("akan", "FUT"), ("(ber)tanya", "BER-ask"), ("nanti", "later")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['d', 'i', 'a'], ['3'], [⟨['d', 'i', 'a'], ['3'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['(', 'b', 'e', 'r', ')', 't', 'a', 'n', 'y', 'a'], ['B', 'E', 'R', '-', 'a', 's', 'k'], []⟩, ⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], [⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_35a : Datum :=
   { id := "arka2013_35a"
@@ -336,11 +382,13 @@ def ex_35a : Datum :=
     language := "indo1316"
     primaryText := "Kapan beli=nya?"
     glossedTokens := [("Kapan", "when"), ("beli=nya", "buy=NYA")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['b', 'e', 'l', 'i', '=', 'n', 'y', 'a'], ['b', 'u', 'y', '=', 'N', 'Y', 'A'], [⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("kapan akan beli=nya?", .ungrammatical)]
-    readings := [("When did you buy it?", .acceptable), ("When are you going to buy it?", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    contrasts := [("kapan akan beli=nya?", .ungrammatical)]
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_35c : Datum :=
   { id := "arka2013_35c"
@@ -349,11 +397,13 @@ def ex_35c : Datum :=
     language := "indo1316"
     primaryText := "Kapan kamu akan beli?"
     glossedTokens := [("Kapan", "when"), ("kamu", "2s"), ("akan", "FUT"), ("beli", "buy")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['k', 'a', 'm', 'u'], ['2', 's'], [⟨['k', 'a', 'm', 'u'], ['2', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], [⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_36a : Datum :=
   { id := "arka2013_36a"
@@ -362,11 +412,13 @@ def ex_36a : Datum :=
     language := "indo1316"
     primaryText := "Kapan lahirnya?"
     glossedTokens := [("Kapan", "when"), ("lahirnya", "birth=3s")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['l', 'a', 'h', 'i', 'r', 'n', 'y', 'a'], ['b', 'i', 'r', 't', 'h', '=', '3', 's'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Kapan akan lahirnya?", .ungrammatical)]
-    readings := [("When was s/he born?", .acceptable), ("When is s/he going to be born?", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    contrasts := [("Kapan akan lahirnya?", .ungrammatical)]
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_36c : Datum :=
   { id := "arka2013_36c"
@@ -375,11 +427,13 @@ def ex_36c : Datum :=
     language := "indo1316"
     primaryText := "Kapan ia akan lahir?"
     glossedTokens := [("Kapan", "when"), ("ia", "3s"), ("akan", "FUT"), ("lahir", "birth")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['i', 'a'], ['3', 's'], [⟨['i', 'a'], ['3', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'a', 'h', 'i', 'r'], ['b', 'i', 'r', 't', 'h'], [⟨['l', 'a', 'h', 'i', 'r'], ['b', 'i', 'r', 't', 'h'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_37a : Datum :=
   { id := "arka2013_37a"
@@ -388,11 +442,13 @@ def ex_37a : Datum :=
     language := "indo1316"
     primaryText := "kamu harus datang."
     glossedTokens := [("kamu", "2"), ("harus", "must"), ("datang", "come")]
+    glossedWords := [⟨['k', 'a', 'm', 'u'], ['2'], [⟨['k', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], [⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "harus"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "deontic")] }
+    paperFeatures := [("soa", "future"), ("evaluation", "deontic")] }
 
 def ex_37b : Datum :=
   { id := "arka2013_37b"
@@ -401,11 +457,13 @@ def ex_37b : Datum :=
     language := "indo1316"
     primaryText := "harus=nya kamu datang."
     glossedTokens := [("harus=nya", "must=NYA"), ("kamu", "2"), ("datang", "come")]
+    glossedWords := [⟨['h', 'a', 'r', 'u', 's', '=', 'n', 'y', 'a'], ['m', 'u', 's', 't', '=', 'N', 'Y', 'A'], [⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩, ⟨['k', 'a', 'm', 'u'], ['2'], [⟨['k', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "harus"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "counterfactual")] }
+    paperFeatures := [("soa", "past"), ("evaluation", "counterfactual")] }
 
 def ex_38a : Datum :=
   { id := "arka2013_38a"
@@ -414,11 +472,13 @@ def ex_38a : Datum :=
     language := "indo1316"
     primaryText := "Ia bisa menangis"
     glossedTokens := [("Ia", "she"), ("bisa", "can"), ("menangis", "cry")]
+    glossedWords := [⟨['I', 'a'], ['s', 'h', 'e'], [⟨['I', 'a'], ['s', 'h', 'e'], none⟩]⟩, ⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], [⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], none⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "bisa"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "epistemic")] }
+    paperFeatures := [("soa", "future"), ("evaluation", "epistemic")] }
 
 def ex_38b : Datum :=
   { id := "arka2013_38b"
@@ -427,11 +487,13 @@ def ex_38b : Datum :=
     language := "indo1316"
     primaryText := "bisa=nya menangis"
     glossedTokens := [("bisa=nya", "can=3s"), ("menangis", "cry")]
+    glossedWords := [⟨['b', 'i', 's', 'a', '=', 'n', 'y', 'a'], ['c', 'a', 'n', '=', '3', 's'], [⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], none⟩, ⟨['n', 'y', 'a'], ['3', 's'], some '='⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "bisa"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "past ability")] }
+    paperFeatures := [("soa", "past"), ("evaluation", "past ability")] }
 
 def ex_39a : Datum :=
   { id := "arka2013_39a"
@@ -440,11 +502,13 @@ def ex_39a : Datum :=
     language := "indo1316"
     primaryText := "Ia mau pulang."
     glossedTokens := [("Ia", "3s"), ("mau", "wish"), ("pulang", "go.home")]
+    glossedWords := [⟨['I', 'a'], ['3', 's'], [⟨['I', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], [⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], none⟩]⟩, ⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], [⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "mau"), ("nominalised", "false"), ("soa", "future")] }
+    paperFeatures := [("soa", "future")] }
 
 def ex_39b : Datum :=
   { id := "arka2013_39b"
@@ -453,11 +517,13 @@ def ex_39b : Datum :=
     language := "indo1316"
     primaryText := "mau=nya pulang."
     glossedTokens := [("mau=nya", "wish=DEF"), ("pulang", "go.home")]
+    glossedWords := [⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'i', 's', 'h', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], [⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("modal", "mau"), ("nominalised", "true"), ("soa", "present/past"), ("evaluation", "counterfactual")] }
+    paperFeatures := [("evaluation", "counterfactual"), ("soa", "present"), ("soa", "past")] }
 
 def ex_40a : Datum :=
   { id := "arka2013_40a"
@@ -466,11 +532,13 @@ def ex_40a : Datum :=
     language := "indo1316"
     primaryText := "tampak=nya [ada orang datang]"
     glossedTokens := [("tampak=nya", "appear=DEF"), ("ada", "exist"), ("orang", "person"), ("datang", "come")]
+    glossedWords := [⟨['t', 'a', 'm', 'p', 'a', 'k', '=', 'n', 'y', 'a'], ['a', 'p', 'p', 'e', 'a', 'r', '=', 'D', 'E', 'F'], [⟨['t', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], [⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], none⟩]⟩, ⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
+    contrasts := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
     readings := []
-    paperFeatures := [("nominalised", "true"), ("withAux", "ungrammatical"), ("evidential", "visual"), ("predicate", "nominal")] }
+    paperFeatures := [] }
 
 def ex_41 : Datum :=
   { id := "arka2013_41"
@@ -479,11 +547,13 @@ def ex_41 : Datum :=
     language := "indo1316"
     primaryText := "Tampak ada orang datang"
     glossedTokens := [("Tampak", "appear"), ("ada", "exist"), ("orang", "people"), ("datang", "come")]
+    glossedWords := [⟨['T', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], [⟨['T', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], none⟩]⟩, ⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], [⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], none⟩]⟩, ⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'o', 'p', 'l', 'e'], [⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'o', 'p', 'l', 'e'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("nominalised", "false")] }
+    paperFeatures := [] }
 
 def ex_42a : Datum :=
   { id := "arka2013_42a"
@@ -492,11 +562,13 @@ def ex_42a : Datum :=
     language := "indo1316"
     primaryText := "Dia sakit."
     glossedTokens := [("Dia", "3s"), ("sakit", "ill")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], [⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("evidential", "none")] }
+    paperFeatures := [] }
 
 def ex_42b : Datum :=
   { id := "arka2013_42b"
@@ -505,11 +577,13 @@ def ex_42b : Datum :=
     language := "indo1316"
     primaryText := "Dia sakit kata=nya."
     glossedTokens := [("Dia", "3s"), ("sakit", "ill"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], [⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_43a : Datum :=
   { id := "arka2013_43a"
@@ -518,11 +592,13 @@ def ex_43a : Datum :=
     language := "indo1316"
     primaryText := "Kamu pembohong kata=nya"
     glossedTokens := [("Kamu", "2"), ("pembohong", "PEN.lie"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_43b : Datum :=
   { id := "arka2013_43b"
@@ -531,11 +607,13 @@ def ex_43b : Datum :=
     language := "indo1316"
     primaryText := "Kamu pembohong keluh=nya"
     glossedTokens := [("Kamu", "2"), ("pembohong", "PEN.lie"), ("keluh=nya", "word=3POSS")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'e', 'l', 'u', 'h', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', '3', 'P', 'O', 'S', 'S'], [⟨['k', 'e', 'l', 'u', 'h'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 'P', 'O', 'S', 'S'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("evidential", "none"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_44a : Datum :=
   { id := "arka2013_44a"
@@ -544,11 +622,13 @@ def ex_44a : Datum :=
     language := "indo1316"
     primaryText := "Dia tidur."
     glossedTokens := [("Dia", "3s"), ("tidur", "sleep")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia adalah tidur.", .ungrammatical)]
+    contrasts := [("Dia adalah tidur.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "verbal"), ("adalah", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_45a : Datum :=
   { id := "arka2013_45a"
@@ -557,11 +637,13 @@ def ex_45a : Datum :=
     language := "indo1316"
     primaryText := "Ali (adalah) guru itu."
     glossedTokens := [("Ali", "Ali"), ("adalah", "be"), ("guru", "teacher"), ("itu", "the")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], [⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'e'], [⟨['i', 't', 'u'], ['t', 'h', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_45b : Datum :=
   { id := "arka2013_45b"
@@ -572,9 +654,9 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_46a : Datum :=
   { id := "arka2013_46a"
@@ -583,11 +665,13 @@ def ex_46a : Datum :=
     language := "indo1316"
     primaryText := "[ _ tidur] (adalah) mau=nya"
     glossedTokens := [("tidur", "sleep"), ("adalah", "be"), ("mau=nya", "want=DEF")]
+    glossedWords := [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_46b : Datum :=
   { id := "arka2013_46b"
@@ -596,64 +680,113 @@ def ex_46b : Datum :=
     language := "indo1316"
     primaryText := "Mau=nya (adalah) [ _ tidur]"
     glossedTokens := [("Mau=nya", "want=DEF"), ("adalah", "be"), ("tidur", "sleep")]
+    glossedWords := [⟨['M', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['M', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_47a : Datum :=
   { id := "arka2013_47a"
     source := ⟨"arka-2013", "(47a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Ali bukan/*tidak guru itu."
+    primaryText := "Ali bukan guru itu."
     glossedTokens := [("Ali", "Ali"), ("bukan", "NEG"), ("guru", "teacher"), ("itu", "that")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], [⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := [("Ali tidak guru itu.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_47b : Datum :=
   { id := "arka2013_47b"
     source := ⟨"arka-2013", "(47b)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Guru itu bukan/*tidak Ali."
+    primaryText := "Guru itu bukan Ali."
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := [("Guru itu tidak Ali.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_48a : Datum :=
   { id := "arka2013_48a"
     source := ⟨"arka-2013", "(48a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "[_ tidur] bukan/*tidak mau=nya"
+    primaryText := "[_ tidur] bukan mau=nya"
     glossedTokens := [("tidur", "sleep"), ("bukan", "NEG"), ("mau=nya", "want=DEF")]
+    glossedWords := [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := [("[_ tidur] tidak mau=nya", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_48b : Datum :=
   { id := "arka2013_48b"
     source := ⟨"arka-2013", "(48b)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Mau=nya bukan / tidak tidur"
-    glossedTokens := [("Mau=nya", "want=DEF"), ("bukan/tidak", "NEG"), ("tidur", "sleep")]
+    primaryText := "Mau=nya bukan tidur"
+    glossedTokens := [("Mau=nya", "want=DEF"), ("bukan", "NEG"), ("tidur", "sleep")]
+    glossedWords := [⟨['M', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['M', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := [("Mau=nya tidak tidur", .acceptable)]
     readings := [("The/his/her/my wish was not to sleep.", .acceptable), ("It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", .acceptable)]
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "acceptable")] }
+    paperFeatures := [] }
 
-def all : List Datum := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b]
+def ex_52a : Datum :=
+  { id := "arka2013_52a"
+    source := ⟨"arka-2013", "(52a)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "[Kamu pembohong] kata=nya"
+    glossedTokens := [("Kamu", "2"), ("pembohong", "peN.lie"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['p', 'e', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['p', 'e', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
+def ex_52b : Datum :=
+  { id := "arka2013_52b"
+    source := ⟨"arka-2013", "(52b)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "Katanya [kamu pembohong]"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := [("katanya adalah [kamu pembohong].", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
+def ex_53 : Datum :=
+  { id := "arka2013_53"
+    source := ⟨"arka-2013", "(53)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "[Kamu] katanya [pembohong]"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [] }
+
+def all : List Datum := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b, ex_52a, ex_52b, ex_53]
 
 end Arka2013.Examples

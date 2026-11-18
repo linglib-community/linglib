@@ -24,7 +24,7 @@ def s2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "John PAST1 cry"), ("presupposition", "g(1) < t_c")] }
 
@@ -37,7 +37,7 @@ def s5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(6): (at) some time λ3 [John PAST3 be in Paris]"), ("presupposition", "every time in the restriction precedes t_c")] }
 
@@ -50,7 +50,7 @@ def s11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(12): John PAST1 believe λ0 [Bill to0 be asleep]"), ("reading", "simultaneous only")] }
 
@@ -63,7 +63,7 @@ def s13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (13b)")] }
 
@@ -76,7 +76,7 @@ def s13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -89,7 +89,7 @@ def s14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (14b)")] }
 
@@ -102,7 +102,7 @@ def s14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -115,7 +115,7 @@ def s19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(20): John PAST1 believe λ0 [his 40th birthday λ2 [Bill PAST2 be happy]]"), ("presupposition", "(i) John believed the birthday to precede t_c; (ii) he located himself at or after it")] }
 
@@ -128,7 +128,7 @@ def s22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -141,7 +141,7 @@ def s23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -154,7 +154,7 @@ def s24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(25): PRES1 woll λ0 [John INF0 cry]"), ("entry", "(26): woll shifts the evaluation time forward")] }
 
@@ -167,7 +167,7 @@ def s27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "PRES1 woll λ0 [a man who PRES0 love her λ2 [she INF0 marry t2]]")] }
 
@@ -180,7 +180,7 @@ def s28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(29) simultaneous, John PAST1 believe λ0 [Bill PAST0 be asleep]; (32) back-shifted through res-movement"), ("readings", "simultaneous; back-shifted")] }
 
@@ -193,7 +193,7 @@ def s34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(35): a de re report about six o'clock with g_c(1) = 5 o'clock, g_c(2) = 6 o'clock")] }
 
@@ -206,7 +206,7 @@ def s36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(38): John PAST1 think PRES2 λ3 λ0 [Mary t3 be pregnant]"), ("reading", "double access")] }
 
@@ -219,7 +219,7 @@ def s39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PRES overlapping t_c")] }
 
@@ -232,7 +232,7 @@ def s40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PAST preceding t_c")] }
 
@@ -245,7 +245,7 @@ def s41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -258,7 +258,7 @@ def s42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -271,7 +271,7 @@ def s43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Abusch 1988"), ("lf", "(51)"), ("licensing", "the lowest PAST licensed non-locally by <-decide")] }
 
@@ -284,7 +284,7 @@ def s44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Ogihara 1989"), ("lf", "(52)"), ("licensing", "the lowest PAST licensed non-locally by <-say")] }
 
@@ -297,7 +297,7 @@ def s45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "A. Santisteban, p.c.")] }
 
@@ -310,7 +310,7 @@ def s54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(55): the object NP raised out of the argument of <-be looking for"), ("reading", "transparent only")] }
 
@@ -323,7 +323,7 @@ def s59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(60): John PAST1 <-meet [the man who PAST2 ¬<-live next door]")] }
 

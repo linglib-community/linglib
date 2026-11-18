@@ -77,12 +77,12 @@ open Modality Gitksan
 /-- `lexicalForce m` is the force the paper assigns to `m`. *ima('a)* and *g̱at* introduce an
 existential quantifier over worlds (§3.1–3.2), *da'aḵhlxw* and *anooḵ* are possibility modals,
 and *sgi* is a (weak) necessity modal (§4). -/
-def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else .possibility
+def lexicalForce (m : ModalItem) : QuantificationalForce :=
+  if m = sgi then .universal else .existential
 
 -- Fig. 1 [deal-2011]
-theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
-    Deal2011.Usable .positive (lexicalForce m) (ModalItem.HasScalemate lexicalForce modals m)
-      g := by
+theorem forces_usable : ∀ m ∈ modals, ∀ q, q ∈ m.quantificationalForces ↔
+    Deal2011.TranslatesIn lexicalForce modals .positive m q := by
   decide
 
 theorem hasScalemate_iff : ∀ m ∈ modals,
@@ -153,7 +153,7 @@ def TypeSelective (L : List ModalItem) : Prop := ∀ m ∈ L, m.Epistemic ∨ m.
 
 /-- An inventory selects modal strength when none of its modals varies between necessity and
 possibility, weak necessity counting as necessity. -/
-def StrengthSelective (L : List ModalItem) : Prop := ∀ m ∈ L, ¬ m.classical.VariesForce
+def StrengthSelective (L : List ModalItem) : Prop := ∀ m ∈ L, ¬ m.VariesQuantificationalForce
 
 instance (L : List ModalItem) : Decidable (TypeSelective L) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _ ∨ _))

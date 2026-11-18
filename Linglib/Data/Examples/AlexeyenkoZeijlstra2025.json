@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],
@@ -51,7 +51,7 @@
     "translation": "He is proud of his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "perifanos"],
@@ -73,7 +73,7 @@
     "translation": "the father proud of his son",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "perifanos"],
@@ -95,7 +95,7 @@
     "translation": "She is proud of her work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "harro-a"],
@@ -116,7 +116,7 @@
     "translation": "a woman proud of her work",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "harro-a"],
@@ -139,7 +139,7 @@
     "translation": "They are proud of their children.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "moftaxar-∅-and"],
@@ -161,7 +161,7 @@
     "translation": "mothers proud of their children",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "moftaxar"],
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "running"],
@@ -202,7 +202,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "running"],
@@ -222,7 +222,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],
@@ -242,7 +242,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],
@@ -262,7 +262,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "wearing"],
@@ -282,7 +282,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "to"],
@@ -302,7 +302,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "which"],
@@ -322,7 +322,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "tall"],
@@ -343,7 +343,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "tall"],
@@ -367,7 +367,7 @@
     "translation": "This boy is dependent on his mother.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "damok'ideb-ul-i"],
@@ -389,7 +389,7 @@
     "translation": "a boy (who is) dependent on his mother",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "damok'ideb-ul-i"],
@@ -412,7 +412,7 @@
     "translation": "János is independent of his parents.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "független"],
@@ -434,7 +434,7 @@
     "translation": "a boy (who is) independent of his parents",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "független"],
@@ -457,7 +457,7 @@
     "translation": "Jón is proud of his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
@@ -479,7 +479,7 @@
     "translation": "a father (who is) proud of his son",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
@@ -502,7 +502,7 @@
     "translation": "She/He is proud of her/his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "hpart"],
@@ -523,7 +523,7 @@
     "translation": "a father (who is) proud of his son",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "hpart"],
@@ -546,7 +546,7 @@
     "translation": "He is proud of his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "ponosan"],
@@ -568,7 +568,7 @@
     "translation": "a father (who is) proud of his son",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "ponosan"],
@@ -592,7 +592,7 @@
     "translation": "The countries (that are) friendly towards Turkey are listed as follows.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "filikes"],
@@ -616,7 +616,7 @@
     "translation": "From time to time, he would squeeze shut his eyes that were tired from bad lighting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "ustavšyje"],
@@ -639,7 +639,7 @@
     "translation": "a teenager (who is) independent of his/her parents",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "dúlì"],
@@ -663,7 +663,7 @@
     "translation": "I am looking for a dress (that is) suitable for the child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bagay"],
@@ -686,7 +686,7 @@
     "translation": "a proud woman",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "harro-a"],
@@ -708,7 +708,7 @@
     "translation": "a woman who is proud of her work",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "harro-a"],
@@ -732,7 +732,7 @@
     "translation": "This motorcycle is bad for driving on the highway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "naa motó tsi ʂo karetera ka=tí yói.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -756,7 +756,7 @@
     "translation": "Paë buys/will buy a motorcycle (which is) bad for driving on the highway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "motó karetera ka=tí yói kopi=ki paɨ.",
         "judgment": "ungrammatical"
@@ -784,7 +784,7 @@
     "translation": "Paë buys/will buy a motorcycle which is bad for driving on the highway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "yói=ka"],
@@ -808,7 +808,7 @@
     "translation": "This man is proud of being rich.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "boon-aa-ɗa"],
@@ -829,7 +829,7 @@
     "translation": "Muussa is a proud person.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "boon-aa-ɗa"],
@@ -851,7 +851,7 @@
     "translation": "Muussa is a person (who is) proud of being rich.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "boon-aa-ɗa"],
@@ -874,7 +874,7 @@
     "translation": "Muussa is a person (who is) proud of being rich.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "boon-∅-u"],
@@ -898,7 +898,7 @@
     "translation": "The boy bitten by the dog told about it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "kii-sit-tu-p"],
@@ -921,7 +921,7 @@
     "translation": "your horse that is strongest in running",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "rak-khal"],
@@ -945,7 +945,7 @@
     "translation": "in men who excel in the government of the republic",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "praestantibus"],
@@ -968,7 +968,7 @@
     "translation": "in the students (who are) good at math",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bravi"],
@@ -991,7 +991,7 @@
     "translation": "in the students good at math",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bravi"],
@@ -1011,7 +1011,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bravi"],
@@ -1030,7 +1030,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bravi"],
@@ -1051,7 +1051,7 @@
     "translation": "He is proud.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "(Aftos) ine perifan.",
         "judgment": "ungrammatical"
@@ -1077,7 +1077,7 @@
     "translation": "the proud father",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "o perifan pateras",
         "judgment": "ungrammatical"
@@ -1104,7 +1104,7 @@
     "translation": "He is proud.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Er ist stolz-er.",
         "judgment": "ungrammatical"
@@ -1130,7 +1130,7 @@
     "translation": "a proud father",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "stolz Vater",
         "judgment": "ungrammatical"
@@ -1157,7 +1157,7 @@
     "translation": "She is smart.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ona umn-a.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1180,7 +1180,7 @@
     "translation": "a/the smart girl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "umn-a d'evočka",
         "judgment": "ungrammatical"
@@ -1208,7 +1208,7 @@
     "translation": "Jón is proud of his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
@@ -1230,7 +1230,7 @@
     "translation": "a father proud of his son",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
@@ -1252,7 +1252,7 @@
     "translation": "Jón is proud.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Jón er stolt-i.",
         "judgment": "ungrammatical"
@@ -1278,7 +1278,7 @@
     "translation": "a proud father",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "stolt-i faðir",
         "judgment": "ungrammatical"
@@ -1306,7 +1306,7 @@
     "translation": "the proud father",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-i"],
@@ -1329,7 +1329,7 @@
     "translation": "the father, who, by the way, is proud",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
@@ -1353,7 +1353,7 @@
     "translation": "Goran is nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Goran je lijepi.",
         "judgment": "ungrammatical"
@@ -1379,7 +1379,7 @@
     "translation": "a nice young man",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "lijep"],
@@ -1402,7 +1402,7 @@
     "translation": "the nice young man",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "lijepi"],
@@ -1426,7 +1426,7 @@
     "translation": "Maria is proud of her daughter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maria ist auf ihre Tochter stolz.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1450,7 +1450,7 @@
     "translation": "the mother (who is) proud of her daughter",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolz"],
@@ -1474,7 +1474,7 @@
     "translation": "the mother (who is) proud of her daughter",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "stolz-e"],
@@ -1498,7 +1498,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots-e"],
@@ -1522,7 +1522,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots"],
@@ -1546,7 +1546,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots-e"],
@@ -1570,7 +1570,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots-∅"],
@@ -1594,7 +1594,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots"],
@@ -1618,7 +1618,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "trots-∅"],
@@ -1641,7 +1641,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "groot"],
@@ -1664,7 +1664,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "groot"],
@@ -1687,7 +1687,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "groot-e"],
@@ -1709,7 +1709,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "groot"],
@@ -1729,7 +1729,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud-∅"],
@@ -1749,7 +1749,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],
@@ -1770,7 +1770,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["head", "proud"],

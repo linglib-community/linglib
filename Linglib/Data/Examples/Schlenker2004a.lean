@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "Free Indirect Discourse. Past tense `was` with future adverbial `tomorrow` — a contradiction if both anchored to the same context, but felicitous when `tomorrow` is evaluated against the character's Context of Thought (CT) and `was` against the narrator's Context of Utterance (CU). The thought is the character's; the tense morphology is the narrator's."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := "Historical Present. The present tense `attack` / `are about to invade` is evaluated against the Context of Utterance (CU), whose time is set exactly fifty eight years before that of the Context of Thought (CT); the adverbial `fifty eight years ago` is evaluated against the CT, which is the actual context. Evaluated against the same context the sentence would be contradictory; with the split, it yields the impression that the speaker is directly witnessing the scene."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("HP (CT/CU split, CU shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := [] }
 

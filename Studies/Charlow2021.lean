@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Control.Monad.Writer
 public import Linglib.Semantics.Dynamic.RegisterStructure
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Control.Monad.Cont
 public import Mathlib.Tactic.DeriveFintype
 

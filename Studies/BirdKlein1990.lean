@@ -153,11 +153,12 @@ variable {X : AR τ} {prec ov : X.Pos → X.Pos → Prop}
 
 /-- A representation with an event structure obeys the No-Crossing Constraint. -/
 theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoCrossing :=
-  fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ by
+  fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
     by_contra! hgt
-    exact h.not_crossing (h.prec_of_lt i (show (⟨p, hp⟩ : Fin _) < ⟨p', hp'⟩ from hlt))
-      (h.prec_of_lt j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) (h.ov_of_adj h₁)
-      (h.ov_of_adj h₂)
+    exact h.not_crossing
+      (h.prec_of_lt i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
+      (h.prec_of_lt j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt))
+      (h.ov_of_adj h₁.adj) (h.ov_of_adj h₂.adj)
 
 theorem exists_isEventStructureOf_of_hasIntervalOrder (h : X.HasIntervalOrder) :
     ∃ prec ov, IsEventStructureOf X prec ov := by
@@ -182,12 +183,13 @@ inductive Syl
 /-- Clements's `mo yɛ ka` (27): `mo` and `yɛ` overlap the first L, `ka` the H, and the final L
 floats, with no precedence across the tiers (28). -/
 abbrev clements : AR (TwoTier TRN Syl) :=
-  AR.ofWords [L, H, L] [.mo, .ye, .ka] fun p q ↦ (p, q) ∈ [(0, 0), (0, 1), (1, 2)]
+  AR.ofLines [L, H, L] [.mo, .ye, .ka] {(0, 0), (0, 1), (1, 2)}
 
 /-- (27) is consistent: it has an event structure. -/
 theorem clements_consistent : ∃ prec ov, IsEventStructureOf clements prec ov :=
   exists_isEventStructureOf_of_hasIntervalOrder
-    (AR.noCrossing_iff_hasIntervalOrder.1 (by decide))
+    ((AR.noCrossing_iff_hasIntervalOrder_of_card_le_two (by simp)).1
+      (show clements.NoCrossing by decide))
 
 /-- Three tiers, each tier's first position linked to the next tier's second around the cycle
 of tiers. -/

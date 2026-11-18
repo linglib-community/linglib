@@ -178,13 +178,13 @@ def features : Spreading → Finset Feature
 
 /-- Spreading from `src` onto `tgt` gives the carried features the values of `src`, specified
 or not, the target's own being delinked ((13)), and leaves every other feature of `tgt`. -/
-def apply : Segment := σ.features.piecewise src tgt
+def apply : Segment := Segment.piecewise σ.features src tgt
 
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
 
 theorem apply_feature (f : Feature) :
-    (feature f).apply src tgt = Function.update tgt f (src f) :=
+    ((feature f).apply src tgt).val = Function.update tgt.val f (src f) :=
   Finset.piecewise_singleton _ _ _
 
 variable {σ} {f g : Feature} {b c : Node}
@@ -255,16 +255,16 @@ theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior
 /-- In rule (12) as a local rewrite rule, a `[−continuant, +coronal, +anterior]` target takes
 the place node of a following `[+consonantal, +coronal]` segment. -/
 def rule12 : Rule where
-  target := Segment.ofSpecs [(.continuant, false), (.coronal, true), (.anterior, true)]
+  target := [−continuant, +coronal, +anterior]
   effect := .copyRight (Spreading.node .place).features
-  rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.coronal, true)])]
+  rightContext := [.seg [+consonantal, +coronal]]
 
 /-- In the SPE statement (14), the same target before a `[+coronal]` segment copies that
 segment's `[anterior]` and `[distributed]` by alpha-variables. -/
 def rule14 : Rule where
-  target := Segment.ofSpecs [(.coronal, true), (.anterior, true), (.continuant, false)]
+  target := [+coronal, +anterior, −continuant]
   effect := .copyRight {Feature.anterior, Feature.distributed}
-  rightContext := [.seg (Segment.ofSpecs [(.coronal, true)])]
+  rightContext := [.seg [+coronal]]
 
 /-- The variant of (14) with `[αnasal]` for `[αanterior]` is "no more and no less ordinary" as
 an SPE rule, and unattested. -/
@@ -275,25 +275,25 @@ as the trigger of (12) in table (11). -/
 def r : Segment := (turnedR.setFeature .distributed false).setFeature .consonantal true
 
 /-- The targets of (12) among the English phonemes are the stops /t d n/. -/
-theorem naturalClass_rule12_target : rule12.target.naturalClass inventory = {t, d, n} := by
+theorem naturalClass_rule12_target : naturalClass rule12.target inventory = {t, d, n} := by
   decide
 
 /-- Before /θ/, in *eighth*, *hundredth* and *tenth*, /t d n/ take `[+distributed]` and nothing
 else, becoming interdental. -/
-theorem rule12_θ : ∀ x ∈ rule12.target.naturalClass inventory,
+theorem rule12_θ : ∀ x ∈ naturalClass rule12.target inventory,
     rule12.apply [x, θ] = [x.setFeature .distributed true, θ] := by
   decide
 
 /-- Before /ʃ/, as in *each*, *insure* and *hundred shoes*, /t d n/ take `[−anterior,
 +distributed]`, becoming postalveolar; /n/ stays a non-strident nasal, `[strident]` and
 `[nasal]` being manner features. -/
-theorem rule12_esh : ∀ x ∈ rule12.target.naturalClass inventory,
+theorem rule12_esh : ∀ x ∈ naturalClass rule12.target inventory,
     rule12.apply [x, esh] = [(x.setFeature .anterior false).setFeature .distributed true, esh] := by
   decide
 
 /-- Before /r/, in *tree*, *dream* and *enrol*, /t d n/ take `[−anterior]`, becoming
 retroflex. -/
-theorem rule12_r : ∀ x ∈ rule12.target.naturalClass inventory,
+theorem rule12_r : ∀ x ∈ naturalClass rule12.target inventory,
     rule12.apply [x, r] = [x.setFeature .anterior false, r] := by
   decide
 
@@ -306,7 +306,7 @@ theorem rule12_s_θ : rule12.apply [s, θ] = [s, θ] := by decide
 
 /-- On table (11), (14) is not distinguishable from (12). -/
 theorem rule14_eq_rule12 :
-    ∀ x ∈ rule12.target.naturalClass inventory, ∀ y ∈ [θ, esh, r],
+    ∀ x ∈ naturalClass rule12.target inventory, ∀ y ∈ [θ, esh, r],
       rule14.apply [x, y] = rule12.apply [x, y] := by
   decide
 
@@ -325,7 +325,8 @@ theorem preaspiration (v c : Segment) :
         ↑(featureClass classNode? Node.supralaryngeal) ∧
       Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c
         ↑(featureClass classNode? Node.laryngeal) :=
-  ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_incompRel v c ⟨by decide, by decide⟩⟩
+  ⟨Spreading.apply_eqOn _ v c,
+    Finset.eqOn_piecewise_of_disjoint (disjoint_featureClass ⟨by decide, by decide⟩)⟩
 
 /-! ### Primary and secondary place features (§4) -/
 
