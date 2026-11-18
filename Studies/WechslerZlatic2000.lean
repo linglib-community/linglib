@@ -380,7 +380,7 @@ def concordBundle (c : Case) (n : Flat Number) (g : Flat UD.Gender) : Bundle
 /-- The bundle of an index-reading target, a pronoun or a finite verb, in the features it is
 marked for; finite verbs and auxiliaries are unmarked for gender (p. 816). -/
 def indexBundle (p : Flat Person) (n : Flat Number) (g : Flat UD.Gender) : Bundle
-  | .person => p
+  | .person => Agreement.Dimension.Slot.ofFlat .person p
   | .number => n
   | .gender => g
   | _ => ⊥

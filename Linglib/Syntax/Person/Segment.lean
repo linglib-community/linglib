@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Order.ForestOrder
 public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Person.Specification
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Order.Preorder.Chain
@@ -98,6 +99,29 @@ def spec (p : Person) : Finset Person.Segment :=
   insert pi ((p.toFeatures Finset.univ).map ofFeature.toEmbedding)
 
 @[simp] theorem pi_mem_spec (p : Person) : pi ∈ spec p := Finset.mem_insert_self _ _
+
+end Person.Segment
+
+/-- The segments a person specification bears: the root and the features every participant set
+it covers bears, so that an unspecified person bears the root alone. -/
+def Person.Specification.segments (x : Person.Specification) : Finset Person.Segment :=
+  insert .pi ((Finset.univ.filter fun f ↦ ∀ s ∈ x.sets, Person.Bears s f).map
+    Person.Segment.ofFeature.toEmbedding)
+
+@[simp] theorem Person.Specification.pi_mem_segments (x : Person.Specification) :
+    .pi ∈ x.segments :=
+  Finset.mem_insert_self _ _
+
+/-- The segments of a person's specification are the person's. -/
+@[simp] theorem Person.Specification.segments_ofPerson (p : Person) :
+    (Person.Specification.ofPerson p).segments = Person.Segment.spec p := by
+  revert p; decide
+
+@[simp] theorem Person.Specification.segments_bot :
+    (⊥ : Person.Specification).segments = {.pi} := by
+  decide
+
+namespace Person.Segment
 
 /-- A person bears a feature as a segment exactly when the feature is in its bundle. -/
 @[simp] theorem ofFeature_mem_spec {p : Person} {f : Person.Feature} :
