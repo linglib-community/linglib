@@ -91,9 +91,9 @@ theorem sat_N_iff (hV : IsAssignment F V) (ha : ContainsNoF a) :
     F.sat V (.N a) t w ↔ F.sat V a t w :=
   ⟨fun h ↦ h w ((F.sim t).iseqv.refl w), fun h _ hw ↦ (sat_iff_of_sim hV ha hw).1 h⟩
 
--- (6) in the terms of `HistoricalAlternatives.settled`: past and present issues are settled.
-theorem settled_sat (hV : IsAssignment F V) (ha : ContainsNoF a) (cg : Set World) :
-    HistoricalAlternatives.settled F.alternatives cg t (F.sat V a t) :=
+-- (6) in the terms of `TWFrame.IsSettled`: past and present issues are settled.
+theorem isSettled_sat (hV : IsAssignment F V) (ha : ContainsNoF a) (cg : Set World) :
+    F.IsSettled cg t (F.sat V a t) :=
   fun _ _ _ hv ↦ sat_iff_of_sim hV ha hv
 
 -- (7), p. 209: this needs only that historical equivalence gets finer as time advances.

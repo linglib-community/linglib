@@ -35,7 +35,7 @@ namespace Mendes2025
 
 open scoped Denotes
 
-open HistoricalAlternatives DynamicSemantics Update SetRel AntidomainMonoid
+open Temporal DynamicSemantics Update SetRel AntidomainMonoid
 open RegisterStructure
 
 variable {W T : Type*}
@@ -70,7 +70,7 @@ theorem ind_apply :
     i ~[ind s s' ℙ] o ↔ (s i).world = (s' i).world ∧ i ~[ℙ s s'] o := by
   simp [ind]
 
-variable [LinearOrder T] (history : HistoricalAlternatives W T)
+variable [LinearOrder T] (F : TWFrame W T)
 
 /-- A temporal morpheme `λ𝒫.λs.λs'.[ | τ(s) ⋈ τ(s')]; 𝒫(s)` tests that the running times of `s`
 and `s'` compare within the cell, then runs the radical at `s`. -/
@@ -90,7 +90,7 @@ abbrev past : Radical W T → Sit W T → Sit W T → Update (State W T) := temp
 /-- The subjunctive `subj^{s₁}_{s₀} ⇝ λℙ.[s₁ | s₁ ∈ hist s₀]; ℙ(s₁)(s₀)` is an indefinite over
 situations, introducing `s₁` among the historical alternatives of the anchor `s₀`. -/
 def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : Update (State W T) :=
-  box {s₁} {i | val s₁ i ∈ historicalBase history (s₀ i)} ○ ℙ (val s₁) s₀
+  box {s₁} {i | val s₁ i ∈ F.historicalBase (s₀ i)} ○ ℙ (val s₁) s₀
 
 /-! ### Unpacking the entries -/
 
@@ -105,8 +105,8 @@ theorem isTest_temporal_radical : IsTest (temporal cell (radical P) s s') :=
   (isTest_test _).comp (isTest_test _)
 
 theorem subj_apply :
-    i ~[subj history s₁ s ℙ] o ↔
-      ∃ e, e ∈ historicalBase history (s (Function.update i s₁ e)) ∧
+    i ~[subj F s₁ s ℙ] o ↔
+      ∃ e, e ∈ F.historicalBase (s (Function.update i s₁ e)) ∧
         Function.update i s₁ e ~[ℙ (val s₁) s] o := by
   simp only [subj, box_singleton, mem_comp, mem_randomAssign, mem_test]
   constructor
@@ -129,25 +129,25 @@ variable (A C : Index W T → Prop)
 form a dynamic implication, as in the conditional and the relative-clause quantification of the
 paper's derivations. -/
 def sfForm (cell : PointAlgebra) : Update (State W T) :=
-  dimp (subj history 1 (val 0) (fut (radical A)))
+  dimp (subj F 1 (val 0) (fut (radical A)))
     (ind (val 2) (val 1) (temporal cell (radical C)))
 
 /-- *If Ivan leaves the room smiling, the interview went well* has the Subordinate Future in the
 antecedent and the past in the consequent. -/
 abbrev conditional (leaves wentWell : Index W T → Prop) : Update (State W T) :=
-  sfForm history leaves wentWell ⟦Tense.past⟧
+  sfForm F leaves wentWell ⟦Tense.past⟧
 
 /-- *Every candidate who delivers a good job talk has an equal chance of being hired* has the
 Subordinate Future in the restrictor and the present in the nuclear scope. -/
 abbrev relativeClause (delivers chance : Index W T → Prop) : Update (State W T) :=
-  sfForm history delivers chance ⟦Tense.present⟧
+  sfForm F delivers chance ⟦Tense.present⟧
 
 /-- The form of the paper's derivations is a test, true at a state iff every historical
 alternative `e` of the anchor after it where `A` holds has the main-clause situation in its
 world, timed by the cell relative to `e`, satisfying `C`. -/
 theorem sfForm_true_at :
-    i ∈ (sfForm history A C cell).dom ↔
-      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → A e →
+    i ∈ (sfForm F A C cell).dom ↔
+      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → A e →
         (i 2).world = e.world ∧ compare (i 2).time e.time ∈ cell ∧ C (i 2) := by
   rw [sfForm, dimp_eq, dom_test]
   simp only [mem_core, mem_dom, subj_apply, temporal_radical_apply, ind_apply,
@@ -155,14 +155,14 @@ theorem sfForm_true_at :
   simp
 
 theorem conditional_true_at (leaves wentWell : Index W T → Prop) :
-    i ∈ (conditional history leaves wentWell).dom ↔
-      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → leaves e →
+    i ∈ (conditional F leaves wentWell).dom ↔
+      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → leaves e →
         (i 2).world = e.world ∧ (i 2).time < e.time ∧ wentWell (i 2) := by
   simp only [conditional, sfForm_true_at, Tense.compare_mem_past]
 
 theorem relativeClause_true_at (delivers chance : Index W T → Prop) :
-    i ∈ (relativeClause history delivers chance).dom ↔
-      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → delivers e →
+    i ∈ (relativeClause F delivers chance).dom ↔
+      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → delivers e →
         (i 2).world = e.world ∧ (i 2).time = e.time ∧ chance (i 2) := by
   simp only [relativeClause, sfForm_true_at, Tense.compare_mem_present]
 
@@ -171,10 +171,10 @@ variable {k l : State W T}
 /-- The Subordinate Future places the situation it introduces after the anchor, and the main
 clause is timed by its tense relative to that situation, not the anchor. The rows of the paper's
 table of main-clause tenses are the cells `future`, `present` and `past`. -/
-theorem temporal_shift (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
+theorem temporal_shift (hk : i ~[subj F 1 (val 0) (fut (radical A))] k)
     (hl : k ~[ind (val 2) (val 1) (temporal cell (radical C))] l) :
     (l 0).time < (l 1).time ∧ compare (l 2).time (l 1).time ∈ cell := by
-  obtain ⟨e, -, hk⟩ := (subj_apply history).mp hk
+  obtain ⟨e, -, hk⟩ := (subj_apply F).mp hk
   obtain ⟨rfl, ht, -⟩ := temporal_radical_apply.mp hk
   obtain ⟨-, hl⟩ := ind_apply.mp hl
   obtain ⟨rfl, hc, -⟩ := temporal_radical_apply.mp hl
@@ -182,10 +182,10 @@ theorem temporal_shift (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
 
 /-- In modal donkey anaphora the indicative retrieves the situation the subjunctive introduced,
 so the main clause is evaluated in a historical alternative of the anchor. -/
-theorem modal_donkey_anaphora (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
+theorem modal_donkey_anaphora (hk : i ~[subj F 1 (val 0) (fut (radical A))] k)
     (hl : k ~[ind (val 2) (val 1) (temporal cell (radical C))] l) :
-    (l 2).world ∈ history (l 0) := by
-  obtain ⟨e, he, hk⟩ := (subj_apply history).mp hk
+    (l 2).world ∈ F.alternatives (l 0) := by
+  obtain ⟨e, he, hk⟩ := (subj_apply F).mp hk
   obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hk
   obtain ⟨hw, hl⟩ := ind_apply.mp hl
   obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hl
@@ -204,8 +204,8 @@ anchor's world. -/
 /-- The Subordinate Future restrictor is true iff the anchor has a later historical alternative
 satisfying `A`. -/
 theorem subj_fut_true_at :
-    i ∈ (subj history 1 (val 0) (fut (radical A))).dom ↔
-      ∃ e ∈ historicalBase history (i 0), (i 0).time < e.time ∧ A e := by
+    i ∈ (subj F 1 (val 0) (fut (radical A))).dom ↔
+      ∃ e ∈ F.historicalBase (i 0), (i 0).time < e.time ∧ A e := by
   simp [subj_apply, temporal_radical_apply]
 
 /-- The indicative restrictor is true iff its situation lies in the anchor's world, after the
