@@ -12,7 +12,7 @@
     "translation": "my spleen",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "inalienable"],
@@ -34,7 +34,7 @@
     "translation": "the spleen",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "none"],
@@ -56,7 +56,7 @@
     "translation": "my heart",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "inalienable"],
@@ -78,7 +78,7 @@
     "translation": "the heart",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "none"],
@@ -100,7 +100,7 @@
     "translation": "my blood (inside my body)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "inalienable"],
@@ -122,7 +122,7 @@
     "translation": "my blood (outside of my body)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "alienable"],
@@ -145,7 +145,7 @@
     "translation": "Leona [my daughter] inherited my nose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "alienable"],
@@ -168,7 +168,7 @@
     "translation": "Draw a pig's leg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "compound"],
@@ -190,7 +190,7 @@
     "translation": "the name of the ship",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "inalienable"],
@@ -213,7 +213,7 @@
     "translation": "his mother",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "inalienable"],
@@ -235,7 +235,7 @@
     "translation": "The mother is important.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["possession", "none"],
@@ -258,7 +258,7 @@
     "translation": "Okomobi's arm",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jane mani", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -282,7 +282,7 @@
     "translation": "our arms",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mee mani", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -306,7 +306,7 @@
     "translation": "Okomobi's foot",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Okomobi kaa tao.kana", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -331,7 +331,7 @@
     "translation": "A toucan's feathers are lying on the ground.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jaki mee afe so to-sa-ke bofe jaa", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -355,7 +355,7 @@
     "translation": "the inside of Okomobi's arm",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jane mani baki", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -379,7 +379,7 @@
     "translation": "the inside of my arm",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ti-mano baki", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -403,7 +403,7 @@
     "translation": "our small feet",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ee teme biti", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -427,7 +427,7 @@
     "translation": "his two names",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "∅-djagaḍa ni-wini", "judgment": "acceptable"},
       {"form": "řa-maŋadji nanda-wini", "judgment": "acceptable"}
     ],
@@ -453,7 +453,7 @@
     "translation": "That [female/animal] name is good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "igih e-pe waninggap k-a.", "judgment": "acceptable"},
       {"form": "igih i-pe waninggap k-a.", "judgment": "acceptable"}
     ],
@@ -478,7 +478,7 @@
     "translation": "[woman's] face like a pig",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "basik hi nanih", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -502,7 +502,7 @@
     "translation": "bones as parts (e.g. of skeletons)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "osso", "judgment": "acceptable"},
       {"form": "ossi", "judgment": "acceptable"}
     ],

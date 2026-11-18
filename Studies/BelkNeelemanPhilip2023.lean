@@ -24,7 +24,7 @@ pivot, which ellipsis cannot create, contains no further pivot.
 
 ## Implementation notes
 
-* A derivation is a linearized syntactic object, multidominated material shared, with its forced and
+* A derivation is a planar syntactic object, multidominated material shared, with its forced and
   its free prunings, each pairing a pruned branch of the first conjunct with its proxy in the
   second. That the conjuncts are parallel, a condition the paper states in focus semantics, is
   assumed of the pairing.
@@ -43,7 +43,7 @@ pivot, which ellipsis cannot create, contains no further pivot.
 
 namespace BelkNeelemanPhilip2023
 
-open Minimalist Minimalist.LinearizedSyntacticObject Core.Order RoseTree
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree
 
 /-! ### Pruning -/
 
@@ -52,37 +52,39 @@ second at `[1]`, with the branches it prunes, each paired with its proxy in the 
 first the branches to multidominated material, then the free ones. -/
 structure Derivation where
   /-- The coordination, multidominated material shared. -/
-  input : LinearizedSyntacticObject
+  input : PlanarSyntacticObject
   /-- The branches to multidominated material, with their proxies. -/
-  forced : List (TreePath × TreePath)
+  forced : List (GornAddress × GornAddress)
   /-- The branches whose material goes unrealized, with their proxies. -/
-  free : List (TreePath × TreePath)
+  free : List (GornAddress × GornAddress)
 
 /-- `x` precedes `y` in the linear order of a tree, lexicographically by address. -/
-def Precedes (x y : TreePath) : Prop := x.toList < y.toList
+def Precedes (x y : GornAddress) : Prop := x.toList < y.toList
 
-instance (x y : TreePath) : Decidable (Precedes x y) := inferInstanceAs (Decidable (_ < _))
+instance (x y : GornAddress) : Decidable (Precedes x y) := inferInstanceAs (Decidable (_ < _))
 
 /-- Where material of the first conjunct at `x` is realized once the branches `P` are pruned:
 inside a pruned branch, at the corresponding position under its proxy. -/
-def realizedAt (P : List (TreePath × TreePath)) (x : TreePath) : TreePath :=
+def realizedAt (P : List (GornAddress × GornAddress)) (x : GornAddress) : GornAddress :=
   match P.find? (decide <| ·.1 ≤ x) with
-  | some (p, q) => ⟨q.toList ++ x.toList.drop p.toList.length⟩
+  | some (p, q) => q * x.relativeTo p
   | none => x
 
 /-- The pruning rule (86). After the prunings `P`, the branch at `p` may be pruned with proxy `q`
 when `p` lies inside the first conjunct and `q` inside the second, and the proxy's yield satisfies
 the ordering statements of `p`'s yield in the first conjunct: pronounced material of the first
 conjunct that precedes `p` is realized before `q`, and material that follows `p` after it. -/
-def MayPrune (t : LinearizedSyntacticObject) (P : List (TreePath × TreePath)) (p q : TreePath) :
+def MayPrune (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress)
+    :
     Prop :=
-  p.toList.head? = some 0 ∧ 1 < p.toList.length ∧ q.toList.head? = some 1 ∧
-    t.val[q]?.isSome ∧
-    ∀ x ∈ tokenList t.val, x.1.toList.head? = some 0 → ¬ p ≤ x.1 → x.2.item.phonForm?.isSome →
+  p.toList.head? = some 0 ∧ 1 < p.depth ∧ q.toList.head? = some 1 ∧
+    t.toRoseTree[q]?.isSome ∧
+    ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 →
+        x.2.item.phonForm?.isSome →
       (Precedes x.1 p → Precedes (realizedAt P x.1) q) ∧
         (Precedes p x.1 → Precedes q (realizedAt P x.1))
 
-instance (t : LinearizedSyntacticObject) (P : List (TreePath × TreePath)) (p q : TreePath) :
+instance (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress) :
     Decidable (MayPrune t P p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -91,7 +93,7 @@ namespace Derivation
 variable (d : Derivation)
 
 /-- All prunings, the forced ones first. -/
-def prunings : List (TreePath × TreePath) := d.forced ++ d.free
+def prunings : List (GornAddress × GornAddress) := d.forced ++ d.free
 
 /-- A derivation is licensed when each pruning obeys (86) given the ones before it; when forced
 pruning removes branches to multidominated material, the same constituent as their proxies, and
@@ -100,17 +102,17 @@ cannot be created through ellipsis (26); and when, as the No-Tangling Condition 
 multidominated token keeps a branch in the first conjunct. -/
 def Licensed : Prop :=
   (∀ x ∈ d.prunings.zipIdx, MayPrune d.input (d.prunings.take x.2) x.1.1 x.1.2) ∧
-    (∀ pq ∈ d.forced, d.input.val[pq.1]? = d.input.val[pq.2]?) ∧
-    (∀ pq ∈ d.free, d.input.val[pq.1]? ≠ d.input.val[pq.2]? ∧
-      ∀ x ∈ tokenList d.input.val, pq.1 ≤ x.1 → x.2.item.cat ≠ .T) ∧
-    ∀ x ∈ tokenList d.input.val, x.1.toList.head? = some 0 → IsShared d.input x.2 →
+    (∀ pq ∈ d.forced, d.input.toRoseTree[pq.1]? = d.input.toRoseTree[pq.2]?) ∧
+    (∀ pq ∈ d.free, d.input.toRoseTree[pq.1]? ≠ d.input.toRoseTree[pq.2]? ∧
+      ∀ x ∈ tokenList d.input.toRoseTree, pq.1 ≤ x.1 → x.2.item.cat ≠ .T) ∧
+    ∀ x ∈ tokenList d.input.toRoseTree, x.1.toList.head? = some 0 → IsShared d.input x.2 →
       ∃ pq ∈ d.forced, pq.1 ≤ x.1
 
 instance : Decidable d.Licensed := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The realized tokens, left to right, are those outside every pruned branch. -/
 def yield : List LexicalItem.Token :=
-  (tokenList d.input.val).filterMap fun x ↦
+  (tokenList d.input.toRoseTree).filterMap fun x ↦
     if ∀ pq ∈ d.prunings, ¬ pq.1 ≤ x.1 then some x.2 else none
 
 /-- The realized words, left to right. -/
@@ -118,14 +120,14 @@ def phon : List String := d.yield.filterMap (·.item.phonForm?)
 
 /-- The first word of the first multidominated pivot, where a prosodic break falls. -/
 def pivotOnset : Option String :=
-  d.forced.head?.bind fun pq ↦ d.input.val[pq.2]?.bind fun s ↦
+  d.forced.head?.bind fun pq ↦ d.input.toRoseTree[pq.2]?.bind fun s ↦
     ((tokenList s).filterMap (·.2.item.phonForm?)).head?
 
 /-- No material of an elided pivot follows a multidominated pivot (49), since forced pruning comes
 first, while that material still stands in the first conjunct (100). -/
 theorem Licensed.not_precedes {d : Derivation} (hd : d.Licensed)
-    {pq rs : TreePath × TreePath} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
-    {x : TreePath × LexicalItem.Token} (hx : x ∈ tokenList d.input.val) (hrx : rs.1 ≤ x.1)
+    {pq rs : GornAddress × GornAddress} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
+    {x : GornAddress × LexicalItem.Token} (hx : x ∈ tokenList d.input.toRoseTree) (hrx : rs.1 ≤ x.1)
     (hphon : x.2.item.phonForm?.isSome) (hnf : ∀ ab ∈ d.forced, ¬ ab.1 ≤ x.1) :
     ¬ Precedes pq.1 x.1 := by
   have hrule : ∀ ab i, d.prunings[i]? = some ab → MayPrune d.input (d.prunings.take i) ab.1 ab.2 :=
@@ -164,7 +166,7 @@ def opera : LexicalItem.Token := ⟨.of .D [] "opera", 5⟩
 def opera' : LexicalItem.Token := ⟨.of .D [] "opera", 6⟩
 
 /-- `[John likes x] and [Mary dislikes y]`. -/
-def likesDislikes (x y : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def likesDislikes (x y : PlanarSyntacticObject) : PlanarSyntacticObject :=
   (john * (likes * x)) * (mary * (dislikes * y))
 
 /-- Multidominance (84) puts one *opera* under both verbs and prunes the first branch (85). -/
@@ -197,7 +199,7 @@ def aBook : LexicalItem.Token := ⟨.of .D [] "a book about opera", 11⟩
 def aBook' : LexicalItem.Token := ⟨.of .D [] "a book about opera", 12⟩
 
 /-- `[John [[bought x] for Mary]] and [Bill [wrapped y]]` (91). -/
-def boughtWrapped (x y : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def boughtWrapped (x y : PlanarSyntacticObject) : PlanarSyntacticObject :=
   (john * ((bought * x) * forMary)) * (bill * (wrapped * y))
 
 /-- Material of the first conjunct follows the gap (90), so neither (91a) nor (91b) is licensed. -/
@@ -215,7 +217,7 @@ def excessively' : LexicalItem.Token := ⟨.of .A [] "excessively", 16⟩
 def john' : LexicalItem.Token := ⟨.of .D [] "John", 17⟩
 
 /-- `[Mary [[flattered x] y]] and [Bill [[disparaged x'] y']]` (92). -/
-def flatteredDisparaged (x y x' y' : LexicalItem.Token) : LinearizedSyntacticObject :=
+def flatteredDisparaged (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject :=
   (mary * ((flattered * x) * y)) * (bill * ((disparaged * x') * y'))
 
 /-- Two pivots, by ellipsis (92a) or multidominance (92b), pruning the adverb's branch before the
@@ -252,7 +254,7 @@ def avasPaper : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 43⟩
 def avasPaper' : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 44⟩
 
 /-- `[she [is going to [show [x y]]]] and [Ryo [will soon [show [x' y']]]]` (58), (60). -/
-def showVP (x y x' y' : LexicalItem.Token) : LinearizedSyntacticObject :=
+def showVP (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject :=
   (she * (isGoingTo * (showV * (x * y)))) * (ryo * (willSoon * (showV' * (x' * y'))))
 
 /-- In (58) the verb phrase is an elided pivot, the indirect object showing vehicle change, and
@@ -301,7 +303,7 @@ def same : LexicalItem.Token := ⟨.of .A [] "same", 40⟩
 def country : LexicalItem.Token := ⟨.of .N [] "country", 41⟩
 
 /-- The pivot *to the same country*, whose internal reading requires it to be multidominated. -/
-def samePivot : LinearizedSyntacticObject := toP * (the * (same * country))
+def samePivot : PlanarSyntacticObject := toP * (the * (same * country))
 
 /-- Example (51) with the auxiliary phrase multidominated, and no ellipsis. -/
 def shareAuxP : Derivation :=

@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Computability.Variety.Definite
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Phonology.Subregular.Multitier
-public import Linglib.Phonology.Subregular.MultitierReverseDefinite
+public import Linglib.Phonology.Subregular.MultitierDefinite
 public import Linglib.Phonology.Subregular.ForbiddenPairs
 public import Linglib.Phonology.Subregular.Agree
 public import Linglib.Phonology.Tone.Plateauing
@@ -16,23 +16,24 @@ This file formalizes the paper's classifications: attested constraints on stress
 harmony, and tone are placed in the multitier extensions of the definite, reverse definite,
 generalized definite, and co/finite classes, the Boolean closures of the tier-projected classes,
 by writing each constraint as a propositional formula over tier affixes, and are refuted from a
-class by a pair of words the class cannot separate. With the tier literals `Language.tierWord`,
-`tierPrefix`, and `tierSuffix`, a membership proof has the shape of its formula: the bounded
-stress patterns with culminativity are multitier definite or reverse definite, the four
-unbounded patterns of Hayes's typology are multitier reverse definite, definite, or generalized
-definite as their defaults demand, Uyghur backness harmony is multitier definite
-(`uyghur_isBTD`), and the Karanga Shona verb stem is multitier generalized definite
-(`karangaShona_isBTLI`). The refutations follow the paper's parameterized witnesses:
-culminativity alone is not generalized definite, culminative stress-final is not definite, and
-Tsuut'ina sibilant harmony, Luganda plateauing, and Prinmi are not multitier generalized
-definite (`tsuutina_not_isBTLI`, `luganda_not_isBTLI`). Luganda's plateauing conjunct holds of
+class by a pair of words the class cannot separate. A tier literal is a word, prefix or suffix
+language read on a tier by `Language.onTier`, and a membership proof has the shape of its formula:
+the bounded stress patterns with culminativity are multitier definite or reverse definite, the
+four unbounded patterns of Hayes's typology are multitier reverse definite, definite, or
+generalized definite as their defaults demand, Uyghur backness harmony is multitier definite
+(`uyghur_mem_multitierDefinite`), and the Karanga Shona verb stem is multitier generalized
+definite (`karangaShona_mem_multitierGeneralizedDefinite`). The refutations follow the paper's
+parameterized witnesses: culminativity alone is not generalized definite, culminative
+stress-final is not definite, and Tsuut'ina sibilant harmony, Luganda plateauing, and Prinmi are
+not multitier generalized definite (`tsuutina_notMem_multitierGeneralizedDefinite`,
+`luganda_notMem_multitierGeneralizedDefinite`). Luganda's plateauing conjunct holds of
 exactly the outputs of Hyman and Katamba's plateauing map (`plateauing_iff_mem_range_utp`).
 Following §6, stress-initial is refuted from the definite class, stress-penult from the reverse
 definite class, and culminative stress-penult from the generalized definite class by an
 idempotent syntactic class that fails the class's equation (`finnish_not_isDefinite`,
 `amara_not_isReverseDefinite`, `stressPenultCulminative_not_isGeneralizedDefinite`), and
 culminative stress-penult from the multitier reverse definite class by the equation of (62)
-(`stressPenultCulminative_not_isBTK`).
+(`stressPenultCulminative_notMem_multitierReverseDefinite`).
 
 ## Implementation notes
 
@@ -52,7 +53,8 @@ Prove the equivalence of the order-based and tier-based formulae for Kagoshima J
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
 grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
 testable, are not formalized. Of the equations for the multitier classes ((60)–(63), Table 6),
-only (62) is proved (`Language.exists_isBTK_iff`).
+(61) and (62) are proved (`Language.exists_mem_multitierDefinite_iff`,
+`Language.exists_mem_multitierReverseDefinite_iff`).
 
 ## References
 
@@ -67,7 +69,7 @@ only (62) is proved (`Language.exists_isBTK_iff`).
 
 namespace Lambert2026
 
-open Language Subregular List
+open Language Subregular List BooleanSubalgebra
 open TierStrictlyLocalGrammar (mem_agree_language_iff_forall_sublist_pair
   mem_ofForbiddenPairs_language_iff)
 
@@ -147,8 +149,8 @@ theorem finnish_isReverseDefinite : finnish.IsReverseDefinite 1 := isReverseDefi
 def culminativity : Language Syl :=
   {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
-theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
-  ⟨(Syl.isStressed ·), _, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
+theorem culminativity_mem_tierBased : culminativity ∈ tierBased {L | L.IsFiniteOrCofinite} :=
+  ⟨(Syl.isStressed ·), _, _, Or.inl ((Set.finite_singleton _).insert _), rfl⟩
 
 theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     ¬ culminativity.IsGeneralizedDefinite k := by
@@ -163,22 +165,28 @@ theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     simp [Syl.isStressed]
 
 /-- Culminative stress-final ((13a)) is `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressFinalCulminative : Language Syl := iban ⊓ tierWord (Syl.isStressed ·) [.stressed]
+def stressFinalCulminative : Language Syl := iban ⊓ onTier (Syl.isStressed ·) {[.stressed]}
 
-theorem stressFinalCulminative_isBTD : IsBTD 2 stressFinalCulminative :=
-  IsBTC.inter (isBTD_ofSuffix _ (by decide)) (isBTD_tierWord _ _ (by decide))
+theorem stressFinalCulminative_mem_multitierDefinite :
+    stressFinalCulminative ∈ multitierDefinite 2 :=
+  inf_mem (ofSuffix_mem_multitierDefinite (by decide))
+    (onTier_singleton_mem_multitierDefinite (by decide))
 
 /-- Culminative stress-penult ((13b)) is `(σ́σ⋉ ∨ ⋊σ́⋉) ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressPenultCulminative : Language Syl := amara ⊓ tierWord (Syl.isStressed ·) [.stressed]
+def stressPenultCulminative : Language Syl := amara ⊓ onTier (Syl.isStressed ·) {[.stressed]}
 
-theorem stressPenultCulminative_isBTD : IsBTD 2 stressPenultCulminative :=
-  IsBTC.inter (IsBTC.of_class amara_isDefinite) (isBTD_tierWord _ _ (by decide))
+theorem stressPenultCulminative_mem_multitierDefinite :
+    stressPenultCulminative ∈ multitierDefinite 2 :=
+  inf_mem (subset_multitier amara_isDefinite)
+    (onTier_singleton_mem_multitierDefinite (by decide))
 
 /-- Culminative stress-initial ((13c)) is `⋊σ́ ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressInitialCulminative : Language Syl := finnish ⊓ tierWord (Syl.isStressed ·) [.stressed]
+def stressInitialCulminative : Language Syl := finnish ⊓ onTier (Syl.isStressed ·) {[.stressed]}
 
-theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
-  IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
+theorem stressInitialCulminative_mem_multitierReverseDefinite :
+    stressInitialCulminative ∈ multitierReverseDefinite 2 :=
+  inf_mem (ofPrefix_mem_multitierReverseDefinite (by decide))
+    (onTier_singleton_mem_multitierReverseDefinite (by decide))
 
 -- §2.3
 theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
@@ -226,53 +234,69 @@ def QSyl.isHeavy : QSyl → Bool
 
 /-- A word has exactly one primary stress, `[⋊σ́⋉]_{σ́}`. -/
 def oneStress : Language QSyl :=
-  tierWord (QSyl.isStressed ·) [.lightStressed] ⊔ tierWord (QSyl.isStressed ·) [.heavyStressed]
+  onTier (QSyl.isStressed ·) {[.lightStressed]} ⊔ onTier (QSyl.isStressed ·) {[.heavyStressed]}
 
-theorem oneStress_isBTD : IsBTD 2 oneStress :=
-  IsBTC.union (isBTD_tierWord _ _ (by decide)) (isBTD_tierWord _ _ (by decide))
+theorem oneStress_mem_multitierDefinite : oneStress ∈ multitierDefinite 2 :=
+  sup_mem (onTier_singleton_mem_multitierDefinite (by decide))
+    (onTier_singleton_mem_multitierDefinite (by decide))
 
-theorem oneStress_isBTK : IsBTK 2 oneStress :=
-  IsBTC.union (isBTK_tierWord _ _ (by decide)) (isBTK_tierWord _ _ (by decide))
+theorem oneStress_mem_multitierReverseDefinite : oneStress ∈ multitierReverseDefinite 2 :=
+  sup_mem (onTier_singleton_mem_multitierReverseDefinite (by decide))
+    (onTier_singleton_mem_multitierReverseDefinite (by decide))
 
 /-- Amele ((20), [roberts-1987]) stresses the leftmost heavy syllable, else the leftmost. -/
 def amele : Language QSyl :=
-  oneStress ⊓ (tierPrefix (QSyl.isHeavy ·) [.heavyStressed] ⊔
-    (tierWord (QSyl.isHeavy ·) [] ⊓ ofPrefix [.lightStressed]))
+  oneStress ⊓ (onTier (QSyl.isHeavy ·) (ofPrefix [.heavyStressed]) ⊔
+    (onTier (QSyl.isHeavy ·) {[]} ⊓ ofPrefix [.lightStressed]))
 
-theorem amele_isBTK : IsBTK 2 amele :=
-  IsBTC.inter oneStress_isBTK (IsBTC.union (isBTK_tierPrefix _ _ (by decide))
-    (IsBTC.inter (isBTK_tierWord _ _ (by decide)) (isBTK_ofPrefix _ (by decide))))
+theorem amele_mem_multitierReverseDefinite : amele ∈ multitierReverseDefinite 2 :=
+  inf_mem oneStress_mem_multitierReverseDefinite
+    (sup_mem (onTier_ofPrefix_mem_multitierReverseDefinite (by decide))
+      (inf_mem (onTier_singleton_mem_multitierReverseDefinite (by decide))
+        (ofPrefix_mem_multitierReverseDefinite (by decide))))
 
 /-- Golin ((23), [bunn-bunn-1970]) stresses the rightmost heavy syllable, else the rightmost. -/
 def golin : Language QSyl :=
-  oneStress ⊓ (tierSuffix (QSyl.isHeavy ·) [.heavyStressed] ⊔
-    (tierWord (QSyl.isHeavy ·) [] ⊓ ofSuffix [.lightStressed]))
+  oneStress ⊓ (onTier (QSyl.isHeavy ·) (ofSuffix [.heavyStressed]) ⊔
+    (onTier (QSyl.isHeavy ·) {[]} ⊓ ofSuffix [.lightStressed]))
 
-theorem golin_isBTD : IsBTD 2 golin :=
-  IsBTC.inter oneStress_isBTD (IsBTC.union (isBTD_tierSuffix _ _ (by decide))
-    (IsBTC.inter (isBTD_tierWord _ _ (by decide)) (isBTD_ofSuffix _ (by decide))))
+theorem golin_mem_multitierDefinite : golin ∈ multitierDefinite 2 :=
+  inf_mem oneStress_mem_multitierDefinite
+    (sup_mem (onTier_ofSuffix_mem_multitierDefinite (by decide))
+      (inf_mem (onTier_singleton_mem_multitierDefinite (by decide))
+        (ofSuffix_mem_multitierDefinite (by decide))))
 
 /-- Kwak'wala ((26), [grubb-1969]) stresses the leftmost heavy syllable, else the rightmost. -/
 def kwakwala : Language QSyl :=
-  oneStress ⊓ (tierPrefix (QSyl.isHeavy ·) [.heavyStressed] ⊔
-    (tierWord (QSyl.isHeavy ·) [] ⊓ ofSuffix [.lightStressed]))
+  oneStress ⊓ (onTier (QSyl.isHeavy ·) (ofPrefix [.heavyStressed]) ⊔
+    (onTier (QSyl.isHeavy ·) {[]} ⊓ ofSuffix [.lightStressed]))
 
-theorem kwakwala_isBTLI : IsBTLI 2 kwakwala :=
-  IsBTC.inter oneStress_isBTD.toIsBTLI
-    (IsBTC.union (IsBTK.toIsBTLI (isBTK_tierPrefix _ _ (by decide)))
-      (IsBTC.inter (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))
-        (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide)))))
+theorem kwakwala_mem_multitierGeneralizedDefinite : kwakwala ∈ multitierGeneralizedDefinite 2 :=
+  inf_mem (multitierDefinite_le_multitierGeneralizedDefinite oneStress_mem_multitierDefinite)
+    (sup_mem
+      (multitierReverseDefinite_le_multitierGeneralizedDefinite
+        (onTier_ofPrefix_mem_multitierReverseDefinite (by decide)))
+      (inf_mem
+        (multitierDefinite_le_multitierGeneralizedDefinite
+          (onTier_singleton_mem_multitierDefinite (by decide)))
+        (multitierDefinite_le_multitierGeneralizedDefinite
+          (ofSuffix_mem_multitierDefinite (by decide)))))
 
 /-- Chuvash ((29), [krueger-1961]) stresses the rightmost heavy syllable, else the leftmost. -/
 def chuvash : Language QSyl :=
-  oneStress ⊓ (tierSuffix (QSyl.isHeavy ·) [.heavyStressed] ⊔
-    (tierWord (QSyl.isHeavy ·) [] ⊓ ofPrefix [.lightStressed]))
+  oneStress ⊓ (onTier (QSyl.isHeavy ·) (ofSuffix [.heavyStressed]) ⊔
+    (onTier (QSyl.isHeavy ·) {[]} ⊓ ofPrefix [.lightStressed]))
 
-theorem chuvash_isBTLI : IsBTLI 2 chuvash :=
-  IsBTC.inter oneStress_isBTD.toIsBTLI
-    (IsBTC.union (IsBTD.toIsBTLI (isBTD_tierSuffix _ _ (by decide)))
-      (IsBTC.inter (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))
-        (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))))
+theorem chuvash_mem_multitierGeneralizedDefinite : chuvash ∈ multitierGeneralizedDefinite 2 :=
+  inf_mem (multitierDefinite_le_multitierGeneralizedDefinite oneStress_mem_multitierDefinite)
+    (sup_mem
+      (multitierDefinite_le_multitierGeneralizedDefinite
+        (onTier_ofSuffix_mem_multitierDefinite (by decide)))
+      (inf_mem
+        (multitierDefinite_le_multitierGeneralizedDefinite
+          (onTier_singleton_mem_multitierDefinite (by decide)))
+        (multitierReverseDefinite_le_multitierGeneralizedDefinite
+          (ofPrefix_mem_multitierReverseDefinite (by decide)))))
 
 /-! ### Harmony (§4)
 
@@ -293,9 +317,11 @@ def isPosterior (c : Option Bool) : Bool := c == some false
 
 /-- In Navajo ((30)) the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
 def navajo : Language (Option Bool) :=
-  tierWord (isAnterior ·) [] ⊔ tierWord (isPosterior ·) []
+  onTier (isAnterior ·) {[]} ⊔ onTier (isPosterior ·) {[]}
 
-theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
+theorem navajo_mem_multitierFiniteOrCofinite : navajo ∈ multitierFiniteOrCofinite :=
+  sup_mem onTier_singleton_mem_multitierFiniteOrCofinite
+    onTier_singleton_mem_multitierFiniteOrCofinite
 
 theorem navajo_eq_agree :
     navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language 2 := by
@@ -400,10 +426,10 @@ private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
 
 /-- Tsuut'ina is not multitier generalized definite (§4.2), since `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ`
 is out with the same affixes of length `k` on every tier. -/
-theorem tsuutina_not_isBTLI (k : ℕ) : ¬ IsBTLI k tsuutina :=
-  not_isBTC_of_indist
-    (IsBTC.indist_isGeneralizedDefinite_of_tierAffixes (tsuutina_tierAffixes k))
-    (tsuutinaIn_mem k) (tsuutinaOut_notMem k)
+theorem tsuutina_notMem_multitierGeneralizedDefinite (k : ℕ) :
+    tsuutina ∉ multitierGeneralizedDefinite k := fun h ↦
+  tsuutinaOut_notMem k <|
+    (mem_iff_of_mem_multitierGeneralizedDefinite h (tsuutina_tierAffixes k)).1 (tsuutinaIn_mem k)
 
 /-- The segment classes of Uyghur backness harmony ((34)) are the harmonizing vowels and dorsal
 consonants, front or back, the same marked as suffix material, and the rest. -/
@@ -442,27 +468,33 @@ def UyghurSeg.isSuffixBack : UyghurSeg → Bool
 /-- In Uyghur backness harmony ((35)) the suffix agrees with the rightmost harmonizing vowel, or
 failing that with the rightmost dorsal, each implication `φ → ψ` written `φᶜ ⊔ ψ`. -/
 def uyghur : Language UyghurSeg :=
-  ((tierSuffix (UyghurSeg.isHarmonizingVowel ·) [.frontVowel])ᶜ ⊔
-      tierWord (UyghurSeg.isSuffixBack ·) []) ⊓
-    ((tierSuffix (UyghurSeg.isHarmonizingVowel ·) [.backVowel])ᶜ ⊔
-      tierWord (UyghurSeg.isSuffixFront ·) []) ⊓
-    ((tierWord (UyghurSeg.isHarmonizingVowel ·) [] ⊓
-        tierSuffix (UyghurSeg.isDorsal ·) [.frontDorsal])ᶜ ⊔
-      tierWord (UyghurSeg.isSuffixBack ·) []) ⊓
-    ((tierWord (UyghurSeg.isHarmonizingVowel ·) [] ⊓
-        tierSuffix (UyghurSeg.isDorsal ·) [.backDorsal])ᶜ ⊔
-      tierWord (UyghurSeg.isSuffixFront ·) [])
+  ((onTier (UyghurSeg.isHarmonizingVowel ·) (ofSuffix [.frontVowel]))ᶜ ⊔
+      onTier (UyghurSeg.isSuffixBack ·) {[]}) ⊓
+    ((onTier (UyghurSeg.isHarmonizingVowel ·) (ofSuffix [.backVowel]))ᶜ ⊔
+      onTier (UyghurSeg.isSuffixFront ·) {[]}) ⊓
+    ((onTier (UyghurSeg.isHarmonizingVowel ·) {[]} ⊓
+        onTier (UyghurSeg.isDorsal ·) (ofSuffix [.frontDorsal]))ᶜ ⊔
+      onTier (UyghurSeg.isSuffixBack ·) {[]}) ⊓
+    ((onTier (UyghurSeg.isHarmonizingVowel ·) {[]} ⊓
+        onTier (UyghurSeg.isDorsal ·) (ofSuffix [.backDorsal]))ᶜ ⊔
+      onTier (UyghurSeg.isSuffixFront ·) {[]})
 
 /-- Uyghur backness harmony is multitier definite (§4.3), since every literal is a tier
 suffix. -/
-theorem uyghur_isBTD : IsBTD 1 uyghur :=
-  IsBTC.inter (IsBTC.inter (IsBTC.inter
-    (IsBTC.union (IsBTC.compl (isBTD_tierSuffix _ _ (by decide))) (isBTD_tierWord _ _ (by decide)))
-    (IsBTC.union (IsBTC.compl (isBTD_tierSuffix _ _ (by decide))) (isBTD_tierWord _ _ (by decide))))
-    (IsBTC.union (IsBTC.compl (IsBTC.inter (isBTD_tierWord _ _ (by decide))
-      (isBTD_tierSuffix _ _ (by decide)))) (isBTD_tierWord _ _ (by decide))))
-    (IsBTC.union (IsBTC.compl (IsBTC.inter (isBTD_tierWord _ _ (by decide))
-      (isBTD_tierSuffix _ _ (by decide)))) (isBTD_tierWord _ _ (by decide)))
+theorem uyghur_mem_multitierDefinite : uyghur ∈ multitierDefinite 1 :=
+  inf_mem (inf_mem (inf_mem
+    (sup_mem (compl_mem (onTier_ofSuffix_mem_multitierDefinite (by decide)))
+      (onTier_singleton_mem_multitierDefinite (by decide)))
+    (sup_mem (compl_mem (onTier_ofSuffix_mem_multitierDefinite (by decide)))
+      (onTier_singleton_mem_multitierDefinite (by decide))))
+    (sup_mem
+      (compl_mem (inf_mem (onTier_singleton_mem_multitierDefinite (by decide))
+        (onTier_ofSuffix_mem_multitierDefinite (by decide))))
+      (onTier_singleton_mem_multitierDefinite (by decide))))
+    (sup_mem
+      (compl_mem (inf_mem (onTier_singleton_mem_multitierDefinite (by decide))
+        (onTier_ofSuffix_mem_multitierDefinite (by decide))))
+      (onTier_singleton_mem_multitierDefinite (by decide)))
 
 /-! ### Tone (§5)
 
@@ -492,20 +524,10 @@ theorem luganda_isPiecewiseTestable : luganda.IsPiecewiseTestable 3 :=
     ((isPiecewiseTestable_compl_shuffleIdeal (by decide)).union
       (isPiecewiseTestable_shuffleIdeal (by decide)))
 
-/-- A tone as a timing unit's association state, low read as unspecified (§5.1). -/
-def Tone.toAssociationState : Tone → _root_.Tone.AssociationState
-  | .high => .H
-  | .low => .O
-
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
-    w ∉ shuffleIdeal [.high, .low, .high] ↔
-      w.map Tone.toAssociationState ∈ Set.range _root_.Tone.utp.map := by
-  have hinj : Function.Injective Tone.toAssociationState := fun a b h ↦ by
-    cases a <;> cases b <;> first | rfl | cases h
-  rw [_root_.Tone.utp.mem_range_map_iff, not_iff_not]
-  refine ⟨fun h ↦ h.map Tone.toAssociationState, fun h ↦ ?_⟩
-  obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
-  rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
+    w ∉ shuffleIdeal [.high, .low, .high] ↔ w ∈ Set.range (_root_.Tone.utp Tone.high) := by
+  rw [_root_.Tone.mem_range_utp_iff]
+  exact ⟨fun h b hb ↦ by cases b; exacts [h, absurd rfl hb], fun h ↦ h .low (by decide)⟩
 
 /-- The accepted witness `ℓᵏℓhhℓℓᵏ`. -/
 private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .high, .low] k .low
@@ -520,16 +542,13 @@ private lemma tone_tierAffixes (k : ℕ) (T : Tone → Prop) [DecidablePred T] :
   by_cases h_low : T .low <;> by_cases h_high : T .high <;>
     simp [rtake_eq_reverse_take_reverse, h_low, h_high]
 
-private lemma tone_indist (k : ℕ) :
-    IsBTC.Indist (IsGeneralizedDefinite · k) (toneIn k) (toneOut k) :=
-  IsBTC.indist_isGeneralizedDefinite_of_tierAffixes (tone_tierAffixes k)
-
 /-- Luganda plateauing is not multitier generalized definite (§5.1). -/
-theorem luganda_not_isBTLI (k : ℕ) : ¬ IsBTLI k luganda :=
-  not_isBTC_of_indist (tone_indist k)
+theorem luganda_notMem_multitierGeneralizedDefinite (k : ℕ) :
+    luganda ∉ multitierGeneralizedDefinite k := fun h ↦
+  ((mem_iff_of_mem_multitierGeneralizedDefinite h (tone_tierAffixes k)).1
     ⟨(sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide),
-      Or.inr (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))⟩
-    fun h ↦ h.1 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
+      Or.inr (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))⟩).1
+    (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
 /-- Prinmi ((39), [ding-2006]) has one high span of at most two syllables,
 `h ∧ ¬h..ℓ..h ∧ ¬h..h..h`. -/
@@ -543,12 +562,13 @@ theorem prinmi_isPiecewiseTestable : prinmi.IsPiecewiseTestable 3 :=
     (isPiecewiseTestable_compl_shuffleIdeal (by decide))
 
 -- §5.2
-theorem prinmi_not_isBTLI (k : ℕ) : ¬ IsBTLI k prinmi :=
-  not_isBTC_of_indist (tone_indist k)
+theorem prinmi_notMem_multitierGeneralizedDefinite (k : ℕ) :
+    prinmi ∉ multitierGeneralizedDefinite k := fun h ↦
+  ((mem_iff_of_mem_multitierGeneralizedDefinite h (tone_tierAffixes k)).1
     ⟨⟨sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)),
       (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩,
-      (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩
-    fun h ↦ h.1.2 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
+      (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩).1.2
+    (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
 /-- Arigibi ((40), [donohue-1997]) has at most one high mora, `¬h..h`. -/
 def arigibi : Language Tone := (shuffleIdeal [.high, .high])ᶜ
@@ -569,9 +589,9 @@ private lemma high_high_sublist_iff (w : List Tone) :
     using h.filter Tone.isHigh, fun h ↦ h.trans filter_sublist⟩
 
 -- §5.3
-theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
-  refine ⟨(Tone.isHigh ·), inferInstance, {xs | xs = [] ∨ xs = [.high]}, ?_,
-    Or.inl ((Set.finite_singleton _).insert _)⟩
+theorem arigibi_mem_tierBased : arigibi ∈ tierBased {L | L.IsFiniteOrCofinite} := by
+  refine ⟨(Tone.isHigh ·), inferInstance, {xs | xs = [] ∨ xs = [.high]},
+    Or.inl ((Set.finite_singleton _).insert _), Eq.symm ?_⟩
   ext w
   show ¬ [Tone.high, .high] <+ w ↔ w.filter Tone.isHigh = [] ∨ w.filter Tone.isHigh = [.high]
   rw [high_high_sublist_iff, show ([Tone.high, .high] : List Tone) = replicate 2 .high from rfl,
@@ -594,11 +614,12 @@ theorem kagoshima_isPiecewiseTestable : kagoshima.IsPiecewiseTestable 3 :=
 
 /-- By tiers ((43)), Kagoshima Japanese is `[⋊h⋉]_{h} ∧ (hℓ⋉ ∨ h⋉)`. -/
 def kagoshimaTier : Language Tone :=
-  tierWord (Tone.isHigh ·) [.high] ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
+  onTier (Tone.isHigh ·) {[.high]} ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
 
-theorem kagoshimaTier_isBTD : IsBTD 2 kagoshimaTier :=
-  IsBTC.inter (isBTD_tierWord _ _ (by decide))
-    (IsBTC.union (isBTD_ofSuffix _ (by decide)) (isBTD_ofSuffix _ (by decide)))
+theorem kagoshimaTier_mem_multitierDefinite : kagoshimaTier ∈ multitierDefinite 2 :=
+  inf_mem (onTier_singleton_mem_multitierDefinite (by decide))
+    (sup_mem (ofSuffix_mem_multitierDefinite (by decide))
+      (ofSuffix_mem_multitierDefinite (by decide)))
 
 /-- Chuave ((44), [donohue-1997]) requires at least one high mora, `h`. -/
 def chuave : Language Tone := shuffleIdeal [.high]
@@ -613,7 +634,7 @@ theorem chuave_isLocallyTestable : chuave.IsLocallyTestable 1 := by
   exact singleton_sublist.trans
     ⟨fun h ↦ let ⟨s, t, e⟩ := append_of_mem h; ⟨s, t, by simp [e]⟩, fun ⟨_, _, e⟩ ↦ e ▸ by simp⟩
 
-theorem chuave_eq_compl_tierWord : chuave = (tierWord (Tone.isHigh ·) [])ᶜ := by
+theorem chuave_eq_compl_onTier : chuave = (onTier (Tone.isHigh ·) {[]})ᶜ := by
   ext w
   show [Tone.high] <+ w ↔ ¬ w.filter Tone.isHigh = []
   rw [singleton_sublist, filter_eq_nil_iff]
@@ -625,8 +646,8 @@ theorem chuave_eq_compl_tierWord : chuave = (tierWord (Tone.isHigh ·) [])ᶜ :=
     · exact absurd hh (by decide)
     · exact ha
 
-theorem chuave_isBTN : IsBTN chuave :=
-  chuave_eq_compl_tierWord ▸ IsBTC.compl (isBTN_tierWord (Tone.isHigh ·) [])
+theorem chuave_mem_multitierFiniteOrCofinite : chuave ∈ multitierFiniteOrCofinite :=
+  chuave_eq_compl_onTier ▸ compl_mem onTier_singleton_mem_multitierFiniteOrCofinite
 
 /-- The seven fully specified Karanga Shona stems (§5.6, [odden-1984]). -/
 def karangaShort : Language Tone :=
@@ -637,23 +658,32 @@ def karangaShort : Language Tone :=
 or a high-toned root `⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. -/
 def karangaShona : Language Tone :=
   karangaShort ⊔
-    (ofPrefix [.low, .high, .high, .low] ⊓ tierWord (Tone.isHigh ·) [.high, .high]) ⊔
+    (ofPrefix [.low, .high, .high, .low] ⊓ onTier (Tone.isHigh ·) {[.high, .high]}) ⊔
     (ofPrefix [.high, .high, .high, .low] ⊓ ofSuffix [.low, .high] ⊓
-      tierWord (Tone.isHigh ·) [.high, .high, .high, .high])
+      onTier (Tone.isHigh ·) {[.high, .high, .high, .high]})
 
 /-- The Karanga Shona verb stem is multitier generalized definite (§5.6, refining
 [jardine-2020]), and needs both tier prefixes and tier suffixes. -/
-theorem karangaShona_isBTLI : IsBTLI 5 karangaShona :=
-  IsBTC.union (IsBTC.union
-    (IsBTC.of_class (isDefinite_succ_of_forall_length_le (N := 4)
+theorem karangaShona_mem_multitierGeneralizedDefinite :
+    karangaShona ∈ multitierGeneralizedDefinite 5 :=
+  sup_mem (sup_mem
+    (subset_multitier (isDefinite_succ_of_forall_length_le (N := 4)
       fun w hw ↦ (by decide : ∀ w ∈ [[Tone.low], [.low, .high], [.low, .high, .low], [.high],
         [.high, .low], [.high, .low, .high], [.high, .high, .low, .high]], w.length ≤ 4)
         w hw).toIsGeneralizedDefinite)
-    (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
-      (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))))
-    (IsBTC.inter (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
-      (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide))))
-      (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide))))
+    (inf_mem
+      (multitierReverseDefinite_le_multitierGeneralizedDefinite
+        (ofPrefix_mem_multitierReverseDefinite (by decide)))
+      (multitierDefinite_le_multitierGeneralizedDefinite
+        (onTier_singleton_mem_multitierDefinite (by decide)))))
+    (inf_mem
+      (inf_mem
+        (multitierReverseDefinite_le_multitierGeneralizedDefinite
+          (ofPrefix_mem_multitierReverseDefinite (by decide)))
+        (multitierDefinite_le_multitierGeneralizedDefinite
+          (ofSuffix_mem_multitierDefinite (by decide))))
+      (multitierDefinite_le_multitierGeneralizedDefinite
+        (onTier_singleton_mem_multitierDefinite (by decide))))
 
 /-! ### Classification through equations (§6)
 
@@ -712,8 +742,9 @@ theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
 
 /-- Culminative stress-penult is not multitier reverse definite, against the equation of (62)
 (§6.3). -/
-theorem stressPenultCulminative_not_isBTK (k : ℕ) : ¬ IsBTK k stressPenultCulminative := fun h ↦ by
-  have := h.mem_languages_multitierReverseDefiniteVariety.2.2 _
+theorem stressPenultCulminative_notMem_multitierReverseDefinite (k : ℕ) :
+    stressPenultCulminative ∉ multitierReverseDefinite k := fun h ↦ by
+  have := (multitierReverseDefinite_le_languages h).2.2 _
     stressPenultCulminative_isIdempotentElem (stressPenultCulminative.syntacticClass [.stressed])
   rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
   simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using

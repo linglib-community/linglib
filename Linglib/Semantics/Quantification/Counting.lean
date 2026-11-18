@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Core.Data.Set.Card
+public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
 
 /-!
@@ -310,7 +311,7 @@ theorem downNE_most [Finite α] : (most : Det α).DownNEMon := by
 theorem upSE_most [Finite α] : (most : Det α).UpSEMon := by
   intro A B A' h₁ h₂ hq
   rw [most_apply] at *
-  rw [Set.Subset.antisymm (fun x hx ↦ ⟨h₂ hx, hx.2⟩ : A' \ B ⊆ A \ B)
+  rw [Set.Subset.antisymm (a := A' \ B) (b := A \ B) (fun x hx ↦ ⟨h₂ hx, hx.2⟩)
     (Set.sdiff_subset_sdiff_left h₁)]
   exact hq.trans_le (Set.ncard_le_ncard (Set.inter_subset_inter_left B h₁))
 

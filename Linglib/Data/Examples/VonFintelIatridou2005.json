@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "harlemBase"]
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "Waiter has the only access to sugar.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "hareMinimalPair"],
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "Excessive desire for sugar may indicate diabetes.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "hareMinimalPair"],
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "harlemBase"],
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "You actually want to go to Hoboken; I do not know that. Best way to Hoboken is the PATH train; best way to Harlem is the A train.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "hoboken"]
@@ -104,7 +104,7 @@
     "translation": "",
     "context": "In the actual world you want to go to Hoboken; I do not know that and am uncertain whether you want to go to Hoboken or to Harlem. The best way to Hoboken is the PATH train, the best way to Harlem is the A train; there is not enough time to go to both places.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "conflictingGoals"]
@@ -123,7 +123,7 @@
     "translation": "",
     "context": "You want to become mayor. You also want to not go to the pub regularly. You will become mayor only if you go to the pub regularly.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "conflictingGoals"]
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "Either A train or C train goes to Harlem. You are an incorrigible fan of Ruud van Nistelrooy and most want to meet him. Van Nistelrooy regularly rides the A train.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "correlatedIrrelevant"],
@@ -162,7 +162,7 @@
     "translation": "",
     "context": "Both the A train and the C train go to Harlem. The C train will have Pedro Martinez on it. You want to kiss Pedro Martinez.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "nonCausalCoincidence"]
@@ -181,7 +181,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "triviallyTrue"],
@@ -200,7 +200,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "triviallyTrue"],
@@ -221,7 +221,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "oughtVsHaveTo"]
@@ -240,7 +240,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "If you want to get to London by noon then you have to go by train.",
         "judgment": "acceptable"
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "Two trains cross Siberia to Vladivostok: Russian and Chinese. The Chinese train is significantly more comfortable.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "vladivostokOughtHave"],
@@ -284,7 +284,7 @@
     "translation": "",
     "context": "Same Vladivostok scenario.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "vladivostokOughtHave"],
@@ -306,7 +306,7 @@
     "translation": "",
     "context": "A announces an itinerary; no to-clause or if-clause overtly supplies a goal.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "You ought to have some hot chocolate at Burdick's.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -326,7 +326,7 @@
     "translation": "",
     "context": "Joe has been considering buying a used car in Harlem. If he hasn't bought it yet, the A train is his only way to Harlem; if he has bought it, he can drive or take the A train. The only reason Joe would want Harlem is to buy the car (so if he wants Harlem, he hasn't bought it).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "marginal"},
       {"name": "anankastic", "judgment": "acceptable"}

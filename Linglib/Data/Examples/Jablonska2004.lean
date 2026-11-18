@@ -24,7 +24,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "degree achievements pass both telicity tests")] }
 
@@ -37,7 +37,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "degree achievements pass both telicity tests")] }
 
@@ -50,7 +50,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "considerable change"), ("claim", "upward entailing to (11b)")] }
 
@@ -63,7 +63,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "considerable change")] }
 
@@ -76,7 +76,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "delimitative"), ("claim", "entails (12b) only by varying the vague 'while'")] }
 
@@ -89,7 +89,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "delimitative")] }
 
@@ -102,7 +102,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "semelfactive"), ("claim", "no process part")] }
 
@@ -115,7 +115,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("claim", "no process part")] }
 
@@ -128,7 +128,7 @@ def ex_14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "stative"), ("claim", "no change of state")] }
 
@@ -141,7 +141,7 @@ def ex_14d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("claim", "no change of state")] }
 
@@ -154,7 +154,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "an overt degree quantizes")] }
 
@@ -167,7 +167,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
@@ -180,7 +180,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("reading", "distributive")] }
 
@@ -193,7 +193,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
@@ -206,7 +206,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("layers", "lexical prefix, po-"), ("claim", "po- selects a [-Perf] predicate (25)")] }
 
@@ -219,7 +219,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high -aj-"), ("reading", "distributive or delimitative")] }
 
@@ -232,7 +232,7 @@ def ex_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "distributive or delimitative")] }
 
@@ -245,7 +245,7 @@ def ex_28c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "delimitative only: the external argument is outside the scope of po-")] }
 
@@ -258,7 +258,7 @@ def ex_28d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "distributive or delimitative")] }
 
@@ -271,7 +271,7 @@ def ex_28e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "distributive with singular subject and object")] }
 
@@ -284,7 +284,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "po- above SI yields a perfective: no phasal complement")] }
 
@@ -297,7 +297,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("actual present", .unacceptable), ("future", .acceptable)]
     paperFeatures := [("section", "2.3"), ("claim", "no present-tense interpretation")] }
 
@@ -310,7 +310,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "the SI morpheme sits below Voice: a verbal passive")] }
 
@@ -323,7 +323,7 @@ def ex_46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("claim", "semelfactives are perfective: no phasal complement")] }
 
@@ -336,7 +336,7 @@ def ex_46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("actual present", .unacceptable), ("future", .acceptable)]
     paperFeatures := [("section", "2.3.1"), ("claim", "semelfactives are perfective: no present reading")] }
 
@@ -349,7 +349,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("claim", "impersonal passive: unergative")] }
 
@@ -362,7 +362,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "no attenuative reading without SI")] }
 
@@ -375,7 +375,7 @@ def ex_65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("reading", "progressive of an attenuative-frequentative")] }
 
@@ -388,7 +388,7 @@ def ex_65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("reading", "habitual only")] }
 
@@ -401,7 +401,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "English degree achievements take the progressive")] }
 
@@ -414,7 +414,7 @@ def ex_80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "directed motion")] }
 
@@ -427,7 +427,7 @@ def ex_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("actual present", .acceptable)]
     paperFeatures := [("section", "3"), ("claim", "SI only through the non-directed stem")] }
 
@@ -440,7 +440,7 @@ def ex_83a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
@@ -453,7 +453,7 @@ def ex_83b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 

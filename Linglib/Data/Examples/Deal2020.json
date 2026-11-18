@@ -14,7 +14,7 @@
     "translation": "My sister told my husband that her dog chased her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "both utterance", "judgment": "marginal"},
@@ -45,7 +45,7 @@
     "translation": "My sister told my husband that his dog chased her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "both utterance", "judgment": "marginal"},
@@ -76,7 +76,7 @@
     "translation": "Katie says she thinks she is also here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "both utterance", "judgment": "acceptable"},
@@ -107,7 +107,7 @@
     "translation": "John thinks that Mary told Sue that she is taller than her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "intermediate reported context", "judgment": "unacceptable"},
       {"name": "lowest reported context", "judgment": "acceptable"}
@@ -137,7 +137,7 @@
     "translation": "They said at Talmaks they won’t be there this week.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "first reported only", "judgment": "acceptable"}
@@ -165,7 +165,7 @@
     "translation": "My friend in Boston told them that he is not there right now.",
     "context": "Taamsas is speaking.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "first reported only", "judgment": "unacceptable"}
@@ -193,7 +193,7 @@
     "translation": "Intended: Maybe Harold thinks that I am here in Clarkston.",
     "context": "Harold is in Clarkston. I and my consultant are in Lapwai.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "second reported only", "judgment": "unacceptable"}
     ],
@@ -219,7 +219,7 @@
     "translation": "Intended: The woman thought she was missing.",
     "context": "A woman was on a group tour and she wandered off from the group and went back to the bus to take a nap. People noticed she was missing and started searching for her. She woke up, got back off the bus, and noticed everyone searching around. Of course, she didn’t know why they were searching. Someone said to her, “A woman is lost.” So she joined the search party to look for that woman, without knowing it was herself!",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-de se", "judgment": "unacceptable"}
     ],
@@ -246,7 +246,7 @@
     "translation": "Literal: Mary told John that you should go home.",
     "context": "Mary is organizing a big dinner at a restaurant with waiters to help serve food. She hears that a certain waiter named John is being a nuisance. She tells the nearest waiter, “John should go home.\" Unbeknowst to her, she’s talking to John.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-de se", "judgment": "unacceptable"}
     ],
@@ -275,7 +275,7 @@
     "translation": "The woman is in Clarkston, but she thinks (she is) in Asotin, and she thinks Costco is here.",
     "context": "Elicited in Lapwai: Costco is a prominent store in Clarkston. Everyone knows where it is.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-de se", "judgment": "acceptable"}
     ],
@@ -301,7 +301,7 @@
     "translation": "Hesen said that he was sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se", "judgment": "acceptable"},
       {"name": "non-de se", "judgment": "unacceptable"}
@@ -328,7 +328,7 @@
     "translation": "Hesen said to Ali that he was sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se", "judgment": "acceptable"},
       {"name": "non-de se", "judgment": "unacceptable"}
@@ -356,7 +356,7 @@
     "translation": "When he was in London, Pierre said that it is pretty there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se", "judgment": "acceptable"},
       {"name": "non-de se", "judgment": "unacceptable"}
@@ -384,7 +384,7 @@
     "translation": "Muhemmet told me that he would study here from September.",
     "context": "This summer, I went to UCLA and met Muhemmet there. He told me, “I’m going to study here from this September.” Now I’m back in Cambridge, MA, talking to Ahmet.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Muhemmet manga toqquzinji ay-din bašla-p (men) u jer-de uqu-imen di-di.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -412,7 +412,7 @@
     "translation": "Muhemmet told John that he should go home.",
     "context": "Muhemmet is hosting a party. He hears that a certain waiter named John is being a nuisance. Muhemmet tells the nearest waiter, “John should go home.” Unbeknownst to him, he’s talking to John.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-de se", "judgment": "acceptable"}
     ],
@@ -437,7 +437,7 @@
     "translation": "Simon said that you hit him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "second reported only", "judgment": "acceptable"}
     ],
@@ -463,7 +463,7 @@
     "translation": "Baali said his pants were on fire.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se", "judgment": "acceptable"},
       {"name": "non-de se", "judgment": "acceptable"}
@@ -491,7 +491,7 @@
     "translation": "John said last Monday that Mary would leave that day.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se", "judgment": "acceptable"},
       {"name": "non-de se", "judgment": "unacceptable"}
@@ -518,7 +518,7 @@
     "translation": "Who did Mary think a week ago would leave on January 2nd/9th?",
     "context": "It is January 8th.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "acceptable"}
@@ -544,7 +544,7 @@
     "translation": "Who did Mary think likes me?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "unacceptable"}
@@ -571,7 +571,7 @@
     "translation": "Literal: Tom said in New York last night that Sue came here yesterday.",
     "context": "John and Mary are having a conversation in Boston on July 3rd. John says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both utterance", "judgment": "acceptable"},
       {"name": "both reported", "judgment": "acceptable"},
@@ -600,7 +600,7 @@
     "translation": "Literal: Tom said in New York that I was born here.",
     "context": "John and Mary are having a conversation in Seoul. John says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both utterance", "judgment": "acceptable"},
       {"name": "second reported only", "judgment": "acceptable"},
@@ -626,7 +626,7 @@
     "translation": "",
     "context": "",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"}
     ],
@@ -649,7 +649,7 @@
     "translation": "",
     "context": "John is confused on Thursday and thinks the date is the 23rd, when it is really the 24th. On Thursday, John tells Sarah, “I’m coming on the 25th.” But he doesn’t show up until Saturday. A week later, Sarah is telling Bill what happened. She says:",
     "judgment": "variable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "non-de se", "judgment": "acceptable"}
     ],

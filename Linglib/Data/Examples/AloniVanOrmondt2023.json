@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -69,7 +69,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "bare"],
@@ -109,7 +109,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -129,7 +129,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The speaker does not know who", "judgment": "acceptable"}
     ],
@@ -170,7 +170,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "The speaker does not know how many", "judgment": "acceptable"}
     ],
@@ -191,7 +191,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "disjunction"],
@@ -210,7 +210,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "disjunction"],
@@ -229,7 +229,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "It is possible that Klaus married with Paul and it is possible that Klaus married with John",
@@ -253,7 +253,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "It is possible that the band has exactly three players and it is possible that the band has more than three players",
@@ -278,7 +278,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -299,7 +299,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Authoritative: it has to be the case that Paprika reads three or more books",
@@ -329,7 +329,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -351,7 +351,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -373,7 +373,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "disjunction"],
@@ -392,7 +392,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "disjunction"],
@@ -412,7 +412,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Authoritative", "judgment": "acceptable"},
       {"name": "Epistemic", "judgment": "acceptable"}
@@ -435,7 +435,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Some woman has two and some woman has three children", "judgment": "acceptable"}
     ],
@@ -458,7 +458,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Some woman might have two and some woman might have three children", "judgment": "acceptable"}
     ],
@@ -481,7 +481,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Full knowledge: some woman has three and some woman has more than three children",
@@ -511,7 +511,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "You are allowed to give a presentation and you are allowed to write a short paper", "judgment": "acceptable"}
     ],
@@ -533,7 +533,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "You are allowed to read three books and you are allowed to read more", "judgment": "acceptable"}
     ],
@@ -557,7 +557,7 @@
     "translation": "",
     "context": "All brothers have been married to a woman, and one of them married first a woman and then a man.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Some brother has been married to a woman and some brother has been married to a man", "judgment": "acceptable"}
     ],
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "You may have coffee and you may have tea", "judgment": "acceptable"}
     ],
@@ -601,7 +601,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Some woman has two and some woman has three", "judgment": "unacceptable"},
       {"name": "Some woman in my family might have two children and might have three children", "judgment": "acceptable"}
@@ -624,7 +624,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Klaus did not marry either of the two", "judgment": "acceptable"}
     ],
@@ -646,7 +646,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -667,7 +667,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -687,7 +687,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -707,7 +707,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -727,7 +727,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -747,7 +747,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "comparative"],
@@ -767,7 +767,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "All of the boys may go to the beach and all of the boys may go to the cinema", "judgment": "acceptable"}
     ],
@@ -789,7 +789,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],
@@ -810,7 +810,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "superlative"],

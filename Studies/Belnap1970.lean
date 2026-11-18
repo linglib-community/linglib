@@ -37,7 +37,7 @@ as implication between truth values.
 
 namespace Belnap1970
 
-open Aristotelian (Square SquareRelations)
+open Aristotelian
 open Quantifier Quantifier.Det
 
 variable {E : Type}
@@ -124,9 +124,9 @@ theorem contentSquare_eq_square (hC : ∃ x, x ∈ C) : contentSquare C = Det.sq
 /-- The content square satisfies `SquareRelations` when the restrictor is non-empty, which is
 Belnap's assertiveness condition, so the relations hold exactly where the forms are
 assertive. -/
-theorem content_square_relations (hR : ∃ x, x ∈ C) :
+theorem squareRelations_contentSquare (hR : ∃ x, x ∈ C) :
     SquareRelations (contentSquare C) :=
-  contentSquare_eq_square hR ▸ Det.square_relations hR
+  contentSquare_eq_square hR ▸ Det.squareRelations_square hR
 
 /-! ### Obversion, I-conversion, Barbara -/
 

@@ -40,7 +40,7 @@ open Phonology Data.PHOIBLE Drubea
 namespace Numee
 
 /-- /ŋw/, the labialised velar nasal; Numèè only, where Drubea has /gw/. -/
-def ŋw : Segment := .ofChart .«ŋ» labialized
+def ŋw : Segment := .ofChart FeatureMatrix.last.«ŋʷ»
 
 /-- /ü/, phonetically [y]; long only. -/
 def ü : Segment := .ofChart .«y»

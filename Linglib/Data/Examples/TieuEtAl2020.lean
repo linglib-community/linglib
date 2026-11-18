@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("more than one giraffe", .acceptable)]
     paperFeatures := [("polarity", "positive")] }
 
@@ -37,7 +37,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not more than one giraffe", .unacceptable), ("not a single giraffe", .acceptable)]
     paperFeatures := [("polarity", "negative")] }
 
@@ -50,7 +50,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "downward")] }
 
@@ -63,7 +63,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "downward")] }
 
@@ -76,7 +76,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative")] }
 
@@ -89,7 +89,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive")] }
 
@@ -102,7 +102,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative")] }
 
@@ -115,7 +115,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := "Emily fed exactly one giraffe."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("n_acted_on", "one")] }
 
@@ -128,7 +128,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := "Emily fed exactly one giraffe."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("n_acted_on", "one")] }
 
@@ -141,7 +141,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all of the giraffes", .acceptable)]
     paperFeatures := [("polarity", "positive")] }
 
@@ -154,7 +154,7 @@ def exp1_positive : Datum :=
     glossedTokens := []
     context := "Emily is visiting the pig farm and feeds exactly one pig."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "positive"), ("n_acted_on", "one")] }
 
@@ -167,7 +167,7 @@ def exp1_negative : Datum :=
     glossedTokens := []
     context := "Emily feeds exactly one giraffe."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "negative"), ("n_acted_on", "one")] }
 
@@ -180,7 +180,7 @@ def exp2_si : Datum :=
     glossedTokens := []
     context := "Lion carried all of the apples."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("polarity", "positive"), ("inference", "scalar")] }
 
@@ -193,7 +193,7 @@ def exp3_positive_plural : Datum :=
     glossedTokens := []
     context := "Koala bought exactly one pear."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "positive"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "intermediate")] }
 
@@ -206,7 +206,7 @@ def exp3_negative_plural : Datum :=
     glossedTokens := []
     context := "Koala bought exactly one pear."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "negative"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "minimal")] }
 

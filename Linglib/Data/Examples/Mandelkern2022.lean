@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("them covaries with a child", .acceptable)]
     paperFeatures := [("section", "1")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("them covaries with the parents' children", .marginal), ("them is some salient person", .acceptable)]
     paperFeatures := [("section", "1")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .marginal), ("she is Sue", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -76,7 +76,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's twin", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -89,7 +89,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue", .acceptable)]
     paperFeatures := [("section", "2")] }
 
@@ -102,7 +102,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Everyone who has a child loves the child.", .acceptable)]
+    contrasts := [("Everyone who has a child loves the child.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -115,7 +115,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Everyone who is a parent loves the child.", .acceptable)]
+    contrasts := [("Everyone who is a parent loves the child.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -128,7 +128,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Everyone who has a twin loves the twin.", .acceptable)]
+    contrasts := [("Everyone who has a twin loves the twin.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -141,7 +141,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Everyone who is a twin loves the twin.", .acceptable)]
+    contrasts := [("Everyone who is a twin loves the twin.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -154,7 +154,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -167,7 +167,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2")] }
 
@@ -180,7 +180,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -193,7 +193,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3")] }
 
@@ -206,7 +206,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .acceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -219,7 +219,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .marginal), ("she is Sue", .acceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -232,7 +232,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .acceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -245,7 +245,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .marginal), ("she is Sue", .acceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -258,7 +258,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .acceptable)]
     paperFeatures := [("section", "4")] }
 
@@ -271,7 +271,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she is Sue's child", .marginal)]
     paperFeatures := [("section", "4")] }
 
@@ -284,7 +284,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he is the man", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -297,7 +297,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he is the man", .questionable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -310,7 +310,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Either there isn't a bathroom, or the bathroom is upstairs.", .acceptable)]
+    contrasts := [("Either there isn't a bathroom, or the bathroom is upstairs.", .acceptable)]
     readings := [("it is the bathroom", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -323,7 +323,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Either the bathroom is upstairs, or there isn't a bathroom.", .acceptable)]
+    contrasts := [("Either the bathroom is upstairs, or there isn't a bathroom.", .acceptable)]
     readings := [("it is the bathroom", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -336,7 +336,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Either the child is at boarding school, or Susie doesn't have a child.", .acceptable)]
+    contrasts := [("Either the child is at boarding school, or Susie doesn't have a child.", .acceptable)]
     readings := [("she is Susie's child", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -349,7 +349,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Either the child is at boarding school, or Susie isn't a parent.", .acceptable)]
+    contrasts := [("Either the child is at boarding school, or Susie isn't a parent.", .acceptable)]
     readings := [("she is Susie's child", .marginal)]
     paperFeatures := [("section", "5.5")] }
 
@@ -362,7 +362,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("him is the student", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -375,7 +375,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he is the kid", .acceptable)]
     paperFeatures := [("section", "5.5")] }
 
@@ -388,7 +388,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.5")] }
 
@@ -401,7 +401,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Everyone who has a child loves the child.", .acceptable)]
+    contrasts := [("Everyone who has a child loves the child.", .acceptable)]
     readings := [("them covaries with a child", .acceptable)]
     paperFeatures := [("section", "5.8")] }
 
@@ -414,7 +414,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Every parent loves the child.", .acceptable)]
+    contrasts := [("Every parent loves the child.", .acceptable)]
     readings := [("them covaries with the parents' children", .unacceptable)]
     paperFeatures := [("section", "5.8")] }
 
@@ -427,7 +427,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.8")] }
 
@@ -440,7 +440,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6")] }
 
@@ -453,7 +453,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John doesn't have a car so he doesn't wash the car.", .acceptable)]
+    contrasts := [("John doesn't have a car so he doesn't wash the car.", .acceptable)]
     readings := []
     paperFeatures := [("section", "6"), ("footnote", "26")] }
 

@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Syntax.Control.Head
+public import Studies.Landau2004
+public import Linglib.Semantics.ArgumentStructure.Control
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -15,8 +16,13 @@ status of the selecting predicate, non-attitude complements establishing control
 attitude complements by the binding of a projected coordinate of the embedded context, a second tier
 built over the first. Landau's earlier predicate classes carry the split, the four classes selecting
 untensed complements to the predicative tier and the four selecting tensed ones to the logophoric
-tier ((4), (5)); the summary table of contrasts (80) shows the two tiers separated on every row,
-with obligatory control into an inflected complement realized as the OC-NC generalization (70) over
+tier ((4), (5)). The two tiers read the complement differently: a predicative verb like *begin*
+[reads its property at the controller](##Landau2015.isControlledAt_begin), and a logophoric verb
+[reads it at the author of each of the holder's
+alternatives](##Landau2015.isLogophoricAt_logophoric), which is the obligatory *de se* reading and
+differs from the first where the holder mistakes who that author is. The summary table of
+contrasts (80) shows the two tiers separated on every row, with obligatory control into an
+inflected complement realized as the OC-NC generalization (70) over
 the library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
 attitude predicates reads *de se* with psychological verbs and *de te* with communicative ones (36).
 The predicate classes are derived from the English fragment's verb entries rather than stored
@@ -31,7 +37,7 @@ The book was checked against the author's 2014 manuscript, whose numbering agree
 citations here. A tier is a shape of control dependency (`Tier.Realizes`): predication is
 saturating, and logophoric control composes a binding leg over predication. Table (80)'s three
 saturation rows, control shift, partial control and split control, are derived from that shape,
-since `Control.IsSaturating` denies them of predication and the binding leg admits them; its
+since `Binding.IsSaturating` denies them of predication and the binding leg admits them; its
 inflected-complement row is the OC-NC generalization, and its rows on non-human PRO and implicit
 control are recorded as the book states them. In a single dependency, control shift and split
 control both show as a dependent with two controllers; the dependency does not record whether
@@ -49,7 +55,7 @@ they are alternatives or act jointly. Obligatory
 
 namespace Landau2015
 
-open Control SetRel
+open Binding SetRel
 
 /-! ### The two tiers -/
 
@@ -74,6 +80,50 @@ theorem isPartial_bind_of_logophoric {Pos Ref : Type*} [Preorder Ref] {val : Pos
     {bind pred : SetRel Pos Pos} (hp : IsSaturating val pred) (h : IsPartial val (bind ○ pred)) :
     IsPartial val bind :=
   h.of_comp hp.exhaustive
+
+/-! ### The two tiers as readings of the complement -/
+
+section Readings
+
+variable {E D Ev W C X : Type*}
+
+/-- (31b): the denotation of *begin*, a predicative control verb. The subject has the property to
+a degree in an event it causes, and in some inertia world has it to a greater degree in an event
+the first begins. -/
+def begin [LT D] (inertia : W → Set W) (initial : Ev → Ev → Prop) (cause : E → Ev → W → Prop)
+    (P : E → D → Ev → W → Prop) (x : E) : D → Ev → W → Prop :=
+  fun d e w ↦ P x d e w ∧ cause x e w ∧
+    ∃ e' w' d', w' ∈ inertia w ∧ initial e e' ∧ d < d' ∧ P x d' e' w'
+
+/-- (55k): the denotation of a logophoric control verb with its complement. Every alternative of
+the attitude holder has the property of its own author. -/
+def logophoric (alternatives : X → Set C) (author : C → E) (P : E → Set C) (x : X) : Prop :=
+  ∀ i ∈ alternatives x, i ∈ P (author i)
+
+/-- Predicative control reads the complement's property at the controller. -/
+theorem isControlledAt_begin [LT D] (inertia : W → Set W) (initial : Ev → Ev → Prop)
+    (cause : E → Ev → W → Prop) :
+    ArgumentStructure.IsControlledAt (begin (D := D) inertia initial cause) id :=
+  ArgumentStructure.isControlledAt_iff.2 ⟨fun φ x d e w ↦ φ d e w ∧ cause x e w ∧
+    ∃ e' w' d', w' ∈ inertia w ∧ initial e e' ∧ d < d' ∧ φ d' e' w', fun _ _ ↦ rfl⟩
+
+/-- Logophoric control reads the complement's property at the author of each alternative. -/
+theorem isLogophoricAt_logophoric (alternatives : X → Set C) (author : C → E) :
+    ArgumentStructure.IsLogophoricAt (logophoric alternatives author) author :=
+  fun P Q x h ↦ by
+    simp only [logophoric]
+    exact propext (forall₂_congr fun i _ ↦ by
+      simpa using Set.ext_iff.1 h i)
+
+-- the amnesiac of §3.4
+/-- A logophoric reading is not a reading at the controller: where an alternative's author is not
+the attitude holder, two properties that agree on the holder are told apart. -/
+example : ¬ ArgumentStructure.IsControlledAt
+    (logophoric (fun _ : Bool ↦ ({()} : Set Unit)) fun _ ↦ false) id := fun h ↦ by
+  have := @h (fun y ↦ {_i | y = true}) (fun _ ↦ Set.univ) true (by ext; simp)
+  simp [logophoric] at this
+
+end Readings
 
 /-! ### Predicate classes ((4), (5)) -/
 
@@ -119,21 +169,21 @@ inductive Table80Row where
   represented argument, so exhaustive-control verbs resist impersonal passives (98). -/
   | implicitControl
   /-- Control shift (§4.3) is out under predication, which is bi-unique
-  (`Control.IsSaturating.eq_of_controllers`), so no other argument can saturate the predicate. -/
+  (`Binding.IsSaturating.eq_of_antecedents`), so no other argument can saturate the predicate. -/
   | controlShift
   /-- Partial control (§5) is out under a saturating dependency, which is exhaustive
-  (`Control.IsSaturating.not_isPartial`). -/
+  (`Binding.IsSaturating.not_isPartial`). -/
   | partialControl
   /-- Split control (§5) is out under a saturating dependency, which has a unique controller
-  (`Control.IsSaturating.not_isSplit`). -/
+  (`Binding.IsSaturating.not_isSplit`). -/
   | splitControl
   deriving DecidableEq, Repr
 
 /-- The clause class of an inflected complement on each tier, untensed under predication and
 tensed under logophoric control ((4), (5)). -/
-def Tier.inflectedClass : Tier → ClauseClass
-  | .predicative => .cSubjunctive
-  | .logophoric => .fSubjunctive
+def Tier.inflectedClass : Tier → Landau2004.EmbeddedTense
+  | .predicative => .anaphoric
+  | .logophoric => .dependent
 
 /-- A row of table (80) is available on a tier. The three saturation rows are available when some
 dependency realizing the tier shows them, referents measured in `ℕ`; the inflected-complement row
@@ -161,10 +211,12 @@ theorem available_iff_logophoric {r : Table80Row}
   have hw := realizes_logophoric_witness
   rcases hr with rfl | rfl | rfl <;> cases t <;> simp only [Table80Row.Available, reduceCtorEq,
     iff_false, not_exists, not_and, iff_true]
-  · exact fun _ _ _ h a b p hab ha hb ↦ hab (IsSaturating.eq_of_controllers h ha hb)
+  · exact fun _ _ _ h a b p hab ha hb ↦ hab (IsSaturating.eq_of_antecedents h ha hb)
   · exact ⟨_, _, _, hw, 0, 1, 3, by decide, ⟨2, by simp⟩, ⟨2, by simp⟩⟩
   · exact fun _ _ _ h ↦ IsSaturating.not_isPartial h
-  · exact ⟨_, _, _, hw, 0, 3, ⟨2, by simp⟩, by decide⟩
+  · refine ⟨_, _, _, hw, 3, ⟨0, 2, by simp⟩, 1, ?_, by decide⟩
+    rintro _ ⟨a, ⟨_, rfl, m, ha, -⟩, rfl⟩
+    rcases ha with h | h <;> simp [Prod.ext_iff] at h <;> simp [h.1]
   · exact fun _ _ _ h ↦ IsSaturating.not_isSplit h
   · exact ⟨_, _, _, hw, fun h ↦
       absurd (h (a := 0) (b := 1) (c := 3) ⟨2, by simp⟩ ⟨2, by simp⟩) (by decide)⟩

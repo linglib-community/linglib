@@ -33,7 +33,7 @@ partition settles and no single kernel proposition does, shows the other
 The four worlds are the combinations of whether the rain gear coming inside is wet and whether it
 is raining, with `P` (no wet rain gear) and `Q` (it is raining) of (25) the propositions
 `noWetGear` and `raining`, so that `P ∩ Q` and `P \ Q` are both inhabited, as the figures draw
-them. A subject matter is a `Setoid`, and a proposition is an issue in it when the setoid decides
+them. A subject matter is a `Setoid`, and a proposition is an issue in it when the setoid determines
 the proposition. The paper's examples are the rows of `Data.Examples.VonFintelGillies2010`.
 
 ## References
@@ -128,7 +128,7 @@ the pairs of `S` that agree on `P`, and `P` is an *issue* in `S` iff
 `S[P] = S`. The subject matter S_K determined by a kernel is the refinement
 `S_o[P₁]…[Pₙ]` of the universal relation along each kernel proposition —
 equivalently, the relation "agrees on every `X ∈ K`". Implementation 2:
-K directly settles P iff P is an issue in S_K, that is, S_K decides P. -/
+K directly settles P iff P is an issue in S_K, that is, S_K determines P. -/
 
 /-- The subject matter `S_K` of a kernel, relating worlds that agree on every
 proposition in `K`. -/
@@ -138,7 +138,7 @@ def subjectMatter : Setoid W where
     fun h h' X hX ↦ (h X hX).trans (h' X hX)⟩
 
 /-- `K` settles `P` by partition when `P` is an issue in `S_K`. -/
-def SettlesByPartition (P : Set W) : Prop := (subjectMatter K).Decides P
+def SettlesByPartition (P : Set W) : Prop := (subjectMatter K).Determines P
 
 theorem subjectMatter_rel_sInter {v w : W} (hv : v ∈ ⋂₀ K) (hw : w ∈ ⋂₀ K) :
     (subjectMatter K).r v w := fun X hX ↦
@@ -149,9 +149,9 @@ theorem SettlesByPartition.sInter_subset_or {P : Set W} (h : SettlesByPartition 
   rcases (⋂₀ K).eq_empty_or_nonempty with hEmpty | ⟨w₀, hw₀⟩
   · exact Or.inl (hEmpty ▸ Set.empty_subset P)
   · exact (em (w₀ ∈ P)).imp
-      (fun hP _ hv ↦ (Setoid.decides_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mp hP)
+      (fun hP _ hv ↦ (Setoid.determines_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mp hP)
       (fun hP _ hv hvP ↦
-        hP ((Setoid.decides_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mpr hvP))
+        hP ((Setoid.determines_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mpr hvP))
 
 /-! ### Non-equivalence of the two implementations (§7.2)
 
@@ -163,7 +163,7 @@ entailing it. -/
 
 private theorem not_settles_onlyRainWets : ¬ SettlesByPartition {noWetGear} onlyRainWets := by
   intro h
-  have h' := Setoid.decides_iff.1 h (true, true) (true, false) fun X hX ↦ by
+  have h' := Setoid.determines_iff.1 h (true, true) (true, false) fun X hX ↦ by
     rw [Set.mem_singleton_iff.1 hX]; simp
   simp at h'
 
@@ -175,7 +175,7 @@ theorem explicit_not_implies_partition :
 
 theorem partition_not_implies_explicit :
     ∃ (K : Set (Set World)) (P : Set World), SettlesByPartition K P ∧ ¬ DirectlySettles K P := by
-  refine ⟨wetGearK, wetGear ∩ raining, Setoid.decides_iff.2 fun w v h ↦ ?_, ?_⟩
+  refine ⟨wetGearK, wetGear ∩ raining, Setoid.determines_iff.2 fun w v h ↦ ?_, ?_⟩
   · have h1 := h onlyRainWets (by simp [wetGearK])
     have h2 := h wetGear (by simp [wetGearK])
     revert h1 h2
@@ -186,7 +186,7 @@ theorem partition_not_implies_explicit :
 theorem entailment_not_implies_partition :
     ∃ (K : Set (Set World)) (P : Set World), ⋂₀ K ⊆ P ∧ ¬ SettlesByPartition K P := by
   refine ⟨wetGearK, raining, raining_follows, fun h ↦ ?_⟩
-  have h' := Setoid.decides_iff.1 h (false, true) (false, false) fun X hX ↦ by
+  have h' := Setoid.determines_iff.1 h (false, true) (false, false) fun X hX ↦ by
     rcases hX with rfl | rfl <;> simp
   simp at h'
 

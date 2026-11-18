@@ -52,7 +52,10 @@ operator on the members of `H` true at `w`:
   which holds where the member is the strongest true one (`mem_exh_iff_isStrongestTrueAnswer`),
   so that the presupposition holds throughout a set of worlds exactly when exhaustifying members
   gives each of their cells there (`forall_isExhaustivelyResolvable_iff_exh_inter`); a strongest
-  true member is never dominated (`not_dominated_of_isStrongestTrueAnswer`).
+  true member is never dominated (`not_dominated_of_isStrongestTrueAnswer`);
+- `presupposition_eq_sUnion`: when the members exclude one another the presupposition is that
+  one of them is true, and a proposition with its negation presupposes nothing
+  (`presupposition_pair_compl`).
 
 The presupposition holds exactly when the weak answer is itself a member
 (`isExhaustivelyResolvable_iff`), so Dayal's operator agrees with Heim's and
@@ -227,6 +230,19 @@ theorem isExhaustivelyResolvable_iff : IsExhaustivelyResolvable H w ↔ weakAnsw
 theorem IsExhaustivelyResolvable.exists_mem {H : Set (Set W)} {w : W}
     (h : IsExhaustivelyResolvable H w) : ∃ p ∈ H, w ∈ p :=
   let ⟨p, hp⟩ := h; ⟨p, hp.1.1, hp.1.2⟩
+
+/-- When the members exclude one another, Dayal's presupposition is that one of them is true. -/
+theorem presupposition_eq_sUnion {H : Set (Set W)} (hH : H.PairwiseDisjoint id) :
+    presupposition H = ⋃₀ H := by
+  refine Set.ext fun w ↦ ⟨fun h ↦ let ⟨p, hp, hw⟩ := h.exists_mem; ⟨p, hp, hw⟩,
+    fun ⟨p, hp, hw⟩ ↦ ⟨p, ⟨hp, hw⟩, fun q hq ↦ ?_⟩⟩
+  rw [hH.elim hq.1 hp (Set.not_disjoint_iff.2 ⟨w, hq.2, hw⟩)]
+
+/-- A proposition and its negation carry no presupposition as a question. -/
+theorem presupposition_pair_compl (p : Set W) : presupposition {p, pᶜ} = Set.univ := by
+  rw [presupposition_eq_sUnion, Set.sUnion_pair, Set.union_compl_self]
+  rintro a (rfl | rfl) b (rfl | rfl) hab
+  exacts [absurd rfl hab, disjoint_compl_right, disjoint_compl_left, absurd rfl hab]
 
 /-! ### Topical properties
 
@@ -461,8 +477,7 @@ variable {H w} in
 [dayal-1996]'s `Max_inf`). -/
 theorem mem_exh_iff_isStrongestTrueAnswer {p : Set W} (hp : p ∈ H) :
     w ∈ Exhaustification.exh H p ↔ IsStrongestTrueAnswer H w p :=
-  ⟨fun ⟨hw, h⟩ => ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ => h q hq hwq⟩,
-    fun ⟨⟨_, hw⟩, h⟩ => ⟨hw, fun _ hq hwq => h ⟨hq, hwq⟩⟩⟩
+  Exhaustification.mem_exh_iff_isLeast_of_mem hp
 
 theorem exh_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
     Exhaustification.exh H p = strongAnswer H w := by

@@ -24,7 +24,7 @@ def ex4_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
@@ -37,7 +37,7 @@ def ex4_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CNPC")] }
 
@@ -50,7 +50,7 @@ def ex4_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CNPC")] }
 
@@ -63,7 +63,7 @@ def ex4_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
@@ -76,7 +76,7 @@ def ex2_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")] }
 
@@ -89,7 +89,7 @@ def ex4_82a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CSC")] }
 
@@ -102,7 +102,7 @@ def ex4_82d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")] }
 
@@ -115,7 +115,7 @@ def ex4_184a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
@@ -128,7 +128,7 @@ def ex4_184b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")] }
 
@@ -141,7 +141,7 @@ def ex4_184c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")] }
 
@@ -154,7 +154,7 @@ def ex4_251a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
@@ -167,7 +167,7 @@ def ex4_251b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "SSC")] }
 
@@ -180,7 +180,7 @@ def ex4_251c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
@@ -193,7 +193,7 @@ def ex4_252 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "question")] }
 
@@ -206,7 +206,7 @@ def ex6_128b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CNPC")] }
 
@@ -219,7 +219,7 @@ def ex6_135b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CSC")] }
 
@@ -232,7 +232,7 @@ def ex6_136 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "SSC")] }
 
@@ -245,7 +245,7 @@ def ex6_137 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "LBC")] }
 

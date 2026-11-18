@@ -45,7 +45,7 @@ the situation of the [+Author] cell in Figure 5.
 
 namespace Hammerly2023
 
-open Discourse Finset
+open SpeechAct Finset
 
 /-! ### Features as first-order predicates (§3.1) -/
 
@@ -72,7 +72,7 @@ instance (f : Feature) : DecidablePred f.Positive := fun _ ↦ by
   unfold Feature.Positive; infer_instance
 
 theorem Feature.positive_author_iff (s : Finset Role) :
-    Feature.author.Positive s ↔ Person.Bears s .author := by
+    Feature.author.Positive s ↔ Person.Bears s .speaker := by
   revert s; decide
 
 theorem Feature.positive_participant_iff (s : Finset Role) :

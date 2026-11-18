@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.QingFranke2015
-public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Pragmatics.Probabilistic.Decision
 public import Studies.FrankGoodman2012
 public import Mathlib.Analysis.Complex.ExponentialBounds
 
@@ -94,7 +94,7 @@ theorem salience_apply_singleton_ne_zero (t : Object) : salience {t} ≠ 0 := by
 
 /-- The literal listener at a prior (1) conditions the prior on the extension of the word. -/
 noncomputable def literal (μ : Measure Object) : Kernel (Word Colour Shape) Object :=
-  listener μ (truthful fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object))
+  literalListener μ (fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object))
 
 instance (μ : Measure Object) : IsFiniteKernel (literal μ) :=
   inferInstanceAs (IsFiniteKernel (listener _ _))
@@ -156,10 +156,10 @@ theorem speaker_eq_softmax (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goa
   refine congrArg Kernel.softmax (funext fun t ↦ funext fun u ↦ ?_)
   split_ifs with h
   · have h0 : literal μ u {t} ≠ 0 :=
-      (listener_truthful_apply_singleton_ne_zero_iff μ _ u t).2 ⟨Finset.mem_coe.2 h, hμ t⟩
+      (literalListener_apply_singleton_ne_zero_iff μ _ u t).2 ⟨Finset.mem_coe.2 h, hμ t⟩
     rw [ENNReal.log_pos_real h0 (measure_ne_top _ _), utility, Goal.value, measureReal_def,
       ← EReal.coe_sub, ← EReal.coe_mul]
-  · rw [literal, listener_truthful_apply_singleton_of_notMem μ _ (by simpa using h),
+  · rw [literal, literalListener_apply_singleton_of_notMem μ _ (by simpa using h),
       ENNReal.log_zero, EReal.bot_sub, EReal.coe_mul_bot_of_pos hlam]
 
 theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
@@ -167,8 +167,8 @@ theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (
     (speaker g μ lam c t).real {u} < (speaker g μ lam c t).real {u'} ↔
       utility g μ c t u < utility g μ c t u' := by
   rw [speaker_eq_softmax hlam hμ, Kernel.softmax_real_singleton_lt_iff
-    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top])
-    ⟨u, by rw [ite_eq_left hu]; exact EReal.coe_ne_bot _⟩, ite_eq_left hu, ite_eq_left hu',
+    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top]), ite_eq_left hu,
+    ite_eq_left hu',
     EReal.coe_lt_coe_iff, mul_lt_mul_iff_right₀ hlam]
 
 theorem speaker_real_singleton (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
@@ -199,7 +199,7 @@ Every word of the context is true of one object or of two, and the difference in
 
 theorem literal_uniform_real (h : t ∈ ⟦u⟧ᴹ) :
     (literal (uniformOn .univ) u).real {t} = (⟦u⟧ᴹ.card : ℝ)⁻¹ := by
-  rw [literal_uniform, FrankGoodman2012.literal, listener_uniformOn_truthful_real_singleton,
+  rw [literal_uniform, FrankGoodman2012.literal, literalListener_uniformOn_real_singleton,
     ite_eq_left h]
 
 /-- The informativity gap between a word true of the referent alone and a word true of two
@@ -261,7 +261,7 @@ theorem prefers_noun_iff (hlam : 0 < lam) (g : Goal) :
 theorem literal_salience_real (h : t ∈ ⟦u⟧ᴹ) :
     (literal salience u).real {t} = (listenerChoice .salience t).count /
       ∑ t' ∈ ⟦u⟧ᴹ, ((listenerChoice .salience t').count : ℝ) := by
-  rw [literal, listener_truthful_real_singleton salience
+  rw [literal, literalListener_real_singleton salience
     (fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object)) (Finset.mem_coe.2 h),
     salience_real_singleton, salience_real_finset]
 

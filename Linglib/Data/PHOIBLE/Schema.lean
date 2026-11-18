@@ -7,22 +7,14 @@ public import Linglib.Core.Order.Flat
 /-!
 # PHOIBLE 2.0
 
-PHOIBLE 2.0 is a database of 3,020 phoneme inventories, drawn from eight source databases, in
-which every phoneme is decomposed into distinctive features. Its table has a row for each
-phoneme of each inventory. An `Inventory` collects the rows of one inventory, and each of its
-`Phoneme`s carries the phoneme's glyph, its `FeatureMatrix` and what the source records about
-it. The generated inventories are in `Data/PHOIBLE/Inventories/`, and `Data/PHOIBLE/Chart.lean`
-gives the feature matrix of each glyph.
-
-## Main definitions
-
-* `Data.PHOIBLE.Feature`: the features, one column of the table each.
-* `Data.PHOIBLE.FeatureMatrix`: an assignment of `+` and `−` to some of the features.
-* `Data.PHOIBLE.FeatureRow`, `Data.PHOIBLE.FeatureMatrix.ofRow`: a row of the table on its
-  feature columns, and its feature matrix.
-* `Data.PHOIBLE.Source`: the source databases.
-* `Data.PHOIBLE.Phoneme`, `Data.PHOIBLE.Inventory`: a phoneme of an inventory, and an inventory.
-* `Data.PHOIBLE.Inventory.featureMatrices`: the feature matrices of an inventory's phonemes.
+PHOIBLE 2.0 is a database of 3,020 phoneme inventories, drawn from eight
+[source databases](##Data.PHOIBLE.Source), in which every phoneme is decomposed into distinctive
+features. Its table has a row for each phoneme of each inventory and a column for each
+[feature](##Data.PHOIBLE.Feature). An [inventory](##Data.PHOIBLE.Inventory) collects the rows of
+one inventory, and each of its [phonemes](##Data.PHOIBLE.Phoneme) carries the phoneme's glyph, its
+[feature matrix](##Data.PHOIBLE.FeatureMatrix) and what the source records about it. A glyph has
+the same feature values in every inventory, and `Data/PHOIBLE/Chart.lean` gives the feature matrix
+of each. The generated inventories are in `Data/PHOIBLE/Inventories/`.
 
 ## Implementation notes
 
@@ -30,14 +22,20 @@ Where PHOIBLE has `NA`, a field is `none`. This means that the source does not r
 not that it records an absence; `Source` says what each source records. A blank dialect, which
 the SAPHON source writes in place of `NA`, is `none` too.
 
-The generated feature matrices are given by their rows, so that the value of one at a feature is
-read by a single case split. A proof by `decide` about segments built from the chart evaluates
-their matrices at every feature, and a search through a list of the specified values made that
-its main cost.
+A generated feature matrix is [given by its row](##Data.PHOIBLE.FeatureMatrix.ofRow), so that its
+value at a feature is read by a single case split. A proof by `decide` about segments built from
+the chart evaluates their matrices at every feature.
 
-A complex segment, such as a prenasalized stop or a diphthong, has a contour value such as `+,-`
-on a feature that changes within it. The feature matrix of such a segment takes the meet of the
-contour's values in the subsumption order, so it leaves that feature unspecified.
+A complex segment, such as a prenasalized stop or a diphthong, has a contour such as `+,-` on a
+feature that changes within it. The phases of a contour are never all equal, so their meet in the
+subsumption order is the unspecified value, and the feature matrix of the segment has that value
+at the feature: it holds the values the segment keeps throughout. The chart also gives each
+complex segment at the first and at the last phase of its contours, `FeatureMatrix.first.«kʷ»`
+and `FeatureMatrix.last.«kʷ»`, and the docstring of its entry records every phase.
+
+The generator checks what this file says of the table against every row of it: what each source
+records, that a glyph determines its class and its feature values, that the phases of a contour
+differ, and that no inventory lists a glyph twice.
 
 ## References
 
@@ -92,7 +90,8 @@ inductive Feature where
   deriving DecidableEq, Fintype
 
 /-- A feature matrix gives some features the value `+` (`true`) or `−` (`false`) and leaves the
-others unspecified, as PHOIBLE's value `0`, not applicable, does. -/
+others unspecified. An unspecified feature is one PHOIBLE marks `0`, not applicable, or one on
+which the segment has a contour. -/
 abbrev FeatureMatrix := Feature → Flat Bool
 
 /-- A row of the table on its feature columns, a value for each feature, unspecified unless
@@ -187,12 +186,13 @@ structure Phoneme where
   allophones : Option (List String)
   /-- Whether the phoneme is marginal in the inventory, `none` when the source does not say. -/
   marginal : Option Bool
-  /-- The class of the glyph. -/
+  /-- The class of the glyph, the same in every inventory. -/
   segmentClass : SegmentClass
-  /-- The feature matrix of the glyph. -/
+  /-- The feature matrix of the glyph, its entry in the chart. -/
   features : FeatureMatrix
 
-/-- An inventory is a list of phonemes with the language variety it describes and its source. -/
+/-- An inventory is a list of phonemes, no two with the same glyph, with the language variety it
+describes and its source. -/
 structure Inventory where
   /-- The PHOIBLE inventory identifier. -/
   id : ℕ

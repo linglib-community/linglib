@@ -10,7 +10,7 @@
     "translation": "",
     "context": "A bare plural with a defining property.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "barePlural"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "An indefinite singular with a defining property.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "A bare plural with an accidental property.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "barePlural"],
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "An indefinite singular with an accidental property: being popular cannot be a definitional criterion for madrigals.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "Burton-Roberts's analytic indefinite-singular generic, equivalent to *To be a kangaroo is to be a marsupial*.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "Bolinger's intuition, reported by Burton-Roberts: true, though *To be a tiger is to climb trees* is false.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "A physical rule.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -151,7 +151,7 @@
     "translation": "",
     "context": "A moral rule; *gentleman* names a social kind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -172,7 +172,7 @@
     "translation": "",
     "context": "A legal rule of chess.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -193,7 +193,7 @@
     "translation": "",
     "context": "A legal rule, the price set by the shop manager.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -214,7 +214,7 @@
     "translation": "",
     "context": "Read descriptively, a generalization about boys under a shared interpretation; read definitionally, a proposal to restrict the interpretation of *boys*.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "descriptive", "judgment": "acceptable"},
       {"name": "definitional", "judgment": "acceptable"}
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "An empirical finding that reads as definitional: the chromosome number runs in the species.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -256,7 +256,7 @@
     "translation": "",
     "context": "The subject does not pick out a natural kind on which a species-based generalization could rest.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -276,7 +276,7 @@
     "translation": "",
     "context": "Universal in the definitional reconstruction, the property being suppressed in immature and male ducks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -296,7 +296,7 @@
     "translation": "",
     "context": "A minority but striking property.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"]
@@ -315,7 +315,7 @@
     "translation": "",
     "context": "An unmodified indefinite singular with an accidental property.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -335,7 +335,7 @@
     "translation": "",
     "context": "A partial definition of what makes a king good.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -355,7 +355,7 @@
     "translation": "",
     "context": "A descriptive generalization with an indefinite-singular subject.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -375,7 +375,7 @@
     "translation": "",
     "context": "A descriptive generalization with an indefinite-singular subject; the methods do not run in the species.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -395,7 +395,7 @@
     "translation": "",
     "context": "A generalization in which single animals matter.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],
@@ -415,7 +415,7 @@
     "translation": "",
     "context": "An animal typically held in larger quantities.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "barePlural"],
@@ -435,7 +435,7 @@
     "translation": "",
     "context": "An animal typically held in larger quantities.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"],

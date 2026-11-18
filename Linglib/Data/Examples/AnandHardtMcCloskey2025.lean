@@ -25,7 +25,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := "Corpus-attested sluice with a stranded nonargument preposition in the ellipsis site that has no antecedent source. The bracketed capitalized material is the elided clause, not pronounced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")] }
 
@@ -39,7 +39,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := "Corpus-attested sluice with a stranded nonargument PP 'on' in the ellipsis site that has no antecedent source. The bracketed capitalized material is the elided clause, not pronounced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")] }
 
@@ -52,7 +52,7 @@ def ex_12c : Datum :=
     glossedTokens := []
     context := "The argument/nonargument PP contrast: (12a) 'at who(m)', with the sprouted PP moved out of the ellipsis site, is fine, (12b) pied-piped 'who at' is fine, but the bare sluice fails because the possibly semantically vacuous preposition 'at' is within the argument domain of the elided clause, has no counterpart in the antecedent, and fails the Isomorphism Condition."
     judgment := .ungrammatical
-    alternatives := [("They're furious but it's unclear who at.", .acceptable)]
+    contrasts := [("They're furious but it's unclear who at.", .acceptable)]
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")] }
 
@@ -65,7 +65,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := "Sluicing fails completely when the argument domain itself has no match: no vP in the antecedent whose argument domain matches 'who [he is loyal to]'."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")] }
 

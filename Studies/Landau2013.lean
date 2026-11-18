@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Control.Diagnostics
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Readers
 
@@ -16,22 +16,21 @@ Landau's signature of obligatory control has two clauses: the controller must
 be a co-dependent of the clause, and the controlled element, or part of it, is interpreted as a
 bound variable. The familiar criteria follow from the two clauses: co-dependence excludes
 arbitrary, long-distance, and non-c-commanding control and forces the sloppy reading under
-ellipsis, and variable binding excludes the strict reading under *only*. The `Control.Excludes`
-instance records this derivation, so that the library's `Control.admits` returns the book's
-characterizations: a profile satisfying both clauses admits no criterial configuration and one
-satisfying neither admits them all. `ofNoncoreferential` reads such a profile off whether a
-clause type licenses a noncoreferential subject, a free reading of the controlled position
-refuting co-dependence, and `attests` reads a row of example data as the diagnostics it attests;
-the studies of controlled subjects consume both.
+ellipsis, and variable binding excludes the strict reading under *only*. `Diagnostic` lists these
+five configurations, which are the book's own and not a battery other accounts share: Williams's
+five criteria and Hornstein's seven are different lists. `refutes` records this
+derivation as the clause each diagnostic refutes, so the clauses a construction fails are the image
+of the diagnostics it shows, and a construction is obligatory control when that image is empty.
+`attests` reads a row of example data as the diagnostics it attests; the studies of controlled
+subjects consume both.
 
 ## Implementation notes
 
-The signature is the book's (74), in the section on the obligatory-control signature of the
-first chapter, and the derivation of the criteria from it runs through (75)–(79). Obligatory
-*de se* is not criterial for obligatory control, being a property of the attitude tier, and the
-lexical-subject diagnostic is a criterion of obligatory nullness rather than of obligatory
-control, the separation the overt-subject studies turn on; the positive human-reference clause of
-the non-obligatory signature is not modelled.
+The derivation of the criteria is the book's discussion following the signature in the first
+chapter. Obligatory *de se* is not criterial for obligatory control, being a property of the
+attitude tier, and the lexical-subject diagnostic is a criterion of obligatory nullness rather
+than of obligatory control, the separation the overt-subject studies turn on; the positive
+human-reference clause of the non-obligatory signature is not modelled.
 
 ## References
 
@@ -42,10 +41,24 @@ the non-obligatory signature is not modelled.
 
 namespace Landau2013
 
-open Control
+/-- (75)–(79): the configurations the signature of obligatory control excludes, three of
+antecedence and two readings. -/
+inductive Diagnostic where
+  /-- A free reading of the controlled element, arbitrary control. -/
+  | arbitraryControl
+  /-- A non-local antecedent, long-distance control. -/
+  | longDistanceControl
+  /-- A non-c-commanding antecedent. -/
+  | nonCCommandingControl
+  /-- A strict reading under VP-ellipsis. -/
+  | strictEllipsis
+  /-- A strict (non-bound-variable) reading under *only*. -/
+  | strictUnderOnly
+  deriving DecidableEq, Repr, Fintype
 
-/-- The two clauses of the signature of obligatory control. The co-dependence clause admits
-implicit, split, and, through "part of it", partial control. -/
+/-- (74): the two clauses of the signature of obligatory control. The co-dependence clause admits
+implicit and split control, and the bound-variable clause, through "part of it", partial
+control. -/
 inductive Clause74 where
   /-- The controller or controllers must be co-dependents of the clause. -/
   | codependent
@@ -53,27 +66,12 @@ inductive Clause74 where
   | boundVariable
   deriving DecidableEq, Repr, Fintype
 
-/-- The signature derives the criteria. Co-dependence excludes the three antecedence
-configurations and the strict ellipsis reading, and variable binding the strict reading under
-*only*. -/
-instance : Excludes Clause74 where
-  excludedBy
-    | .strictUnderOnly => .boundVariable
-    | _                => .codependent
-  surjective := by
-    rintro (_ | _)
-    exacts [⟨.arbitraryControl, rfl⟩, ⟨.strictUnderOnly, rfl⟩]
-
-/-- The profile determined by whether a clause type licenses noncoreferential subjects. Free
-reference attests a free reading of the controlled position, refuting co-dependence, and
-obligatory coreference attests nothing. -/
-def ofNoncoreferential (noncoreferential : Bool) : Set Clause74 :=
-  ofAttested {d | noncoreferential = true ∧ d = .arbitraryControl}
-
-@[simp] theorem ofNoncoreferential_eq_univ_iff {b : Bool} :
-    ofNoncoreferential b = Set.univ ↔ b = false := by
-  rw [ofNoncoreferential, ofAttested_eq_univ_iff]
-  cases b <;> simp [Set.eq_empty_iff_forall_notMem]
+/-- (75)–(79): the clause of the signature a diagnostic refutes. Co-dependence excludes the three
+antecedence configurations and the strict ellipsis reading, and variable binding the strict
+reading under *only*. -/
+def refutes : Diagnostic → Clause74
+  | .strictUnderOnly => .boundVariable
+  | _ => .codependent
 
 /-- The diagnostic a row of example data attests. A free reading of the embedded subject is
 arbitrary control; a strict reading is the strict reading of the row's test, ellipsis or *only*;

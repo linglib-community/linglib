@@ -40,13 +40,6 @@ from the modal's domain (§6.2).
   worlds to be nonempty ([`mem_must_singleton_iff`](##Simons2005.mem_must_singleton_iff)), which
   (14) does not.
 
-## Errata
-
-* p. 308: Alternativeness entails Non-Containment only when the disjuncts denote at least two
-  propositions. A single proposition, the argument fn. 10 allows a modal, or the denotation of an
-  *or* coordination of synonymous disjuncts, satisfies Alternativeness on a set inside it while
-  violating Non-Containment there (`alternativeness_singleton`).
-
 ## TODO
 
 * The syntax of §§3–4, ATB movement of the modal and the Rule of Independent Composition (51),
@@ -101,29 +94,32 @@ theorem must_subset_may : must R C ⊆ may R C :=
 /-- `MAY` is the possibility of [kratzer-shimoyama-2002] together with their distribution
 requirement, that each alternative be possible (p. 278). -/
 theorem mem_may_iff_kann_and_distribution :
-    w ∈ may R C ↔ C.Nonempty ∧ (∀ q ∈ KratzerShimoyama2002.kann (.ofSuccessors R) C, q w) ∧
-      KratzerShimoyama2002.distribution (.ofSuccessors R) C w := by
+    w ∈ may R C ↔ C.Nonempty ∧
+      (∀ q ∈ KratzerShimoyama2002.kann (.ofSuccessors R) {p | {w | p w} ∈ C}, q w) ∧
+      KratzerShimoyama2002.distribution (.ofSuccessors R) {p | {w | p w} ∈ C} w := by
   simp only [mem_may_iff, KratzerShimoyama2002.kann, KratzerShimoyama2002.distribution,
     Set.mem_singleton_iff, forall_eq, Diamond, SetRel.mem_ofSuccessors]
   refine ⟨fun ⟨⟨c, hc⟩, h⟩ ↦ ⟨⟨c, hc⟩, ?_, fun c hc ↦ ?_⟩,
     fun ⟨hC, _, h⟩ ↦ ⟨hC, fun c hc ↦ ?_⟩⟩
   · obtain ⟨v, hvc, hvR⟩ := h c hc
-    exact ⟨v, hvR, c, hc, hvc⟩
-  · obtain ⟨v, hvc, hvR⟩ := h c hc
+    exact ⟨v, hvR, (· ∈ c), hc, hvc⟩
+  · obtain ⟨v, hvc, hvR⟩ := h _ hc
     exact ⟨v, hvR, hvc⟩
-  · obtain ⟨v, hvR, hvc⟩ := h c hc
+  · obtain ⟨v, hvR, hvc⟩ := h (· ∈ c) hc
     exact ⟨v, hvc, hvR⟩
 
 -- p. 278
 theorem mem_must_iff_muss_and_distribution :
-    w ∈ must R C ↔ C.Nonempty ∧ (∀ q ∈ KratzerShimoyama2002.muss (.ofSuccessors R) C, q w) ∧
-      KratzerShimoyama2002.distribution (.ofSuccessors R) C w := by
+    w ∈ must R C ↔ C.Nonempty ∧
+      (∀ q ∈ KratzerShimoyama2002.muss (.ofSuccessors R) {p | {w | p w} ∈ C}, q w) ∧
+      KratzerShimoyama2002.distribution (.ofSuccessors R) {p | {w | p w} ∈ C} w := by
   simp only [must, IsSuperCover, Set.mem_ofPred_eq, KratzerShimoyama2002.muss,
     KratzerShimoyama2002.distribution, Set.mem_singleton_iff, forall_eq, Box, Diamond,
     SetRel.mem_ofSuccessors]
   refine and_congr_right fun _ ↦ and_comm.trans (and_congr (forall_congr' fun v ↦ ?_)
-    (forall₂_congr fun c _ ↦ ?_))
-  · exact ⟨fun h hv ↦ h hv, fun h hv ↦ h hv⟩
+    (Set.ofPred_bijective.surjective.forall.trans (forall₂_congr fun c _ ↦ ?_)))
+  · exact ⟨fun h hv ↦ let ⟨c, hc, hvc⟩ := h hv; ⟨(· ∈ c), hc, hvc⟩,
+      fun h hv ↦ let ⟨_, hc, hvc⟩ := h hv; ⟨_, hc, hvc⟩⟩
   · exact ⟨fun ⟨v, hvc, hvR⟩ ↦ ⟨v, hvR, hvc⟩, fun ⟨v, hvR, hvc⟩ ↦ ⟨v, hvc, hvR⟩⟩
 
 /-! ### Jane's permissions and obligations (§2)

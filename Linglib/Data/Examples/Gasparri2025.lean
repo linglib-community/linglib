@@ -24,7 +24,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -37,7 +37,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -50,7 +50,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -63,7 +63,7 @@ def ex4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -76,7 +76,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "pluralName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -89,7 +89,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "pluralName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -102,7 +102,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -115,7 +115,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -128,7 +128,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -141,7 +141,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -154,7 +154,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -167,7 +167,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -180,7 +180,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "locative"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -193,7 +193,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "locative"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -206,7 +206,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .marginal), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -219,7 +219,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -232,7 +232,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -245,7 +245,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -258,7 +258,7 @@ def ex14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -271,7 +271,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -284,7 +284,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -297,7 +297,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -310,7 +310,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -323,7 +323,7 @@ def ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "binding"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -336,7 +336,7 @@ def ex17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "binding"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -349,7 +349,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -362,7 +362,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "binding"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -375,7 +375,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "binding"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -388,7 +388,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := "We have collected data on school performance over the past 5 years across all public schools in the world, and categorized it by given name."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -401,7 +401,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -414,7 +414,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -427,7 +427,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := "We have collected data on school performance over the past 5 years across all public schools in the world, and categorized it by given name."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "yes"), ("level", "characterizing")] }
 
@@ -440,7 +440,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := "People have a tendency to fall in love with individuals with names of comparable length to theirs."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -453,7 +453,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := "Reading a baby-name catalog."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -466,7 +466,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := "A discussion on the sociology of French names."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -479,7 +479,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := "We have biases about names."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -492,7 +492,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -505,7 +505,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := "We manufacture three types of bottles in this plant: green, blue, and clear."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "focusedKinds"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -518,7 +518,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -531,7 +531,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -544,7 +544,7 @@ def ex32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "contrast"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -557,7 +557,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -570,7 +570,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := "Reading a baby-name catalog."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
@@ -583,7 +583,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -596,7 +596,7 @@ def ex34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -609,7 +609,7 @@ def ex34d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -622,7 +622,7 @@ def ex34e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -635,7 +635,7 @@ def ex34f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "quotedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -648,7 +648,7 @@ def ex34g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "quotedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -661,7 +661,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -674,7 +674,7 @@ def ex35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -687,7 +687,7 @@ def ex35c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
@@ -700,7 +700,7 @@ def ex35d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 

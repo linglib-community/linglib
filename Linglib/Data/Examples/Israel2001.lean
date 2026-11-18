@@ -24,7 +24,7 @@ def s1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("type", "NPI")] }
 
@@ -37,7 +37,7 @@ def s1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("type", "NPI")] }
 
@@ -50,7 +50,7 @@ def s2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("type", "PPI")] }
 
@@ -63,7 +63,7 @@ def s2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("type", "PPI")] }
 
@@ -76,7 +76,7 @@ def s3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "antecedent of a conditional")] }
 
@@ -89,7 +89,7 @@ def s3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("context", "antecedent of a conditional")] }
 
@@ -102,7 +102,7 @@ def s4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "interrogative")] }
 
@@ -115,7 +115,7 @@ def s4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("context", "interrogative")] }
 
@@ -128,7 +128,7 @@ def s5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "restriction of a universal")] }
 
@@ -141,7 +141,7 @@ def s5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("context", "restriction of a universal")] }
 
@@ -154,7 +154,7 @@ def s6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "standard of a comparative")] }
 
@@ -167,7 +167,7 @@ def s6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("context", "standard of a comparative")] }
 
@@ -180,7 +180,7 @@ def s7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "a wink"), ("cell", "emphatic NPI, low value")] }
 
@@ -193,7 +193,7 @@ def s7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "the least bit"), ("cell", "emphatic NPI, low value")] }
 
@@ -206,7 +206,7 @@ def s7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "an inch"), ("cell", "emphatic NPI, low value")] }
 
@@ -219,7 +219,7 @@ def s8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "much"), ("cell", "attenuating NPI, high value")] }
 
@@ -232,7 +232,7 @@ def s8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "all that"), ("cell", "attenuating NPI, high value")] }
 
@@ -245,7 +245,7 @@ def s8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "long"), ("cell", "attenuating NPI, high value")] }
 
@@ -258,7 +258,7 @@ def s9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "insanely"), ("cell", "emphatic PPI, high value")] }
 
@@ -271,7 +271,7 @@ def s9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "awfully"), ("cell", "emphatic PPI, high value")] }
 
@@ -284,7 +284,7 @@ def s9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "a heap"), ("cell", "emphatic PPI, high value")] }
 
@@ -297,7 +297,7 @@ def s10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "sorta"), ("cell", "attenuating PPI, low value")] }
 
@@ -310,7 +310,7 @@ def s10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "rather"), ("cell", "attenuating PPI, low value")] }
 
@@ -323,7 +323,7 @@ def s10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("item", "somewhat"), ("cell", "attenuating PPI, low value")] }
 
@@ -336,7 +336,7 @@ def s11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Wild horses could keep me away.", .ungrammatical)]
+    contrasts := [("Wild horses could keep me away.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "wild horses"), ("cell", "maximizing NPI"), ("role", "facilitating: stimulus")] }
 
@@ -349,7 +349,7 @@ def s11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I would do it for all the tea in China.", .ungrammatical)]
+    contrasts := [("I would do it for all the tea in China.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "all the tea in China"), ("cell", "maximizing NPI"), ("role", "facilitating: reward")] }
 
@@ -362,7 +362,7 @@ def s11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I would touch it with a ten-foot pole.", .ungrammatical)]
+    contrasts := [("I would touch it with a ten-foot pole.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "a ten-foot pole"), ("cell", "maximizing NPI"), ("role", "facilitating: instrument")] }
 
@@ -375,7 +375,7 @@ def s12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Godfrey is not scared of his own shadow.", .ungrammatical)]
+    contrasts := [("Godfrey is not scared of his own shadow.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "his own shadow"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
@@ -388,7 +388,7 @@ def s12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("She would not betray us at the drop of a hat.", .ungrammatical)]
+    contrasts := [("She would not betray us at the drop of a hat.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "at the drop of a hat"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
@@ -401,7 +401,7 @@ def s12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("You could not have knocked me over with a feather.", .ungrammatical)]
+    contrasts := [("You could not have knocked me over with a feather.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "with a feather"), ("cell", "minimizing PPI"), ("role", "facilitating: instrument")] }
 
@@ -414,7 +414,7 @@ def s13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("We have heard from you in a coon's age!", .ungrammatical)]
+    contrasts := [("We have heard from you in a coon's age!", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "in a coon's age"), ("cell", "inverted NPI, large time span")] }
 
@@ -427,7 +427,7 @@ def s13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("You'll in a million years guess who I saw last night.", .ungrammatical)]
+    contrasts := [("You'll in a million years guess who I saw last night.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "in a million years"), ("cell", "inverted NPI, large time span")] }
 
@@ -440,7 +440,7 @@ def s14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("We will not be back in a jiffy.", .ungrammatical)]
+    contrasts := [("We will not be back in a jiffy.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "in a jiffy"), ("cell", "inverted PPI, minimal span")] }
 
@@ -453,7 +453,7 @@ def s14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I wouldn't marry that woman in a New York minute.", .ungrammatical)]
+    contrasts := [("I wouldn't marry that woman in a New York minute.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4"), ("item", "in a New York minute"), ("cell", "inverted PPI, minimal span")] }
 
@@ -466,7 +466,7 @@ def s15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "a red cent"), ("cell", "canonical NPI"), ("role", "resource")] }
 
@@ -479,7 +479,7 @@ def s15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "all the tea in China"), ("cell", "inverted NPI"), ("role", "reward")] }
 
@@ -492,7 +492,7 @@ def s16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "a king's ransom"), ("cell", "canonical PPI"), ("role", "resource")] }
 
@@ -505,7 +505,7 @@ def s16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "for peanuts"), ("cell", "inverted PPI"), ("role", "reward")] }
 
@@ -518,7 +518,7 @@ def s17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I will be half a minute.", .questionable)]
+    contrasts := [("I will be half a minute.", .questionable)]
     readings := []
     paperFeatures := [("section", "5"), ("item", "half a minute"), ("role", "duration: impeding")] }
 
@@ -531,7 +531,7 @@ def s17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I can for a second believe she would do that.", .ungrammatical)]
+    contrasts := [("I can for a second believe she would do that.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("item", "for a second"), ("role", "duration: impeding")] }
 
@@ -544,7 +544,7 @@ def s18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("item", "time out of mind"), ("role", "duration: impeding")] }
 
@@ -557,7 +557,7 @@ def s18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("item", "for ages"), ("role", "duration: impeding")] }
 
@@ -570,7 +570,7 @@ def s19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("source", "Fillmore, Kay and O'Connor 1988"), ("scales", "five coordinated scales")] }
 
@@ -583,7 +583,7 @@ def s20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -596,7 +596,7 @@ def s20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -609,7 +609,7 @@ def s20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -622,7 +622,7 @@ def s21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -635,7 +635,7 @@ def s21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -648,7 +648,7 @@ def s21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
@@ -661,7 +661,7 @@ def s22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
@@ -674,7 +674,7 @@ def s22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "existential")] }
 
@@ -687,7 +687,7 @@ def s22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("paraphrase", "of both (22a) and (22b)")] }
 
@@ -700,7 +700,7 @@ def s23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "existential")] }
 
@@ -713,7 +713,7 @@ def s23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
@@ -726,7 +726,7 @@ def s24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
@@ -739,7 +739,7 @@ def s24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "existential")] }
 
@@ -752,7 +752,7 @@ def s25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "existential")] }
 
@@ -765,7 +765,7 @@ def s25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
@@ -778,7 +778,7 @@ def s26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "see")] }
 
@@ -791,7 +791,7 @@ def s26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "see")] }
 
@@ -804,7 +804,7 @@ def s27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "detect")] }
 
@@ -817,7 +817,7 @@ def s27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "detect")] }
 
@@ -830,7 +830,7 @@ def s28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "find")] }
 
@@ -843,7 +843,7 @@ def s28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("verb", "find")] }
 

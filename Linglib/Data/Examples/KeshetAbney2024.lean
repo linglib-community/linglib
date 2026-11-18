@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := "Everyone is (atypically) sharing a huge cheeseburger."
     judgment := .acceptable
-    alternatives := [("Everyone is eating a cheeseburger. They are very large!", .acceptable)]
+    contrasts := [("Everyone is eating a cheeseburger. They are very large!", .acceptable)]
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
@@ -37,7 +37,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("Andrea might be eating a cheeseburger. They are very large!", .unacceptable)]
+    contrasts := [("Andrea might be eating a cheeseburger. They are very large!", .unacceptable)]
     readings := [("the burger she might be eating is/would be large", .unacceptable)]
     paperFeatures := [("operator", "might"), ("pronoun", "summation")] }
 
@@ -50,7 +50,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("the various cheeseburgers Andrea might be eating are all on the counter", .unacceptable)]
     paperFeatures := [("operator", "might"), ("pronoun", "summation")] }
 
@@ -63,7 +63,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := "Exactly five well-known candidates have run, no write-ins; late on election night the speaker has not checked the news, and may even have one candidate in mind as the possible winner."
     judgment := .unacceptable
-    alternatives := [("There might already be a winner in the mayoral election. They are women.", .unacceptable)]
+    contrasts := [("There might already be a winner in the mayoral election. They are women.", .unacceptable)]
     readings := [("the possible winner is a woman", .unacceptable)]
     paperFeatures := [("operator", "might"), ("pronoun", "summation"), ("referents_exist", "true")] }
 
@@ -76,7 +76,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "The teachers of a particular school; the speaker has no particular teacher in mind."
     judgment := .unacceptable
-    alternatives := [("… He is working late.", .unacceptable), ("… They are working late.", .unacceptable)]
+    contrasts := [("… He is working late.", .unacceptable), ("… They are working late.", .unacceptable)]
     readings := []
     paperFeatures := [("operator", "possible"), ("pronoun", "summation"), ("referents_exist", "true")] }
 
@@ -89,7 +89,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "summation")] }
 
@@ -102,7 +102,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "House, Season 5, Episode 9 (corpus attestation)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "summation")] }
 
@@ -115,7 +115,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Jerry doesn't own a car—they are too much of a hassle!", .acceptable)]
+    contrasts := [("Jerry doesn't own a car—they are too much of a hassle!", .acceptable)]
     readings := [("'they' refers to the kind cars", .acceptable)]
     paperFeatures := [("operator", "might"), ("pronoun", "kind")] }
 
@@ -128,7 +128,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "none"), ("pronoun", "simple")] }
 
@@ -141,7 +141,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "none"), ("pronoun", "simple")] }
 
@@ -154,7 +154,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "simple")] }
 
@@ -167,7 +167,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("most of the donkeys that are owned and beaten are otherwise treated well", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "simple"), ("subordination", "quantificational")] }
 
@@ -180,7 +180,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "simple"), ("subordination", "modal")] }
 
@@ -193,7 +193,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "might"), ("pronoun", "simple"), ("subordination", "modal")] }
 
@@ -206,7 +206,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "none"), ("pronoun", "simple")] }
 
@@ -219,7 +219,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "summation")] }
 
@@ -232,7 +232,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("'it' refers to the papers written by the few forgetful girls", .acceptable)]
     paperFeatures := [("operator", "few"), ("pronoun", "paycheck")] }
 
@@ -245,7 +245,7 @@ def ex_74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "none"), ("pronoun", "simple")] }
 
@@ -258,7 +258,7 @@ def ex_79 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "might"), ("pronoun", "summation")] }
 
@@ -271,7 +271,7 @@ def ex_85 : Datum :=
     glossedTokens := []
     context := "A known set of real-life candidates, no write-ins; late on election night the tabulation might be over."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("the likely/possible/potential winner is a woman", .unacceptable)]
     paperFeatures := [("operator", "may"), ("pronoun", "summation"), ("referents_exist", "true")] }
 
@@ -284,7 +284,7 @@ def ex_91 : Datum :=
     glossedTokens := []
     context := "A town with an outbreak of witch mania."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "think"), ("pronoun", "summation")] }
 
@@ -297,7 +297,7 @@ def ex_92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Either John doesn't own a donkey, or he keeps it very quiet.", .acceptable)]
+    contrasts := [("Either John doesn't own a donkey, or he keeps it very quiet.", .acceptable)]
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 

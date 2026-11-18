@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "distal demonstrative (-NP)"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["source", "Haaretz"],
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["source", "Maariv"],
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["speaker", "self"]
@@ -82,7 +82,7 @@
   },
   {
     "id": "ariel2001_6",
-    "method": "introspection",
+    "method": "unclassified",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(6)"},
     "language": "stan1293",
     "primaryText": "In the garden, I saw a young girl kicking a tree. I looked at them for a while.",
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "girl and tree"],
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "stressed pronoun"]
@@ -128,7 +128,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["position", "headline"],
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["position", "opening sentence"],
@@ -172,7 +172,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "stressed pronoun"]
@@ -190,7 +190,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the paper coreferent with the newspaper", "judgment": "acceptable"}
     ],
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["topicMarker", "unstressed pronoun"],
@@ -222,7 +222,7 @@
   },
   {
     "id": "ariel2001_maya_rachel",
-    "method": "introspection",
+    "method": "unclassified",
     "source": {"bibkey": "ariel-2001", "paperLabel": "§1.2"},
     "language": "stan1293",
     "primaryText": "Maya kissed Rachel. And then she/SHE …",
@@ -231,7 +231,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "she = Maya", "judgment": "acceptable"},
       {"name": "SHE = Rachel", "judgment": "acceptable"}

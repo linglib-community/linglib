@@ -24,7 +24,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "persuade"), ("embeddedSubject", "for")] }
 
@@ -37,7 +37,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "persuade"), ("embeddedSubject", "for")] }
 
@@ -50,7 +50,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "PRO")] }
 
@@ -63,7 +63,7 @@ def ex_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "manage"), ("embeddedSubject", "PRO")] }
 
@@ -76,7 +76,7 @@ def ex_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "for")] }
 
@@ -89,7 +89,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "manage"), ("embeddedSubject", "for")] }
 
@@ -102,7 +102,7 @@ def ex_52c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "persuade"), ("embeddedSubject", "PRO")] }
 
@@ -115,7 +115,7 @@ def ex_56a : Datum :=
     glossedTokens := []
     context := "Mary and I had a fight and we stopped talking. John, a good friend of both of us, is keen on getting us to be friends again. He insists that we meet but he feels it would be best if the meeting would be just between Mary and myself, without him."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "want"), ("embeddedSubject", "for"), ("diagnostic", "conditionB")] }
 
@@ -128,7 +128,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := "Mary and I had a fight and we stopped talking. John, a good friend of both of us, is keen on getting us to be friends again. He insists that we meet but he feels it would be best if the meeting would be just between Mary and myself, without him."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "want"), ("embeddedSubject", "PRO"), ("diagnostic", "conditionB")] }
 
@@ -141,7 +141,7 @@ def ex_57c : Datum :=
     glossedTokens := []
     context := "John annoyed a number of people on his team at work, right before an important deadline. He asks for my advice on what they should do."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "advise"), ("embeddedSubject", "for"), ("diagnostic", "conditionB")] }
 
@@ -154,7 +154,7 @@ def ex_57d : Datum :=
     glossedTokens := []
     context := "John annoyed a number of people on his team at work, right before an important deadline. He asks for my advice on what they should do."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "advise"), ("embeddedSubject", "PRO"), ("diagnostic", "conditionB")] }
 
@@ -167,7 +167,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := "Peter, Jane and Adam are each making arrangements to have a meeting with their respective families."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strict", .acceptable), ("sloppy", .acceptable)]
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "for"), ("diagnostic", "only")] }
 
@@ -180,7 +180,7 @@ def ex_58b : Datum :=
     glossedTokens := []
     context := "Peter, Jane and Adam are each making arrangements to have a meeting with their respective families."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strict", .unacceptable), ("sloppy", .acceptable)]
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "PRO"), ("diagnostic", "only")] }
 
@@ -193,7 +193,7 @@ def ex_59a : Datum :=
     glossedTokens := []
     context := "Peter, Jane and Adam are each making arrangements for Peter's family to meet."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strict", .acceptable), ("sloppy", .acceptable)]
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "for"), ("diagnostic", "only")] }
 
@@ -206,7 +206,7 @@ def ex_59b : Datum :=
     glossedTokens := []
     context := "Peter, Jane and Adam are each making arrangements for Peter's family to meet."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strict", .unacceptable), ("sloppy", .acceptable)]
     paperFeatures := [("verb", "arrange"), ("embeddedSubject", "PRO"), ("diagnostic", "only")] }
 

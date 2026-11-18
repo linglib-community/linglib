@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Gunlogson2001
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 
 /-!
 # Gunlogson (2001): True to Form: Rising and Falling Declaratives as Questions in English
@@ -32,17 +32,6 @@ of the updated commitment sets, and the second clause of the final definition of
 (136), which is not a condition on commitment sets, is left out. Theorem (91) is stated for
 declaratives whose content stays unresolved, the form in which it holds.
 
-## Errata
-
-* Theorem (91), that no declarative is neutral in any context, does not hold as stated. A resolved
-  proposition is controversial for no one under (66), so a resolved context is neutral under (68),
-  and a declarative whose content the addressee already holds makes it a joint commitment and so is
-  neutral (`Locution.isNeutralIn_fallingDecl`). (93) correspondingly fails for declaratives as
-  literally defined.
-* The reduction-set definition of bias (71), which the text calls equivalent to (67), agrees with
-  it exactly on unresolved propositions (`isBiasedR_iff_isBiased_of_not_isResolved`); on a joint
-  commitment (71) holds and (67) does not (`isBiasedR_of_isJoint`).
-
 ## References
 
 * [gunlogson-2001]
@@ -52,7 +41,7 @@ declaratives whose content stays unresolved, the form in which it holds.
 
 namespace Gunlogson2001
 
-open Commitment State Discourse
+open Commitment State SpeechAct
 
 variable {W : Type*} {K : State Role W} {p : Set W}
 
@@ -116,32 +105,38 @@ theorem IsNeutral.not_subset (h : IsNeutral K p) (hu : ¬ IsResolved K p)
   ⟨fun hx ↦ h.2 ⟨⟨x, hne x, by simpa using hx⟩, by simpa using hu, hne⟩,
     fun hx ↦ h.1 ⟨⟨x, hne x, hx⟩, hu, hne⟩⟩
 
+/-- A context neutral and unresolved about `p` becomes biased toward `p` once one participant's
+commitment set is narrowed to `p` while the others' stay as they were. -/
 theorem isBiased_of_commitmentSet_eq {K' : State Role W} {y : Role}
     (h : IsNeutral K p) (hu : ¬ IsResolved K p) (hne : ∀ x, (commitmentSet K x).Nonempty)
     (hy : commitmentSet K' y = p ∩ commitmentSet K y)
-    (hx : commitmentSet K' y.other = commitmentSet K y.other) : IsBiased K' p := by
+    (hx : ∀ x ≠ y, commitmentSet K' x = commitmentSet K x) : IsBiased K' p := by
   have hyp : (commitmentSet K' y).Nonempty := by
     obtain ⟨w, hw, hwp⟩ := Set.not_subset.1 (h.not_subset hu hne y).2
     exact ⟨w, by rw [hy]; exact ⟨by simpa using hwp, hw⟩⟩
-  have hne' : ∀ x, (commitmentSet K' x).Nonempty :=
-    (Role.forall_role' y).2 ⟨hyp, hx ▸ hne _⟩
   have hsub : commitmentSet K' y ⊆ p := hy ▸ Set.inter_subset_left
-  have hnot : ∀ x, ¬ commitmentSet K' x ⊆ pᶜ :=
-    (Role.forall_role' y).2 ⟨fun hxp ↦ hyp.elim fun _ hw ↦ hxp hw (hsub hw),
-      fun hxp ↦ (h.not_subset hu hne _).2 (hx ▸ hxp)⟩
+  have hne' : ∀ x, (commitmentSet K' x).Nonempty := fun x ↦ by
+    obtain rfl | hxy := eq_or_ne x y
+    exacts [hyp, hx x hxy ▸ hne x]
+  have hnot : ∀ x, ¬ commitmentSet K' x ⊆ pᶜ := fun x hxp ↦ by
+    obtain rfl | hxy := eq_or_ne x y
+    exacts [hyp.elim fun _ hw ↦ hxp hw (hsub hw), (h.not_subset hu hne x).2 (hx x hxy ▸ hxp)]
   refine ⟨⟨⟨y, hyp, by simpa using hsub⟩, ?_, hne'⟩, fun hc ↦ hc.1.elim fun x hx' ↦ hnot x hx'.2⟩
   rw [isResolved_compl]
   rintro (hj | hj)
-  · exact (h.not_subset hu hne y.other).1 (hx ▸ (hj y.other).2)
+  · obtain ⟨x, hxy⟩ := exists_ne y
+    exact (h.not_subset hu hne x).1 (hx x hxy ▸ (hj x).2)
   · exact hnot y (hj y).2
 
 theorem isBiased_falling (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (falling K p) p :=
-  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1 (commitmentSet_falling K p).2
+  isBiased_of_commitmentSet_eq h hu hne commitmentSet_insert_self
+    fun _ hx ↦ commitmentSet_insert_of_ne hx
 
 theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (rising K p) p :=
-  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1 (commitmentSet_rising K p).2
+  isBiased_of_commitmentSet_eq h hu hne commitmentSet_insert_self
+    fun _ hx ↦ commitmentSet_insert_of_ne hx
 
 /-! ### Contextual bias through the reduction set, section 3.1 -/
 

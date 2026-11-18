@@ -36,32 +36,33 @@ namespace Japanese.Adpositions
 
 /-- *de* で 'at', marking the place of an action and its instrument. -/
 def de : Adposition :=
-  { morphs := [.encl "de"], linearization := {.post}, functions := {.loc, .inst},
+  { morphs := [.encl "de"], linearization := {.post},
+    functions := {.spatial none .place, .instrumental},
     complements := {some .np} }
 
 /-- *e* へ 'to', marking a goal. -/
 def e : Adposition :=
-  { morphs := [.encl "e"], linearization := {.post}, functions := {.all},
+  { morphs := [.encl "e"], linearization := {.post}, functions := {.spatial none .goal},
     complements := {some .np} }
 
 /-- *to* と 'with', marking a companion. -/
 def «to» : Adposition :=
-  { morphs := [.encl "to"], linearization := {.post}, functions := {.com},
+  { morphs := [.encl "to"], linearization := {.post}, functions := {.comitative},
     complements := {some .np} }
 
 /-- *kara* から 'from', marking a source. -/
 def kara : Adposition :=
-  { morphs := [.encl "kara"], linearization := {.post}, functions := {.abl},
+  { morphs := [.encl "kara"], linearization := {.post}, functions := {.spatial none .source},
     complements := {some .np} }
 
 /-- *made* まで 'until, as far as', marking an endpoint. -/
 def made : Adposition :=
-  { morphs := [.encl "made"], linearization := {.post}, functions := {.ter},
+  { morphs := [.encl "made"], linearization := {.post}, functions := {.terminative},
     complements := {some .np} }
 
 /-- *yori* より 'than', marking the standard of a comparison as an ablative. -/
 def yori : Adposition :=
-  { morphs := [.encl "yori"], linearization := {.post}, functions := {.abl},
+  { morphs := [.encl "yori"], linearization := {.post}, functions := {.spatial none .source},
     complements := {some .np} }
 
 /-- The postpositions. -/

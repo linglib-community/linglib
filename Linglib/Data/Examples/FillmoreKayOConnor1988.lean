@@ -24,7 +24,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "colonel"), ("b", "general")] }
 
@@ -63,7 +63,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex31c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex31d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def ex65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def ex66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -271,7 +271,7 @@ def ex67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def ex68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def ex69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -310,7 +310,7 @@ def ex70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -324,7 +324,7 @@ def ex71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -338,7 +338,7 @@ def ex72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -351,7 +351,7 @@ def ex104 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("felicity", "infelicitous")] }
 
@@ -364,7 +364,7 @@ def ex106 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "secondLieutenant"), ("b", "colonel")] }
 
@@ -377,7 +377,7 @@ def ex107 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "secondLieutenant"), ("b", "secondLieutenant")] }
 
@@ -390,7 +390,7 @@ def ex113 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -403,7 +403,7 @@ def ex114 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -416,7 +416,7 @@ def ex115 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -429,7 +429,7 @@ def ex116 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -442,7 +442,7 @@ def ex117 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -455,7 +455,7 @@ def ex121 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
@@ -468,7 +468,7 @@ def ex122a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "rich poor"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
@@ -481,7 +481,7 @@ def ex122b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wax wash"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
@@ -494,7 +494,7 @@ def ex122c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$1 $2")] }
 
@@ -507,7 +507,7 @@ def ex130 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "inFact"), ("polarity", "negative"), ("a", "general"), ("b", "colonel")] }
 
@@ -520,7 +520,7 @@ def ex131 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "inFact"), ("polarity", "positive"), ("a", "colonel"), ("b", "general")] }
 
@@ -533,7 +533,7 @@ def ex132 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "ifNot"), ("polarity", "positive"), ("a", "colonel"), ("b", "general")] }
 

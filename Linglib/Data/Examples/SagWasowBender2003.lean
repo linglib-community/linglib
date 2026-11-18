@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
@@ -50,7 +50,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
@@ -63,7 +63,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
@@ -76,7 +76,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
@@ -89,7 +89,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
@@ -102,7 +102,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
@@ -115,7 +115,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
@@ -128,7 +128,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
@@ -141,7 +141,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
@@ -154,7 +154,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
@@ -167,7 +167,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
@@ -180,7 +180,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
@@ -193,7 +193,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
@@ -206,7 +206,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
@@ -219,7 +219,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
@@ -232,7 +232,7 @@ def ex37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "false")] }
 
@@ -245,7 +245,7 @@ def ex37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "false"), ("gapInSecond", "true")] }
 
@@ -258,7 +258,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "false")] }
 
@@ -271,7 +271,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "false"), ("gapInSecond", "true")] }
 
@@ -284,7 +284,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
@@ -297,7 +297,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
@@ -310,7 +310,7 @@ def ex40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
@@ -323,7 +323,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
@@ -336,7 +336,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
@@ -349,7 +349,7 @@ def ex44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 

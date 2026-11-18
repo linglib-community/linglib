@@ -9,11 +9,11 @@ public import Mathlib.Order.OrderDual
 This file defines Kiparsky's feeding and bleeding: applying one rule to a form feeds a second when
 the second applies further to the result than to the form, and bleeds it when it applies less far,
 how far being measured in any preorder. [A predicate, with `False < True`, gives Kiparsky's
-relations](##RuleInteraction.feeds_iff), the number of times the second rule applies Baković and
+relations](##Phonology.feeds_iff), the number of times the second rule applies Baković and
 Blumenfeld's input-provision and input-removal, and [a coarser measure fewer
-interactions](##RuleInteraction.Feeds.of_comp). [In the bleeding order the bled rule applies
-vacuously](##RuleInteraction.Bleeds.isFixedPt), and [a map undoing the first rule bleeds what it
-feeds](##RuleInteraction.bleeds_iff_feeds_of_apply_eq).
+interactions](##Phonology.Feeds.of_comp). [In the bleeding order the bled rule applies
+vacuously](##Phonology.Bleeds.isFixedPt), and [a map undoing the first rule bleeds what it
+feeds](##Phonology.bleeds_iff_feeds_of_apply_eq).
 
 ## Implementation notes
 
@@ -29,35 +29,35 @@ may belong to different modules, as when impoverishment feeds metathesis.
 
 @[expose] public section
 
-namespace RuleInteraction
+namespace Phonology
 
 open Function OrderDual
 
 variable {S α : Type*} [Preorder α]
 
-/-- Applying `f` to `x` **feeds** the measure `r` when `r` is greater at `f x` than at `x`. With `r`
+/-- Applying `f` to `x` **feeds** the measure `m` when `m` is greater at `f x` than at `x`. With `m`
 how far a second rule applies, the second rule applies further once `f` has applied: with a
 predicate, it applies to `f x` but not to `x` (`feeds_iff`); with the number of times it applies,
 `f` may also give a second locus to a rule that already applies to `x`. -/
-def Feeds (f : S → S) (r : S → α) (x : S) : Prop := r x < r (f x)
+def Feeds (f : S → S) (m : S → α) (x : S) : Prop := m x < m (f x)
 
-/-- Applying `f` to `x` **bleeds** the measure `r` when `r` is smaller at `f x` than at `x`: with
+/-- Applying `f` to `x` **bleeds** the measure `m` when `m` is smaller at `f x` than at `x`: with
 a predicate, the second rule applies to `x` but not to `f x` (`bleeds_iff`). -/
-def Bleeds (f : S → S) (r : S → α) (x : S) : Prop := r (f x) < r x
+def Bleeds (f : S → S) (m : S → α) (x : S) : Prop := m (f x) < m x
 
-variable {f g : S → S} {r : S → α} {p : S → Prop} {x : S}
+variable {f g : S → S} {m : S → α} {p : S → Prop} {x : S}
 
-instance [DecidableLT α] : Decidable (Feeds f r x) := inferInstanceAs (Decidable (_ < _))
+instance [DecidableLT α] : Decidable (Feeds f m x) := inferInstanceAs (Decidable (_ < _))
 
-instance [DecidableLT α] : Decidable (Bleeds f r x) := inferInstanceAs (Decidable (_ < _))
+instance [DecidableLT α] : Decidable (Bleeds f m x) := inferInstanceAs (Decidable (_ < _))
 
-theorem feeds_toDual_comp_iff : Feeds f (toDual ∘ r) x ↔ Bleeds f r x := Iff.rfl
+theorem feeds_toDual_comp_iff : Feeds f (toDual ∘ m) x ↔ Bleeds f m x := Iff.rfl
 
-theorem bleeds_toDual_comp_iff : Bleeds f (toDual ∘ r) x ↔ Feeds f r x := Iff.rfl
+theorem bleeds_toDual_comp_iff : Bleeds f (toDual ∘ m) x ↔ Feeds f m x := Iff.rfl
 
 /-- A map undoing `f` at `x` bleeds at `f x` what `f` feeds at `x`: flipping a rule turns its
 feeding into bleeding. -/
-theorem bleeds_iff_feeds_of_apply_eq (h : g (f x) = x) : Bleeds g r (f x) ↔ Feeds f r x := by
+theorem bleeds_iff_feeds_of_apply_eq (h : g (f x) = x) : Bleeds g m (f x) ↔ Feeds f m x := by
   rw [Bleeds, h, Feeds]
 
 /-- A measure read through a monotone map feeds only where the measure itself does: coarsening
@@ -96,4 +96,4 @@ satisfying `p` fixes a form at which `p` is fed. -/
 theorem Feeds.isFixedPt (h : Feeds f p x) (hg : ∀ y, ¬ p y → IsFixedPt g y) : IsFixedPt g x :=
   hg _ (feeds_iff.mp h).1
 
-end RuleInteraction
+end Phonology

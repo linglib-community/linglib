@@ -24,7 +24,7 @@ def hobNob : Datum :=
     glossedTokens := []
     context := "No witch need exist."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

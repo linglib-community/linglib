@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 
 /-!
 # Cophonology theory
@@ -74,18 +74,20 @@ theorem mergeRanking_cons (default sub : List (L × Constraint C)) (l : L) (k : 
 merged with the trigger's subranking. -/
 def optimal
     (defaultRanking subranking : List (L × Constraint C)) (candidates : Finset C) : Finset C :=
-  (Tableau.ofList candidates ((mergeRanking defaultRanking subranking).map (·.2))).optimal
+  Constraint.eval candidates ((mergeRanking defaultRanking subranking).map (·.2))
 
 /-- With an empty subranking, cophonological evaluation reduces to standard OT
 evaluation: CPT is a proper generalization of OT. -/
 theorem optimal_nil
     (defaultRanking : List (L × Constraint C)) (candidates : Finset C) :
     optimal defaultRanking [] candidates
-      = (Tableau.ofList candidates (defaultRanking.map (·.2))).optimal := by
+      = Constraint.eval candidates (defaultRanking.map (·.2)) := by
   rw [optimal, mergeRanking_nil]
 
 variable {default pre sub : List (L × Constraint C)} {candidates : Finset C} {l : L}
   {k : Constraint C} {c d : C}
+
+theorem optimal_subset : optimal default sub candidates ⊆ candidates := Constraint.eval_subset
 
 /-- If some candidate satisfies every constraint at the top of the trigger's subranking, so does
 every winner. -/
@@ -94,7 +96,7 @@ theorem eq_zero_of_mem_optimal
     (h0 : ∀ p ∈ pre, p.2 d = 0) : ∀ p ∈ pre, p.2 c = 0 := by
   rw [optimal, mergeRanking, List.append_assoc, List.map_append] at hc
   exact List.forall_mem_map.1 <|
-    Tableau.eq_zero_of_mem_optimal_ofList_append hc hd (List.forall_mem_map.2 h0)
+    Constraint.eq_zero_of_mem_eval_append hc hd (List.forall_mem_map.2 h0)
 
 /-- A constraint at the top of the subranking that rates every candidate alike does not change
 the winners. -/
@@ -102,7 +104,7 @@ theorem optimal_cons_of_forall_eq (h : ∀ c ∈ candidates, ∀ d ∈ candidate
     optimal default ((l, k) :: sub) candidates =
       optimal (default.filter (·.1 ≠ l)) sub candidates := by
   rw [optimal, mergeRanking_cons, List.map_cons,
-    Tableau.optimal_ofList_cons_of_forall_eq h, optimal]
+    Constraint.eval_cons_of_forall_eq h, optimal]
 
 end Eval
 

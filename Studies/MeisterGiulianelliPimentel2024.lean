@@ -32,12 +32,6 @@ entropy.
 * `tendsto_simAdjSurprisal_rpow` assumes the similarity below one off the diagonal, which the
   normalized cosine (7) satisfies only when distinct words have non-parallel embeddings.
 
-## Errata
-
-* (19a) writes the target as `w'`, the variable (19b) sums over; it is `w_t`.
-* (19c) and (19d) hold only for meanings that yield `w_t`, the ones (20b) weighs; for another
-  meaning, the sum in (19b) is the similarity of `w_t` to that meaning's word.
-
 ## TODO
 
 * The reading-time regressions (Tables 1–4, Fig. 1).
@@ -201,7 +195,7 @@ theorem simAdjPosterior_indicatorScore [MeasurableSingletonClass W]
       rw [← hr]
       cases r <;> simp
     have hmem : t ∈ consistent str (ws ++ [w]) ↔ r.head? = some w := by
-      simp only [consistent, Set.mem_preimage, Set.mem_ofPred_eq, ← hr,
+      simp only [consistent, Set.mem_preimage, List.mem_cylinder, ← hr,
         List.prefix_append_right_inj]
       cases r <;> simp [eq_comm]
     by_cases ht : t ∈ consistent str (ws ++ [w])

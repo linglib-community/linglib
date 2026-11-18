@@ -123,6 +123,30 @@ theorem ofPart_ite_some_false (R : Prop) [Decidable R] (p : Part Prop) :
   · obtain ⟨a, ha, hya⟩ := ofPart_eq_true_iff.1 h
     exact (Part.eq_some_iff.2 (eq_true hya ▸ ha)).symm
 
+/-- A trivalent value that depends on a partial one is undefined where that one is: the bind of
+partial values, read back as a truth value. -/
+noncomputable def bindPart {α : Type*} (o : Part α) (f : α → Trivalent) : Trivalent :=
+  ofPart (o.bind fun a ↦ toPart (f a))
+
+theorem bindPart_of_mem {α : Type*} {o : Part α} {a : α} (h : a ∈ o) (f : α → Trivalent) :
+    bindPart o f = f a := by
+  rw [bindPart, Part.eq_some_iff.2 h, Part.bind_some, ofPart_toPart]
+
+theorem bindPart_of_not_dom {α : Type*} {o : Part α} (h : ¬ o.Dom) (f : α → Trivalent) :
+    bindPart o f = .undefined := by
+  rw [bindPart, Part.eq_none_iff'.2 h, Part.bind_none, ofPart_none]
+
+/-- With a function that is defined everywhere, the bind is defined exactly where the partial
+value is. -/
+theorem bindPart_ne_undefined_iff {α : Type*} {o : Part α} {f : α → Trivalent}
+    (hf : ∀ a, f a ≠ .undefined) : bindPart o f ≠ .undefined ↔ o.Dom := by
+  by_cases h : o.Dom
+  · obtain ⟨a, ha⟩ := Part.dom_iff_mem.1 h
+    rw [bindPart_of_mem ha]
+    exact iff_of_true (hf a) h
+  · rw [bindPart_of_not_dom h]
+    exact iff_of_false (fun h' ↦ h' rfl) h
+
 /-- Three-valued truth and partial propositions are equivalent carriers. -/
 noncomputable def equivPart : Trivalent ≃ Part Prop where
   toFun := toPart

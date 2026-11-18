@@ -26,12 +26,6 @@ printed object of each of the grammar's examples in the case the rules assign](#
 * The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
-## Errata
-
-* The grammar makes an affirmative sentence and either a resultative action or a definite quantity
-  enough for a total object; [it needs all three](##Object.case_ne_part_iff), and [the grammar's
-  own *Tyttö luki kirja-a* is no total object](##exists_affirmative_definite_not_total).
-
 ## References
 
 * [karlsson-2017]
@@ -148,12 +142,13 @@ structure Row where
   stem : List Segment
   form : List Segment
 
-/-- The printed object is a surface form of its stem in the case `c`, in the object's number. -/
+/-- The printed object fills the cell of its stem at the case `c`, in the object's number. -/
 def Row.Realizes (r : Row) (c : Finnish.Case) : Prop :=
-  r.form ∈ Finnish.Nominal.realize r.stem (Finnish.Nominal.endings r.object.number c)
+  (r.object.number, c) ∈ Finnish.Nominal.realization.cells r.stem r.form
 
 instance (r : Row) (c : Finnish.Case) : Decidable (r.Realizes c) :=
-  inferInstanceAs (Decidable (_ ∈ _))
+  inferInstanceAs
+    (Decidable (r.form ∈ Finnish.Nominal.realization.realize r.stem (r.object.number, c)))
 
 /-- A row read through the grammar's terms, failing on a term it does not use. -/
 def Row.ofDatum (e : Datum) : Option Row := do

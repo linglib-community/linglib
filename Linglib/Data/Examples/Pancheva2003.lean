@@ -24,7 +24,7 @@ def ex1a_U : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "UNIVERSAL")] }
 
@@ -37,7 +37,7 @@ def ex1b_EXP : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "EXPERIENTIAL")] }
 
@@ -50,7 +50,7 @@ def ex1c_RES : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "RESULTATIVE")] }
 
@@ -63,7 +63,7 @@ def ex5a_atelic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "EXP")] }
 
@@ -76,7 +76,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "EXP")] }
 
@@ -89,7 +89,7 @@ def ex6a_telic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "EXP or RES")] }
 
@@ -102,7 +102,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "EXP or RES")] }
 
@@ -115,7 +115,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("reading", "EXP"), ("aspect", "NEUTRAL")] }
 
@@ -128,7 +128,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("reading", "EXP"), ("aspect", "BOUNDED")] }
 
@@ -141,7 +141,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("reading", "RES")] }
 

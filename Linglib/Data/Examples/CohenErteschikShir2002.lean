@@ -24,7 +24,7 @@ def boys_brave : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")] }
 
@@ -37,7 +37,7 @@ def boys_present : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")] }
 
@@ -50,7 +50,7 @@ def firemen_available : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")] }
 

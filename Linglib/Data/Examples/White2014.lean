@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite"), ("inference", "presupposes (2)")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("inference", "entails (2)")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "the embedded content")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "negation"), ("inference", "still implies (2)")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "negation"), ("inference", "implies the negation of (2)")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hope"), ("complement", "infinitive")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "turn out"), ("complement", "finite")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite with overt modal"), ("inference", "presupposes (7b)")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "denial of obligation")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "denial of obligation")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "coordination")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "gapping")] }
 
@@ -180,7 +180,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "In the same context as (9a)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "detachability")] }
 
@@ -193,7 +193,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again")] }
 
@@ -206,7 +206,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := "Jo told Bo to fill the bird feeder. He remembered this but didn't fill it. The next week, she asked again."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "again"), ("previous", "remembering only")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "again"), ("previous", "filling only")] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "Jo told Bo to fill the bird feeder. He remembered that he had to, but didn't. The next week, she asked again."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again"), ("previous", "remembering only")] }
 
@@ -245,7 +245,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again"), ("previous", "filling only")] }
 
@@ -258,7 +258,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "Bo hoped to get a ticket to Jo's show. He couldn't, but when Jo came again..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hope"), ("test", "again"), ("previous", "hoping only")] }
 
@@ -271,7 +271,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "finite with overt modal"), ("inference", "no actuality entailment")] }
 
@@ -284,7 +284,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hope"), ("test", "coordination")] }
 

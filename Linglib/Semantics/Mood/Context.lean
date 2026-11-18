@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Semantics.Mood.State
 
 /-!
@@ -15,19 +15,19 @@ Portner's discourse context assigns each participant discourse commitments, a mo
 context is a function `Role → State W`. A sentential force updates one component of the states of
 some participants: assertion meets the speaker's context set with its content, and directing
 promotes the content in the addressee's ordering. Each force [meets a context with a fixed
-content](##Discourse.SpeechAct.Force.isAdditive_update). Zanuttini, Pak and Portner's promissive
+content](##SpeechAct.Force.isAdditive_update). Zanuttini, Pak and Portner's promissive
 adds its content to the speaker's To-Do List rather than the addressee's, so a promise and a
 directive with the same content [coincide exactly when both participants' orderings already
-respect the content](##Discourse.SpeechAct.Force.update_promise_eq_directive_iff), so that
+respect the content](##SpeechAct.Force.update_promise_eq_directive_iff), so that
 promoting it changes neither.
 
 ## Main definitions
 
 * `Mood.Component.update`: the update of one component of a mood state.
-* `Discourse.SpeechAct.Force.target`: the component a force updates, Portner's classification of
+* `SpeechAct.Force.target`: the component a force updates, Portner's classification of
   the sentence moods.
-* `Discourse.SpeechAct.Force.holders`: the participants whose states a force updates.
-* `Discourse.SpeechAct.Force.update`: a force as an update of a discourse context.
+* `SpeechAct.Force.holders`: the participants whose states a force updates.
+* `SpeechAct.Force.update`: a force as an update of a discourse context.
 
 ## Implementation notes
 
@@ -49,7 +49,7 @@ promoting it changes neither.
 @[expose] public section
 
 open DynamicSemantics
-open Discourse.SpeechAct (Force)
+open SpeechAct (Force)
 
 variable {W : Type*}
 
@@ -80,7 +80,7 @@ theorem Component.isAdditive_update (k : Component) (φ : W → Prop) :
 
 end Mood
 
-namespace Discourse.SpeechAct.Force
+namespace SpeechAct.Force
 
 open Mood
 
@@ -112,17 +112,17 @@ def holders : Force → Finset Role
 /-- A force with content `φ` updates the component it relates to in the state of each of its
 holders and leaves the other participants' states alone. -/
 def update (f : Force) (d : Role → State W) (φ : W → Prop) : Role → State W :=
-  fun r ↦ if r ∈ f.holders then f.target.elim (d r) fun c ↦ c.update (d r) φ else d r
+  f.holders.piecewise (fun r ↦ f.target.elim (d r) fun c ↦ c.update (d r) φ) d
 
 variable (d : Role → State W) (φ : W → Prop)
 
 theorem update_apply_of_mem {f : Force} {r : Role} {c : Component} (hr : r ∈ f.holders)
     (hc : f.target = some c) : f.update d φ r = c.update (d r) φ := by
-  simp only [update, hr, ↓reduceIte, hc, Option.elim_some]
+  simp only [update, Finset.piecewise_eq_of_mem _ _ _ hr, hc, Option.elim_some]
 
 theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
-    f.update d φ r = d r := by
-  simp only [update, hr, ↓reduceIte]
+    f.update d φ r = d r :=
+  Finset.piecewise_eq_of_notMem _ _ _ hr
 
 /-- Every force meets a discourse context with a fixed content, so that for texts of forces the
 three consequence relations of dynamic semantics coincide (`DynamicSemantics.tfae_entails`). -/
@@ -172,13 +172,4 @@ theorem update_promise_eq_directive_iff :
     update_promise_addressee, update_directive_addressee]
   rw [State.promote_eq_self_iff, eq_comm, State.promote_eq_self_iff]
 
-/-- Folding contents through a force folds them through the update of its component in the state
-of each holder. -/
-theorem foldl_update_apply_of_mem {f : Force} {r : Role} {c : Component} (hr : r ∈ f.holders)
-    (hc : f.target = some c) (l : List (W → Prop)) (d : Role → State W) :
-    l.foldl f.update d r = l.foldl c.update (d r) := by
-  induction l generalizing d with
-  | nil => rfl
-  | cons φ l ih => rw [List.foldl_cons, ih, update_apply_of_mem d φ hr hc, List.foldl_cons]
-
-end Discourse.SpeechAct.Force
+end SpeechAct.Force

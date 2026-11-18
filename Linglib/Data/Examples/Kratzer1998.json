@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Showcases that the underlined past tense \"were\" need not be interpreted as semantically past — the meal time is in the future of utterance, not the past.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "uninterpreted-past (SOT)", "judgment": "acceptable"}
     ],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "Past tense \"was\" inside the future-complement \"would buy\" — the alive-time is the future buying time, not the saying-time and not the utterance time.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "alive-at-buying (later-than-saying)", "judgment": "acceptable"},
       {"name": "alive-at-saying", "judgment": "acceptable"}
@@ -46,7 +46,7 @@
     "translation": "",
     "context": "Multi-embedded SOT with two underlined past forms (\"was\", \"got\") both referring to future-of-utterance times.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "pregnancy-at-knowing (future-of-utterance)", "judgment": "acceptable"}
     ],
@@ -63,7 +63,7 @@
     "translation": "",
     "context": "The past tense \"went\" need not refer to a time before the utterance time: will shifts the evaluation time into the future and the embedded past takes us back from there, so the past cannot be analyzed as a pronoun.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "going-to-Harvard before the marrying time, not necessarily before utterance",
@@ -83,7 +83,7 @@
     "translation": "",
     "context": "Uttered at, say, 11 o'clock. John self-locates at 10 o'clock; his belief is not that the time of utterance is 10.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se (John self-locates at 10)", "judgment": "acceptable"},
       {"name": "indexical (John thinks 11 is 10)", "judgment": "marginal"}
@@ -101,7 +101,7 @@
     "translation": "",
     "context": "Embedded present-under-present. John self-locates at a time when he has a headache.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de se (headache at John's now)", "judgment": "acceptable"}
     ],
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "Relative clause past tense under a matrix past. The relative-clause tense can be zero-bound (simultaneous with buying) or independently past.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous (alive-at-buying, zero tense in RC)", "judgment": "acceptable"},
       {"name": "independent past (alive-before-buying, past in RC)", "judgment": "acceptable"}
@@ -136,7 +136,7 @@
     "translation": "",
     "context": "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "RC zero-tense (alive-at-buying)", "judgment": "acceptable"},
       {"name": "RC past-tense (alive-at-saying)", "judgment": "acceptable"}
@@ -154,7 +154,7 @@
     "translation": "",
     "context": "Sickness is at yesterday (between thought-time two-days-ago and utterance). \"Would\" makes the relative future-from-thought reachable.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "sickness yesterday, after the self-located thought time (de se)",
@@ -174,7 +174,7 @@
     "translation": "",
     "context": "Without \"would\", the embedded past forces sickness at the thought-time (two days ago), which conflicts with the adverbial \"yesterday\".",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sickness-at-thought-time", "judgment": "ungrammatical"}
     ],
@@ -191,7 +191,7 @@
     "translation": "",
     "context": "Past matrix with present embedded. Embedded present can be de re about a present state of Mary that the past ultrasound picture is about.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de re on present state", "judgment": "marginal"}
     ],
@@ -208,7 +208,7 @@
     "translation": "",
     "context": "Ogihara-style paraphrase that makes the temporal de re explicit.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "de re on present state (explicit)", "judgment": "acceptable"}
     ],
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "Looking at churches in Italy, no previous discourse. English simple past acceptable out of the blue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40a), Section 7, p. 106. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time.",
@@ -250,7 +250,7 @@
     "translation": "Who built this church? Borromini built this church.",
     "context": "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40b), Section 7, p. 106. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry. The paper prints a period after the question \"Wer baute diese Kirche\".",
@@ -273,7 +273,7 @@
     "translation": "Who has this church built? Borromini has this church built.",
     "context": "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40c), Section 7, p. 106. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense.",
@@ -289,7 +289,7 @@
     "translation": "",
     "context": "English simple past in a relative clause inside a future matrix. Felicitous even without a contextually salient past interval.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "simple past"]],
     "comment": "Kratzer's example (41a), Section 7, p. 106. English simple past = perfect tolerated in embedded sentences.",
@@ -308,7 +308,7 @@
     "translation": "We will answer every letter that we received.",
     "context": "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "Präteritum"]],
     "comment": "Kratzer's example (41b), Section 7, p. 106. Printed unmarked. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement.",
@@ -328,7 +328,7 @@
     "translation": "We will answer every letter that we received.",
     "context": "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [["form", "Perfekt"]],
     "comment": "Kratzer's example (41c), Section 7, p. 106. The Perfekt slot again fills in for the missing deictic Preterit.",
@@ -344,7 +344,7 @@
     "translation": "",
     "context": "RC past \"caught\" can have either an anaphoric reading (relative to the dream-time) or an independent backward-shifted reading.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "anaphoric (caught-before-dreaming)", "judgment": "acceptable"},
       {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
@@ -366,7 +366,7 @@
     "translation": "Hans dreamed about eating a fish that he caught himself.",
     "context": "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "anaphoric (caught-at-dreaming-time)", "judgment": "acceptable"},
       {"name": "backward-shifted (caught-before-eating)", "judgment": "unacceptable"}
@@ -388,7 +388,7 @@
     "translation": "Hans dreamed about eating a fish that he had caught himself.",
     "context": "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
     ],

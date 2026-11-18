@@ -24,7 +24,7 @@ def beltrama_schwarz_2024_1 : Datum :=
     glossedTokens := []
     context := "The time is 6:03."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def beltrama_schwarz_2024_2 : Datum :=
     glossedTokens := []
     context := "The price is $207."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

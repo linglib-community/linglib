@@ -59,8 +59,8 @@ def invariantsOrderIso {s : β → Set α × Set α} (hs : RightInverse s f) : i
 theorem card_invariants [Finite β] (hf : Surjective f) :
     Nat.card (invariants f) = 2 ^ Nat.card β := by
   rw [Nat.card_congr (invariantsOrderIso (rightInverse_surjInv hf)).toEquiv]
-  change Nat.card (β → Prop) = _
-  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop]
+  have := Fintype.ofFinite β
+  rw [Nat.card_eq_fintype_card, Fintype.card_set, Nat.card_eq_fintype_card]
 
 /-- The atoms of a class are the fibres of its function. -/
 theorem isAtom_invariants_iff (hf : Surjective f) {d : invariants f} :
@@ -76,12 +76,20 @@ theorem isAtom_invariants_iff (hf : Surjective f) {d : invariants f} :
 
 /-! ### The closure of two classes -/
 
+/-- A determiner denotation as the set of restrictors and scopes it relates. -/
+private def pairsOrderIso : Det α ≃o Set (Set α × Set α) where
+  toFun d := {p | d p.1 p.2}
+  invFun S A B := (A, B) ∈ S
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' := Prod.forall.trans <| forall_congr' fun _ ↦ .rfl
+
 /-- The closure of a family of denotations consists of those whose value is a function of the
 pattern of values of the family. -/
 theorem generateCompleteBoolean_iff_forall {X : Set (Det α)} :
     GenerateCompleteBoolean X d ↔
       ∀ A B A' B', (∀ x ∈ X, x A B ↔ x A' B') → (d A B ↔ d A' B') := by
-  rw [generateCompleteBoolean_iff_factorsThrough (B := Det α) (Set.curryOrderIso _ _)]
+  rw [generateCompleteBoolean_iff_factorsThrough (B := Det α) pairsOrderIso]
   refine ⟨fun h A B A' B' e ↦ iff_of_eq (h (a := (A, B)) (b := (A', B')) ?_),
     fun h ⟨A, B⟩ ⟨A', B'⟩ e ↦ propext (h A B A' B' fun x hx ↦ ?_)⟩
   · exact funext fun x ↦ propext (e x.1 x.2)

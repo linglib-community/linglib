@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy
-public import Linglib.Syntax.Agreement.Resolution
+public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Gender.Assignment
 public import Linglib.Syntax.Number.Resolve
@@ -30,7 +30,7 @@ public import Linglib.Data.Examples.Languages
 
 A language's genders are its agreement classes, assigned to nouns by ordered rules that read
 meaning or form, never form alone; German diminutives put [a formal rule before the semantic
-one](##German.not_semanticFirst). Hybrid nouns take semantic agreement more readily down the
+one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily down the
 Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu [semantic
 agreement spreads up it stage by stage](##BantuStage.respectsHierarchy). Coordinations resolve
 by ordered rules reading the conjuncts' person, meaning or gender, and Serbo-Croat moves from
@@ -166,13 +166,13 @@ def sem (n : Tamil.Gender.Noun) : Bool × Option ReferentGender := (n.rational, 
 /-- Table 2.1 makes male rationals masculine, female rationals feminine and the residue
 neuter. -/
 def system : Gender.AssignmentSystem (Bool × Option ReferentGender) Unit Value where
-  rules := [.semantic fun
+  semantic
     | (true, some .male) => some .masc
     | (true, some .female) => some .fem
-    | _ => none]
-  residue := .neut
+    | _ => none
+  formal _ := .neut
 
-theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ ↦ rfl
+theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ _ ↦ rfl
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨aaN, rfl⟩
 
@@ -213,14 +213,11 @@ def sem (n : Russian.Gender.Noun) : Option ReferentGender := n.referentGender
 declension I masculine, declensions II and III feminine and the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) (Option Declension) Value where
-  rules := [.semantic (Option.map Value.ofReferentGender), .formal fun
-    | some .I => some .masc
-    | some .II | some .III => some .fem
-    | _ => none]
-  residue := .neut
-
--- p. 41
-theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+  semantic := Option.map Value.ofReferentGender
+  formal
+    | some .I => .masc
+    | some .II | some .III => .fem
+    | _ => .neut
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨djadja, rfl⟩
 
@@ -229,7 +226,7 @@ theorem assign_eq_gender :
   decide
 
 theorem djadja_precedence :
-    system.formal (declension djadja) = some .fem ∧
+    system.formal (declension djadja) = .fem ∧
       system.assign sem declension djadja = .masc := by
   decide
 
@@ -263,15 +260,11 @@ def animate : Option Evaluative × Animacy → Option _root_.Swahili.Gender
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
 to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
-book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
-never reached. -/
+book's 11/10 and 15 are not among them). -/
 def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
-  rules := [.semantic augmentative, .semantic diminutive, .semantic animate, .formal some]
-  residue := .genderE
-
--- p. 48
-theorem semanticFirst_system : system.SemanticFirst := ⟨[_, _, _], [_], rfl⟩
+  semantic s := [augmentative, diminutive, animate].findSome? (· s)
+  formal := id
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨kitoto, rfl⟩
 
@@ -286,8 +279,7 @@ theorem genderA_semantic :
 -- p. 47: the semantic rules apply in their order
 theorem animate_first_misassigns :
     let A : Gender.AssignmentSystem _ _root_.Swahili.Gender _root_.Swahili.Gender :=
-      { system with rules := [.semantic animate, .semantic augmentative, .semantic diminutive,
-          .formal some] }
+      { system with semantic := fun s ↦ [animate, augmentative, diminutive].findSome? (· s) }
     A.assign sem Noun.morphClass joka = .genderA ∧ joka.gender = .genderC ∧
       A.assign sem Noun.morphClass kitoto = .genderA ∧ kitoto.gender = .genderD := by
   decide
@@ -306,12 +298,8 @@ def sem (n : Afar.Gender.Noun) : Option ReferentGender := n.referentGender
 /-- The referents' sex first; then a citation form ending in an accented vowel is feminine,
 the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Value where
-  rules := [.semantic (Option.map Value.ofReferentGender),
-    .formal fun acc ↦ if acc then some .fem else none]
-  residue := .masc
-
--- p. 52
-theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+  semantic := Option.map Value.ofReferentGender
+  formal acc := if acc then .fem else .masc
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨abba, rfl⟩
 
@@ -320,7 +308,7 @@ theorem assign_eq_gender :
   decide
 
 theorem abba_precedence :
-    system.formal abba.finalAccentedVowel = some .fem ∧
+    system.formal abba.finalAccentedVowel = .fem ∧
       system.assign sem Noun.finalAccentedVowel abba = .masc := by
   decide
 
@@ -335,11 +323,8 @@ def sem (n : Hausa.Noun) : Option ReferentGender := n.referentGender
 
 /-- The referents' sex first; then a noun in *-ā* is feminine, the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Gender.Value where
-  rules := [.semantic (Option.map Gender.Value.ofReferentGender),
-    .formal fun aa ↦ if aa then some .feminine else none]
-  residue := .masculine
-
-theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+  semantic := Option.map Gender.Value.ofReferentGender
+  formal aa := if aa then .feminine else .masculine
 
 theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨uba, rfl⟩
 
@@ -362,24 +347,20 @@ def diminutive : Option Suffix → Option Value
   | _ => none
 
 /-- German diminutives are neuter whatever the sex of the referent, *Männchen* 'little man'
-(p. 50) and *Mädchen* 'girl'. A system whose semantic rules make females feminine therefore
-assigns *Mädchen* its neuter only if its semantic rules do not come first. -/
-theorem not_semanticFirst {φ : Type*}
-    {A : Gender.AssignmentSystem (Option ReferentGender) φ Value} {form : GenderedNoun Value → φ}
-    (hfem : A.semantic (some .female) = some .fem)
-    (h : A.assign GenderedNoun.referentGender form maedchen = maedchen.gender) :
-    ¬ A.SemanticFirst := fun hA ↦
-  absurd ((Gender.AssignmentSystem.assign_of_semantic (n := maedchen) hA hfem).symm.trans h)
-    (by decide)
+(p. 50) and *Mädchen* 'girl'. No system whose semantic rules take precedence and make females
+feminine therefore assigns *Mädchen* its neuter. -/
+theorem assign_maedchen_ne {φ : Type*}
+    (A : Gender.AssignmentSystem (Option ReferentGender) φ Value) (form : GenderedNoun Value → φ)
+    (hfem : A.semantic (some .female) = some .fem) :
+    A.assign (·.referentGender) form maedchen ≠ maedchen.gender := by
+  rw [Gender.AssignmentSystem.assign_of_semantic (n := maedchen) hfem]
+  decide
 
 /-- With the diminutive rule before the sex rule, a noun in *-chen* is neuter whatever the sex
-of its referents, and the semantic rule still makes females feminine. -/
-example : let A : Gender.AssignmentSystem (Option ReferentGender) (Option Suffix) Value :=
-      ⟨[.formal diminutive, .semantic (Option.map Value.ofReferentGender)], .masc⟩
-    let chen : GenderedNoun Value → Option Suffix := fun _ ↦ some .chen
-    A.semantic (some .female) = some .fem ∧
-      A.assign GenderedNoun.referentGender chen maedchen = maedchen.gender ∧
-      A.assign GenderedNoun.referentGender chen buebchen = buebchen.gender := by
+of its referents. -/
+example : let assign (n : GenderedNoun Value) : Value :=
+      ((diminutive (some .chen)).or (n.referentGender.map Value.ofReferentGender)).getD .masc
+    assign maedchen = maedchen.gender ∧ assign buebchen = buebchen.gender := by
   decide
 
 end German
@@ -714,36 +695,37 @@ end BantuStage
 The rows are read off Corbett's glosses: a word's category labels name the gender, class or
 number its form marks, and the lexical gloss of its first morph names the noun it is. -/
 
-/-- The category labels of a gloss, stripped of the brackets around optional material. -/
-def labels (g : String) : List (List Char) := (Gloss.labels g).map Gloss.trim
+/-- The category labels of a word's gloss, stripped of the brackets around optional material. -/
+def labels (g : GlossedWord) : List (List Char) := g.labels.map Gloss.trim
 
 /-- What `table` reads off the first label of a gloss that it lists. -/
-def readLabel {α : Type*} (table : List (List Char × α)) (g : String) : Option α :=
+def readLabel {α : Type*} (table : List (List Char × α)) (g : GlossedWord) : Option α :=
   (labels g).findSome? (List.lookup · table)
 
 /-- A gloss marks a non-singular number, `PL` or the book's `DUAL`. -/
-def Nonsingular (g : String) : Prop := "PL".toList ∈ labels g ∨ "DUAL".toList ∈ labels g
+def Nonsingular (g : GlossedWord) : Prop := "PL".toList ∈ labels g ∨ "DUAL".toList ∈ labels g
 
 instance : DecidablePred Nonsingular := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The number a gloss marks, singular where it marks none. -/
-def number (g : String) : Number :=
+def number (g : GlossedWord) : Number :=
   if "DUAL".toList ∈ labels g then .dual else if "PL".toList ∈ labels g then .plural else .singular
 
 /-- The words of the lexical gloss of a word's first morph: *elder sister* in
 `elder.sister-and`, *door the* in `door.FEM.the`. -/
-def lexicalWords (g : String) : List (List Char) :=
-  ((Gloss.elements ((Gloss.segments g).headD [])).map Gloss.trim).filter
+def lexicalWords (g : GlossedWord) : List (List Char) :=
+  ((Gloss.elements (g.glosses.headD [])).map Gloss.trim).filter
     fun e ↦ !decide (Gloss.IsLabel e)
 
 /-- A gloss names the noun glossed `n` when its lexical words begin with those of `n`. -/
-def Names (n g : String) : Bool := (Gloss.split [' '] n.toList).isPrefixOf (lexicalWords g)
+def Names (n : String) (g : GlossedWord) : Bool :=
+  (Gloss.split [' '] n.toList).isPrefixOf (lexicalWords g)
 
 /-- What `f` reads off each word of a row that glosses a noun of `lex`, with the word's gloss,
 in order. -/
-def glossed {N β : Type*} (gloss : N → String) (lex : List N) (f : N → String → β)
+def glossed {N β : Type*} (gloss : N → String) (lex : List N) (f : N → GlossedWord → β)
     (row : Datum) : List β :=
-  row.glossedTokens.filterMap fun t ↦ (lex.find? fun n ↦ Names (gloss n) t.2).map (f · t.2)
+  row.glossedWords.filterMap fun w ↦ (lex.find? fun n ↦ Names (gloss n) w).map (f · w)
 
 /-! ### The judgments of chapter 8
 
@@ -806,7 +788,7 @@ structure Controller where
   semantic : List (List Char)
 
 /-- The agreement a target's gloss shows with the controller. -/
-def Controller.kind? (c : Controller) (g : String) : Option Kind :=
+def Controller.kind? (c : Controller) (g : GlossedWord) : Option Kind :=
   if (labels g).any c.semantic.contains then some .semantic
   else if (labels g).any c.syntactic.contains then some .syntactic else none
 
@@ -823,7 +805,7 @@ def controllers : List Controller :=
 one nearer the controller first. -/
 def targetPair? (row : Datum) : Option (Kind × Kind) := do
   guard (row.feature? "targets").isSome
-  let gs := row.glossedTokens.map (·.2)
+  let gs := row.glossedWords
   let (c, i) ← gs.zipIdx.findSome? fun (g, i) ↦
     (controllers.find? fun c ↦ Names c.gloss g).map (·, i)
   match gs.zipIdx.filterMap fun (g, j) ↦ (c.kind? g).map (if i ≤ j then j - i else i - j, ·) with
@@ -1151,22 +1133,22 @@ is acceptable exactly when the language's rules select the target's form. -/
 
 /-- The form a coordination's target shows: what `form` reads off the gloss of the last word
 whose form it reads. -/
-def target? {G : Type*} (form : String → Option G) (row : Datum) : Option G :=
-  row.glossedTokens.reverse.findSome? (form ·.2)
+def target? {G : Type*} (form : GlossedWord → Option G) (row : Datum) : Option G :=
+  row.glossedWords.reverse.findSome? form
 
 /-- The form of `table` a target's gloss marks along with a non-singular number. -/
-def pluralForm {G : Type*} (table : List (List Char × G)) (g : String) : Option G :=
+def pluralForm {G : Type*} (table : List (List Char × G)) (g : GlossedWord) : Option G :=
   if Nonsingular g then readLabel table g else none
 
 /-- The conjuncts the labels of a row's glosses mark: the words whose gloss labels a value of
 `table` and no non-singular number. -/
 def labelled {α : Type*} (table : List (List Char × α)) (row : Datum) : List α :=
-  row.glossedTokens.filterMap fun t ↦ if Nonsingular t.2 then none else readLabel table t.2
+  row.glossedWords.filterMap fun w ↦ if Nonsingular w then none else readLabel table w
 
 /-- A coordination of `lang`: at least two conjuncts as `conjuncts` reads them, and the form
 its target shows. -/
 def coordination? {α G : Type*} (lang : Glottocode) (conjuncts : Datum → List α)
-    (form : String → Option G) (row : Datum) : Option (List α × G) :=
+    (form : GlossedWord → Option G) (row : Datum) : Option (List α × G) :=
   if row.language = lang ∧ 2 ≤ (conjuncts row).length then
     (target? form row).map (conjuncts row, ·)
   else none

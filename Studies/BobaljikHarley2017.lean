@@ -44,7 +44,7 @@ where agreement follows derived ones are not formalized.
 
 namespace BobaljikHarley2017
 
-open PhraseStructure Core.Order
+open PhraseStructure
 open DistributedMorphology (Cat MayCondition MayCondition' localLabels mayCondition'_of_isHeadAt)
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive)
@@ -112,11 +112,11 @@ def clause (c : Arguments Number) : T :=
   | none => xp .v [rootP c, term .v]
 
 /-- The position of the Root in the clause. -/
-def rootPos (c : Arguments Number) : TreePath :=
+def rootPos (c : Arguments Number) : GornAddress :=
   ⟨(if (c .external).isSome then [1, 0] else [0]) ++ [if (c .internal).isSome then 1 else 0]⟩
 
 /-- The numbers that may condition the node at `α` under the refined formulation. -/
-def localNumbers (t : T) (α : TreePath) : List Number := (localLabels t α).filterMap Prod.snd
+def localNumbers (t : T) (α : GornAddress) : List Number := (localLabels t α).filterMap Prod.snd
 
 /-- **Only the internal argument is local to the Root.** Whatever arguments a Hiaki clause has, the
 numbers that may condition its Root are exactly that of its internal argument. -/

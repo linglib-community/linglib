@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("positive inference", "Gal was at the party"), ("exhaustive inference", "No one distinct from Gal was at the party")] }
 
@@ -37,7 +37,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("positive inference", "Gal is at least a grad student")] }
 
@@ -50,7 +50,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("positive presupposition", "Gal was at the party")] }
 
@@ -63,7 +63,7 @@ def ex_107 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

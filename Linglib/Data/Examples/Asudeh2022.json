@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["premises", "likes, alex, blake"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "surface", "judgment": "acceptable"},
       {"name": "inverse", "judgment": "acceptable"}
@@ -51,7 +51,7 @@
     "translation": "I drank water.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["premises", "speaker, drink, water"]
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["premises", "speaker, drink, water"]

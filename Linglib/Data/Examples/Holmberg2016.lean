@@ -24,7 +24,7 @@ def en_neutral_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("question", "neutral"), ("answer", "yes"), ("confirms", "p")] }
 
@@ -37,7 +37,7 @@ def en_neutral_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("question", "neutral"), ("answer", "no"), ("confirms", "not p")] }
 
@@ -50,7 +50,7 @@ def fi_verb_echo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2"), ("question", "neutral"), ("answer", "verb echo"), ("confirms", "p")] }
 
@@ -63,7 +63,7 @@ def sv_neg_nej : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p"), ("system", "polarityBased")] }
 
@@ -76,7 +76,7 @@ def yue_neg_hai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "hai"), ("confirms", "not p"), ("system", "truthBased")] }
 
@@ -89,7 +89,7 @@ def en_neg_yes_bare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "yes"), ("intended", "p")] }
 
@@ -102,7 +102,7 @@ def en_neg_yes_long : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p")] }
 
@@ -115,7 +115,7 @@ def sv_neutral_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "neutral"), ("answer", "ja"), ("confirms", "p")] }
 
@@ -128,7 +128,7 @@ def sv_neg_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "ja"), ("intended", "p")] }
 
@@ -141,7 +141,7 @@ def sv_neg_jo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "jo"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
@@ -154,7 +154,7 @@ def yue_neg_hai_intended_p : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "hai"), ("intended", "p")] }
 
@@ -167,7 +167,7 @@ def yue_neg_mhai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "m hai"), ("confirms", "p"), ("system", "truthBased")] }
 
@@ -180,7 +180,7 @@ def en_tell_me : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "explicit disjunction"), ("answer", "yes")] }
 
@@ -193,7 +193,7 @@ def en_tea_or_not : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "explicit disjunction"), ("answer", "yes")] }
 
@@ -206,7 +206,7 @@ def en_tea : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "neutral"), ("answer", "yes"), ("confirms", "p")] }
 
@@ -219,7 +219,7 @@ def en_maybe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "modified polarity")] }
 
@@ -232,7 +232,7 @@ def en_maybe_not : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "modified polarity")] }
 
@@ -245,7 +245,7 @@ def fi_luin : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "verb echo"), ("confirms", "p")] }
 
@@ -258,7 +258,7 @@ def fi_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "inflected negation"), ("confirms", "not p")] }
 
@@ -271,7 +271,7 @@ def en_not_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "negative bias"), ("answer", "no")] }
 
@@ -284,7 +284,7 @@ def fi_hajotti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "neutral"), ("answer", "verb echo")] }
 
@@ -297,7 +297,7 @@ def fi_rikkoi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "neutral"), ("answer", "verb echo with a synonym")] }
 
@@ -310,7 +310,7 @@ def en_coffee_not_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "yes"), ("intended", "p")] }
 
@@ -323,7 +323,7 @@ def en_coffee_not_yes_i_do : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p")] }
 
@@ -336,7 +336,7 @@ def fi_juo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "bare verb echo"), ("intended", "p")] }
 
@@ -349,7 +349,7 @@ def fi_juo_se : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "verb echo + subject"), ("confirms", "p")] }
 
@@ -362,7 +362,7 @@ def fr_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "neutral"), ("answer", "oui"), ("confirms", "p")] }
 
@@ -375,7 +375,7 @@ def fr_neg_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "oui"), ("intended", "p")] }
 
@@ -388,7 +388,7 @@ def fr_neg_si : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "si"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
@@ -401,7 +401,7 @@ def ja_neutral : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "neutral"), ("answer", "un / uun")] }
 
@@ -414,7 +414,7 @@ def ja_neg_un : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "low"), ("answer", "un"), ("confirms", "not p"), ("system", "truthBased")] }
 
@@ -427,7 +427,7 @@ def ja_neg_uun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "low"), ("answer", "uun"), ("confirms", "p"), ("system", "truthBased")] }
 
@@ -440,7 +440,7 @@ def sv_neg_tired_nej : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p"), ("system", "polarityBased")] }
 
@@ -453,7 +453,7 @@ def en_neg_coffee_yes_he_does : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p"), ("system", "polarityBased")] }
 
@@ -466,7 +466,7 @@ def en_not_yes_low : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p"), ("variety", "low reading of not")] }
 
@@ -479,7 +479,7 @@ def en_not_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "no"), ("confirms", "not p")] }
 
@@ -492,7 +492,7 @@ def en_isnt_either : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "-n't with NPI"), ("variety", "tolerant")] }
 
@@ -505,7 +505,7 @@ def en_sometimes_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p")] }
 
@@ -518,7 +518,7 @@ def en_sometimes_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "no"), ("confirms", "p")] }
 
@@ -531,7 +531,7 @@ def en_purposely : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p")] }
 
@@ -544,7 +544,7 @@ def en_two_negations : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("negation", "middle and low")] }
 
@@ -557,7 +557,7 @@ def en_two_middle : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("negation", "two middle negations")] }
 
@@ -570,7 +570,7 @@ def en_is_not_coming_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("answer", "yes"), ("confirms", "not p")] }
 
@@ -583,7 +583,7 @@ def en_no_he_is : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("answer", "no + clause"), ("confirms", "p")] }
 
@@ -596,7 +596,7 @@ def en_delicious_no_it_is : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "positive bias"), ("negation", "high"), ("answer", "no + clause")] }
 
@@ -609,7 +609,7 @@ def sv_kommit_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "ja")] }
 
@@ -622,7 +622,7 @@ def sv_kommit_nej : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p")] }
 
@@ -635,7 +635,7 @@ def sv_inte_inte : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("negation", "double")] }
 
@@ -648,7 +648,7 @@ def sv_nangang_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle behind an adverb"), ("answer", "ja"), ("confirms", "not p")] }
 
@@ -661,7 +661,7 @@ def sv_nangang_nej : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle behind an adverb"), ("answer", "nej"), ("confirms", "p")] }
 
@@ -674,7 +674,7 @@ def sv_kommit_jo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "jo"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
@@ -687,7 +687,7 @@ def nl_jawel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("answer", "jawel"), ("confirms", "p"), ("particle", "affirmative plus particle")] }
 
@@ -700,7 +700,7 @@ def fi_tulee : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.4"), ("question", "negative bias"), ("answer", "no + clause"), ("confirms", "p")] }
 
@@ -713,7 +713,7 @@ def sv_road_ambiguous : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "negative or positive bias")] }
 
@@ -726,7 +726,7 @@ def sv_road_high : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "positive bias"), ("negation", "high")] }
 
@@ -739,7 +739,7 @@ def en_road_not : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "negative bias"), ("negation", "middle")] }
 
@@ -752,7 +752,7 @@ def en_road_isnt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "positive bias"), ("negation", "high")] }
 
@@ -765,7 +765,7 @@ def en_road_so_it_is : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "neutral"), ("answer", "agreement")] }
 
@@ -778,7 +778,7 @@ def en_tag_so_it_is : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "tag"), ("answer", "agreement")] }
 
@@ -791,7 +791,7 @@ def en_tag_at_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "tag"), ("NPI", "at all")] }
 
@@ -804,7 +804,7 @@ def en_statement_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "statement"), ("answer", "no")] }
 

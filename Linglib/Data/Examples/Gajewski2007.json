@@ -12,18 +12,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "positive"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -40,18 +31,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "negation"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -68,18 +50,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "positive"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -96,18 +69,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "negation"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -124,18 +88,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Claim is not neg-raising.",
     "verified": "page-image"
   },
@@ -152,18 +107,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Claim is not neg-raising.",
     "verified": "page-image"
   },
@@ -180,18 +126,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThink"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -208,18 +145,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThink"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -236,18 +164,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -264,18 +183,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -292,18 +202,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThink"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -320,18 +221,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThink"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -348,18 +240,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notKnow"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -376,18 +259,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -404,18 +278,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -432,18 +297,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -460,18 +316,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -488,22 +335,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "nonfinite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -520,22 +354,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "nonfinite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -552,22 +373,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "nonfinite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -584,22 +392,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "nonfinite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -616,22 +411,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notEvery"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "finite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -648,22 +430,9 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notSome"
-      ],
-      [
-        "npi",
-        "in years"
-      ],
-      [
-        "clause",
-        "finite"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The paper marks it ?? and takes the finite clause boundary to degrade it.",
     "verified": "page-image"
   },
@@ -680,18 +449,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "noOneThinks"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -708,18 +468,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThinkWant"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Based on Horn (1971).",
     "verified": "page-image"
   },
@@ -736,18 +487,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notWantThink"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Based on Horn (1971).",
     "verified": "page-image"
   },
@@ -764,18 +506,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThinkWant"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -792,18 +525,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notWantThink"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -820,18 +544,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThinkWant"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -848,18 +563,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notWantThink"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -876,18 +582,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "only"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -904,18 +601,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "only"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The paper prints Marry.",
     "verified": "page-image"
   },
@@ -932,18 +620,9 @@
     "translation": "",
     "context": "Only John likes pancakes.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "only"
-      ],
-      [
-        "npi",
-        "either"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -960,18 +639,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "adversative"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -988,18 +658,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "adversative"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1016,18 +677,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "conditional"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1044,18 +696,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "conditional"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1072,18 +715,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "superlative"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1100,18 +734,9 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "superlative"
-      ],
-      [
-        "npi",
-        "until"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1128,18 +753,9 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "environment",
-        "notThinkStressed"
-      ],
-      [
-        "npi",
-        "in years"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Capitals mark stress on the negation, the reading without neg-raising.",
     "verified": "page-image"
   }

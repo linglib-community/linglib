@@ -13,7 +13,7 @@
     "translation": "Jóna and Siggi kissed after the dance.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "reciprocal"]
@@ -34,7 +34,7 @@
     "translation": "John disguised himself as a priest.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "reflexive"]
@@ -55,7 +55,7 @@
     "translation": "The window opened by itself.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anticausative"]
@@ -77,7 +77,7 @@
     "translation": "Electric cars sell well here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "generic middle"]
@@ -98,7 +98,7 @@
     "translation": "People deepened the ditch.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exponent", "-ka"],
@@ -120,7 +120,7 @@
     "translation": "The ditch deepened.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exponent", "-ka"],
@@ -142,7 +142,7 @@
     "translation": "John heated the water.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["voice", "Voice{D}"]
@@ -163,7 +163,7 @@
     "translation": "The water heated.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exponent", "-na"],
@@ -185,7 +185,7 @@
     "translation": "The door opened.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anticausative"],
@@ -207,7 +207,7 @@
     "translation": "The window shattered.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anticausative"],
@@ -229,7 +229,7 @@
     "translation": "The woman murdered the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["voice", "agentive"]
@@ -251,7 +251,7 @@
     "translation": "The lava stream murdered the man.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["voice", "agentive"]
@@ -272,7 +272,7 @@
     "translation": "The man got murdered.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "anticausative"]
@@ -294,7 +294,7 @@
     "translation": "Bjartur gave himself the book as a Christmas present.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["position", "SpecApplP"]
@@ -316,7 +316,7 @@
     "translation": "Bjartur gave himself the book as a Christmas present.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["position", "SpecApplP"]
@@ -338,7 +338,7 @@
     "translation": "People allowed them all things.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dative", "Appl"]
@@ -359,7 +359,7 @@
     "translation": "They were allowed all things.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dative", "Appl"]
@@ -380,7 +380,7 @@
     "translation": "Ásta shattered the window.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dative", "direct object"]
@@ -401,7 +401,7 @@
     "translation": "The window shattered.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dative", "direct object"]
@@ -422,7 +422,7 @@
     "translation": "She was bored by Ólafur.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "subject experiencer"],
@@ -444,7 +444,7 @@
     "translation": "Jóna and Siggi kissed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "reciprocal"],
@@ -466,7 +466,7 @@
     "translation": "Jóna kissed with Siggi.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "reciprocal"],
@@ -489,7 +489,7 @@
     "translation": "The emperor dressed himself in new clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "reflexive"]

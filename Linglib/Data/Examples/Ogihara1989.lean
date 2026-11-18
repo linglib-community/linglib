@@ -25,7 +25,7 @@ def ex_1_46a : Datum :=
     glossedTokens := []
     context := "Uttered when the speaker is driving down the freeway."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no past time at which I turn off the stove", .unacceptable), ("some past time at which I do not turn off the stove", .unacceptable), ("no subinterval of the contextually salient past interval at which I turn off the stove", .acceptable)]
     paperFeatures := [("use", "deictic")] }
 
@@ -39,7 +39,7 @@ def ex_1_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Sam got drunk at the time of Sheila's party", .acceptable)]
     paperFeatures := [("use", "anaphoric")] }
 
@@ -53,7 +53,7 @@ def ex_1_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John saw Mary at some time within the contextually relevant interval", .acceptable), ("John saw Mary at some past time", .unacceptable)]
     paperFeatures := [("restriction", "contextual")] }
 
@@ -67,7 +67,7 @@ def ex_2_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -75,13 +75,14 @@ def ex_2_2a : Datum :=
   { id := "ogihara1989_2_2a"
     source := ⟨"ogihara-1989", "ch. 2, (2a)"⟩
     reportedIn := none
-    method := some .introspection
     language := "nucl1643"
     primaryText := "John-wa Mary-ga byookidat-ta to it-ta."
     glossedTokens := [("John-wa", "John-TOP"), ("Mary-ga", "Mary-NOM"), ("byookidat-ta", "be.ill-PST"), ("to", "COMP"), ("it-ta", "say-PST")]
+    glossedWords := [⟨['J', 'o', 'h', 'n', '-', 'w', 'a'], ['J', 'o', 'h', 'n', '-', 'T', 'O', 'P'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['M', 'a', 'r', 'y', '-', 'g', 'a'], ['M', 'a', 'r', 'y', '-', 'N', 'O', 'M'], [⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['b', 'y', 'o', 'o', 'k', 'i', 'd', 'a', 't', '-', 't', 'a'], ['b', 'e', '.', 'i', 'l', 'l', '-', 'P', 'S', 'T'], [⟨['b', 'y', 'o', 'o', 'k', 'i', 'd', 'a', 't'], ['b', 'e', '.', 'i', 'l', 'l'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩, ⟨['t', 'o'], ['C', 'O', 'M', 'P'], [⟨['t', 'o'], ['C', 'O', 'M', 'P'], none⟩]⟩, ⟨['i', 't', '-', 't', 'a'], ['s', 'a', 'y', '-', 'P', 'S', 'T'], [⟨['i', 't'], ['s', 'a', 'y'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -89,13 +90,14 @@ def ex_2_2b : Datum :=
   { id := "ogihara1989_2_2b"
     source := ⟨"ogihara-1989", "ch. 2, (2b)"⟩
     reportedIn := none
-    method := some .introspection
     language := "nucl1643"
     primaryText := "John-wa Mary-ga byookid-a to it-ta."
     glossedTokens := [("John-wa", "John-TOP"), ("Mary-ga", "Mary-NOM"), ("byookid-a", "be.ill-PRES"), ("to", "COMP"), ("it-ta", "say-PST")]
+    glossedWords := [⟨['J', 'o', 'h', 'n', '-', 'w', 'a'], ['J', 'o', 'h', 'n', '-', 'T', 'O', 'P'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['M', 'a', 'r', 'y', '-', 'g', 'a'], ['M', 'a', 'r', 'y', '-', 'N', 'O', 'M'], [⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['b', 'y', 'o', 'o', 'k', 'i', 'd', '-', 'a'], ['b', 'e', '.', 'i', 'l', 'l', '-', 'P', 'R', 'E', 'S'], [⟨['b', 'y', 'o', 'o', 'k', 'i', 'd'], ['b', 'e', '.', 'i', 'l', 'l'], none⟩, ⟨['a'], ['P', 'R', 'E', 'S'], some '-'⟩]⟩, ⟨['t', 'o'], ['C', 'O', 'M', 'P'], [⟨['t', 'o'], ['C', 'O', 'M', 'P'], none⟩]⟩, ⟨['i', 't', '-', 't', 'a'], ['s', 'a', 'y', '-', 'P', 'S', 'T'], [⟨['i', 't'], ['s', 'a', 'y'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [] }
 
@@ -109,7 +111,7 @@ def ex_2_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -123,7 +125,7 @@ def ex_2_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -137,7 +139,7 @@ def ex_2_25c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -151,7 +153,7 @@ def ex_2_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable), ("subsequent", .acceptable)]
     paperFeatures := [] }
 
@@ -165,7 +167,7 @@ def ex_2_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("simultaneous", .acceptable), ("subsequent", .unacceptable)]
     paperFeatures := [] }
 
@@ -179,7 +181,7 @@ def ex_2_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -193,7 +195,7 @@ def ex_2_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before the speech time", .unacceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -207,7 +209,7 @@ def ex_2_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -221,7 +223,7 @@ def ex_2_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -229,13 +231,14 @@ def ex_2_47a : Datum :=
   { id := "ogihara1989_2_47a"
     source := ⟨"ogihara-1989", "ch. 2, (47a)"⟩
     reportedIn := none
-    method := some .introspection
     language := "nucl1643"
     primaryText := "John-wa warat-te ir-u otoko ni at-ta."
     glossedTokens := [("John-wa", "John-TOP"), ("warat-te", "laugh-TE"), ("ir-u", "PROG-PRES"), ("otoko", "man"), ("ni", "DAT"), ("at-ta", "see-PST")]
+    glossedWords := [⟨['J', 'o', 'h', 'n', '-', 'w', 'a'], ['J', 'o', 'h', 'n', '-', 'T', 'O', 'P'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['w', 'a', 'r', 'a', 't', '-', 't', 'e'], ['l', 'a', 'u', 'g', 'h', '-', 'T', 'E'], [⟨['w', 'a', 'r', 'a', 't'], ['l', 'a', 'u', 'g', 'h'], none⟩, ⟨['t', 'e'], ['T', 'E'], some '-'⟩]⟩, ⟨['i', 'r', '-', 'u'], ['P', 'R', 'O', 'G', '-', 'P', 'R', 'E', 'S'], [⟨['i', 'r'], ['P', 'R', 'O', 'G'], none⟩, ⟨['u'], ['P', 'R', 'E', 'S'], some '-'⟩]⟩, ⟨['o', 't', 'o', 'k', 'o'], ['m', 'a', 'n'], [⟨['o', 't', 'o', 'k', 'o'], ['m', 'a', 'n'], none⟩]⟩, ⟨['n', 'i'], ['D', 'A', 'T'], [⟨['n', 'i'], ['D', 'A', 'T'], none⟩]⟩, ⟨['a', 't', '-', 't', 'a'], ['s', 'e', 'e', '-', 'P', 'S', 'T'], [⟨['a', 't'], ['s', 'e', 'e'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("subsequent", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [] }
 
@@ -243,13 +246,14 @@ def ex_2_47b : Datum :=
   { id := "ogihara1989_2_47b"
     source := ⟨"ogihara-1989", "ch. 2, (47b)"⟩
     reportedIn := none
-    method := some .introspection
     language := "nucl1643"
     primaryText := "John-wa warat-te ir-ta otoko ni at-ta."
     glossedTokens := [("John-wa", "John-TOP"), ("warat-te", "laugh-TE"), ("ir-ta", "PROG-PST"), ("otoko", "man"), ("ni", "DAT"), ("at-ta", "see-PST")]
+    glossedWords := [⟨['J', 'o', 'h', 'n', '-', 'w', 'a'], ['J', 'o', 'h', 'n', '-', 'T', 'O', 'P'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['w', 'a', 'r', 'a', 't', '-', 't', 'e'], ['l', 'a', 'u', 'g', 'h', '-', 'T', 'E'], [⟨['w', 'a', 'r', 'a', 't'], ['l', 'a', 'u', 'g', 'h'], none⟩, ⟨['t', 'e'], ['T', 'E'], some '-'⟩]⟩, ⟨['i', 'r', '-', 't', 'a'], ['P', 'R', 'O', 'G', '-', 'P', 'S', 'T'], [⟨['i', 'r'], ['P', 'R', 'O', 'G'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩, ⟨['o', 't', 'o', 'k', 'o'], ['m', 'a', 'n'], [⟨['o', 't', 'o', 'k', 'o'], ['m', 'a', 'n'], none⟩]⟩, ⟨['n', 'i'], ['D', 'A', 'T'], [⟨['n', 'i'], ['D', 'A', 'T'], none⟩]⟩, ⟨['a', 't', '-', 't', 'a'], ['s', 'e', 'e', '-', 'P', 'S', 'T'], [⟨['a', 't'], ['s', 'e', 'e'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable), ("subsequent", .acceptable)]
     paperFeatures := [] }
 
@@ -263,7 +267,7 @@ def ex_2_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -277,7 +281,7 @@ def ex_2_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -291,7 +295,7 @@ def ex_2_61 : Datum :=
     glossedTokens := []
     context := "On the intended reading, the winning follows the speech time."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -305,7 +309,7 @@ def ex_2_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -319,7 +323,7 @@ def ex_2_97 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -333,7 +337,7 @@ def ex_2_103 : Datum :=
     glossedTokens := []
     context := "On the reading on which your having is simultaneous with your saying."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -347,7 +351,7 @@ def ex_2_104 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -361,7 +365,7 @@ def ex_2_105 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -375,7 +379,7 @@ def ex_2_125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after the speech time", .acceptable)]
     paperFeatures := [] }
 
@@ -389,7 +393,7 @@ def ex_2_139a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [] }
 
@@ -403,7 +407,7 @@ def ex_2_139b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -417,7 +421,7 @@ def ex_2_139c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -431,9 +435,10 @@ def ex_4_17d : Datum :=
     glossedTokens := []
     context := "At 10 A.M. John and Bill are peeping into a room where Sue is. John, near-sighted, says Mary is in the room. Bill denies it. One minute later Sue is still in the room and Bill reports this to Kent, adding: But that's not true. The one that is in the room is Sue."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex_4_24_Case_1 : Datum :=
   { id := "ogihara1989_4_24_Case_1"
@@ -445,7 +450,7 @@ def ex_4_24_Case_1 : Datum :=
     glossedTokens := []
     context := "On June 20th John says Mary is pregnant, and she is. On December 20th Bill verifies that she is still pregnant."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -459,7 +464,7 @@ def ex_4_24_Case_2 : Datum :=
     glossedTokens := []
     context := "On June 20th John says Mary is pregnant, and she is. On December 20th Bill learns that she has had a miscarriage."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -473,7 +478,7 @@ def ex_4_27d : Datum :=
     glossedTokens := []
     context := "As in (17), except that Sue leaves the room before Kent joins them."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -487,7 +492,7 @@ def ex_4_28 : Datum :=
     glossedTokens := []
     context := "As in (27), except that Mary comes in just before Sue leaves."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -501,7 +506,7 @@ def ex_4_34d : Datum :=
     glossedTokens := []
     context := "As in (17), except that Bill convinces John that it is Sue. One minute later Sue is still in the room."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -515,7 +520,7 @@ def ex_4_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -529,7 +534,7 @@ def ex_4_43c : Datum :=
     glossedTokens := []
     context := "As in (27) on the first day. On the following day Sue, who went home for the night, is inside the room again."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

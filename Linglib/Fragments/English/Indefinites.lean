@@ -36,20 +36,24 @@ def noOne : IndefinitePronoun := { form := "no one", ontology := .person }
 
 /-- The *some-* series. -/
 def someSeries : IndefinitePronoun.Series :=
-  ⟨"some-", {⟨{ form := "somebody" }, .person⟩, someone, ⟨{ form := "something" }, .thing⟩,
-    ⟨{ form := "somewhere" }, .place⟩, ⟨{ form := "sometime" }, .time⟩,
-    ⟨{ form := "somehow" }, .manner⟩, ⟨{ form := "some" }, .determiner⟩}⟩
+  ⟨"some-", {{ form := "somebody", ontology := .person }, someone,
+    { form := "something", ontology := .thing },
+    { form := "somewhere", ontology := .place }, { form := "sometime", ontology := .time },
+    { form := "somehow", ontology := .manner }, { form := "some", ontology := .determiner }}⟩
 
 /-- The *any-* series. -/
 def anySeries : IndefinitePronoun.Series :=
-  ⟨"any-", {⟨{ form := "anybody" }, .person⟩, anyone, ⟨{ form := "anything" }, .thing⟩,
-    ⟨{ form := "anywhere" }, .place⟩, ⟨{ form := "anytime" }, .time⟩,
-    ⟨{ form := "anyhow" }, .manner⟩, ⟨{ form := "any" }, .determiner⟩}⟩
+  ⟨"any-", {{ form := "anybody", ontology := .person }, anyone,
+    { form := "anything", ontology := .thing },
+    { form := "anywhere", ontology := .place }, { form := "anytime", ontology := .time },
+    { form := "anyhow", ontology := .manner }, { form := "any", ontology := .determiner }}⟩
 
 /-- The *no-* series, whose time and manner members are *never* and *no way*. -/
 def noSeries : IndefinitePronoun.Series :=
-  ⟨"no-", {⟨{ form := "nobody" }, .person⟩, noOne, ⟨{ form := "nothing" }, .thing⟩,
-    ⟨{ form := "nowhere" }, .place⟩, ⟨{ form := "never" }, .time⟩, ⟨{ form := "no way" }, .manner⟩,
-    ⟨{ form := "no" }, .determiner⟩}⟩
+  ⟨"no-", {{ form := "nobody", ontology := .person }, noOne,
+    { form := "nothing", ontology := .thing },
+    { form := "nowhere", ontology := .place }, { form := "never", ontology := .time },
+    { form := "no way", ontology := .manner },
+    { form := "no", ontology := .determiner }}⟩
 
 end English.Indefinites

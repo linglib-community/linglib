@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Basic
 public import Linglib.Core.Data.RoseTree.Licensed
+public import Linglib.Core.Data.RoseTree.Positions
 
 /-!
 # Constituency trees
@@ -324,11 +325,11 @@ end Inversion
 
 @[simp] theorem map_id (t : Tree C W) : t.map id = t := by
   rw [map, show Label.mapWord (C := C) (id : W → W) = id from funext Label.mapWord_id]
-  exact RoseTree.id_map t
+  exact RoseTree.map_id t
 
 @[simp] theorem map_map (g : W' → W'') (f : W → W') (t : Tree C W) :
     (t.map f).map g = t.map (g ∘ f) := by
-  simp only [map, ← RoseTree.comp_map]
+  simp only [map, RoseTree.map_map]
   congr 1
   funext l
   exact Label.mapWord_mapWord g f l
@@ -350,12 +351,8 @@ def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 @[simp] theorem terminals_terminal (c : C) (w : W) : (terminal c w).terminals = [(c, w)] := rfl
 
 @[simp] theorem terminals_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
-    (phrase c k cs).terminals = cs.flatMap terminals := by
-  rcases cs with _ | ⟨c', cs⟩
-  · rfl
-  · simp only [terminals, phrase, RoseTree.leafList_node_cons, List.filterMap_flatten,
-      List.map_map, List.flatMap_def]
-    rfl
+    (phrase c k cs).terminals = cs.flatMap terminals :=
+  (RoseTree.filterMap_leafList_node_of_eq_none rfl cs).trans (List.flatMap_def ..).symm
 
 @[simp] theorem terminals_trace (n : ℕ) (c : C) : (trace n c : Tree C W).terminals = [] := rfl
 
@@ -482,10 +479,9 @@ in `Syntax/Tree/Command.lean`, the command relations. The terminals, paired with
 are the word-bearing leaves, so the order of the yield is precedence
 (`RoseTree.pairwise_precedes_positionedLeaves`). -/
 
-open Core.Order
 
 /-- The terminals, left to right, each paired with its position. -/
-def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=
+def positionedTerminals (t : Tree C W) : List (GornAddress × (C × W)) :=
   t.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
 
 theorem map_snd_positionedTerminals (t : Tree C W) :
@@ -496,7 +492,7 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
   funext x
   simp [Option.map_map, Function.comp_def]
 
-theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
+theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : GornAddress × (C × W)}
     (h : x ∈ t.positionedTerminals) :
     t[x.1]? = some (terminal x.2.1 x.2.2) := by
   obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h

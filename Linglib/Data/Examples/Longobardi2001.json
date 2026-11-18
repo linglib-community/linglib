@@ -12,7 +12,7 @@
     "translation": "White-colored elephants raised a lot of curiosity in the past.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -52,7 +52,7 @@
     "translation": "White-colored elephants may raise a lot of curiosity.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -92,7 +92,7 @@
     "translation": "White-colored elephants always/often raised a lot of curiosity in the past.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -132,7 +132,7 @@
     "translation": "Watch dogs of large size are more efficient.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -172,7 +172,7 @@
     "translation": "States of large size are dangerous.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -212,7 +212,7 @@
     "translation": "States of large size are prosperous.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -252,7 +252,7 @@
     "translation": "Watchdogs of large size are more hairy/black.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -292,7 +292,7 @@
     "translation": "Birds from marshy areas are greedy for insects.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -332,7 +332,7 @@
     "translation": "Birds from marshy areas are dark/intelligent.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -372,7 +372,7 @@
     "translation": "In such cases, firemen of great experience run to the rescue of the victims of the accident.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -412,7 +412,7 @@
     "translation": "White-colored elephants have become extinct.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -452,7 +452,7 @@
     "translation": "White-colored elephants grow larger as one drives north.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -492,7 +492,7 @@
     "translation": "White-colored elephants are so-called because of the pigmentation of their skin.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -532,7 +532,7 @@
     "translation": "White-colored elephants will undergo the Final Judgment tomorrow at 5.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -572,7 +572,7 @@
     "translation": "White-colored elephants were mass-exterminated by cataclysm in 1874.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -612,7 +612,7 @@
     "translation": "Part.art/Two white-colored elephants raised a lot of curiosity in the past.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -652,7 +652,7 @@
     "translation": "Part.art./Two white-colored elephants may raise a lot of curiosity.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -692,7 +692,7 @@
     "translation": "Part.art./Two white-colored elephants always/often raised a lot of curiosity in the past.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -732,7 +732,7 @@
     "translation": "Part.art./Two watchdogs of large size are more efficient.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -773,7 +773,7 @@
     "translation": "A state of large size is dangerous.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -813,7 +813,7 @@
     "translation": "A state of large size is prosperous.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -853,7 +853,7 @@
     "translation": "A watchdog of large size is more hairy/black.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -893,7 +893,7 @@
     "translation": "Part.art./Two white-colored elephants have become extinct.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -933,7 +933,7 @@
     "translation": "Part.art./Two white-colored elephants grow larger as one drives north.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -973,7 +973,7 @@
     "translation": "I only excluded (episodic asp.) old ladies.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1013,7 +1013,7 @@
     "translation": "A fair law only excludes foreign citizens from the right to vote.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1053,7 +1053,7 @@
     "translation": "I love/adore/like oranges of large size.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1093,7 +1093,7 @@
     "translation": "Roentgen discovered X-rays.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1133,7 +1133,7 @@
     "translation": "I only excluded partit.art. old ladies.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1173,7 +1173,7 @@
     "translation": "A fair law only excludes partit.art. foreign citizens from right to vote.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1213,7 +1213,7 @@
     "translation": "I love/adore/like partit.art. oranges of large size.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1253,7 +1253,7 @@
     "translation": "Roentgen discovered partit.art. X-rays.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1293,7 +1293,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1333,7 +1333,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1373,7 +1373,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1414,7 +1414,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1454,7 +1454,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1494,7 +1494,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -1535,7 +1535,7 @@
     "translation": "The white-colored elephants raised a lot of curiosity in the past.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1571,7 +1571,7 @@
     "translation": "The white-colored elephants have become extinct.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1607,7 +1607,7 @@
     "translation": "The white-colored elephants grow larger as one drives north.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1643,7 +1643,7 @@
     "translation": "The white-colored elephants are so-called because of the pigmentation of their skin.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1679,7 +1679,7 @@
     "translation": "The white-colored elephants will undergo the Final Judgment tomorrow at 5.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1715,7 +1715,7 @@
     "translation": "The white-colored elephants were mass-exterminated by a cataclysm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1751,7 +1751,7 @@
     "translation": "The states of large size are prosperous.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1787,7 +1787,7 @@
     "translation": "The watchdogs of large size are more hairy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1823,7 +1823,7 @@
     "translation": "I only excluded the old ladies.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1859,7 +1859,7 @@
     "translation": "A fair law only excludes the foreign citizens from right to vote.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1895,7 +1895,7 @@
     "translation": "I love/adore/like the oranges of large size.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1931,7 +1931,7 @@
     "translation": "Roentgen discovered the X-rays.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -1967,7 +1967,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "species",
@@ -2007,7 +2007,7 @@
     "translation": "Cats of great size have a high opinion of themselves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "species",
@@ -2047,7 +2047,7 @@
     "translation": "A cat of great size has a high opinion of itself.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "species",
@@ -2087,7 +2087,7 @@
     "translation": "Part.art. cats of great size have a high opinion of themselves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "species",
@@ -2127,7 +2127,7 @@
     "translation": "The cats of great size have a high opinion of themselves.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "species",
@@ -2167,7 +2167,7 @@
     "translation": "White elephants have become extinct.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -2207,7 +2207,7 @@
     "translation": "White elephants were exterminated by a cataclysm in 1874.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Ex",
@@ -2248,7 +2248,7 @@
     "translation": "The white elephants have become extinct.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -2284,7 +2284,7 @@
     "translation": "The white elephants were exterminated by a cataclysm in 1874.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "Gen",
@@ -2321,7 +2321,7 @@
     "translation": "(The) Rome is the capital of (the) Italy.",
     "context": "The name without the article; with the article Ē the sentence is grammatical.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2348,7 +2348,7 @@
     "translation": "I-know (the) Rome very well.",
     "context": "The name without the article; with the article tē the sentence is grammatical.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

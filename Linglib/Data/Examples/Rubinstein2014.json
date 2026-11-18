@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],
@@ -56,7 +56,7 @@
     "translation": "",
     "context": "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "Negated evaluative; tests the excluded-middle (neg-raising) inference under higher negation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],
@@ -102,7 +102,7 @@
     "translation": "",
     "context": "Embedded under 'I don't think', testing whether the lower-negation reading is available for a strong necessity modal.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "unacceptable"}
     ],
@@ -125,7 +125,7 @@
     "translation": "",
     "context": "Embedded under 'I don't think', testing whether the lower-negation reading is available for a strong necessity modal.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "unacceptable"}
     ],
@@ -151,7 +151,7 @@
     "translation": "(I'm astonished that) young Chinese these days don't think it would be better if things were different.",
     "context": "Blog discussion of attitudes; tests neg-raising (cyclicity) of 'adif 'preferable' in Hebrew.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],
@@ -174,7 +174,7 @@
     "translation": "",
     "context": "Test 1 (x E q, but doesn't have to q) with lexical weak-necessity 'ought'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "ought"],
@@ -199,7 +199,7 @@
     "translation": "I ought to do the dishes but I am not obliged to.",
     "context": "Spanish derives weak necessity compositionally: strong modal deber + conditional morphology.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "deberia"],
@@ -225,7 +225,7 @@
     "translation": "He needs to do the dishes, but he doesn't have to.",
     "context": "Given the rules of the house. Test 1 (x ought to q, but doesn't have to) with carix 'need' substituted for ought.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "carix"],
@@ -249,7 +249,7 @@
     "translation": "Waiters have to wash their hands, but guests only need to.",
     "context": "Test 2 with the exclusive 'only' (raq): y has to q, x only need-to q.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "carix"],
@@ -273,7 +273,7 @@
     "translation": "It is better that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario: a convicted politician ought to resign though no law requires it. Hebrew renders weak-necessity 'ought' via morphological comparison (yoter tov 'more good').",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "tov"],
@@ -298,7 +298,7 @@
     "translation": "It is preferable that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario; lexical comparison with a predicate of preference, 'adif 'preferable'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "adif"],
@@ -323,7 +323,7 @@
     "translation": "It would be good that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario; implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "kday"],
@@ -345,7 +345,7 @@
     "translation": "",
     "context": "Three salient alternatives (get fired / keep working / resign). The morphological comparative pairwise-compares two of them.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "better"],
@@ -374,7 +374,7 @@
     "translation": "I don't think you should be here.",
     "context": "The speaker tries to prevent someone from entering a meeting they are not invited to.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowerNeg", "judgment": "acceptable"}
     ],

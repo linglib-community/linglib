@@ -137,7 +137,7 @@
     "translation": "You have sold me to the enemy.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["constraint", "Person Case Constraint"]
@@ -177,7 +177,7 @@
     "translation": "I had you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "1"],
@@ -199,7 +199,7 @@
     "translation": "I had him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "1"],
@@ -221,7 +221,7 @@
     "translation": "You had me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "2"],
@@ -243,7 +243,7 @@
     "translation": "You had us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "2"],
@@ -265,7 +265,7 @@
     "translation": "You had him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "2"],
@@ -287,7 +287,7 @@
     "translation": "We had you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "1"],
@@ -309,7 +309,7 @@
     "translation": "We had him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "1"],
@@ -331,7 +331,7 @@
     "translation": "He had you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "3"],
@@ -353,7 +353,7 @@
     "translation": "He had us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "3"],
@@ -375,7 +375,7 @@
     "translation": "He had him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "3"],
@@ -584,7 +584,7 @@
     "translation": "He will hand you over to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "3"],
@@ -627,7 +627,7 @@
     "translation": "You will see me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ea", "2"],

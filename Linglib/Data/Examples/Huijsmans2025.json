@@ -12,7 +12,7 @@
     "translation": "",
     "context": "P visits M in the hospital. P sees through the window of the hospital room that the doctors look worried. P says:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "She should be very sick.",
         "judgment": "unacceptable"
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "P poisons M's food and leaves. Later P says:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "She seems to be very sick.",
         "judgment": "unacceptable"
@@ -95,7 +95,7 @@
     "translation": "It will be cooked.",
     "context": "We're outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked. I say to you:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "č̓ɛkʷi č̓ɛχ.",
         "judgment": "unacceptable"
@@ -132,7 +132,7 @@
     "translation": "",
     "context": "Same as (40).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It must be cooked (by now).",
         "judgment": "acceptable"
@@ -182,7 +182,7 @@
     "translation": "He must have gotten home.",
     "context": "Daniel left from t̓ɩšosəm to go back home to Vancouver. We know he left pretty early, so in the evening when we see the time, I say:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "č̓ɛkʷi θo hɛwt.",
         "judgment": "unacceptable"
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "Same as (42).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He must have gotten home (by now).",
         "judgment": "acceptable"
@@ -265,7 +265,7 @@
     "translation": "He'll be dead.",
     "context": "The villain puts poison in the hero's food that he has prepped for dinner and then leaves. An hour or so after dinnertime, the villain tells his sidekick:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "č̓ɛkʷi qey.",
         "judgment": "unacceptable"
@@ -302,7 +302,7 @@
     "translation": "",
     "context": "Same as (44).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He must be dead (by now).",
         "judgment": "acceptable"
@@ -376,7 +376,7 @@
     "translation": "Felipe will have gotten really soaked. It's pouring, and he didn't have a rain jacket.",
     "context": "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time—the ground is really soaked. Then I notice that Felipe left his coat in my bag, which is with me on campus. I figure Felipe will be just home by now, but must have been soaked on his way. I say:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "χʷɛt č̓ɛkʷa ƛəm̓mot Felipe.",
         "judgment": "unacceptable"
@@ -417,7 +417,7 @@
     "translation": "",
     "context": "Same as (46).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Felipe must have gotten really soaked.",
         "judgment": "acceptable"
@@ -471,7 +471,7 @@
     "translation": "She will have been really cold!",
     "context": "It's winter. Last night, it was very cold, with strong winds and some snow. Today, I find out that my friend had been clam-digging last night.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "hɛhɛw č̓ɛkʷa č̓ɩmč̓ɛʔmamot.",
         "judgment": "unacceptable"
@@ -508,7 +508,7 @@
     "translation": "",
     "context": "Same as (48).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "She must have been really cold!",
         "judgment": "acceptable"
@@ -554,7 +554,7 @@
     "translation": "It must be cooked.",
     "context": "I'm cooking a fish, and I'm guessing by the smell that it is cooked. I remark to you:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "səmkʷi č̓ɛχ.",
         "judgment": "unacceptable"
@@ -591,7 +591,7 @@
     "translation": "",
     "context": "Same as (50).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It will be cooked (by now).",
         "judgment": "unacceptable"
@@ -641,7 +641,7 @@
     "translation": "He must have gotten home.",
     "context": "Someone was out earlier, and now I see his car in his driveway.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "səmkʷi θo hɛwt.",
         "judgment": "unacceptable"
@@ -678,7 +678,7 @@
     "translation": "",
     "context": "Same as (52).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He will have gotten home.",
         "judgment": "unacceptable"
@@ -720,7 +720,7 @@
     "translation": "It must be dead.",
     "context": "My brother was hiking, and at one point there was a cliff looking out over the water. Looking down, he could see a bear, but it was just laid out, not moving.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "qəqey=səm.",
         "judgment": "unacceptable"
@@ -757,7 +757,7 @@
     "translation": "",
     "context": "Same as (54).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It will be dead.",
         "judgment": "unacceptable"
@@ -811,7 +811,7 @@
     "translation": "He'll come back. Don't worry.",
     "context": "Tim is Bailey's cat that's gone missing. He hasn't been seen for a while now. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -856,7 +856,7 @@
     "translation": "He must be home.",
     "context": "It's after 6, so it's the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on. I think to myself.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "səmkʷi nɛʔ ʔamot.",
         "judgment": "unacceptable"
@@ -893,7 +893,7 @@
     "translation": "",
     "context": "Same as (57).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "He will be home.",
         "judgment": "unacceptable"
@@ -943,7 +943,7 @@
     "translation": "My cooking will be cooked.",
     "context": "This fish has been in the oven for 20 min, which should be sufficient given its size. In addition, the fish is starting to smell cooked.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "č̓ɛkʷi č̓ɛχ šɛtᶿ kʷukʷ.",
         "judgment": "acceptable"
@@ -980,7 +980,7 @@
     "translation": "",
     "context": "Same as (59).",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The fish must be cooked.",
         "judgment": "acceptable"
@@ -1062,7 +1062,7 @@
     "translation": "Freddie said he would come to the meeting, but he never arrived. What could have happened? It's really strange.",
     "context": "We had a meeting this morning, and Freddie had told me he would come, but never showed up. Later I tell you, 'Freddie was going to come but he never came.'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1127,7 +1127,7 @@
     "translation": "They were always searching for something to do so he would be caught.",
     "context": "From a traditional story about Mink and Wolf.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1172,7 +1172,7 @@
     "translation": "Her baby will be asleep.",
     "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1209,7 +1209,7 @@
     "translation": "Her baby will be asleep.",
     "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1237,7 +1237,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1269,7 +1269,7 @@
     "translation": "",
     "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1301,7 +1301,7 @@
     "translation": "",
     "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1350,7 +1350,7 @@
     "translation": "Freddie must be home. His lights are on.",
     "context": "We go past Freddie's home, and I say that he must be home because his lights are on.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1403,7 +1403,7 @@
     "translation": "Betty must have been cleaning roots. The waste bits are scattered about.",
     "context": "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass. I say to Gloria, who's with me:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1452,7 +1452,7 @@
     "translation": "It must be going to rain. It's clouding over.",
     "context": "You feel a change in the weather and see storm clouds gathering.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "paperFeatures": [
       [
         "section",
@@ -1484,7 +1484,7 @@
     "translation": "",
     "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Her baby must be asleep.",
         "judgment": "unacceptable"

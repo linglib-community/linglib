@@ -87,7 +87,7 @@ instance : DecidableLT Obstruent := decidableLTOfDecidableLE
 
 /-- The features of a class. -/
 def column (o : Obstruent) : Segment :=
-  .ofSpecs [(.sonorant, false), (.continuant, o.continuant), (.voice, o.voice)]
+  (([−sonorant] : Segment).setFeature .continuant o.continuant).setFeature .voice o.voice
 
 end Obstruent
 

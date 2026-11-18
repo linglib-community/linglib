@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Module
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 
 /-!
 # Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
@@ -34,7 +34,7 @@ paper's 1.
 
 ## Implementation notes
 
-The agents are kernels of `Pragmatics/RSA`, the speakers power-weight kernels and the
+The agents are kernels of `Pragmatics/Probabilistic`, the speakers power-weight kernels and the
 listeners Bayesian inverses against uniform priors; the expertise speaker is a weight kernel
 built from the fixed-lexicon listener and the lexicon posterior. The paper's speakers subtract
 the cost outside the rationality, so it enters the substrate speaker divided by α. Listener
@@ -181,7 +181,7 @@ def cost (m : Msg) : ℝ := if m.IsDisjunction then c else 0
 
 /-- The literal listener (10) conditions a flat prior on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World :=
-  listener (uniformOn Set.univ) (truthful fun m ↦ (sem l m : Set World))
+  literalListener (uniformOn Set.univ) (fun m ↦ (sem l m : Set World))
 
 instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
@@ -292,7 +292,7 @@ noncomputable def l0r (l : Lex) (m : Msg) (w : World) : ℝ :=
 
 theorem L0_rpow_toReal {α : ℝ} (hα : 0 < α) (l : Lex) (m : Msg) (w : World) :
     (L0 l m {w} ^ α).toReal = l0r l m w ^ α := by
-  rw [L0, listener_uniformOn_truthful_apply_singleton, l0r]
+  rw [L0, literalListener_uniformOn_apply_singleton, l0r]
   split_ifs
   · rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   · rw [ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, Real.zero_rpow hα.ne']
@@ -337,12 +337,7 @@ theorem S2_real_lt_iff (p : World × Lex) (m₁ m₂ : Msg) :
     (S2 α β c p).real {m₁} < (S2 α β c p).real {m₂} ↔
       (l1 α c p.2 m₁).real {p.1} ^ α * (L1 α c m₁).snd.real {p.2} ^ β * costFactor c m₁
         < (l1 α c p.2 m₂).real {p.1} ^ α * (L1 α c m₂).snd.real {p.2} ^ β * costFactor c m₂ := by
-  have hnull : ∀ p : World × Lex, p.1 ∈ sem p.2 .null := by decide
-  have h0 : ∑ m, l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
-      ENNReal.ofReal (Real.exp (-cost c m)) ≠ 0 := fun h =>
-    S2_weight_ne_zero hα (hnull p) (Finset.sum_eq_zero_iff.1 h .null (Finset.mem_univ _))
-  rw [S2, Kernel.ofWeights_real_singleton_lt_iff _ h0
-    (ENNReal.sum_ne_top.2 fun m _ => S2_weight_ne_top hα hβ p m),
+  rw [S2, Kernel.ofWeights_real_singleton_lt_iff _ fun m => S2_weight_ne_top hα hβ p m,
     ← ENNReal.toReal_lt_toReal (S2_weight_ne_top hα hβ p m₁) (S2_weight_ne_top hα hβ p m₂)]
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
     ENNReal.toReal_ofReal (Real.exp_pos _).le, costFactor]

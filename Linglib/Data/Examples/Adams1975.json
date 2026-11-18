@@ -13,7 +13,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "contraposition"]
@@ -35,7 +35,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "disjunction"]
@@ -58,7 +58,7 @@
     "translation": "",
     "context": "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "hypotheticalSyllogism"]
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "antecedentRestriction"]

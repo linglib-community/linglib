@@ -49,7 +49,7 @@
     "translation": "To go to the zoo, Jane could take the train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -126,7 +126,7 @@
     "translation": "To go to the zoo, Jane was able to take the train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -210,7 +210,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -250,7 +250,7 @@
     "translation": "Jane could-PFV lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -290,7 +290,7 @@
     "translation": "Jane could-PFV lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -330,7 +330,7 @@
     "translation": "Jane could-IMPF lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -370,7 +370,7 @@
     "translation": "Jane could-IMPF lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -410,7 +410,7 @@
     "translation": "Darcy could-PFV marry a homeless person.",
     "context": "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -450,7 +450,7 @@
     "translation": "Darcy could-PFV marry a billionaire.",
     "context": "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -490,7 +490,7 @@
     "translation": "Jane could-PFV take the train to go to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -530,7 +530,7 @@
     "translation": "Jane had to-PFV take the train to go to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -570,7 +570,7 @@
     "translation": "Jane could-PFV take the plane to go to London, but the plane got rerouted to Manchester, and she never reached London.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -643,7 +643,7 @@
     "translation": "Jane took the train to go to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -675,7 +675,7 @@
     "translation": "Jane could-PFV take the train to go to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -715,7 +715,7 @@
     "translation": "Jane had to-PFV take the train to go to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -755,7 +755,7 @@
     "translation": "Elisabeth could-IMPF talk to monkeys.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -795,7 +795,7 @@
     "translation": "This car could-IMPF go 250 kph.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -835,7 +835,7 @@
     "translation": "...and she could-IMPF talk to them. Unfortunately, when we arrived, all the monkeys had already been transferred to the new zoo.",
     "context": "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -875,7 +875,7 @@
     "translation": "...and she could-PFV talk to them. #Unfortunately...",
     "context": "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -915,7 +915,7 @@
     "translation": "Jane could-IMPF take the train to go to London, ?(but she...)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -976,7 +976,7 @@
     "translation": "Jane must have taken / had to take the train.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic: given my evidence now, Jane must have taken the train",
@@ -1013,7 +1013,7 @@
     "translation": "At the time of the crime, Jane could-IMPF be reading a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1049,7 +1049,7 @@
     "translation": "At the time of the crime, it must be the case that Jane was reading a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1085,7 +1085,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1117,7 +1117,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1166,7 +1166,7 @@
     "translation": "It is possible that Jane was sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1206,7 +1206,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1238,7 +1238,7 @@
     "translation": "Jane might have thought that Darcy loved Lizzie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "speechBoundEpistemic: possible given the speaker's evidence",
@@ -1279,7 +1279,7 @@
     "translation": "Jane was able to notice that Darcy was nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

@@ -1,227 +1,111 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Core.Analysis.MeanInequalities
+public import Linglib.Core.Analysis.Convex.StdSimplex
+public import Linglib.Core.Basic.ENNReal.BigOperators
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Basic.ENNReal.Inv
 
 /-!
-# Probabilistic context-free grammars
+# Weighted and probabilistic context-free grammars
 
-A probabilistic context-free grammar (PCFG) over `G` weights the rules of `G` so that the rules
-expanding each nonterminal have total weight one. A derivation tree has the product of the
-weights of the rules it applies, and a corpus, a multiset of trees, the product over its trees.
-
-## Main definitions
-
-* `PCFG G`: rule weights, zero off the grammar and normalised at each nonterminal.
-* `PCFG.derivProb`, `PCFG.corpusProb`: the probability of a derivation tree and of a corpus.
-* `PCFG.normalize`: rule weights normalised at each nonterminal.
-* `PCFG.uniform`, `PCFG.ofCounts`, `PCFG.relFreq`: the uniform PCFG, the relative frequencies of
-  rule counts, and the relative-frequency estimate from a corpus.
-
-## Main results
-
-* `PCFG.corpusProb_eq_prod_pow_ruleCounts`: over licensed trees, the probability of a corpus is
-  the product of the rule weights raised to their counts.
-* `PCFG.corpusProb_le_corpusProb_relFreq`: the relative-frequency estimate is the
-  maximum-likelihood PCFG of a corpus of licensed trees ([chi-1999] §3).
+Rule weights give a derivation tree the product of the weights of the rules it applies, and a
+corpus, a multiset of trees, the product over its trees; over licensed trees that is the product
+of the rule weights [raised to their counts](##RoseTree.prod_map_ruleWeight).
+A probabilistic context-free grammar (PCFG) over `G` is a weighting in which the rules at each
+nonterminal have total weight one ([abney-mcallester-pereira-1999], [smith-johnson-2007]), so
+[a family of probability vectors](##PCFG.simplexEquiv), one over the rules at each nonterminal.
+Normalizing rule counts at each nonterminal gives the relative-frequency estimate,
+[the maximum-likelihood PCFG](##PCFG.prod_map_ruleWeight_le_ofCounts) of a corpus of licensed
+trees ([chi-1999]) and [the only one](##PCFG.prod_map_ruleWeight_eq_ofCounts_iff) at the
+nonterminals the corpus applies a rule to.
 
 ## Implementation notes
 
-Weights are `ℝ≥0∞`, the scalar of `MeasureTheory.Measure`. The measure on trees whose singleton
-masses are `derivProb`, and tightness ([booth-thompson-1973], [chi-1999]), are in
+Weights are `ℝ≥0∞`, the scalar of `MeasureTheory.Measure`. A PCFG's weights sum to one at the
+nonterminals the grammar has a rule for, where the sources assume every nonterminal has one, and
+may be zero on a rule. `PCFG.normalize` is total: at a nonterminal where the weights total `0` or
+`⊤` it gives the rules equal weights, where [chi-1999] defines relative frequencies only for a
+sample in which every nonterminal occurs. The measure on trees whose singleton masses are the tree
+weights, and its total mass ([booth-thompson-1973]), are in
 `Linglib.Core.Computability.ContextFreeGrammar.Measure`.
 
 ## References
 
+* [abney-mcallester-pereira-1999]
 * [booth-thompson-1973]
 * [chi-1999]
+* [smith-johnson-2007]
 -/
 
 @[expose] public section
 
+open Convexity
 open scoped ENNReal
 
-/-- A probabilistic context-free grammar over `G` weights the rules so that the weights vanish off
-the grammar and sum to one over the rules with each left-hand side the grammar expands. -/
-@[ext]
-structure PCFG {T : Type*} (G : ContextFreeGrammar T) [DecidableEq G.NT] where
-  /-- The weight of a rule. -/
-  weight : ContextFreeRule T G.NT → ℝ≥0∞
-  /-- Rules outside the grammar have weight `0`. -/
-  weight_eq_zero_of_not_mem : ∀ r ∉ G.rules, weight r = 0
-  /-- Weights sum to one over the rules with each left-hand side the grammar expands. -/
-  sum_weight : ∀ a ∈ G.rules.image (·.input), ∑ r ∈ G.rules.filter (·.input = a), weight r = 1
+/-! ### Weighted grammars
 
-namespace PCFG
+Rule weights are any function from rules to `ℝ≥0∞`. The weight of a tree is the product of the
+weights of the rules it applies. -/
 
-variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
+section Weights
 
-attribute [simp] weight_eq_zero_of_not_mem
+variable {T N : Type*} (w : ContextFreeRule T N → ℝ≥0∞)
 
-/-- The weight of a node, read from its symbol and the symbols of its children, is the rule
-weight at a nonterminal, `1` at a childless terminal and `0` at a terminal with children. -/
-noncomputable def symbolWeight : Symbol T G.NT → List (Symbol T G.NT) → ℝ≥0∞
-  | .nonterminal A, syms => W.weight ⟨A, syms⟩
+/-- The weight of a node under rule weights `w`, read from its symbol and the symbols of its
+children: the weight of the rule at a nonterminal, `1` at a childless terminal and `0` at a
+terminal with children. -/
+noncomputable def Symbol.ruleWeight : Symbol T N → List (Symbol T N) → ℝ≥0∞
+  | .nonterminal A, syms => w ⟨A, syms⟩
   | .terminal _, [] => 1
   | .terminal _, _ :: _ => 0
 
-@[simp] theorem symbolWeight_nonterminal (A : G.NT) (syms : List (Symbol T G.NT)) :
-    W.symbolWeight (.nonterminal A) syms = W.weight ⟨A, syms⟩ := rfl
+@[simp] theorem Symbol.ruleWeight_nonterminal (A : N) (syms : List (Symbol T N)) :
+    (Symbol.nonterminal A).ruleWeight w syms = w ⟨A, syms⟩ := rfl
 
-@[simp] theorem symbolWeight_terminal_nil (a : T) : W.symbolWeight (.terminal a) [] = 1 := rfl
+@[simp] theorem Symbol.ruleWeight_terminal_nil (a : T) :
+    (Symbol.terminal a : Symbol T N).ruleWeight w [] = 1 := rfl
 
-@[simp] theorem symbolWeight_terminal_cons (a : T) (s : Symbol T G.NT)
-    (syms : List (Symbol T G.NT)) : W.symbolWeight (.terminal a) (s :: syms) = 0 := rfl
+@[simp] theorem Symbol.ruleWeight_terminal_cons (a : T) (s : Symbol T N)
+    (syms : List (Symbol T N)) : (Symbol.terminal a).ruleWeight w (s :: syms) = 0 := rfl
 
-/-- The probability of a derivation tree is the product over its nodes of the weight of the rule
-applied there. -/
-noncomputable def derivProb (t : RoseTree (Symbol T G.NT)) : ℝ≥0∞ :=
-  (t.localTrees.map fun p ↦ W.symbolWeight p.1 p.2).prod
+namespace RoseTree
 
-theorem derivProb_node (s : Symbol T G.NT) (cs : List (RoseTree (Symbol T G.NT))) :
-    W.derivProb (RoseTree.node s cs) =
-      W.symbolWeight s (cs.map RoseTree.value) * (cs.map W.derivProb).prod := by
-  simp only [derivProb, RoseTree.localTrees_node, List.map_cons, List.prod_cons, List.map_flatten,
+/-- The weight of a tree under rule weights `w` is the product over its nodes of the weight of
+the rule applied there. -/
+noncomputable def ruleWeight (t : RoseTree (Symbol T N)) : ℝ≥0∞ :=
+  (t.localTrees.map fun p ↦ p.1.ruleWeight w p.2).prod
+
+theorem ruleWeight_node (s : Symbol T N) (cs : List (RoseTree (Symbol T N))) :
+    (node s cs).ruleWeight w = s.ruleWeight w (cs.map value) * (cs.map (ruleWeight w)).prod := by
+  simp only [ruleWeight, localTrees_node, List.map_cons, List.prod_cons, List.map_flatten,
     List.prod_flatten, List.map_map, Function.comp_def]
   rfl
 
-/-- The probability of a corpus is the product of the probabilities of its derivation trees. -/
-noncomputable def corpusProb (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ≥0∞ :=
-  (D.map W.derivProb).prod
+end RoseTree
 
-@[simp]
-theorem corpusProb_zero : W.corpusProb 0 = 1 := by
-  simp [corpusProb]
+end Weights
 
-theorem corpusProb_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
-    W.corpusProb (D₁ + D₂) = W.corpusProb D₁ * W.corpusProb D₂ := by
-  simp [corpusProb]
+namespace RoseTree
 
-theorem sum_weight_le_one (A : G.NT) : ∑ r ∈ G.rules.filter (·.input = A), W.weight r ≤ 1 := by
-  by_cases hA : A ∈ G.rules.image (·.input)
-  · exact (W.sum_weight A hA).le
-  · rw [Finset.sum_eq_zero fun r hr ↦ (hA (Finset.mem_image.mpr
-      ⟨r, (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2⟩)).elim]
-    exact zero_le_one
+variable {T : Type*} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+  (w : ContextFreeRule T G.NT → ℝ≥0∞)
 
-section
-
-variable [DecidableEq T]
-
-/-! ### Normalized weights -/
-
-/-- The rule weights `w` normalized at each nonterminal give a rule its weight over the total
-weight of the rules sharing its left-hand side, and `0` off the grammar. The totals must be
-nonzero and finite. -/
-noncomputable def normalize (w : ContextFreeRule T G.NT → ℝ≥0∞)
-    (h0 : ∀ a ∈ G.rules.image (·.input), ∑ r ∈ G.rules.filter (·.input = a), w r ≠ 0)
-    (htop : ∀ a ∈ G.rules.image (·.input), ∑ r ∈ G.rules.filter (·.input = a), w r ≠ ⊤) :
-    PCFG G where
-  weight r := if r ∈ G.rules then w r / ∑ r' ∈ G.rules.filter (·.input = r.input), w r' else 0
-  weight_eq_zero_of_not_mem _ hr := ite_eq_right hr
-  sum_weight a ha :=
-    calc _ = ∑ r ∈ G.rules.filter (·.input = a),
-            w r * (∑ r' ∈ G.rules.filter (·.input = a), w r')⁻¹ :=
-          Finset.sum_congr rfl fun r hr ↦ by
-            obtain ⟨hmem, rfl⟩ := Finset.mem_filter.mp hr
-            exact (ite_eq_left hmem).trans (div_eq_mul_inv _ _)
-      _ = 1 := by rw [← Finset.sum_mul]; exact ENNReal.mul_inv_cancel (h0 a ha) (htop a ha)
-
-section Normalize
-
-variable {w : ContextFreeRule T G.NT → ℝ≥0∞}
-  {h0 : ∀ a ∈ G.rules.image (·.input), ∑ r ∈ G.rules.filter (·.input = a), w r ≠ 0}
-  {htop : ∀ a ∈ G.rules.image (·.input), ∑ r ∈ G.rules.filter (·.input = a), w r ≠ ⊤}
-
-theorem normalize_weight {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules) :
-    (normalize w h0 htop).weight r = w r / ∑ r' ∈ G.rules.filter (·.input = r.input), w r' :=
-  ite_eq_left hr
-
-theorem normalize_weight_lt_normalize_weight_iff {a : G.NT} {r r' : G.RulesWithLHS a} :
-    (normalize w h0 htop).weight r < (normalize w h0 htop).weight r' ↔ w r < w r' := by
-  obtain ⟨r, hr⟩ := r
-  obtain ⟨r', hr'⟩ := r'
-  obtain ⟨hmem, rfl⟩ := Finset.mem_filter.mp hr
-  obtain ⟨hmem', hin⟩ := Finset.mem_filter.mp hr'
-  have ha : r.input ∈ G.rules.image (·.input) := Finset.mem_image_of_mem _ hmem
-  rw [normalize_weight hmem, normalize_weight hmem', hin]
-  exact ENNReal.div_lt_div_iff_left (h0 _ ha) (htop _ ha)
-
-end Normalize
-
-/-- The uniform PCFG puts the uniform distribution over its rules at every nonterminal. -/
-noncomputable def uniform : PCFG G :=
-  normalize 1 (fun _ ha ↦ by simpa using ContextFreeGrammar.card_filter_input_ne_zero ha)
-    fun _ _ ↦ by simp
-
-noncomputable instance : Inhabited (PCFG G) := ⟨uniform⟩
-
-/-! ### Relative frequencies -/
-
-/-- The relative frequencies of rule counts `x` give each rule its count over the counts of the
-rules sharing its left-hand side, and are uniform at a nonterminal whose rules all have count
-`0`. -/
-noncomputable def ofCounts (x : ContextFreeRule T G.NT → ℕ) : PCFG G :=
-  normalize
-    (fun r ↦ ((if ∑ r' ∈ G.rules.filter (·.input = r.input), x r' = 0 then 1 else x r : ℕ) : ℝ≥0∞))
-    (fun a ha ↦ by
-      rw [← Nat.cast_sum, Nat.cast_ne_zero,
-        Finset.sum_congr rfl fun r hr ↦ by rw [(Finset.mem_filter.mp hr).2]]
-      by_cases h : ∑ r' ∈ G.rules.filter (·.input = a), x r' = 0
-      · simpa [h] using ContextFreeGrammar.card_filter_input_ne_zero ha
-      · simp [h])
-    fun _ _ ↦ by rw [← Nat.cast_sum]; exact ENNReal.natCast_ne_top _
-
-theorem ofCounts_weight {x : ContextFreeRule T G.NT → ℕ} {r : ContextFreeRule T G.NT}
-    (hr : r ∈ G.rules) (h : ∑ r' ∈ G.rules.filter (·.input = r.input), x r' ≠ 0) :
-    (ofCounts x).weight r = x r / ∑ r' ∈ G.rules.filter (·.input = r.input), (x r' : ℝ≥0∞) := by
-  rw [ofCounts, normalize_weight hr]
-  congr 1
-  · simp [h]
-  · exact Finset.sum_congr rfl fun r' hr' ↦ by simp [(Finset.mem_filter.mp hr').2, h]
-
-theorem ofCounts_weight_lt_ofCounts_weight_iff {x : ContextFreeRule T G.NT → ℕ} {a : G.NT}
-    {r r' : G.RulesWithLHS a} : (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
-  rw [ofCounts, normalize_weight_lt_normalize_weight_iff, Nat.cast_lt]
-  obtain ⟨r, hr⟩ := r
-  obtain ⟨r', hr'⟩ := r'
-  have hle {s} (hs : s ∈ G.rules.filter (·.input = a)) :
-      x s ≤ ∑ r'' ∈ G.rules.filter (·.input = a), x r'' :=
-    Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hs
-  simp only [(Finset.mem_filter.mp hr).2, (Finset.mem_filter.mp hr').2]
-  split_ifs with h0
-  · simp [Nat.le_zero.mp (h0 ▸ hle hr), Nat.le_zero.mp (h0 ▸ hle hr')]
-  · rfl
-
-/-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
-theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
-    ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
-  rw [← Finset.prod_fiberwise_of_maps_to (s := G.rules) (t := G.rules.image (·.input))
-      (g := (·.input)) fun r hr ↦ Finset.mem_image_of_mem _ hr,
-    ← Finset.prod_fiberwise_of_maps_to (s := G.rules) (t := G.rules.image (·.input))
-      (g := (·.input)) fun r hr ↦ Finset.mem_image_of_mem _ hr]
-  refine Finset.prod_le_prod fun a _ ↦
-    (ENNReal.prod_pow_le_prod_div_sum_pow (W.sum_weight_le_one a) x).trans_eq ?_
-  refine Finset.prod_congr rfl fun r hr ↦ ?_
-  obtain ⟨hmem, rfl⟩ := Finset.mem_filter.mp hr
-  rcases Nat.eq_zero_or_pos (x r) with h | h
-  · simp [h]
-  rw [ofCounts_weight hmem
-    (h.trans_le (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr)).ne']
-
-/-! ### Corpora -/
-
-theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
+theorem ruleWeight_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
     (ht : t.Licensed G.Licenses) :
-    W.derivProb t = ∏ r ∈ G.rules, W.weight r ^ RoseTree.ruleCount r t := by
-  induction ht using RoseTree.Licensed.grammar_induction with
-  | terminal a => simp [RoseTree.leaf, derivProb_node, RoseTree.ruleCount_node_terminal]
+    t.ruleWeight w = ∏ r ∈ G.rules, w r ^ ruleCount r t := by
+  induction ht using Licensed.grammar_induction with
+  | terminal a => simp [leaf, ruleWeight_node, ruleCount_node_terminal]
   | nonterminal A cs hrule hcs ih =>
-    simp only [derivProb_node, RoseTree.ruleCount_node_nonterminal, pow_add,
+    simp only [ruleWeight_node, ruleCount_node_nonterminal, pow_add,
       Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero, Finset.prod_ite_eq', ite_eq_left hrule,
-      symbolWeight_nonterminal]
+      Symbol.ruleWeight_nonterminal]
     congr 1
     clear hrule hcs
     induction cs with
@@ -230,31 +114,277 @@ theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
       simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
       rw [ih c (List.mem_cons_self ..), ihl fun c' hc' ↦ ih c' (List.mem_cons_of_mem _ hc')]
 
-/-- Over licensed derivation trees, the probability of a corpus is the product over the grammar's
-rules of the rule weight raised to the rule's count. -/
-theorem corpusProb_eq_prod_pow_ruleCounts (D : Multiset (RoseTree (Symbol T G.NT)))
+/-- Over licensed derivation trees, the product of the weights of the trees of a corpus is the
+product over the grammar's rules of the rule weight raised to the rule's count. -/
+theorem prod_map_ruleWeight (D : Multiset (RoseTree (Symbol T G.NT)))
     (h : ∀ t ∈ D, t.Licensed G.Licenses) :
-    W.corpusProb D = ∏ r ∈ G.rules, W.weight r ^ RoseTree.ruleCounts D r := by
+    (D.map (ruleWeight w)).prod = ∏ r ∈ G.rules, w r ^ ruleCounts D r := by
   induction D using Multiset.induction_on with
   | empty => simp
   | cons t D ih =>
-    rw [← Multiset.singleton_add, corpusProb_add,
+    rw [← Multiset.singleton_add, Multiset.map_add, Multiset.prod_add,
       ih fun t' ht' ↦ h t' (Multiset.mem_cons_of_mem ht')]
-    simp only [corpusProb, Multiset.map_singleton, Multiset.prod_singleton, map_add,
-      Pi.add_apply, pow_add, Finset.prod_mul_distrib, RoseTree.ruleCounts_singleton,
-      W.derivProb_eq_prod_pow_ruleCount (h t (Multiset.mem_cons_self t D))]
+    simp only [Multiset.map_singleton, Multiset.prod_singleton, map_add,
+      Pi.add_apply, pow_add, Finset.prod_mul_distrib, ruleCounts_singleton,
+      ruleWeight_eq_prod_pow_ruleCount w (h t (Multiset.mem_cons_self t D))]
 
-/-- The relative-frequency estimate from a corpus of derivation trees, the relative frequencies of
-its rule counts. -/
-noncomputable def relFreq (D : Multiset (RoseTree (Symbol T G.NT))) : PCFG G :=
-  ofCounts (RoseTree.ruleCounts D)
+end RoseTree
 
-/-- **The relative-frequency estimate is the maximum-likelihood PCFG** of a corpus of derivation
-trees the grammar licenses. -/
-theorem corpusProb_le_corpusProb_relFreq {D : Multiset (RoseTree (Symbol T G.NT))}
-    (hD : ∀ t ∈ D, t.Licensed G.Licenses) : W.corpusProb D ≤ (relFreq D).corpusProb D := by
-  rw [W.corpusProb_eq_prod_pow_ruleCounts D hD, (relFreq D).corpusProb_eq_prod_pow_ruleCounts D hD]
+/-! ### Probabilistic grammars -/
+
+/-- A probabilistic context-free grammar over `G` weights the rules so that the weights vanish off
+the grammar and sum to one over the rules at each nonterminal the grammar has a rule for. -/
+@[ext]
+structure PCFG {T : Type*} (G : ContextFreeGrammar T) where
+  /-- The weight of a rule. -/
+  weight : ContextFreeRule T G.NT → ℝ≥0∞
+  /-- Rules outside the grammar have weight `0`. -/
+  weight_eq_zero_of_notMem : ∀ r ∉ G.rules, weight r = 0
+  /-- Weights sum to one over the rules sharing the input of a rule of the grammar. -/
+  finsum_weight : ∀ r ∈ G.rules,
+    ∑ᶠ r' ∈ {r' | r' ∈ G.rules ∧ r'.input = r.input}, weight r' = 1
+
+namespace PCFG
+
+variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
+
+attribute [simp] weight_eq_zero_of_notMem
+
+/-- A PCFG from weights that vanish off the grammar and sum to one over the rules at each
+nonterminal the grammar has a rule for. -/
+def mk' (weight : ContextFreeRule T G.NT → ℝ≥0∞) (h0 : ∀ r ∉ G.rules, weight r = 0)
+    (hsum : ∀ a ∈ G.inputs, ∑ r ∈ G.rulesWithInput a, weight r = 1) : PCFG G where
+  weight := weight
+  weight_eq_zero_of_notMem := h0
+  finsum_weight r hr := by
+    rw [← ContextFreeGrammar.coe_rulesWithInput, finsum_mem_coe_finset]
+    exact hsum _ (G.input_mem_inputs hr)
+
+@[simp]
+theorem mk'_weight (weight : ContextFreeRule T G.NT → ℝ≥0∞) (h0 : ∀ r ∉ G.rules, weight r = 0)
+    (hsum : ∀ a ∈ G.inputs, ∑ r ∈ G.rulesWithInput a, weight r = 1) :
+    (mk' weight h0 hsum).weight = weight := rfl
+
+theorem sum_weight (a : G.NT) (ha : a ∈ G.inputs) : ∑ r ∈ G.rulesWithInput a, W.weight r = 1 := by
+  obtain ⟨r, hr, rfl⟩ := ContextFreeGrammar.mem_inputs.mp ha
+  rw [← finsum_mem_coe_finset, ContextFreeGrammar.coe_rulesWithInput]
+  exact W.finsum_weight r hr
+
+theorem sum_weight_le_one (A : G.NT) : ∑ r ∈ G.rulesWithInput A, W.weight r ≤ 1 := by
+  by_cases hA : A ∈ G.inputs
+  · exact (W.sum_weight A hA).le
+  · simp [ContextFreeGrammar.rulesWithInput_eq_empty_iff.mpr hA]
+
+theorem weight_le_one (r : ContextFreeRule T G.NT) : W.weight r ≤ 1 := by
+  by_cases hr : r ∈ G.rules
+  · exact (Finset.single_le_sum (f := W.weight) (fun _ _ ↦ zero_le)
+      (G.mem_rulesWithInput_input hr)).trans (W.sum_weight_le_one r.input)
+  · simp [hr]
+
+theorem weight_ne_top (r : ContextFreeRule T G.NT) : W.weight r ≠ ⊤ :=
+  ne_top_of_le_ne_top ENNReal.one_ne_top (W.weight_le_one r)
+
+/-! ### Probability vectors -/
+
+/-- The rule distribution of a PCFG at a nonterminal the grammar has a rule for, the probability
+vector of the weights of the rules there. -/
+noncomputable def toSimplex (a : G.inputs) : StdSimplex ℝ≥0∞ (G.rulesWithInput a) :=
+  .ofFintype (fun r ↦ W.weight r) (fun _ ↦ zero_le) <| by
+    rw [Finset.sum_coe_sort (G.rulesWithInput a) W.weight, W.sum_weight a a.2]
+
+@[simp]
+theorem toSimplex_weights (a : G.inputs) (r : G.rulesWithInput a) :
+    (W.toSimplex a).weights r = W.weight r :=
+  rfl
+
+/-- A product of powers of the rule weights is the product over the nonterminals of the products
+at their probability vectors. -/
+theorem prod_weight_pow (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r =
+      ∏ a : G.inputs, ∏ r : G.rulesWithInput a, (W.toSimplex a).weights r ^ x r := by
+  rw [← G.prod_inputs_prod_rulesWithInput,
+    ← Finset.prod_coe_sort G.inputs fun a ↦ ∏ r ∈ G.rulesWithInput a, W.weight r ^ x r]
+  exact Finset.prod_congr rfl fun a _ ↦
+    (Finset.prod_coe_sort (G.rulesWithInput a) fun r ↦ W.weight r ^ x r).symm
+
+section
+
+variable [DecidableEq T]
+
+/-- The PCFG whose rule distribution at each nonterminal is a given probability vector over the
+rules there. -/
+noncomputable def ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) : PCFG G :=
+  mk' (fun r ↦
+      if h : r ∈ G.rules then
+        (θ ⟨r.input, G.input_mem_inputs h⟩).weights ⟨r, G.mem_rulesWithInput_input h⟩
+      else 0)
+    (fun _ hr ↦ dite_eq_right hr) fun a ha ↦ by
+    rw [← Finset.sum_attach, ← Finset.univ_eq_attach,
+      Finset.sum_congr rfl (g := fun r ↦ (θ ⟨a, ha⟩).weights r) fun r _ ↦ by
+        obtain ⟨r, hr⟩ := r
+        obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+        exact dite_eq_left hmem,
+      StdSimplex.total_of_fintype]
+
+theorem ofSimplex_weight (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a))
+    (a : G.inputs) (r : G.rulesWithInput a) : (ofSimplex θ).weight r = (θ a).weights r := by
+  obtain ⟨r, hr⟩ := r
+  obtain ⟨a, ha⟩ := a
+  obtain ⟨hmem, rfl⟩ := ContextFreeGrammar.mem_rulesWithInput.mp hr
+  exact dite_eq_left hmem
+
+theorem ofSimplex_toSimplex : ofSimplex W.toSimplex = W := by
+  refine PCFG.ext (funext fun r ↦ ?_)
+  by_cases hr : r ∈ G.rules
+  · exact ofSimplex_weight _ ⟨_, G.input_mem_inputs hr⟩ ⟨r, G.mem_rulesWithInput_input hr⟩
+  · simp [ofSimplex, hr]
+
+theorem toSimplex_ofSimplex (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) :
+    (ofSimplex θ).toSimplex = θ :=
+  funext fun a ↦ StdSimplex.weights_inj.mp (Finsupp.ext fun r ↦ ofSimplex_weight θ a r)
+
+/-- PCFGs over `G` are the families of probability vectors over the rules at each nonterminal the
+grammar has a rule for. -/
+noncomputable def simplexEquiv : PCFG G ≃ ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a) where
+  toFun := toSimplex
+  invFun := ofSimplex
+  left_inv W := W.ofSimplex_toSimplex
+  right_inv := toSimplex_ofSimplex
+
+@[simp] theorem simplexEquiv_apply : simplexEquiv W = W.toSimplex := rfl
+
+@[simp]
+theorem simplexEquiv_symm_apply (θ : ∀ a : G.inputs, StdSimplex ℝ≥0∞ (G.rulesWithInput a)) :
+    simplexEquiv.symm θ = ofSimplex θ :=
+  rfl
+
+/-! ### Normalized weights -/
+
+/-- The rule weights `w` normalized at each nonterminal give a rule of the grammar its weight over
+the total weight of the rules sharing its input. At a nonterminal where that total is `0` or `⊤`
+the rules get equal weights. -/
+noncomputable def normalize (w : ContextFreeRule T G.NT → ℝ≥0∞) : PCFG G :=
+  ofSimplex fun _ ↦ .normalize fun r ↦ w r
+
+variable {w : ContextFreeRule T G.NT → ℝ≥0∞} {a : G.NT}
+
+theorem toSimplex_normalize (a : G.inputs) :
+    (normalize w).toSimplex a = .normalize fun r ↦ w r :=
+  congrFun (toSimplex_ofSimplex _) a
+
+theorem normalize_weight (r : G.rulesWithInput a) (h0 : ∑ r' ∈ G.rulesWithInput a, w r' ≠ 0)
+    (htop : ∑ r' ∈ G.rulesWithInput a, w r' ≠ ⊤) :
+    (normalize w).weight r = w r / ∑ r' ∈ G.rulesWithInput a, w r' := by
+  obtain ⟨a, rfl⟩ : ∃ a' : G.inputs, (a' : G.NT) = a :=
+    ⟨⟨a, ContextFreeGrammar.rulesWithInput_nonempty_iff.mp ⟨r, r.2⟩⟩, rfl⟩
+  rw [normalize, ofSimplex_weight _ a r,
+    StdSimplex.normalize_weights (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w])
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w]),
+    Finset.sum_coe_sort (G.rulesWithInput a) w]
+
+theorem normalize_weight_lt_normalize_weight_iff (r r' : G.rulesWithInput a)
+    (htop : ∑ r'' ∈ G.rulesWithInput a, w r'' ≠ ⊤) :
+    (normalize w).weight r < (normalize w).weight r' ↔ w r < w r' := by
+  obtain ⟨a, rfl⟩ : ∃ a' : G.inputs, (a' : G.NT) = a :=
+    ⟨⟨a, ContextFreeGrammar.rulesWithInput_nonempty_iff.mp ⟨r, r.2⟩⟩, rfl⟩
+  rw [normalize, ofSimplex_weight _ a r, ofSimplex_weight _ a r',
+    StdSimplex.normalize_weights_lt_normalize_weights_iff
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) w])]
+
+/-- The uniform PCFG puts the uniform distribution over its rules at every nonterminal. -/
+noncomputable def uniform : PCFG G :=
+  normalize 1
+
+noncomputable instance : Inhabited (PCFG G) := ⟨uniform⟩
+
+/-! ### Relative frequencies -/
+
+/-- The relative frequencies of rule counts `x` give each rule its count over the counts of the
+rules sharing its input, and are uniform at a nonterminal whose rules all have count `0`. -/
+noncomputable def ofCounts (x : ContextFreeRule T G.NT → ℕ) : PCFG G :=
+  normalize fun r ↦ x r
+
+variable {x : ContextFreeRule T G.NT → ℕ}
+
+theorem toSimplex_ofCounts (a : G.inputs) :
+    (ofCounts x).toSimplex a = .normalize fun r ↦ (x r : ℝ≥0∞) :=
+  toSimplex_normalize a
+
+theorem ofCounts_weight (r : G.rulesWithInput a) (h : ∑ r' ∈ G.rulesWithInput a, x r' ≠ 0) :
+    (ofCounts x).weight r = x r / ∑ r' ∈ G.rulesWithInput a, (x r' : ℝ≥0∞) :=
+  normalize_weight r (by exact_mod_cast h) (by simp [← Nat.cast_sum])
+
+theorem ofCounts_weight_lt_ofCounts_weight_iff (r r' : G.rulesWithInput a) :
+    (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
+  rw [ofCounts, normalize_weight_lt_normalize_weight_iff r r' (by simp [← Nat.cast_sum]),
+    Nat.cast_lt]
+
+/-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
+theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
+  rw [W.prod_weight_pow, (ofCounts x).prod_weight_pow]
+  refine Finset.prod_le_prod fun a _ ↦ ?_
+  rw [toSimplex_ofCounts]
+  exact (W.toSimplex a).prod_weights_pow_le_normalize fun r : G.rulesWithInput a ↦ x r
+
+/-- Rule counts attain their greatest likelihood only at their relative frequencies: a PCFG giving
+them that likelihood has the relative frequencies as its rule distribution at every nonterminal
+with a counted rule. -/
+theorem prod_pow_eq_prod_ofCounts_pow_iff (x : ContextFreeRule T G.NT → ℕ) :
+    ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
+      ∀ a : G.inputs, ∑ r ∈ G.rulesWithInput a, x r ≠ 0 →
+        W.toSimplex a = (ofCounts x).toSimplex a := by
+  rw [W.prod_weight_pow, (ofCounts x).prod_weight_pow,
+    ENNReal.prod_eq_prod_iff_of_le
+      (fun a _ ↦ by
+        rw [toSimplex_ofCounts]
+        exact (W.toSimplex a).prod_weights_pow_le_normalize fun r : G.rulesWithInput a ↦ x r)
+      (fun a _ ↦ by
+        rw [toSimplex_ofCounts]
+        exact StdSimplex.prod_normalize_weights_pow_ne_zero fun r : G.rulesWithInput a ↦ x r)
+      fun a _ ↦ ENNReal.prod_ne_top fun r _ ↦
+        ENNReal.pow_ne_top (StdSimplex.weights_ne_top _ r)]
+  refine forall_congr' fun a ↦ ?_
+  simp only [Finset.mem_univ, forall_true_left]
+  rw [toSimplex_ofCounts]
+  by_cases hx : ∑ r ∈ G.rulesWithInput a, x r = 0
+  · have h0 : ∀ r : G.rulesWithInput a, x r = 0 := fun r ↦ Finset.sum_eq_zero_iff.mp hx r r.2
+    simp [h0, hx]
+  · rw [StdSimplex.prod_weights_pow_eq_normalize_iff _ (x := fun r : G.rulesWithInput a ↦ x r)
+      (by rwa [Finset.sum_coe_sort (G.rulesWithInput a) x])]
+    simp [hx]
+
+/-- When every nonterminal with a rule has a counted rule, the relative frequencies are the only
+PCFG giving the counts their greatest likelihood. -/
+theorem prod_pow_eq_prod_ofCounts_pow_iff_eq {x : ContextFreeRule T G.NT → ℕ}
+    (hx : ∀ a ∈ G.inputs, ∑ r ∈ G.rulesWithInput a, x r ≠ 0) :
+    ∏ r ∈ G.rules, W.weight r ^ x r = ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r ↔
+      W = ofCounts x := by
+  rw [prod_pow_eq_prod_ofCounts_pow_iff]
+  exact ⟨fun h ↦ simplexEquiv.injective (funext fun a ↦ h a (hx a a.2)), fun h _ _ ↦ by rw [h]⟩
+
+/-! ### Corpora -/
+
+/-- **Relative frequencies are the maximum-likelihood PCFG** of a corpus of derivation trees the
+grammar licenses. -/
+theorem prod_map_ruleWeight_le_ofCounts {D : Multiset (RoseTree (Symbol T G.NT))}
+    (hD : ∀ t ∈ D, t.Licensed G.Licenses) :
+    (D.map (RoseTree.ruleWeight W.weight)).prod ≤
+      (D.map (RoseTree.ruleWeight (ofCounts (RoseTree.ruleCounts D)).weight)).prod := by
+  rw [RoseTree.prod_map_ruleWeight _ D hD, RoseTree.prod_map_ruleWeight _ D hD]
   exact W.prod_pow_le_prod_ofCounts_pow _
+
+/-- **The maximum-likelihood PCFG is unique**: a PCFG giving a corpus of licensed derivation trees
+the probability its relative frequencies do has those frequencies as its rule distribution at
+every nonterminal the corpus applies a rule to. -/
+theorem prod_map_ruleWeight_eq_ofCounts_iff {D : Multiset (RoseTree (Symbol T G.NT))}
+    (hD : ∀ t ∈ D, t.Licensed G.Licenses) :
+    (D.map (RoseTree.ruleWeight W.weight)).prod =
+        (D.map (RoseTree.ruleWeight (ofCounts (RoseTree.ruleCounts D)).weight)).prod ↔
+      ∀ a : G.inputs, ∑ r ∈ G.rulesWithInput a, RoseTree.ruleCounts D r ≠ 0 →
+        W.toSimplex a = (ofCounts (RoseTree.ruleCounts D)).toSimplex a := by
+  rw [RoseTree.prod_map_ruleWeight _ D hD, RoseTree.prod_map_ruleWeight _ D hD]
+  exact W.prod_pow_eq_prod_ofCounts_pow_iff _
 
 end
 

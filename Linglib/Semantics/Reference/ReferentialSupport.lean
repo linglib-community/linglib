@@ -25,21 +25,21 @@ variable {E : Type*} {N M : Set E}
 /-- A definite with head `N` and the intersective modifier `M`, if any, is referentially supported
 when it refers and, if modified, the definite with the bare head does not. -/
 def ReferentiallySupported (N : Set E) : Option (Set E) → Prop
-  | none => (iota N).isSome
-  | some M => (iota (Modifier.intersective M N)).isSome ∧ iota N = none
+  | none => (iota N).Dom
+  | some M => (iota (Modifier.intersective M N)).Dom ∧ ¬ (iota N).Dom
 
 @[simp]
-theorem referentiallySupported_none : ReferentiallySupported N none ↔ (iota N).isSome :=
+theorem referentiallySupported_none : ReferentiallySupported N none ↔ (iota N).Dom :=
   Iff.rfl
 
 /-- A modified definite is referentially supported exactly when some individual is its referent
 and not the bare head's. -/
 theorem referentiallySupported_some_iff :
     ReferentiallySupported N (some M) ↔
-      ∃ e, iota (Modifier.intersective M N) = some e ∧ iota N ≠ some e := by
-  refine ⟨fun ⟨h, hN⟩ ↦ ?_, fun ⟨e, he, hN⟩ ↦ ⟨Option.isSome_iff_exists.2 ⟨e, he⟩, ?_⟩⟩
-  · obtain ⟨e, he⟩ := Option.isSome_iff_exists.1 h
-    exact ⟨e, he, by simp [hN]⟩
-  · refine Option.eq_none_iff_forall_ne_some.2 fun e' he' ↦ hN ?_
-    obtain rfl := (iota_eq_some_iff.1 he').2 e (iota_eq_some_iff.1 he).1.2
+      ∃ e ∈ iota (Modifier.intersective M N), e ∉ iota N := by
+  refine ⟨fun ⟨h, hN⟩ ↦ ?_, fun ⟨e, he, hN⟩ ↦ ⟨Part.dom_iff_mem.2 ⟨e, he⟩, fun hd ↦ hN ?_⟩⟩
+  · obtain ⟨e, he⟩ := Part.dom_iff_mem.1 h
+    exact ⟨e, he, fun h' ↦ hN (Part.dom_iff_mem.2 ⟨e, h'⟩)⟩
+  · obtain ⟨e', he'⟩ := Part.dom_iff_mem.1 hd
+    obtain rfl := (mem_iota.1 he').2 e (mem_iota.1 he).1.2
     exact he'

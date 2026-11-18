@@ -30,6 +30,12 @@ A pullback [gives indices with the same image the same forms](##ker_le_ker_comap
 every realization is [the pullback of its reduction](##comap_reduce), the quotient that merges
 exactly those indices.
 
+Read backwards, a realization analyses a form: [`cells r f`](##Morphology.Realization.cells) is
+the set of contexts in which `f` realizes `r`, a form is an exponent exactly when it fills a cell,
+and [syncretism is a form filling two](##Morphology.Realization.isSyncretic_iff_cells). A map of
+forms, as a transcription is, [pools the cells of the forms it
+identifies](##Morphology.Realization.mem_cells_map).
+
 ## Implementation notes
 
 * The index is opaque, and the frameworks that separate an item from its form choose it
@@ -304,6 +310,40 @@ theorem IsHomophonous.symm (h : S.IsHomophonous r r') : S.IsHomophonous r' r :=
 theorem exists_isHomophonous_iff : (∃ r r', S.IsHomophonous r r') ↔ ¬ Injective S.realize := by
   simp [IsHomophonous, Function.not_injective_iff, and_comm]
 
+/-! ### The cells of a form
+
+Realization runs from an index and a context to forms. Read backwards it analyses a form: the
+contexts in which a given form realizes a given index. -/
+
+variable (S)
+
+/-- `cells r f` is the set of contexts in which `f` realizes `r`: the cells of the paradigm of `r`
+that the form `f` fills, one for an unambiguous form and several for a syncretic one. -/
+def cells (r : R) (f : F) : Set Ctx := {c | f ∈ S.realize r c}
+
+variable {S}
+
+@[simp] theorem mem_cells : c ∈ S.cells r f ↔ f ∈ S.realize r c := Iff.rfl
+
+/-- A form is an exponent of an index exactly when it fills one of its cells. -/
+theorem mem_exponents_iff_cells_nonempty : f ∈ S.exponents r ↔ (S.cells r f).Nonempty := Iff.rfl
+
+theorem cells_eq_empty_iff : S.cells r f = ∅ ↔ f ∉ S.exponents r := by
+  rw [mem_exponents_iff_cells_nonempty, Set.not_nonempty_iff_eq_empty]
+
+/-- No two contexts of an index share a form exactly when each form fills at most one cell. -/
+theorem leftUnique_rel_iff_cells : LeftUnique (S.Rel r) ↔ ∀ f, (S.cells r f).Subsingleton :=
+  ⟨fun h _ _ hc _ hc' ↦ h hc hc', fun h _ _ _ hc hc' ↦ h _ hc hc'⟩
+
+/-- An index is syncretic exactly when some form fills two of its cells. -/
+theorem isSyncretic_iff_cells : S.IsSyncretic r ↔ ∃ f, (S.cells r f).Nontrivial := by
+  simp [IsSyncretic, leftUnique_rel_iff_cells, Set.not_subsingleton_iff]
+
+/-- A form of an index that is not syncretic determines its cell. -/
+theorem eq_of_mem_cells (h : ¬ S.IsSyncretic r) (hc : c ∈ S.cells r f) (hc' : c' ∈ S.cells r f) :
+    c = c' :=
+  not_isSyncretic_iff.1 h hc hc'
+
 /-! ### Decidability
 
 Each instance decides a characterization that quantifies over contexts and their finite sets of
@@ -345,6 +385,13 @@ instance [DecidableEq K] (k : Ctx → K) (r : R) : Decidable (S.IsCrossCategoria
 instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+omit [Fintype Ctx] in
+instance (r : R) (f : F) : DecidablePred (· ∈ S.cells r f) := fun c ↦
+  inferInstanceAs (Decidable (f ∈ S.realize r c))
+
+instance (r : R) (f : F) : Decidable (f ∈ S.exponents r) :=
+  inferInstanceAs (Decidable (∃ c, f ∈ S.realize r c))
+
 variable [Fintype R]
 
 instance : Decidable S.IsTotal := inferInstanceAs (Decidable (∀ r, LeftTotal (S.Rel r)))
@@ -370,6 +417,8 @@ theorem IsLicensed.mono (hc : S.IsLicensed r c) : T.IsLicensed r c :=
   Finset.Nonempty.mono (h r c) hc
 
 theorem exponents_mono (r : R) : S.exponents r ⊆ T.exponents r := fun _ ⟨c, hf⟩ ↦ ⟨c, h r c hf⟩
+
+theorem cells_mono (r : R) (f : F) : S.cells r f ⊆ T.cells r f := fun _ hc ↦ h r _ hc
 
 theorem IsSuppletive.mono (hs : S.IsSuppletive r) : T.IsSuppletive r :=
   Set.Nontrivial.mono hs (exponents_mono h r)
@@ -409,6 +458,9 @@ def transpose (S : Realization R Ctx F) : Realization Ctx R F := ⟨swap S.reali
 
 @[simp] theorem transpose_transpose : S.transpose.transpose = S := rfl
 
+/-- The cells of a form at a context of the transpose are the indices the form realizes there. -/
+@[simp] theorem mem_cells_transpose : r ∈ S.transpose.cells c f ↔ c ∈ S.cells r f := Iff.rfl
+
 /-- The contexts that the transpose does not distinguish are those that every index realizes
 alike. -/
 theorem ker_transpose_realize_iff :
@@ -428,6 +480,11 @@ variable [DecidableEq G] (g : F → G)
 
 @[simp] theorem exponents_map (r : R) : (S.map g).exponents r = g '' S.exponents r := by
   ext; simp only [mem_exponents, map_realize, Finset.mem_image, Set.mem_image]; tauto
+
+/-- A form of the image fills the cells its preimages fill: forms that the map identifies, as a
+transcription that omits a distinction does, pool their cells. -/
+theorem mem_cells_map {y : G} : c ∈ (S.map g).cells r y ↔ ∃ f, c ∈ S.cells r f ∧ g f = y := by
+  simp [cells]
 
 variable {S}
 
@@ -465,6 +522,8 @@ variable {g : R → Ctx → Option F}
 
 theorem mem_ofOption_realize : f ∈ (ofOption g).realize r c ↔ g r c = some f := by simp
 
+theorem mem_cells_ofOption : c ∈ (ofOption g).cells r f ↔ g r c = some f := mem_ofOption_realize
+
 theorem isLicensed_ofOption_iff : (ofOption g).IsLicensed r c ↔ (g r c).isSome := by
   simp [IsLicensed, Finset.Nonempty, Option.isSome_iff_exists]
 
@@ -494,6 +553,9 @@ variable [DecidableEq G] {S} {T : Realization F Ctx G} {g : G}
 @[simp] theorem mem_comp_realize :
     g ∈ (S.comp T).realize r c ↔ ∃ f ∈ S.realize r c, g ∈ T.realize f c :=
   Finset.mem_biUnion
+
+theorem mem_cells_comp : c ∈ (S.comp T).cells r g ↔ ∃ f ∈ S.realize r c, c ∈ T.cells f g :=
+  mem_comp_realize
 
 theorem IsTotal.comp (hS : S.IsTotal) (hT : T.IsTotal) : (S.comp T).IsTotal := fun r c ↦
   let ⟨f, hf⟩ := hS r c
@@ -532,6 +594,10 @@ variable {T T'} in
 
 @[simp] theorem isLicensed_comap_iff : (T.comap i k).IsLicensed r c ↔ T.IsLicensed (i r) (k c) :=
   Iff.rfl
+
+/-- The cells of a form in a pullback are the contexts sent to its cells. -/
+@[simp] theorem cells_comap (r : R₁) (f : F) :
+    (T.comap i k).cells r f = k ⁻¹' T.cells (i r) f := rfl
 
 /-- The allomorphs of an index of a pullback are among those of its image. -/
 theorem exponents_comap_subset (r : R₁) : (T.comap i k).exponents r ⊆ T.exponents (i r) :=

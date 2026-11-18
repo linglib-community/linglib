@@ -11,7 +11,7 @@
     "translation": "He made the telephone call.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -35,7 +35,7 @@
     "translation": "He cleaned the classroom.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -59,7 +59,7 @@
     "translation": "He cleaned the classroom.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -83,7 +83,7 @@
     "translation": "He did make a phone call, but he didn't find anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -108,7 +108,7 @@
     "translation": "He did clean the classroom, but he hasn't finished it yet.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -133,7 +133,7 @@
     "translation": "He did clean the classroom, but he hasn't finished it yet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -160,7 +160,7 @@
     "translation": "Did he make the phone call? Yes, he did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -187,7 +187,7 @@
     "translation": "Did he clean the classroom? Yes, he did.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -214,7 +214,7 @@
     "translation": "Did he clean the classroom? Yes, he did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -238,7 +238,7 @@
     "translation": "He made a phone call to his mom, and so did I.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -262,7 +262,7 @@
     "translation": "He cleaned up his room, and so did I.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -286,7 +286,7 @@
     "translation": "He cleaned up his room, and so did I.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -310,7 +310,7 @@
     "translation": "Zhangsan cleaned up the room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.1"],
@@ -334,7 +334,7 @@
     "translation": "You'd better make the phone call.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.1"],

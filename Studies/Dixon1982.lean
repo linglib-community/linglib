@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.PropertyConcept
 public import Linglib.Data.StructureDataset.Dixon1982
 public import Linglib.Data.UD.UPOS
 
@@ -78,23 +77,13 @@ def PartOfSpeech.parts : PartOfSpeech → List UPOS
 
 namespace Row
 
-variable (r : Row) (t : PropertyConcept.Class) (p : UPOS)
-
-/-- The codes of a row for a semantic type. -/
-def cell : PropertyConcept.Class → List (Coded PartOfSpeech)
-  | .dimension => r.dimension
-  | .physicalProperty => r.physicalProperty
-  | .color => r.color
-  | .humanPropensity => r.humanPropensity
-  | .age => r.age
-  | .value => r.value
-  | .speed => r.speed
+variable (r : Row) (t : SemanticType) (p : UPOS)
 
 /-- Some of the language's items of the type are of the part of speech. -/
-def Takes : Prop := ∃ v ∈ r.cell t, p ∈ v.code.parts
+def Takes : Prop := ∃ v ∈ r.semanticType t, p ∈ v.code.parts
 
 /-- More than a few of the language's items of the type are of the part of speech. -/
-def Predominantly : Prop := ∃ v ∈ r.cell t, v.minor = false ∧ p ∈ v.code.parts
+def Predominantly : Prop := ∃ v ∈ r.semanticType t, v.minor = false ∧ p ∈ v.code.parts
 
 instance : Decidable (r.Takes t p) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
@@ -127,8 +116,8 @@ theorem exists_predominantly_iff :
 /-- By (a), in every closed adjective class age, dimension, value and colour have adjectives, except
 Bemba and Kiriwinian colour, Dixon's (3), and Hua value. -/
 theorem takes_adjective_iff :
-    ∀ r ∈ table2, r.language ∈ closedClass → ∀ t ∈ [PropertyConcept.Class.age, .dimension,
-      .value, .color], (r.Takes t .ADJ ↔
+    ∀ r ∈ table2, r.language ∈ closedClass → ∀ t ∈ [SemanticType.age, .dimension, .value, .color],
+      (r.Takes t .ADJ ↔
         (r.language, t) ∉ [(bemba, .color), (kiriwinian, .color), (hua, .value)]) := by
   decide +kernel
 
@@ -150,7 +139,7 @@ theorem takes_physicalProperty_of_humanPropensity :
 predominant part of speech or is an adverb where that is verbal (p. 48). -/
 theorem speed_iff :
     ∀ r ∈ table2,
-      ((∃ v ∈ r.speed, ∃ p ∈ v.code.parts, r.Predominantly .physicalProperty p) ∨
+      ((∃ v ∈ r.semanticType .speed, ∃ p ∈ v.code.parts, r.Predominantly .physicalProperty p) ∨
           (r.Takes .speed .ADV ∧ r.Predominantly .physicalProperty .VERB)) ↔
         r.language ≠ kiriwinian := by
   decide +kernel
@@ -158,7 +147,7 @@ theorem speed_iff :
 /-- In Table 2, A/V and N/V antonym pairs occur exactly in Hausa and Alamblak (p. 51). -/
 theorem pair_iff :
     ∀ r ∈ table2,
-      (∃ t, ∃ v ∈ r.cell t, v.code = .adjectiveVerb ∨ v.code = .nounVerb) ↔
+      (∃ t, ∃ v ∈ r.semanticType t, v.code = .adjectiveVerb ∨ v.code = .nounVerb) ↔
         r.language ∈ [hausa, alamblak] := by
   decide +kernel
 

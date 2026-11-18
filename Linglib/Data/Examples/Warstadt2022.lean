@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "Does Tom need a visa?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "projects"), ("qud", "need visa")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "Can Tom get a free drink? The local bar is giving free drinks to anyone with a green card."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "absent"), ("qud", "free drink")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("presupposition", "the new hires are non-US citizens"), ("projection", "universal")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("level", "species"), ("inference", "Tom is an athlete"), ("strength", "stronger")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("level", "genus"), ("inference", "Tom is an athlete"), ("strength", "weaker")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("level", "family")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "Why is Tom chewing on his pencil?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "stop"), ("projection", "reduced")] }
 

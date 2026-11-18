@@ -360,19 +360,16 @@ theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
       exact absurd rfl (hT .t (by decide) : naote[3]? ≠ some Seg.t)
 
 theorem warao_le_sem : waraoU ≤ waraoChi.sem naote := by
-  have hmem : ∀ i, waraoChi.sem naote 0 i =
+  have hmem : ∀ i, i ∈ waraoChi.sem naote 0 ↔
       (waraoChi.eqs 0).Realize naote (waraoChi.sem naote) i := fun i ↦
-    congrFun (congrFun (waraoChi.op_sem naote).symm 0) i
+    Set.ext_iff.1 (congrFun (waraoChi.op_sem naote).symm 0) i
   have h0 : 0 ∈ waraoChi.sem naote 0 := by
-    show waraoChi.sem naote 0 0
     rw [hmem]
     exact Or.inl ⟨.n, by decide, rfl⟩
   have h1 : 1 ∈ waraoChi.sem naote 0 := by
-    show waraoChi.sem naote 0 1
     rw [hmem]
     exact Or.inr ⟨show ∀ sg ∈ stop, naote[1]? ≠ some sg by decide, 0, by decide, h0⟩
   have h2 : 2 ∈ waraoChi.sem naote 0 := by
-    show waraoChi.sem naote 0 2
     rw [hmem]
     exact Or.inr ⟨show ∀ sg ∈ stop, naote[2]? ≠ some sg by decide, 1, by decide, h1⟩
   intro X i hi

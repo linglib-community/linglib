@@ -59,7 +59,7 @@ writing one segment.
 
 * `subset_tur`: every phoneme but `a` and the two laterals is a segment of PHOIBLE's Turkish
   inventory.
-* `unspecified_back_iff`, `not_unspecified_voice`: a consonant lacks [back] unless it is the
+* `back_eq_bot_iff`, `voice_ne_bot`: a consonant lacks [back] unless it is the
   palatal lateral, and every phoneme has a value for [voice], which the tier tests of fronting
   and voicing rely on.
 * `naturalClass_archiphoneme`: the natural class of `A`, `I`, `D` or `C` is its alternants.
@@ -103,8 +103,9 @@ def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
 among consonants on the palatal lateral alone. -/
 def consonant (m : FeatureMatrix) : Segment := .ofChart m ⊥ {.back}ᶜ
 
-/-- The low back vowel `a`, a back vowel where the chart's is central. -/
-def a : Segment := vowel .«a» (Segment.ofSpecs [(.back, true)])
+/-- The low back vowel `a`, a back vowel where the chart's is central: the grammar describes [a]
+as "a low, back and unrounded vowel" (§1.1.2.1). -/
+def a : Segment := vowel .«a» [+back]
 
 /-- The non-high front unrounded vowel `e`. -/
 def e : Segment := vowel .«e»
@@ -183,7 +184,7 @@ def y : Segment := consonant .«j»
 
 /-- The palatal `l'` of loans such as *gol* and *hal*, which shares the chart entry of `l` and
 is [−back] (§3.4 (iv)). -/
-def l' : Segment := .ofChart .«l» (Segment.ofSpecs [(.back, false)])
+def l' : Segment := .ofChart .«l» [−back]
 
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[a, e, ı, i, o, ö, u, ü], by decide⟩
@@ -224,17 +225,17 @@ def K : Segment := Segment.restrict {.continuant}ᶜ k
 
 /-- A consonant lacks a value for [back] unless it is the palatal lateral, which is what
 fronting's tier test reads. -/
-theorem unspecified_back_iff : ∀ x ∈ consonants, x.Unspecified .back ↔ x ≠ l' := by decide
+theorem back_eq_bot_iff : ∀ x ∈ consonants, x .back = none ↔ x ≠ l' := by decide
 
 /-- Every phoneme has a value for [voice], so that only `D` and `C` are targets of voicing. -/
-theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by
+theorem voice_ne_bot : ∀ x ∈ vowels ∪ consonants, ¬ x .voice = none := by
   decide
 
 /-- The natural class of a vowel archiphoneme among the vowels, and of `D` or `C` among the
 consonants, is its alternants. -/
 theorem naturalClass_archiphoneme :
-    A.naturalClass vowels = {a, e} ∧ I.naturalClass vowels = {ı, i, u, ü} ∧
-      D.naturalClass consonants = {t, d} ∧ C.naturalClass consonants = {c, ç} := by
+    naturalClass A vowels = {a, e} ∧ naturalClass I vowels = {ı, i, u, ü} ∧
+      naturalClass D consonants = {t, d} ∧ naturalClass C consonants = {c, ç} := by
   decide
 
 /-- `A` with [back] filled in is `a` or `e`. -/
@@ -259,16 +260,16 @@ preceding segment specified for it, a vowel or a palatal `l'`. All other consona
 the tier (§3.1, §3.2). -/
 def fronting : System Segment :=
   System.mk' (feature := .back)
-    (IsTarget      := fun s ↦ s.HasValue .syllabic true ∧ s .back = none)
-    (IsTransparent := fun s ↦ s .back = none ∧ ¬ s.HasValue .syllabic true)
+    (IsTarget      := fun s ↦ s .syllabic = true ∧ s .back = none)
+    (IsTransparent := fun s ↦ s .back = none ∧ ¬ s .syllabic = true)
 
 /-- Under rounding harmony a high suffix vowel unspecified for [round] takes the value of the
 preceding vowel. Consonants are off the tier (§3.1, §3.2.1). -/
 def rounding : System Segment :=
   System.mk' (feature := .round)
-    (IsTarget      := fun s ↦ s.HasValue .syllabic true ∧ s.HasValue .high true ∧
+    (IsTarget      := fun s ↦ s .syllabic = true ∧ s .high = true ∧
       s .round = none)
-    (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true)
+    (IsTransparent := fun s ↦ ¬ s .syllabic = true)
 
 /-- A suffix-initial `D` or `C` takes the [voice] of the preceding segment (§6.1.2). -/
 def voicing : System Segment :=

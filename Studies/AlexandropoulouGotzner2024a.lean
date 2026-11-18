@@ -31,11 +31,12 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 * A cell of the design is represented by the pair of its example item, *gigantic* for the relative
   adjectives and *pristine* for the absolute ones.
 * Communicated ranges are sets of Krifka's four regions, ordered along the scale. Horn's
-  antonyms take the contrary denotation with thresholds at the two border regions, which form the
-  semantic gap; Krifka's take the contradictory one.
-* NACH is a complexity cost of the negative pole. The complexity on which Krifka's quadruplet is
-  computed already has that shape (`complexity_eq_cost`), yet weak optimality returns a symmetric
-  quadruplet, since it compares two pairs only when they share a form or an interpretation. NACH's
+  antonyms have the outer regions as extensions and the two border regions as their semantic
+  gap; Krifka's are contradictory.
+* NACH is a complexity cost of the negative pole. Weak optimality returns Krifka's symmetric
+  quadruplet whenever each negated form costs more than the simple form of the other pole
+  (`Krifka2007b.superoptimal_quadruplet_iff`), whatever the negative pole costs besides, since it
+  compares two pairs only when they share a form or an interpretation. NACH's
   asymmetry is one of degree, the difference in stereotype deviation of the two negated forms.
 * A cell is interpreted asymmetrically when its Negation effect is significant at .05; the
   marginal effect for strong absolute pairs counts as no asymmetry, as in the paper.
@@ -54,7 +55,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 namespace AlexandropoulouGotzner2024a
 
 open Krifka2007b English.Adjectives Data.Statistics
-open AntonymForm (strengthenedDenotation strengthenedDenotation_notNegative_diff_positive)
+open AntonymForm (denotation denotation_negative_sdiff)
 
 variable {t : AdjectiveType} {s : Strength}
 
@@ -99,24 +100,30 @@ instance (r : Ranges) : Decidable r.Symmetric := Fintype.decidableForallFintype
 def Ranges.asymmetry (r : Ranges) : Asymmetry :=
   if r.Symmetric then .symmetric else .asymmetric
 
-/-- Horn's antonyms are contrary, with the thresholds of `hornPair`, whose gap is the two border
-regions. -/
-def hornPair : ThresholdPair Region := ⟨.plateauHigh, .plateauLow⟩
+/-- Horn's antonyms are contrary: the extensions of the two poles are the outer regions, and the
+two border regions are their extension gap. -/
+def hornExt : Polarity → Set Region
+  | .positive => Set.Ioi .plateauHigh
+  | .negative => Set.Iio .plateauLow
+
+instance : ∀ p, DecidablePred (· ∈ hornExt p)
+  | .positive => fun r ↦ inferInstanceAs (Decidable (Region.plateauHigh < r))
+  | .negative => fun r ↦ inferInstanceAs (Decidable (r < Region.plateauLow))
 
 /-- Horn's ranges R-strengthen the negated positive to the antonym it conceals, a face-threatening
 statement, and Q/R-restrict the double negative to what its simpler antonym could not describe. -/
 def hornRanges : Ranges
-  | .notPositive => (strengthenedDenotation hornPair .negative).toFinset
-  | .notNegative => (strengthenedDenotation hornPair .notNegative \
-      strengthenedDenotation hornPair .positive).toFinset
-  | f => (strengthenedDenotation hornPair f).toFinset
+  | .notPositive => (hornExt .negative).toFinset
+  | .notNegative => (denotation hornExt .notNegative \ hornExt .positive).toFinset
+  | f => (denotation hornExt f).toFinset
 
 -- (7), p. 376
-theorem coe_hornRanges_notNegative : (hornRanges .notNegative : Set Region) = hornPair.gap :=
-  (Set.coe_toFinset _).trans (strengthenedDenotation_notNegative_diff_positive _)
+theorem coe_hornRanges_notNegative :
+    (hornRanges .notNegative : Set Region) = (hornExt .positive ∪ hornExt .negative)ᶜ :=
+  (Set.coe_toFinset _).trans (denotation_negative_sdiff hornExt .negative)
 
 /-- Krifka's ranges are the quadruplet that weak optimality selects
-(`Krifka2007b.superoptimal_quadruplet`). -/
+(`Krifka2007b.superoptimal_quadruplet_iff`). -/
 def krifkaRanges : Ranges := fun f ↦ (krifkaQuadruplet.filter (·.1 = f)).image (·.2)
 
 theorem hornRanges_asymmetric : hornRanges.asymmetry = .asymmetric := by decide
@@ -134,17 +141,14 @@ def cost (n k : ℕ) : AntonymForm → ℕ
   | .notPositive => n
   | .notNegative => n + k
 
-theorem complexity_eq_cost : AntonymForm.complexity = cost 3 2 := by
-  funext f; cases f <;> rfl
-
 /-- The stereotype deviation of a form is its excess complexity over the co-extensive simple form,
 which the M principle turns into a non-stereotypical reading. -/
-def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k (simple f)
+def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k f.simple
 
 -- p. 378
 theorem deviation_eq_iff (n k : ℕ) :
     deviation n k .notPositive = deviation n k .notNegative ↔ k = 0 := by
-  simp only [deviation, cost, simple]
+  simp only [deviation, cost, AntonymForm.simple]
   omega
 
 /-! ### Predictions -/

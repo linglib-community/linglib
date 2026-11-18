@@ -19,16 +19,6 @@ theta position](##gaveRaised_notMem_language).
 The trace of the moved verb is a leaf anchored by the verb's trace, as the contraction quotient
 of Internal Merge leaves it, colored by the verb's grid. Sentences take the non-theta root.
 
-## Errata
-
-* The bare theta structures need not satisfy the theta criterion, against the paper's lemma:
-  [one comb filling an argument slot of another](##knowsLeft_not_satisfiesCriterion) leaves two
-  leaves with giver grids. The proof establishes the recursive criterion of its later section.
-* The criterion as printed asks only that each received role occur in the head's grid, which two
-  agent arguments of an agent-theme head pass; its gloss asks for the bijection encoded here.
-* The comb generators end with a role $\theta_{I,n}$ beyond the hierarchy
-  $\theta_{I,1} > \dots > \theta_{I,n-1}$ the paper fixes for them.
-
 ## TODO
 
 * The balanced theta structures, cut at the first non-theta position on every path, and the
@@ -88,7 +78,8 @@ theorem giveComb_satisfiesCriterion : SatisfiesCriterion (giveComb mary gave boo
 
 theorem realize_giveComb :
     realize (giveComb mary gave book toJohn) =
-      ↑(merge (.leaf mary) (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave)))) :=
+      ↑(merge (.leaf mary) (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))) :
+        SyntacticObject) :=
   rfl
 
 /-! ### Movement to a non-theta position -/
@@ -119,11 +110,14 @@ followed by External Merge of the subject: the verb is pronounced in the landing
 its trace where its grid was injected ([marcolli-larson-2025], Example 4.7). -/
 theorem realize_gaveMoved (hb : book ≠ gave) (hj : toJohn ≠ gave) :
     realize (gaveMoved mary gave book toJohn) = ↑(merge (.leaf mary)
-      ((Step.im (.leaf gave)).apply (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
-  rw [Step.apply_im, deleteAccessible, headTrace, selHead_leaf, Option.elim,
+      ((Step.im (.leaf gave) : Step).apply
+        (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
+  rw [Step.apply_im, deleteAccessible, headTrace, TraceLabel.encoder_token, selHead_leaf,
+    Option.elim,
     replace_merge_of_ne (leaf_ne_merge _ _ _).symm, replace_merge_of_ne (leaf_ne_merge _ _ _).symm,
-    replace_of_val_eq_leaf (leaf_val book) (by simpa using hb),
-    replace_of_val_eq_leaf (leaf_val toJohn) (by simpa using hj), replace_self,
+    replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf book) (by simpa using hb),
+    replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf toJohn) (by simpa using
+        hj), replace_self,
     merge_comm _ (.leaf gave)]
   rfl
 

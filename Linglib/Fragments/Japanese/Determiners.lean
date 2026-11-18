@@ -74,14 +74,14 @@ def ryoho : QuantificationalDeterminer := { form := "ryōhō", readings := {.bot
 def quantityWords : List QuantificationalDeterminer := [subete, hotondo, ryoho]
 
 /-- この *kono* 'this (N)', near the speaker ([tsujimura-2014] (24)). -/
-def kono : DemonstrativeDeterminer := { form := "kono", deixis := Person.first.participantSets }
+def kono : DemonstrativeDeterminer := { form := "kono", deixis := Pronouns.kore.deixis }
 
 /-- その *sono* 'that (N)', near the listener, with the so-series' further reading slightly
 removed from both participants unrecorded ([tsujimura-2014] (24)). -/
-def sono : DemonstrativeDeterminer := { form := "sono", deixis := Person.second.participantSets }
+def sono : DemonstrativeDeterminer := { form := "sono", deixis := Pronouns.sore.deixis }
 
 /-- あの *ano* 'that (N)', far from both participants ([tsujimura-2014] (24)). -/
-def ano : DemonstrativeDeterminer := { form := "ano", deixis := Person.third.participantSets }
+def ano : DemonstrativeDeterminer := { form := "ano", deixis := Pronouns.are.deixis }
 
 /-- The demonstrative determiners. -/
 def allDemonstratives : List DemonstrativeDeterminer := [kono, sono, ano]

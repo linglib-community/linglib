@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"]
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"]
@@ -93,7 +93,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"]
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "one person singing and standing", "judgment": "unacceptable"}
     ],
@@ -133,7 +133,7 @@
     "translation": "",
     "context": "out of the blue",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"]
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"]
@@ -174,7 +174,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"]
@@ -196,7 +196,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.4"]
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.4"]
@@ -240,7 +240,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "one person smokes and drinks", "judgment": "unacceptable"}
     ],
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a woman is singing, and the room is locked or one of the singing women is a guitarist playing", "judgment": "unacceptable"}
     ],
@@ -285,7 +285,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "everyone spoke to someone (narrow scope)", "judgment": "acceptable"}
     ],
@@ -306,7 +306,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "everyone spoke to someone (narrow scope)", "judgment": "acceptable"}
     ],
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "he = a male student who did not come", "judgment": "unacceptable"}
     ],
@@ -354,7 +354,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "they = all the students", "judgment": "acceptable"},
       {"name": "they = the students who did not come", "judgment": "unacceptable"}
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6.6"]
@@ -398,7 +398,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Sue has no donkey or a donkey she does not beat (weak)", "judgment": "unacceptable"},
       {"name": "Sue beats no donkey she has", "judgment": "acceptable"}
@@ -420,7 +420,7 @@
     "translation": "",
     "context": "Sue has two umbrellas, and she took one with her and left the other one at home.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -439,7 +439,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "no farmer who owns a donkey beats any donkey they have",
@@ -463,7 +463,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "no student who has an umbrella left every umbrella they have at home",
@@ -487,7 +487,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -506,7 +506,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -525,7 +525,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -544,7 +544,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -563,7 +563,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -582,7 +582,7 @@
     "translation": "",
     "context": "It is raining.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Sue left every umbrella she has home", "judgment": "acceptable"}
     ],
@@ -603,7 +603,7 @@
     "translation": "",
     "context": "It is raining.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "some students left all their umbrellas home", "judgment": "acceptable"}
     ],
@@ -624,7 +624,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -643,7 +643,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -662,7 +662,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "every credit card she has is one she did not pay with (strong)", "judgment": "acceptable"}
     ],
@@ -683,7 +683,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -702,7 +702,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "either Sue has no card she bought a cake with, or she has one she bought a cake and a book with", "judgment": "acceptable"}
     ],
@@ -723,7 +723,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "7"]
@@ -742,7 +742,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "one student liked the book they read", "judgment": "acceptable"}
     ],

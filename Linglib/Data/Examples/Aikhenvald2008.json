@@ -14,7 +14,7 @@
     "translation": "After/because his son had died after/because he drowned (lit. consumed water) he (father) cried",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after", "judgment": "acceptable"},
       {"name": "because", "judgment": "acceptable"}
@@ -39,7 +39,7 @@
     "translation": "After/*because his son had died, after/*because he came back, he (father) sat in mourning",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "after", "judgment": "acceptable"},
       {"name": "because", "judgment": "unacceptable"}

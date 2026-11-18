@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Hawkins, Gweon and Goodman (2021): The division of labor in communication
@@ -318,8 +318,8 @@ theorem mixSpeaker_lt_iff {α : ℝ} (hα : 0 < α) (wS : ℝ) {u u' : U} :
     (g.mixSpeaker α wS ()).real {u} < (g.mixSpeaker α wS ()).real {u'} ↔
       g.mixUtility wS u < g.mixUtility wS u' := by
   rw [mixSpeaker, Kernel.softmax_real_singleton_lt_iff
-    (score := fun _ u => ((α * g.mixUtility wS u : ℝ) : EReal)) (fun _ => EReal.coe_ne_top _)
-    ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+    (score := fun _ u => ((α * g.mixUtility wS u : ℝ) : EReal)) (fun _ => EReal.coe_ne_top _),
+    EReal.coe_lt_coe_iff]
   exact ⟨fun h => lt_of_mul_lt_mul_left h hα.le, fun h => mul_lt_mul_of_pos_left h hα⟩
 
 /-- Under the tie of `gain_pos_of_tie`, if the egocentric speaker does not disprefer the more

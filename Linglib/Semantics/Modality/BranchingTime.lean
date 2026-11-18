@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Core.Order.LeftLinear
+public import Linglib.Core.Order.Cover
+public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Core.Order.ForestOrder
 public import Linglib.Semantics.Tense.Quantificational
 public import Mathlib.Order.Zorn
 
@@ -9,7 +11,7 @@ public import Mathlib.Order.Zorn
 
 The branching-time model of Prior and Thomason depicts the open future as an order of moments
 that is linear towards the past and branches towards the future: a left-linear partial order
-(`Core.Order.IsLeftLinear`). A history is a complete possible course of the world, a maximal
+(`IsForestOrder`). A history is a complete possible course of the world, a maximal
 chain of moments, mathlib's `Flag`; the histories through a moment are its possible futures
 (`histories`). Propositions are sets, of moments or of moment–history pairs.
 
@@ -73,9 +75,9 @@ def histories (m : M) : Set (Flag M) := {h | m ∈ h}
 theorem histories_nonempty (m : M) : (histories m).Nonempty :=
   let ⟨s, hs⟩ := Flag.exists_mem m; ⟨s, hs⟩
 
-section LeftLinear
+section ForestOrder
 
-variable [IsLeftLinear M]
+variable [IsForestOrder M]
 
 /-- Later moments lie on fewer histories. -/
 theorem histories_antitone : Antitone (histories (M := M)) :=
@@ -92,7 +94,7 @@ theorem histories_inter_nonempty_iff {m n : M} :
     (fun hmn ↦ let ⟨h, hh⟩ := histories_nonempty n; ⟨h, Flag.Iic_subset hh hmn, hh⟩)
     fun hnm ↦ let ⟨h, hh⟩ := histories_nonempty m; ⟨h, hh, Flag.Iic_subset hh hnm⟩⟩
 
-end LeftLinear
+end ForestOrder
 
 /-! ### The Peircean postsemantics
 
@@ -163,18 +165,18 @@ theorem settled_past_atom (φ : Set M) : settled (past (atom φ)) = atom (Peirce
 theorem settled_future_atom (φ : Set M) :
     settled (future (atom φ)) = atom (Peircean.future φ) := rfl
 
-/-! #### Grounding in the library's tense cells
+/-! #### Grounding in the library's tenses
 
-The Ockhamist past and future quantify along the relations of the library's tense cells
-(`Tense.toSetRel`), which relate a moment to the moments below it and above it in the order of
-the frame. The witness of the future is kept on the history of evaluation. -/
+The Ockhamist past and future quantify along the relations of the tenses
+(`PointAlgebra.toSetRel`), which relate a moment to the moments below it and above it in the order
+of the frame. The witness of the future is kept on the history of evaluation. -/
 
 theorem mem_past_atom_iff (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ past (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.past⟧).preimage φ := by
+    (m, h) ∈ past (atom φ) ↔ m ∈ (PointAlgebra.toSetRel ⟦Tense.past⟧).preimage φ := by
   simp [and_comm]
 
 theorem mem_future_atom_iff (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ future (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.future⟧).preimage (↑h ∩ φ) :=
+    (m, h) ∈ future (atom φ) ↔ m ∈ (PointAlgebra.toSetRel ⟦Tense.future⟧).preimage (↑h ∩ φ) :=
   ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', ⟨hm', hφ⟩, Tense.mem_toSetRel_future.2 hlt⟩,
     fun ⟨m', ⟨hm', hφ⟩, hlt⟩ ↦ ⟨m', hm', Tense.mem_toSetRel_future.1 hlt, hφ⟩⟩
 
@@ -200,19 +202,22 @@ theorem past_future_subset (hm : m ∈ h) (hφ : (m, h) ∈ past (future φ)) :
 
 /-- On the history of evaluation of a left-linear frame, a future past is a past, a present or a
 future. -/
-theorem future_past_subset [IsLeftLinear M] (hm : m ∈ h) (hφ : (m, h) ∈ future (past φ)) :
+theorem future_past_subset [IsForestOrder M] (hm : m ∈ h) (hφ : (m, h) ∈ future (past φ)) :
     (m, h) ∈ past φ ∨ (m, h) ∈ φ ∨ (m, h) ∈ future φ :=
   let ⟨_, hy, _, _, hzy, hz'⟩ := hφ
   mem_of_mem_flag hm (Flag.Iic_subset hy hzy.le) hz'
 
 end Ockhamist
 
-open ModalLogic Tense in
+open ModalLogic Tense PointAlgebra in
 /-- A moment with two immediate successors refutes $PFp \to Mp$ along the moments of the frame. -/
 theorem not_diamond_past_diamond_future_le {x : M} (hx : IsBranching x) :
     ¬ ((◇[toSetRel ⟦Tense.past⟧] ∘ ◇[toSetRel ⟦Tense.future⟧] : (M → Prop) → M → Prop) ≤
       ◇[toSetRel ⊤]) :=
-  fun h ↦ hx.not_isLeftLinear_orderDual (diamond_past_diamond_future_le_iff.1 h)
+  fun h ↦
+    have := diamond_past_diamond_future_le_iff.1 h
+    let ⟨_, ha, _, hb, hab⟩ := hx
+    hab (IsForestOrder.covBy_unique_right ha hb)
 
 /-! ### Finite frames
 
@@ -223,9 +228,8 @@ quantifying over the maximal moments above it, and settled future truth is decid
 namespace Peircean
 
 /-- Settled future truth on a finite frame is a search over the maximal moments. -/
-theorem mem_future_iff [IsLeftLinear M] [Finite M] {φ : Set M} {m : M} :
+theorem mem_future_iff [IsForestOrder M] [Finite M] {φ : Set M} {m : M} :
     m ∈ future φ ↔ ∀ x, IsMax x → m ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
-  have : Nonempty M := ⟨m⟩
   refine Flag.forall_mem_iff.trans ?_
   exact forall_congr' fun x ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
     ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', hlt, hm', hφ⟩, fun ⟨m', hlt, hm', hφ⟩ ↦ ⟨m', hm', hlt, hφ⟩⟩
@@ -233,7 +237,7 @@ theorem mem_future_iff [IsLeftLinear M] [Finite M] {φ : Set M} {m : M} :
 variable [Fintype M] [DecidableEq M] [DecidableLE M] [DecidableLT M]
   (φ : Set M) [DecidablePred (· ∈ φ)] (m : M)
 
-instance [IsLeftLinear M] : Decidable (m ∈ future φ) :=
+instance [IsForestOrder M] : Decidable (m ∈ future φ) :=
   decidable_of_iff _ mem_future_iff.symm
 
 instance : Decidable (m ∈ past φ) := inferInstanceAs (Decidable (∃ m' < m, m' ∈ φ))

@@ -34,11 +34,6 @@ likely to win as not; the lottery's probability measure makes the first true and
   values.
 * In §4 the measure lives on the epistemic space: almost every world is accessible.
 
-## Errata
-
-* p. 674: when the world order is not connected, the best worlds need not strictly dominate their
-  complement under the revised lift (`not_asymmRel_kratzer_bestWorlds`).
-
 ## References
 
 * [lassiter-2015]
@@ -119,19 +114,19 @@ theorem lottery_not_fourteen : ¬inducedGe lottery (wins {0}) (wins {0})ᶜ := b
 and (33c) false. -/
 theorem lottery_rows :
     (inducedGe lottery (wins {0}) (wins {0})ᶜ ↔
-      Examples.ex2b.feature? "truthValue" = some "true") ∧
+      Examples.ex2b.verdict = some true) ∧
     ((∀ n ≠ 0, inducedGe lottery (wins {0}) (wins {n})) ↔
-      Examples.ex4.feature? "truthValue" = some "true") ∧
+      Examples.ex4.verdict = some true) ∧
     (inducedGe lottery (wins {0}) (wins {1}) ∧ inducedGe lottery (wins {0}) (wins {2}) ↔
-      Examples.ex5.feature? "truthValue" = some "true") ∧
+      Examples.ex5.verdict = some true) ∧
     (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
-      Examples.ex8.feature? "truthValue" = some "true") ∧
+      Examples.ex8.verdict = some true) ∧
     (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
-      Examples.ex9.feature? "truthValue" = some "true") ∧
+      Examples.ex9.verdict = some true) ∧
     (inducedGe lottery (wins {0}) (wins (Set.Icc 1 7)) ↔
-      Examples.ex12.feature? "truthValue" = some "true") ∧
+      Examples.ex12.verdict = some true) ∧
     (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
-      Examples.ex33c.feature? "truthValue" = some "true") := by
+      Examples.ex33c.verdict = some true) := by
   have h12 : ¬inducedGe lottery (wins {0}) (wins (Set.Icc 1 7)) := fun h ↦
     lottery_not_nine ((lottery_inducedGe_iff.2 (Set.ncard_le_ncard fun t ht ↦ by
       simp only [wins, holder, Set.mem_preimage, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -435,11 +430,11 @@ theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro (inducedGe cutClass.mu) := 
     (by norm_num [inducedGe, cutClass])
 
 theorem rows_48 :
-    ¬(inducedGe cutClass.mu {0} ({0} ∪ {1}) ↔ Examples.ex48.feature? "truthValue" = some "true") ∧
+    ¬(inducedGe cutClass.mu {0} ({0} ∪ {1}) ↔ Examples.ex48.verdict = some true) ∧
       ∀ μ : SymmetricFuzzyMeasure W, μ.EqualShares → ∀ movies school : Set W,
         μ.mu (school \ movies) ≠ 0 →
         (inducedGe μ.mu movies (movies ∪ school) ↔
-          Examples.ex48.feature? "truthValue" = some "true") :=
+          Examples.ex48.verdict = some true) :=
   ⟨fun h ↦ absurd (h.1 (by norm_num [inducedGe, cutClass])) (by decide),
     fun _ h _ _ hs ↦ iff_of_false (fun h' ↦ hs (h.union_le_iff.1 h')) (by decide)⟩
 

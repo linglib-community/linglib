@@ -10,7 +10,7 @@
     "translation": "Peter must (has to) study.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -27,7 +27,7 @@
     "translation": "Peter needn't (doesn't have to) study.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "short1993_musi"]
@@ -46,7 +46,7 @@
     "translation": "Peter may (is allowed to) come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -63,7 +63,7 @@
     "translation": "Peter must not (is not allowed to) come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "short1993_smi"]

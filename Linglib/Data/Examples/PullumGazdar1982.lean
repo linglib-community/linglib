@@ -24,7 +24,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "sg sg")] }
 
@@ -37,7 +37,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "sg pl")] }
 
@@ -50,7 +50,7 @@ def ex18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "pl sg")] }
 
@@ -63,7 +63,7 @@ def ex18d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "pl pl")] }
 
@@ -76,7 +76,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg sg"), ("verbs", "sg sg")] }
 
@@ -89,7 +89,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subjects", "sg sg"), ("verbs", "pl pl")] }
 
@@ -102,7 +102,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("categories", "BBBHFD")] }
 
@@ -115,7 +115,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("categories", "BBBHFE")] }
 
@@ -128,7 +128,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("categories", "BBBBHFD")] }
 
@@ -141,7 +141,7 @@ def ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("categories", "BBBIFFD")] }
 
@@ -154,7 +154,7 @@ def ex31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("categories", "BBBIFFD")] }
 
@@ -167,7 +167,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
@@ -180,7 +180,7 @@ def ex39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "hnek"), ("external", "tsiʔts")] }
 
@@ -193,7 +193,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "seleht"), ("external", "bike")] }
 
@@ -206,7 +206,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
@@ -219,7 +219,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "none")] }
 
@@ -232,7 +232,7 @@ def ex42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "liʔw"), ("external", "none")] }
 
@@ -245,7 +245,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 
@@ -258,7 +258,7 @@ def ex43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 
@@ -271,7 +271,7 @@ def ex43c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
@@ -284,7 +284,7 @@ def ex43d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "sawatis")] }
 
@@ -297,7 +297,7 @@ def ex43e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 

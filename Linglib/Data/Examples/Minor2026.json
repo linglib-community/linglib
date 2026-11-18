@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "want > ∃", "judgment": "acceptable"},
       {"name": "∃ > want", "judgment": "acceptable"}
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "want > ∃", "judgment": "acceptable"},
       {"name": "∃ > want", "judgment": "unacceptable"}
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "want > ∃", "judgment": "acceptable"},
       {"name": "∃ > want", "judgment": "acceptable"}

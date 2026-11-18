@@ -24,7 +24,7 @@ def ost2024_left_country : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("reading", "nonCommittal")] }
 
@@ -37,7 +37,7 @@ def ost2024_before_counterfactual_mozart : Datum :=
     glossedTokens := []
     context := "Counterfactual reading of *before*: Mozart never finished the Requiem."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false"), ("precursor", "true")] }
 
@@ -50,7 +50,7 @@ def ost2024_beethoven : Datum :=
     glossedTokens := []
     context := "Beethoven composed no 11th symphony, and nothing at his death was leading to one: he did not even compose a 10th."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "antiVeridical"), ("precursor", "false")] }
 
@@ -63,7 +63,7 @@ def ost2024_ohtani : Datum :=
     glossedTokens := []
     context := "Uttered in the middle of September 2021. The A-time is the end of the 2021 MLB season; the complement (Ohtani's 10th win) can only occur during the season, before the A-time — a counterexample to B&C's forward-branching alt(w,t)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")] }
 
@@ -76,7 +76,7 @@ def ost2024_snow : Datum :=
     glossedTokens := []
     context := "Uttered on Christmas Day 2020. *This year* refers to 2020; the first snow of 2020 can only occur in 2020, so a modal alternative placing it after 2020 does not work."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "nonCommittal")] }
 
@@ -89,7 +89,7 @@ def ost2024_nostradamus : Datum :=
     glossedTokens := []
     context := "Uttered a few minutes before the end of July 1999. The prophecy (a King of terror in July 1999) can only come true in July 1999 — not after."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")] }
 
@@ -100,9 +100,11 @@ def ost2024_ohtani_japanese : Datum :=
     language := "nucl1643"
     primaryText := "Zannen-na koto-ni, 2021-nen-no siizun-wa Ootani-ga zyussyoome-o ageru mae ni owat-ta."
     glossedTokens := [("Zannen-na koto-ni", "unfortunately"), ("2021-nen-no", "2021-year-GEN"), ("siizun-wa", "season-TOP"), ("Ootani-ga", "Ohtani-NOM"), ("zyussyoome-o", "10th win-ACC"), ("ageru", "earn.NON-PAST"), ("mae", "before"), ("ni", "at"), ("owat-ta", "end-PAST")]
+    glossedWords := [⟨['Z', 'a', 'n', 'n', 'e', 'n', '-', 'n', 'a', ' ', 'k', 'o', 't', 'o', '-', 'n', 'i'], ['u', 'n', 'f', 'o', 'r', 't', 'u', 'n', 'a', 't', 'e', 'l', 'y'], []⟩, ⟨['2', '0', '2', '1', '-', 'n', 'e', 'n', '-', 'n', 'o'], ['2', '0', '2', '1', '-', 'y', 'e', 'a', 'r', '-', 'G', 'E', 'N'], [⟨['2', '0', '2', '1'], ['2', '0', '2', '1'], none⟩, ⟨['n', 'e', 'n'], ['y', 'e', 'a', 'r'], some '-'⟩, ⟨['n', 'o'], ['G', 'E', 'N'], some '-'⟩]⟩, ⟨['s', 'i', 'i', 'z', 'u', 'n', '-', 'w', 'a'], ['s', 'e', 'a', 's', 'o', 'n', '-', 'T', 'O', 'P'], [⟨['s', 'i', 'i', 'z', 'u', 'n'], ['s', 'e', 'a', 's', 'o', 'n'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['O', 'o', 't', 'a', 'n', 'i', '-', 'g', 'a'], ['O', 'h', 't', 'a', 'n', 'i', '-', 'N', 'O', 'M'], [⟨['O', 'o', 't', 'a', 'n', 'i'], ['O', 'h', 't', 'a', 'n', 'i'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['z', 'y', 'u', 's', 's', 'y', 'o', 'o', 'm', 'e', '-', 'o'], ['1', '0', 't', 'h', ' ', 'w', 'i', 'n', '-', 'A', 'C', 'C'], [⟨['z', 'y', 'u', 's', 's', 'y', 'o', 'o', 'm', 'e'], ['1', '0', 't', 'h', ' ', 'w', 'i', 'n'], none⟩, ⟨['o'], ['A', 'C', 'C'], some '-'⟩]⟩, ⟨['a', 'g', 'e', 'r', 'u'], ['e', 'a', 'r', 'n', '.', 'N', 'O', 'N', '-', 'P', 'A', 'S', 'T'], []⟩, ⟨['m', 'a', 'e'], ['b', 'e', 'f', 'o', 'r', 'e'], [⟨['m', 'a', 'e'], ['b', 'e', 'f', 'o', 'r', 'e'], none⟩]⟩, ⟨['n', 'i'], ['a', 't'], [⟨['n', 'i'], ['a', 't'], none⟩]⟩, ⟨['o', 'w', 'a', 't', '-', 't', 'a'], ['e', 'n', 'd', '-', 'P', 'A', 'S', 'T'], [⟨['o', 'w', 'a', 't'], ['e', 'n', 'd'], none⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual"), ("connective", "mae"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
@@ -115,7 +117,7 @@ def ost2024_noncommittal_available : Datum :=
     glossedTokens := []
     context := "Non-committal reading available: felicitous and true if Mary thinks that Bill might get drunk at the party, which she does not wish to see, and will leave the party early."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "true")] }
 
@@ -128,7 +130,7 @@ def ost2024_noncommittal_unavailable : Datum :=
     glossedTokens := []
     context := "Non-committal reading unavailable (#): in the same situation as (22a), Mary's leaving the party has nothing to do with the possibility of Quebec's becoming an independent country."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "false")] }
 

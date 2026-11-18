@@ -40,6 +40,15 @@ def Lexemes.careless : Lexeme :=
 def Lexemes.clueless : Lexeme :=
   { id := "clueless", languageId := "stan1293", parameterId := "clueless" }
 
+def Lexemes.childless : Lexeme :=
+  { id := "childless", languageId := "stan1293", parameterId := "childless" }
+
+def Lexemes.helpful : Lexeme :=
+  { id := "helpful", languageId := "stan1293", parameterId := "helpful" }
+
+def Lexemes.helpless : Lexeme :=
+  { id := "helpless", languageId := "stan1293", parameterId := "helpless" }
+
 def boyish : Form Cell :=
   { id := "audring2019_boyish"
     lexeme := Lexemes.like_a_boy
@@ -110,12 +119,44 @@ def clueless : Form Cell :=
       ⟨"audring-2019", "4.2.2"⟩
     ] }
 
+def childless : Form Cell :=
+  { id := "audring2019_childless"
+    lexeme := Lexemes.childless
+    cell := {}
+    form := "childless"
+    morphs := ["child", "less"]
+    source := [
+      ⟨"audring-2019", "(10)"⟩
+    ] }
+
+def helpful : Form Cell :=
+  { id := "audring2019_helpful"
+    lexeme := Lexemes.helpful
+    cell := {}
+    form := "helpful"
+    morphs := ["help", "ful"]
+    source := [
+      ⟨"audring-2019", "(12)"⟩
+    ] }
+
+def helpless : Form Cell :=
+  { id := "audring2019_helpless"
+    lexeme := Lexemes.helpless
+    cell := {}
+    form := "helpless"
+    morphs := ["help", "less"]
+    source := [
+      ⟨"audring-2019", "(12)"⟩
+    ] }
+
 /-- Every lexeme of the data. -/
 def lexemes : List Lexeme := [Lexemes.like_a_boy, Lexemes.like_a_fool, Lexemes.like_a_child,
-  Lexemes.like_trump, Lexemes.careful, Lexemes.careless, Lexemes.clueless]
+  Lexemes.like_trump, Lexemes.careful, Lexemes.careless, Lexemes.clueless, Lexemes.childless,
+  Lexemes.helpful, Lexemes.helpless]
 
 /-- Every form the sources accept. -/
-def all : List (Form Cell) := [boyish, foolish, childish, trumpish, careful, careless, clueless]
+def all : List (Form Cell) := [boyish, foolish, childish, trumpish, careful, careless, clueless,
+  childless, helpful, helpless]
 
 /-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
 def marked : List (Form Cell) := []
@@ -136,7 +177,15 @@ def relations : List (FormRelation (Form Cell)) := [
     ] },
   { id := "audring2019_careful_careless", form := careful, target := careless,
     relation := "second_order_schema", source := [
-      ⟨"audring-2019", "(14)"⟩
+      ⟨"audring-2019", "5"⟩
+    ] },
+  { id := "audring2019_childish_childless", form := childish, target := childless,
+    relation := "same_stem", source := [
+      ⟨"audring-2019", "(10)"⟩
+    ] },
+  { id := "audring2019_helpful_helpless", form := helpful, target := helpless,
+    relation := "second_order_schema", source := [
+      ⟨"audring-2019", "(12)"⟩
     ] }]
 
 end Audring2019.Wordlist

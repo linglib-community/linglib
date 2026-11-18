@@ -30,11 +30,12 @@ stochastic OT, is a `Measure`.
 
 ## Main definitions
 
-* `Ranking.ofList`: the ranking that orders the constraints as a list of all of them does.
-* `Ranking.Dominates`: strict dominance, a strict total order on the constraints.
-* `Ranking.toRel`: the reflexive closure of `Dominates`, which determines the ranking.
-* `Ranking.take`: the top `k` constraints.
-* `Ranking.swapAt`: the transposition of two adjacent constraints.
+* `Ranking.Enumeration.ofList`: the ranking that orders the constraints as a list of all of them
+  does.
+* `Ranking.Enumeration.Dominates`: strict dominance, a strict total order on the constraints.
+* `Ranking.Enumeration.toRel`: the reflexive closure of `Dominates`, which determines the ranking.
+* `Ranking.Enumeration.take`: the top `k` constraints.
+* `Ranking.Enumeration.swapAt`: the transposition of two adjacent constraints.
 
 ## Implementation notes
 
@@ -56,14 +57,14 @@ namespace OptimalityTheory
 /-- A ranking of the constraints `ι` into `n` rank positions (Prince's total domination order
 `≫`). Here `r p` is the constraint at rank position `p`, position `0` is the most dominant, and
 `r.symm i` is the rank position of `i`. -/
-abbrev Ranking (ι : Type*) (n : ℕ) := Fin n ≃ ι
+abbrev Ranking.Enumeration (ι : Type*) (n : ℕ) := Fin n ≃ ι
 
 variable {ι : Type*} {n : ℕ}
 
 /-- There are finitely many rankings of `n` constraints, and every set of them is measurable. -/
-instance : MeasurableSpace (Ranking ι n) := ⊤
+instance : MeasurableSpace (Ranking.Enumeration ι n) := ⊤
 
-instance : DiscreteMeasurableSpace (Ranking ι n) := ⟨fun _ ↦ trivial⟩
+instance : DiscreteMeasurableSpace (Ranking.Enumeration ι n) := ⟨fun _ ↦ trivial⟩
 
 theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
     [ht : Std.Total r] [ha : Std.Antisymm s] (h : r ≤ s) : r = s := by
@@ -73,21 +74,32 @@ theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
   · obtain rfl := ha.antisymm _ _ hs (h b a hr)
     exact (ht.total a a).elim id id
 
-namespace Ranking
+/-- A *ranking* of the constraints `ι`: an enumeration of all of them, most dominant first. It
+is the enumeration by `Fin (Fintype.card ι)`, so a ranking is given by the constraints alone,
+and what is proved of an arbitrary `Ranking.Enumeration ι n` holds of it. -/
+abbrev Ranking (ι : Type*) [Fintype ι] := Ranking.Enumeration ι (Fintype.card ι)
 
-theorem card_eq [Fintype ι] (r : Ranking ι n) : Fintype.card ι = n := by
+/-- The ranking a list of all the constraints enumerates, most dominant first. -/
+def Ranking.ofList [Fintype ι] [DecidableEq ι] (l : List ι) (hl : l.Nodup := by decide)
+    (hc : ∀ i, i ∈ l := by decide) : Ranking ι :=
+  (finCongr ((Fintype.card_congr (hl.getEquivOfForallMemList l hc)).symm.trans
+    (Fintype.card_fin _))).trans (hl.getEquivOfForallMemList l hc)
+
+namespace Ranking.Enumeration
+
+theorem card_eq [Fintype ι] (r : Ranking.Enumeration ι n) : Fintype.card ι = n := by
   simpa using Fintype.card_congr r.symm
 
 /-- The ranking a list of all the constraints enumerates, most dominant first. -/
 def ofList [DecidableEq ι] (l : List ι) (hl : l.Nodup := by decide)
-    (hc : ∀ i, i ∈ l := by decide) : Ranking ι l.length :=
+    (hc : ∀ i, i ∈ l := by decide) : Ranking.Enumeration ι l.length :=
   hl.getEquivOfForallMemList l hc
 
 @[simp] theorem ofList_apply [DecidableEq ι] {l : List ι} {hl : l.Nodup} {hc : ∀ i, i ∈ l}
     (p : Fin l.length) : ofList l hl hc p = l[p] :=
   rfl
 
-variable (r : Ranking ι n)
+variable (r : Ranking.Enumeration ι n)
 
 /-- Constraint `i` dominates constraint `j` under `r` if `i` has a lower (more dominant) rank
 position than `j`. -/
@@ -101,26 +113,19 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
 
-@[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
-  Iff.rfl
-
 /-- A ranking acts on a lex-ordered vector by reordering it by rank, so that coordinate `p` of `r •
 v` is the value of `v` at the constraint ranked `p`-th. With this convention the action of `Sₙ` is a
 right action, `(r * s) • v = s • r • v`. -/
-instance {α : Type*} : SMul (Ranking (Fin n) n) (Lex (Fin n → α)) :=
+instance {α : Type*} : SMul (Ranking.Enumeration (Fin n) n) (Lex (Fin n → α)) :=
   ⟨fun r v => toLex fun p => ofLex v (r p)⟩
 
-@[simp] theorem smul_apply {α : Type*} (r : Ranking (Fin n) n) (v : Lex (Fin n → α)) (p : Fin n) :
+@[simp] theorem smul_apply {α : Type*} (r : Ranking.Enumeration (Fin n) n) (v : Lex (Fin n → α))
+    (p : Fin n) :
     ofLex (r • v) p = ofLex v (r p) := rfl
 
-@[simp] theorem one_smul {α : Type*} (v : Lex (Fin n → α)) : (1 : Ranking (Fin n) n) • v = v :=
+@[simp] theorem one_smul {α : Type*} (v : Lex (Fin n → α)) : (1 : Ranking.Enumeration
+    (Fin n) n) • v = v :=
   rfl
-
-theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
-    ∃ r : Ranking (Fin n) n, r.Dominates i j := by
-  rcases lt_or_gt_of_ne hij with h | h
-  · exact ⟨1, one_dominates_iff.mpr h⟩
-  · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
 
 /-! ### Adjacent transpositions -/
 
@@ -129,7 +134,7 @@ section AdjacentTranspositions
 /-- The ranking that transposes the constraints at the adjacent rank positions `k` and `k + 1`.
 Two rankings related by an adjacent transposition are neighbours in the permutohedron of
 rankings. -/
-def swapAt (k : ℕ) (hk : k + 1 < n) : Ranking ι n :=
+def swapAt (k : ℕ) (hk : k + 1 < n) : Ranking.Enumeration ι n :=
   (Equiv.swap ⟨k, Nat.lt_of_succ_lt hk⟩ ⟨k + 1, hk⟩).trans r
 
 variable {r} {k : ℕ} {hk : k + 1 < n}
@@ -227,10 +232,7 @@ theorem toRel_iff_dominates {i j : ι} (hij : i ≠ j) :
   rw [toRel_iff]
   simp [hij]
 
-@[simp] theorem toRel_mul (g σ : Ranking (Fin n) n) (i j : Fin n) :
-    (g * σ).toRel i j ↔ σ.toRel (g⁻¹ i) (g⁻¹ j) := Iff.rfl
-
-variable {r} {σ τ : Ranking ι n}
+variable {r} {σ τ : Ranking.Enumeration ι n}
 
 theorem toRel_injective : Function.Injective (toRel (ι := ι) (n := n)) := by
   intro σ τ h
@@ -250,7 +252,7 @@ theorem toRel_le_toRel_iff : σ.toRel ≤ τ.toRel ↔ σ = τ :=
 /-- Every linear order on the constraints is the order `toRel` of some ranking (compare
 `toRel_injective`). -/
 theorem exists_toRel_eq [Fintype ι] (s : ι → ι → Prop) [IsLinearOrder ι s]
-    (h : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.toRel = s := by
+    (h : Fintype.card ι = n := by simp) : ∃ σ : Ranking.Enumeration ι n, σ.toRel = s := by
   classical
   have hlen : (Finset.univ.sort s).length = n := by simp [h]
   let e : Fin (Finset.univ.sort s).length ≃ ι :=
@@ -266,7 +268,7 @@ theorem exists_toRel_eq [Fintype ι] (s : ι → ι → Prop) [IsLinearOrder ι 
 values under `f`. -/
 theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι → β)
     (hf : Function.Injective f) (h : Fintype.card ι = n := by simp) :
-    ∃ σ : Ranking ι n, ∀ i j, σ.Dominates i j ↔ f i < f j := by
+    ∃ σ : Ranking.Enumeration ι n, ∀ i j, σ.Dominates i j ↔ f i < f j := by
   let _ : LinearOrder ι := LinearOrder.lift' f hf
   obtain ⟨σ, hσ⟩ := exists_toRel_eq (ι := ι) (· ≤ ·) h
   refine ⟨σ, fun i j ↦ ?_⟩
@@ -275,5 +277,18 @@ theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι 
   rw [Dominates, ← not_le, this, not_le]
   rfl
 
-end Ranking
+/-- Any two distinct constraints are ranked in either order by some ranking. -/
+theorem exists_dominates [Fintype ι] [DecidableEq ι] {i j : ι} (hij : i ≠ j)
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking.Enumeration ι n, σ.Dominates i j := by
+  let e := Fintype.equivFinOfCardEq hn
+  obtain ⟨σ, hσ⟩ := exists_dominates_iff (fun c ↦ if c = i then 0 else (e c : ℕ) + 1)
+    (fun c d hcd ↦ by
+      by_cases hc : c = i <;> by_cases hd : d = i <;> simp only [hc, hd, ite_true, ite_false] at hcd
+      · exact hc.trans hd.symm
+      · omega
+      · omega
+      · exact e.injective (Fin.ext (by omega))) hn
+  exact ⟨σ, (hσ i j).2 (by simp [hij.symm])⟩
+
+end Ranking.Enumeration
 end OptimalityTheory

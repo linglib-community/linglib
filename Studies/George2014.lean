@@ -39,11 +39,6 @@ neither quantity invariance nor finiteness, and the parity remarks need finitene
 invariance. The reading of universal entailments and presuppositions on the Hasse diagram of
 `Set α` is not George's, who argues by counting.
 
-## Errata
-
-Definitions 20 and 21 write `Q` for the determiner `D` in their two-argument clauses. Definition 24
-says *perm-quantifier* for *pc-determiner*. Propositions 5 and 7 say `Q` for `D`.
-
 ## TODO
 
 * Integrate George's isomorphism between Heim's updates and trivalent propositions, already
@@ -196,7 +191,7 @@ theorem UniversalPresupposition.eq_even_or_eq_odd [Finite α] (h : UniversalPres
 
 -- Not George's: Definition 20 as independence in the Hasse diagram of `Set α`
 theorem universalEntailment_iff_isIndepSet :
-    UniversalEntailment Q ↔ (hasse (Set α)).IsIndepSet Q := by
+    UniversalEntailment Q ↔ (hasse (Set α)).IsIndepSet {A | Q A} := by
   rw [universalEntailment_iff]
   constructor
   · intro h B hB C hC _ hadj
@@ -294,14 +289,16 @@ theorem universalEntailment_iff_ofDet [Finite α] (hC : d.Conservative)
     refine h R B a haR haB ⟨h₁, (Det.iff_of_ncard_eq hC hQ ?_ ?_).1 h₂⟩
     · rw [hd₂, Set.insert_eq, Set.union_comm, ← Set.sdiff_sdiff,
         Set.ncard_sdiff_singleton_of_mem haRB, hd]; rfl
-    · rw [hi₂, Set.inter_insert_of_mem haR, Set.ncard_insert_of_notMem (fun h ↦ haB h.2), hi]
+    · rw [hi₂, Set.inter_insert_of_mem haR,
+        Set.ncard_insert_of_notMem (show a ∉ R ∩ B from fun h ↦ haB h.2), hi]
   · rintro h R B a haR haB ⟨h₁, h₂⟩
     have haRB : a ∈ R \ B := ⟨haR, haB⟩
     refine h (R \ insert a B).ncard (R ∩ B).ncard ⟨⟨R, B, ?_, rfl, h₁⟩, R, insert a B, rfl, ?_, h₂⟩
     · rw [Set.insert_eq, Set.union_comm, ← Set.sdiff_sdiff, Set.ncard_sdiff_singleton_of_mem haRB]
       have : 0 < (R \ B).ncard := (Set.ncard_pos (Set.toFinite _)).2 ⟨a, haR, haB⟩
       omega
-    · rw [Set.inter_insert_of_mem haR, Set.ncard_insert_of_notMem (fun h ↦ haB h.2)]
+    · rw [Set.inter_insert_of_mem haR,
+        Set.ncard_insert_of_notMem (show a ∉ R ∩ B from fun h ↦ haB h.2)]
 
 open NumberTree in
 -- Proposition 7

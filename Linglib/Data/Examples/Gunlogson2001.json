@@ -12,7 +12,7 @@
     "translation": "",
     "context": "On a tax form.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "During the tax year, you received a distribution from a foreign trust?",
         "judgment": "unacceptable"
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "In a guessing game.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It's bigger than a breadbox?",
         "judgment": "unacceptable"
@@ -94,7 +94,7 @@
     "translation": "",
     "context": "It's an open question.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "She lied to the grand jury?",
         "judgment": "unacceptable"
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "You can (please) pass the salt?",
         "judgment": "unacceptable"
@@ -176,7 +176,7 @@
     "translation": "",
     "context": "Radio station DJ: Good morning Susan. Where are you calling from? The caller answers.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "I'm from Skokie?",
         "judgment": "acceptable"
@@ -217,7 +217,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "The manager has of course been informed?",
         "judgment": "acceptable"
@@ -258,7 +258,7 @@
     "translation": "",
     "context": "A and B are looking at a co-worker's much-dented car. A: His driving has gotten a lot better. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It has? I don't see much evidence of that.",
         "judgment": "acceptable"
@@ -299,7 +299,7 @@
     "translation": "",
     "context": "A: That copier is broken. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It is? Thanks, I'll use a different one.",
         "judgment": "acceptable"
@@ -340,7 +340,7 @@
     "translation": "",
     "context": "A: Jake's here. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Jake's here? Then let's get started.",
         "judgment": "acceptable"
@@ -381,7 +381,7 @@
     "translation": "",
     "context": "A: The king of France is bald. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "France is a monarchy?",
         "judgment": "acceptable"
@@ -422,7 +422,7 @@
     "translation": "",
     "context": "Uttered to insinuate that the addressee has shoplifted.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Shoplifting's fun?",
         "judgment": "acceptable"
@@ -467,7 +467,7 @@
     "translation": "",
     "context": "A is watching a bird fly away; neither A nor B has a prior commitment about its identity.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -495,7 +495,7 @@
     "translation": "",
     "context": "A: I've just searched the refrigerator and there's absolutely nothing cold to drink. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "We're out of beer?",
         "judgment": "acceptable"
@@ -536,7 +536,7 @@
     "translation": "",
     "context": "B: I've just searched the refrigerator and there's absolutely nothing cold to drink. A: Yeah, I know. We're out of just about everything. B responds.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "We're out of beer?",
         "judgment": "unacceptable"
@@ -577,7 +577,7 @@
     "translation": "",
     "context": "A: Maria's husband was at the party. B responds.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Maria's married?",
         "judgment": "acceptable"
@@ -618,7 +618,7 @@
     "translation": "",
     "context": "Robin is sitting, as before, in a windowless computer room when another person enters. The newcomer is wearing a wet raincoat and boots. Robin says:",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "It's raining?",
         "judgment": "acceptable"

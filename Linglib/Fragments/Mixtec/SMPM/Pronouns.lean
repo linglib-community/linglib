@@ -76,6 +76,8 @@ theorem clitic_injective : Function.Injective Value.clitic := by decide
 
 end Gender
 
+namespace Pronouns
+
 /-! ### Clitics -/
 
 /-- *=ì* is the first person singular clitic ((4), (61)). -/
@@ -143,10 +145,10 @@ def nonclitics : Finset PersonalPronoun := {str1sg, str1plExcl, str2sg, str2pl}
 /-! ### The paradigm -/
 
 /-- The personal pronouns. -/
-def pronouns : Finset PersonalPronoun := clitics ∪ nonclitics
+def personal : Finset PersonalPronoun := clitics ∪ nonclitics
 
 /-- The forms of each referential category. -/
-def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
+def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm personal
 
 /-- The non-clitic series covers every category the clitics do except the inclusive and the
 nonlocal persons ((62)). -/
@@ -163,5 +165,7 @@ theorem clitic_mem_paradigm_others_iff (g : Gender.Value) :
 'himself' ((71)). A possessor may take one without needing it: *mí =rí* 'its own' ((74)). -/
 def reflexive (p : PersonalPronoun) : ReflexivePronoun :=
   { toPronoun := { p.toPronoun with form := "mí " ++ p.form, strength := none } }
+
+end Pronouns
 
 end Mixtec.SMPM

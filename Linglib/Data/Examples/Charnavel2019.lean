@@ -24,7 +24,7 @@ def ex_2_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 
@@ -37,7 +37,7 @@ def ex_2_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Cette auberge bénéficie du fait que son jardin est plus spacieux que celui des auberges voisines.", .acceptable)]
+    contrasts := [("Cette auberge bénéficie du fait que son jardin est plus spacieux que celui des auberges voisines.", .acceptable)]
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 
@@ -50,7 +50,7 @@ def ex_2_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_2_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 
@@ -76,7 +76,7 @@ def ex_2_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("La Terre a bénéficié du fait que des photos d'elle et de son satellite ont montré les effets néfastes de la pollution.", .acceptable)]
+    contrasts := [("La Terre a bénéficié du fait que des photos d'elle et de son satellite ont montré les effets néfastes de la pollution.", .acceptable)]
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 
@@ -89,7 +89,7 @@ def ex_4_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "attitude holder")] }
 
@@ -102,7 +102,7 @@ def ex_4_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "empathy locus")] }
 
@@ -115,7 +115,7 @@ def ex_4_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "empathy locus")] }
 
@@ -128,7 +128,7 @@ def ex_4_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Irène tient de Paul qu'hier, plusieurs journaux ont parlé de lui.", .acceptable)]
+    contrasts := [("Irène tient de Paul qu'hier, plusieurs journaux ont parlé de lui.", .acceptable)]
     readings := []
     paperFeatures := [("antecedent", "non-attitudinal source")] }
 
@@ -141,7 +141,7 @@ def ex_4_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Le tableau à la gauche de l'épinette pourrait contenir une représentation d'elle.", .acceptable)]
+    contrasts := [("Le tableau à la gauche de l'épinette pourrait contenir une représentation d'elle.", .acceptable)]
     readings := []
     paperFeatures := [("animacy", "inanimate"), ("antecedent", "deictic center")] }
 
@@ -154,7 +154,7 @@ def ex_4_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_4_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, il semble qu'à la droite du professeur de musique, son élève joue de l'épinette.", .acceptable)]
+    contrasts := [("Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, il semble qu'à la droite du professeur de musique, son élève joue de l'épinette.", .acceptable)]
     readings := []
     paperFeatures := [("antecedent", "deictic center")] }
 
@@ -180,7 +180,7 @@ def ex_4_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex_4_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex_4_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex_4_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex_4_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def ex_4_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def ex_4_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -271,7 +271,7 @@ def ex_4_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("La Terre tourne sur elle-même.", .acceptable)]
+    contrasts := [("La Terre tourne sur elle-même.", .acceptable)]
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 

@@ -73,7 +73,7 @@ theorem not_antitone_npComparative [Nonempty Entity] : ¬ Antitone (npComparativ
 /-- A map `f` from quantifiers to predicates preserves the ordering (Definition 4) when `a > b`
 holds exactly when `a` falls under `f` of the quantifier that the name of `b` denotes. -/
 def PreservesOrdering (f : Set (Set Entity) → Set Entity) : Prop :=
-  ∀ a b, μ b < μ a ↔ a ∈ f (Quantifier.individual b)
+  ∀ a b, μ b < μ a ↔ a ∈ f {B | Quantifier.individual b B}
 
 -- (30)
 theorem npComparative_preservesOrdering : PreservesOrdering μ (npComparative μ) :=
@@ -84,7 +84,7 @@ variable {μ}
 -- Fact 1
 theorem PreservesOrdering.apply_individual {f g : Set (Set Entity) → Set Entity}
     (hf : PreservesOrdering μ f) (hg : PreservesOrdering μ g) (b : Entity) :
-    f (Quantifier.individual b) = g (Quantifier.individual b) :=
+    f {B | Quantifier.individual b B} = g {B | Quantifier.individual b B} :=
   Set.ext fun a ↦ (hf a b).symm.trans (hg a b)
 
 -- Fact 2, Fact 1
@@ -113,7 +113,7 @@ theorem gtOverSet_antitone : Antitone (μ ⁻¹' strictUpperBounds ·) :=
 
 -- §3.9, (44)
 theorem npComparative_individual (b : Entity) :
-    npComparative μ (Quantifier.individual b) = μ ⁻¹' strictUpperBounds {μ b} := by
+    npComparative μ {B | Quantifier.individual b B} = μ ⁻¹' strictUpperBounds {μ b} := by
   ext a
   exact (npComparative_preservesOrdering μ a b).symm.trans (by simp)
 

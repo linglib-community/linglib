@@ -24,7 +24,7 @@ def bs2026_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "math speak")] }
 
@@ -37,7 +37,7 @@ def bs2026_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "four times ten to the thirteenth"), ("unit", "kilometers"), ("interpretation", "math speak")] }
 
@@ -50,7 +50,7 @@ def bs2026_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "compositional")] }
 
@@ -63,7 +63,7 @@ def bs2026_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "math speak")] }
 
@@ -76,7 +76,7 @@ def bs2026_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour"), ("interpretation", "math speak")] }
 
@@ -89,7 +89,7 @@ def bs2026_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams")] }
 
@@ -102,7 +102,7 @@ def bs2026_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("numeral", "thirty"), ("unit", "miles")] }
 
@@ -115,7 +115,7 @@ def bs2026_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "compositional"), ("pro_antecedent", "this sample of liquid")] }
 
@@ -128,7 +128,7 @@ def bs2026_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour"), ("interpretation", "compositional"), ("pro_antecedent", "its six-hour trip")] }
 
@@ -141,7 +141,7 @@ def bs2026_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "pressure"), ("numeral", "33"), ("unit", "pounds"), ("per_unit", "square inch"), ("interpretation", "idiom")] }
 
@@ -154,7 +154,7 @@ def bs2026_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "pressure"), ("numeral", "33"), ("unit", "psi")] }
 
@@ -167,7 +167,7 @@ def bs2026_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "sub-extraction"), ("base", "(3)"), ("interpretation", "math speak")] }
 
@@ -180,7 +180,7 @@ def bs2026_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "substitution"), ("base", "(6a)"), ("verbalizes", "13 g/mL")] }
 
@@ -193,7 +193,7 @@ def bs2026_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "substitution"), ("base", "(6b)"), ("verbalizes", "30 mph")] }
 
@@ -206,7 +206,7 @@ def bs2026_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "substitution"), ("base", "(8a)"), ("verbalizes", "13 g/mL")] }
 
@@ -219,7 +219,7 @@ def bs2026_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "substitution"), ("base", "(8b)"), ("verbalizes", "30 mph")] }
 
@@ -232,7 +232,7 @@ def bs2026_27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -245,7 +245,7 @@ def bs2026_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -258,7 +258,7 @@ def bs2026_27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -271,7 +271,7 @@ def bs2026_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
@@ -284,7 +284,7 @@ def bs2026_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
@@ -297,7 +297,7 @@ def bs2026_28c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
@@ -310,7 +310,7 @@ def bs2026_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -323,7 +323,7 @@ def bs2026_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -336,7 +336,7 @@ def bs2026_29c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -349,7 +349,7 @@ def bs2026_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
@@ -362,7 +362,7 @@ def bs2026_30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
@@ -375,7 +375,7 @@ def bs2026_30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 

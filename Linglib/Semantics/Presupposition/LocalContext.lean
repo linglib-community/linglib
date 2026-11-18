@@ -164,24 +164,19 @@ variable {ι : Type*} {C : Set W} {env : Set (Set ι → Set W)} {x : Set ι}
 context and under each continuation, the truth value depends only on the gap's denotation within
 the restriction. -/
 theorem transparent_iff_dependsOn :
-    Transparent C env x ↔ ∀ f ∈ env, ∀ w ∈ C, DependsOn (fun d : Set ι ↦ w ∈ f d) x := by
-  have h (d d' : Set ι) : x ⊓ d = x ⊓ d' ↔ ∀ i ∈ x, d i = d' i :=
-    ⟨fun h i hi ↦ propext ⟨fun hd ↦ (h ▸ ⟨hi, hd⟩ : i ∈ x ⊓ d').2,
-      fun hd ↦ (h ▸ ⟨hi, hd⟩ : i ∈ x ⊓ d).2⟩,
-      fun h ↦ Set.ext fun i ↦ and_congr_right fun hi ↦ Iff.of_eq (h i hi)⟩
-  rw [transparent_iff_factorsThrough]
-  exact forall₂_congr fun f _ ↦ forall₂_congr fun w _ ↦
-    ⟨fun hf d d' hd ↦ hf ((h d d').2 hd), fun hf d d' hd ↦ hf ((h d d').1 hd)⟩
+    Transparent C env x ↔ ∀ f ∈ env, ∀ w ∈ C, Set.DependsOn (fun d ↦ w ∈ f d) x :=
+  forall₂_congr fun _ _ ↦
+    ⟨fun h w hw d ↦ propext (h d w hw), fun h d w hw ↦ Iff.of_eq (h w hw d)⟩
 
 /-- If each truth value at a world of the context depends on finitely many indices, the local
 context is the set of indices on which some such truth value depends. -/
 theorem isLocalContext_of_dependsOn
-    (h : ∀ f ∈ env, ∀ w ∈ C, ∃ s : Set ι, s.Finite ∧ DependsOn (fun d : Set ι ↦ w ∈ f d) s) :
+    (h : ∀ f ∈ env, ∀ w ∈ C, ∃ s : Set ι, s.Finite ∧ Set.DependsOn (fun d ↦ w ∈ f d) s) :
     IsLocalContext C env
-      {i | ∃ f ∈ env, ∃ w ∈ C, ¬ DependsOn (fun d : Set ι ↦ w ∈ f d) {i}ᶜ} := by
+      {i | ∃ f ∈ env, ∃ w ∈ C, ¬ Set.DependsOn (fun d ↦ w ∈ f d) {i}ᶜ} := by
   refine ⟨transparent_iff_dependsOn.2 fun f hf w hw ↦ ?_, fun y hy i ⟨f, hf, w, hw, hi⟩ ↦ ?_⟩
   · obtain ⟨s, hs, hd⟩ := h f hf w hw
-    exact (isLeast_dependsOn hs hd).1.mono fun i hi ↦ ⟨f, hf, w, hw, hi⟩
+    exact (Set.isLeast_dependsOn hs hd).1.mono fun i hi ↦ ⟨f, hf, w, hw, hi⟩
   · exact by_contra fun hiy ↦ hi ((transparent_iff_dependsOn.1 hy f hf w hw).mono
       (Set.subset_compl_singleton_iff.2 hiy))
 

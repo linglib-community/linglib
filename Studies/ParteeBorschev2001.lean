@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.ParteeBorschev2001
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Semantics.Possession.Relationalizer
 
 /-!
@@ -24,15 +24,6 @@ allows](##readings_fit_fullNP), and a Russian possessive inside an NP
 * Locators are to the May 2000 manuscript, the copy at hand, not to the printed volume.
 * A modifier has [no mode with a relational noun](##possessive_modes), so the possessor slot is
   closed first, with `⨆`.
-
-## Errata
-
-* (8), (9) and (15) apply a relation to the possessee first; (10) and (14), as here, to the
-  possessor.
-* (34b) translates a full NP as 'mine'; the parallel (32b) has 'my country'.
-* *portret* with an instrumental pronoun
-  [lacks the possession reading](##not_instrumental_possession) (footnote 13), which the authors
-  cannot explain.
 
 ## TODO
 

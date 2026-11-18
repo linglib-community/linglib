@@ -24,7 +24,7 @@ namespace Hausa.Adpositions
 
 /-- *dà* 'with', marking a companion or an instrument. -/
 def da : Adposition :=
-  { morphs := [.free "dà"], linearization := {.pre}, functions := {.com, .inst},
+  { morphs := [.free "dà"], linearization := {.pre}, functions := {.comitative, .instrumental},
     complements := {some .np} }
 
 end Hausa.Adpositions

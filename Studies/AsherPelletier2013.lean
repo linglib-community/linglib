@@ -163,7 +163,7 @@ def tailed : Fin 20 → Prop := fun w ↦ w.val < 11
 instance : DecidablePred tailed := fun w ↦ Nat.decLt w.val 11
 
 theorem cohen_too_weak :
-    Cohen1999.gen (Finset.univ : Finset (Fin 20)) (fun _ ↦ True) (fun _ ↦ True) tailed ∧
+    Cohen1999.gen (uniformOn Set.univ) Set.univ {w : Fin 20 | tailed w} ∧
       (0 : Fin 20) ∉ (⊤ : Normality (Fin 20) (Fin 20)).gen Set.univ {w | tailed w} := by
   refine ⟨by decide, fun h ↦ ?_⟩
   exact absurd (h (Set.mem_univ (11 : Fin 20))) (by decide)

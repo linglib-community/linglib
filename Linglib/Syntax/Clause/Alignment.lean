@@ -39,6 +39,7 @@ marking.
 * [comrie-2013]
 * [dixon-1994]
 * [haspelmath-2011]
+* [haspelmath-2022]
 -/
 
 @[expose] public section
@@ -120,6 +121,61 @@ theorem isSecundative_iff : IsSecundative m ↔ m .P = m .R ∧ m .P ≠ m .T :=
 instance [DecidableEq κ] : Decidable (IsIndirective m) := decidable_of_iff' _ isIndirective_iff
 
 instance [DecidableEq κ] : Decidable (IsSecundative m) := decidable_of_iff' _ isSecundative_iff
+
+/-! ### Argument markers
+
+[haspelmath-2022] defines the four core argument markers by the roles they signal, each with the
+roles it must not signal, so that a marker is nominative or absolutive only against the rest of
+the marking: the marker of S is nominative exactly under accusative alignment and absolutive
+exactly under ergative alignment, and under tripartite alignment it is neither. -/
+
+section Marker
+
+variable (rs : Set ArgumentRole)
+
+/-- A nominative marker signals S and A but not P. -/
+def IsNominativeMarker : Prop := .S ∈ rs ∧ .A ∈ rs ∧ .P ∉ rs
+
+/-- An accusative marker signals P but not S or A. -/
+def IsAccusativeMarker : Prop := .P ∈ rs ∧ .S ∉ rs ∧ .A ∉ rs
+
+/-- An ergative marker signals A but not S or P. -/
+def IsErgativeMarker : Prop := .A ∈ rs ∧ .S ∉ rs ∧ .P ∉ rs
+
+/-- An absolutive marker signals S and P but not A. -/
+def IsAbsolutiveMarker : Prop := .S ∈ rs ∧ .P ∈ rs ∧ .A ∉ rs
+
+end Marker
+
+theorem isAccusative_iff_isNominativeMarker :
+    IsAccusative m ↔ IsNominativeMarker (m ⁻¹' {m .S}) := by
+  simp only [IsAccusative, IsNominativeMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  tauto
+
+theorem isErgative_iff_isAbsolutiveMarker :
+    IsErgative m ↔ IsAbsolutiveMarker (m ⁻¹' {m .S}) := by
+  simp only [IsErgative, IsAbsolutiveMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  tauto
+
+theorem IsAccusative.isAccusativeMarker (h : IsAccusative m) :
+    IsAccusativeMarker (m ⁻¹' {m .P}) := by
+  simp only [IsAccusativeMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  exact ⟨trivial, h.2, h.1 ▸ h.2⟩
+
+theorem IsErgative.isErgativeMarker (h : IsErgative m) : IsErgativeMarker (m ⁻¹' {m .A}) := by
+  simp only [IsErgativeMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  exact ⟨trivial, h.2, h.1 ▸ h.2⟩
+
+/-- Under tripartite alignment no marker is nominative or absolutive. -/
+theorem IsTripartite.not_isNominativeMarker (h : IsTripartite m) (k : κ) :
+    ¬ IsNominativeMarker (m ⁻¹' {k}) := by
+  simp only [IsNominativeMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  exact fun ⟨hS, hA, _⟩ ↦ h.1 (hS.trans hA.symm)
+
+theorem IsTripartite.not_isAbsolutiveMarker (h : IsTripartite m) (k : κ) :
+    ¬ IsAbsolutiveMarker (m ⁻¹' {k}) := by
+  simp only [IsAbsolutiveMarker, Set.mem_preimage, Set.mem_singleton_iff]
+  exact fun ⟨hS, hP, _⟩ ↦ h.2.1 (hS.trans hP.symm)
 
 /-! ### The observational classification -/
 

@@ -196,6 +196,11 @@ def question (P : Set S) : Space S := C.restrict (upperClosure P)
 theorem mem_question {P : Set S} : d ∈ C.question P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ≤ d :=
   .rfl
 
+/-- A question one of whose proposals the root already carries changes nothing. -/
+theorem question_eq_self {P : Set S} (h : ∃ p ∈ P, p ≤ C.root) : C.question P = C :=
+  ext fun _ ↦ ⟨fun hd ↦ hd.elim (· ▸ C.root_mem) And.left, fun hd ↦
+    let ⟨p, hp, hle⟩ := h; .inr ⟨hd, p, hp, hle.trans (C.root_le hd)⟩⟩
+
 /-- A question with alternative proposals is the disjunction of the questions
 ([krifka-2015] (31), (34)). -/
 theorem coe_question_union (P Q : Set S) :
@@ -315,38 +320,38 @@ variable {κ W : Type*} (C : Space (Set (Set W))) (O : κ → SetRel W W) (k : �
 
 /-- The assertion `C + k⊢φ` adds the proposition that `k` is committed to `φ`
 ([cohen-krifka-2014] (37), [krifka-2015] (14)). -/
-def assert : Space (Set (Set W)) := C.update {committed O k φ}
+def assert : Space (Set (Set W)) := C.update {k ⊢[O] φ}
 
 theorem mem_assert :
-    d ∈ C.assert O k φ ↔ d = (C.assert O k φ).root ∨ d ∈ C ∧ committed O k φ ∈ d :=
+    d ∈ C.assert O k φ ↔ d = (C.assert O k φ).root ∨ d ∈ C ∧ (k ⊢[O] φ) ∈ d :=
   or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
 
-theorem committed_mem_root_assert : committed O k φ ∈ (C.assert O k φ).root :=
+theorem committed_mem_root_assert : (k ⊢[O] φ) ∈ (C.assert O k φ).root :=
   Set.singleton_subset_iff.1 (C.le_root_update _)
 
-theorem root_assert_of_mem (h : insert (committed O k φ) C.root ∈ C) :
-    (C.assert O k φ).root = insert (committed O k φ) C.root :=
+theorem root_assert_of_mem (h : insert (k ⊢[O] φ) C.root ∈ C) :
+    (C.assert O k φ).root = insert (k ⊢[O] φ) C.root :=
   C.root_update_of_mem h
 
-theorem root_mem_assert_iff : C.root ∈ C.assert O k φ ↔ committed O k φ ∈ C.root :=
+theorem root_mem_assert_iff : C.root ∈ C.assert O k φ ↔ (k ⊢[O] φ) ∈ C.root :=
   C.root_mem_update_iff.trans Set.singleton_subset_iff
 
-theorem committed_mem_of_mem_assert (hd : d ∈ C.assert O k φ) : committed O k φ ∈ d :=
+theorem committed_mem_of_mem_assert (hd : d ∈ C.assert O k φ) : (k ⊢[O] φ) ∈ d :=
   ((C.mem_assert O k φ).1 hd).elim (· ▸ C.committed_mem_root_assert O k φ) And.right
 
 /-- The monopolar question proposes `k`'s commitment to `φ` ([krifka-2015] (27)). -/
-def monopolarQuestion : Space (Set (Set W)) := C.question {{committed O k φ}}
+def monopolarQuestion : Space (Set (Set W)) := C.question {{k ⊢[O] φ}}
 
 /-- The bipolar question proposes `k`'s commitment to `φ` or to `¬φ` ([krifka-2015] (23)). -/
-def bipolarQuestion : Space (Set (Set W)) := C.question {{committed O k φ}, {committed O k φᶜ}}
+def bipolarQuestion : Space (Set (Set W)) := C.question {{k ⊢[O] φ}, {k ⊢[O] φᶜ}}
 
 theorem mem_monopolarQuestion :
-    d ∈ C.monopolarQuestion O k φ ↔ d = C.root ∨ d ∈ C ∧ committed O k φ ∈ d := by
+    d ∈ C.monopolarQuestion O k φ ↔ d = C.root ∨ d ∈ C ∧ (k ⊢[O] φ) ∈ d := by
   simp [monopolarQuestion, mem_question]
 
 theorem mem_bipolarQuestion :
     d ∈ C.bipolarQuestion O k φ ↔
-      d = C.root ∨ d ∈ C ∧ (committed O k φ ∈ d ∨ committed O k φᶜ ∈ d) := by
+      d = C.root ∨ d ∈ C ∧ ((k ⊢[O] φ) ∈ d ∨ (k ⊢[O] φᶜ) ∈ d) := by
   simp [bipolarQuestion, mem_question]
 
 /-- The bipolar question is the disjunction of the monopolar questions of `φ` and of `¬φ`
@@ -363,7 +368,7 @@ theorem coe_bipolarQuestion :
 root of `C` carries `k⊢φ` or `k⊢¬φ`. The participant whose commitment to its content an act
 projects is its epistemic authority ([coppock-wechsler-2018]). -/
 def ProjectsCommitment (D : Space (Set (Set W))) : Prop :=
-  ∀ d ∈ D, d ≠ C.root → committed O k φ ∈ d ∨ committed O k φᶜ ∈ d
+  ∀ d ∈ D, d ≠ C.root → (k ⊢[O] φ) ∈ d ∨ (k ⊢[O] φᶜ) ∈ d
 
 /-- An assertion projects its author's commitment. -/
 theorem projectsCommitment_assert : C.ProjectsCommitment O k φ (C.assert O k φ) := fun _ hd _ ↦
@@ -380,8 +385,8 @@ variable {O k φ} {l : κ}
 commitment to `φ` is `k`'s commitment to `φ` or to `¬φ`. -/
 theorem projectsCommitment_Ici_assert_iff :
     (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).assert O l φ) ↔
-      committed O k φ = committed O l φ ∨ committed O k φᶜ = committed O l φ := by
-  refine ⟨fun h ↦ h {committed O l φ} (((Space.Ici ∅).mem_assert O l φ).2
+      (k ⊢[O] φ) = (l ⊢[O] φ) ∨ (k ⊢[O] φᶜ) = (l ⊢[O] φ) := by
+  refine ⟨fun h ↦ h {l ⊢[O] φ} (((Space.Ici ∅).mem_assert O l φ).2
     (.inr ⟨Set.empty_subset _, rfl⟩)) (Set.singleton_ne_empty _), fun h d hd _ ↦ ?_⟩
   have hl := (Space.Ici ∅).committed_mem_of_mem_assert O l φ hd
   rcases h with h | h <;> simp only [h, hl, true_or, or_true]
@@ -390,12 +395,12 @@ theorem projectsCommitment_Ici_assert_iff :
 `l`'s commitments to `φ` and to `¬φ` are each `k`'s commitment to `φ` or to `¬φ`. -/
 theorem projectsCommitment_Ici_bipolarQuestion_iff :
     (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).bipolarQuestion O l φ) ↔
-      (committed O k φ = committed O l φ ∨ committed O k φᶜ = committed O l φ) ∧
-        (committed O k φ = committed O l φᶜ ∨ committed O k φᶜ = committed O l φᶜ) := by
+      ((k ⊢[O] φ) = (l ⊢[O] φ) ∨ (k ⊢[O] φᶜ) = (l ⊢[O] φ)) ∧
+        ((k ⊢[O] φ) = (l ⊢[O] φᶜ) ∨ (k ⊢[O] φᶜ) = (l ⊢[O] φᶜ)) := by
   refine ⟨fun h ↦ ⟨?_, ?_⟩, fun h d hd hne ↦ ?_⟩
-  · exact h {committed O l φ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
+  · exact h {l ⊢[O] φ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
       (.inr ⟨Set.empty_subset _, .inl rfl⟩)) (Set.singleton_ne_empty _)
-  · exact h {committed O l φᶜ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
+  · exact h {l ⊢[O] φᶜ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
       (.inr ⟨Set.empty_subset _, .inr rfl⟩)) (Set.singleton_ne_empty _)
   · rcases (Space.Ici ∅).projectsCommitment_bipolarQuestion O l φ d hd hne with hl | hl
     · rcases h.1 with h | h <;> simp only [h, hl, true_or, or_true]

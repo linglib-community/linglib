@@ -13,7 +13,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -46,7 +46,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -79,7 +79,7 @@
     "translation": "Léa broke all her arms.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -112,7 +112,7 @@
     "translation": "Léa broke both her arms.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -211,7 +211,7 @@
     "translation": "Neither of the sides of this sheet of paper has been used.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -244,7 +244,7 @@
     "translation": "Neither of the sides of this sheet of paper has been used.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -277,7 +277,7 @@
     "translation": "Which arm did she break?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -310,7 +310,7 @@
     "translation": "Which arm did she break?",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -343,7 +343,7 @@
     "translation": "Which arm did Taro break?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -376,7 +376,7 @@
     "translation": "Which arm did Taro break?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -409,7 +409,7 @@
     "translation": "Taro broke each of his arms.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -442,7 +442,7 @@
     "translation": "Taro broke each of his arms.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -475,7 +475,7 @@
     "translation": "Taro broke one of his arms.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -508,7 +508,7 @@
     "translation": "Taro broke one of his arms.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -541,7 +541,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -574,7 +574,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -607,7 +607,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -640,7 +640,7 @@
     "translation": "Which arm hurts you?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -673,7 +673,7 @@
     "translation": "I have a problem with each arm.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -706,7 +706,7 @@
     "translation": "One arm hurts me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -739,7 +739,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -772,7 +772,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -805,7 +805,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -838,7 +838,7 @@
     "translation": "She visited us twice and always brought us flowers.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -871,7 +871,7 @@
     "translation": "She came to visit us twice and she always brought us flowers.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -904,7 +904,7 @@
     "translation": "She came to visit us twice and she brought flowers both times.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -937,7 +937,7 @@
     "translation": "The computers are broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -966,7 +966,7 @@
     "translation": "All the cups are full.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -991,7 +991,7 @@
     "translation": "The two cups are full.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

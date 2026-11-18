@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Core.Order.Ortholattice.Hom
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.BooleanAlgebra.Basic
@@ -224,8 +225,14 @@ theorem embed_mono : Monotone (embed (B := B)) := fun _ _ h _ hx ↦ hx.trans h
   · exact bot_le
   · exact @h ⟨⟨(b, ⊤), le_top⟩, hb⟩ le_rfl
 
+/-- `embed` as an order embedding. -/
+def embedOrderEmbedding : B ↪o (epistemicFrame B).Regular :=
+  OrderEmbedding.ofMapLEIff embed fun _ _ ↦ embed_le_embed
+
+@[simp] theorem coe_embedOrderEmbedding : ⇑(embedOrderEmbedding (B := B)) = embed := rfl
+
 theorem embed_injective : Function.Injective (embed (B := B)) :=
-  fun _ _ h ↦ le_antisymm (embed_le_embed.1 h.le) (embed_le_embed.1 h.ge)
+  embedOrderEmbedding.injective
 
 /-- `embed` preserves every meet that exists in `B` ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 theorem isGLB_embed_image {s : Set B} {a : B} (h : IsGLB s a) :
@@ -268,6 +275,19 @@ theorem embed_compl (b : B) : embed bᶜ = (embed b)ᶜ := by
   refine ⟨fun hx y hxy hy ↦ hxy.1 (disjoint_compl_left.mono hx hy), fun h ↦ ?_⟩
   refine le_compl_iff_disjoint_right.2 (by_contra fun hd ↦ ?_)
   exact h _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hd)) inf_le_right
+
+/-- `embed` as an ortholattice homomorphism ([holliday-mandelkern-2024] Theorem 5.7.2). -/
+def embedHom : OrtholatticeHom B (epistemicFrame B).Regular where
+  toFun := embed
+  map_sup' := embed_sup
+  map_inf' := embed_inf
+  map_top' := embed_top
+  map_bot' := embed_bot
+  map_compl' := embed_compl
+
+@[simp] theorem coe_embedHom : ⇑(embedHom (B := B)) = embed := rfl
+
+@[simp] theorem embedHom_apply (b : B) : embedHom b = embed b := rfl
 
 /-- `b` must be the case at `[a, i]` iff `i ≤ b` ([holliday-mandelkern-2024] Lemma 5.8.2). -/
 theorem mem_core_embed {b : B} {x : Possibility B} :

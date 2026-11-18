@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "fronted"],
@@ -35,7 +35,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "fronted"],
@@ -71,7 +71,7 @@
     "translation": "I mistakenly thought he took away a picture of someone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "inSitu"],
@@ -108,7 +108,7 @@
     "translation": "I mistakenly thought he took away that picture of someone.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "inSitu"],

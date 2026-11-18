@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Word
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
@@ -23,7 +23,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 ## Main definitions
 
 * `vocabulary`: the Vocabulary Items of the heads of (44), with (57a).
-* `Constituency`, `candidates`, `tableau`: the syntax of the head and the next word, GEN over the
+* `Constituency`, `candidates`, `optimal`: the syntax of the head and the next word, GEN over the
   allomorphs and the phrasings, and the ranking of (26c), (63), (64) and (80) over MAX-XP (23a),
   SUBCAT (29b), Positional Minimality (26a), PRIORITY (60a), Match(ω, X⁰) (75a) and
   Match(φ, XP) (23b).
@@ -133,7 +133,7 @@ each with the word heading it, and whether the second word is a second-position 
 subcategorizes for the minimal φ of the element before it (29). -/
 structure Constituency where
   /-- The phrases over the two words, each as the words it spans and the word heading it. -/
-  phrases : List ((ℕ × ℕ) × ℕ)
+  phrases : List HeadedSpan
   /-- The second word is a second-position element. -/
   subcat : Bool
   deriving DecidableEq
@@ -142,18 +142,18 @@ namespace Constituency
 
 /-- The head ends its phrase and the next word heads a sister phrase: a stranded head, or a
 wh-phrase before the predicate. -/
-def sisters : Constituency := ⟨[((0, 1), 0), ((1, 2), 1)], false⟩
+def sisters : Constituency := ⟨[⟨⟨(0, 1), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word heads a phrase inside the head's own, the deictic *e* or *o* after a stranded
 demonstrative or negator ((33b), (36b)). -/
-def adjunct : Constituency := ⟨[((0, 2), 0), ((1, 2), 1)], false⟩
+def adjunct : Constituency := ⟨[⟨⟨(0, 2), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word heads the head's phrase, a noun or predicate whose extended projection the head
 belongs to ((33a), (36a)), one phrase as [ito-mester-2019] count an extended projection. -/
-def complement : Constituency := ⟨[((0, 2), 1)], false⟩
+def complement : Constituency := ⟨[⟨⟨(0, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word is a second-position element hosted by the head's phrase ((40a)–(42a)). -/
-def host : Constituency := ⟨[((0, 1), 0)], true⟩
+def host : Constituency := ⟨[⟨⟨(0, 1), by decide⟩, 0⟩], true⟩
 
 end Constituency
 
@@ -171,18 +171,19 @@ structure Input where
 
 /-- The prosodic word of `n` syllables with penultimate stress (14), a trochee over its last two
 syllables and the earlier ones unfooted (15); a monosyllable is a degenerate foot. -/
-def penultimate : ℕ → Tree
-  | 0 => .om []
-  | 1 => .om [.ft true [.σ 0 true]]
-  | n + 2 => .om (List.replicate n .σ ++ [.ft true [.σ 0 true, .σ]])
+def penultimate : ℕ → MetricalTree
+  | 0 => .om false []
+  | 1 => .om false [.ft true [.σ 0 true]]
+  | n + 2 => .om false (List.replicate n .σ ++ [.ft true [.σ 0 true, .σ]])
 
 /-- A disyllabic trochee is a well-formed foot with the head profile of `Foot.trochee`. -/
-def IsTrochee (t : Tree) : Prop := IsFoot t ∧ Foot.childHeadFlags t = [true, false]
+def IsTrochee (t : MetricalTree) : Prop := IsFoot t ∧ Foot.childHeadFlags t = [true, false]
 
 instance : DecidablePred IsTrochee := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A minimal φ dominates no φ. -/
-def IsMinimalPhi (t : Tree) : Prop := t.value.level = .ph ∧ ∀ c ∈ t.children, c.value.level ≠ .ph
+def IsMinimalPhi (t : MetricalTree) : Prop :=
+  t.value.level = .ph ∧ ∀ c ∈ t.children, c.value.level ≠ .ph
 
 instance : DecidablePred IsMinimalPhi := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -204,10 +205,11 @@ theorem spans_penultimate_isMinimalPhi (k : ℕ) : (penultimate k).spans IsMinim
   rcases k with _ | _ | n <;>
     simp [penultimate, IsMinimalPhi, RoseTree.spansList_append, RoseTree.spansList_replicate]
 
-theorem spans_penultimate_isTrochee : (penultimate (n + 2)).spans IsTrochee = [(n, n + 2)] := by
+theorem spans_penultimate_isTrochee :
+    (penultimate (n + 2)).spans IsTrochee = [⟨(n, n + 2), Nat.le_add_right ..⟩] := by
   simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate, IsTrochee,
     IsConstituent, Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses,
-    Constituent.isHead]
+    Level.Licenses, Constituent.isHead, show Level.syl ≤ Level.ft by decide]
 
 end Penultimate
 
@@ -232,28 +234,29 @@ def next : ℕ := if x.footed then 2 else 3
 
 /-- The parse of the input by a head of `k` syllables under a phrasing, the two φs grouped into one
 maximal φ where the next word shares the head's. -/
-def parse (k : ℕ) : Phrasing → Tree
-  | .joined => .node .iota [Tree.ph [penultimate k, penultimate x.next]]
+def parse (k : ℕ) : Phrasing → MetricalTree
+  | .joined => .iota [.ph false [penultimate k, penultimate x.next]]
   | .separate => pair (penultimate k) (penultimate x.next)
   | .lifted => pair (penultimate (k + 1)) (penultimate (x.next - 1))
 where
   /-- Two φs, under one maximal φ where the next word shares the head's. -/
-  pair (h n : Tree) : Tree :=
-    if x.sameMax then .node .iota [Tree.ph [Tree.ph [h], Tree.ph [n]]]
-    else .node .iota [Tree.ph [h], Tree.ph [n]]
+  pair (h n : MetricalTree) : MetricalTree :=
+    if x.sameMax then .iota [.ph false [.ph false [h], .ph false [n]]]
+    else .iota [.ph false [h], .ph false [n]]
 
 /-- The cut before word `w`, in syllables, for a head of `k` syllables. -/
-def cut (k w : ℕ) : ℕ := ([k, x.next].take w).sum
+def cut (k : ℕ) : ℕ →o ℕ := Prosody.cut [k, x.next]
 
 /-- The stressed syllable of word `w`, its penult (14). -/
 def stress (k w : ℕ) : ℕ := x.cut k w + ([k, x.next].getD w 0 - 2)
 
 /-- The phrases in syllables, each with the stressed syllable of the word heading it. -/
-def phrases (k : ℕ) : List ((ℕ × ℕ) × ℕ) :=
-  x.constituency.phrases.map fun p ↦ ((x.cut k p.1.1, x.cut k p.1.2), x.stress k p.2)
+def phrases (k : ℕ) : List HeadedSpan :=
+  x.constituency.phrases.map fun p ↦ ⟨p.span.map (x.cut k), x.stress k p.head⟩
 
 /-- The spans of the morphosyntactic words, the head's `k` syllables and then the next word's. -/
-def words (k : ℕ) : List (ℕ × ℕ) := [(0, k), (k, k + x.next)]
+def words (k : ℕ) : List (NonemptyInterval ℕ) :=
+  [⟨(0, k), Nat.zero_le k⟩, ⟨(k, k + x.next), Nat.le_add_right ..⟩]
 
 end Input
 
@@ -270,7 +273,7 @@ section Tableau
 variable (v : RuleSet Item) (x : Input)
 
 /-- The parse a candidate gives the input. -/
-def Candidate.tree (c : Candidate) : Tree := x.parse (syllables c.item.exponent) c.phrasing
+def Candidate.tree (c : Candidate) : MetricalTree := x.parse (syllables c.item.exponent) c.phrasing
 
 /-- GEN offers each item of `v` applicable to the head in each phrasing, Syllable Lifting only where
 the next word shares the head's maximal φ, the domain §4.3 gives it. -/
@@ -288,9 +291,10 @@ def maxXP : Constraint Candidate := fun c ↦
 /-- SUBCAT (29b): a violation when a second-position element lies in no minimal φ together with the
 element before it. -/
 def subcat : Constraint Candidate :=
-  (Constraint.align fun (w p : ℕ × ℕ) ↦ p.1 < w.1 ∧ w.2 ≤ p.2).comap fun c ↦
+  (Constraint.align fun (w p : NonemptyInterval ℕ) ↦ p.fst < w.fst ∧ w.snd ≤ p.snd).comap fun c ↦
     let k := syllables c.item.exponent
-    (if x.constituency.subcat then [(k, k + x.next)] else [], (c.tree x).spans IsMinimalPhi)
+    (if x.constituency.subcat then [⟨(k, k + x.next), Nat.le_add_right ..⟩] else [],
+      (c.tree x).spans IsMinimalPhi)
 
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
@@ -310,12 +314,13 @@ over both words answering to the clause. -/
 def matchPhi : Constraint Candidate := fun c ↦
   let k := syllables c.item.exponent
   prosodySyntaxMatch .ph
-    ((x.phrases k).map (·.1) ++ if x.sameMax then [(0, k + x.next)] else []) (c.tree x)
+    ((x.phrases k).map (·.span) ++
+      if x.sameMax then [⟨(0, k + x.next), Nat.zero_le _⟩] else []) (c.tree x)
 
-/-- The tableau of an input: MAX-XP and SUBCAT over Positional Minimality over PRIORITY over the
-Match constraints, as in (26c), (63), (64) and (80). -/
-def tableau : Tableau Candidate 6 :=
-  Tableau.ofList (candidates v x)
+/-- The optimal candidates of an input: MAX-XP and SUBCAT over Positional Minimality over
+PRIORITY over the Match constraints, as in (26c), (63), (64) and (80). -/
+def optimal : Finset Candidate :=
+  Constraint.eval (candidates v x)
     [maxXP x, subcat x, positionalMinimality x, priority v x, matchOmega x, matchPhi x]
 
 end Tableau
@@ -355,7 +360,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- **The grammar derives the examples**: in each the optimal candidates insert the attested
 allomorph. -/
 theorem rows_optimal :
-    ∀ d ∈ rows, (tableau vocabulary d.input).optimal.image (·.item.exponent) = {d.form} := by
+    ∀ d ∈ rows, (optimal vocabulary d.input).image (·.item.exponent) = {d.form} := by
   decide
 
 /-! ### Suppletion and its suspension -/
@@ -364,7 +369,7 @@ theorem rows_optimal :
 phrase or is a hosted second-position element ((24)–(26), (29)). -/
 theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
-      ∀ c ∈ (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal,
+      ∀ c ∈ optimal vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩,
         c.phrasing = .joined ↔ (s = .complement ∨ s = .host) := by
   decide +revert +kernel
 
@@ -372,7 +377,7 @@ theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
 unavailable (88). -/
 theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
-      (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal.image
+      (optimal vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).image
         (·.item.exponent) = {if (s == .sisters || s == .adjunct) && (footed || !sameMax)
           then h.long else h.short} := by
   decide +revert +kernel
@@ -384,8 +389,8 @@ theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
     (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
       matchOmega x, matchPhi x]) ⟨h.neighborhood false, .sisters, footed, true⟩)
     (hp : priority vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩ ∈ Fs) :
-    ⟨{Feature.head h} ⟷ h.long, .separate⟩ ∉ (Tableau.ofList
-      (candidates vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩) Fs).optimal := by
+    ⟨{Feature.head h} ⟷ h.long, .separate⟩ ∉ Constraint.eval
+      (candidates vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩) Fs := by
   set x : Input := ⟨h.neighborhood false, .sisters, footed, true⟩
   have hle : ∀ F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
       matchOmega x, matchPhi x]) x,
@@ -394,14 +399,8 @@ theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
   have hlt : priority vocabulary x ⟨{Feature.head h} ⟷ h.short, .joined⟩ <
       priority vocabulary x ⟨{Feature.head h} ⟷ h.long, .separate⟩ := by
     cases h <;> cases footed <;> decide
-  refine Tableau.notMem_optimal_of_lt (c := ⟨{Feature.head h} ⟷ h.short, .joined⟩)
-    (by rw [Tableau.ofList_candidates]; cases h <;> cases footed <;> decide)
-    (Pi.toLex_strictMono ?_)
-  obtain ⟨p, hp⟩ := List.get_of_mem hp
-  refine Pi.lt_def.2 ⟨fun q ↦ hle _ (hFs _ (List.get_mem _ _)), p, ?_⟩
-  show Fs.get p _ < Fs.get p _
-  rw [hp]
-  exact hlt
+  exact Constraint.notMem_eval_of_forall_le
+    (by cases h <;> cases footed <;> decide) (fun F hF ↦ hle F (hFs F hF)) ⟨_, hp, hlt⟩
 
 section Priority
 
@@ -473,16 +472,16 @@ it (§3.3). -/
 theorem optimal_item_eq_of_two_le
     (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
     (hi : (v.applicable x.neighborhood).head? = some i) (hk : 2 ≤ syllables i.exponent)
-    (hc : c ∈ (tableau v x).optimal) : c.item = i := by
+    (hc : c ∈ optimal v x) : c.item = i := by
   obtain ⟨p, hp, h₁, h₂, h₃⟩ := exists_phrasing_eq_zero hs hk
   have hd : (⟨i, p⟩ : Candidate) ∈ candidates v x :=
     mem_candidates.2 ⟨List.mem_of_mem_head? hi, fun h ↦ absurd h hp⟩
   have z {s : Finset Candidate} {F : Constraint Candidate} (hs : (⟨i, p⟩ : Candidate) ∈ s)
       (h0 : F ⟨i, p⟩ = 0) : (⟨i, p⟩ : Candidate) ∈ s.argmin F :=
     Finset.mem_argmin.2 ⟨hs, fun _ _ ↦ h0.trans_le (Nat.zero_le _)⟩
-  rw [tableau, Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons,
-    Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons] at hc
-  obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Tableau.optimal_subset hc)
+  rw [optimal, Constraint.eval_cons, Constraint.eval_cons,
+    Constraint.eval_cons, Constraint.eval_cons] at hc
+  obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Constraint.eval_subset hc)
   exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1
     ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
@@ -490,10 +489,10 @@ theorem optimal_item_eq_of_two_le
 /-- PRIORITY undominated selects the Subset Principle's winner. -/
 theorem winner?_eq_some_item_of_mem_optimal
     (hv : v.Pairwise fun i j ↦ j.specificity ≤ i.specificity) {Fs : List (Constraint Candidate)}
-    (hc : c ∈ (Tableau.ofList (candidates v x) (priority v x :: Fs)).optimal) :
+    (hc : c ∈ Constraint.eval (candidates v x) (priority v x :: Fs)) :
     winner? v x.neighborhood = some c.item := by
-  rw [Tableau.optimal_ofList_cons] at hc
-  obtain ⟨hcs, hmin⟩ := Finset.mem_argmin.1 (Tableau.optimal_subset hc)
+  rw [Constraint.eval_cons] at hc
+  obtain ⟨hcs, hmin⟩ := Finset.mem_argmin.1 (Constraint.eval_subset hc)
   rw [winner?_eq_head?_applicable hv]
   obtain ⟨i, hi⟩ := Option.isSome_iff_exists.1
     (List.isSome_head?.2 (List.ne_nil_of_mem (mem_candidates.1 hcs).1))
@@ -503,7 +502,7 @@ theorem winner?_eq_some_item_of_mem_optimal
   rw [hi, h0]
 
 theorem winner?_vocabulary_eq_some_item_of_mem_optimal {Fs : List (Constraint Candidate)}
-    (hc : c ∈ (Tableau.ofList (candidates vocabulary x) (priority vocabulary x :: Fs)).optimal) :
+    (hc : c ∈ Constraint.eval (candidates vocabulary x) (priority vocabulary x :: Fs)) :
     winner? vocabulary x.neighborhood = some c.item :=
   winner?_eq_some_item_of_mem_optimal vocabulary_pairwise hc
 
@@ -584,7 +583,7 @@ end Globality
 
 section CCommand
 
-open PhraseStructure Core.Order
+open PhraseStructure
 
 /-- The ditransitive clause of (90), the verb raised to Voice over the internal argument, a
 demonstrative whose noun phrase is elided, and the applied argument in a rightward specifier of
@@ -600,7 +599,7 @@ def ditransitive (verb o d : String) : PhraseStructure.Tree Minimalist.Cat Strin
         Tree.node .D [Tree.terminal .N d]]]]
 
 /-- The words of the terminals a position c-commands. -/
-def cCommandedWords (t : PhraseStructure.Tree Minimalist.Cat String) (p : TreePath) :
+def cCommandedWords (t : PhraseStructure.Tree Minimalist.Cat String) (p : GornAddress) :
     List String :=
   (t.positionedTerminals.filter fun x ↦ t.CCommands p x.1).map (·.2.2)
 

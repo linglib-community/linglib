@@ -201,8 +201,8 @@ theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure
       -(w ⬝ᵥ ∫ c, T c ∂q) - logPartition T w := by
   rw [integral_fintype .of_finite, integral_eq_sum]
   simp only [smul_eq_mul, log_maxEnt_real_singleton, mul_sub, sum_sub_distrib, ← sum_mul,
-    sum_measureReal_singleton_eq_one, one_mul, harmony, dotProduct_sum, dotProduct_smul,
-    mul_neg, sum_neg_distrib]
+    sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul, harmony, dotProduct_sum,
+    dotProduct_smul, mul_neg, sum_neg_distrib]
 
 variable (p : Measure C) [IsProbabilityMeasure p]
 

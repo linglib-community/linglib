@@ -11,7 +11,7 @@
     "translation": "foliages",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "derivedAggregate"],
@@ -33,7 +33,7 @@
     "translation": "two leaves",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -55,7 +55,7 @@
     "translation": "two foliages",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "derivedAggregate"],
@@ -77,7 +77,7 @@
     "translation": "many foliage already fell",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "derivedAggregate"],
@@ -100,7 +100,7 @@
     "translation": "birches and spruces shed many foliage",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "derivedAggregate"],
@@ -122,7 +122,7 @@
     "translation": "collection of tables",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -144,7 +144,7 @@
     "translation": "collection of jackets",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -166,7 +166,7 @@
     "translation": "collection of planets",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -188,7 +188,7 @@
     "translation": "a group of 3 sailors",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "animate"],
@@ -210,7 +210,7 @@
     "translation": "two groups of three sailors",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "animate"],
@@ -232,7 +232,7 @@
     "translation": "many groups of three sailors",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "animate"],
@@ -254,7 +254,7 @@
     "translation": "all groups of three sailors",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "animate"],
@@ -277,7 +277,7 @@
     "translation": "Two sets of cards were lying on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -299,7 +299,7 @@
     "translation": "two rings/sets of keys",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -321,7 +321,7 @@
     "translation": "two pairs of shoes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -343,7 +343,7 @@
     "translation": "two staircases",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -366,7 +366,7 @@
     "translation": "two kitchens, two purchases, two refrigerators, two sets of dishes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "derivedAggregate"],
@@ -388,7 +388,7 @@
     "translation": "two coffees, two portions of French fries",
     "context": "fast-food order",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -411,7 +411,7 @@
     "translation": "two coffees, two individual French fries",
     "context": "fast-food order",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -434,7 +434,7 @@
     "translation": "two sets of tables",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -456,7 +456,7 @@
     "translation": "two sets of jackets",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -478,7 +478,7 @@
     "translation": "six sets of cars",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -500,7 +500,7 @@
     "translation": "all two sets of violins",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "pluraleTantum"],
@@ -522,7 +522,7 @@
     "translation": "all two sets of keys",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -544,7 +544,7 @@
     "translation": "all seven staircases",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -566,7 +566,7 @@
     "translation": "three two sets of keys",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -588,7 +588,7 @@
     "translation": "three two sets of doors",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "pluraleTantum"],
@@ -610,7 +610,7 @@
     "translation": "three seven staircases",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "multiple"],
@@ -632,7 +632,7 @@
     "translation": "two kinds of life (as in a Jekyll and Hyde scenario)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "abstract"],
@@ -654,7 +654,7 @@
     "translation": "two kinds of cheese",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -676,7 +676,7 @@
     "translation": "two faces (as in a Janus face)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -698,7 +698,7 @@
     "translation": "four kinds of cheese",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -720,7 +720,7 @@
     "translation": "all two kinds of cheese",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -742,7 +742,7 @@
     "translation": "all two kinds of life",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "abstract"],
@@ -764,7 +764,7 @@
     "translation": "all four kinds of cheese",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -786,7 +786,7 @@
     "translation": "three two kinds of cheese",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -808,7 +808,7 @@
     "translation": "ten two kinds of life",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "abstract"],
@@ -830,7 +830,7 @@
     "translation": "nine four kinds of cheese",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -852,7 +852,7 @@
     "translation": "There was cow all over the road.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -874,7 +874,7 @@
     "translation": "There was (a) pig in the salad.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -897,7 +897,7 @@
     "translation": "I used two oils in this salad.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -922,7 +922,7 @@
     "translation": "We sell wines in bottles and on tap.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -947,7 +947,7 @@
     "translation": "We sell oils for personal cargo and utility cars.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -972,7 +972,7 @@
     "translation": "They have three beers on tap in Brno.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -997,7 +997,7 @@
     "translation": "We breed (different types of) dogs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -1022,7 +1022,7 @@
     "translation": "Our gas station sells three fuels.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -1047,7 +1047,7 @@
     "translation": "Yesterday our gas station sold three fuels.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -1072,7 +1072,7 @@
     "translation": "Our gas station sells three fuels.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -1097,7 +1097,7 @@
     "translation": "Yesterday our gas station sold three fuels.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],
@@ -1121,7 +1121,7 @@
     "translation": "two kinds of this table's leg",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "unique"],
@@ -1143,7 +1143,7 @@
     "translation": "two kinds of Petr Novák",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "proper"],
@@ -1166,7 +1166,7 @@
     "translation": "Peter saw two sets of dogs in the yard.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "ordinary"],
@@ -1188,7 +1188,7 @@
     "translation": "two packages of water, each consisting of six bottles",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "substance"],

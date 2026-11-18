@@ -84,12 +84,12 @@ inductive Claim
   | blocked
   deriving DecidableEq, Repr
 
-/-- A conditioning relation records the word's heads, the head whose realization is at issue, its
-conditioner, `none` for the root, and the book's verdict. -/
+/-- A conditioning relation records the word's heads, the head whose realization is at issue, the
+position that conditions it, `⊥` for the root, and the book's verdict. -/
 structure Row where
   spine : ComplexHead Root Morpheme
   target : Fin spine.heads.length
-  conditioner : Option (Fin spine.heads.length)
+  conditioner : WithBot (Fin spine.heads.length)
   claim : Claim
 
 /-- The heads as named in the rows. -/
@@ -117,11 +117,11 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let c ← ex.feature? "conditioner"
   if ht : t - 1 < hs.length then
     if c = "root" then
-      pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, none, claim⟩
+      pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, ⊥, claim⟩
     else
       let j ← ex.nat? "conditioner"
       if hj : j - 1 < hs.length then
-        pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, some ⟨j - 1, hj⟩, claim⟩
+        pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, (⟨j - 1, hj⟩ : Fin hs.length), claim⟩
       else none
   else none
 
@@ -132,22 +132,19 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Predictions -/
 
-theorem root_rows :
-    ∀ r ∈ rows, r.conditioner = none →
-      (r.spine.SeesRoot cyclic phonNull r.target ↔ r.claim = .attested) := by
-  decide
-
-theorem head_rows :
-    ∀ r ∈ rows, ∀ j, r.conditioner = some j →
-      (r.spine.Sees cyclic phonNull r.target j ↔ r.claim = .attested) := by
+/-- Every conditioning relation the book attests holds between a head and a position it sees,
+the root included, and every one it excludes does not. -/
+theorem rows_sees :
+    ∀ r ∈ rows, (r.spine.Sees cyclic phonNull r.target r.conditioner ↔ r.claim = .attested) := by
   decide
 
 -- §3.1.1
 theorem perfect_one_cycle :
-    ∀ r ∈ rows, r.spine.root = ⟨rootNames.idxOf "AM"⟩ → ∀ j, r.conditioner = some j →
-      r.spine.Coactive cyclic r.target j ∧
-        (r.spine.Sees cyclic phonNull r.target j ↔
-          ∀ k, j < k → k < r.target → phonNull r.spine.heads[k]) := by
+    ∀ r ∈ rows, r.spine.root = ⟨rootNames.idxOf "AM"⟩ →
+      ∀ j : Fin r.spine.heads.length, r.conditioner = j →
+        r.spine.Active cyclic r.target j ∧
+          (r.spine.Sees cyclic phonNull r.target j ↔
+            ∀ k, j < k → k < r.target → phonNull r.spine.heads[k]) := by
   decide
 
 end Embick2010

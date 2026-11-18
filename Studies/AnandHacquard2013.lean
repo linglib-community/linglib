@@ -42,15 +42,6 @@ imperfect correlate.
   the reading on which an embedded epistemic is undefined whatever the world of evaluation.
 * Villalta's alternative set is Heim's $\{\varphi, \neg\varphi\}$, as the paper assumes.
 
-## Errata
-
-* The verifier set (50) as printed contains the empty state, which meets its condition vacuously,
-  so the uncertainty condition (54) would hold of every complement and the contradiction (58)
-  draws for necessity modals would not arise. The prose's "excluding ∅" is needed, and `verifiers`
-  follows it.
-* (63) states the preference assertion and the verifier set for an unmodalized `p`, as in (56),
-  although the entry is for `ϕ`; `doubt` reads `ϕ`.
-
 ## References
 
 * [anand-hacquard-2013]

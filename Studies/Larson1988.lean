@@ -73,7 +73,7 @@ def tok_kick   : LexicalItem.Token := ⟨.of .V [.D] (phonForm := "kicked"), 310
 def tok_ball   : LexicalItem.Token := ⟨.of .D [] (phonForm := "the ball"), 311⟩
 
 /-- The constituent *to Mary*. -/
-def ppToMaryP : LinearizedSyntacticObject := tok_to * tok_mary
+def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
 
 /-! ### The oblique dative
 
@@ -90,7 +90,7 @@ def obliqueDative : Derivation :=
     ] }
 
 /-- The oblique dative's tree, `[John [a letter [send [to Mary]]]]`. -/
-def obliqueDativeTree : LinearizedSyntacticObject :=
+def obliqueDativeTree : PlanarSyntacticObject :=
   tok_john * (tok_letter * (tok_send * ppToMaryP))
 
 theorem obliqueDative_externalize? : obliqueDative.externalize? = some obliqueDativeTree := by
@@ -120,9 +120,9 @@ def docDativeShift : Derivation :=
     ] }
 
 /-- The double object construction's tree, `[John [Mary [a letter [send [to t]]]]]`. -/
-def docDativeShiftTree : LinearizedSyntacticObject :=
+def docDativeShiftTree : PlanarSyntacticObject :=
   tok_john * (tok_mary * (tok_letter * (tok_send *
-    (tok_to * (LinearizedSyntacticObject.trace : LinearizedSyntacticObject)))))
+    (tok_to * (PlanarSyntacticObject.trace : PlanarSyntacticObject)))))
 
 theorem docDativeShift_externalize? :
     docDativeShift.externalize? (fun _ ↦ none) = some docDativeShiftTree := by
@@ -151,9 +151,9 @@ def standardPassive : Derivation :=
     ] }
 
 /-- The passive's tree, `[the ball [John [kicked t]]]`. -/
-def standardPassiveTree : LinearizedSyntacticObject :=
-  tok_ball * (tok_john * (tok_kick * (LinearizedSyntacticObject.trace :
-    LinearizedSyntacticObject)))
+def standardPassiveTree : PlanarSyntacticObject :=
+  tok_ball * (tok_john * (tok_kick * (PlanarSyntacticObject.trace :
+    PlanarSyntacticObject)))
 
 theorem standardPassive_externalize? :
     standardPassive.externalize? (fun _ ↦ none) = some standardPassiveTree := by
@@ -224,7 +224,7 @@ def tok_to2     : LexicalItem.Token := ⟨.of .P [.D] (phonForm := "to"), 323⟩
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .em .right (tok_to2 * tok_mary2 : LinearizedSyntacticObject),
+      .em .right (tok_to2 * tok_mary2 : PlanarSyntacticObject),
       .em .left tok_letter2,
       .im DP_mary2,
       .im DP_mary2
@@ -232,10 +232,10 @@ def indirectPassive : Derivation :=
 
 /-- The indirect passive's tree, `[Mary [t [a letter [sent [to t]]]]]`, with a trace at each
 extraction site. -/
-def indirectPassiveTree : LinearizedSyntacticObject :=
-  tok_mary2 * ((LinearizedSyntacticObject.trace : LinearizedSyntacticObject) *
+def indirectPassiveTree : PlanarSyntacticObject :=
+  tok_mary2 * ((PlanarSyntacticObject.trace : PlanarSyntacticObject) *
     (tok_letter2 * (tok_sent * (tok_to2 *
-      (LinearizedSyntacticObject.trace : LinearizedSyntacticObject)))))
+      (PlanarSyntacticObject.trace : PlanarSyntacticObject)))))
 
 theorem indirectPassive_externalize? :
     indirectPassive.externalize? (fun _ ↦ none) = some indirectPassiveTree := by

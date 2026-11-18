@@ -24,7 +24,7 @@ def felicity_mass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "massNoun")] }
 
@@ -37,7 +37,7 @@ def felicity_count : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "countNoun")] }
 
@@ -50,7 +50,7 @@ def felicity_atelic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "atelicVP")] }
 
@@ -63,7 +63,7 @@ def felicity_telic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "telicVP")] }
 
@@ -76,7 +76,7 @@ def felicity_ga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "gradableAdj")] }
 
@@ -89,7 +89,7 @@ def felicity_nonga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "nonGradableAdj")] }
 
@@ -102,7 +102,7 @@ def dim_82a_hotter : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "temperature"), ("intensive", "true")] }
 
@@ -115,7 +115,7 @@ def dim_82b_harder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "hardness"), ("intensive", "true")] }
 
@@ -128,7 +128,7 @@ def dim_83a_more_coffee : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "massNoun"), ("measuredDomain", "entity"), ("dimension", "volume"), ("intensive", "false")] }
 
@@ -141,7 +141,7 @@ def dim_83b_more_plastic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "massNoun"), ("measuredDomain", "entity"), ("dimension", "weight"), ("intensive", "false")] }
 
@@ -154,7 +154,7 @@ def dim_84a_fuller : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "volume"), ("intensive", "false")] }
 
@@ -167,7 +167,7 @@ def dim_84b_heavier : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "weight"), ("intensive", "false")] }
 
@@ -180,7 +180,7 @@ def dim_85a_more_heat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "massNoun"), ("measuredDomain", "state"), ("dimension", "temperature"), ("intensive", "true")] }
 
@@ -193,7 +193,7 @@ def dim_85b_more_firmness : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "massNoun"), ("measuredDomain", "state"), ("dimension", "hardness"), ("intensive", "true")] }
 
@@ -206,7 +206,7 @@ def dim_89a_sped_up : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "atelicVP"), ("measuredDomain", "event"), ("dimension", "speed"), ("intensive", "true")] }
 
@@ -219,7 +219,7 @@ def dim_87a_drove : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("category", "atelicVP"), ("measuredDomain", "event"), ("dimension", "distance"), ("intensive", "false")] }
 
@@ -232,7 +232,7 @@ def very_ga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Al wasn't very much intelligent.", .ungrammatical)]
+    contrasts := [("Al wasn't very much intelligent.", .ungrammatical)]
     readings := []
     paperFeatures := [("category", "gradableAdj"), ("requiresOvertMuch", "false")] }
 
@@ -245,7 +245,7 @@ def very_noun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Al didn't eat very soup.", .ungrammatical)]
+    contrasts := [("Al didn't eat very soup.", .ungrammatical)]
     readings := []
     paperFeatures := [("category", "massNoun"), ("requiresOvertMuch", "true")] }
 
@@ -258,7 +258,7 @@ def very_verb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Al didn't run very.", .ungrammatical)]
+    contrasts := [("Al didn't run very.", .ungrammatical)]
     readings := []
     paperFeatures := [("category", "atelicVP"), ("requiresOvertMuch", "true")] }
 
@@ -271,7 +271,7 @@ def shift_104_rock : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Al found more rocks than Bill did.", .acceptable)]
+    contrasts := [("Al found more rocks than Bill did.", .acceptable)]
     readings := []
     paperFeatures := [("shift", "numberMorphology")] }
 
@@ -284,7 +284,7 @@ def shift_105_run : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Al ran to the park more than Bill did.", .acceptable)]
+    contrasts := [("Al ran to the park more than Bill did.", .acceptable)]
     readings := []
     paperFeatures := [("shift", "telicization")] }
 

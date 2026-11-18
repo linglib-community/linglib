@@ -22,9 +22,11 @@ def ex22 : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You hear pattering, and you're not entirely sure what it is."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -35,9 +37,11 @@ def ex29 : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl siipxw-t"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Joe left the meeting looking really green in the face and sweaty. Someone asks you why he left."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false"), ("figure", "4"), ("force", "necessity"), ("flavor", "epistemic")] }
 
@@ -48,9 +52,11 @@ def ex30 : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl da'awhl ixwt oo ligi nee=yimaa=dii ixwt"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("da'awhl", "then"), ("ixwt", "fish"), ("oo", "or"), ("ligi", "INDEF"), ("nee=yimaa=dii", "NEG=EPIS=CNTR"), ("ixwt", "fish")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], [⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], none⟩]⟩, ⟨['i', 'x', 'w', 't'], ['f', 'i', 's', 'h'], [⟨['i', 'x', 'w', 't'], ['f', 'i', 's', 'h'], none⟩]⟩, ⟨['o', 'o'], ['o', 'r'], [⟨['o', 'o'], ['o', 'r'], none⟩]⟩, ⟨['l', 'i', 'g', 'i'], ['I', 'N', 'D', 'E', 'F'], [⟨['l', 'i', 'g', 'i'], ['I', 'N', 'D', 'E', 'F'], none⟩]⟩, ⟨['n', 'e', 'e', '=', 'y', 'i', 'm', 'a', 'a', '=', 'd', 'i', 'i'], ['N', 'E', 'G', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N', 'T', 'R'], [⟨['n', 'e', 'e'], ['N', 'E', 'G'], none⟩, ⟨['y', 'i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['d', 'i', 'i'], ['C', 'N', 'T', 'R'], some '='⟩]⟩, ⟨['i', 'x', 'w', 't'], ['f', 'i', 's', 'h'], [⟨['i', 'x', 'w', 't'], ['f', 'i', 's', 'h'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibly not", .acceptable)]
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("negated", "true")] }
 
@@ -61,9 +67,11 @@ def ex37 : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl x̱sdaa-diit"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['x', '̱', 's', 'd', 'a', 'a', '-', 'd', 'i', 'i', 't'], ['w', 'i', 'n', '-', '3', 'P', 'L', '.', 'I', 'I'], [⟨['x', '̱', 's', 'd', 'a', 'a'], ['w', 'i', 'n'], none⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "The Canucks were playing last night. You weren't watching the game but you heard your son sounding excited and happy from the living room where he was watching the game, so you thought they were winning. You found out after the game that the Canucks lost 20–0, and your son was happy about something else that his friend had told him on his cellphone."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -74,9 +82,11 @@ def ex38a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl x̱sdaa-diit"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['x', '̱', 's', 'd', 'a', 'a', '-', 'd', 'i', 'i', 't'], ['w', 'i', 'n', '-', '3', 'P', 'L', '.', 'I', 'I'], [⟨['x', '̱', 's', 'd', 'a', 'a'], ['w', 'i', 'n'], none⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You can hear people hollering, so the Canucks might be winning."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -87,9 +97,11 @@ def ex38b : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa[=hl] dim x̱sdaa-diit"
     glossedTokens := [("yugw=imaa[=hl]", "IMPF=EPIS[=CN]"), ("dim", "FUT"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '[', '=', 'h', 'l', ']'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '[', '=', 'C', 'N', ']'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S', '['], some '='⟩, ⟨['h', 'l'], ['C', 'N', ']'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['x', '̱', 's', 'd', 'a', 'a', '-', 'd', 'i', 'i', 't'], ['w', 'i', 'n', '-', '3', 'P', 'L', '.', 'I', 'I'], [⟨['x', '̱', 's', 'd', 'a', 'a'], ['w', 'i', 'n'], none⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You are watching the Canucks. They might win."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -100,9 +112,11 @@ def ex39a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
@@ -113,9 +127,11 @@ def ex40a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -126,9 +142,11 @@ def ex41a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
@@ -139,9 +157,11 @@ def ex42a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -152,9 +172,11 @@ def ex39b : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You hear pattering on the roof."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -165,9 +187,11 @@ def ex40b : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You hear pattering on the roof."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -178,9 +202,11 @@ def ex41b : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Why isn't Joe here?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
@@ -191,9 +217,11 @@ def ex42b : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Why isn't Joe here?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -204,9 +232,11 @@ def ex39c : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You hear thunder, so you think it might rain soon."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -217,9 +247,11 @@ def ex40c : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You hear thunder, so you think it might rain soon."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -230,9 +262,11 @@ def ex41c : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -243,9 +277,11 @@ def ex42c : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
     glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\'', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a', '/', 'i', 'm', 'a', '\''], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -256,9 +292,11 @@ def ex43a : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl wis da'awhl"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("wis", "rain"), ("da'awhl", "then")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩, ⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], [⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
@@ -269,9 +307,11 @@ def ex43a_prime : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl dim wis da'awhl"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain"), ("da'awhl", "then")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩, ⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], [⟨['d', 'a', '\'', 'a', 'w', 'h', 'l'], ['t', 'h', 'e', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -282,9 +322,11 @@ def ex44 : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl dim wis"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
@@ -295,9 +337,11 @@ def ex44_prime : Datum :=
     language := "gitx1241"
     primaryText := "yugw=imaa=hl wis"
     glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
+    glossedWords := [⟨['y', 'u', 'g', 'w', '=', 'i', 'm', 'a', 'a', '=', 'h', 'l'], ['I', 'M', 'P', 'F', '=', 'E', 'P', 'I', 'S', '=', 'C', 'N'], [⟨['y', 'u', 'g', 'w'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'm', 'a', 'a'], ['E', 'P', 'I', 'S'], some '='⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], [⟨['w', 'i', 's'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -308,9 +352,11 @@ def ex47a : Datum :=
     language := "gitx1241"
     primaryText := "limx=g̱at[=t] Bob"
     glossedTokens := [("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob sang last week."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
@@ -321,9 +367,11 @@ def ex48a : Datum :=
     language := "gitx1241"
     primaryText := "dim limx=g̱at[=t] Bob"
     glossedTokens := [("dim", "FUT"), ("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob sang last week."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
@@ -334,9 +382,11 @@ def ex47b : Datum :=
     language := "gitx1241"
     primaryText := "limx=g̱at[=t] Bob"
     glossedTokens := [("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob was singing (at that time)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
@@ -347,9 +397,11 @@ def ex48b : Datum :=
     language := "gitx1241"
     primaryText := "dim limx=g̱at[=t] Bob"
     glossedTokens := [("dim", "FUT"), ("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob was singing (at that time)."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "true")] }
 
@@ -360,9 +412,11 @@ def ex47c : Datum :=
     language := "gitx1241"
     primaryText := "limx=g̱at[=t] Bob"
     glossedTokens := [("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob would be singing later that day."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -373,9 +427,11 @@ def ex48c : Datum :=
     language := "gitx1241"
     primaryText := "dim limx=g̱at[=t] Bob"
     glossedTokens := [("dim", "FUT"), ("limx=g̱at[=t]", "sing=REPORT[=DM]"), ("Bob", "Bob")]
+    glossedWords := [⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'i', 'm', 'x', '=', 'g', '̱', 'a', 't', '[', '=', 't', ']'], ['s', 'i', 'n', 'g', '=', 'R', 'E', 'P', 'O', 'R', 'T', '[', '=', 'D', 'M', ']'], [⟨['l', 'i', 'm', 'x'], ['s', 'i', 'n', 'g'], none⟩, ⟨['g', '̱', 'a', 't'], ['R', 'E', 'P', 'O', 'R', 'T', '['], some '='⟩, ⟨['t'], ['D', 'M', ']'], some '='⟩]⟩, ⟨['B', 'o', 'b'], ['B', 'o', 'b'], [⟨['B', 'o', 'b'], ['B', 'o', 'b'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Yesterday, Henry told you that Bob would be singing later that day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
@@ -386,9 +442,11 @@ def ex53 : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵxw-i=hl t'x̱alpx̱-a gat dim luu wan-diit g̱oo=hl ts'im kyaa tust"
     glossedTokens := [("da'aḵxw-i=hl", "CIRC.POSS-TRA=CN"), ("t'x̱alpx̱-a", "four-LINK"), ("gat", "people"), ("dim", "FUT"), ("luu", "in"), ("wan-diit", "sit-3PL.II"), ("g̱oo=hl", "LOC=CN"), ("ts'im", "inside"), ("kyaa", "car"), ("tust", "that")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w', '-', 'i', '=', 'h', 'l'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '=', 'C', 'N'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['t', '\'', 'x', '̱', 'a', 'l', 'p', 'x', '̱', '-', 'a'], ['f', 'o', 'u', 'r', '-', 'L', 'I', 'N', 'K'], [⟨['t', '\'', 'x', '̱', 'a', 'l', 'p', 'x', '̱'], ['f', 'o', 'u', 'r'], none⟩, ⟨['a'], ['L', 'I', 'N', 'K'], some '-'⟩]⟩, ⟨['g', 'a', 't'], ['p', 'e', 'o', 'p', 'l', 'e'], [⟨['g', 'a', 't'], ['p', 'e', 'o', 'p', 'l', 'e'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'u', 'u'], ['i', 'n'], [⟨['l', 'u', 'u'], ['i', 'n'], none⟩]⟩, ⟨['w', 'a', 'n', '-', 'd', 'i', 'i', 't'], ['s', 'i', 't', '-', '3', 'P', 'L', '.', 'I', 'I'], [⟨['w', 'a', 'n'], ['s', 'i', 't'], none⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['g', '̱', 'o', 'o', '=', 'h', 'l'], ['L', 'O', 'C', '=', 'C', 'N'], [⟨['g', '̱', 'o', 'o'], ['L', 'O', 'C'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['t', 's', '\'', 'i', 'm'], ['i', 'n', 's', 'i', 'd', 'e'], [⟨['t', 's', '\'', 'i', 'm'], ['i', 'n', 's', 'i', 'd', 'e'], none⟩]⟩, ⟨['k', 'y', 'a', 'a'], ['c', 'a', 'r'], [⟨['k', 'y', 'a', 'a'], ['c', 'a', 'r'], none⟩]⟩, ⟨['t', 'u', 's', 't'], ['t', 'h', 'a', 't'], [⟨['t', 'u', 's', 't'], ['t', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -399,9 +457,11 @@ def ex53_prime : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵxw-i=hl t'x̱alpx̱-a gat luu wan-diit g̱oo=hl ts'im kyaa tust"
     glossedTokens := [("da'aḵxw-i=hl", "CIRC.POSS-TRA=CN"), ("t'x̱alpx̱-a", "four-LINK"), ("gat", "people"), ("luu", "in"), ("wan-diit", "sit-3PL.II"), ("g̱oo=hl", "LOC=CN"), ("ts'im", "inside"), ("kyaa", "car"), ("tust", "that")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w', '-', 'i', '=', 'h', 'l'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '=', 'C', 'N'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['t', '\'', 'x', '̱', 'a', 'l', 'p', 'x', '̱', '-', 'a'], ['f', 'o', 'u', 'r', '-', 'L', 'I', 'N', 'K'], [⟨['t', '\'', 'x', '̱', 'a', 'l', 'p', 'x', '̱'], ['f', 'o', 'u', 'r'], none⟩, ⟨['a'], ['L', 'I', 'N', 'K'], some '-'⟩]⟩, ⟨['g', 'a', 't'], ['p', 'e', 'o', 'p', 'l', 'e'], [⟨['g', 'a', 't'], ['p', 'e', 'o', 'p', 'l', 'e'], none⟩]⟩, ⟨['l', 'u', 'u'], ['i', 'n'], [⟨['l', 'u', 'u'], ['i', 'n'], none⟩]⟩, ⟨['w', 'a', 'n', '-', 'd', 'i', 'i', 't'], ['s', 'i', 't', '-', '3', 'P', 'L', '.', 'I', 'I'], [⟨['w', 'a', 'n'], ['s', 'i', 't'], none⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['g', '̱', 'o', 'o', '=', 'h', 'l'], ['L', 'O', 'C', '=', 'C', 'N'], [⟨['g', '̱', 'o', 'o'], ['L', 'O', 'C'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['t', 's', '\'', 'i', 'm'], ['i', 'n', 's', 'i', 'd', 'e'], [⟨['t', 's', '\'', 'i', 'm'], ['i', 'n', 's', 'i', 'd', 'e'], none⟩]⟩, ⟨['k', 'y', 'a', 'a'], ['c', 'a', 'r'], [⟨['k', 'y', 'a', 'a'], ['c', 'a', 'r'], none⟩]⟩, ⟨['t', 'u', 's', 't'], ['t', 'h', 'a', 't'], [⟨['t', 'u', 's', 't'], ['t', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -412,9 +472,11 @@ def ex56 : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵhlxw-i-'y dim hahla'lsd-i'y k'yoots"
     glossedTokens := [("da'aḵhlxw-i-'y", "CIRC.POSS-TRA-1SG.II"), ("dim", "FUT"), ("hahla'lsd-i'y", "work-1SG.II"), ("k'yoots", "yesterday")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '-', 'i', '-', '\'', 'y'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd', '-', 'i', '\'', 'y'], ['w', 'o', 'r', 'k', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd'], ['w', 'o', 'r', 'k'], none⟩, ⟨['i', '\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -425,9 +487,11 @@ def ex56_prime : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵhlxw-i-'y hahla'lsd-i'y k'yoots"
     glossedTokens := [("da'aḵhlxw-i-'y", "CIRC.POSS-TRA-1SG.II"), ("hahla'lsd-i'y", "work-1SG.II"), ("k'yoots", "yesterday")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '-', 'i', '-', '\'', 'y'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd', '-', 'i', '\'', 'y'], ['w', 'o', 'r', 'k', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd'], ['w', 'o', 'r', 'k'], none⟩, ⟨['i', '\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -438,9 +502,11 @@ def ex62 : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵhlxw-i-'y dim hahla'lsd-i'y k'yoots, ii ap nee=dii wil-'y"
     glossedTokens := [("da'aḵhlxw-i-'y", "CIRC.POSS-TRA-1SG.II"), ("dim", "FUT"), ("hahla'lsd-i'y", "work-1SG.II"), ("k'yoots", "yesterday"), ("ii", "and"), ("ap", "EMPH"), ("nee=dii", "NEG=CONT"), ("wil-'y", "COMP-1SG.II")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '-', 'i', '-', '\'', 'y'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd', '-', 'i', '\'', 'y'], ['w', 'o', 'r', 'k', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd'], ['w', 'o', 'r', 'k'], none⟩, ⟨['i', '\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩, ⟨['i', 'i'], ['a', 'n', 'd'], [⟨['i', 'i'], ['a', 'n', 'd'], none⟩]⟩, ⟨['a', 'p'], ['E', 'M', 'P', 'H'], [⟨['a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['n', 'e', 'e', '=', 'd', 'i', 'i'], ['N', 'E', 'G', '=', 'C', 'O', 'N', 'T'], [⟨['n', 'e', 'e'], ['N', 'E', 'G'], none⟩, ⟨['d', 'i', 'i'], ['C', 'O', 'N', 'T'], some '='⟩]⟩, ⟨['w', 'i', 'l', '-', '\'', 'y'], ['C', 'O', 'M', 'P', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['w', 'i', 'l'], ['C', 'O', 'M', 'P'], none⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("actualityEntailment", "false")] }
 
@@ -451,9 +517,11 @@ def ex63a : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵhlxw-i-n mi=dim sa=yeed-in=hl gabii=hl cake=hl gub-n"
     glossedTokens := [("da'aḵhlxw-i-n", "CIRC.POSS-TRA-2SG.II"), ("mi=dim", "2SG.I=FUT"), ("sa=yeed-in=hl", "off-go-CAUS=CN"), ("gabii=hl", "amount=CN"), ("cake=hl", "cake=CN"), ("gub-n", "eat-2SG.II")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '-', 'i', '-', 'n'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '-', '2', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['n'], ['2', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['m', 'i', '=', 'd', 'i', 'm'], ['2', 'S', 'G', '.', 'I', '=', 'F', 'U', 'T'], [⟨['m', 'i'], ['2', 'S', 'G', '.', 'I'], none⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], some '='⟩]⟩, ⟨['s', 'a', '=', 'y', 'e', 'e', 'd', '-', 'i', 'n', '=', 'h', 'l'], ['o', 'f', 'f', '-', 'g', 'o', '-', 'C', 'A', 'U', 'S', '=', 'C', 'N'], []⟩, ⟨['g', 'a', 'b', 'i', 'i', '=', 'h', 'l'], ['a', 'm', 'o', 'u', 'n', 't', '=', 'C', 'N'], [⟨['g', 'a', 'b', 'i', 'i'], ['a', 'm', 'o', 'u', 'n', 't'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['c', 'a', 'k', 'e', '=', 'h', 'l'], ['c', 'a', 'k', 'e', '=', 'C', 'N'], [⟨['c', 'a', 'k', 'e'], ['c', 'a', 'k', 'e'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['g', 'u', 'b', '-', 'n'], ['e', 'a', 't', '-', '2', 'S', 'G', '.', 'I', 'I'], [⟨['g', 'u', 'b'], ['e', 'a', 't'], none⟩, ⟨['n'], ['2', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Given that you want to be thinner, ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "bouletic")] }
 
@@ -464,9 +532,11 @@ def ex64 : Datum :=
     language := "gitx1241"
     primaryText := "woy hlaa dim da'aḵhlxw-'m dim ha'jim huxw g̱a-ts'eeḵxw-'m"
     glossedTokens := [("woy", "okay"), ("hlaa", "INCEPT"), ("dim", "FUT"), ("da'aḵhlxw-'m", "CIRC.POSS-1PL.II"), ("dim", "FUT"), ("ha'jim", "once"), ("huxw", "again"), ("g̱a-ts'eeḵxw-'m", "PL-make.noise-1PL.II")]
+    glossedWords := [⟨['w', 'o', 'y'], ['o', 'k', 'a', 'y'], [⟨['w', 'o', 'y'], ['o', 'k', 'a', 'y'], none⟩]⟩, ⟨['h', 'l', 'a', 'a'], ['I', 'N', 'C', 'E', 'P', 'T'], [⟨['h', 'l', 'a', 'a'], ['I', 'N', 'C', 'E', 'P', 'T'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '-', '\'', 'm'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', '1', 'P', 'L', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['\'', 'm'], ['1', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', '\'', 'j', 'i', 'm'], ['o', 'n', 'c', 'e'], [⟨['h', 'a', '\'', 'j', 'i', 'm'], ['o', 'n', 'c', 'e'], none⟩]⟩, ⟨['h', 'u', 'x', 'w'], ['a', 'g', 'a', 'i', 'n'], [⟨['h', 'u', 'x', 'w'], ['a', 'g', 'a', 'i', 'n'], none⟩]⟩, ⟨['g', '̱', 'a', '-', 't', 's', '\'', 'e', 'e', 'ḵ', 'x', 'w', '-', '\'', 'm'], ['P', 'L', '-', 'm', 'a', 'k', 'e', '.', 'n', 'o', 'i', 's', 'e', '-', '1', 'P', 'L', '.', 'I', 'I'], [⟨['g', '̱', 'a'], ['P', 'L'], none⟩, ⟨['t', 's', '\'', 'e', 'e', 'ḵ', 'x', 'w'], ['m', 'a', 'k', 'e', '.', 'n', 'o', 'i', 's', 'e'], some '-'⟩, ⟨['\'', 'm'], ['1', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "We are burglars in someone's house, and we discover the residents are still at home, so we have to be quiet if we don't want to be caught. Finally the people leave, so we can make noise now."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "teleological")] }
 
@@ -477,9 +547,11 @@ def ex65 : Datum :=
     language := "gitx1241"
     primaryText := "mahl-d-i-s nox-'y da'aḵhlxw[-i]-'y dim ma'us-'y"
     glossedTokens := [("mahl-d-i-s", "tell-T-TRA-PN"), ("nox-'y", "mother-1SG.II"), ("da'aḵhlxw[-i]-'y", "CIRC.POSS[-TRA]-1SG.II"), ("dim", "FUT"), ("ma'us-'y", "play-1SG.II")]
+    glossedWords := [⟨['m', 'a', 'h', 'l', '-', 'd', '-', 'i', '-', 's'], ['t', 'e', 'l', 'l', '-', 'T', '-', 'T', 'R', 'A', '-', 'P', 'N'], [⟨['m', 'a', 'h', 'l'], ['t', 'e', 'l', 'l'], none⟩, ⟨['d'], ['T'], some '-'⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['s'], ['P', 'N'], some '-'⟩]⟩, ⟨['n', 'o', 'x', '-', '\'', 'y'], ['m', 'o', 't', 'h', 'e', 'r', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['n', 'o', 'x'], ['m', 'o', 't', 'h', 'e', 'r'], none⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w', '[', '-', 'i', ']', '-', '\'', 'y'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '[', '-', 'T', 'R', 'A', ']', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'h', 'l', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '['], none⟩, ⟨['i'], ['T', 'R', 'A', ']'], some '-'⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['m', 'a', '\'', 'u', 's', '-', '\'', 'y'], ['p', 'l', 'a', 'y', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['m', 'a', '\'', 'u', 's'], ['p', 'l', 'a', 'y'], none⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "deontic")] }
 
@@ -491,9 +563,11 @@ def ex66 : Datum :=
     language := "gitx1241"
     primaryText := "da'aḵxw-i=hl dim sim siipxw-t"
     glossedTokens := [("da'aḵxw-i=hl", "CIRC.POSS-TRA=CN"), ("dim", "FUT"), ("sim", "very"), ("siipxw-t", "sick-3SG.II")]
+    glossedWords := [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w', '-', 'i', '=', 'h', 'l'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S', '-', 'T', 'R', 'A', '=', 'C', 'N'], [⟨['d', 'a', '\'', 'a', 'ḵ', 'x', 'w'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['i'], ['T', 'R', 'A'], some '-'⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['s', 'i', 'm'], ['v', 'e', 'r', 'y'], [⟨['s', 'i', 'm'], ['v', 'e', 'r', 'y'], none⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Bob ate bad chicken last night. He should be sick now (given the facts about what he ate)."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
@@ -504,9 +578,11 @@ def ex73 : Datum :=
     language := "gitx1241"
     primaryText := "anooḵ-xw(=hl) dim ha'w-s Savanna k'yoots"
     glossedTokens := [("anooḵ-xw(=hl)", "DEON.POSS-MED(=CN)"), ("dim", "FUT"), ("ha'w-s", "go.home-PN"), ("Savanna", "Savanna"), ("k'yoots", "yesterday")]
+    glossedWords := [⟨['a', 'n', 'o', 'o', 'ḵ', '-', 'x', 'w', '(', '=', 'h', 'l', ')'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S', '-', 'M', 'E', 'D', '(', '=', 'C', 'N', ')'], [⟨['a', 'n', 'o', 'o', 'ḵ'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['x', 'w'], ['M', 'E', 'D', '('], some '-'⟩, ⟨['h', 'l'], ['C', 'N', ')'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', '\'', 'w', '-', 's'], ['g', 'o', '.', 'h', 'o', 'm', 'e', '-', 'P', 'N'], [⟨['h', 'a', '\'', 'w'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩, ⟨['s'], ['P', 'N'], some '-'⟩]⟩, ⟨['S', 'a', 'v', 'a', 'n', 'n', 'a'], ['S', 'a', 'v', 'a', 'n', 'n', 'a'], [⟨['S', 'a', 'v', 'a', 'n', 'n', 'a'], ['S', 'a', 'v', 'a', 'n', 'n', 'a'], none⟩]⟩, ⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
@@ -517,9 +593,11 @@ def ex73_prime : Datum :=
     language := "gitx1241"
     primaryText := "anooḵ-xw(=hl) ha'w-s Savanna k'yoots"
     glossedTokens := [("anooḵ-xw(=hl)", "DEON.POSS-MED(=CN)"), ("ha'w-s", "go.home-PN"), ("Savanna", "Savanna"), ("k'yoots", "yesterday")]
+    glossedWords := [⟨['a', 'n', 'o', 'o', 'ḵ', '-', 'x', 'w', '(', '=', 'h', 'l', ')'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S', '-', 'M', 'E', 'D', '(', '=', 'C', 'N', ')'], [⟨['a', 'n', 'o', 'o', 'ḵ'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['x', 'w'], ['M', 'E', 'D', '('], some '-'⟩, ⟨['h', 'l'], ['C', 'N', ')'], some '='⟩]⟩, ⟨['h', 'a', '\'', 'w', '-', 's'], ['g', 'o', '.', 'h', 'o', 'm', 'e', '-', 'P', 'N'], [⟨['h', 'a', '\'', 'w'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩, ⟨['s'], ['P', 'N'], some '-'⟩]⟩, ⟨['S', 'a', 'v', 'a', 'n', 'n', 'a'], ['S', 'a', 'v', 'a', 'n', 'n', 'a'], [⟨['S', 'a', 'v', 'a', 'n', 'n', 'a'], ['S', 'a', 'v', 'a', 'n', 'n', 'a'], none⟩]⟩, ⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', '\'', 'y', 'o', 'o', 't', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
@@ -531,9 +609,11 @@ def ex79 : Datum :=
     language := "gitx1241"
     primaryText := "anooḵ-xw=hl maa'y dim limx̱s-t"
     glossedTokens := [("anooḵ-xw=hl", "DEON.POSS-MED=CN"), ("maa'y", "berries"), ("dim", "FUT"), ("limx̱s-t", "grow.PL-3SG.II")]
+    glossedWords := [⟨['a', 'n', 'o', 'o', 'ḵ', '-', 'x', 'w', '=', 'h', 'l'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S', '-', 'M', 'E', 'D', '=', 'C', 'N'], [⟨['a', 'n', 'o', 'o', 'ḵ'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['x', 'w'], ['M', 'E', 'D'], some '-'⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['m', 'a', 'a', '\'', 'y'], ['b', 'e', 'r', 'r', 'i', 'e', 's'], [⟨['m', 'a', 'a', '\'', 'y'], ['b', 'e', 'r', 'r', 'i', 'e', 's'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'i', 'm', 'x', '̱', 's', '-', 't'], ['g', 'r', 'o', 'w', '.', 'P', 'L', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['l', 'i', 'm', 'x', '̱', 's'], ['g', 'r', 'o', 'w', '.', 'P', 'L'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "possibility"), ("flavor", "pure circumstantial")] }
 
@@ -544,9 +624,11 @@ def ex80 : Datum :=
     language := "gitx1241"
     primaryText := "anooḵ-xw=diit dim hahla'lsd-i'y yuxwsa tun"
     glossedTokens := [("anooḵ-xw=diit", "DEON.POSS-MED=3PL.II"), ("dim", "FUT"), ("hahla'lsd-i'y", "work-1SG.II"), ("yuxwsa", "evening"), ("tun", "DEM")]
+    glossedWords := [⟨['a', 'n', 'o', 'o', 'ḵ', '-', 'x', 'w', '=', 'd', 'i', 'i', 't'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S', '-', 'M', 'E', 'D', '=', '3', 'P', 'L', '.', 'I', 'I'], [⟨['a', 'n', 'o', 'o', 'ḵ'], ['D', 'E', 'O', 'N', '.', 'P', 'O', 'S', 'S'], none⟩, ⟨['x', 'w'], ['M', 'E', 'D'], some '-'⟩, ⟨['d', 'i', 'i', 't'], ['3', 'P', 'L', '.', 'I', 'I'], some '='⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd', '-', 'i', '\'', 'y'], ['w', 'o', 'r', 'k', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'h', 'l', 'a', '\'', 'l', 's', 'd'], ['w', 'o', 'r', 'k'], none⟩, ⟨['i', '\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['y', 'u', 'x', 'w', 's', 'a'], ['e', 'v', 'e', 'n', 'i', 'n', 'g'], [⟨['y', 'u', 'x', 'w', 's', 'a'], ['e', 'v', 'e', 'n', 'i', 'n', 'g'], none⟩]⟩, ⟨['t', 'u', 'n'], ['D', 'E', 'M'], [⟨['t', 'u', 'n'], ['D', 'E', 'M'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "\"Can you go out tonight?\" \"No, I have to work.\""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "necessity"), ("flavor", "deontic")] }
 
@@ -557,9 +639,11 @@ def ex83 : Datum :=
     language := "gitx1241"
     primaryText := "sgi dim ap ha'w-s Lisa"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("ap", "EMPH"), ("ha'w-s", "go.home-PN"), ("Lisa", "Lisa")]
+    glossedWords := [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['a', 'p'], ['E', 'M', 'P', 'H'], [⟨['a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['h', 'a', '\'', 'w', '-', 's'], ['g', 'o', '.', 'h', 'o', 'm', 'e', '-', 'P', 'N'], [⟨['h', 'a', '\'', 'w'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩, ⟨['s'], ['P', 'N'], some '-'⟩]⟩, ⟨['L', 'i', 's', 'a'], ['L', 'i', 's', 'a'], [⟨['L', 'i', 's', 'a'], ['L', 'i', 's', 'a'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true"), ("flavor", "deontic")] }
 
@@ -570,9 +654,11 @@ def ex83_prime : Datum :=
     language := "gitx1241"
     primaryText := "sgi ap ha'w-s Lisa"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("ap", "EMPH"), ("ha'w-s", "go.home-PN"), ("Lisa", "Lisa")]
+    glossedWords := [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['a', 'p'], ['E', 'M', 'P', 'H'], [⟨['a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['h', 'a', '\'', 'w', '-', 's'], ['g', 'o', '.', 'h', 'o', 'm', 'e', '-', 'P', 'N'], [⟨['h', 'a', '\'', 'w'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩, ⟨['s'], ['P', 'N'], some '-'⟩]⟩, ⟨['L', 'i', 's', 'a'], ['L', 'i', 's', 'a'], [⟨['L', 'i', 's', 'a'], ['L', 'i', 's', 'a'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false"), ("flavor", "deontic")] }
 
@@ -583,9 +669,11 @@ def ex86a : Datum :=
     language := "gitx1241"
     primaryText := "sgi dim siipxw-t gyuu'n"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II"), ("gyuu'n", "now")]
+    glossedWords := [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['s', 'i', 'i', 'p', 'x', 'w', '-', 't'], ['s', 'i', 'c', 'k', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['s', 'i', 'i', 'p', 'x', 'w'], ['s', 'i', 'c', 'k'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['g', 'y', 'u', 'u', '\'', 'n'], ['n', 'o', 'w'], [⟨['g', 'y', 'u', 'u', '\'', 'n'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Bob ate bad chicken last night, so he should be sick now."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
@@ -596,9 +684,11 @@ def ex89 : Datum :=
     language := "gitx1241"
     primaryText := "ji daa hasaḵ-t dim yee-t g̱oo=hl Whistler ii sgi dim-t yuxw=hl g̱enim 99"
     glossedTokens := [("ji", "IRR"), ("daa", "ever"), ("hasaḵ-t", "want-3SG.II"), ("dim", "FUT"), ("yee-t", "go-3SG.II"), ("g̱oo=hl", "LOC=CN"), ("Whistler", "Whistler"), ("ii", "and"), ("sgi", "CIRC.NECESS"), ("dim-t", "FUT-3SG.II"), ("yuxw=hl", "follow=CN"), ("g̱enim", "road"), ("99", "99")]
+    glossedWords := [⟨['j', 'i'], ['I', 'R', 'R'], [⟨['j', 'i'], ['I', 'R', 'R'], none⟩]⟩, ⟨['d', 'a', 'a'], ['e', 'v', 'e', 'r'], [⟨['d', 'a', 'a'], ['e', 'v', 'e', 'r'], none⟩]⟩, ⟨['h', 'a', 's', 'a', 'ḵ', '-', 't'], ['w', 'a', 'n', 't', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 's', 'a', 'ḵ'], ['w', 'a', 'n', 't'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['y', 'e', 'e', '-', 't'], ['g', 'o', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['y', 'e', 'e'], ['g', 'o'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['g', '̱', 'o', 'o', '=', 'h', 'l'], ['L', 'O', 'C', '=', 'C', 'N'], [⟨['g', '̱', 'o', 'o'], ['L', 'O', 'C'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['W', 'h', 'i', 's', 't', 'l', 'e', 'r'], ['W', 'h', 'i', 's', 't', 'l', 'e', 'r'], [⟨['W', 'h', 'i', 's', 't', 'l', 'e', 'r'], ['W', 'h', 'i', 's', 't', 'l', 'e', 'r'], none⟩]⟩, ⟨['i', 'i'], ['a', 'n', 'd'], [⟨['i', 'i'], ['a', 'n', 'd'], none⟩]⟩, ⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm', '-', 't'], ['F', 'U', 'T', '-', '3', 'S', 'G', '.', 'I', 'I'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩, ⟨['t'], ['3', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['y', 'u', 'x', 'w', '=', 'h', 'l'], ['f', 'o', 'l', 'l', 'o', 'w', '=', 'C', 'N'], [⟨['y', 'u', 'x', 'w'], ['f', 'o', 'l', 'l', 'o', 'w'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['g', '̱', 'e', 'n', 'i', 'm'], ['r', 'o', 'a', 'd'], [⟨['g', '̱', 'e', 'n', 'i', 'm'], ['r', 'o', 'a', 'd'], none⟩]⟩, ⟨['9', '9'], ['9', '9'], [⟨['9', '9'], ['9', '9'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "There is only one way to get to Whistler: Highway 99."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "teleological")] }
 
@@ -609,9 +699,11 @@ def ex90 : Datum :=
     language := "gitx1241"
     primaryText := "ji daa dim yee-n g̱oo=hl Lillooet ii sgi mi=dim yuxw=hl g̱enim 99"
     glossedTokens := [("ji", "IRR"), ("daa", "ever"), ("dim", "FUT"), ("yee-n", "go-2SG.II"), ("g̱oo=hl", "LOC=CN"), ("Lillooet", "Lillooet"), ("ii", "and"), ("sgi", "CIRC.NECESS"), ("mi=dim", "2SG.III=FUT"), ("yuxw=hl", "follow=CN"), ("g̱enim", "road"), ("99", "99")]
+    glossedWords := [⟨['j', 'i'], ['I', 'R', 'R'], [⟨['j', 'i'], ['I', 'R', 'R'], none⟩]⟩, ⟨['d', 'a', 'a'], ['e', 'v', 'e', 'r'], [⟨['d', 'a', 'a'], ['e', 'v', 'e', 'r'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['y', 'e', 'e', '-', 'n'], ['g', 'o', '-', '2', 'S', 'G', '.', 'I', 'I'], [⟨['y', 'e', 'e'], ['g', 'o'], none⟩, ⟨['n'], ['2', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩, ⟨['g', '̱', 'o', 'o', '=', 'h', 'l'], ['L', 'O', 'C', '=', 'C', 'N'], [⟨['g', '̱', 'o', 'o'], ['L', 'O', 'C'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['L', 'i', 'l', 'l', 'o', 'o', 'e', 't'], ['L', 'i', 'l', 'l', 'o', 'o', 'e', 't'], [⟨['L', 'i', 'l', 'l', 'o', 'o', 'e', 't'], ['L', 'i', 'l', 'l', 'o', 'o', 'e', 't'], none⟩]⟩, ⟨['i', 'i'], ['a', 'n', 'd'], [⟨['i', 'i'], ['a', 'n', 'd'], none⟩]⟩, ⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['m', 'i', '=', 'd', 'i', 'm'], ['2', 'S', 'G', '.', 'I', 'I', 'I', '=', 'F', 'U', 'T'], [⟨['m', 'i'], ['2', 'S', 'G', '.', 'I', 'I', 'I'], none⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], some '='⟩]⟩, ⟨['y', 'u', 'x', 'w', '=', 'h', 'l'], ['f', 'o', 'l', 'l', 'o', 'w', '=', 'C', 'N'], [⟨['y', 'u', 'x', 'w'], ['f', 'o', 'l', 'l', 'o', 'w'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['g', '̱', 'e', 'n', 'i', 'm'], ['r', 'o', 'a', 'd'], [⟨['g', '̱', 'e', 'n', 'i', 'm'], ['r', 'o', 'a', 'd'], none⟩]⟩, ⟨['9', '9'], ['9', '9'], [⟨['9', '9'], ['9', '9'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "There are two ways to get to Lillooet: Highway 99 or Highway 1. Highway 99 is better."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "weak necessity"), ("flavor", "teleological")] }
 
@@ -622,9 +714,11 @@ def ex91 : Datum :=
     language := "gitx1241"
     primaryText := "sgi mi=dim baḵ=hl cake tun"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("mi=dim", "2SG.III=FUT"), ("baḵ=hl", "try=CN"), ("cake", "cake"), ("tun", "DEM")]
+    glossedWords := [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['m', 'i', '=', 'd', 'i', 'm'], ['2', 'S', 'G', '.', 'I', 'I', 'I', '=', 'F', 'U', 'T'], [⟨['m', 'i'], ['2', 'S', 'G', '.', 'I', 'I', 'I'], none⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], some '='⟩]⟩, ⟨['b', 'a', 'ḵ', '=', 'h', 'l'], ['t', 'r', 'y', '=', 'C', 'N'], [⟨['b', 'a', 'ḵ'], ['t', 'r', 'y'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['c', 'a', 'k', 'e'], ['c', 'a', 'k', 'e'], [⟨['c', 'a', 'k', 'e'], ['c', 'a', 'k', 'e'], none⟩]⟩, ⟨['t', 'u', 'n'], ['D', 'E', 'M'], [⟨['t', 'u', 'n'], ['D', 'E', 'M'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("flavor", "bouletic")] }
 
@@ -635,9 +729,11 @@ def ex92 : Datum :=
     language := "gitx1241"
     primaryText := "ḵ'ap sim sgi mi=dim baḵ=hl cake tun"
     glossedTokens := [("ḵ'ap", "EMPH"), ("sim", "really"), ("sgi", "CIRC.NECESS"), ("mi=dim", "2SG.III=FUT"), ("baḵ=hl", "try=CN"), ("cake", "cake"), ("tun", "DEM")]
+    glossedWords := [⟨['ḵ', '\'', 'a', 'p'], ['E', 'M', 'P', 'H'], [⟨['ḵ', '\'', 'a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['s', 'i', 'm'], ['r', 'e', 'a', 'l', 'l', 'y'], [⟨['s', 'i', 'm'], ['r', 'e', 'a', 'l', 'l', 'y'], none⟩]⟩, ⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['m', 'i', '=', 'd', 'i', 'm'], ['2', 'S', 'G', '.', 'I', 'I', 'I', '=', 'F', 'U', 'T'], [⟨['m', 'i'], ['2', 'S', 'G', '.', 'I', 'I', 'I'], none⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], some '='⟩]⟩, ⟨['b', 'a', 'ḵ', '=', 'h', 'l'], ['t', 'r', 'y', '=', 'C', 'N'], [⟨['b', 'a', 'ḵ'], ['t', 'r', 'y'], none⟩, ⟨['h', 'l'], ['C', 'N'], some '='⟩]⟩, ⟨['c', 'a', 'k', 'e'], ['c', 'a', 'k', 'e'], [⟨['c', 'a', 'k', 'e'], ['c', 'a', 'k', 'e'], none⟩]⟩, ⟨['t', 'u', 'n'], ['D', 'E', 'M'], [⟨['t', 'u', 'n'], ['D', 'E', 'M'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "bouletic")] }
 
@@ -648,9 +744,11 @@ def ex95a : Datum :=
     language := "gitx1241"
     primaryText := "dim hadiswa-'y"
     glossedTokens := [("dim", "FUT"), ("hadiswa-'y", "sneeze-1SG.II")]
+    glossedWords := [⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', 'd', 'i', 's', 'w', 'a', '-', '\'', 'y'], ['s', 'n', 'e', 'e', 'z', 'e', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'd', 'i', 's', 'w', 'a'], ['s', 'n', 'e', 'e', 'z', 'e'], none⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "dim")] }
 
@@ -662,9 +760,11 @@ def ex96 : Datum :=
     language := "gitx1241"
     primaryText := "sgi dim hajiswa-'y"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("hajiswa-'y", "sneeze-1SG.II")]
+    glossedWords := [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['h', 'a', 'j', 'i', 's', 'w', 'a', '-', '\'', 'y'], ['s', 'n', 'e', 'e', 'z', 'e', '-', '1', 'S', 'G', '.', 'I', 'I'], [⟨['h', 'a', 'j', 'i', 's', 'w', 'a'], ['s', 'n', 'e', 'e', 'z', 'e'], none⟩, ⟨['\'', 'y'], ['1', 'S', 'G', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
@@ -675,9 +775,11 @@ def ex100a : Datum :=
     language := "gitx1241"
     primaryText := "k'ap sgi dim gwalg̱a daxw-'m"
     glossedTokens := [("k'ap", "EMPH"), ("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("gwalg̱a", "all"), ("daxw-'m", "die.PL-1PL.II")]
+    glossedWords := [⟨['k', '\'', 'a', 'p'], ['E', 'M', 'P', 'H'], [⟨['k', '\'', 'a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['g', 'w', 'a', 'l', 'g', '̱', 'a'], ['a', 'l', 'l'], [⟨['g', 'w', 'a', 'l', 'g', '̱', 'a'], ['a', 'l', 'l'], none⟩]⟩, ⟨['d', 'a', 'x', 'w', '-', '\'', 'm'], ['d', 'i', 'e', '.', 'P', 'L', '-', '1', 'P', 'L', '.', 'I', 'I'], [⟨['d', 'a', 'x', 'w'], ['d', 'i', 'e', '.', 'P', 'L'], none⟩, ⟨['\'', 'm'], ['1', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
@@ -688,9 +790,11 @@ def ex100b : Datum :=
     language := "gitx1241"
     primaryText := "ap sgi dim ap 'walg̱a didaw-'m"
     glossedTokens := [("ap", "EMPH"), ("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("ap", "EMPH"), ("'walg̱a", "all"), ("didaw-'m", "die.PL-1PL.II")]
+    glossedWords := [⟨['a', 'p'], ['E', 'M', 'P', 'H'], [⟨['a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], [⟨['s', 'g', 'i'], ['C', 'I', 'R', 'C', '.', 'N', 'E', 'C', 'E', 'S', 'S'], none⟩]⟩, ⟨['d', 'i', 'm'], ['F', 'U', 'T'], [⟨['d', 'i', 'm'], ['F', 'U', 'T'], none⟩]⟩, ⟨['a', 'p'], ['E', 'M', 'P', 'H'], [⟨['a', 'p'], ['E', 'M', 'P', 'H'], none⟩]⟩, ⟨['\'', 'w', 'a', 'l', 'g', '̱', 'a'], ['a', 'l', 'l'], [⟨['\'', 'w', 'a', 'l', 'g', '̱', 'a'], ['a', 'l', 'l'], none⟩]⟩, ⟨['d', 'i', 'd', 'a', 'w', '-', '\'', 'm'], ['d', 'i', 'e', '.', 'P', 'L', '-', '1', 'P', 'L', '.', 'I', 'I'], [⟨['d', 'i', 'd', 'a', 'w'], ['d', 'i', 'e', '.', 'P', 'L'], none⟩, ⟨['\'', 'm'], ['1', 'P', 'L', '.', 'I', 'I'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 

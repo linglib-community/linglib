@@ -229,7 +229,7 @@ theorem Smooth.scopeMonotone (h : d.Smooth) (hC : d.Conservative) : d.ScopeMonot
     h.1 A B _ Set.inter_subset_left (fun x hx ↦ ⟨hx.1, .inl hx.2⟩) hd
   have h₂ : d (A ∩ (B ∪ B'ᶜ)) B' := (hC.iff_of_inter_eq <| Set.ext fun x ↦
     ⟨fun ⟨hx, h⟩ ↦ ⟨hx, hB h⟩, fun ⟨hx, h⟩ ↦ ⟨hx, hx.2.resolve_right fun hn ↦ hn h⟩⟩).1 h₁
-  exact h.2 _ B' A Set.inter_subset_left (fun x hx ↦ ⟨hx.1, .inr hx.2⟩) h₂
+  exact h.2 (A ∩ (B ∪ B'ᶜ)) B' A Set.inter_subset_left (fun x hx ↦ ⟨hx.1, .inr hx.2⟩) h₂
 
 theorem Intersective.upSWMon (h : d.Intersective) : d.UpSWMon :=
   fun A B _ h₁ h₂ ↦ (h A B _ B (Set.Subset.antisymm
@@ -282,6 +282,18 @@ theorem Intersective.iff_inter_univ (h : d.Intersective) : d A B ↔ d (A ∩ B)
 
 theorem intersective_iff : d.Intersective ↔ ∀ A B, d A B ↔ d (A ∩ B) Set.univ :=
   ⟨fun h _ _ ↦ h.iff_inter_univ, fun h A B A' B' e ↦ by rw [h A B, h A' B', e]⟩
+
+/-- An intersective determiner denotation is unchanged by removing from its restrictor a set
+disjoint from what the restrictor and the scope share. -/
+theorem Intersective.sdiff_iff (h : d.Intersective) {C : Set α} (hC : Disjoint (A ∩ B) C) :
+    d (A \ C) B ↔ d A B :=
+  h _ _ _ _ (by rw [← Set.inter_sdiff_right_comm, hC.sdiff_eq_left])
+
+/-- A co-intersective determiner denotation is unchanged by removing from its restrictor a set
+disjoint from the part of the restrictor outside the scope. -/
+theorem CoIntersective.sdiff_iff (h : d.CoIntersective) {C : Set α} (hC : Disjoint (A \ B) C) :
+    d (A \ C) B ↔ d A B :=
+  h _ _ _ _ (by rw [sdiff_right_comm, hC.sdiff_eq_left])
 
 /-- A determiner denotation is co-intersective exactly when `d A B ↔ d univ (A → B)`, so that it
 reduces to its value on the universe at the Boolean conditional. -/
@@ -363,10 +375,10 @@ theorem ScopeAntitone.quasiUniversal (h : d.ScopeAntitone) (hC : d.Conservative)
   fun A B hd ↦ (hC A B).2 (h A Set.inter_subset_left hd)
 
 theorem ScopeMonotone.rightContinuous (h : d.ScopeMonotone) : d.RightContinuous :=
-  fun A _ _ _ h₁ _ hd _ ↦ h A h₁ hd
+  fun A ↦ (isUpperSet_setOfPred.2 (h A)).ordConnected
 
 theorem ScopeAntitone.rightContinuous (h : d.ScopeAntitone) : d.RightContinuous :=
-  fun A _ _ _ _ h₂ _ hd ↦ h A h₂ hd
+  fun A ↦ (isLowerSet_setOfPred.2 (h A)).ordConnected
 
 /-- An irreflexive almost-connected conservative determiner denotation is scope antitone
 ([van-benthem-1984], Theorem 4.1.2). -/

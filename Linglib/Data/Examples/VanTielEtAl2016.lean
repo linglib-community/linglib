@@ -24,7 +24,7 @@ def cheap_free : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not free?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "cheap, free"), ("stronger term", "free"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -37,7 +37,7 @@ def sometimes_always : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not always?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "sometimes, always"), ("stronger term", "always"), ("class", "adverb"), ("bounded", "yes")] }
 
@@ -50,7 +50,7 @@ def some_all : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not all?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "some, all"), ("stronger term", "all"), ("class", "quantifier"), ("bounded", "yes")] }
 
@@ -63,7 +63,7 @@ def possible_certain : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not certain?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "possible, certain"), ("stronger term", "certain"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -76,7 +76,7 @@ def may_will : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not will?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "may, will"), ("stronger term", "will"), ("class", "auxiliary verb"), ("bounded", "yes")] }
 
@@ -89,7 +89,7 @@ def difficult_impossible : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not impossible?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "difficult, impossible"), ("stronger term", "impossible"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -102,7 +102,7 @@ def rare_extinct : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not extinct?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "rare, extinct"), ("stronger term", "extinct"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -115,7 +115,7 @@ def may_haveto : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not have to?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "may, have to"), ("stronger term", "have to"), ("class", "auxiliary verb"), ("bounded", "yes")] }
 
@@ -128,7 +128,7 @@ def warm_hot : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hot?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "warm, hot"), ("stronger term", "hot"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -141,7 +141,7 @@ def few_none : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not none?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "few, none"), ("stronger term", "none"), ("class", "quantifier"), ("bounded", "yes")] }
 
@@ -154,7 +154,7 @@ def low_depleted : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not depleted?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "low, depleted"), ("stronger term", "depleted"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -167,7 +167,7 @@ def hard_unsolvable : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unsolvable?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "hard, unsolvable"), ("stronger term", "unsolvable"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -180,7 +180,7 @@ def allowed_obligatory : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not obligatory?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "allowed, obligatory"), ("stronger term", "obligatory"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -193,7 +193,7 @@ def scarce_unavailable : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unavailable?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "scarce, unavailable"), ("stronger term", "unavailable"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -206,7 +206,7 @@ def try_succeed : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not succeed?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "try, succeed"), ("stronger term", "succeed"), ("class", "main verb"), ("bounded", "yes")] }
 
@@ -219,7 +219,7 @@ def palatable_delicious : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not delicious?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "palatable, delicious"), ("stronger term", "delicious"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -232,7 +232,7 @@ def memorable_unforgettable : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unforgettable?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "memorable, unforgettable"), ("stronger term", "unforgettable"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -245,7 +245,7 @@ def like_love : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not love?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "like, love"), ("stronger term", "love"), ("class", "main verb"), ("bounded", "no")] }
 
@@ -258,7 +258,7 @@ def good_perfect : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not perfect?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "good, perfect"), ("stronger term", "perfect"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -271,7 +271,7 @@ def good_excellent : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not excellent?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "good, excellent"), ("stronger term", "excellent"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -284,7 +284,7 @@ def cool_cold : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not cold?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "cool, cold"), ("stronger term", "cold"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -297,7 +297,7 @@ def hungry_starving : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not starving?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "hungry, starving"), ("stronger term", "starving"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -310,7 +310,7 @@ def adequate_good : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not good?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "adequate, good"), ("stronger term", "good"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -323,7 +323,7 @@ def unsettling_horrific : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not horrific?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "unsettling, horrific"), ("stronger term", "horrific"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -336,7 +336,7 @@ def dislike_loathe : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not loathe?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "dislike, loathe"), ("stronger term", "loathe"), ("class", "main verb"), ("bounded", "no")] }
 
@@ -349,7 +349,7 @@ def believe_know : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not know?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "believe, know"), ("stronger term", "know"), ("class", "main verb"), ("bounded", "yes")] }
 
@@ -362,7 +362,7 @@ def start_finish : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not finish?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "start, finish"), ("stronger term", "finish"), ("class", "main verb"), ("bounded", "yes")] }
 
@@ -375,7 +375,7 @@ def participate_win : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not win?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "participate, win"), ("stronger term", "win"), ("class", "main verb"), ("bounded", "yes")] }
 
@@ -388,7 +388,7 @@ def wary_scared : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not scared?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "wary, scared"), ("stronger term", "scared"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -401,7 +401,7 @@ def old_ancient : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not ancient?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "old, ancient"), ("stronger term", "ancient"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -414,7 +414,7 @@ def big_enormous : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not enormous?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "big, enormous"), ("stronger term", "enormous"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -427,7 +427,7 @@ def snug_tight : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not tight?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "snug, tight"), ("stronger term", "tight"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -440,7 +440,7 @@ def attractive_stunning : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not stunning?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "attractive, stunning"), ("stronger term", "stunning"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -453,7 +453,7 @@ def special_unique : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unique?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "special, unique"), ("stronger term", "unique"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -466,7 +466,7 @@ def pretty_beautiful : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not beautiful?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "pretty, beautiful"), ("stronger term", "beautiful"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -479,7 +479,7 @@ def intelligent_brilliant : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not brilliant?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "intelligent, brilliant"), ("stronger term", "brilliant"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -492,7 +492,7 @@ def funny_hilarious : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hilarious?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "funny, hilarious"), ("stronger term", "hilarious"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -505,7 +505,7 @@ def dark_black : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not black?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "dark, black"), ("stronger term", "black"), ("class", "adjective"), ("bounded", "yes")] }
 
@@ -518,7 +518,7 @@ def small_tiny : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not tiny?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "small, tiny"), ("stronger term", "tiny"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -531,7 +531,7 @@ def ugly_hideous : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hideous?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "ugly, hideous"), ("stronger term", "hideous"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -544,7 +544,7 @@ def silly_ridiculous : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not ridiculous?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "silly, ridiculous"), ("stronger term", "ridiculous"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -557,7 +557,7 @@ def tired_exhausted : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not exhausted?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "tired, exhausted"), ("stronger term", "exhausted"), ("class", "adjective"), ("bounded", "no")] }
 
@@ -570,7 +570,7 @@ def content_happy : Datum :=
     glossedTokens := []
     context := "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not happy?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "content, happy"), ("stronger term", "happy"), ("class", "adjective"), ("bounded", "no")] }
 

@@ -24,7 +24,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "Passage completion after a Source-Goal transfer-of-possession context with a pronoun prompt; the continuation's first mention is coded for its referent (Rohde, Kehler & Elman 2006)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := "Passage completion after a Source-Goal transfer-of-possession context with a pronoun prompt; the continuation's first mention is coded for its referent (Rohde, Kehler & Elman 2006)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := "Passage completion after a Source-Goal transfer-of-possession context with a pronoun prompt: the pronoun prompt condition of Stevenson et al. (1994), paired with the no-pronoun prompt (10b) in Rohde & Kehler (2008)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "Passage completion after a Source-Goal transfer context, with or without a pronoun prompt; continuations coded for coherence relation and first-mentioned referent (Rohde & Kehler 2008)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := "Passage completion after a subject-biased implicit-causality context in the active or passive voice, with or without a pronoun prompt (Rohde & Kehler 2009, 2013)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := "Passage completion after a subject-biased implicit-causality context in the active or passive voice, with or without a pronoun prompt (Rohde & Kehler 2009, 2013)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := "Passage completion after a subject-biased implicit-causality context in the active or passive voice, with or without a pronoun prompt (Rohde & Kehler 2009, 2013)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_20d : Datum :=
     glossedTokens := []
     context := "Passage completion after a subject-biased implicit-causality context in the active or passive voice, with or without a pronoun prompt (Rohde & Kehler 2009, 2013)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

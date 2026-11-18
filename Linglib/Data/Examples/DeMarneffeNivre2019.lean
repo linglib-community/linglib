@@ -24,7 +24,7 @@ def fig1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyTree"), ("projective", "yes")] }
 
@@ -37,7 +37,7 @@ def fig2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "coordination"), ("projective", "yes")] }
 
@@ -50,7 +50,7 @@ def fig3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "projectivity"), ("projective", "no")] }
 
@@ -63,7 +63,7 @@ def fig4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "headChoice"), ("projective", "yes")] }
 
@@ -76,7 +76,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "initial")] }
 
@@ -89,7 +89,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "final")] }
 
@@ -102,7 +102,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "no")] }
 
@@ -128,7 +128,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "neither")] }
 
@@ -141,7 +141,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "neither")] }
 
@@ -154,7 +154,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "object")] }
 
@@ -167,7 +167,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "subject")] }
 
@@ -180,7 +180,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "ellipsis")] }
 
@@ -193,7 +193,7 @@ def fig5_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "determiner")] }
 
@@ -204,9 +204,11 @@ def fig5_sv : Datum :=
     language := "swed1254"
     primaryText := "husen är nya"
     glossedTokens := [("husen", "the-houses"), ("är", "are"), ("nya", "new")]
+    glossedWords := [⟨['h', 'u', 's', 'e', 'n'], ['t', 'h', 'e', '-', 'h', 'o', 'u', 's', 'e', 's'], []⟩, ⟨['ä', 'r'], ['a', 'r', 'e'], [⟨['ä', 'r'], ['a', 'r', 'e'], none⟩]⟩, ⟨['n', 'y', 'a'], ['n', 'e', 'w'], [⟨['n', 'y', 'a'], ['n', 'e', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "inflection")] }
 
@@ -217,9 +219,11 @@ def fig5_wsk : Datum :=
     language := "wask1241"
     primaryText := "kawam mu ititi"
     glossedTokens := [("kawam", "houses"), ("mu", "the"), ("ititi", "new")]
+    glossedWords := [⟨['k', 'a', 'w', 'a', 'm'], ['h', 'o', 'u', 's', 'e', 's'], [⟨['k', 'a', 'w', 'a', 'm'], ['h', 'o', 'u', 's', 'e', 's'], none⟩]⟩, ⟨['m', 'u'], ['t', 'h', 'e'], [⟨['m', 'u'], ['t', 'h', 'e'], none⟩]⟩, ⟨['i', 't', 'i', 't', 'i'], ['n', 'e', 'w'], [⟨['i', 't', 'i', 't', 'i'], ['n', 'e', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "determiner")] }
 
@@ -230,9 +234,11 @@ def fig5_ru : Datum :=
     language := "russ1263"
     primaryText := "Дома новые"
     glossedTokens := [("Дома", "houses"), ("новые", "new")]
+    glossedWords := [⟨['Д', 'о', 'м', 'а'], ['h', 'o', 'u', 's', 'e', 's'], [⟨['Д', 'о', 'м', 'а'], ['h', 'o', 'u', 's', 'e', 's'], none⟩]⟩, ⟨['н', 'о', 'в', 'ы', 'е'], ['n', 'e', 'w'], [⟨['н', 'о', 'в', 'ы', 'е'], ['n', 'e', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "unmarked")] }
 
@@ -243,9 +249,11 @@ def fig6_sv : Datum :=
     language := "swed1254"
     primaryText := "en katt jagar råttor och möss"
     glossedTokens := [("en", "a"), ("katt", "cat"), ("jagar", "chases"), ("råttor", "rats"), ("och", "and"), ("möss", "mice")]
+    glossedWords := [⟨['e', 'n'], ['a'], [⟨['e', 'n'], ['a'], none⟩]⟩, ⟨['k', 'a', 't', 't'], ['c', 'a', 't'], [⟨['k', 'a', 't', 't'], ['c', 'a', 't'], none⟩]⟩, ⟨['j', 'a', 'g', 'a', 'r'], ['c', 'h', 'a', 's', 'e', 's'], [⟨['j', 'a', 'g', 'a', 'r'], ['c', 'h', 'a', 's', 'e', 's'], none⟩]⟩, ⟨['r', 'å', 't', 't', 'o', 'r'], ['r', 'a', 't', 's'], [⟨['r', 'å', 't', 't', 'o', 'r'], ['r', 'a', 't', 's'], none⟩]⟩, ⟨['o', 'c', 'h'], ['a', 'n', 'd'], [⟨['o', 'c', 'h'], ['a', 'n', 'd'], none⟩]⟩, ⟨['m', 'ö', 's', 's'], ['m', 'i', 'c', 'e'], [⟨['m', 'ö', 's', 's'], ['m', 'i', 'c', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "SwedishTreebank")] }
 
@@ -256,9 +264,11 @@ def fig6_da : Datum :=
     language := "dani1285"
     primaryText := "en kat jager rotter og mus"
     glossedTokens := [("en", "a"), ("kat", "cat"), ("jager", "chases"), ("rotter", "rats"), ("og", "and"), ("mus", "mice")]
+    glossedWords := [⟨['e', 'n'], ['a'], [⟨['e', 'n'], ['a'], none⟩]⟩, ⟨['k', 'a', 't'], ['c', 'a', 't'], [⟨['k', 'a', 't'], ['c', 'a', 't'], none⟩]⟩, ⟨['j', 'a', 'g', 'e', 'r'], ['c', 'h', 'a', 's', 'e', 's'], [⟨['j', 'a', 'g', 'e', 'r'], ['c', 'h', 'a', 's', 'e', 's'], none⟩]⟩, ⟨['r', 'o', 't', 't', 'e', 'r'], ['r', 'a', 't', 's'], [⟨['r', 'o', 't', 't', 'e', 'r'], ['r', 'a', 't', 's'], none⟩]⟩, ⟨['o', 'g'], ['a', 'n', 'd'], [⟨['o', 'g'], ['a', 'n', 'd'], none⟩]⟩, ⟨['m', 'u', 's'], ['m', 'i', 'c', 'e'], [⟨['m', 'u', 's'], ['m', 'i', 'c', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "DanishDependencyTreebank")] }
 
@@ -271,7 +281,7 @@ def fig6_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "StanfordTypedDependencies")] }
 
@@ -284,7 +294,7 @@ def fig7_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "functionWords")] }
 
@@ -295,9 +305,11 @@ def fig7_fi : Datum :=
     language := "finn1318"
     primaryText := "koira jahtaa kissan huoneesta"
     glossedTokens := [("koira", "dog.NOM"), ("jahtaa", "chase"), ("kissan", "cat.ACC"), ("huoneesta", "room.ELA")]
+    glossedWords := [⟨['k', 'o', 'i', 'r', 'a'], ['d', 'o', 'g', '.', 'N', 'O', 'M'], [⟨['k', 'o', 'i', 'r', 'a'], ['d', 'o', 'g', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['j', 'a', 'h', 't', 'a', 'a'], ['c', 'h', 'a', 's', 'e'], [⟨['j', 'a', 'h', 't', 'a', 'a'], ['c', 'h', 'a', 's', 'e'], none⟩]⟩, ⟨['k', 'i', 's', 's', 'a', 'n'], ['c', 'a', 't', '.', 'A', 'C', 'C'], [⟨['k', 'i', 's', 's', 'a', 'n'], ['c', 'a', 't', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['h', 'u', 'o', 'n', 'e', 'e', 's', 't', 'a'], ['r', 'o', 'o', 'm', '.', 'E', 'L', 'A'], [⟨['h', 'u', 'o', 'n', 'e', 'e', 's', 't', 'a'], ['r', 'o', 'o', 'm', '.', 'E', 'L', 'A'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "case")] }
 
@@ -310,7 +322,7 @@ def fig8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "nonsyntacticRelations")] }
 
@@ -323,7 +335,7 @@ def fig9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topic", "enhancedDependencies")] }
 

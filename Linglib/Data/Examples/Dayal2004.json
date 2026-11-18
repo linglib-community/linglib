@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1"],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1"],
@@ -51,7 +51,7 @@
     "translation": "The dog is a common animal.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -73,7 +73,7 @@
     "translation": "Dogs are common here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -95,7 +95,7 @@
     "translation": "Man has evolved from apes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -117,7 +117,7 @@
     "translation": "Men have evolved from apes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -139,7 +139,7 @@
     "translation": "Dogs are extinct.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -179,7 +179,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -199,7 +199,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -239,7 +239,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -279,7 +279,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -299,7 +299,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -321,7 +321,7 @@
     "translation": "The dog is widespread.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.2"],
@@ -343,7 +343,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.2"],
@@ -365,7 +365,7 @@
     "translation": "The dogs are widespread.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.2"],
@@ -387,7 +387,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.2"],
@@ -407,7 +407,7 @@
     "translation": "Pandas are facing extinction.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],
@@ -427,7 +427,7 @@
     "translation": "Pandas are facing extinction.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],
@@ -447,7 +447,7 @@
     "translation": "Gold is getting more expensive.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],
@@ -467,7 +467,7 @@
     "translation": "Gold is getting more expensive.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],
@@ -487,7 +487,7 @@
     "translation": "The Panda is facing extinction.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],
@@ -507,7 +507,7 @@
     "translation": "The Panda is facing extinction.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4.3"],

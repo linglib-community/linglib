@@ -147,7 +147,8 @@ theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D
 
 theorem forall_mem_ofDomain_or_compl_iff :
     (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton :=
-  ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p))
+  have key := ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p)) (w := i)
+  ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
     ofDomain D p q ⊆ materialImp p q :=

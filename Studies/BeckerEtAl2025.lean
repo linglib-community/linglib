@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Grid
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Basic
 public import Mathlib.Order.Interval.Finset.Nat
@@ -13,7 +13,7 @@ Becker, Franchetto, Kuikuro, Kuikuro and Petrović analyze Kuikuro prosody with 
 optimality-theoretic grammars. Words are footed into iambs from left to right with a final
 trochee under *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb, and the last foot heads the word. The High tone of
 a phrase is realized in a domain chosen by Align-L(Δφ,H), NonFin(H) and Culminativity-H over
-Align-R(H), and `toneTableau_optimal` derives the paper's generalization from these
+Align-R(H), and `toneOptimal_eq` derives the paper's generalization from these
 constraints: the domain runs from the primary stress up to the next foot head, so the High
 target can fall up to three syllables after the stress it marks.
 
@@ -51,100 +51,101 @@ open Prosody OptimalityTheory
 /-! ### Footing -/
 
 /-- Iamb, constraint (2), assigns one mark to every foot that is not right-headed. -/
-def iamb : Constraint Tree := fun t ↦
+def iamb : Constraint MetricalTree := fun t ↦
   t.localTrees.countP fun x ↦ decide (x.1.level = .ft) && !(x.2.getLast?.any (·.isHead))
 
 /-- *V:]φ, constraint (3), assigns one mark to a long vowel in the phrase-final syllable. -/
-def finalLong : Constraint Tree :=
-  Constraint.binary fun t ↦ 2 ≤ (t.leafList.getLast?.bind (·.weight?)).getD 0
+def finalLong : Constraint MetricalTree :=
+  Constraint.binary fun t ↦ 2 ≤ (t.constituency.leafList.getLast?.bind (·.weight?)).getD 0
 
 /-- Max-μ assigns one mark to every input mora missing from the output. -/
-def maxMora (input : List ℕ) : Constraint Tree := fun t ↦
-  (List.zipWith (· - ·) input (t.leafList.filterMap (·.weight?))).sum
+def maxMora (input : List ℕ) : Constraint MetricalTree := fun t ↦
+  (List.zipWith (· - ·) input (t.constituency.leafList.filterMap (·.weight?))).sum
 
 /-- The footing ranking *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb of Tables 2, 4 and 6, where Parse-σ,
-    constraint (1), marks every syllable no foot dominates. -/
-def footing (input : List ℕ) : List (Constraint Tree) :=
+constraint (1), marks every syllable no foot dominates. -/
+def footing (input : List ℕ) : List (Constraint MetricalTree) :=
   [finalLong, maxMora input, parseInto .ft, iamb]
 
 -- Table 2
 theorem table2 :
-    (Tableau.ofList
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
-       .om [.ft true [.σ 1, .σ 2 true], .σ 1, .σ 1],
-       .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]}
-      (footing [1, 1, 1, 1])).optimal =
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
+    Constraint.eval
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
+       .om false [.ft true [.σ 1, .σ 2 true], .σ 1, .σ 1],
+       .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]}
+      (footing [1, 1, 1, 1]) =
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 -- Table 4
 theorem table4 :
-    (Tableau.ofList
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
-       .om [.σ 1, .ft true [.σ 1, .σ 2 true], .σ 1],
-       .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]}
-      (footing [1, 1, 2, 1])).optimal =
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
+    Constraint.eval
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
+       .om false [.σ 1, .ft true [.σ 1, .σ 2 true], .σ 1],
+       .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]}
+      (footing [1, 1, 2, 1]) =
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
   decide
 
 -- Table 6
 theorem table6 :
-    (Tableau.ofList {.om [.ft true [.σ 1, .σ 2 true]], .om [.ft true [.σ 1 true, .σ 1]]}
-      (footing [1, 2])).optimal = {.om [.ft true [.σ 1 true, .σ 1]]} := by
+    Constraint.eval {.om false [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]}
+      (footing [1, 2]) = {.om false [.ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 /-! ### Words in isolation -/
 
 /-- *[(alaː)(makíː)lɨ]* 's/he fell' (Fig. 1) has two iambs and a stray final syllable, and the
-    second iamb heads the word. -/
-def fell : Tree :=
-  .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true], .σ 1]
+second iamb heads the word. -/
+def fell : MetricalTree :=
+  .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true], .σ 1]
 
 /-- *[(tsihaː)(lamaː)(kílɨ)]* 'we fell' (Fig. 2) has an even number of syllables, so its last two
-    form a trochee, which heads the word. -/
-def weFell : Tree :=
-  .om [.ft false [.σ 1, .σ 2 true], .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]
+form a trochee, which heads the word. -/
+def weFell : MetricalTree :=
+  .om false [.ft false [.σ 1, .σ 2 true], .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]
 
 /-- *[(umíː)ŋi]* 'annatto' (§1) is an iamb and a stray final syllable. -/
-def annatto : Tree :=
-  .om [.ft true [.σ 1, .σ 2 true], .σ 1]
+def annatto : MetricalTree :=
+  .om false [.ft true [.σ 1, .σ 2 true], .σ 1]
 
 theorem columns_words :
-    Tree.columns fell = [1, 2, 1, 3, 1] ∧ Tree.columns weFell = [1, 2, 1, 2, 3, 1] ∧
-      Tree.columns annatto = [1, 3, 1] := by
+    MetricalTree.columns fell = [1, 2, 1, 3, 1] ∧ MetricalTree.columns weFell = [1, 2, 1, 2, 3, 1] ∧
+      MetricalTree.columns annatto = [1, 3, 1] := by
   decide
 
 -- p. 2365
 theorem headTerminals_words :
-    Tree.headTerminals fell = [.σ 2 true] ∧ Tree.headTerminals weFell = [.σ 1 true] ∧
-      Tree.headTerminals annatto = [.σ 2 true] := by
+    MetricalTree.headTerminals fell = [.σ 2 true] ∧
+      MetricalTree.headTerminals weFell = [.σ 1 true] ∧
+      MetricalTree.headTerminals annatto = [.σ 2 true] := by
   decide
 
 /-! ### Tone domains -/
 
 section ToneDomain
 
-variable (t : Tree)
+variable (t : MetricalTree)
 
 /-- The number of syllables. -/
-abbrev syllableCount : ℕ := (Tree.columns t).length
+abbrev syllableCount : ℕ := (MetricalTree.columns t).length
 
 /-- The mora count of the `i`th syllable. -/
-def moras (i : ℕ) : ℕ := ((Tree.terminals t)[i]?.bind (·.value.weight?)).getD 0
+def moras (i : ℕ) : ℕ := ((MetricalTree.terminals t)[i]?.bind (·.constituency.value.weight?)).getD 0
 
 /-- A syllable is stressed when it heads a foot (p. 2365), its grid column rising above the
-    bottom row. -/
-def Stressed (i : ℕ) : Prop := 2 ≤ (Tree.columns t).getD i 0
+bottom row. -/
+def Stressed (i : ℕ) : Prop := 2 ≤ (MetricalTree.columns t).getD i 0
 
 instance : DecidablePred (Stressed t) := fun _ ↦ inferInstanceAs (Decidable (2 ≤ _))
 
 /-- The phrase head Δφ, the primary stress of the phrase, is the position of the head
-    terminal. -/
-def head : ℕ := (Tree.project t).findIdx (·.onSpine)
+terminal. -/
+def head : ℕ := (MetricalTree.project t).findIdx (·.onSpine)
 
 /-- A phrase is metrical, in the sense the tone constraints presuppose (p. 2372), when every
-    syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
-    syllable. -/
+syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
+syllable. -/
 structure IsMetricalPhrase : Prop where
   moras_pos : ∀ i < syllableCount t, 0 < moras t i
   stressed_head : Stressed t (head t)
@@ -173,7 +174,7 @@ theorem mem_domains {d : NonemptyInterval ℕ} :
     exact ⟨d.toProd, ⟨d.fst_le_snd.trans_lt hd, hd⟩, by simp [d.fst_le_snd]⟩
 
 /-- Align-L(Δφ,H), (4), counts the moras between the phrase head and the left edge of the
-    domain. -/
+domain. -/
 def alignL : Constraint (NonemptyInterval ℕ) := fun d ↦
   ∑ i ∈ Finset.Ico (min d.fst (head t)) (max d.fst (head t)), moras t i
 
@@ -194,22 +195,23 @@ inductive ToneConstraint
   | alignL | nonFin | culm | alignR
   deriving DecidableEq, Fintype
 
-/-- The tone-domain constraints (4)–(7). -/
-def tone : ConstraintSet (NonemptyInterval ℕ) ToneConstraint
-  | .alignL => alignL t
-  | .nonFin => nonFin t
-  | .culm => culm t
-  | .alignR => alignR t
+/-- The marks of a tone domain on the constraints (4)–(7). -/
+def tone (d : NonemptyInterval ℕ) : ToneConstraint → ℕ
+  | .alignL => alignL t d
+  | .nonFin => nonFin t d
+  | .culm => culm t d
+  | .alignR => alignR t d
 
 /-- The column order of Tables 7 and 14. -/
-def toneRanking : Ranking ToneConstraint 4 := Ranking.ofList [.alignL, .nonFin, .culm, .alignR]
+def toneRanking : Ranking.Enumeration ToneConstraint 4 := Ranking.Enumeration.ofList
+    [.alignL, .nonFin, .culm, .alignR]
 
-/-- The tone-domain tableau of a phrase under a ranking of (4)–(7). -/
-def toneTableau (r : Ranking ToneConstraint 4) : Tableau (NonemptyInterval ℕ) 4 :=
-  .ofRanking (tone t) r (domains t)
+/-- The optimal tone domains of a phrase under a ranking of (4)–(7). -/
+def toneOptimal (r : Ranking.Enumeration ToneConstraint 4) : Finset (NonemptyInterval ℕ) :=
+  r.optimal (tone t) (domains t)
 
 /-- The extent of the predicted domain is the number of syllables it takes in after the phrase
-    head, the most it can take without a foot head or the phrase-final syllable. -/
+head, the most it can take without a foot head or the phrase-final syllable. -/
 def extent : ℕ :=
   Nat.findGreatest (fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
     (syllableCount t - head t - 2)
@@ -217,7 +219,7 @@ def extent : ℕ :=
 /-- The predicted domain runs from the phrase head over `extent t` further syllables. -/
 def toneDomain : NonemptyInterval ℕ := ⟨(head t, head t + extent t), Nat.le_add_right _ _⟩
 
-variable {t} {r : Ranking ToneConstraint 4} {d d' : NonemptyInterval ℕ}
+variable {t} {r : Ranking.Enumeration ToneConstraint 4} {d d' : NonemptyInterval ℕ}
 
 theorem alignL_eq_zero_iff (hμ : ∀ i < syllableCount t, 0 < moras t i)
     (hd : d ∈ domains t) : alignL t d = 0 ↔ d.fst = head t := by
@@ -247,15 +249,15 @@ theorem alignR_lt_alignR (hμ : ∀ i < syllableCount t, 0 < moras t i)
 
 /-- If Align-R(H) is ranked last, the optimal tone domain of a metrical phrase is `toneDomain t`
 (§4.5). -/
-theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
-    (toneTableau t r).optimal = {toneDomain t} := by
+theorem toneOptimal_eq (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
+    toneOptimal t r = {toneDomain t} := by
   obtain ⟨hμ, hp, hn⟩ := ht
   have hext : ∀ i ∈ Finset.Ioc (head t) (head t + extent t), ¬ Stressed t i :=
     Nat.findGreatest_spec (P := fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
       (Nat.zero_le _) (by simp)
   have hle : extent t ≤ syllableCount t - head t - 2 := Nat.findGreatest_le _
   -- a domain satisfies Align-L(Δφ,H), NonFin(H) and Culminativity-H iff it lies in `toneDomain t`
-  have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t c d = 0) ↔
+  have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t d c = 0) ↔
       d.fst = head t ∧ d.snd ≤ head t + extent t := by
     intro d hd
     have hpd := d.fst_le_snd
@@ -275,7 +277,7 @@ theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .al
   have hm : toneDomain t ∈ domains t :=
     mem_domains.2 (by simp only [toneDomain]; omega)
   have hmf := (hfeas _ hm).2 ⟨rfl, le_rfl⟩
-  rw [toneTableau, Tableau.ofRanking_optimal_eq_argmin_filter ⟨_, hm, hr ▸ hmf⟩, hr]
+  rw [toneOptimal, Ranking.Enumeration.optimal_eq_argmin_filter ⟨_, hm, hr ▸ hmf⟩, hr]
   refine StrictAntiOn.argmin_eq_singleton (fun d hd d' hd' hlt ↦ ?_)
     ⟨Finset.mem_filter.2 ⟨hm, hmf⟩, fun d hd ↦ ?_⟩
   · rw [Finset.coe_filter] at hd hd'
@@ -291,57 +293,57 @@ end ToneDomain
 
 -- Table 7
 theorem tone_in_isolation :
-    (toneTableau fell toneRanking).optimal = {⟨(3, 3), le_rfl⟩} ∧
-      (toneTableau weFell toneRanking).optimal = {⟨(4, 4), le_rfl⟩} ∧
-      (toneTableau annatto toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
-  ⟨by rw [toneTableau_optimal (by decide) rfl]; decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide⟩
+    toneOptimal fell toneRanking = {⟨(3, 3), le_rfl⟩} ∧
+      toneOptimal weFell toneRanking = {⟨(4, 4), le_rfl⟩} ∧
+      toneOptimal annatto toneRanking = {⟨(1, 1), le_rfl⟩} :=
+  ⟨by rw [toneOptimal_eq (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide⟩
 
 /-! ### Phrases -/
 
 /-- *[(atɔ́ː) (hɛlɨ)]* 'the friend was injured' (Fig. 9), whose second word is a trochee. -/
-def friendInjured : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true]], .om [.ft true [.σ 1 true, .σ 1]]]
+def friendInjured : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]]
 
 /-- *[(atɔː) (hɛ́pɨː)ɾɨ]* 'the friend has been injured' (Fig. 10), whose second word begins with
-    an iamb. -/
-def friendHasBeenInjured : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true]],
-    .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
+an iamb. -/
+def friendHasBeenInjured : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true]],
+    .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
 -- Fig. 9
 theorem tone_blocked_by_trochee_head :
-    (toneTableau friendInjured toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+    toneOptimal friendInjured toneRanking = {⟨(1, 1), le_rfl⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 -- Fig. 10, §1
 theorem tone_crosses_iamb_dependent :
-    (toneTableau friendHasBeenInjured toneRanking).optimal = {⟨(1, 2), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+    toneOptimal friendHasBeenInjured toneRanking = {⟨(1, 2), by decide⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
-    `/σσσ # σσσ/`. -/
-def manHasBeenHeard : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
-    .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
+`/σσσ # σσσ/`. -/
+def manHasBeenHeard : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
+    .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
 -- Table 14
-theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) rfl]; decide
+theorem table14 : toneOptimal manHasBeenHeard toneRanking = {⟨(1, 3), by decide⟩} :=
+  by rw [toneOptimal_eq (by decide) rfl]; decide
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
-    and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
-def annattoFell : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
-    .om [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
+and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
+def annattoFell : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
+    .om false [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
 
 -- Fig. 3, §1, §7
 theorem stress_tone_incoherence :
-    head annattoFell = 1 ∧ (toneTableau annattoFell toneRanking).optimal = {⟨(1, 4), by decide⟩} ∧
+    head annattoFell = 1 ∧ toneOptimal annattoFell toneRanking = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=
   ⟨by decide,
-    by rw [toneTableau_optimal (by decide) rfl]; decide,
+    by rw [toneOptimal_eq (by decide) rfl]; decide,
     by decide, by decide⟩
 
 end BeckerEtAl2025

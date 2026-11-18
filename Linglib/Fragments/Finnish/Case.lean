@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Finnish case
@@ -25,7 +25,7 @@ is the genitive's, as in *jala-n* 'on foot' beside *auto-n* 'of a car'.
 
 * `Finnish.Case`: the fifteen cases, in the order of Karlsson's table.
 * `Finnish.Case.label`, `Finnish.Case.functions`: the comparative value each case is named for,
-  and the values it expresses.
+  and the functions it marks.
 
 ## Main results
 
@@ -103,17 +103,18 @@ def label : Case → _root_.Case
   | abess => .abess
   | instr => .inst
 
-/-- The comparative values a case expresses: the external cases also express the surface
+/-- The functions a case marks: the external cases also express the surface
 relations ([karlsson-2017] pp. 243, 247, 250), the adessive the instrument (p. 243), the allative
 the recipient (p. 250) and the instructive location (p. 264). -/
-def functions : Case → Finset _root_.Case
-  | ade => {.ade, .sup, .inst}
-  | abl => {.abl, .del}
-  | all => {.all, .sub, .dat}
-  | instr => {.inst, .loc}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | ade => {.spatial (some .exterior) .place, .spatial (some .surface) .place, .instrumental}
+  | abl => {.spatial (some .exterior) .source, .spatial (some .surface) .source}
+  | all => {.spatial (some .exterior) .goal, .spatial (some .surface) .goal, .argument .R}
+  | instr => {.instrumental, .spatial none .place}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 /-- The local cases are those whose label decomposes into a localization and a direction. -/
@@ -134,7 +135,8 @@ theorem cells_image_label : cells (Finset.univ.image label) =
 
 /-- The external cases also express the surface relations, so that the functions of the Finnish
 cases fill every localization. -/
-theorem cells_biUnion_functions : cells (Finset.univ.biUnion functions) =
+theorem cells_biUnion_functions :
+    _root_.Case.Function.cells (Finset.univ.biUnion functions) =
     (.univ : Finset Localization) ×ˢ ({.place, .source, .goal} : Finset Direction) := by
   decide
 

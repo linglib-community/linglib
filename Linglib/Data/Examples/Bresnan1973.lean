@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "synthetic")] }
 
@@ -50,7 +50,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
@@ -63,7 +63,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -76,7 +76,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
@@ -89,7 +89,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "noun"), ("surface", "deleted")] }
 
@@ -102,7 +102,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
@@ -115,7 +115,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "deleted")] }
 
@@ -128,7 +128,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -141,7 +141,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
@@ -154,7 +154,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
@@ -167,7 +167,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
@@ -180,7 +180,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -193,7 +193,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
@@ -206,7 +206,7 @@ def ex17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
@@ -219,7 +219,7 @@ def ex17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
@@ -232,7 +232,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -245,7 +245,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
@@ -258,7 +258,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
@@ -271,7 +271,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
@@ -284,7 +284,7 @@ def ex84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "so"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -297,7 +297,7 @@ def ex84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "so"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
@@ -310,7 +310,7 @@ def ex85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -323,7 +323,7 @@ def ex85b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
@@ -336,7 +336,7 @@ def ex225b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "est"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -349,7 +349,7 @@ def ex275b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
@@ -362,7 +362,7 @@ def ex277 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "synthetic")] }
 
@@ -375,7 +375,7 @@ def ex278c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
@@ -388,7 +388,7 @@ def ex278d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "deleted")] }
 
@@ -401,7 +401,7 @@ def ex279a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
@@ -414,7 +414,7 @@ def ex279b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "synthetic")] }
 
@@ -427,7 +427,7 @@ def ex279c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
@@ -440,7 +440,7 @@ def ex279d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "synthetic")] }
 
@@ -453,7 +453,7 @@ def ex111a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "that"), ("q", "much"), ("order", "prearticle")] }
 
@@ -466,7 +466,7 @@ def ex111b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "that"), ("q", "much"), ("order", "postarticle")] }
 
@@ -479,7 +479,7 @@ def ex112a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "prearticle")] }
 
@@ -492,7 +492,7 @@ def ex112b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "postarticle")] }
 
@@ -505,7 +505,7 @@ def ex113a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "as"), ("q", "much"), ("order", "prearticle")] }
 
@@ -518,7 +518,7 @@ def ex113b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "as"), ("q", "much"), ("order", "postarticle")] }
 
@@ -531,7 +531,7 @@ def ex114a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "prearticle")] }
 
@@ -544,7 +544,7 @@ def ex114b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "postarticle")] }
 
@@ -557,7 +557,7 @@ def ex115a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
@@ -570,7 +570,7 @@ def ex115b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -583,7 +583,7 @@ def ex116a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("q", "enough"), ("order", "prearticle")] }
 
@@ -596,7 +596,7 @@ def ex116b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("q", "enough"), ("order", "postarticle")] }
 
@@ -609,7 +609,7 @@ def ex125a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
@@ -622,7 +622,7 @@ def ex125b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -635,7 +635,7 @@ def ex126a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "any"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
@@ -648,7 +648,7 @@ def ex126b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "any"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -661,7 +661,7 @@ def ex127a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "no"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
@@ -674,7 +674,7 @@ def ex127b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "no"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -687,7 +687,7 @@ def ex217a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -700,7 +700,7 @@ def ex217b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "postarticle")] }
 
@@ -713,7 +713,7 @@ def ex218a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
@@ -726,7 +726,7 @@ def ex218b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "postarticle")] }
 
@@ -739,7 +739,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "much")] }
 
@@ -752,7 +752,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "little")] }
 
@@ -765,7 +765,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "few")] }
 
@@ -778,7 +778,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "few")] }
 
@@ -791,7 +791,7 @@ def ex45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("q", "enough")] }
 
@@ -804,7 +804,7 @@ def ex83 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("q", "much")] }
 
@@ -817,7 +817,7 @@ def ex107a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "so"), ("q", "enough")] }
 
@@ -830,7 +830,7 @@ def ex107b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "enough")] }
 
@@ -843,7 +843,7 @@ def ex107c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "too"), ("q", "enough")] }
 
@@ -856,7 +856,7 @@ def ex107d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "that"), ("q", "enough")] }
 
@@ -869,7 +869,7 @@ def ex107e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "enough")] }
 
@@ -882,7 +882,7 @@ def ex117 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "much")] }
 
@@ -895,7 +895,7 @@ def ex118 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "any"), ("clitic", "er"), ("q", "much")] }
 
@@ -908,7 +908,7 @@ def ex119 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "no"), ("clitic", "er"), ("q", "much")] }
 
@@ -921,7 +921,7 @@ def ex224a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("clitic", "er"), ("q", "much")] }
 
@@ -934,7 +934,7 @@ def ex224b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "too"), ("clitic", "er"), ("q", "much")] }
 
@@ -947,7 +947,7 @@ def ex224c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "that"), ("clitic", "est"), ("q", "much")] }
 
@@ -960,7 +960,7 @@ def ex224d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "det"), ("particle", "so"), ("clitic", "est"), ("q", "much")] }
 
@@ -973,7 +973,7 @@ def ex242a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective"), ("standard", "father"), ("noun", "man"), ("anomalous", "no")] }
 
@@ -986,7 +986,7 @@ def ex242b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "adjective"), ("standard", "father"), ("noun", "man"), ("anomalous", "no")] }
 
@@ -999,7 +999,7 @@ def ex242c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective"), ("standard", "mother"), ("noun", "man"), ("anomalous", "no")] }
 
@@ -1012,7 +1012,7 @@ def ex242d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "adjective"), ("standard", "mother"), ("noun", "man"), ("anomalous", "yes")] }
 
@@ -1025,7 +1025,7 @@ def ex252 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
@@ -1038,7 +1038,7 @@ def ex253 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
@@ -1051,7 +1051,7 @@ def ex254a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
@@ -1064,7 +1064,7 @@ def ex254b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
@@ -1077,7 +1077,7 @@ def ex255a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective")] }
 
@@ -1090,7 +1090,7 @@ def ex255b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
@@ -1103,7 +1103,7 @@ def ex256a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase")] }
 
@@ -1116,7 +1116,7 @@ def ex256b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "noun")] }
 
@@ -1129,7 +1129,7 @@ def ex256c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase")] }
 
@@ -1142,7 +1142,7 @@ def ex256d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "phrase")] }
 
@@ -1155,7 +1155,7 @@ def ex262 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "long"), ("clause", "ap"), ("clause_site", "adjective")] }
 
@@ -1168,7 +1168,7 @@ def ex266 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "long"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
@@ -1181,7 +1181,7 @@ def ex270 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
@@ -1194,7 +1194,7 @@ def ex271 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase"), ("contraction", "yes")] }
 
@@ -1207,7 +1207,7 @@ def ex273 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
@@ -1220,7 +1220,7 @@ def ex280a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "qp"), ("clause_site", "measure")] }
 
@@ -1233,7 +1233,7 @@ def ex280b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1246,7 +1246,7 @@ def ex280c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "measure")] }
 
@@ -1259,7 +1259,7 @@ def ex280d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective")] }
 
@@ -1272,7 +1272,7 @@ def ex281a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "measure")] }
 
@@ -1285,7 +1285,7 @@ def ex281b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1298,7 +1298,7 @@ def ex281c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1311,7 +1311,7 @@ def ex281d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1324,7 +1324,7 @@ def ex282a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "qp"), ("clause_site", "measure")] }
 
@@ -1337,7 +1337,7 @@ def ex282b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1350,7 +1350,7 @@ def ex282c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "ap"), ("clause_site", "measure")] }
 
@@ -1363,7 +1363,7 @@ def ex282d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "ap"), ("clause_site", "adjective")] }
 
@@ -1376,7 +1376,7 @@ def ex283a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "measure")] }
 
@@ -1389,7 +1389,7 @@ def ex283b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1402,7 +1402,7 @@ def ex283c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1415,7 +1415,7 @@ def ex283d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
@@ -1428,7 +1428,7 @@ def ex296a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "short"), ("clause", "qp"), ("clause_site", "measure")] }
 
@@ -1441,7 +1441,7 @@ def ex296b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "short"), ("clause", "ap"), ("clause_site", "measure")] }
 
@@ -1454,7 +1454,7 @@ def ex298 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "noun")] }
 
@@ -1467,7 +1467,7 @@ def ex300 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "noun")] }
 

@@ -24,7 +24,7 @@ def ex_37d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "backward looking"), ("turn", "taken"), ("u0", "Bo"), ("answer", "Jo")] }
 
@@ -37,7 +37,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "backward looking"), ("turn", "kept"), ("u0", "Georges"), ("answer", "Jacques")] }
 
@@ -50,7 +50,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "backward looking"), ("turn", "kept"), ("u0", "in"), ("answer", "from")] }
 
@@ -64,7 +64,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("I mean headphones", .acceptable)]
     paperFeatures := [("rule", "backward looking"), ("turn", "kept"), ("u0", "earphones"), ("answer", "headphones")] }
 
@@ -77,7 +77,7 @@ def iv_swimming : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("I was swimming", .unacceptable)]
     paperFeatures := [("rule", "backward looking"), ("turn", "kept"), ("u0", "a little bit"), ("answer", "swimming")] }
 
@@ -90,7 +90,7 @@ def iv_quite_a_bit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("I was quite a bit shocked by that", .acceptable)]
     paperFeatures := [("rule", "backward looking"), ("turn", "kept"), ("u0", "a little bit"), ("answer", "quite a bit")] }
 
@@ -103,7 +103,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "forward looking"), ("turn", "kept"), ("u0", "in"), ("answer", "Boston")] }
 
@@ -117,7 +117,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "forward looking"), ("turn", "taken"), ("u0", "been"), ("answer", "a big seller")] }
 
@@ -131,7 +131,7 @@ def ex_72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "forward looking"), ("turn", "kept"), ("u0", "it's"), ("query", "what's his name")] }
 

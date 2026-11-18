@@ -22,9 +22,11 @@ def ex_9a : Datum :=
     language := "itel1242"
     primaryText := "t’-əŋkzu-s-čeʔn"
     glossedTokens := [("t’-əŋkzu-s-čeʔn", "1S:SU-help-PRES-1>3P:OB")]
+    glossedWords := [⟨['t', '’', '-', 'ə', 'ŋ', 'k', 'z', 'u', '-', 's', '-', 'č', 'e', 'ʔ', 'n'], ['1', 'S', ':', 'S', 'U', '-', 'h', 'e', 'l', 'p', '-', 'P', 'R', 'E', 'S', '-', '1', '>', '3', 'P', ':', 'O', 'B'], [⟨['t', '’'], ['1', 'S', ':', 'S', 'U'], none⟩, ⟨['ə', 'ŋ', 'k', 'z', 'u'], ['h', 'e', 'l', 'p'], some '-'⟩, ⟨['s'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['č', 'e', 'ʔ', 'n'], ['1', '>', '3', 'P', ':', 'O', 'B'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "əŋkzu"), ("rootClass", "I"), ("subj", "1sg"), ("obj", "3pl"), ("m1", "t"), ("m2", "əŋkzu"), ("m3", "s"), ("m4", "čeʔn")] }
 
@@ -35,9 +37,11 @@ def ex_9b : Datum :=
     language := "itel1242"
     primaryText := "t-tɸ-s-ki-čeʔn"
     glossedTokens := [("t-tɸ-s-ki-čeʔn", "1S:SU-bring-PRES-II-1>3P:OB")]
+    glossedWords := [⟨['t', '-', 't', 'ɸ', '-', 's', '-', 'k', 'i', '-', 'č', 'e', 'ʔ', 'n'], ['1', 'S', ':', 'S', 'U', '-', 'b', 'r', 'i', 'n', 'g', '-', 'P', 'R', 'E', 'S', '-', 'I', 'I', '-', '1', '>', '3', 'P', ':', 'O', 'B'], [⟨['t'], ['1', 'S', ':', 'S', 'U'], none⟩, ⟨['t', 'ɸ'], ['b', 'r', 'i', 'n', 'g'], some '-'⟩, ⟨['s'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['k', 'i'], ['I', 'I'], some '-'⟩, ⟨['č', 'e', 'ʔ', 'n'], ['1', '>', '3', 'P', ':', 'O', 'B'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tɸ"), ("rootClass", "II"), ("subj", "1sg"), ("obj", "3pl"), ("m1", "t"), ("m2", "tɸ"), ("m3", "s"), ("m4", "ki"), ("m5", "čeʔn")] }
 
@@ -48,9 +52,11 @@ def ex_10a : Datum :=
     language := "itel1242"
     primaryText := "əlčqu-z-in"
     glossedTokens := [("əlčqu-z-in", "see-PRES-2S>3S:OB")]
+    glossedWords := [⟨['ə', 'l', 'č', 'q', 'u', '-', 'z', '-', 'i', 'n'], ['s', 'e', 'e', '-', 'P', 'R', 'E', 'S', '-', '2', 'S', '>', '3', 'S', ':', 'O', 'B'], [⟨['ə', 'l', 'č', 'q', 'u'], ['s', 'e', 'e'], none⟩, ⟨['z'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['i', 'n'], ['2', 'S', '>', '3', 'S', ':', 'O', 'B'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "əlčqu"), ("rootClass", "I"), ("subj", "2sg"), ("obj", "3sg"), ("m1", "əlčqu"), ("m2", "s"), ("m3", "in")] }
 
@@ -61,9 +67,11 @@ def ex_10b : Datum :=
     language := "itel1242"
     primaryText := "tɸ-s-čŋ-in"
     glossedTokens := [("tɸ-s-čŋ-in", "bring-PRES-II-2S>3S:OB")]
+    glossedWords := [⟨['t', 'ɸ', '-', 's', '-', 'č', 'ŋ', '-', 'i', 'n'], ['b', 'r', 'i', 'n', 'g', '-', 'P', 'R', 'E', 'S', '-', 'I', 'I', '-', '2', 'S', '>', '3', 'S', ':', 'O', 'B'], [⟨['t', 'ɸ'], ['b', 'r', 'i', 'n', 'g'], none⟩, ⟨['s'], ['P', 'R', 'E', 'S'], some '-'⟩, ⟨['č', 'ŋ'], ['I', 'I'], some '-'⟩, ⟨['i', 'n'], ['2', 'S', '>', '3', 'S', ':', 'O', 'B'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "tɸ"), ("rootClass", "II"), ("subj", "2sg"), ("obj", "3sg"), ("m1", "tɸ"), ("m2", "s"), ("m3", "čŋ"), ("m4", "in")] }
 
@@ -76,7 +84,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3sg"), ("obj", "2sg"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "ɣət")] }
 
@@ -89,7 +97,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3sg"), ("obj", "3sg"), ("m1", "ɬʔu"), ("m2", "nin")] }
 
@@ -102,7 +110,7 @@ def ex_19d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3sg"), ("obj", "1pl"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "mək")] }
 
@@ -115,7 +123,7 @@ def ex_19e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3sg"), ("obj", "2pl"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "tək")] }
 
@@ -128,7 +136,7 @@ def ex_19f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3sg"), ("obj", "3pl"), ("m1", "ɬʔu"), ("m2", "ninet")] }
 
@@ -141,7 +149,7 @@ def ex_19g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "1sg"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "ɣəm")] }
 
@@ -154,7 +162,7 @@ def ex_19h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "2sg"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "ɣət")] }
 
@@ -167,7 +175,7 @@ def ex_19i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "3sg"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "ɣʔen")] }
 
@@ -180,7 +188,7 @@ def ex_19j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "1pl"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "mək")] }
 
@@ -193,7 +201,7 @@ def ex_19k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "2pl"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "tək")] }
 
@@ -206,7 +214,7 @@ def ex_19l : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ɬʔu"), ("subj", "3pl"), ("obj", "3pl"), ("m1", "ne"), ("m2", "ɬʔu"), ("m3", "net")] }
 
@@ -217,9 +225,11 @@ def ex_27 : Datum :=
     language := "chuk1273"
     primaryText := "ənan ɣənəkə ənqen ne-jəl-ɣət"
     glossedTokens := [("ənan", "3SG:ERG"), ("ɣənəkə", "2SG:DAT"), ("ənqen", "sth.(ABS)"), ("ne-jəl-ɣət", "3:SU-give-2S:OB")]
+    glossedWords := [⟨['ə', 'n', 'a', 'n'], ['3', 'S', 'G', ':', 'E', 'R', 'G'], [⟨['ə', 'n', 'a', 'n'], ['3', 'S', 'G', ':', 'E', 'R', 'G'], none⟩]⟩, ⟨['ɣ', 'ə', 'n', 'ə', 'k', 'ə'], ['2', 'S', 'G', ':', 'D', 'A', 'T'], [⟨['ɣ', 'ə', 'n', 'ə', 'k', 'ə'], ['2', 'S', 'G', ':', 'D', 'A', 'T'], none⟩]⟩, ⟨['ə', 'n', 'q', 'e', 'n'], ['s', 't', 'h', '.', '(', 'A', 'B', 'S', ')'], [⟨['ə', 'n', 'q', 'e', 'n'], ['s', 't', 'h', '.', '(', 'A', 'B', 'S', ')'], none⟩]⟩, ⟨['n', 'e', '-', 'j', 'ə', 'l', '-', 'ɣ', 'ə', 't'], ['3', ':', 'S', 'U', '-', 'g', 'i', 'v', 'e', '-', '2', 'S', ':', 'O', 'B'], [⟨['n', 'e'], ['3', ':', 'S', 'U'], none⟩, ⟨['j', 'ə', 'l'], ['g', 'i', 'v', 'e'], some '-'⟩, ⟨['ɣ', 'ə', 't'], ['2', 'S', ':', 'O', 'B'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "jəl"), ("subj", "3sg"), ("obj", "3sg"), ("io", "2sg"), ("m1", "ne"), ("m2", "jəl"), ("m3", "ɣət")] }
 

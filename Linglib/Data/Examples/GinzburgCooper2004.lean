@@ -24,7 +24,7 @@ def ex_4a_bo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "Bo"), ("fragmentCat", "NP"), ("access", "shared")] }
 
@@ -37,7 +37,7 @@ def ex_4a_finagle : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "finagle"), ("antecedentCat", "V[bse]"), ("fragment", "Finagle"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
@@ -50,7 +50,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := "British National Corpus, file H5G, sentences 193–196."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "spunyarn"), ("antecedentCat", "N"), ("fragment", "Spunyarn"), ("fragmentCat", "N"), ("access", "shared")] }
 
@@ -63,7 +63,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "My cousin"), ("fragmentCat", "NP"), ("access", "shared")] }
 
@@ -76,7 +76,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "she"), ("antecedentCat", "NP"), ("fragment", "Sue"), ("fragmentCat", "NP"), ("access", "shared")] }
 
@@ -89,7 +89,7 @@ def ex_8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "bike"), ("antecedentCat", "V[bse]"), ("fragment", "Cycle"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
@@ -102,7 +102,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "Who"), ("fragmentCat", "NP"), ("access", "shared")] }
 
@@ -115,7 +115,7 @@ def ex_10a_him : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "him"), ("antecedentCat", "NP[acc]"), ("fragment", "Him"), ("fragmentCat", "NP[acc]"), ("access", "shared")] }
 
@@ -128,7 +128,7 @@ def ex_10a_he : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "him"), ("antecedentCat", "NP[acc]"), ("fragment", "He"), ("fragmentCat", "NP[nom]"), ("access", "shared")] }
 
@@ -141,7 +141,7 @@ def ex_10b_he : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "he"), ("antecedentCat", "NP[nom]"), ("fragment", "He"), ("fragmentCat", "NP[nom]"), ("access", "shared")] }
 
@@ -154,7 +154,7 @@ def ex_10b_him : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "he"), ("antecedentCat", "NP[nom]"), ("fragment", "Him"), ("fragmentCat", "NP[acc]"), ("access", "shared")] }
 
@@ -167,7 +167,7 @@ def ex_10c_adore : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "adore"), ("antecedentCat", "V[bse]"), ("fragment", "Adore"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
@@ -180,7 +180,7 @@ def ex_10c_adored : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "adore"), ("antecedentCat", "V[bse]"), ("fragment", "Adored"), ("fragmentCat", "V[fin]"), ("access", "shared")] }
 
@@ -193,7 +193,7 @@ def ex_10d_cycling : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Cycling"), ("fragmentCat", "V[prp]"), ("access", "shared")] }
 
@@ -206,7 +206,7 @@ def ex_10d_biking : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Biking"), ("fragmentCat", "V[prp]"), ("access", "shared")] }
 
@@ -219,7 +219,7 @@ def ex_10d_biked : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Biked"), ("fragmentCat", "V[psp]"), ("access", "shared")] }
 
@@ -232,7 +232,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "A is located in Gothenburg, B in Hyderabad."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .unacceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "here"), ("antecedentCat", "AdvP"), ("fragment", "Here"), ("fragmentCat", "AdvP"), ("access", "distinct")] }
 
@@ -245,7 +245,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "A and B are both located in Gothenburg."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "here"), ("antecedentCat", "AdvP"), ("fragment", "Here"), ("fragmentCat", "AdvP"), ("access", "shared")] }
 
@@ -258,7 +258,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("clausal", .unacceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "I"), ("antecedentCat", "NP[nom]"), ("fragment", "I"), ("fragmentCat", "NP[nom]"), ("access", "distinct")] }
 

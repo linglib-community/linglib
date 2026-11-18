@@ -41,13 +41,6 @@ The paper argues its necessity verdicts from the background variables alone, so 
 over the exogenous settlements, a subset of the consistent supersituations
 (`isConsistentSupersituation_of_isExogenousSettlement`).
 
-## Errata
-
-Definition 10b ranges over the consistent supersituations of Definition 9b
-(`IsConsistentSupersituation`), and over them the paper's own verdicts on (34c) and (34d) fail:
-settling the message, which the background leaves open, reaches communication without the nerve
-(`Consistent.not_nrv_necessary_for_com`).
-
 ## TODO
 
 The *manage* examples need set-valued prerequisites, one of them the
@@ -336,9 +329,8 @@ theorem rows_agree : ∀ r ∈ rows, r.signature.implied r.matrix = r.entails :=
 
 /-- The complement of an example, its word glossed as an infinitive. -/
 def complement? (e : Datum) : Option (List Phonology.Segment) := do
-  let w ← e.glossedTokens.find? fun w ↦
-    Morphology.Features.ofLabels (Gloss.labels w.2) .verbForm == (UD.VerbForm.Inf : Flat _)
-  (w.1.toList.filter (· ≠ '-')).mapM Finnish.ofChar
+  let w ← e.glossedWords.find? fun w ↦ w.features .verbForm == (UD.VerbForm.Inf : Flat _)
+  w.form.mapM Finnish.ofChar
 
 theorem complement_mem_infinitiveForms : ∀ e ∈ Examples.all, ∃ v ∈ Finnish.verbs,
     e.feature? "verb" = some v.form ∧ ∃ ic ∈ v.complement, ∃ x ∈ complement? e,

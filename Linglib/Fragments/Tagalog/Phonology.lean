@@ -126,11 +126,17 @@ theorem subset_tgl : consonants ∪ vowels ⊆ Inventories.Tagalog.tgl.segments 
 
 /-- The consonants that a preceding nasal assimilates to, which are those that are not nasals.
 The glides and `h` are not consonantal. -/
-def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
+def trigger : Segment := [+consonantal, −nasal]
 
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following non-nasal
 consonant. -/
 def assimilate : List Segment → List Segment := NasalSubstitution.assimilate consonants trigger ŋ
+
+/-- Each consonant that the nasal assimilates to has exactly one nasal at its place, except the
+glottal stop, which has none. -/
+theorem card_homorganicNasals_eq_one_iff : ∀ x ∈ consonants, trigger ≤ x →
+    ((NasalSubstitution.homorganicNasals consonants x).card = 1 ↔ x ≠ «ʔ») := by
+  decide
 
 /-- `substitute x` is the nasal that the prefix nasal and a stem-initial `x` surface as under
 substitution. -/

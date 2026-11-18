@@ -12,7 +12,7 @@
     "translation": "Juan's child was born. / Juan had a child born.",
     "context": "Declarative with a possessed theme, Oxchuc Tseltal.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -33,7 +33,7 @@
     "translation": "Whose child was born?",
     "context": "Pied-piping: the question is about a particular child whose existence is presupposed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -58,7 +58,7 @@
     "translation": "Who had a child born?",
     "context": "Stranding: no child is presupposed to exist.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -84,7 +84,7 @@
     "translation": "Who can provide a car? (lit. who goes his car?)",
     "context": "A group of men planning a community work project ask how they will get to the site; no particular car is presupposed, and 'nobody' is a felicitous answer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -109,7 +109,7 @@
     "translation": "Whose cow did they kill?",
     "context": "In a kitchen where meat that was obviously not purchased is being cooked; the cow is contextually salient and a 'nobody' answer is nonsensical.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -134,7 +134,7 @@
     "translation": "Whose cow fell?",
     "context": "Ch'ol possessive S_O.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -159,7 +159,7 @@
     "translation": "Whose cow fell?",
     "context": "Ch'ol possessive S_O, stranded.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -185,7 +185,7 @@
     "translation": "Whose sister did you see?",
     "context": "Ch'ol possessive O in a monotransitive clause.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -210,7 +210,7 @@
     "translation": "Intended: Whose sister did you see?",
     "context": "Ch'ol possessive O, stranded.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -236,7 +236,7 @@
     "translation": "Whose sister did you see?",
     "context": "Ch'ol ditransitive applicative with the possessor as applied object.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -263,7 +263,7 @@
     "translation": "Whose daughter did you see in the market?",
     "context": "Possessive O in a monotransitive clause.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -288,7 +288,7 @@
     "translation": "Intended: Whose daughter did you see in the market?",
     "context": "Possessive O, stranded.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -315,7 +315,7 @@
     "translation": "I bought pictures of NY and the observation tower.",
     "context": "Text description of a visit to the Empire State Building; nothing in the context implies the existence of pictures.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -338,7 +338,7 @@
     "translation": "Intended: What did you buy pictures/a picture of?",
     "context": "Stranding from a non-specific possessive O.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -364,7 +364,7 @@
     "translation": "What did you buy a picture of?",
     "context": "The applicative suffix makes (25) grammatical.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -391,7 +391,7 @@
     "translation": "Who did you buy a picture of?",
     "context": "Tenango Tseltal applicative.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -418,7 +418,7 @@
     "translation": "Intended: Who did you buy a picture of?",
     "context": "Tenango Tseltal monotransitive.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -443,7 +443,7 @@
     "translation": "Intended: Who will you tell me gossip about?",
     "context": "Ditransitive with a first-person thematic applied object filling Spec,ApplP.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -470,7 +470,7 @@
     "translation": "Intended: What are you giving me money for?",
     "context": "Tenango Tseltal ditransitive with a thematic applied object.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -498,7 +498,7 @@
     "translation": "And then we were given a picture of the Virgin.",
     "context": "Text: initial mention of the picture; Spec,ApplP is filled by the first-person goal.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "ditransitiveThematic"],
@@ -520,7 +520,7 @@
     "translation": "I had books.",
     "context": "Predicative possession on the existential construction.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -541,7 +541,7 @@
     "translation": "I am angry. (lit. my head is mixed up)",
     "context": "Experiential collocation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -562,7 +562,7 @@
     "translation": "I lost some (non-specific) money.",
     "context": "Lexical unaccusative with a non-specific possessive S_O.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -584,7 +584,7 @@
     "translation": "I don't have a boy.",
     "context": "Predicative possession under negation: the possessum takes narrow scope.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -607,7 +607,7 @@
     "translation": "Juan has a house in San Cristobal.",
     "context": "Preferred order: the locative separates possessum and possessor.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -629,7 +629,7 @@
     "translation": "Intended: Juan has a house in San Cristobal.",
     "context": "Locative after the possessor.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -651,7 +651,7 @@
     "translation": "Juan's house is in San Cristobal. (not: Juan has a house in San Cristobal)",
     "context": "The whole possessive follows the PP and is definite.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -674,7 +674,7 @@
     "translation": "The man has an older sister and a younger sister.",
     "context": "Coordinated existentials with one sentence-final possessor and no prosodic break.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -695,7 +695,7 @@
     "translation": "Who has a pig/pigs?",
     "context": "Predicative possession.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -721,7 +721,7 @@
     "translation": "Intended: Who has a pig/pigs?",
     "context": "Predicative possession, pied-piped.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -746,7 +746,7 @@
     "translation": "Who has money?",
     "context": "Tenejapa Tseltal predicative possession.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -772,7 +772,7 @@
     "translation": "Intended: Who has money?",
     "context": "Tenejapa Tseltal, pied-piped.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -797,7 +797,7 @@
     "translation": "The woman is angry. (lit. the woman's head is mixed up)",
     "context": "Experiential collocation kap -jol.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -818,7 +818,7 @@
     "translation": "Intended: I am angry.",
     "context": "Experiencer indexed on the verb.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -839,7 +839,7 @@
     "translation": "Who is angry?",
     "context": "Experiential collocation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -865,7 +865,7 @@
     "translation": "Intended: Who is angry?",
     "context": "Experiential collocation, pied-piped.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -891,7 +891,7 @@
     "translation": "Who woke up in the night? (not: Whose soul arrived in the night?)",
     "context": "yul -ch'ulel is ambiguous between the idiom 'x awakes' and the literal 'x's soul arrives'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "x woke up", "judgment": "acceptable"},
       {"name": "x's soul arrived", "judgment": "unacceptable"}
@@ -921,7 +921,7 @@
     "translation": "Whose soul arrived in the night? (not: Who woke up?)",
     "context": "The same string with pied-piping.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "whose soul arrived", "judgment": "acceptable"},
       {"name": "who woke up", "judgment": "unacceptable"}
@@ -950,7 +950,7 @@
     "translation": "Maria's money was lost. / Maria lost some (non-specific) money.",
     "context": "Ambiguous between a definite and a non-specific possessum; intransitive under both.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Maria's money was lost", "judgment": "acceptable"},
       {"name": "Maria lost some money", "judgment": "acceptable"}
@@ -975,7 +975,7 @@
     "translation": "Maria's money was lost yesterday.",
     "context": "The whole possessive follows the adverb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -998,7 +998,7 @@
     "translation": "Maria lost some money yesterday.",
     "context": "The adverb separates possessum and possessor.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -1020,7 +1020,7 @@
     "translation": "Whose money was lost?",
     "context": "About some specific money known to have been lost.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -1045,7 +1045,7 @@
     "translation": "Who lost some money?",
     "context": "Who lost some non-specific money.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1072,7 +1072,7 @@
     "translation": "At whose house will you leave your bag?",
     "context": "Psr-OP pied-piped with the PP.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -1097,7 +1097,7 @@
     "translation": "In whose house do you work?",
     "context": "Petalcingo Tseltal unergative with a locative PP.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -1122,7 +1122,7 @@
     "translation": "Intended: At whose house will you leave your bag?",
     "context": "Transitive clause with a specific external argument.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1148,7 +1148,7 @@
     "translation": "Intended: Whose house do you work in? / Who has a house that you work in?",
     "context": "Unergative with a specific (second-person) S_A.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1174,7 +1174,7 @@
     "translation": "Who has a house that children (habitually) work in?",
     "context": "Unergative with a non-specific S_A.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1199,7 +1199,7 @@
     "translation": "Who killed Juan? / Who did Juan kill?",
     "context": "Ambiguous transitive question.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "who killed Juan", "judgment": "acceptable"},
       {"name": "who did Juan kill", "judgment": "acceptable"}
@@ -1223,7 +1223,7 @@
     "translation": "A cow entered Juan's house. ~ Juan had a cow enter his house.",
     "context": "Path verb with a non-specific theme and a locative PP.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
@@ -1244,7 +1244,7 @@
     "translation": "Who had a cow enter his house?",
     "context": "Path verb, non-specific theme.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1270,7 +1270,7 @@
     "translation": "Intended: Whose house did you enter? ~ Who had a house that you entered?",
     "context": "Path verb, specific (second-person) theme.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1296,7 +1296,7 @@
     "translation": "Who has corn in his/her house?",
     "context": "Locative existential with a non-specific theme.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1322,7 +1322,7 @@
     "translation": "Intended: Whose house are you in?",
     "context": "Locative copula with a specific theme, Petalcingo Tseltal.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1348,7 +1348,7 @@
     "translation": "Intended: Whose house are you in?",
     "context": "Locative copula with a specific theme.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1374,7 +1374,7 @@
     "translation": "Who loves you? (lit. who are you painful in their heart?)",
     "context": "Two-argument experiential collocation with a specific (second-person) theme.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1401,7 +1401,7 @@
     "translation": "Who remembered to buy candles?",
     "context": "Two-argument experiential collocation yul ta -jol.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1428,7 +1428,7 @@
     "translation": "Whose child stole sheep?",
     "context": "Possessive A.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "piedPiping"],
@@ -1453,7 +1453,7 @@
     "translation": "Intended: Whose child stole sheep?",
     "context": "Possessive A, stranded; the A is specific.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1478,7 +1478,7 @@
     "translation": "Whose fleas landed on me? / Who passed me their fleas?",
     "context": "Transitive with a non-specific possessive A whose possessor is a plausible ψ-subject.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "stranding"],
@@ -1503,7 +1503,7 @@
     "translation": "The dog's fleas landed on me last night. / The dog passed me his fleas last night.",
     "context": "Possessor and possessum separated by an adverb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],

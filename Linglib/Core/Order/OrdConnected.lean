@@ -3,7 +3,9 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Basic
+public import Mathlib.Order.Closure
 public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Order-connected sets and contiguous maps
@@ -17,6 +19,7 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 
 ## Main definitions
 
+* `Set.ordConnectedHull`: the least order-connected set containing a set, as a closure operator.
 * `IsContiguous`: a map whose fibres are order-connected.
 
 ## Main statements
@@ -29,14 +32,46 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
   `Icc a ⊤`.
 * `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing `⊤` is an upper
   set.
+* `isLowerSet_iff_ordConnected_and_bot_mem`: the nonempty lower sets are the order-connected
+  sets containing `⊥`.
 -/
 
 @[expose] public section
+
+/-- The order-connected hull of a set is the least order-connected set containing it. -/
+def Set.ordConnectedHull {α : Type*} [Preorder α] : ClosureOperator (Set α) :=
+  .ofCompletePred Set.OrdConnected fun _ ↦ Set.ordConnected_sInter
+
+theorem Set.ordConnected_ordConnectedHull {α : Type*} [Preorder α] (s : Set α) :
+    (Set.ordConnectedHull s).OrdConnected :=
+  Set.ordConnectedHull.isClosed_closure s
+
+/-- A point is in the hull of `s` when it lies between two points of `s`. -/
+theorem Set.mem_ordConnectedHull {α : Type*} [Preorder α] {s : Set α} {a : α} :
+    a ∈ Set.ordConnectedHull s ↔ ∃ x ∈ s, ∃ y ∈ s, x ≤ a ∧ a ≤ y := by
+  refine ⟨fun h ↦ ?_, fun ⟨x, hx, y, hy, hxa, hay⟩ ↦ ?_⟩
+  · have hc : Set.ordConnectedHull.IsClosed {a | ∃ x ∈ s, ∃ y ∈ s, x ≤ a ∧ a ≤ y} :=
+      ⟨fun a ⟨x, hx, _, _, hxa, _⟩ b ⟨_, _, y, hy, _, hby⟩ c hc ↦
+        ⟨x, hx, y, hy, hxa.trans hc.1, hc.2.trans hby⟩⟩
+    exact ClosureOperator.closure_min (fun a ha ↦ ⟨a, ha, a, ha, le_rfl, le_rfl⟩) hc h
+  · exact (s.ordConnected_ordConnectedHull).out (Set.ordConnectedHull.le_closure s hx)
+      (Set.ordConnectedHull.le_closure s hy) ⟨hxa, hay⟩
+
+theorem Set.ordConnectedHull_eq_self_iff {α : Type*} [Preorder α] {s : Set α} :
+    Set.ordConnectedHull s = s ↔ s.OrdConnected :=
+  Set.ordConnectedHull.isClosed_iff.symm
 
 /-- An order-connected set containing the top element is an upper set. -/
 theorem Set.OrdConnected.isUpperSet_of_top_mem {α : Type*} [Preorder α] [OrderTop α]
     {s : Set α} (hs : s.OrdConnected) (ht : ⊤ ∈ s) : IsUpperSet s :=
   fun _ _ hab ha ↦ hs.out ha ht ⟨hab, le_top⟩
+
+/-- A nonempty set is a lower set exactly when it is order-connected and contains the bottom
+element. -/
+theorem isLowerSet_iff_ordConnected_and_bot_mem {α : Type*} [Preorder α] [OrderBot α]
+    {s : Set α} (hne : s.Nonempty) : IsLowerSet s ↔ s.OrdConnected ∧ ⊥ ∈ s :=
+  ⟨fun h ↦ ⟨h.ordConnected, h bot_le hne.some_mem⟩,
+    fun ⟨hc, hb⟩ _ _ hba ha ↦ hc.out hb ha ⟨bot_le, hba⟩⟩
 
 namespace Finset
 

@@ -37,7 +37,7 @@
     "translation": "We fixed the door's handle / the handle of the door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "episkevasame to pomolo tis portas",
         "judgment": "acceptable"
@@ -62,8 +62,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -119,7 +119,7 @@
     "translation": "We boiled the spring's water / the water of the spring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "vrasame to nero tis pijis",
         "judgment": "acceptable"
@@ -144,8 +144,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -201,7 +201,7 @@
     "translation": "The horse's tail / The tail of the horse tangled.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "blextike i ura tu aloɣu",
         "judgment": "acceptable"
@@ -226,8 +226,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "animate"
       ],
       [
         "number",
@@ -283,7 +283,7 @@
     "translation": "We invited the brother of the girls.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -303,8 +303,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -360,7 +360,7 @@
     "translation": "I sharpened the pencil of the teacher.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -380,8 +380,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -433,7 +433,7 @@
     "translation": "I painted your book.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -453,8 +453,8 @@
         "pronoun"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -506,7 +506,7 @@
     "translation": "I painted your eyes.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -526,8 +526,8 @@
         "pronoun"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -583,7 +583,7 @@
     "translation": "Fani's shoulder got injured.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -603,8 +603,8 @@
         "properName"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -660,7 +660,7 @@
     "translation": "Fani's mom got hurt.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -680,8 +680,8 @@
         "properName"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -737,7 +737,7 @@
     "translation": "I changed the small mat of the door.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -757,8 +757,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -814,7 +814,7 @@
     "translation": "I changed the small mat of the doors.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -834,8 +834,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -895,7 +895,7 @@
     "translation": "I changed the small mat of the front door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -915,8 +915,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -968,7 +968,7 @@
     "translation": "the coating of chocolates",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "i epikalipsi ton sokolat-akion",
         "judgment": "ungrammatical"
@@ -993,8 +993,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -1046,7 +1046,7 @@
     "translation": "the little goat's fur",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "to trixoma tu katsik-akiu",
         "judgment": "ungrammatical"
@@ -1071,8 +1071,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "animate"
       ],
       [
         "number",
@@ -1132,7 +1132,7 @@
     "translation": "The little boy's balloon flies high.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "petai psila to baloni tu aɣor-akiu",
         "judgment": "ungrammatical"
@@ -1157,8 +1157,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -1214,7 +1214,7 @@
     "translation": "The little kid's dad left.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "efije o babas tu peð-akiu",
         "judgment": "ungrammatical"
@@ -1239,8 +1239,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -1343,7 +1343,7 @@
     "translation": "The father of the quiet kid didn't say much. The father of the naughty kid was talking a lot.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1363,8 +1363,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -1376,10 +1376,10 @@
       ],
       [
         "gap",
-        "no"
+        "yes"
       ]
     ],
-    "comment": "Reported as more acceptable for some speakers, including a reviewer; unmarked in the paper. Repeated from footnote 8 (i). The paper glosses the first babas 'dad.SGNOM' here and 'dad.SG.NOM' in the footnote.",
+    "comment": "Reported as more acceptable for some speakers, including a reviewer; unmarked in the paper. Repeated from footnote 8 (i). The paper glosses the first babas 'dad.SGNOM' here and 'dad.SG.NOM' in the footnote. The possessor is the diminutive of (15b), whose genitive the paper stars.",
     "verified": "page-image"
   },
   {
@@ -1424,7 +1424,7 @@
     "translation": "I fixed the table's leg support.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1497,7 +1497,7 @@
     "translation": "I fixed the support of the leg of the table.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1566,7 +1566,7 @@
     "translation": "I fixed the support of the table's leg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1635,7 +1635,7 @@
     "translation": "I fixed the support of the leg of the table.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1708,7 +1708,7 @@
     "translation": "Three minutes are needed for the boiling of the pasta.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "xriazode tria lepta ja to vrasimo ton zimarikon",
         "judgment": "acceptable"
@@ -1739,9 +1739,99 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "Degraded for some speakers, including one author and one reviewer. The paper prints the genitive and the apo-PP as alternants, genitive first: ton zimarikon/ apo ta zimarika.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_7b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(7b)"
+    },
+    "language": "mode1248",
+    "primaryText": "iparxi ðinatotita aperioristis katanalosis apo krasi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "iparxi",
+        "exist.3SG"
+      ],
+      [
+        "ðinatotita",
+        "possibility.SG.ACC"
+      ],
+      [
+        "aperioristis",
+        "unlimited.SG.GEN"
+      ],
+      [
+        "katanalosis",
+        "consumption.SG.GEN"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "krasi",
+        "wine.SG.ACC"
+      ]
+    ],
+    "translation": "There is a possibility for unlimited wine consumption.",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [
+      {
+        "form": "iparxi ðinatotita aperioristis katanalosis krasju",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: krasju/ apo krasi.",
     "verified": "page-image"
   },
   {
@@ -1798,7 +1888,7 @@
     "translation": "The novel's translation by John lasted one year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1824,6 +1914,18 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "properName"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
@@ -1875,7 +1977,7 @@
     "translation": "The translation of the novel lasted one year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1901,6 +2003,14 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
@@ -1960,7 +2070,7 @@
     "translation": "The translation of John's novel lasted one year.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1986,6 +2096,18 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "properName"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "Acceptable only with John as the novel's author. The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d). The paper glosses miθistorima 'novel.SG.ACC.', with a stray period.",
@@ -2049,7 +2171,7 @@
     "translation": "The translation of the novel of John lasted one year.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2075,17 +2197,334 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "properName"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
     "verified": "page-image"
   },
   {
-    "id": "ka2026_12",
+    "id": "ka2026_9b_movement",
     "source": {
       "bibkey": "kampanarou-alexiadou-2026",
-      "paperLabel": "(12)"
+      "paperLabel": "(9b)"
     },
+    "language": "mode1248",
+    "primaryText": "latrepsa tin kinisi apo mena",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "latrepsa",
+        "adore.PST.1SG"
+      ],
+      [
+        "tin",
+        "DEF.SG.ACC"
+      ],
+      [
+        "kinisi",
+        "movement.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "mena",
+        "1SG.ACC"
+      ]
+    ],
+    "translation": "I loved my movement.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "pronoun"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the two nouns as alternants: tin kinisi /to xoro. Acceptable if the apo-PP is not read as the argument, as when it names who offered the dance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_9b_dance",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "mode1248",
+    "primaryText": "latrepsa to xoro apo mena",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "latrepsa",
+        "adore.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "xoro",
+        "dance.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "mena",
+        "1SG.ACC"
+      ]
+    ],
+    "translation": "I loved my dance.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "pronoun"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the two nouns as alternants: tin kinisi /to xoro. Acceptable if the apo-PP is not read as the argument, as when it names who offered the dance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_10b_existence",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(10b)"
+    },
+    "language": "mode1248",
+    "primaryText": "amfisvitiθike i iparksi apo ti Vasiliki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "amfisvitiθike",
+        "be.doubted.PST.3SG"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "iparksi",
+        "existence.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.ACC"
+      ],
+      [
+        "Vasiliki",
+        "Vasiliki.ACC"
+      ]
+    ],
+    "translation": "The existence of Vasiliki was doubted.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "properName"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the two nouns as alternants: i iparksi /to pesimo. Acceptable if the apo-PP is read as a by-phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_10b_falling",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(10b)"
+    },
+    "language": "mode1248",
+    "primaryText": "amfisvitiθike to pesimo apo ti Vasiliki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "amfisvitiθike",
+        "be.doubted.PST.3SG"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "pesimo",
+        "falling.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.ACC"
+      ],
+      [
+        "Vasiliki",
+        "Vasiliki.ACC"
+      ]
+    ],
+    "translation": "The falling of Vasiliki was doubted.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "properName"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the two nouns as alternants: i iparksi /to pesimo. Acceptable if the apo-PP is read as a by-phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_12",
+    "source": {
+      "bibkey": "michelioudakis-chatzikyriakidis-spathas-2024",
+      "paperLabel": "(22)"
+    },
+    "reportedIn": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(12), (17a)"
+    },
+    "method": "unclassified",
     "language": "mode1248",
     "primaryText": "i piriɣrafi ap tun ðimarxu ap ta piðja",
     "discourseSegments": [],
@@ -2126,7 +2565,7 @@
     "translation": "the description of the mayor of the kids",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2152,9 +2591,583 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
-    "comment": "",
+    "comment": "Grevena Greek. Checked against the pages of the reporting paper, which locates the example at p. 286 of its source.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_17b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(17b)"
+    },
+    "language": "mode1248",
+    "primaryText": "i periɣrafi tu ðimarxu ton peðjon",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "periɣrafi",
+        "description.SG.NOM"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "ðimarxu",
+        "mayor.SG.GEN"
+      ],
+      [
+        "ton",
+        "DEF.PL.GEN"
+      ],
+      [
+        "peðjon",
+        "kid.PL.GEN"
+      ]
+    ],
+    "translation": "the mayor's kids' description",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "genitive"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "Two genitive arguments; the paper's translation is literal and assigns neither role.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_17c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(17c)"
+    },
+    "language": "mode1248",
+    "primaryText": "i periɣrafi apo to ðimarxo apo ta peðja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "periɣrafi",
+        "description.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "ðimarxo",
+        "mayor.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "peðja",
+        "kid.PL.ACC"
+      ]
+    ],
+    "translation": "the description of the mayor of the kids",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "apo"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "Two apo-PP arguments; the paper's translation is literal and assigns neither role.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_22a",
+    "source": {
+      "bibkey": "michelioudakis-chatzikyriakidis-spathas-2024",
+      "paperLabel": "(31a)"
+    },
+    "reportedIn": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(22a)"
+    },
+    "method": "unclassified",
+    "language": "mode1248",
+    "primaryText": "apu pjon u ksaefus efiji xte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apu",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "u",
+        "DEF.SG.NOM"
+      ],
+      [
+        "ksaefus",
+        "cousin.NOM"
+      ],
+      [
+        "efiji",
+        "leave.PST.3SG"
+      ],
+      [
+        "xte",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose cousin left yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "grevena"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "Grevena Greek. Checked against the pages of the reporting paper, which locates the example at p. 289 of its source. The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_22b",
+    "source": {
+      "bibkey": "michelioudakis-chatzikyriakidis-spathas-2024",
+      "paperLabel": "(31b)"
+    },
+    "reportedIn": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(22b)"
+    },
+    "method": "unclassified",
+    "language": "mode1248",
+    "primaryText": "apu pjon efiji u ksaefus xte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apu",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "efiji",
+        "leave.PST.3SG"
+      ],
+      [
+        "u",
+        "DEF.SG.NOM"
+      ],
+      [
+        "ksaefus",
+        "cousin.NOM"
+      ],
+      [
+        "xte",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose cousin left yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "grevena"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "Grevena Greek. Checked against the pages of the reporting paper, which locates the example at p. 289 of its source. The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_23a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(23a)"
+    },
+    "language": "mode1248",
+    "primaryText": "apo pjon to poði espase xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun. Acceptable if the apo-PP names the agent of espase 'broke', which is why the paper does not star it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_23b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(23b)"
+    },
+    "language": "mode1248",
+    "primaryText": "apo pjon espase to poði xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun. Acceptable if the apo-PP names the agent of espase 'broke', which is why the paper does not star it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_24a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(24a)"
+    },
+    "language": "mode1248",
+    "primaryText": "pjanu to poði espase xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pjanu",
+        "whose"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_24b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(24b)"
+    },
+    "language": "mode1248",
+    "primaryText": "pjanu espase to poði xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pjanu",
+        "whose"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun.",
     "verified": "page-image"
   },
   {
@@ -2199,7 +3212,7 @@
     "translation": "the destruction of the city by the barbarians",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2225,9 +3238,255 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "agentForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "Repeated from (4b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_32a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(32a)"
+    },
+    "language": "mode1248",
+    "primaryText": "i esθisi apo ti sokolata",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "esθisi",
+        "sensation.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.SG.ACC"
+      ],
+      [
+        "sokolata",
+        "chocolate.SG.ACC"
+      ]
+    ],
+    "translation": "the sensation of the chocolate",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [
+      {
+        "form": "i esθisi tis sokolatas",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first, and two head nouns as alternants: esθisi/ gefsi.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_32b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(32b)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kopsimo apo to kreas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kopsimo",
+        "cutting.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "kreas",
+        "meat.SG.ACC"
+      ]
+    ],
+    "translation": "the cutting of the meat",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [
+      {
+        "form": "to kopsimo tu kreatos",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first, and three head nouns as alternants: kopsimo/ psisimo/ ðagoma.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_33a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(33a)"
+    },
+    "language": "mode1248",
+    "primaryText": "i kinisi apo tus planites",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kinisi",
+        "movement.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "planites",
+        "planet.PL.ACC"
+      ]
+    ],
+    "translation": "the movement of the planets",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [
+      {
+        "form": "i kinisi ton planiton",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first.",
     "verified": "page-image"
   },
   {
@@ -2264,7 +3523,7 @@
     "translation": "the swimming of the athletes",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "to kolibi ton aθliton",
         "judgment": "acceptable"
@@ -2295,6 +3554,14 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: ton aθliton/ ?apo tus aθlites.",
@@ -2346,7 +3613,7 @@
     "translation": "the movement of the planets for millions of years",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2372,6 +3639,184 @@
       [
         "aspectual",
         "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_34b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(34b)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kopsimo apo to kreas ja ðeka lepta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kopsimo",
+        "cutting.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "kreas",
+        "meat.SG.ACC"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ðeka",
+        "ten"
+      ],
+      [
+        "lepta",
+        "minute.PL.ACC"
+      ]
+    ],
+    "translation": "the cutting of the meat for ten minutes",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_34c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(34c)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kitrinizma apo ta fila ja ðeka meres",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kitrinizma",
+        "yellowing.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "fila",
+        "leaf.PL.ACC"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ðeka",
+        "ten"
+      ],
+      [
+        "meres",
+        "day.PL.ACC"
+      ]
+    ],
+    "translation": "the yellowing of the leaves for ten days",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "",
@@ -2419,7 +3864,7 @@
     "translation": "the planets' movement for millions of years",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2445,6 +3890,176 @@
       [
         "aspectual",
         "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_35b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(35b)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kopsimo tu kreatos ja ðeka lepta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kopsimo",
+        "cutting.SG.NOM"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "kreatos",
+        "meat.SG.GEN"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ðeka",
+        "ten"
+      ],
+      [
+        "lepta",
+        "minute.PL.ACC"
+      ]
+    ],
+    "translation": "the meat's cutting for ten minutes",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_35c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(35c)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kitrinizma ton filon ja ðeka meres",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kitrinizma",
+        "yellowing.SG.NOM"
+      ],
+      [
+        "ton",
+        "DEF.PL.GEN"
+      ],
+      [
+        "filon",
+        "leaf.PL.GEN"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ðeka",
+        "ten"
+      ],
+      [
+        "meres",
+        "day.PL.ACC"
+      ]
+    ],
+    "translation": "the leaves' yellowing for ten days",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
       ]
     ],
     "comment": "",
@@ -2488,7 +4103,7 @@
     "translation": "They study the movements of the planets.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2514,9 +4129,179 @@
       [
         "aspectual",
         "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "pl"
       ]
     ],
     "comment": "The pluralized head nominal diagnoses the result reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_36b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(36b)"
+    },
+    "language": "mode1248",
+    "primaryText": "prosekste ta kopsimata apo to kreas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "prosekste",
+        "be.careful.IMP.2PL"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "kopsimata",
+        "cutting.PL.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "kreas",
+        "meat.SG.ACC"
+      ]
+    ],
+    "translation": "Be careful with the cuts of the meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "pl"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_36c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(36c)"
+    },
+    "language": "mode1248",
+    "primaryText": "ta kitrinizmata apo ta fila ine enðiksis asθenias",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ta",
+        "DEF.PL.NOM"
+      ],
+      [
+        "kitrinizmata",
+        "yellowing.PL.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "fila",
+        "leaf.PL.ACC"
+      ],
+      [
+        "ine",
+        "are"
+      ],
+      [
+        "enðiksis",
+        "indication.PL.NOM"
+      ],
+      [
+        "asθenias",
+        "illness.SG.GEN"
+      ]
+    ],
+    "translation": "The yellowings of the leaves are indications of illness.",
+    "context": "",
+    "judgment": "marginal",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "pl"
+      ]
+    ],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -2553,7 +4338,7 @@
     "translation": "A leg of each table broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "surface",
@@ -2619,7 +4404,7 @@
     "translation": "A toy of each kid broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "surface",
@@ -2689,7 +4474,7 @@
     "translation": "A leg of each table broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "surface",
@@ -2759,7 +4544,7 @@
     "translation": "A toy of each kid broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "surface",

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "massNoun"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "countNoun"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "atelicVP"]
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "telicVP"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"]
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "nonGradableAdj"]
@@ -124,7 +124,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
@@ -146,7 +146,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "massNoun"],
@@ -190,7 +190,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "massNoun"],
@@ -212,7 +212,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
@@ -234,7 +234,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
@@ -256,7 +256,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "massNoun"],
@@ -278,7 +278,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "massNoun"],
@@ -300,7 +300,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "atelicVP"],
@@ -322,7 +322,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["category", "atelicVP"],
@@ -344,7 +344,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Al wasn't very much intelligent.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -366,7 +366,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Al didn't eat very soup.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -388,7 +388,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Al didn't run very.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -410,7 +410,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Al found more rocks than Bill did.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -431,7 +431,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Al ran to the park more than Bill did.", "judgment": "acceptable"}
     ],
     "readings": [],

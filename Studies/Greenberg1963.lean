@@ -35,19 +35,6 @@ genitive is the adposition's (Universal 2).
 * Zapotec and Songhai, whose question particles follow more than one rule, carry none, as in
   Table 2.
 
-## Errata
-
-* The text counts 14 prepositional languages, 13 of them with the genitive after the noun, but
-  Table 1 and Appendix I have 16, and with Norwegian the only exception 15
-  (`prepositional_count`), the count that gives the text's 29 conforming languages of 30.
-* The printed Table 6 garbles the counts of Appendix I: its NA column sums to 23 against the 19 of
-  Table 5.
-* Universal 23 as printed pairs proper-noun-first apposition with a postposed genitive, as do the
-  genitive rows of Table 9. The languages footnote 19 lists, with their genitive orders, Table 9's
-  rows by basic type, and the text's assimilation of apposition to the genitive pair it with a
-  preposed genitive, so the printed universal has the two genitive orders exchanged
-  (`not_universal_23_as_printed`).
-
 ## TODO
 
 Universals 6 to 8, 11, 13 to 15, 19, 20, 25, and 26 and the morphological universals 28 to 45

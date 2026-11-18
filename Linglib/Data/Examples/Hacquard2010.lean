@@ -24,7 +24,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("root: given Mary's circumstances then, a past necessity to take the train then", .acceptable), ("root evaluated now: given her circumstances now, a necessity to have taken the train then", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -37,7 +37,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic over past: given what is known now, it is necessary that Mary was home", .acceptable), ("past over epistemic: given what was known then, it was necessary that Mary was home", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -50,7 +50,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -63,7 +63,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -76,7 +76,7 @@ def ex13c : Datum :=
     glossedTokens := []
     context := "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -87,9 +87,11 @@ def ex14a : Datum :=
     language := "ital1282"
     primaryText := "Gianni può aver parlato a Maria."
     glossedTokens := [("Gianni", "Gianni"), ("può", "can"), ("aver", "have"), ("parlato", "talked"), ("a", "to"), ("Maria.", "Maria.")]
+    glossedWords := [⟨['G', 'i', 'a', 'n', 'n', 'i'], ['G', 'i', 'a', 'n', 'n', 'i'], [⟨['G', 'i', 'a', 'n', 'n', 'i'], ['G', 'i', 'a', 'n', 'n', 'i'], none⟩]⟩, ⟨['p', 'u', 'ò'], ['c', 'a', 'n'], [⟨['p', 'u', 'ò'], ['c', 'a', 'n'], none⟩]⟩, ⟨['a', 'v', 'e', 'r'], ['h', 'a', 'v', 'e'], [⟨['a', 'v', 'e', 'r'], ['h', 'a', 'v', 'e'], none⟩]⟩, ⟨['p', 'a', 'r', 'l', 'a', 't', 'o'], ['t', 'a', 'l', 'k', 'e', 'd'], [⟨['p', 'a', 'r', 'l', 'a', 't', 'o'], ['t', 'a', 'l', 'k', 'e', 'd'], none⟩]⟩, ⟨['a'], ['t', 'o'], [⟨['a'], ['t', 'o'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a', '.'], ['M', 'a', 'r', 'i', 'a', '.'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable), ("deontic or ability", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -100,9 +102,11 @@ def ex14b : Datum :=
     language := "ital1282"
     primaryText := "Gianni ha potuto parlare a Maria."
     glossedTokens := [("Gianni", "Gianni"), ("ha", "has"), ("potuto", "could"), ("parlare", "talk"), ("a", "to"), ("Maria.", "Maria.")]
+    glossedWords := [⟨['G', 'i', 'a', 'n', 'n', 'i'], ['G', 'i', 'a', 'n', 'n', 'i'], [⟨['G', 'i', 'a', 'n', 'n', 'i'], ['G', 'i', 'a', 'n', 'n', 'i'], none⟩]⟩, ⟨['h', 'a'], ['h', 'a', 's'], [⟨['h', 'a'], ['h', 'a', 's'], none⟩]⟩, ⟨['p', 'o', 't', 'u', 't', 'o'], ['c', 'o', 'u', 'l', 'd'], [⟨['p', 'o', 't', 'u', 't', 'o'], ['c', 'o', 'u', 'l', 'd'], none⟩]⟩, ⟨['p', 'a', 'r', 'l', 'a', 'r', 'e'], ['t', 'a', 'l', 'k'], [⟨['p', 'a', 'r', 'l', 'a', 'r', 'e'], ['t', 'a', 'l', 'k'], none⟩]⟩, ⟨['a'], ['t', 'o'], [⟨['a'], ['t', 'o'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a', '.'], ['M', 'a', 'r', 'i', 'a', '.'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deontic or ability", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
@@ -113,9 +117,11 @@ def ex16 : Datum :=
     language := "stan1290"
     primaryText := "Mary put soulever cette table, mais elle ne la souleva pas."
     glossedTokens := [("Mary", "Mary"), ("put", "could-PFV"), ("soulever", "lift"), ("cette", "this"), ("table,", "table,"), ("mais", "but"), ("elle", "she"), ("ne", "NE"), ("la", "it"), ("souleva", "lifted"), ("pas.", "not.")]
+    glossedWords := [⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], [⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], none⟩]⟩, ⟨['p', 'u', 't'], ['c', 'o', 'u', 'l', 'd', '-', 'P', 'F', 'V'], []⟩, ⟨['s', 'o', 'u', 'l', 'e', 'v', 'e', 'r'], ['l', 'i', 'f', 't'], [⟨['s', 'o', 'u', 'l', 'e', 'v', 'e', 'r'], ['l', 'i', 'f', 't'], none⟩]⟩, ⟨['c', 'e', 't', 't', 'e'], ['t', 'h', 'i', 's'], [⟨['c', 'e', 't', 't', 'e'], ['t', 'h', 'i', 's'], none⟩]⟩, ⟨['t', 'a', 'b', 'l', 'e', ','], ['t', 'a', 'b', 'l', 'e', ','], [⟨['t', 'a', 'b', 'l', 'e'], ['t', 'a', 'b', 'l', 'e', ','], none⟩]⟩, ⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], [⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], none⟩]⟩, ⟨['e', 'l', 'l', 'e'], ['s', 'h', 'e'], [⟨['e', 'l', 'l', 'e'], ['s', 'h', 'e'], none⟩]⟩, ⟨['n', 'e'], ['N', 'E'], [⟨['n', 'e'], ['N', 'E'], none⟩]⟩, ⟨['l', 'a'], ['i', 't'], [⟨['l', 'a'], ['i', 't'], none⟩]⟩, ⟨['s', 'o', 'u', 'l', 'e', 'v', 'a'], ['l', 'i', 'f', 't', 'e', 'd'], [⟨['s', 'o', 'u', 'l', 'e', 'v', 'a'], ['l', 'i', 'f', 't', 'e', 'd'], none⟩]⟩, ⟨['p', 'a', 's', '.'], ['n', 'o', 't', '.'], [⟨['p', 'a', 's'], ['n', 'o', 't', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
@@ -128,7 +134,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic", .acceptable), ("root: John managed to take the train, but it is possible he didn't", .unacceptable)]
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
@@ -141,7 +147,7 @@ def ex18_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic over aspect: some world compatible with what is known holds a past train-taking by Mary", .acceptable), ("aspect over root: an actual past event which in some circumstantial world is a train-taking by Mary", .acceptable)]
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
@@ -154,7 +160,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("given Mary's circumstances then, she had to take the train then", .acceptable), ("given Mary's circumstances now, she had to take the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
@@ -167,7 +173,7 @@ def ex23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("given what I know now, it must be the case that Mary was home then", .acceptable), ("given what I knew then, Mary had to be home", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
@@ -180,7 +186,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("given what John knew at his thinking time, it was possible Mary was home", .acceptable), ("given what John knows now, it was possible Mary was home", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
@@ -193,7 +199,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
@@ -206,7 +212,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("speech event: given what I know now, it is possible that John thought Mary had taken the train", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
@@ -219,7 +225,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("attitude event: given what John thought yesterday, it was possible that Mary had taken the train", .acceptable), ("speech event: John thought yesterday that it was possible, given what I know, that Mary took the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
@@ -232,7 +238,7 @@ def ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("VP event: given Mary's circumstances the day before yesterday, it was necessary that she take the train", .acceptable), ("speech event: John thought that it was necessary given what I know that Mary took the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
@@ -245,7 +251,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.2"), ("phenomenon", "speechEvent")] }
 
@@ -258,7 +264,7 @@ def ex50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("rain is compatible with what John believes", .acceptable)]
     paperFeatures := [("section", "6.1.1"), ("phenomenon", "embeddedEpistemic")] }
 
@@ -271,7 +277,7 @@ def ex55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.2"), ("phenomenon", "matrixEpistemic")] }
 
@@ -284,7 +290,7 @@ def ex58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.1.3"), ("phenomenon", "yalcin")] }
 
@@ -297,7 +303,7 @@ def ex59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic for the subject: it was necessary, last night, given what Mary knew, that she took the train", .unacceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
@@ -310,7 +316,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic for the subject: Mary being nice was compatible with what John came to know", .acceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
@@ -323,7 +329,7 @@ def ex60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("epistemic for the subject: Mary being nice was compatible with what John came to know", .acceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
@@ -336,7 +342,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "circumstantial")] }
 
@@ -349,7 +355,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "circumstantial")] }
 

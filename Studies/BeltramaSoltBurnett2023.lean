@@ -86,7 +86,7 @@ theorem precise_mem_approximate (e : Experiment) {a : Approximator}
     (hne : m {(stimuli e .approximate).after} ≠ {(stimuli e .approximate).after}) :
     (stimuli e .precise).after ∈ m {(stimuli e .approximate).after} := by
   cases e <;> cases a <;> simp only [stimuli, reduceCtorEq, Option.some.injEq] at ha ⊢ <;>
-    obtain ⟨y, rfl⟩ := hr <;> simp only [Modifier.pointwise_singleton, Set.mem_Icc] at hne ⊢ <;>
+    obtain ⟨y, rfl⟩ := hr <;> simp only [SetRel.image_ofSuccessors_singleton, Set.mem_Icc] at hne ⊢ <;>
     refine ⟨?_, by omega⟩ <;>
     by_contra h <;> exact hne (by
       obtain rfl : y = 0 := by omega

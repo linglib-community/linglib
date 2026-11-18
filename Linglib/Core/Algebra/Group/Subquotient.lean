@@ -16,14 +16,11 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Subquotients of monoids
 
-A monoid `T` is a *subquotient* of a monoid `S` when `T` is a homomorphic image of a
-submonoid of `S`. In finite semigroup theory the relation is called *division* (`T ≼ S`), and in
-group theory a *section*. This file defines the relation and proves it transitive, closed under
-products, and, on finite monoids, antisymmetric up to isomorphism.
-
-## Main definitions
-
-* `Monoid.IsSubquotient T S`: `T` is a homomorphic image of a submonoid of `S`.
+A monoid `T` is a *subquotient* of a monoid `S` when it is a homomorphic image of a submonoid of
+`S`. Finite semigroup theory calls the relation *division*, and group theory calls `T` a *section*
+of `S`. The relation is [transitive](##Monoid.IsSubquotient.trans), closed under
+[products](##Monoid.IsSubquotient.prod) and, on finite monoids,
+[antisymmetric up to isomorphism](##Monoid.IsSubquotient.nonempty_mulEquiv).
 
 ## References
 

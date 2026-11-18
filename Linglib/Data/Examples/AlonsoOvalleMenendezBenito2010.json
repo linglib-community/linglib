@@ -13,7 +13,7 @@
     "translation": "María married a linguistics student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -37,7 +37,7 @@
     "translation": "María married a linguistics student, namely Pedro.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -61,7 +61,7 @@
     "translation": "María married a linguistics student, namely Pedro.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -80,7 +80,7 @@
     "translation": "Pedro thinks that María married a linguistics student.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide scope: a particular student Pedro thinks María married, the speaker does not know who", "judgment": "acceptable"},
       {"name": "narrow scope: Pedro is uncertain about the identity of the student", "judgment": "acceptable"}
@@ -104,7 +104,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -126,7 +126,7 @@
     "translation": "Mary had to marry a doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendein"],
@@ -148,7 +148,7 @@
     "translation": "Juan must be in a room of the house.",
     "context": "Hide and seek. María, Juan, and Pedro are playing hide-and-seek in their country house. Juan is hiding. Pedro is sure that Juan is inside the house, and sure that Juan is not in the bathroom or in the kitchen; as far as he knows, Juan could be in any of the other rooms.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -168,7 +168,7 @@
     "translation": "A: Juan must be in a room of the house. B: In which one?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -192,7 +192,7 @@
     "translation": "Juan is in a room of the house, namely in the kitchen.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -212,7 +212,7 @@
     "translation": "A: Juan must be in a room of the house. B: In which one?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -232,7 +232,7 @@
     "translation": "Juan must be in a room of the house, namely in the kitchen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -252,7 +252,7 @@
     "translation": "A: Mr. X has to be in a blue line stop. B: No! Mr. X. has to be in a green line stop.",
     "context": "Board game: find in which stop of the Boston subway system (blue, red, green, orange lines) Mr. X is hiding. Player B knows that Mr. X is not in the blue, red, or orange lines, but player A thinks he is in a station of the blue line.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -272,7 +272,7 @@
     "translation": "A: Juan is in the kitchen. B: No, Juan is in the bathroom! A: Well, Juan is in some room. We are sure of that, aren't we?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -294,7 +294,7 @@
     "translation": "Juan may be in a room of the house.",
     "context": "The hide-and-seek situation, but now, according to what Pedro knows, if Juan is in the house he could only be in the bathroom.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -317,7 +317,7 @@
     "translation": "Juan may be in a room of the house.",
     "context": "The hide-and-seek situation, but now, according to what Pedro knows, if Juan is in the house he could only be in the bathroom.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -340,7 +340,7 @@
     "translation": "You can take any of the cards in this deck.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "cualquiera"],
@@ -365,7 +365,7 @@
     "context": "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn).",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "cualquiera"],
@@ -389,7 +389,7 @@
     "context": "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn).",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -410,7 +410,7 @@
     "context": "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "cualquiera"],
@@ -431,7 +431,7 @@
     "context": "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -454,7 +454,7 @@
     "translation": "The girl who is making an effort will be successful.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "-bhii correlative"],
@@ -473,7 +473,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "-ever free relative"],
@@ -492,7 +492,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Unless I don't know what Arlo is cooking and there is a lot of garlic in what he is cooking, I will eat out tonight", "judgment": "unacceptable"}
     ],
@@ -514,7 +514,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the speaker doesn't know what Arlo is cooking, but the thing Arlo is cooking has a lot of garlic in it", "judgment": "acceptable"}
     ],
@@ -541,7 +541,7 @@
     "translation": "Juan is not dating any of the girls in the linguistics department.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Juan is not dating any girl in the department", "judgment": "acceptable"},
       {"name": "the speaker knows which girl Juan is dating", "judgment": "unacceptable"}
@@ -564,7 +564,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["projection", "local accommodation"]
@@ -582,7 +582,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"],
@@ -601,7 +601,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"],
@@ -621,7 +621,7 @@
     "translation": "Juan knows that María married a student in the department. He doesn't know who, but I do!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -641,7 +641,7 @@
     "translation": "We've been trying to find out for days who María's new love is. All Juan knows is that María is going out with some student of the department or other. But I know who María is going out with!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -661,7 +661,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"],
@@ -680,7 +680,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "appositive"],
@@ -704,7 +704,7 @@
     "translation": "María married a linguistics student. In fact, I know exactly who!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -728,7 +728,7 @@
     "translation": "Pedro doubts that Juan is dating any girl in the linguistics department.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -748,7 +748,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["status", "conventional implicature"],
@@ -767,7 +767,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["status", "presupposition"],
@@ -786,7 +786,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["status", "entailment"],
@@ -810,7 +810,7 @@
     "translation": "María is dating some student in the linguistics department, but I don't know who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -833,7 +833,7 @@
     "translation": "Juan bought a book that happened to be the most expensive one in the bookstore.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -856,7 +856,7 @@
     "translation": "Juan bought a book that happened to be the most expensive one in the store.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -875,7 +875,7 @@
     "translation": "Pedro hired a candidate that was the most incompetent of the ones that applied.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -894,7 +894,7 @@
     "translation": "Pedro hired a candidate that was be the most incompetent of the ones that applied.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -913,7 +913,7 @@
     "translation": "",
     "context": "Hide and seek. María, Juan, and Pedro are playing hide-and-seek in their country house. Juan is hiding. Pedro is sure that Juan is inside the house, and sure that Juan is not in the bathroom or in the kitchen; as far as he knows, Juan could be in any of the other rooms.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Juan might be in the bathroom", "judgment": "acceptable"},
       {"name": "Juan might be in the living room", "judgment": "acceptable"},
@@ -935,7 +935,7 @@
     "translation": "B: He is in one of these two rooms: in the bathroom or in the living room.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -957,7 +957,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -980,7 +980,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -1003,7 +1003,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -1026,7 +1026,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -1048,7 +1048,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
@@ -1069,7 +1069,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["competitor", "plural"]
@@ -1090,7 +1090,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["competitor", "numeral"]
@@ -1110,7 +1110,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the speaker does not know who the student was (uniqueness assumed)", "judgment": "acceptable"},
       {"name": "the speaker does not know how many students came (uniqueness not assumed)", "judgment": "acceptable"}
@@ -1134,7 +1134,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendein"],
@@ -1153,7 +1153,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
@@ -1176,7 +1176,7 @@
     "translation": "Juan lives with some students from the department.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendwelche"],
@@ -1199,7 +1199,7 @@
     "translation": "Juan lives with some students from the department.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algunos"],
@@ -1219,7 +1219,7 @@
     "translation": "Juan lives with some students in the department, namely Peter and Sally.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendwelche"],
@@ -1239,7 +1239,7 @@
     "translation": "Juan lives with some students in the department, namely Pedro and María.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algunos"],
@@ -1259,7 +1259,7 @@
     "translation": "I climbed a tallest mountain in Massachusetts.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -1278,7 +1278,7 @@
     "translation": "I climbed a mountain that is the tallest of Massachusetts.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -1297,7 +1297,7 @@
     "translation": "There is a (sub-Saharan) country that could disappear if it is not offered help to fight the disease.",
     "context": "Question asked by reader in on-line interview: In which areas of the world is the AIDS problem the worst? Answer by doctor: In sub-Saharan Africa, undoubtlessly ...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -1316,7 +1316,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "exhaustivity optional"]
@@ -1337,7 +1337,7 @@
     "translation": "He might be in a room of the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],
@@ -1357,7 +1357,7 @@
     "translation": "There is some spice in the soup that I don't like.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendein"],
@@ -1376,7 +1376,7 @@
     "translation": "There is some spice in the soup that I don't like.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "un"],

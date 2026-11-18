@@ -13,7 +13,7 @@
     "translation": "a very clever student",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "degree"],
@@ -35,7 +35,7 @@
     "translation": "a clever student",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "bare"],
@@ -58,7 +58,7 @@
     "translation": "a very big table",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "degree"],
@@ -80,7 +80,7 @@
     "translation": "a big table",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "bare"],
@@ -103,7 +103,7 @@
     "translation": "a very big table",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "degree"],
@@ -126,7 +126,7 @@
     "translation": "(As to) apples, Zhangsan ate three.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dislocation", "Cl N"]
@@ -148,7 +148,7 @@
     "translation": "(As to) apples, Zhangsan ate three.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dislocation", "N"]
@@ -170,7 +170,7 @@
     "translation": "Zhangsan ate three apples.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dislocation", "Num Cl"]
@@ -192,7 +192,7 @@
     "translation": "How many very big tables did Zhangsān buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "numeral"],
@@ -215,7 +215,7 @@
     "translation": "How many very big tables did Zhangsān buy?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "numeral"],
@@ -237,7 +237,7 @@
     "translation": "three glasses of liquor",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "none"],
@@ -259,7 +259,7 @@
     "translation": "three glassfuls of liquor",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "de"],
@@ -282,7 +282,7 @@
     "translation": "that very big table",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "de-marked"],
@@ -305,7 +305,7 @@
     "translation": "three glassfuls of very expensive liquor",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "two de-marked"],
@@ -328,7 +328,7 @@
     "translation": "liquor in the volume of three very big glasses",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modifier", "nested de-marked"]
@@ -350,7 +350,7 @@
     "translation": "Three apples, Zhangsān ate.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["topicalisation", "D"]
@@ -372,7 +372,7 @@
     "translation": "(As to) apples, Zhangsān ate three very big (ones).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["topicalisation", "N"],
@@ -395,7 +395,7 @@
     "translation": "(As to) apples, Zhangsān ate three very big (ones).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["topicalisation", "N"],
@@ -418,7 +418,7 @@
     "translation": "There are three more apples than cherries.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "measure"],

@@ -55,7 +55,7 @@ tell pied-piping from anti-pied-piping.
 
 namespace BrananErlewine2023
 
-open Core.Order PhraseStructure Minimalist Focus Reflex OrderDual
+open PhraseStructure Minimalist Focus Reflex OrderDual
 
 /-! ### The particle is not a quantifier -/
 
@@ -133,34 +133,34 @@ variable {W : Type*}
 /-- A position is on the spine of a phase when its category and that of every node above it
 extend to the category of the phase, so that it belongs to the extended projection containing
 the phase head. -/
-def OnSpine (t : Tree Cat W) (p : TreePath) : Prop :=
-  ∀ l ∈ p.toList.inits, ∃ s ∈ t[l]?, (Tree.cat s).ExtendsTo t.cat
+def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, (Tree.cat s).ExtendsTo t.cat
 
-instance (t : Tree Cat W) (p : TreePath) : Decidable (OnSpine t p) := by
+instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
   unfold OnSpine; infer_instance
 
 /-- The prominent phrases of a phase are the phrases off its spine other than the `skipped`
 ones, listed in document order. -/
-def prominent (t : Tree Cat W) (skipped : List TreePath) : List TreePath :=
-  (t.vertices.map TreePath.mk).filter fun p ↦
+def prominent (t : Tree Cat W) (skipped : List GornAddress) : List GornAddress :=
+  (t.vertices.map GornAddress.mk).filter fun p ↦
     p ∈ RoseTree.positionsWhere (fun s ↦ s.value.IsPhrase) t ∧ ¬ OnSpine t p ∧ p ∉ skipped
 
 /-! ### Left-alignment relative to the prominent phrases -/
 
 section LeftAlignedOn
 
-variable {m : List TreePath} {X Y Z : TreePath}
+variable {m : List GornAddress} {X Y Z : GornAddress}
 
 /-- `leftmost m X` is the first phrase of `m` that the constituent at `X` contains. With `m` in
 document order it is the one that begins earliest, and the largest that does. -/
-def leftmost (m : List TreePath) (X : TreePath) : Option TreePath := m.find? (X ≤ ·)
+def leftmost (m : List GornAddress) (X : GornAddress) : Option GornAddress := m.find? (X ≤ ·)
 
-theorem le_of_mem_leftmost {a : TreePath} (h : a ∈ leftmost m X) : X ≤ a := by
+theorem le_of_mem_leftmost {a : GornAddress} (h : a ∈ leftmost m X) : X ≤ a := by
   simpa using List.find?_some h
 
 /-- Two constituents are left-aligned on `m` when the leftmost phrase of `m` in the one and
 the leftmost in the other are left-aligned ((118)). -/
-def LeftAlignedOn (m : List TreePath) (X Y : TreePath) : Prop :=
+def LeftAlignedOn (m : List GornAddress) (X Y : GornAddress) : Prop :=
   ∃ a ∈ leftmost m X, ∃ b ∈ leftmost m Y, a.LeftAligned b
 
 instance : Decidable (LeftAlignedOn m X Y) := by unfold LeftAlignedOn; infer_instance
@@ -215,15 +215,15 @@ inductive LeftmostRequirement
 
 namespace LeftmostRequirement
 
-variable {r : LeftmostRequirement} {m : List TreePath} {host focus : TreePath}
+variable {r : LeftmostRequirement} {m : List GornAddress} {host focus : GornAddress}
 
 /-- The phrases a variant lets host the particle for a focus. -/
-def Allows : LeftmostRequirement → List TreePath → TreePath → TreePath → Prop
+def Allows : LeftmostRequirement → List GornAddress → GornAddress → GornAddress → Prop
   | strong, m, host, focus => LeftAlignedOn m host focus
   | weak, _, host, focus | free, _, host, focus => Relation.SymmGen (· ≤ ·) host focus
 
 /-- The phrases a variant lets host the particle at no cost. -/
-def Favors : LeftmostRequirement → List TreePath → TreePath → TreePath → Prop
+def Favors : LeftmostRequirement → List GornAddress → GornAddress → GornAddress → Prop
   | strong, m, host, focus | weak, m, host, focus => LeftAlignedOn m host focus
   | free, _, host, focus => Relation.SymmGen (· ≤ ·) host focus
 
@@ -248,7 +248,7 @@ theorem favors_comm : r.Favors m host focus ↔ r.Favors m focus host := by
   cases r <;> grind [Favors, LeftAlignedOn.symm, Relation.SymmGen]
 
 theorem Allows.exactlyTargets_or_piedPipes_or_antiPiedPipes (h : r.Allows m host focus)
-    {s : Finset (Reflex TreePathᵒᵈ)} (hs : s.Nonempty) (hhost : ExactlyTargets s (toDual host)) :
+    {s : Finset (Reflex GornAddressᵒᵈ)} (hs : s.Nonempty) (hhost : ExactlyTargets s (toDual host)) :
     ExactlyTargets s (toDual focus) ∨ PiedPipes s (toDual focus) ∨
       AntiPiedPipes s (toDual focus) := by
   rw [hhost.exactlyTargets_iff hs, hhost.piedPipes_iff hs, hhost.antiPiedPipes_iff hs,
@@ -279,9 +279,9 @@ namespace Frame
 variable (fr : Frame)
 
 /-- The position of a named constituent, the first node spelling its words. -/
-def site (c : Part) : Option TreePath :=
+def site (c : Part) : Option GornAddress :=
   (fr.brackets.lookup c).bind fun ws ↦
-    (fr.phase.vertices.map TreePath.mk).find? fun p ↦ ∃ s ∈ fr.phase[p]?,
+    (fr.phase.vertices.map GornAddress.mk).find? fun p ↦ ∃ s ∈ fr.phase[p]?,
       Tree.yield s = ws
 
 /-- A variant of the rule lets the constituent `host` of a frame host the particle for a focus
@@ -453,12 +453,12 @@ inductive Process
   deriving DecidableEq, Repr
 
 /-- The relation of host to focus that a label names. -/
-def Mismatch.Holds : Mismatch → TreePath → TreePath → Prop
+def Mismatch.Holds : Mismatch → GornAddress → GornAddress → Prop
   | none, host, focus => host = focus
   | piedPiping, host, focus => host < focus
   | antiPiedPiping, host, focus => focus < host
 
-instance (k : Mismatch) (host focus : TreePath) : Decidable (k.Holds host focus) := by
+instance (k : Mismatch) (host focus : GornAddress) : Decidable (k.Holds host focus) := by
   cases k <;> unfold Mismatch.Holds <;> infer_instance
 
 /-- The phase of each example, by the paper's number. -/
@@ -495,9 +495,9 @@ of the rule the paper reports for the construction, and the mismatch the paper l
 with. -/
 structure Row where
   process : Process
-  prominent : List TreePath
-  host : TreePath
-  readings : List (TreePath × Judgment)
+  prominent : List GornAddress
+  host : GornAddress
+  readings : List (GornAddress × Judgment)
   requirement : Option LeftmostRequirement
   mismatch : Option Mismatch
 

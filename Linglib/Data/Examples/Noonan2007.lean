@@ -24,7 +24,7 @@ def ex_214b : Datum :=
     glossedTokens := []
     context := "Negated matrix, against (214a) I think that Floyd didn't hit Roscoe."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("verb", "think")] }
 
@@ -37,7 +37,7 @@ def ex_215b : Datum :=
     glossedTokens := []
     context := "Negated matrix, against (215a) Zeke believes that Martians don't live in caves."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("verb", "believe")] }
 
@@ -50,7 +50,7 @@ def ex_216b : Datum :=
     glossedTokens := []
     context := "Negated matrix, against (216a) Hugh wants Mary Ann not to win."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("verb", "want")] }
 
@@ -63,7 +63,7 @@ def ex_218 : Datum :=
     glossedTokens := []
     context := "Negated matrix, against (217) I regret that Floyd didn't hit Roscoe."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("verb", "regret")] }
 

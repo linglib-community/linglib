@@ -24,7 +24,7 @@ def sm2022_1_classical : Datum :=
     glossedTokens := []
     context := "Reasoning task: does the conclusion follow? Adapted from Walsh and Johnson-Laird's items."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mark", "fallacious"), ("kind", "classical"), ("acceptance", "85%")] }
 
@@ -37,7 +37,7 @@ def sm2022_2_indirect : Datum :=
     glossedTokens := []
     context := "Reasoning task: the hint does not match any conjunct of the first premise; it is causally connected to 'the car slowed down'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mark", "fallacious"), ("kind", "indirect, hint step"), ("link", "the brake was depressed causes the car slowed down")] }
 
@@ -50,7 +50,7 @@ def sm2022_3_walsh_johnson_laird : Datum :=
     glossedTokens := []
     context := "The original four-proposition items."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mark", "fallacious"), ("kind", "classical"), ("acceptance", "85%")] }
 
@@ -63,7 +63,7 @@ def sm2022_11_conclusion_step : Datum :=
     glossedTokens := []
     context := "Experiment 2: the hint matches a conjunct exactly; the causal link does its work at the conclusion step."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("mark", "fallacious"), ("kind", "indirect, conclusion step")] }
 
@@ -76,7 +76,7 @@ def sm2022_13_two_conclusions : Datum :=
     glossedTokens := []
     context := "The asymmetry between the two candidate conclusions: the revised mental model theory's weak necessity certifies both."
     judgment := .acceptable
-    alternatives := [("Bill speaks German. (Ccl. 2)", .acceptable)]
+    contrasts := [("Bill speaks German. (Ccl. 2)", .acceptable)]
     readings := []
     paperFeatures := [("conclusion1", "Mary speaks French: attractive, acceptance about 85%"), ("conclusion2", "Bill speaks German: either not at all a compelling fallacy, or a very weak illusion; original mental model theory predicts not-c")] }
 
@@ -89,7 +89,7 @@ def sm2022_17_linda : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Linda is a bank teller.", .acceptable), ("Linda is a bank teller and she is active in the feminist movement.", .acceptable)]
+    contrasts := [("Linda is a bank teller.", .acceptable), ("Linda is a bank teller and she is active in the feminist movement.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "conjunction fallacy"), ("parallel", "the options are the disjunctive premise (f and b) or b; the description is the hint pointing to f (18)")] }
 
@@ -102,7 +102,7 @@ def sm2022_9_0_fertilizer : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "0"), ("removed", "excluded from the inference tasks: the d-to-b control block showed an effect driven by this item")] }
 
@@ -115,7 +115,7 @@ def sm2022_9_1_brake : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "1")] }
 
@@ -128,7 +128,7 @@ def sm2022_9_2_pool : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "2")] }
 
@@ -141,7 +141,7 @@ def sm2022_9_3_trigger : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block; also the (8i) exemplar."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "3")] }
 
@@ -154,7 +154,7 @@ def sm2022_9_4_fingerprints : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "4")] }
 
@@ -167,7 +167,7 @@ def sm2022_9_5_gong : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "5")] }
 
@@ -180,7 +180,7 @@ def sm2022_9_6_studied : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "6")] }
 
@@ -193,7 +193,7 @@ def sm2022_9_7_apples : Datum :=
     glossedTokens := []
     context := "Norming study, d-to-a block."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "d to a"), ("item", "7")] }
 
@@ -206,7 +206,7 @@ def sm2022_7_instructions : Datum :=
     glossedTokens := []
     context := "The instructions' example of an invalid but inductively attractive conclusion; the paper's printed correct answer is no."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("role", "instructions example"), ("validity", "invalid")] }
 
@@ -219,7 +219,7 @@ def sm2022_8i_trigger_gun : Datum :=
     glossedTokens := []
     context := "Norming block (i), the crucial d-to-a dependence; ratings are not printed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "(i) d to a")] }
 
@@ -232,7 +232,7 @@ def sm2022_8ii_gun_guitar : Datum :=
     glossedTokens := []
     context := "Norming block (ii), the a-to-b control; ratings are not printed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "(ii) a to b")] }
 
@@ -245,7 +245,7 @@ def sm2022_8iii_trigger_guitar : Datum :=
     glossedTokens := []
     context := "Norming block (iii), the d-to-b control; ratings are not printed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("block", "(iii) d to b")] }
 

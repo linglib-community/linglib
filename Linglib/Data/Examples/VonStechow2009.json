@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "there is a time before the speech time at which John calls", "judgment": "acceptable"}
     ],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a past time before a past time", "judgment": "acceptable"}
     ],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["tense", "future"],
@@ -74,7 +74,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["adverbial", "frame"],
@@ -94,7 +94,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "present perfect puzzle"],
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reference-time modification: the leaving is before six", "judgment": "acceptable"},
       {"name": "event-time modification: the leaving is at six", "judgment": "acceptable"}
@@ -137,7 +137,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "quantifier under the Past: a past time on every Sunday", "judgment": "unacceptable"},
       {"name": "quantifier over the Past: every Sunday contains a past time", "judgment": "unacceptable"},
@@ -161,7 +161,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "some past time at which I do not turn off the stove", "judgment": "unacceptable"},
       {"name": "no past time at which I turn off the stove", "judgment": "unacceptable"},
@@ -185,7 +185,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the leaving is after the speech time", "judgment": "acceptable"}
     ],
@@ -207,7 +207,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no past time in today at which it rains", "judgment": "acceptable"}
     ],
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "for every boot a past polishing time", "judgment": "acceptable"}
     ],
@@ -249,7 +249,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous: alive at the buying time", "judgment": "acceptable"},
       {"name": "deictic: alive at the speech time", "judgment": "acceptable"}
@@ -272,7 +272,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted: alive before the buying time", "judgment": "acceptable"},
       {"name": "deictic perfect: alive before the speech time", "judgment": "acceptable"}
@@ -295,7 +295,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "deictic: alive before the speech time",
@@ -324,7 +324,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "deictic",
@@ -353,7 +353,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "backward shifted", "judgment": "acceptable"},
@@ -377,7 +377,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "forward shifted", "judgment": "acceptable"}
     ],
@@ -399,7 +399,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the fish is alive at the future buying time", "judgment": "acceptable"}
     ],
@@ -421,7 +421,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a belief John would word as it is raining", "judgment": "acceptable"}
     ],
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "anaphoric: Mary believes that 5 o'clock is 6 o'clock", "judgment": "unacceptable"},
       {"name": "Mary locates her time at 6 o'clock", "judgment": "acceptable"}
@@ -466,7 +466,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "shifted: the leaving before Mary's subjective now", "judgment": "acceptable"}
     ],
@@ -488,7 +488,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John will enter the room after Mary has left.", "judgment": "acceptable"},
       {"form": "John will enter the room after Mary leaves.", "judgment": "acceptable"}
     ],
@@ -513,7 +513,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "John will enter the room before Mary will leave.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -535,7 +535,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mary left after John arrived.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -559,7 +559,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Mary arrived before 6.",
         "judgment": "acceptable"

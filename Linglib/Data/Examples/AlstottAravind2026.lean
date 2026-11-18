@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after-start", .acceptable), ("after-finish", .acceptable)]
     paperFeatures := [("construction", "after"), ("telicity", "atelic")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("telicity", "atelic")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable), ("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("telicity", "telic")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("after-start", .unacceptable), ("after-finish", .acceptable)]
     paperFeatures := [("construction", "after"), ("telicity", "telic")] }
 
@@ -76,7 +76,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("change of state", .acceptable)]
     paperFeatures := [("construction", "within"), ("telicity", "atelic")] }
 
@@ -89,7 +89,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("completive", .acceptable)]
     paperFeatures := [("construction", "at"), ("telicity", "telic")] }
 
@@ -102,7 +102,7 @@ def exp1a_coercion : Datum :=
     glossedTokens := []
     context := "(27a) Alex read one of his own articles to Jessica in full; by the fifteen-minute mark, Jessica voiced her annoyance."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "aspectualCoercion"), ("construction", "within"), ("telicity", "atelic"), ("rtCost", "no"), ("naturalness", "null")] }
 
@@ -115,7 +115,7 @@ def exp1a_control : Datum :=
     glossedTokens := []
     context := "(27b) Alex read his article during the first fifteen minutes, which annoyed Jessica the whole time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "aspectualControl"), ("construction", "for"), ("telicity", "atelic")] }
 
@@ -128,7 +128,7 @@ def exp1a_complement : Datum :=
     glossedTokens := []
     context := "(27a) or (27b)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
@@ -141,7 +141,7 @@ def exp1a_complementControl : Datum :=
     glossedTokens := []
     context := "(27a) or (27b)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "complementControl"), ("construction", "complement")] }
 
@@ -154,7 +154,7 @@ def exp1b_coercion : Datum :=
     glossedTokens := []
     context := "(28) Hector started building the tent at 8:55pm, and the tent was fully set up at 9pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "aspectualCoercion"), ("construction", "at"), ("telicity", "telic"), ("rtCost", "yes"), ("region", "verb+1"), ("naturalness", "lower")] }
 
@@ -167,7 +167,7 @@ def exp1b_control : Datum :=
     glossedTokens := []
     context := "(28) Hector started building the tent at 8:55pm, and the tent was fully set up five minutes after Emma made the bet."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "aspectualControl"), ("construction", "in"), ("telicity", "telic")] }
 
@@ -180,7 +180,7 @@ def exp1b_complement : Datum :=
     glossedTokens := []
     context := "(28), both endings."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
@@ -193,7 +193,7 @@ def exp1b_complementControl : Datum :=
     glossedTokens := []
     context := "(28), both endings."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "complementControl"), ("construction", "complement")] }
 
@@ -206,7 +206,7 @@ def exp2_noCoercion : Datum :=
     glossedTokens := []
     context := "(29a) Hector pulled out the camping equipment at 4pm and the tent was fully up by 4:30pm; Emma had become irritable when the wind started (2pm) and regained her composure at 4:30pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "aspectualControl"), ("construction", "before"), ("telicity", "telic"), ("context", "beforeStart")] }
 
@@ -219,7 +219,7 @@ def exp2_completive : Datum :=
     glossedTokens := []
     context := "(29b) Same as (29a), but Emma became irritable when Hector had to start over at 4:15pm and regained her composure at 4:30pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "aspectualCoercion"), ("construction", "before"), ("telicity", "telic"), ("context", "beforeFinish"), ("rtCost", "yes"), ("region", "verb+2"), ("preregistered", "no"), ("naturalness", "lower")] }
 
@@ -232,7 +232,7 @@ def exp2_complement : Datum :=
     glossedTokens := []
     context := "(29b)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun"), ("naturalness", "lower")] }
 
@@ -245,7 +245,7 @@ def exp3_coercion : Datum :=
     glossedTokens := []
     context := "(30a) Jessica voiced her annoyance at first, but by the fifteen-minute mark had given up and decided to tolerate Alex."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "aspectualCoercion"), ("construction", "within"), ("telicity", "atelic"), ("rtCost", "no"), ("naturalness", "null")] }
 
@@ -258,7 +258,7 @@ def exp3_control : Datum :=
     glossedTokens := []
     context := "(30b) Jessica tolerated Alex during the first fifteen minutes, then snapped."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "aspectualControl"), ("construction", "for"), ("telicity", "atelic")] }
 
@@ -271,7 +271,7 @@ def exp3_complement : Datum :=
     glossedTokens := []
     context := "(30a) or (30b)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
@@ -284,7 +284,7 @@ def exp4_coercion : Datum :=
     glossedTokens := []
     context := "(31a) Lara felt fear towards the dog 10–10:15am; Dave felt regretful from 10:05 until Lara regained her composure at 10:15."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "aspectualCoercion"), ("construction", "after"), ("telicity", "atelic"), ("context", "afterStart"), ("rtCost", "yes"), ("region", "verb+2"), ("preregistered", "no"), ("naturalness", "lower")] }
 
@@ -297,7 +297,7 @@ def exp4_control : Datum :=
     glossedTokens := []
     context := "(31b) Same as (31a), but Dave's regret lasted for many days."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "aspectualControl"), ("construction", "after"), ("telicity", "atelic"), ("context", "afterFinish")] }
 
@@ -310,7 +310,7 @@ def exp4_complement : Datum :=
     glossedTokens := []
     context := "(31c) Lara smoked a cigarette outside 9:50–9:55am; Dave passed by at 9:56, smelled the smoke, and felt regretful."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "no"), ("naturalness", "lower")] }
 
@@ -323,7 +323,7 @@ def exp4_complementControl : Datum :=
     glossedTokens := []
     context := "(31c)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "complementControl"), ("construction", "complement")] }
 
@@ -336,7 +336,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := "Ben was exposed to a virus at 6pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("became sick during 6–7pm", .acceptable)]
     paperFeatures := [("construction", "within"), ("telicity", "atelic")] }
 
@@ -349,7 +349,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := "Ben was exposed to a virus at 6pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "within"), ("telicity", "atelic"), ("alternativeOf", "(32a)")] }
 
@@ -362,7 +362,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := "Hector bought a burrito at 6pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "within"), ("telicity", "telic")] }
 
@@ -373,9 +373,11 @@ def ex_17a : Datum :=
     language := "taga1270"
     primaryText := "Um-alis siya bago niya w<in>alisan ang-sahig"
     glossedTokens := [("Um-alis", "PFV.NEUT-leave"), ("siya", "3SG"), ("bago", "before"), ("niya", "3SG"), ("w<in>alisan", "<PFV.NEUT>-sweep"), ("ang-sahig", "floor")]
+    glossedWords := [⟨['U', 'm', '-', 'a', 'l', 'i', 's'], ['P', 'F', 'V', '.', 'N', 'E', 'U', 'T', '-', 'l', 'e', 'a', 'v', 'e'], [⟨['U', 'm'], ['P', 'F', 'V', '.', 'N', 'E', 'U', 'T'], none⟩, ⟨['a', 'l', 'i', 's'], ['l', 'e', 'a', 'v', 'e'], some '-'⟩]⟩, ⟨['s', 'i', 'y', 'a'], ['3', 'S', 'G'], [⟨['s', 'i', 'y', 'a'], ['3', 'S', 'G'], none⟩]⟩, ⟨['b', 'a', 'g', 'o'], ['b', 'e', 'f', 'o', 'r', 'e'], [⟨['b', 'a', 'g', 'o'], ['b', 'e', 'f', 'o', 'r', 'e'], none⟩]⟩, ⟨['n', 'i', 'y', 'a'], ['3', 'S', 'G'], [⟨['n', 'i', 'y', 'a'], ['3', 'S', 'G'], none⟩]⟩, ⟨['w', '<', 'i', 'n', '>', 'a', 'l', 'i', 's', 'a', 'n'], ['<', 'P', 'F', 'V', '.', 'N', 'E', 'U', 'T', '>', '-', 's', 'w', 'e', 'e', 'p'], []⟩, ⟨['a', 'n', 'g', '-', 's', 'a', 'h', 'i', 'g'], ['f', 'l', 'o', 'o', 'r'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("aspect", "pfv.neut")] }
 
@@ -386,9 +388,11 @@ def ex_17b : Datum :=
     language := "taga1270"
     primaryText := "Um-alis siya bago niya na-walisan ang-sahig"
     glossedTokens := [("Um-alis", "PFV.NEUT-leave"), ("siya", "3SG"), ("bago", "before"), ("niya", "3SG"), ("na-walisan", "AIA-sweep"), ("ang-sahig", "floor")]
+    glossedWords := [⟨['U', 'm', '-', 'a', 'l', 'i', 's'], ['P', 'F', 'V', '.', 'N', 'E', 'U', 'T', '-', 'l', 'e', 'a', 'v', 'e'], [⟨['U', 'm'], ['P', 'F', 'V', '.', 'N', 'E', 'U', 'T'], none⟩, ⟨['a', 'l', 'i', 's'], ['l', 'e', 'a', 'v', 'e'], some '-'⟩]⟩, ⟨['s', 'i', 'y', 'a'], ['3', 'S', 'G'], [⟨['s', 'i', 'y', 'a'], ['3', 'S', 'G'], none⟩]⟩, ⟨['b', 'a', 'g', 'o'], ['b', 'e', 'f', 'o', 'r', 'e'], [⟨['b', 'a', 'g', 'o'], ['b', 'e', 'f', 'o', 'r', 'e'], none⟩]⟩, ⟨['n', 'i', 'y', 'a'], ['3', 'S', 'G'], [⟨['n', 'i', 'y', 'a'], ['3', 'S', 'G'], none⟩]⟩, ⟨['n', 'a', '-', 'w', 'a', 'l', 'i', 's', 'a', 'n'], ['A', 'I', 'A', '-', 's', 'w', 'e', 'e', 'p'], [⟨['n', 'a'], ['A', 'I', 'A'], none⟩, ⟨['w', 'a', 'l', 'i', 's', 'a', 'n'], ['s', 'w', 'e', 'e', 'p'], some '-'⟩]⟩, ⟨['a', 'n', 'g', '-', 's', 'a', 'h', 'i', 'g'], ['f', 'l', 'o', 'o', 'r'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("aspect", "aia")] }
 

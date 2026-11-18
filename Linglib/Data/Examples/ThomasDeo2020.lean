@@ -25,7 +25,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -39,7 +39,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -52,7 +52,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -65,7 +65,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -78,7 +78,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -91,7 +91,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -104,7 +104,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -117,7 +117,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -130,7 +130,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 
@@ -144,7 +144,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -158,7 +158,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -171,7 +171,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -184,7 +184,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -197,7 +197,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -210,7 +210,7 @@ def ex_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -223,7 +223,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative"), ("felicity", "infelicitous")] }
 
@@ -236,7 +236,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not older than Siri at the finest grain", .acceptable), ("older than Siri at a coarser grain", .acceptable)]
     paperFeatures := [("construction", "comparative")] }
 
@@ -249,7 +249,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -262,7 +262,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -275,7 +275,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
@@ -288,7 +288,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := "CQ: Are miniature amaryllis really as tall as hybrid amaryllis?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "equative")] }
 

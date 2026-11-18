@@ -131,17 +131,13 @@ theorem invariant_iff_forall_real_singleton [IsMarkovKernel κ] [IsFiniteMeasure
   · rw [← measureReal_eq_measureReal_iff (measure_ne_top _ _) (measure_ne_top _ _),
       Measure.comp_real_singleton, h b]
 
-private theorem sum_real_singleton (ρ : Measure α) [IsProbabilityMeasure ρ] :
-    ∑ b, ρ.real {b} = 1 := by
-  rw [sum_measureReal_singleton, coe_univ, probReal_univ]
-
 /-- A Markov kernel on a finite type has an invariant probability measure. -/
 theorem exists_isProbabilityMeasure_invariant [Nonempty α] (κ : Kernel α α) [IsMarkovKernel κ] :
     ∃ μ : Measure α, IsProbabilityMeasure μ ∧ κ.Invariant μ := by
   classical
   set P : Matrix α α ℝ := fun a b ↦ (κ a).real {b}
   have hP : ∀ a b, 0 ≤ P a b := fun _ _ ↦ measureReal_nonneg
-  have hrow : ∀ a, ∑ b, P a b = 1 := fun a ↦ sum_real_singleton (κ a)
+  have hrow : ∀ a, ∑ b, P a b = 1 := fun a ↦ by simp [P]
   have hdet : (P - 1).det = 0 := Matrix.exists_mulVec_eq_zero_iff.1
     ⟨fun _ ↦ 1, one_ne_zero, by ext a; simp [Matrix.mulVec, dotProduct, hrow, Matrix.one_apply]⟩
   obtain ⟨v, hv0, hv⟩ := Matrix.exists_vecMul_eq_zero_iff.2 hdet
@@ -197,7 +193,8 @@ theorem Invariant.eq_of_isIrreducible [IsMarkovKernel κ] [IsIrreducible Measure
     exact ha (le_antisymm this (hw a))
   have hc : c = 1 := by
     have := sum_congr rfl fun a (_ : a ∈ univ) ↦ hw0 a
-    simp only [w, sum_sub_distrib, ← mul_sum, sum_real_singleton, sum_const_zero] at this
+    simp only [w, sum_sub_distrib, ← mul_sum, sum_measureReal_singleton, coe_univ,
+      probReal_univ, sum_const_zero] at this
     linarith
   refine (Measure.ext_of_singleton fun a ↦ ?_).symm
   rw [← measureReal_eq_measureReal_iff (measure_ne_top _ _) (measure_ne_top _ _)]

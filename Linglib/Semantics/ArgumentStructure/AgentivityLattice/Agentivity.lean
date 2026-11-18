@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Finset
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Sublattice
 public import Mathlib.Tactic.DeriveFintype
@@ -11,19 +12,15 @@ Grimm reformulates Dowty's Proto-Agent entailments as four privative features, v
 sentience, instigation and motion, the Proto-Patient being the unmarked pole of each, and
 decomposes Dowty's relational causation into instigation, which is bound to a single participant.
 An argument's agentivity is the set of features its predicate entails, ordered by inclusion. The
-only relation among the features, that volition entails sentience, picks out the combinations
-Grimm organizes into a lattice, and they are closed under union and intersection. Grimm reserves
-the name agentivity lattice for its product with the persistence lattice.
-
-## Main definitions
-
-* `Agentivity`: the agentivity features of an argument.
-* `Agentivity.Valid`: volition entails sentience.
-* `Agentivity.lattice`: the valid combinations, as a sublattice of all feature sets.
+only relation among the features, that volition entails sentience, orders them as Dowty's
+entailments are ordered, and the combinations Grimm organizes into a lattice are the sets closed
+under it, [the lower sets](##ArgumentStructure.Agentivity.isLowerSet_iff), which
+[form a sublattice](##ArgumentStructure.Agentivity.entailmentClosed) of all feature sets. Grimm
+reserves the name agentivity lattice for its product with the persistence lattice.
 
 ## Implementation notes
 
-The persistence features are `PersistenceLevel.Feature`, their product with the agentivity
+The persistence features are `Persistence.Feature`, their product with the agentivity
 features is `ParticipantType`, and the projection from Dowty's profiles is
 `EntailmentProfile.toAgentivity`.
 
@@ -56,23 +53,42 @@ abbrev Agentivity := Finset Agentivity.Feature
 
 namespace Agentivity
 
-/-- Volition entails sentience. -/
-def Valid (a : Agentivity) : Prop := .volition ∈ a → .sentience ∈ a
+/-- One feature is below another when an argument with the second has the first: volition entails
+sentience ([grimm-2011] p.523), and the other features are independent. -/
+instance : PartialOrder Feature where
+  le a b := a = b ∨ a = .sentience ∧ b = .volition
+  le_refl _ := .inl rfl
+  le_trans := by decide
+  le_antisymm := by decide
 
-instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ → _))
+instance : DecidableLE Feature := fun a b ↦
+  inferInstanceAs (Decidable (a = b ∨ a = .sentience ∧ b = .volition))
 
-/-- The valid combinations of features form a sublattice of the feature sets, Grimm's lattice of
-agentivity properties, with union and intersection as join and meet. -/
-def lattice : Sublattice Agentivity where
-  carrier := {a | a.Valid}
-  supClosed' _ ha _ hb h := (Finset.mem_union.1 h).elim
-    (fun h ↦ Finset.mem_union_left _ (ha h)) fun h ↦ Finset.mem_union_right _ (hb h)
-  infClosed' _ ha _ hb h :=
-    Finset.mem_inter.2 ⟨ha (Finset.mem_inter.1 h).1, hb (Finset.mem_inter.1 h).2⟩
+theorem Feature.sentience_le_volition : Feature.sentience ≤ .volition := .inr ⟨rfl, rfl⟩
 
-@[simp] theorem mem_lattice {a : Agentivity} : a ∈ lattice ↔ a.Valid := Iff.rfl
+/-- A combination of features is closed under entailment exactly when it has sentience wherever it
+has volition. -/
+theorem isLowerSet_iff (a : Agentivity) :
+    IsLowerSet (a : Set Feature) ↔ (.volition ∈ a → .sentience ∈ a) := by
+  refine ⟨fun h hv ↦ h Feature.sentience_le_volition hv, ?_⟩
+  rintro h b c (rfl | ⟨rfl, rfl⟩) hb
+  exacts [hb, h hb]
 
-theorem card_valid : (Finset.univ.filter Valid).card = 12 := by decide
+/-- The combinations of features closed under entailment form a sublattice of the feature sets,
+Grimm's lattice of agentivity properties (Fig. 1), with union and intersection as join and meet. -/
+def entailmentClosed : Sublattice Agentivity where
+  carrier := {a | IsLowerSet (a : Set Feature)}
+  supClosed' a ha b hb := by simpa using IsLowerSet.union ha hb
+  infClosed' a ha b hb := by simpa using IsLowerSet.inter ha hb
+
+@[simp] theorem mem_entailmentClosed {a : Agentivity} :
+    a ∈ entailmentClosed ↔ IsLowerSet (a : Set Feature) :=
+  Iff.rfl
+
+instance : DecidablePred (· ∈ entailmentClosed) := fun a ↦
+  inferInstanceAs (Decidable (IsLowerSet (a : Set Feature)))
+
+theorem card_entailmentClosed : (Finset.univ.filter (· ∈ entailmentClosed)).card = 12 := by decide
 
 end Agentivity
 

@@ -3,7 +3,6 @@ module
 public import Linglib.Data.Examples.FoxHackl2006
 public import Mathlib.Order.Interval.Set.Monotone
 public import Linglib.Semantics.Questions.HamblinSet
-public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Logic.Modal.Defs
 
@@ -88,12 +87,6 @@ theorem moreThan_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
     ((Set.monotone_preimage.comp_antitone antitone_Ioi).strictAnti_of_injective
       ((Set.preimage_injective.2 hμ).comp Set.Ioi_injective))
     (isNecessarilyOpen_gt_over μ) w
-
-theorem exhAgainst_lt_iff_isStrongestTrueAnswer {φ : D → Set W} (hφ : StrictAnti φ) {i : D}
-    {w : W} :
-    Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsStrongestTrueAnswer (range φ) w (φ i) :=
-  (Exhaustification.mem_exh_range_iff_exhAgainst_lt hφ i w).symm.trans
-    (mem_exh_iff_isStrongestTrueAnswer (mem_range_self i))
 
 /-! ### Modal operators -/
 

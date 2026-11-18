@@ -17,15 +17,6 @@ selection function (`IsSelectionFunction`), and conditions (3) and (4) in turn m
 selection establishes a total ordering of the selected worlds. The logic C2 adds the corner `>` to
 classical propositional logic and defines necessity as `¬A > A`.
 
-## Errata
-
-Footnote 7 makes the modal logic of C2 S4 when relative possibility is transitive and S5 when it
-is also symmetric. As Mandelkern observes, condition (2) lets a selection function reach worlds
-not possible relative to the base world, and defined necessity is necessity over the worlds
-selected (`IsSelectionFunction.mem_ofDomain_compl_iff`). With relative possibility the identity,
-`□A ⊃ □□A` fails (`exists_not_box_imp_box_box`). Under Stalnaker's assumption the selected worlds
-are the possible ones and footnote 7 holds (`box_imp_box_box_minimals`).
-
 ## TODO
 
 The completeness of C2, proved by Stalnaker and Thomason.

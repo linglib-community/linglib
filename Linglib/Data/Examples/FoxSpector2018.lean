@@ -24,7 +24,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "no"), ("order", "canonical"), ("distant", "no"), ("de", "0")] }
 
@@ -37,7 +37,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "no"), ("order", "canonical"), ("distant", "no"), ("de", "0")] }
 
@@ -50,7 +50,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")] }
 
@@ -63,7 +63,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")] }
 
@@ -76,7 +76,7 @@ def ex16c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")] }
 
@@ -89,7 +89,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "yes"), ("de", "0")] }
 
@@ -102,7 +102,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "yes"), ("de", "0")] }
 
@@ -115,7 +115,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "reverse"), ("distant", "no"), ("de", "0")] }
 
@@ -128,7 +128,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "reverse"), ("distant", "yes"), ("de", "0")] }
 
@@ -141,7 +141,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")] }
 
@@ -154,7 +154,7 @@ def ex65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")] }
 
@@ -167,7 +167,7 @@ def ex65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "2")] }
 
@@ -180,7 +180,7 @@ def ex66a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")] }
 
@@ -193,7 +193,7 @@ def ex66b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "2")] }
 

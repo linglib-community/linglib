@@ -104,12 +104,12 @@ def precisely : NumeralModifier := .ofComparison "precisely" none .eq
 /-- An approximator places the amount within a tolerance of the number on either side, one
 reading for each tolerance `y` ([egre-etal-2023]). -/
 def approximator (form : String) : NumeralModifier :=
-  ⟨form, none, Set.range fun y ↦ .pointwise fun n ↦ Set.Icc (n - y) (n + y)⟩
+  ⟨form, none, Set.range fun y ↦ (SetRel.ofSuccessors fun n ↦ Set.Icc (n - y) (n + y)).image⟩
 
 /-- A modifier like *almost* places the amount within a tolerance below the number and short of
 it, one reading for each tolerance `y` ([penka-2006]). -/
 def shortOf (form : String) : NumeralModifier :=
-  ⟨form, none, Set.range fun y ↦ .pointwise fun n ↦ Set.Ico (n - y) n⟩
+  ⟨form, none, Set.range fun y ↦ (SetRel.ofSuccessors fun n ↦ Set.Ico (n - y) n).image⟩
 
 /-- *about*, an approximator. -/
 def about : NumeralModifier := approximator "about"
@@ -136,7 +136,7 @@ one. -/
 theorem isExtensive_of_mem_approximator (hm : m ∈ ⟦approximator form⟧) :
     Modifier.IsExtensive m := by
   obtain ⟨y, rfl⟩ := hm
-  exact Modifier.isExtensive_pointwise_iff.2 fun n ↦ ⟨Nat.sub_le n y, Nat.le_add_right n y⟩
+  exact Modifier.isExtensive_image_iff.2 ⟨fun n ↦ ⟨Nat.sub_le n y, Nat.le_add_right n y⟩⟩
 
 /-- No reading of *almost* or *nearly* is true of the number itself. -/
 theorem disjoint_singleton_of_mem_shortOf (hm : m ∈ ⟦shortOf form⟧) (n : ℕ) :

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "A believes that among the relevant individuals only John and Mary went to the party.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "complete"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "A believes Antonio went to the party and it is unclear who else did.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "partial"],
@@ -49,7 +49,7 @@
     "translation": "",
     "context": "A believes Antonio went to the party and it is unclear who else did.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["answer", "partial"],
@@ -69,7 +69,7 @@
     "translation": "",
     "context": "There are three coffee places nearby: Starbucks, Peet's, and J.P. Licks.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Starbucks.", "judgment": "acceptable"},
       {"form": "Starbucks, Peet's, and J.P. Licks.", "judgment": "acceptable"},
       {"form": "Starbucks, Peet's, or J.P. Licks.", "judgment": "acceptable"}
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "A believes there are two coffee places nearby, Starbucks and Peet's, and that John frequents both.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Starbucks.",
         "judgment": "marginal"
@@ -126,7 +126,7 @@
     "translation": "",
     "context": "A believes there are two coffee places nearby, Starbucks and Peet's.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Starbucks.",
         "judgment": "marginal"
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "The hiring committee wants to prioritize the candidates on the long-list who can teach Psycholinguistics.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "mention-all", "judgment": "acceptable"}
     ],
@@ -177,7 +177,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "only one of the children came", "judgment": "acceptable"}
     ],
@@ -199,7 +199,7 @@
     "translation": "",
     "context": "Among the children under consideration only Andy and Billy came; the speaker knows multiple children came but not who.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "plural"]
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "Among the children under consideration only Andy and Billy came; the speaker knows multiple children came but not who.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["wh", "singular"]
@@ -237,7 +237,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow-scope disjunction", "judgment": "acceptable"}
     ],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Heim & Kratzer or Meaning & Grammar.", "judgment": "acceptable"},
       {"form": "Heim & Kratzer and Meaning & Grammar.", "judgment": "unacceptable"}
     ],
@@ -282,7 +282,7 @@
     "translation": "",
     "context": "A multiple-choice context in which each choice involves a single letter, either a or r.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "local uniqueness", "judgment": "acceptable"}
     ],
@@ -304,7 +304,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "we are not allowed to assign more than one chapter", "judgment": "acceptable"}
     ],
@@ -326,7 +326,7 @@
     "translation": "",
     "context": "The book has three chapters. The instructor has told the speaker, a TA, that they could assign either Chap. 1, or Chap. 2, or both Chaps. 2 and 3 next week.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "can"],
@@ -346,7 +346,7 @@
     "translation": "",
     "context": "As in (83).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "can"],
@@ -366,7 +366,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "could"],
@@ -386,7 +386,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["modal", "could"]
@@ -405,7 +405,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "global uniqueness", "judgment": "acceptable"}
     ],
@@ -427,7 +427,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "local uniqueness", "judgment": "acceptable"}
     ],
@@ -449,7 +449,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "universal local uniqueness", "judgment": "acceptable"}
     ],
@@ -471,7 +471,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "existential local uniqueness", "judgment": "acceptable"}
     ],
@@ -493,7 +493,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Chap. 1 or Chap. 2.", "judgment": "acceptable"},
       {"form": "Chap. 1 and Chap. 2.", "judgment": "unacceptable"}
     ],

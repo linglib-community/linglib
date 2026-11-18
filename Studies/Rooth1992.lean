@@ -180,6 +180,18 @@ theorem recognitions_constrained :
   · rfl
   · simp [rel] at hw
 
+-- (37c) is an antecedent for the focus on the verb: a part of the focus semantic value that holds
+-- the prejacent and one other property, so focus constrains the domain without fixing it.
+theorem recognitions_squiggleSet :
+    SquiggleSet (rel .read m c)
+      ((fun R : E → E → Set (Set (Verb × E × E)) ↦ R m c) <$> focused (rel .read)).alternatives
+      {rel .read m c, rel .understand m c} := by
+  rw [alternatives_map_focused]
+  refine ⟨?_, Set.mem_insert _ _, rel .understand m c, Set.mem_insert_of_mem _ rfl, fun h ↦ ?_⟩
+  · rintro _ (rfl | rfl)
+    exacts [⟨rel .read, rfl⟩, ⟨rel .understand, rfl⟩]
+  · exact absurd (Prod.mk.inj (atom_injective h)).1 (by decide)
+
 end Only
 
 /-! ### Contrasting phrases (§2.2)

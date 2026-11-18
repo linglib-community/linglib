@@ -1,7 +1,7 @@
 module
 
 public import Studies.ChristopoulosZompi2023
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -17,7 +17,7 @@ number decompositions of `ChristopoulosZompi2023`, with candidates carried by th
 type as that study's Subset Principle, so that only the competition changes.
 
 Evaluation is lexicographic minimization of the ranked violation vector (`mem_eval_iff`), the
-engine of `OptimalityTheory.Tableau` (`mem_eval_iff_optimal`). On it, the two minimally
+substrate's `Constraint.eval` (`mem_eval_iff_optimal`). On it, the two minimally
 compliant patterns of the case-number paradigm are derived from opposite rankings of the same
 two candidate specifications, East Frisian with ABA down the nominative column and Malayalam
 with ABA down the plural row (`eastFrisian_pattern`, `malayalam_pattern`); the checkerboard
@@ -140,19 +140,18 @@ instance [DecidableEq F] {rk : List Con} {v : List (Cand F)} {c : Bundle}
 /-! ### The shared lexicographic-minimization core
 
 `eval` is the strict-domination filter cascade; the phonology OT engine is
-lexicographic arg-min over a fixed-length violation profile, `OptimalityTheory.Tableau`, a
-finite candidate set scored by a `Lex (Fin n → ℕ)` profile with the winner set
-`Tableau.optimal`. `eval` and this engine are one object, not two parallel engines:
+`OptimalityTheory.Constraint.eval`, filtration of a finite candidate set along a list of
+violation counters. `eval` and this engine are one object, not two parallel engines:
 `mem_eval_iff` characterizes an Eval survivor as a lexicographic minimizer of the ranked
-violation vector, and `mem_eval_iff_optimal` reads that off the tableau whose candidates are
-`v` and whose profile is that vector. So morphological Max/Dep Eval and phonological OT
-provably share the same lexicographic core. -/
+violation vector, and `mem_eval_iff_optimal` reads that off the substrate's evaluation of `v`
+under the ranked constraints. So morphological Max/Dep Eval and phonological OT provably share
+the same lexicographic core. -/
 
 section SharedCore
 open OptimalityTheory
 
 /-- The candidate's violation vector at a cell, ordered by the ranking — the
-`List ℕ` reading of the OT `ViolationProfile`. -/
+row of the candidate in the tableau, most dominant constraint first. -/
 def rankedViols (rk : List Con) (c : Bundle) (r : Cand F) : List ℕ :=
   rk.map (fun C ↦ viol C c r)
 
@@ -210,27 +209,15 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : Bundle} {r : Cand 
       · exact absurd (hsmin r hrv) (not_le_of_gt hlt)
       · exact htail
 
-private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
-    l.map f = List.ofFn (fun i : Fin l.length ↦ f (l.get i)) := by
-  apply List.ext_getElem <;> simp
-
-theorem rankedViols_eq_ofFn (rk : List Con) (c : Bundle) (r : Cand F) :
-    rankedViols rk c r = List.ofFn (fun i : Fin rk.length ↦ viol (rk.get i) c r) :=
-  map_eq_ofFn_get rk (fun C ↦ viol C c r)
-
-/-- The Eval competition as an `OptimalityTheory.Tableau`: candidate set `v`, profile the
-ranked violation vector, rank position `i` reading the `i`-th constraint as a violation count.
-This is a phonological OT tableau with morphological Max/Dep constraints. -/
-def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : Bundle) :
-    Tableau (Cand F) rk.length :=
-  ⟨v.toFinset, fun i ↦ viol (rk.get i) c⟩
-
+-- the Eval competition is the substrate's: its survivors are the optimal candidates of `v`
+-- under the ranked constraints read as violation counters
 theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
-    {c : Bundle} {r : Cand F} : r ∈ eval rk v c ↔ r ∈ (zTableau rk v c).optimal := by
-  rw [mem_eval_iff, Tableau.mem_optimal_iff]
-  refine and_congr List.mem_toFinset.symm (forall_congr' fun s ↦ ?_)
-  refine imp_congr List.mem_toFinset.symm ?_
-  rw [rankedViols_eq_ofFn, rankedViols_eq_ofFn, List.ofFn_le_ofFn_iff]
+    {c : Bundle} {r : Cand F} :
+    r ∈ eval rk v c ↔ r ∈ Constraint.eval v.toFinset (rk.map (viol · c)) := by
+  rw [mem_eval_iff, Constraint.mem_eval]
+  refine and_congr List.mem_toFinset.symm (forall_congr' fun s ↦
+    imp_congr List.mem_toFinset.symm ?_)
+  simp only [rankedViols, List.map_map]
   rfl
 
 end SharedCore

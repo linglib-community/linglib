@@ -24,7 +24,7 @@ def latin_present_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "ō")] }
 
@@ -37,7 +37,7 @@ def latin_present_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "s")] }
 
@@ -50,7 +50,7 @@ def latin_present_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "t")] }
 
@@ -63,7 +63,7 @@ def latin_present_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "mus")] }
 
@@ -76,7 +76,7 @@ def latin_present_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "tis")] }
 
@@ -89,7 +89,7 @@ def latin_present_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "present"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "nt")] }
 
@@ -102,7 +102,7 @@ def latin_imperfect_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "m")] }
 
@@ -115,7 +115,7 @@ def latin_imperfect_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "s")] }
 
@@ -128,7 +128,7 @@ def latin_imperfect_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "t")] }
 
@@ -141,7 +141,7 @@ def latin_imperfect_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "mus")] }
 
@@ -154,7 +154,7 @@ def latin_imperfect_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "tis")] }
 
@@ -167,7 +167,7 @@ def latin_imperfect_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "nt")] }
 
@@ -180,7 +180,7 @@ def latin_perfect_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "ī")] }
 
@@ -193,7 +193,7 @@ def latin_perfect_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "stī")] }
 
@@ -206,7 +206,7 @@ def latin_perfect_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "t")] }
 
@@ -219,7 +219,7 @@ def latin_perfect_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "mus")] }
 
@@ -232,7 +232,7 @@ def latin_perfect_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "stis")] }
 
@@ -245,7 +245,7 @@ def latin_perfect_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "ērunt")] }
 
@@ -258,7 +258,7 @@ def latin_pluperfect_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "m")] }
 
@@ -271,7 +271,7 @@ def latin_pluperfect_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "s")] }
 
@@ -284,7 +284,7 @@ def latin_pluperfect_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "t")] }
 
@@ -297,7 +297,7 @@ def latin_pluperfect_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "mus")] }
 
@@ -310,7 +310,7 @@ def latin_pluperfect_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "tis")] }
 
@@ -323,7 +323,7 @@ def latin_pluperfect_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "nt")] }
 
@@ -336,7 +336,7 @@ def hungarian_ruha_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ruha"), ("poss", "no"), ("plExponent", "k")] }
 
@@ -349,7 +349,7 @@ def hungarian_ruha_plposs : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ruha"), ("poss", "yes"), ("plExponent", "ai")] }
 
@@ -362,7 +362,7 @@ def hungarian_kalap_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kalap"), ("poss", "no"), ("plExponent", "k")] }
 
@@ -375,7 +375,7 @@ def hungarian_kalap_plposs : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kalap"), ("poss", "yes"), ("plExponent", "ai")] }
 
@@ -388,7 +388,7 @@ def hungarian_haz_pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ház"), ("poss", "no"), ("plExponent", "k")] }
 
@@ -401,7 +401,7 @@ def hungarian_haz_plposs : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ház"), ("poss", "yes"), ("plExponent", "ai")] }
 
@@ -414,7 +414,7 @@ def korean_pap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "pap"), ("final", "C"), ("nomExponent", "i")] }
 
@@ -427,7 +427,7 @@ def korean_ai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ai"), ("final", "V"), ("nomExponent", "ka")] }
 

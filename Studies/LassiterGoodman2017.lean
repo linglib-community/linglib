@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
 public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Lassiter and Goodman (2017): Adjectival Vagueness in a Bayesian Model of Interpretation
@@ -82,11 +83,11 @@ def sem (θ : D × D) : Utterance → Set D
 /-- The literal listener at an assignment (eq. 27) is the degree prior conditioned on the truth of
 the utterance. -/
 noncomputable def L0 (μ : Measure D) (θ : D × D) : Kernel Utterance D :=
-  listener μ (truthful fun u ↦ sem θ u)
+  literalListener μ (fun u ↦ sem θ u)
 
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure D) [IsFiniteMeasure μ] (θ : D × D)
     (u : Utterance) (d : D) : L0 μ θ u {d} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  listener_truthful_apply_singleton_ne_zero_iff μ (sem θ) u d
+  literalListener_apply_singleton_ne_zero_iff μ (sem θ) u d
 
 section Model
 
@@ -115,7 +116,7 @@ variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α 
 
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u : Utterance) :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
+  speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
 variable [IsProbabilityMeasure ν]
 

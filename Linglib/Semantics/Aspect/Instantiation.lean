@@ -54,7 +54,7 @@ def SortedProperty.IsEventuality : SortedProperty W E T → Prop
   | .temporal _ => False
   | _ => True
 
-variable [Event.TemporalTrace E T]
+variable [TemporalTrace E T]
 
 /-- `At t w Q` says that the property `Q` is instantiated in `w` at the interval `t`, by inclusion
 of the runtime for events, overlap for states, and application for properties of times. -/

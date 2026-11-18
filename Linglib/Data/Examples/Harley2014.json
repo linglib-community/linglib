@@ -12,7 +12,7 @@
     "translation": "run.sg~run.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -52,7 +52,7 @@
     "translation": "go.sg~go.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -92,7 +92,7 @@
     "translation": "wander.sg~wander.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -132,7 +132,7 @@
     "translation": "enter.sg~enter.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -172,7 +172,7 @@
     "translation": "lie.sg~lie.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -212,7 +212,7 @@
     "translation": "walk.sg~walk.pl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -252,7 +252,7 @@
     "translation": "kill.sgObj~kill.plObj",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -305,7 +305,7 @@
     "translation": "He ran over there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Vempo aman vuite-k.",
         "judgment": "ungrammatical"
@@ -355,7 +355,7 @@
     "translation": "They ran over there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Aapo aman tenne-k.",
         "judgment": "ungrammatical"
@@ -392,7 +392,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -424,7 +424,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -465,7 +465,7 @@
     "translation": "He/she/it is walking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -506,7 +506,7 @@
     "translation": "They are walking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -555,7 +555,7 @@
     "translation": "He/They killed the pig.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -604,7 +604,7 @@
     "translation": "He/They killed the pigs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -649,7 +649,7 @@
     "translation": "Juan saw Maria",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -690,7 +690,7 @@
     "translation": "Maria was seen there",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -735,7 +735,7 @@
     "translation": "The deer dancer danced for the children.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -788,7 +788,7 @@
     "translation": "I closed the door for Jose",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -841,7 +841,7 @@
     "translation": "The cup broke for/on Maria",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -898,7 +898,7 @@
     "translation": "Santos is going/walking to San Xavier for Maria",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -959,7 +959,7 @@
     "translation": "Santos is going/walking to San Xavier for Maria",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1012,7 +1012,7 @@
     "translation": "Santos killed a pig/pigs for Jose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

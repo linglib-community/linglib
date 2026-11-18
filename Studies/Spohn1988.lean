@@ -30,7 +30,7 @@ contraction law of the paper's Theorem 11 and its mirror image (`CondIndependent
 ## Implementation notes
 
 Complete subfields of the propositions over a set of worlds are partitions, `Setoid W`: the
-atoms are the cells, the members are the propositions the partition decides, and the field two
+atoms are the cells, the members are the propositions the partition determines, and the field two
 subfields generate is their meet in the lattice of setoids. Over natural numbers every two
 firmnesses commute and independence is symmetric, so the paper's two directions of
 independence coincide. Simple conditional functions and well-ordered partitions with their
@@ -249,8 +249,8 @@ theorem Independent.symm (h : Independent κ 𝔅 ℭ) : Independent κ ℭ 𝔅
   exact ⟨by rwa [Set.inter_comm], by rw [Set.inter_comm, heq, add_comm]⟩
 
 /-- Independence extends from atoms to all satisfiable members of the fields (Theorem 7). -/
-theorem Independent.rank_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (hB : 𝔅.Decides B)
-    (hC : ℭ.Decides C) (hB' : B.Nonempty) (hC' : C.Nonempty) :
+theorem Independent.rank_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (hB : 𝔅.Determines B)
+    (hC : ℭ.Determines C) (hB' : B.Nonempty) (hC' : C.Nonempty) :
     rank κ (B ∩ C) = rank κ B + rank κ C := by
   refine le_antisymm ?_ ?_
   · obtain ⟨b, hb, eb⟩ := exists_apply_eq_rank κ hB'
@@ -297,7 +297,7 @@ variable {κ}
 /-- Independence is invariance of the ranks of satisfiable members of `ℭ` under conditioning on
 satisfiable members of `𝔅` (Theorem 8, (a) and (b)). -/
 theorem independent_iff_condRank :
-    Independent κ 𝔅 ℭ ↔ ∀ B C, 𝔅.Decides B → ℭ.Decides C → B.Nonempty → C.Nonempty →
+    Independent κ 𝔅 ℭ ↔ ∀ B C, 𝔅.Determines B → ℭ.Determines C → B.Nonempty → C.Nonempty →
       κ[C | B] = rank κ C := by
   constructor
   · intro h B C hB hC hB' hC'
@@ -305,7 +305,7 @@ theorem independent_iff_condRank :
       (ENat.addLECancellable_of_ne_top (rank_ne_top κ hB')).add_tsub_cancel_left]
   · intro h w v
     have heq : rank κ (𝔅.cell w ∩ ℭ.cell v) = rank κ (𝔅.cell w) + rank κ (ℭ.cell v) := by
-      rw [← condRank_add_rank κ, h _ _ (𝔅.decides_cell w) (ℭ.decides_cell v)
+      rw [← condRank_add_rank κ, h _ _ (𝔅.determines_cell w) (ℭ.determines_cell v)
         (𝔅.cell_nonempty w) (ℭ.cell_nonempty v), add_comm]
     refine ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ ?_, heq⟩
     rw [he, rank_empty] at heq
@@ -315,7 +315,7 @@ theorem independent_iff_condRank :
 /-- Independence is invariance of the ranks in `ℭ` under generalized conditionalization on any
 ranking of the atoms of `𝔅` (Theorem 8, (a) and (c)). -/
 theorem independent_iff_condition :
-    Independent κ 𝔅 ℭ ↔ ∀ (l : RankingFunction (Quotient 𝔅)) (C : Set W), ℭ.Decides C →
+    Independent κ 𝔅 ℭ ↔ ∀ (l : RankingFunction (Quotient 𝔅)) (C : Set W), ℭ.Determines C →
       C.Nonempty → rank (condition κ 𝔅 l) C = rank κ C := by
   constructor
   · intro h l C hC hC'
@@ -362,7 +362,7 @@ theorem independent_iff_condition :
             ⟨fun h ↦ 𝔅.trans (𝔅.symm hxy) h, fun h ↦ 𝔅.trans hxy h⟩]
         exists_eq_zero' := ⟨Quotient.mk _ w, by simp⟩ }
     have hl : ∀ x, l (Quotient.mk 𝔅 x) = if 𝔅 x w then 0 else n + 1 := fun x ↦ rfl
-    have hC := h l (ℭ.cell v) (ℭ.decides_cell v) (ℭ.cell_nonempty v)
+    have hC := h l (ℭ.cell v) (ℭ.determines_cell v) (ℭ.cell_nonempty v)
     rw [← hn] at hC
     have hgt : ∀ x ∈ ℭ.cell v, ¬ 𝔅 x w → n + 1 ≤ condition κ 𝔅 l x := fun x _ hx ↦ by
       rw [condition_rank, hl, ite_eq_right hx]

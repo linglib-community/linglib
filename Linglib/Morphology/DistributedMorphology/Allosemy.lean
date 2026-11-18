@@ -1,149 +1,72 @@
 module
 
-public import Mathlib.Algebra.Group.WithOne.Defs
+public import Mathlib.Algebra.Order.GroupWithZero.Canonical
+public import Mathlib.Logic.Equiv.Defs
+public import Linglib.Core.Data.Fintype.WithZero
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Basic
-public import Linglib.Morphology.Exponence.Select
-public import Linglib.Morphology.Realization
-public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Allosemy
 
-Allosemy is contextual meaning variation of a single functional head —
-the LF analogue of allomorphy. The heads v, n, and Voice each carry
-several allosemes, selected by the syntactic context rather than tracked
-by morphosyntactic features, and the ambiguity of deverbal
-nominalizations between event, result, state, entity, and content
-readings is the visible trace of that selection. The reading typology
-`readingFromAllosemes` is grounded in typed denotations in
-`Studies/Benz2025.lean`, where it is shown to track definedness.
-
-## Main definitions
-
-* `Alloseme` — the inventory carrier: contentful allosemes with the
-  zero alloseme adjoined (`Option`, in the `WithZero` pattern)
-* `Verbalizer.Alloseme`, `Nominalizer.Alloseme`, `Voice.Alloseme` —
-  each head's inventory under its own API, from its `Contentful` type;
-  Voice's expletive is the shared zero
-* `Verbalizer.vocabulary`, `Nominalizer.vocabulary`,
-  `Voice.vocabulary` — each head's List-3 vocabulary over the shared
-  selection engine
-* `NominalizationReading`, `readingFromAllosemes` — the reading typology
-  of deverbal nominalizations and its alloseme table
-
-## Main statements
-
-* `Voice.theta_consistent` — a Voice alloseme assigns a θ-role iff its
-  syntactic flavor does
-* `Verbalizer.isAllosemous` — v's contextual meaning variation on the
-  shared `Realization.Interpreted` carrier
+Allosemy is contextual variation in the meaning of one functional head, the counterpart at LF of
+allomorphy: the denotations of a head are listed with the contexts they are inserted in, as its
+exponents are, so an alloseme is a `VocabularyItem` whose exponent is a denotation. A head may be
+semantically zero, the identity function, and its allosemes are its contentful ones with a zero
+adjoined. The allosemes `licensed` in a context are those whose items apply, and
+[a richer context licenses more of them](##licensed_subset_licensed); where the items compete,
+the Subset Principle [picks a licensed one](##mem_licensed_of_subsetPrinciple). The readings of a
+deverbal noun [are the allosemes of n](##Nominalizer.Alloseme.readingEquiv), the complex event
+reading being the zero alloseme, under which the noun has the meaning of the verb.
 
 ## Implementation notes
 
-An alloseme is a `VocabularyItem` whose exponent is a denotation, so DM's
-List 2 (form) and List 3 (meaning) run on one selection engine
-(`subsetPrinciple`, `winner?_isElsewhereWinner`); its specification
-conditions on the neighboring terminals, not on features of its own head.
-`Voice.Alloseme.fromComplement` is a worked List-3 competition on that
-engine; `readingFromAllosemes` is a different object — the composition of
-two already-selected allosemes. The Voice allosemes map to the cells of
-`Minimalist.Voice.Head` (`Voice.Alloseme.toHead`), preserving θ-assignment
-(`Voice.theta_consistent`).
+* Which allosemes of v and n combine is not listed. Every combination is possible whose result is
+  interpretable ([wood-2023]), and that is decided by composing the denotations of
+  `Nominalization.lean`, on which the accounts of eventive v differ.
+* The zero alloseme is `0` and a contentful alloseme `↑c`, the forms of `WithZero`. Nothing is
+  multiplied: the zero alloseme is the identity under composition.
+* The context of the engineer alloseme of Voice mentions two terminals, the copula below Voice
+  and the eventive VoiceP below the copula, as [myler-2016] states the rule.
+* On this view one Voice head is thematic or expletive by its context. `Minimalist.Voice.Head`
+  is the other view, of [schaefer-2008], on which the thematic feature is part of the head; no
+  map between the two is given.
+
+## TODO
+
+* The sources condition an alloseme on the interpretation of its sister, computed first
+  ([wood-2015]); here the condition is a feature of the neighbouring terminal.
+* The allosemes of v are one eventive alloseme and zero, where [wood-2015] has an activity, a
+  state and a causative.
 
 ## References
 
-* [I. Benz, *Structure and interpretation across categories*][benz-2025]
-* [J. Wood, *Icelandic nominalizations and allosemy*][wood-2023]
-* [A. Kratzer, *Severing the external argument from its verb*][kratzer-1996]
-* [N. Myler, *Building and interpreting possession sentences*][myler-2016]
-* [L. J. Adamson, *Gender assignment is local*][adamson-2024]
+* [wood-2023]
+* [benz-2025]
+* [myler-2016]
+* [kratzer-1996]
+* [grimshaw-1990]
+* [wood-2015]
+* [schaefer-2008]
 -/
 
 @[expose] public section
 
 namespace DistributedMorphology.Allosemy
 
-open Minimalist.Voice (Head)
 open Morphology
 
-/-! ### The alloseme carrier
+/-! ### Allosemic entries -/
 
-Every head's inventory contains the zero alloseme trivially, so an
-inventory is the head's contentful allosemes with a zero adjoined:
-`Option`, in the `WithZero` pattern, with `none` the zero alloseme. Each
-head contributes only its `Contentful` type. -/
-
-/-- The allosemes of a head whose contentful allosemes are `C`, with the zero alloseme (Benz's Ø)
-as `0`. -/
-def Alloseme (C : Type*) : Type _ := WithZero C
-
-namespace Alloseme
-
-variable {C : Type*}
-
-/-- The zero alloseme, semantically Ø. -/
-@[match_pattern] def zero : Alloseme C := none
-
-/-- A contentful alloseme. -/
-@[match_pattern] def of (c : C) : Alloseme C := some c
-
-instance [DecidableEq C] : DecidableEq (Alloseme C) :=
-  inferInstanceAs (DecidableEq (Option C))
-
-instance [Repr C] : Repr (Alloseme C) := inferInstanceAs (Repr (Option C))
-
-instance [Fintype C] : Fintype (Alloseme C) :=
-  inferInstanceAs (Fintype (Option C))
-
-instance : Zero (Alloseme C) := inferInstanceAs (Zero (WithZero C))
-
-end Alloseme
-
-/-! ### v allosemy -/
-
-/-- The contentful alloseme of v, which introduces the event variable and the Theme
-requirement. -/
-inductive Verbalizer.Contentful where
-  | eventive
-  deriving DecidableEq, Repr, Fintype
-
-/-- The allosemes of v. A nominalization is eventive when v is interpreted and n vacuous, and
-referential when n is interpreted and v vacuous, as with *observation*. -/
-abbrev Verbalizer.Alloseme := Allosemy.Alloseme Verbalizer.Contentful
-
-namespace Verbalizer.Alloseme
-
-/-- v interpreted as in the verbal domain (CEN contexts). -/
-@[match_pattern] def eventive : Verbalizer.Alloseme :=
-  Allosemy.Alloseme.of .eventive
-
-/-- Semantically Ø (SEN/RN contexts). -/
-@[match_pattern] def zero : Verbalizer.Alloseme := Allosemy.Alloseme.zero
-
-end Verbalizer.Alloseme
-
-/-- Does this v alloseme introduce an event variable? -/
-def Verbalizer.Alloseme.introducesEvent : Verbalizer.Alloseme → Bool
-  | .eventive => true
-  | .zero     => false
-
-/-! ### Allosemic entries
-
-An alloseme is a Vocabulary Item whose exponent is a denotation. Its
-specification mentions no feature of its own head — the vocabulary is the
-head's — and conditions on the neighbors: the complement below, toward the
-root, and the embedding head above — allosemy is conditioned by the
-interpreted domain below and the features of the next head above. The
-locality of the conditioning — the first category head's
-spell-out domain, across semantically null heads only — is `ComplexHead.Sees`
-(`Locality.lean`). -/
-
-/-- A condition an alloseme places on a neighbouring terminal, on its category or on whether it
-denotes an event or a state. -/
+/-- A condition an alloseme places on a neighbouring terminal: its category, or the sort of
+eventuality it describes. -/
 inductive Feature where
   | cat (c : Minimalist.Cat)
+  /-- The terminal describes events. -/
   | eventive
+  /-- The terminal describes events with an agent. -/
+  | agentive
+  /-- The terminal describes states. -/
   | stative
   deriving DecidableEq, Repr
 
@@ -153,59 +76,83 @@ def complement (fs : Finset Feature) : Neighborhood (Finset Feature) := ⟨∅, 
 /-- A specification on the embedding head, the terminal above. -/
 def embedding (fs : Finset Feature) : Neighborhood (Finset Feature) := ⟨∅, [], [fs]⟩
 
-/-- The denotations a vocabulary licenses in a context — the exponents of
-its applicable entries. Ambiguity in a context is non-singleton licensing;
-the canonical default among the licensed entries is the Elsewhere winner
-(`winner?_isElsewhereWinner`). -/
-def licensed {Sem : Type*} (v : RuleSet (VocabularyItem Feature Sem))
-    (n : Neighborhood (Finset Feature)) : List Sem :=
+section Licensed
+
+variable {F Sem : Type*} [DecidableEq F] {v : RuleSet (VocabularyItem F Sem)}
+  {n n' : Neighborhood (Finset F)} {s : Sem}
+
+/-- The denotations a vocabulary licenses in a context, the exponents of its applicable items. A
+head is ambiguous in a context that licenses several. -/
+def licensed (v : RuleSet (VocabularyItem F Sem)) (n : Neighborhood (Finset F)) : List Sem :=
   (v.applicable n).map (·.exponent)
+
+@[simp] theorem mem_licensed : s ∈ licensed v n ↔ ∃ i ∈ v, Applies i n ∧ i.exponent = s := by
+  simp [licensed, and_assoc]
+
+theorem licensed_subset_licensed (h : n ⊆ n') : licensed v n ⊆ licensed v n' := fun s hs ↦ by
+  obtain ⟨i, hi, hin, rfl⟩ := mem_licensed.1 hs
+  exact mem_licensed.2 ⟨i, hi, VocabularyItem.applies_mono hin h, rfl⟩
+
+theorem mem_licensed_of_subsetPrinciple (h : subsetPrinciple v n = some s) :
+    s ∈ licensed v n := by
+  obtain ⟨i, hi, rfl, hin⟩ := subsetPrinciple_winner_mem h
+  exact mem_licensed.2 ⟨i, hi, hin, rfl⟩
+
+end Licensed
+
+/-! ### v allosemy -/
+
+/-- The contentful alloseme of v, which introduces the event variable. -/
+inductive Verbalizer.Contentful where
+  | eventive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The allosemes of v. Under the zero alloseme the verbalizer of a deverbal noun contributes
+nothing, as on the referential reading of *observation*. -/
+abbrev Verbalizer.Alloseme := WithZero Verbalizer.Contentful
+
+/-- v interpreted as in the verbal domain. -/
+@[match_pattern] def Verbalizer.Alloseme.eventive : Verbalizer.Alloseme := WithZero.coe .eventive
 
 /-- The alloseme vocabulary of v. The eventive alloseme requires an eventive complement and the
 zero alloseme is the elsewhere case. -/
 def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
-  [⟨(complement {.eventive}).toFinset, .eventive⟩, ∅ ⟷ .zero]
+  [⟨(complement {.eventive}).toFinset, .eventive⟩, ∅ ⟷ 0]
 
 /-! ### n allosemy -/
 
-/-- The contentful allosemes of n. The relational, sortal and alienator allosemes attach to
-roots; the deverbal ones have their denotations in `Studies/Benz2025.lean`. -/
+/-- The contentful allosemes of n over a verbal base. -/
 inductive Nominalizer.Contentful where
-  | relational    -- introduces a relation (body-part-of)
-  | sortal        -- bare categorization
-  | alienator     -- existentially closes a possessor
-  | content       -- propositional content (CCN reading)
-  | simpleEvent   -- picks out entities equal to an event (SEN)
-  | result        -- picks out the entity an event produced
-  | state         -- picks out states
-  | entity        -- picks out entities, no event connection
+  /-- Propositional content, the reading of a content nominal. -/
+  | content
+  /-- Picks out the entities that are events, the reading of a simple event nominal. -/
+  | simpleEvent
+  /-- Picks out the entity an event produced. -/
+  | result
+  /-- Picks out states. -/
+  | state
+  /-- Picks out entities with no connection to an event. -/
+  | entity
   deriving DecidableEq, Repr, Fintype
 
-/-- The allosemes of n. -/
-abbrev Nominalizer.Alloseme := Allosemy.Alloseme Nominalizer.Contentful
+/-- The allosemes of n. Under the zero alloseme the noun inherits the meaning of the verb. -/
+abbrev Nominalizer.Alloseme := WithZero Nominalizer.Contentful
 
 namespace Nominalizer.Alloseme
 
-@[match_pattern] def relational : Nominalizer.Alloseme := Allosemy.Alloseme.of .relational
-@[match_pattern] def sortal : Nominalizer.Alloseme := Allosemy.Alloseme.of .sortal
-@[match_pattern] def alienator : Nominalizer.Alloseme := Allosemy.Alloseme.of .alienator
-@[match_pattern] def content : Nominalizer.Alloseme := Allosemy.Alloseme.of .content
-@[match_pattern] def simpleEvent : Nominalizer.Alloseme := Allosemy.Alloseme.of .simpleEvent
-@[match_pattern] def result : Nominalizer.Alloseme := Allosemy.Alloseme.of .result
-@[match_pattern] def state : Nominalizer.Alloseme := Allosemy.Alloseme.of .state
-@[match_pattern] def entity : Nominalizer.Alloseme := Allosemy.Alloseme.of .entity
-
-/-- The zero alloseme of n, under which the noun inherits the verb meaning (CEN). -/
-@[match_pattern] def zero : Nominalizer.Alloseme := Allosemy.Alloseme.zero
+@[match_pattern] def content : Nominalizer.Alloseme := WithZero.coe .content
+@[match_pattern] def simpleEvent : Nominalizer.Alloseme := WithZero.coe .simpleEvent
+@[match_pattern] def result : Nominalizer.Alloseme := WithZero.coe .result
+@[match_pattern] def state : Nominalizer.Alloseme := WithZero.coe .state
+@[match_pattern] def entity : Nominalizer.Alloseme := WithZero.coe .entity
 
 end Nominalizer.Alloseme
 
-/-- The alloseme vocabulary of n. The deverbal allosemes require a verbal complement, the CEN and
-result allosemes an eventive one, and the others are unconditioned. -/
+/-- The alloseme vocabulary of n. Every alloseme requires a verbal complement, and the zero and
+result allosemes an eventive one. -/
 def Nominalizer.vocabulary : RuleSet (VocabularyItem Feature Nominalizer.Alloseme) :=
-  [∅ ⟷ .relational, ∅ ⟷ .sortal, ∅ ⟷ .alienator,
-    ⟨(complement {.cat .v}).toFinset, .content⟩,
-    ⟨(complement {.cat .v, .eventive}).toFinset, .zero⟩,
+  [⟨(complement {.cat .v}).toFinset, .content⟩,
+    ⟨(complement {.cat .v, .eventive}).toFinset, 0⟩,
     ⟨(complement {.cat .v}).toFinset, .simpleEvent⟩,
     ⟨(complement {.cat .v, .eventive}).toFinset, .result⟩,
     ⟨(complement {.cat .v}).toFinset, .state⟩,
@@ -213,131 +160,93 @@ def Nominalizer.vocabulary : RuleSet (VocabularyItem Feature Nominalizer.Allosem
 
 /-! ### Voice allosemy -/
 
-/-- The θ-assigning allosemes of Voice. The complement fixes the role, since the holder cannot
-combine with an action predicate nor the agent with a stative one. -/
+/-- The θ-assigning allosemes of Voice. -/
 inductive Voice.Contentful where
-  | agent     -- combines with dynamic action complements
-  | holder    -- combines with stative complements
-  | engineer  -- ECM *have*: saturated eventive VoiceP complement
+  /-- Relates an agent to an agentive, dynamic event. -/
+  | agent
+  /-- Relates a holder to a state. -/
+  | holder
+  /-- Relates to an event the one who brought it about through another agent, the subject of
+  *have* over an eventive VoiceP. -/
+  | engineer
   deriving DecidableEq, Repr, Fintype
 
-/-- The allosemes of Voice. The zero alloseme is the expletive of relational and light-verb
-*have*. -/
-abbrev Voice.Alloseme := Allosemy.Alloseme Voice.Contentful
+/-- The allosemes of Voice. The zero alloseme is expletive Voice, which assigns no θ-role and
+passes the meaning of its complement up, as with relational *have*. -/
+abbrev Voice.Alloseme := WithZero Voice.Contentful
 
 namespace Voice.Alloseme
 
-@[match_pattern] def agent : Voice.Alloseme := Allosemy.Alloseme.of .agent
-@[match_pattern] def holder : Voice.Alloseme := Allosemy.Alloseme.of .holder
-@[match_pattern] def engineer : Voice.Alloseme := Allosemy.Alloseme.of .engineer
-
-/-- The zero alloseme of Voice, which assigns no θ-role. -/
-@[match_pattern] def expletive : Voice.Alloseme := Allosemy.Alloseme.zero
+@[match_pattern] def agent : Voice.Alloseme := WithZero.coe .agent
+@[match_pattern] def holder : Voice.Alloseme := WithZero.coe .holder
+@[match_pattern] def engineer : Voice.Alloseme := WithZero.coe .engineer
 
 end Voice.Alloseme
 
-/-- The alloseme assigns a thematic role to the external argument;
-only the expletive identity does not. -/
-def Voice.Alloseme.AssignsTheta (a : Voice.Alloseme) : Prop :=
-  a ≠ .expletive
-
-instance : DecidablePred Voice.Alloseme.AssignsTheta :=
-  fun _ => inferInstanceAs (Decidable (_ ≠ _))
-
-/-- The alloseme vocabulary of Voice. The engineer takes a saturated eventive complement, the
-holder a stative one, and the expletive is the elsewhere case. -/
+/-- The alloseme vocabulary of Voice. The agent takes an agentive complement and the holder a
+stative one; the engineer takes the copula over an eventive VoiceP; expletive Voice is the
+elsewhere case. -/
 def Voice.vocabulary : RuleSet (VocabularyItem Feature Voice.Alloseme) :=
-  [⟨(complement {.cat .v, .eventive}).toFinset, .engineer⟩,
-    ⟨(complement {.stative}).toFinset, .holder⟩, ∅ ⟷ .expletive]
-
-/-- The Voice alloseme selected from `Voice.vocabulary` by the complement's features. -/
-def Voice.Alloseme.fromComplement (fs : Finset Feature) : Voice.Alloseme :=
-  (subsetPrinciple Voice.vocabulary (complement fs)).getD .expletive
-
-/-- Eventive-VoiceP complement selects engineer. -/
-example : Voice.Alloseme.fromComplement {.cat .v, .eventive} = .engineer := by decide
-
-/-- Stative complement selects holder. -/
-example : Voice.Alloseme.fromComplement {.stative} = .holder := by decide
-
-/-- Neither condition met selects the elsewhere expletive. -/
-example : Voice.Alloseme.fromComplement ∅ = .expletive := by decide
-
-/-- Bridge to the syntactic Voice heads. Syntactically all four allosemes realize an
-    active Voice with a DP specifier; the θ-role distinction is resolved at LF. The
-    map picks the head matching each alloseme's syntactic behavior. -/
-def Voice.Alloseme.toHead : Voice.Alloseme → Head
-  | .agent    => Minimalist.Voice.agentive
-  | .holder   => Minimalist.Voice.experiencer
-  | .engineer => Minimalist.Voice.agentive
-  | .expletive => Minimalist.Voice.anticausative
-
-/-- The bridge respects θ-assignment: an alloseme assigns a thematic
-    role iff its syntactic head does. -/
-theorem Voice.theta_consistent (a : Voice.Alloseme) :
-    a.AssignsTheta ↔ a.toHead.AssignsTheta := by
-  revert a; decide
+  [⟨(⟨∅, [{.cat .v}, {.cat .Voice, .eventive}], []⟩ : Neighborhood (Finset Feature)).toFinset,
+      .engineer⟩,
+    ⟨(complement {.agentive}).toFinset, .agent⟩,
+    ⟨(complement {.stative}).toFinset, .holder⟩, ∅ ⟷ 0]
 
 /-! ### Nominalization readings -/
 
-/-- The readings of a deverbal nominalization. -/
+/-- The readings of a deverbal nominalization: the complex event, simple event and result
+nominals of [grimshaw-1990], with the states and entities of [wood-2023] and the content reading of
+[benz-2025]. -/
 inductive NominalizationReading where
-  | complexEvent   -- CEN: full verbal event reading with argument structure
-  | simpleEvent    -- SEN: event reading without argument structure
-  | result         -- entity whose existence results from an event
-  | simpleState    -- state reading
-  | simpleEntity   -- entity reading, no event connection
-  | content        -- CCN: propositional content, takes a CP complement
+  /-- The complex event reading, with the verb's event and its argument structure. -/
+  | complexEvent
+  /-- The simple event reading, an event without argument structure. -/
+  | simpleEvent
+  /-- An entity whose existence results from an event. -/
+  | result
+  /-- A state. -/
+  | simpleState
+  /-- An entity with no connection to an event. -/
+  | simpleEntity
+  /-- Propositional content, with a clausal complement. -/
+  | content
   deriving DecidableEq, Repr, Fintype
 
-/-- The reading of a nominalization from the allosemes of v and n. The CEN
-pairs eventive v with zero n, the noun inheriting the verb meaning; the
-simple readings pair zero v with the event, state, and entity allosemes of
-n. The result and content readings admit both derivations — v vacuous, or
-the eventive component from v — and the choice is immaterial for what the
-nominal describes (`Benz2025.result_options_pred_agree`,
-`Benz2025.content_options_agree`); content needs no verbal source at all.
-The non-deverbal allosemes yield no nominalization reading: their
-semantics is the relationalizer and the closure of its possessor slot. -/
-def readingFromAllosemes : Verbalizer.Alloseme → Nominalizer.Alloseme → Option NominalizationReading
-  | .eventive, .zero        => some .complexEvent
-  | .eventive, .result      => some .result   -- both-heads-interpreted option
-  | .eventive, .content     => some .content  -- both-heads-interpreted option
-  | .zero,     .simpleEvent => some .simpleEvent
-  | .zero,     .state       => some .simpleState
-  | .zero,     .entity      => some .simpleEntity
-  | .zero,     .result      => some .result   -- v-vacuous option
-  | .zero,     .content     => some .content  -- v-vacuous option
-  | _,         .sortal      => none
-  | _,         .relational  => none
-  | _,         .alienator   => none
-  | .zero,     .zero        => none
-  | .eventive, .simpleEvent => none
-  | .eventive, .state       => none
-  | .eventive, .entity      => none
+namespace Nominalizer.Alloseme
 
-/-! ### The `Realization.Interpreted` view
+/-- The reading a deverbal noun has by its alloseme of n: the complex event reading under the
+zero alloseme, and otherwise the reading the alloseme contributes. -/
+def reading : Nominalizer.Alloseme → NominalizationReading
+  | 0 => .complexEvent
+  | .content => .content
+  | .simpleEvent => .simpleEvent
+  | .result => .result
+  | .state => .simpleState
+  | .entity => .simpleEntity
 
-An allosemic head is a List-3 object: a single morpheme whose
-interpretation is resolved in context by the shared exponence engine.
-`Realization.Interpreted` is exactly that carrier — an opaque index with
-a contextual realization `interp` by readings — with an empty List-2 form side, since
-allosemy is meaning-only. Contextual meaning variation, Benz's core
-claim that allosemy is allomorphy's LF analogue, is then literally
-`Realization.Interpreted.IsAllosemous`. -/
+/-- The readings of a deverbal noun are the allosemes of its n. -/
+def readingEquiv : Nominalizer.Alloseme ≃ NominalizationReading where
+  toFun := reading
+  invFun
+    | .complexEvent => 0
+    | .content => .content
+    | .simpleEvent => .simpleEvent
+    | .result => .result
+    | .simpleState => .state
+    | .simpleEntity => .entity
+  left_inv := by rintro (_ | ⟨⟨⟩⟩) <;> rfl
+  right_inv r := by cases r <;> rfl
 
-/-- The allosemy engine as a `Realization.Interpreted` view, whose one head is interpreted as the
-alloseme the Subset Principle picks. -/
-def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
-    Morphology.Realization.Interpreted Unit (Neighborhood (Finset Feature)) Unit Sem where
-  realize _ _ := ∅
-  interp := toRealization v fun _ n ↦ n
+@[simp] theorem coe_readingEquiv : ⇑readingEquiv = reading := rfl
 
-/-- The verbal categorizer is allosemous, eventive under an eventive complement and zero
-elsewhere. -/
-theorem Verbalizer.isAllosemous :
-    (toInterpreted Verbalizer.vocabulary).IsAllosemous () :=
-  Morphology.Realization.isSuppletive_of_mem (c := complement {.eventive}) (c' := ∅)
-    (f := .eventive) (f' := .zero) (by decide) (by decide) (by decide)
+@[simp] theorem reading_zero : reading 0 = .complexEvent := rfl
+
+theorem reading_injective : Function.Injective reading := readingEquiv.injective
+
+@[simp] theorem reading_eq_complexEvent_iff {a : Nominalizer.Alloseme} :
+    a.reading = .complexEvent ↔ a = 0 :=
+  reading_injective.eq_iff' reading_zero
+
+end Nominalizer.Alloseme
 
 end DistributedMorphology.Allosemy

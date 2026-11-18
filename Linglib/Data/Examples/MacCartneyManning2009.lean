@@ -24,7 +24,7 @@ def manage : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "+/−"), ("deletion", "≡"), ("insertion", "≡"), ("hypothesis", "he escaped"), ("monotonicity", "up")] }
 
@@ -37,7 +37,7 @@ def force : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "+/◦"), ("deletion", "⊏"), ("insertion", "⊐"), ("hypothesis", "he sold"), ("monotonicity", "up")] }
 
@@ -50,7 +50,7 @@ def permit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "◦/−"), ("deletion", "⊐"), ("insertion", "⊏"), ("hypothesis", "he lived"), ("monotonicity", "up")] }
 
@@ -63,7 +63,7 @@ def forget : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "−/+"), ("deletion", "^"), ("insertion", "^"), ("hypothesis", "he paid"), ("monotonicity", "down")] }
 
@@ -76,7 +76,7 @@ def refuse : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "−/◦"), ("deletion", "|"), ("insertion", "|"), ("hypothesis", "he fought"), ("monotonicity", "down")] }
 
@@ -89,7 +89,7 @@ def hesitate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "◦/+"), ("deletion", "⌣"), ("insertion", "⌣"), ("hypothesis", "he asked"), ("monotonicity", "down")] }
 
@@ -102,7 +102,7 @@ def admit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "+/+"), ("deletion", "⊏"), ("insertion", "⊐"), ("hypothesis", "he knew"), ("monotonicity", "non")] }
 
@@ -115,7 +115,7 @@ def pretend : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "−/−"), ("deletion", "|"), ("insertion", "|"), ("hypothesis", "he was sick"), ("monotonicity", "non")] }
 
@@ -128,7 +128,7 @@ def want : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "◦/◦"), ("deletion", "#"), ("insertion", "#"), ("hypothesis", "he flew"), ("monotonicity", "non")] }
 
@@ -141,7 +141,7 @@ def permit_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "◦/−"), ("relation", "⊏"), ("hypothesis", "he didn't live")] }
 
@@ -154,7 +154,7 @@ def hesitate_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "◦/+"), ("relation", "|"), ("hypothesis", "he didn't ask")] }
 
@@ -167,7 +167,7 @@ def admit_neg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("signature", "+/+"), ("relation", "|"), ("hypothesis", "he didn't know")] }
 

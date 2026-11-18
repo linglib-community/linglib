@@ -25,7 +25,7 @@ def neg1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "teksti=viesti-ä")] }
 
@@ -39,7 +39,7 @@ def neg2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "Leena-a")] }
 
@@ -53,7 +53,7 @@ def neg3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "mieh-i-ä")] }
 
@@ -67,7 +67,7 @@ def neg4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "finite"), ("object", "hän-tä")] }
 
@@ -81,7 +81,7 @@ def ex_2a_read_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "kirja-a")] }
 
@@ -95,7 +95,7 @@ def ex_2a_read_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "kirja-n")] }
 
@@ -109,7 +109,7 @@ def ex_2a_drive_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "auto-a")] }
 
@@ -123,7 +123,7 @@ def ex_2a_drive_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "auto-n")] }
 
@@ -137,7 +137,7 @@ def ex_2a_shoot_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "lintu-a")] }
 
@@ -151,7 +151,7 @@ def ex_2a_shoot_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "linnu-n")] }
 
@@ -165,7 +165,7 @@ def ex_2b_love : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "mies-tä")] }
 
@@ -179,7 +179,7 @@ def ex_2b_interest : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "finite"), ("object", "minu-a")] }
 
@@ -193,7 +193,7 @@ def ex_2b_fear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "indefinite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "koir-i-a")] }
 
@@ -207,7 +207,7 @@ def ex_3_icecream_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "jäätelö-ä")] }
 
@@ -221,7 +221,7 @@ def ex_3_icecream_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "jäätelö-n")] }
 
@@ -235,7 +235,7 @@ def ex_3_beer_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "olut-ta")] }
 
@@ -249,7 +249,7 @@ def ex_3_beer_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "olue-n")] }
 
@@ -263,7 +263,7 @@ def ex_3_people_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "ihmis-i-ä")] }
 
@@ -277,7 +277,7 @@ def ex_3_people_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "ihmise-t")] }
 
@@ -291,7 +291,7 @@ def ex_3_guests_part : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "viera-i-ta")] }
 
@@ -305,7 +305,7 @@ def ex_3_guests_tot : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "vieraa-t")] }
 
@@ -319,7 +319,7 @@ def tot_message : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "teksti=viesti-n")] }
 
@@ -333,7 +333,7 @@ def tot_milk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "+maido-n")] }
 
@@ -347,7 +347,7 @@ def tot_car_imp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "imperative"), ("object", "auto")] }
 
@@ -361,7 +361,7 @@ def tot_computers : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "passive"), ("object", "Tiet>o=konee-t")] }
 
@@ -375,7 +375,7 @@ def tot_cars : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "auto-t")] }
 
@@ -389,7 +389,7 @@ def acc_took : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "finite"), ("object", "minu-t")] }
 
@@ -403,7 +403,7 @@ def acc_take_imp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "imperative"), ("object", "minu-t")] }
 
@@ -417,7 +417,7 @@ def acc_taken : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "passive"), ("object", "Minu-t")] }
 
@@ -431,7 +431,7 @@ def acc_whom : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("number", "singular"), ("clause", "finite"), ("object", "Kene-t")] }
 
@@ -445,7 +445,7 @@ def pl_articles : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "finite"), ("object", "artikkeli-t")] }
 
@@ -459,7 +459,7 @@ def pl_children_imp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "imperative"), ("object", "lapse-t")] }
 
@@ -473,7 +473,7 @@ def pl_children_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "plural"), ("clause", "passive"), ("object", "Lapse-t")] }
 
@@ -487,7 +487,7 @@ def num_articles : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("number", "singular"), ("clause", "finite"), ("object", "kaksi")] }
 
@@ -501,7 +501,7 @@ def num_children_imp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("number", "singular"), ("clause", "imperative"), ("object", "kolme")] }
 
@@ -515,7 +515,7 @@ def num_children_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("number", "singular"), ("clause", "passive"), ("object", "Kolme")] }
 
@@ -529,7 +529,7 @@ def sg_camera : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "digi=kamera-n")] }
 
@@ -543,7 +543,7 @@ def sg_child : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "lapse-n")] }
 
@@ -557,7 +557,7 @@ def sg_window : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "finite"), ("object", "ikkuna-n")] }
 
@@ -571,7 +571,7 @@ def sg_paper_imp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "imperative"), ("object", "lehti")] }
 
@@ -585,7 +585,7 @@ def sg_book_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "passive"), ("object", "kirja")] }
 
@@ -599,7 +599,7 @@ def sg_dog_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "passive"), ("object", "Koira")] }
 
@@ -613,7 +613,7 @@ def sg_book_must : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "obligation"), ("object", "kirja")] }
 
@@ -627,7 +627,7 @@ def sg_house_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "infinitival"), ("object", "talo")] }
 

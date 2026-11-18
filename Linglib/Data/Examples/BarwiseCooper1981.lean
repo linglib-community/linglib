@@ -24,7 +24,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("np", "proper name")] }
 
@@ -37,7 +37,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some")] }
 
@@ -50,7 +50,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every")] }
 
@@ -63,7 +63,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most")] }
 
@@ -76,7 +76,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("class", "weak")] }
 
@@ -89,7 +89,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there-sentence")] }
 
@@ -102,7 +102,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("class", "weak")] }
 
@@ -115,7 +115,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("class", "strong")] }
 
@@ -128,7 +128,7 @@ def ex_24c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("class", "strong")] }
 
@@ -141,7 +141,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("monotonicity", "increasing")] }
 
@@ -154,7 +154,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("monotonicity", "decreasing")] }
 
@@ -167,7 +167,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most"), ("class", "positive strong")] }
 
@@ -180,7 +180,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("class", "positive strong")] }
 
@@ -193,7 +193,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "neither"), ("class", "negative strong")] }
 
@@ -206,7 +206,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("class", "weak"), ("felicity", "infelicitous")] }
 
@@ -219,7 +219,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("class", "weak"), ("felicity", "infelicitous")] }
 
@@ -232,7 +232,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "few"), ("class", "weak"), ("felicity", "infelicitous")] }
 
@@ -245,7 +245,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no")] }
 
@@ -258,7 +258,7 @@ def ex_37_prime_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("construction", "there-sentence")] }
 
@@ -271,7 +271,7 @@ def ex_37_prime_prime_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no")] }
 
@@ -284,7 +284,7 @@ def ex_4_10_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "increasing + increasing")] }
 
@@ -297,7 +297,7 @@ def ex_4_10_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "decreasing + decreasing")] }
 
@@ -310,7 +310,7 @@ def ex_4_10_32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "mixed")] }
 
@@ -323,7 +323,7 @@ def ex_4_10_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "sentential")] }
 
@@ -336,7 +336,7 @@ def ex_4_10_33a_prime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "mixed")] }
 
@@ -349,7 +349,7 @@ def ex_4_10_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "but, mixed")] }
 
@@ -362,7 +362,7 @@ def ex_4_10_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "but, increasing + increasing")] }
 
@@ -375,7 +375,7 @@ def ex_4_10_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "iterated and")] }
 
@@ -388,7 +388,7 @@ def ex_4_10_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conjunction", "iterated but")] }
 
@@ -401,7 +401,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "every"), ("negation", "NP")] }
 
@@ -414,7 +414,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "all"), ("negation", "NP")] }
 
@@ -427,7 +427,7 @@ def ex_40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "a"), ("negation", "NP")] }
 
@@ -440,7 +440,7 @@ def ex_40d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "one"), ("negation", "NP")] }
 
@@ -453,7 +453,7 @@ def ex_40e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "many"), ("negation", "NP")] }
 
@@ -466,7 +466,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "each"), ("negation", "NP")] }
 
@@ -479,7 +479,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "some"), ("negation", "NP")] }
 
@@ -492,7 +492,7 @@ def ex_41c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("np", "proper name"), ("negation", "NP")] }
 
@@ -505,7 +505,7 @@ def ex_41d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "the"), ("negation", "NP")] }
 
@@ -518,7 +518,7 @@ def ex_41e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "few"), ("negation", "NP"), ("monotonicity", "decreasing")] }
 
@@ -531,7 +531,7 @@ def ex_41f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "no"), ("negation", "NP"), ("monotonicity", "decreasing")] }
 
@@ -544,7 +544,7 @@ def ex_41g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most"), ("negation", "NP")] }
 
@@ -557,7 +557,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most"), ("negation", "sentential")] }
 
@@ -570,7 +570,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "at least half")] }
 
@@ -583,7 +583,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every man left", .acceptable)]
     paperFeatures := [("determiner", "some")] }
 
@@ -596,7 +596,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some man left", .acceptable)]
     paperFeatures := [("determiner", "every")] }
 
@@ -609,7 +609,7 @@ def ex_44c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "most")] }
 
@@ -622,7 +622,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "many")] }
 
@@ -635,7 +635,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("determiner", "quite a few")] }
 

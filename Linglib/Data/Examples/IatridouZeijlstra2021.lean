@@ -24,7 +24,7 @@ def iz2021_s10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("ai", "cancelable")] }
 
@@ -37,7 +37,7 @@ def iz2021_s10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("ai", "cancelable")] }
 
@@ -50,7 +50,7 @@ def iz2021_s11b : Datum :=
     glossedTokens := []
     context := "A: Has the patient ever had a seizure?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("continuation", "ignorance"), ("section", "1"), ("ai", "canceled")] }
 
@@ -63,7 +63,7 @@ def iz2021_s12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("continuation", "denial"), ("section", "1"), ("ai", "canceled")] }
 
@@ -76,7 +76,7 @@ def iz2021_s22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("continuation", "ignorance"), ("section", "1"), ("ai", "not cancelable")] }
 
@@ -89,7 +89,7 @@ def iz2021_s22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("continuation", "denial"), ("section", "1"), ("ai", "not cancelable")] }
 
@@ -102,7 +102,7 @@ def iz2021_s23 : Datum :=
     glossedTokens := []
     context := "It is 2016; a pilot licence requires 5 seizure-free years; Sue's last seizure was in 2007."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("ai", "the last seizure need not be at the LB")] }
 
@@ -116,7 +116,7 @@ def iz2021_s24a : Datum :=
     context := "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -130,7 +130,7 @@ def iz2021_s24c : Datum :=
     context := "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("ai", "at the LB: conveys that Fred drove around the ladder accident")] }
 
@@ -143,7 +143,7 @@ def iz2021_s25 : Datum :=
     glossedTokens := []
     context := "Fred is 30 and has never driven."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("pts", "exceeds the subject's lifetime")] }
 
@@ -157,7 +157,7 @@ def iz2021_s26 : Datum :=
     context := "Fred is 40 and has never driven."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("ai", "not cancelable")] }
 
@@ -170,7 +170,7 @@ def iz2021_s27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("reading", "modal subordination, (29a)")] }
 
@@ -183,7 +183,7 @@ def iz2021_s31a : Datum :=
     glossedTokens := []
     context := "I expected to hear that Mary had not been there in the last few weeks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("bei", "PTS longer than expected")] }
 
@@ -196,7 +196,7 @@ def iz2021_s31b : Datum :=
     glossedTokens := []
     context := "I expected to hear that Mary had not been there in the last few weeks."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("bei", "PTS shorter than expected")] }
 
@@ -209,7 +209,7 @@ def iz2021_s32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("bei", "violated")] }
 
@@ -222,7 +222,7 @@ def iz2021_s32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("bei", "satisfied")] }
 
@@ -235,7 +235,7 @@ def iz2021_s33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("bei", "violated")] }
 
@@ -248,7 +248,7 @@ def iz2021_s36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("rb", "before the utterance time, past perfect")] }
 
@@ -261,7 +261,7 @@ def iz2021_s37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -274,7 +274,7 @@ def iz2021_s40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "unlicensed")] }
 
@@ -287,7 +287,7 @@ def iz2021_s40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "antiadditive licensor")] }
 
@@ -300,7 +300,7 @@ def iz2021_s41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "strong: not licensed by few")] }
 
@@ -313,7 +313,7 @@ def iz2021_s42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "not an NPI")] }
 
@@ -326,7 +326,7 @@ def iz2021_s52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("until", "imperfective predicate, throughout the UTS")] }
 
@@ -339,7 +339,7 @@ def iz2021_s54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("inference", "cancelable")] }
 
@@ -352,7 +352,7 @@ def iz2021_s56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("readings", "throughout-not; not-throughout")] }
 
@@ -365,7 +365,7 @@ def iz2021_s58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("until", "perfective predicate without negation")] }
 
@@ -378,7 +378,7 @@ def iz2021_s59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "not cancelable")] }
 
@@ -391,7 +391,7 @@ def iz2021_s60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "not cancelable")] }
 
@@ -404,7 +404,7 @@ def iz2021_s61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "none")] }
 
@@ -415,9 +415,11 @@ def iz2021_s62 : Datum :=
     language := "mode1248"
     primaryText := "I prigipisa dhen kimithike para monon ta mesanixta."
     glossedTokens := [("I", "the"), ("prigipisa", "princess"), ("dhen", "not"), ("kimithike", "slept.PRF.3S"), ("para", "but"), ("monon", "only"), ("ta", "the"), ("mesanixta", "midnight")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'r', 'i', 'g', 'i', 'p', 'i', 's', 'a'], ['p', 'r', 'i', 'n', 'c', 'e', 's', 's'], [⟨['p', 'r', 'i', 'g', 'i', 'p', 'i', 's', 'a'], ['p', 'r', 'i', 'n', 'c', 'e', 's', 's'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['n', 'o', 't'], [⟨['d', 'h', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 'i', 'm', 'i', 't', 'h', 'i', 'k', 'e'], ['s', 'l', 'e', 'p', 't', '.', 'P', 'R', 'F', '.', '3', 'S'], [⟨['k', 'i', 'm', 'i', 't', 'h', 'i', 'k', 'e'], ['s', 'l', 'e', 'p', 't', '.', 'P', 'R', 'F', '.', '3', 'S'], none⟩]⟩, ⟨['p', 'a', 'r', 'a'], ['b', 'u', 't'], [⟨['p', 'a', 'r', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['m', 'o', 'n', 'o', 'n'], ['o', 'n', 'l', 'y'], [⟨['m', 'o', 'n', 'o', 'n'], ['o', 'n', 'l', 'y'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['m', 'e', 's', 'a', 'n', 'i', 'x', 't', 'a'], ['m', 'i', 'd', 'n', 'i', 'g', 'h', 't'], [⟨['m', 'e', 's', 'a', 'n', 'i', 'x', 't', 'a'], ['m', 'i', 'd', 'n', 'i', 'g', 'h', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("source", "Giannakidou 2002:92"), ("analysis", "exceptive para mono, not until-p")] }
 
@@ -428,9 +430,11 @@ def iz2021_s64 : Datum :=
     language := "mode1248"
     primaryText := "Dhen vlepo para mono tin Miranda."
     glossedTokens := [("Dhen", "NEG"), ("vlepo", "see.1SG"), ("para", "PARA"), ("mono", "MONO"), ("tin", "the"), ("Miranda", "Miranda")]
+    glossedWords := [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['v', 'l', 'e', 'p', 'o'], ['s', 'e', 'e', '.', '1', 'S', 'G'], [⟨['v', 'l', 'e', 'p', 'o'], ['s', 'e', 'e', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], [⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], none⟩]⟩, ⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], [⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], none⟩]⟩, ⟨['t', 'i', 'n'], ['t', 'h', 'e'], [⟨['t', 'i', 'n'], ['t', 'h', 'e'], none⟩]⟩, ⟨['M', 'i', 'r', 'a', 'n', 'd', 'a'], ['M', 'i', 'r', 'a', 'n', 'd', 'a'], [⟨['M', 'i', 'r', 'a', 'n', 'd', 'a'], ['M', 'i', 'r', 'a', 'n', 'd', 'a'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive on an argument")] }
 
@@ -441,9 +445,11 @@ def iz2021_s70 : Datum :=
     language := "mode1248"
     primaryText := "Dhen kimate para mono otan kani krio."
     glossedTokens := [("Dhen", "NEG"), ("kimate", "sleeps"), ("para", "PARA"), ("mono", "MONO"), ("otan", "when"), ("kani", "makes"), ("krio", "cold")]
+    glossedWords := [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['k', 'i', 'm', 'a', 't', 'e'], ['s', 'l', 'e', 'e', 'p', 's'], [⟨['k', 'i', 'm', 'a', 't', 'e'], ['s', 'l', 'e', 'e', 'p', 's'], none⟩]⟩, ⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], [⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], none⟩]⟩, ⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], [⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], none⟩]⟩, ⟨['o', 't', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['o', 't', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['k', 'a', 'n', 'i'], ['m', 'a', 'k', 'e', 's'], [⟨['k', 'a', 'n', 'i'], ['m', 'a', 'k', 'e', 's'], none⟩]⟩, ⟨['k', 'r', 'i', 'o'], ['c', 'o', 'l', 'd'], [⟨['k', 'r', 'i', 'o'], ['c', 'o', 'l', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive with an imperfective predicate")] }
 
@@ -454,9 +460,11 @@ def iz2021_s74 : Datum :=
     language := "mode1248"
     primaryText := "Dhen thimose para mono proxthes, htes to vradhi ke simera to proi."
     glossedTokens := [("Dhen", "NEG"), ("thimose", "got.angry"), ("para", "PARA"), ("mono", "MONO"), ("proxthes", "day.before.yesterday"), ("htes", "yesterday"), ("to", "the"), ("vradhi", "evening"), ("ke", "and"), ("simera", "today"), ("to", "the"), ("proi", "morning")]
+    glossedWords := [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['t', 'h', 'i', 'm', 'o', 's', 'e'], ['g', 'o', 't', '.', 'a', 'n', 'g', 'r', 'y'], [⟨['t', 'h', 'i', 'm', 'o', 's', 'e'], ['g', 'o', 't', '.', 'a', 'n', 'g', 'r', 'y'], none⟩]⟩, ⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], [⟨['p', 'a', 'r', 'a'], ['P', 'A', 'R', 'A'], none⟩]⟩, ⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], [⟨['m', 'o', 'n', 'o'], ['M', 'O', 'N', 'O'], none⟩]⟩, ⟨['p', 'r', 'o', 'x', 't', 'h', 'e', 's'], ['d', 'a', 'y', '.', 'b', 'e', 'f', 'o', 'r', 'e', '.', 'y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['p', 'r', 'o', 'x', 't', 'h', 'e', 's'], ['d', 'a', 'y', '.', 'b', 'e', 'f', 'o', 'r', 'e', '.', 'y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩, ⟨['h', 't', 'e', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['h', 't', 'e', 's'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['v', 'r', 'a', 'd', 'h', 'i'], ['e', 'v', 'e', 'n', 'i', 'n', 'g'], [⟨['v', 'r', 'a', 'd', 'h', 'i'], ['e', 'v', 'e', 'n', 'i', 'n', 'g'], none⟩]⟩, ⟨['k', 'e'], ['a', 'n', 'd'], [⟨['k', 'e'], ['a', 'n', 'd'], none⟩]⟩, ⟨['s', 'i', 'm', 'e', 'r', 'a'], ['t', 'o', 'd', 'a', 'y'], [⟨['s', 'i', 'm', 'e', 'r', 'a'], ['t', 'o', 'd', 'a', 'y'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'r', 'o', 'i'], ['m', 'o', 'r', 'n', 'i', 'n', 'g'], [⟨['p', 'r', 'o', 'i'], ['m', 'o', 'r', 'n', 'i', 'n', 'g'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive with three temporal arguments; no English counterpart with until")] }
 
@@ -467,9 +475,11 @@ def iz2021_s75a : Datum :=
     language := "mode1248"
     primaryText := "Mexri tis 5 to apojevma, o Yanis iche idhi pchi 3 bires."
     glossedTokens := [("Mexri", "MEXRI"), ("tis", "the"), ("5", "5"), ("to", "the"), ("apojevma", "afternoon"), ("o", "the"), ("Yanis", "John"), ("iche", "had"), ("idhi", "already"), ("pchi", "drunk"), ("3", "3"), ("bires", "beers")]
+    glossedWords := [⟨['M', 'e', 'x', 'r', 'i'], ['M', 'E', 'X', 'R', 'I'], [⟨['M', 'e', 'x', 'r', 'i'], ['M', 'E', 'X', 'R', 'I'], none⟩]⟩, ⟨['t', 'i', 's'], ['t', 'h', 'e'], [⟨['t', 'i', 's'], ['t', 'h', 'e'], none⟩]⟩, ⟨['5'], ['5'], [⟨['5'], ['5'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['a', 'p', 'o', 'j', 'e', 'v', 'm', 'a'], ['a', 'f', 't', 'e', 'r', 'n', 'o', 'o', 'n'], [⟨['a', 'p', 'o', 'j', 'e', 'v', 'm', 'a'], ['a', 'f', 't', 'e', 'r', 'n', 'o', 'o', 'n'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['Y', 'a', 'n', 'i', 's'], ['J', 'o', 'h', 'n'], [⟨['Y', 'a', 'n', 'i', 's'], ['J', 'o', 'h', 'n'], none⟩]⟩, ⟨['i', 'c', 'h', 'e'], ['h', 'a', 'd'], [⟨['i', 'c', 'h', 'e'], ['h', 'a', 'd'], none⟩]⟩, ⟨['i', 'd', 'h', 'i'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['i', 'd', 'h', 'i'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['p', 'c', 'h', 'i'], ['d', 'r', 'u', 'n', 'k'], [⟨['p', 'c', 'h', 'i'], ['d', 'r', 'u', 'n', 'k'], none⟩]⟩, ⟨['3'], ['3'], [⟨['3'], ['3'], none⟩]⟩, ⟨['b', 'i', 'r', 'e', 's'], ['b', 'e', 'e', 'r', 's'], [⟨['b', 'i', 'r', 'e', 's'], ['b', 'e', 'e', 'r', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "mexri with a perfective predicate, unlike until-d")] }
 
@@ -480,9 +490,11 @@ def iz2021_s77 : Datum :=
     language := "czec1258"
     primaryText := "Spal dokud jsem neodešla."
     glossedTokens := [("Spal", "slept.IMP.3.M.SG"), ("dokud", "until"), ("jsem", "AUX.PAST.1SG"), ("neodešla", "NEG.left.PFV.3.F.SG")]
+    glossedWords := [⟨['S', 'p', 'a', 'l'], ['s', 'l', 'e', 'p', 't', '.', 'I', 'M', 'P', '.', '3', '.', 'M', '.', 'S', 'G'], [⟨['S', 'p', 'a', 'l'], ['s', 'l', 'e', 'p', 't', '.', 'I', 'M', 'P', '.', '3', '.', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], [⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['j', 's', 'e', 'm'], ['A', 'U', 'X', '.', 'P', 'A', 'S', 'T', '.', '1', 'S', 'G'], [⟨['j', 's', 'e', 'm'], ['A', 'U', 'X', '.', 'P', 'A', 'S', 'T', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], [⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Spal až do jsem neodešla.", .ungrammatical)]
+    contrasts := [("Spal až do jsem neodešla.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud, clausal complement, affirmative imperfective")] }
 
@@ -493,9 +505,11 @@ def iz2021_s78 : Datum :=
     language := "czec1258"
     primaryText := "Spal až do pěti."
     glossedTokens := [("Spal", "slept.IMP.3.M.SG"), ("až do", "until"), ("pěti", "5")]
+    glossedWords := [⟨['S', 'p', 'a', 'l'], ['s', 'l', 'e', 'p', 't', '.', 'I', 'M', 'P', '.', '3', '.', 'M', '.', 'S', 'G'], [⟨['S', 'p', 'a', 'l'], ['s', 'l', 'e', 'p', 't', '.', 'I', 'M', 'P', '.', '3', '.', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['a', 'ž', ' ', 'd', 'o'], ['u', 'n', 't', 'i', 'l'], [⟨['a', 'ž', ' ', 'd', 'o'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['p', 'ě', 't', 'i'], ['5'], [⟨['p', 'ě', 't', 'i'], ['5'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Spal dokud pěti.", .ungrammatical)]
+    contrasts := [("Spal dokud pěti.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "až do, NP complement, affirmative imperfective")] }
 
@@ -506,9 +520,11 @@ def iz2021_s79 : Datum :=
     language := "czec1258"
     primaryText := "Napsal dvě básně, dokud jsem neodešla."
     glossedTokens := [("Napsal", "wrote.PFV.3.M.SG"), ("dvě", "2"), ("básně", "poems"), ("dokud", "until"), ("jsem", "AUX.PAST.1SG"), ("neodešla", "NEG.left.PFV.3.F.SG")]
+    glossedWords := [⟨['N', 'a', 'p', 's', 'a', 'l'], ['w', 'r', 'o', 't', 'e', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], [⟨['N', 'a', 'p', 's', 'a', 'l'], ['w', 'r', 'o', 't', 'e', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['d', 'v', 'ě'], ['2'], [⟨['d', 'v', 'ě'], ['2'], none⟩]⟩, ⟨['b', 'á', 's', 'n', 'ě'], ['p', 'o', 'e', 'm', 's'], [⟨['b', 'á', 's', 'n', 'ě'], ['p', 'o', 'e', 'm', 's'], none⟩]⟩, ⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], [⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['j', 's', 'e', 'm'], ['A', 'U', 'X', '.', 'P', 'A', 'S', 'T', '.', '1', 'S', 'G'], [⟨['j', 's', 'e', 'm'], ['A', 'U', 'X', '.', 'P', 'A', 'S', 'T', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], [⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud with an affirmative perfective")] }
 
@@ -519,9 +535,11 @@ def iz2021_s81 : Datum :=
     language := "czec1258"
     primaryText := "Neodešel, dokud neodešla Marie."
     glossedTokens := [("Neodešel", "NEG.left.PFV.3.M.SG"), ("dokud", "until"), ("neodešla", "NEG.left.PFV.3.F.SG"), ("Marie", "Marie")]
+    glossedWords := [⟨['N', 'e', 'o', 'd', 'e', 'š', 'e', 'l'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], [⟨['N', 'e', 'o', 'd', 'e', 'š', 'e', 'l'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], [⟨['d', 'o', 'k', 'u', 'd'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], [⟨['n', 'e', 'o', 'd', 'e', 'š', 'l', 'a'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'F', '.', 'S', 'G'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'e'], ['M', 'a', 'r', 'i', 'e'], [⟨['M', 'a', 'r', 'i', 'e'], ['M', 'a', 'r', 'i', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud with a negated perfective"), ("ai", "not cancelable")] }
 
@@ -532,9 +550,11 @@ def iz2021_s82 : Datum :=
     language := "czec1258"
     primaryText := "Neodešel až do pěti."
     glossedTokens := [("Neodešel", "NEG.left.PFV.3.M.SG"), ("až do", "until"), ("pěti", "5")]
+    glossedWords := [⟨['N', 'e', 'o', 'd', 'e', 'š', 'e', 'l'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], [⟨['N', 'e', 'o', 'd', 'e', 'š', 'e', 'l'], ['N', 'E', 'G', '.', 'l', 'e', 'f', 't', '.', 'P', 'F', 'V', '.', '3', '.', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['a', 'ž', ' ', 'd', 'o'], ['u', 'n', 't', 'i', 'l'], [⟨['a', 'ž', ' ', 'd', 'o'], ['u', 'n', 't', 'i', 'l'], none⟩]⟩, ⟨['p', 'ě', 't', 'i'], ['5'], [⟨['p', 'ě', 't', 'i'], ['5'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "až do with a negated perfective"), ("ai", "cancelable")] }
 
@@ -547,7 +567,7 @@ def iz2021_s83 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "not cancelable")] }
 
@@ -560,7 +580,7 @@ def iz2021_s85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("inference", "cancelable")] }
 
@@ -573,7 +593,7 @@ def iz2021_s89 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("subinterval", "negation yields the subinterval property")] }
 
@@ -586,7 +606,7 @@ def iz2021_s91 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "not cancelable, a real-world impossibility")] }
 
@@ -599,7 +619,7 @@ def iz2021_s92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "none")] }
 
@@ -612,7 +632,7 @@ def iz2021_s98b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("source", "Karttunen 1974:287"), ("test", "how long")] }
 
@@ -625,7 +645,7 @@ def iz2021_s102 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("test", "how long fails with negated statives too")] }
 
@@ -638,7 +658,7 @@ def iz2021_s110 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("test", "for how long, above negation")] }
 
@@ -651,7 +671,7 @@ def iz2021_s114a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("npi", "strong: not licensed by few")] }
 
@@ -664,7 +684,7 @@ def iz2021_s119a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("bei", "later than expected")] }
 
@@ -677,7 +697,7 @@ def iz2021_s119b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("bei", "earlier than expected")] }
 
@@ -690,7 +710,7 @@ def iz2021_s121b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("bei", "the RB must be later than the contextual alternative")] }
 
@@ -703,7 +723,7 @@ def iz2021_s123 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("ai", "at the RB")] }
 
@@ -716,7 +736,7 @@ def iz2021_s124 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("inference", "the inferred event need not set the RB")] }
 
@@ -729,7 +749,7 @@ def iz2021_s128 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.1"), ("exh", "contradiction, (129)–(132)")] }
 
@@ -742,7 +762,7 @@ def iz2021_s133a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("construal", "(148a) EXH > UNTIL, vacuous")] }
 
@@ -755,7 +775,7 @@ def iz2021_s133b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("construal", "(148c1) throughout-not; (148c2) not-throughout")] }
 
@@ -768,7 +788,7 @@ def iz2021_s134 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("exh", "contradiction with a perfective predicate")] }
 
@@ -781,7 +801,7 @@ def iz2021_s147b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.3"), ("construal", "(148b) EXH > NEG > UNTIL, until-p, domain widener")] }
 
@@ -794,7 +814,7 @@ def iz2021_s149 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.3"), ("construal", "(148b), noncancelable AI")] }
 
@@ -807,7 +827,7 @@ def iz2021_s152b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8"), ("perfect", "E-perfect contradictory under exhaustification; U-perfect unavailable, (153)")] }
 
@@ -820,7 +840,7 @@ def iz2021_s153 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8"), ("perfect", "E-perfect only")] }
 
@@ -833,7 +853,7 @@ def iz2021_s156 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9"), ("ai", "cancelable: conditional, or future branch")] }
 
@@ -846,7 +866,7 @@ def iz2021_s160 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9"), ("ai", "satisfied on a future branch")] }
 
@@ -857,9 +877,11 @@ def iz2021_s161 : Datum :=
     language := "czec1258"
     primaryText := "Nevdá se, dokud nepotká muže, který mluví 23 jazyky. ... takže se asi nevdá nikdy."
     glossedTokens := [("Nevdá", "NEG.get.married.PFV.3SG"), ("se", "REFL"), ("dokud", "DOKUD"), ("nepotká", "NEG.meet.PFV.3SG"), ("muže", "man"), ("který", "which"), ("mluví", "speaks"), ("23", "23"), ("jazyky", "languages"), ("takže", "so"), ("se", "REFL"), ("asi", "probably"), ("nevdá", "NEG.get.married.PFV.3SG"), ("nikdy", "never")]
+    glossedWords := [⟨['N', 'e', 'v', 'd', 'á'], ['N', 'E', 'G', '.', 'g', 'e', 't', '.', 'm', 'a', 'r', 'r', 'i', 'e', 'd', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], [⟨['N', 'e', 'v', 'd', 'á'], ['N', 'E', 'G', '.', 'g', 'e', 't', '.', 'm', 'a', 'r', 'r', 'i', 'e', 'd', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['s', 'e'], ['R', 'E', 'F', 'L'], [⟨['s', 'e'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['d', 'o', 'k', 'u', 'd'], ['D', 'O', 'K', 'U', 'D'], [⟨['d', 'o', 'k', 'u', 'd'], ['D', 'O', 'K', 'U', 'D'], none⟩]⟩, ⟨['n', 'e', 'p', 'o', 't', 'k', 'á'], ['N', 'E', 'G', '.', 'm', 'e', 'e', 't', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], [⟨['n', 'e', 'p', 'o', 't', 'k', 'á'], ['N', 'E', 'G', '.', 'm', 'e', 'e', 't', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['m', 'u', 'ž', 'e'], ['m', 'a', 'n'], [⟨['m', 'u', 'ž', 'e'], ['m', 'a', 'n'], none⟩]⟩, ⟨['k', 't', 'e', 'r', 'ý'], ['w', 'h', 'i', 'c', 'h'], [⟨['k', 't', 'e', 'r', 'ý'], ['w', 'h', 'i', 'c', 'h'], none⟩]⟩, ⟨['m', 'l', 'u', 'v', 'í'], ['s', 'p', 'e', 'a', 'k', 's'], [⟨['m', 'l', 'u', 'v', 'í'], ['s', 'p', 'e', 'a', 'k', 's'], none⟩]⟩, ⟨['2', '3'], ['2', '3'], [⟨['2', '3'], ['2', '3'], none⟩]⟩, ⟨['j', 'a', 'z', 'y', 'k', 'y'], ['l', 'a', 'n', 'g', 'u', 'a', 'g', 'e', 's'], [⟨['j', 'a', 'z', 'y', 'k', 'y'], ['l', 'a', 'n', 'g', 'u', 'a', 'g', 'e', 's'], none⟩]⟩, ⟨['t', 'a', 'k', 'ž', 'e'], ['s', 'o'], [⟨['t', 'a', 'k', 'ž', 'e'], ['s', 'o'], none⟩]⟩, ⟨['s', 'e'], ['R', 'E', 'F', 'L'], [⟨['s', 'e'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['a', 's', 'i'], ['p', 'r', 'o', 'b', 'a', 'b', 'l', 'y'], [⟨['a', 's', 'i'], ['p', 'r', 'o', 'b', 'a', 'b', 'l', 'y'], none⟩]⟩, ⟨['n', 'e', 'v', 'd', 'á'], ['N', 'E', 'G', '.', 'g', 'e', 't', '.', 'm', 'a', 'r', 'r', 'i', 'e', 'd', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], [⟨['n', 'e', 'v', 'd', 'á'], ['N', 'E', 'G', '.', 'g', 'e', 't', '.', 'm', 'a', 'r', 'r', 'i', 'e', 'd', '.', 'P', 'F', 'V', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['n', 'i', 'k', 'd', 'y'], ['n', 'e', 'v', 'e', 'r'], [⟨['n', 'i', 'k', 'd', 'y'], ['n', 'e', 'v', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9"), ("ai", "satisfied on a future branch")] }
 
@@ -872,7 +894,7 @@ def iz2021_s162 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9"), ("ai", "no future branch satisfies it")] }
 
@@ -885,7 +907,7 @@ def iz2021_s165 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "9"), ("tense", "the argument of until shifts with the matrix")] }
 
@@ -898,7 +920,7 @@ def iz2021_s170 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the completion of the reading, the maximally informative interval")] }
 
@@ -911,7 +933,7 @@ def iz2021_s172 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the beginning of the working")] }
 
@@ -924,7 +946,7 @@ def iz2021_s176 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the completion of Anna Karenina; War and Peace read upon it")] }
 
@@ -937,7 +959,7 @@ def iz2021_s178b : Datum :=
     glossedTokens := []
     context := "If few students pass the state exam, the school will face budget cuts."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "11"), ("few", "not many, without an existential inference")] }
 
@@ -950,7 +972,7 @@ def iz2021_s180 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "11"), ("source", "Chierchia 2013:219–220"), ("npi", "strong: the presupposition is exhaustified")] }
 
@@ -963,7 +985,7 @@ def iz2021_s182a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "11"), ("presupposition", "there is a PTS [t, UT]")] }
 
@@ -976,7 +998,7 @@ def iz2021_s186a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "11"), ("presupposition", "there is a UTS [t, 2010]")] }
 

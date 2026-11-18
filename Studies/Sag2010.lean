@@ -217,9 +217,11 @@ theorem satisfies_gapRest_elist (hI : I.Models grammar) {c : FGClause}
     (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
   rcases hc with rfl | rfl | rfl
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.2.2.1
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.2.2
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).2.2
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_right.and_right.and_right.and_left
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_right
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_right.and_right
 
 theorem isIsland_iff (c : FGClause) :
     c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
@@ -250,15 +252,15 @@ theorem satisfies_filler_nonverbal (hI : I.Models grammar) (hs : I.IsSortResolve
     (c : FGClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal) := by
   cases c
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).1
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).1
-  · exact (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).1
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).and_left
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_left
+  · exact (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).and_left
   · rcases le_finWhRelCl_or_le_infWhRelCl hs hu with h | h
     · exact (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints])
-        h).2.sortAssign_mono (by decide)
+        h).and_right.sortAssign_mono (by decide)
     · exact (satisfies_body hI (c := infWhRelPrinciple) (by simp [constraints])
-        h).1.sortAssign_mono (by decide)
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).1
+        h).and_left.sortAssign_mono (by decide)
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_left
 
 /-- The head daughter of a topicalized clause, wh-exclamative, wh-interrogative or wh-relative is a
 projection of a verb (27). -/
@@ -266,13 +268,16 @@ theorem satisfies_head_verb (hI : I.Models grammar) (hw : I.IsWellTyped) {c : FG
     (hc : c ≠ .theClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT]) .verb) := by
   cases c
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.1
-  · obtain ⟨v, hv, -⟩ := (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.1
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).and_right.and_left
+  · obtain ⟨v, hv, -⟩ :=
+      (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_right.and_left
     exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
-  · obtain ⟨v, hv, -⟩ := (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).2
+  · obtain ⟨v, hv, -⟩ :=
+      (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).and_right
     exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
   · obtain ⟨v, hv, -⟩ := (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).1
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
+          (hu.trans (by decide))).and_left
     exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
   · exact absurd rfl hc
 
@@ -282,10 +287,12 @@ theorem satisfies_head_uninverted (hI : I.Models grammar) {c : FGClause}
     (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .whRelative) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus) := by
   rcases hc with rfl | rfl | rfl
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.1
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.1
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_left
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_right.and_left
   · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).1
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
+          (hu.trans (by decide))).and_left
 
 /-- The head daughter of a topicalized clause, wh-exclamative, the-clause or finite wh-relative is
 finite (29). -/
@@ -293,19 +300,23 @@ theorem satisfies_head_fin (hI : I.Models grammar)
     (hu : I.S u ≤ .topCl ∨ I.S u ≤ .whExclCl ∨ I.S u ≤ .theCl ∨ I.S u ≤ .finWhRelCl) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin) := by
   rcases hu with hu | hu | hu | hu
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.2.1
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.2.1
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).2.1
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_right.and_right.and_left
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_left
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_right.and_left
   · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.VFORM] .fin).1
-      (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints]) hu).1
+      (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints]) hu).and_left
 
 theorem satisfies_head_ic (hI : I.Models grammar) :
     (I.S u ≤ .topCl → I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)) ∧
       (I.S u ≤ .whRelCl →
         I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .minus)) :=
-  ⟨fun hu ↦ (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.1,
+  ⟨fun hu ↦ (satisfies_body hI (c := topPrinciple) (by simp [constraints])
+      hu).and_right.and_right.and_right.and_left,
     fun hu ↦ (satisfies_hdCat_iff hI (hu.trans (by decide)) [.IC] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).2⟩
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
+          (hu.trans (by decide))).and_right⟩
 
 /-! ### The distinguished element -/
 

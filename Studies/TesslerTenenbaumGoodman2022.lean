@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.KullbackLeibler
+public import Linglib.Pragmatics.Probabilistic.KullbackLeibler
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -174,8 +174,8 @@ noncomputable def listener (φ : ℝ≥0∞) (μ : Measure State) : Kernel (List
 instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 theorem listener_zero (μ : Measure State) :
-    listener 0 μ = RSA.listener μ (truthful extension) := by
-  rw [listener, listener_truthful_eq_ofDensity]
+    listener 0 μ = RSA.literalListener μ extension := by
+  rw [listener, literalListener_eq_ofDensity]
   exact congrArg _ (funext noisy_zero)
 
 theorem lintegral_noisy_ne_top [IsFiniteMeasure μ] (hφ : φ ≠ ∞) (us : List Sentence) :
@@ -316,12 +316,10 @@ theorem withFigure_apply_none_eq_one (h0 : S syl {none} ≠ 0) (h : ∀ c ≠ no
     (fun c _ hc ↦ by rw [h c hc, mul_zero]) fun hn ↦ absurd (Finset.mem_univ _) hn]
   exact ENNReal.div_self (by simpa [figuralWeight] using h0) (weight_ne_top β S syl none)
 
-theorem withFigure_real_singleton_lt_iff (h0 : S syl {none} ≠ 0) :
+theorem withFigure_real_singleton_lt_iff :
     (withFigure β S syl).real {c} < (withFigure β S syl).real {c'} ↔
       figuralWeight β syl c * (S syl).real {c} < figuralWeight β syl c' * (S syl).real {c'} := by
-  rw [withFigure, Kernel.ofWeights_real_singleton_lt_iff syl
-    (fun h ↦ h0 (by simpa [figuralWeight] using Finset.sum_eq_zero_iff.1 h none (by simp)))
-    (ENNReal.sum_ne_top.2 fun c _ ↦ weight_ne_top β S syl c),
+  rw [withFigure, Kernel.ofWeights_real_singleton_lt_iff syl fun c ↦ weight_ne_top β S syl c,
     ← ENNReal.toReal_lt_toReal (weight_ne_top β S syl c) (weight_ne_top β S syl c'),
     ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.coe_toReal, ENNReal.coe_toReal,
     measureReal_def, measureReal_def]
@@ -336,16 +334,16 @@ variable {μ : Measure State} {α : ℝ} {β : ℝ≥0} {syl : Syllogism} {c c' 
 
 theorem beliefAlignment_zero (μ : Measure State) (α : ℝ) :
     beliefAlignment 0 μ α =
-      speaker α 0 (RSA.listener μ (truthful fun c ↦ extension (Conclusion.said c)))
+      speaker α 0 (RSA.literalListener μ (fun c ↦ extension (Conclusion.said c)))
         fun syl ↦ μ[|extension syl.premises] := by
   unfold beliefAlignment reasoner naive
   rw [listener_zero]
   congr 1
   · funext c
-    exact (RSA.listener_truthful_apply μ _ _).trans
-      (RSA.listener_truthful_apply μ (fun c ↦ extension (Conclusion.said c)) c).symm
+    exact (RSA.literalListener_apply μ _ _).trans
+      (RSA.literalListener_apply μ (fun c ↦ extension (Conclusion.said c)) c).symm
   · funext syl
-    exact RSA.listener_truthful_apply μ _ _
+    exact RSA.literalListener_apply μ _ _
 
 private theorem ae_le_iff_subset (hμ : ∀ s, μ {s} ≠ 0) {A B : Set State} :
     A ≤ᵐ[μ] B ↔ A ⊆ B :=
@@ -362,7 +360,7 @@ private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set Stat
 theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     beliefAlignment 0 μ α syl {c} = 0 ↔
       ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
-  rw [beliefAlignment_zero, speaker_listener_truthful_apply_singleton_eq_zero_iff hα (o := syl)
+  rw [beliefAlignment_zero, speaker_literalListener_apply_singleton_eq_zero_iff hα (o := syl)
       cond_absolutelyContinuous, ae_cond_mem_iff .of_discrete, ae_le_iff_subset hμ]
 
 theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
@@ -374,7 +372,7 @@ theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (
   have := cond_isProbabilityMeasure (μ := μ) (s := extension syl.premises) fun h ↦
     let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h)
   rw [beliefAlignment_zero]
-  exact speaker_zero_listener_truthful_real_singleton_lt_iff hα (o := syl) cond_absolutelyContinuous
+  exact speaker_zero_literalListener_real_singleton_lt_iff hα (o := syl) cond_absolutelyContinuous
     ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc))
     ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc'))
 
@@ -426,10 +424,7 @@ theorem barbara_prefers_all (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) (hβ : 1 
         (beliefAlignment 0 μ α barbara).real {ac .all} := fun hc hs ↦
     (beliefAlignment_zero_real_singleton_lt_iff hμ hα hne (barbara_entails_all.trans hc)
       barbara_entails_all).2 (measure_lt_of_notMem hμ hc hs (by decide))
-  have h0 : beliefAlignment 0 μ α barbara {none} ≠ 0 :=
-    (beliefAlignment_zero_apply_singleton_eq_zero_iff hμ hα).not_left.2
-      (extension_said_none ▸ Set.subset_univ _)
-  rw [withFigure_real_singleton_lt_iff h0, withFigure_real_singleton_lt_iff h0,
+  rw [withFigure_real_singleton_lt_iff, withFigure_real_singleton_lt_iff,
     figuralWeight_barbara, figuralWeight_barbara]
   have hβ' : (1 : ℝ) ≤ β := by exact_mod_cast hβ
   have h1 := hlt hsome (by decide)

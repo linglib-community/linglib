@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Wordlist.Padgett2002
 public import Linglib.Fragments.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Data.List.Iterate
 
 /-!
@@ -21,7 +21,7 @@ a Color node carries both features or neither.
 
 * `Node`, `node`: the geometry (3); `laryngeal`, `oral`, `vplace`, `height`, `color`: (25).
 * `Tier`, `Tier.spread`: the autosegments of one feature over a word, and SPREAD (26).
-* `tableau`: the Turkish grammar of (17)–(22), over every fully specified candidate.
+* `ranking`: the Turkish grammar of (17)–(22), over every fully specified candidate.
 
 ## Implementation notes
 
@@ -76,6 +76,9 @@ instance : PartialOrder Node where
 
 instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
 
+/-- Each node of (3) has a single mother. -/
+instance : IsForestOrder Node := ⟨by decide⟩
+
 end Node
 
 /-- The node each feature of (3) hangs from, with [aspirated] and [glottalized] read as [spread
@@ -109,6 +112,15 @@ theorem classes_eq_featureClass :
       vplace = featureClass node .vplace ∧ height = featureClass node .height ∧
       color = featureClass node .color := by
   decide
+
+-- p. 99: feature classes do not overlap, subset relations aside, an assumption carried over from
+-- the geometry, where it is the single mother node condition.
+theorem isLaminar_classes :
+    IsLaminar ({laryngeal, oral, vplace, height, color} : Set (Finset Feature)) := by
+  obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := classes_eq_featureClass
+  refine (isLaminar_range_featureClass node).mono ?_
+  rintro _ (rfl | rfl | rfl | rfl | rfl)
+  exacts [⟨_, h₁.symm⟩, ⟨_, h₂.symm⟩, ⟨_, h₃.symm⟩, ⟨_, h₄.symm⟩, ⟨_, h₅.symm⟩]
 
 /-! ### SPREAD (26) -/
 
@@ -192,11 +204,11 @@ def surface (c : Candidate n) (j : Fin n) : Segment :=
 /-- IDENT_Rt (16), summed over Color: a segment of the root, the first `r`, keeps the input
 value of each color feature. -/
 def identRoot (c : Candidate n) : ℕ :=
-  ∑ f, (Finset.univ.filter fun j : Fin n ↦ j.val < r ∧ ¬ (x j).HasValue f.1 ((c f).value j)).card
+  ∑ f, (Finset.univ.filter fun j : Fin n ↦ j.val < r ∧ ¬ x j f.1 = ((c f).value j)).card
 
 /-- *[+rnd, −hi]: a nonhigh segment is not round. -/
 def noRoundNonhigh (c : Candidate n) : ℕ :=
-  (Finset.univ.filter fun j ↦ (c round).value j = true ∧ (x j).HasValue .high false).card
+  (Finset.univ.filter fun j ↦ (c round).value j = true ∧ x j .high = false).card
 
 /-- SPREAD(COLOR) (10, 26), summed over the features of Color. -/
 def spreadColor (c : Candidate n) : ℕ := ∑ f, (c f).spread
@@ -204,26 +216,26 @@ def spreadColor (c : Candidate n) : ℕ := ∑ f, (c f).spread
 /-- IDENT (11), summed over Color: a segment keeps the input value of each color feature,
 unspecified counting as a value. -/
 def ident (c : Candidate n) : ℕ :=
-  ∑ f, (Finset.univ.filter fun j : Fin n ↦ ¬ (x j).HasValue f.1 ((c f).value j)).card
+  ∑ f, (Finset.univ.filter fun j : Fin n ↦ ¬ x j f.1 = ((c f).value j)).card
 
 /-- IDENT_Rt ≫ *[+rnd, −hi] ≫ SPREAD(COLOR) ≫ IDENT, the ranking of (17)–(22), over every
 candidate. -/
-def tableau : Tableau (Candidate n) 4 :=
-  .ofList Finset.univ [identRoot x r, noRoundNonhigh x, spreadColor, ident x]
+def ranking : List (Constraint (Candidate n)) :=
+  [identRoot x r, noRoundNonhigh x, spreadColor, ident x]
 
 /-- The reverse ranking of SPREAD(COLOR) and *[+rnd, −hi], total class spreading as in Kirghiz
 (p. 93). -/
-def tableauTotal : Tableau (Candidate n) 4 :=
-  .ofList Finset.univ [identRoot x r, spreadColor, noRoundNonhigh x, ident x]
+def rankingTotal : List (Constraint (Candidate n)) :=
+  [identRoot x r, spreadColor, noRoundNonhigh x, ident x]
 
 /-- The outputs of the winners of the grammar for the segments `w`, the first `r` of the root. -/
 def predict (w : List Segment) (r : ℕ) : Finset (List Segment) :=
-  (tableau (fun j : Fin w.length ↦ w[j]) r).optimal.image fun c ↦
+  (Constraint.eval Finset.univ (ranking (fun j : Fin w.length ↦ w[j]) r)).image fun c ↦
     List.ofFn (surface (fun j : Fin w.length ↦ w[j]) c)
 
 /-- The outputs of the winners under the reverse ranking. -/
 def predictTotal (w : List Segment) (r : ℕ) : Finset (List Segment) :=
-  (tableauTotal (fun j : Fin w.length ↦ w[j]) r).optimal.image fun c ↦
+  (Constraint.eval Finset.univ (rankingTotal (fun j : Fin w.length ↦ w[j]) r)).image fun c ↦
     List.ofFn (surface (fun j : Fin w.length ↦ w[j]) c)
 
 /-! ### Inputs and forms -/
@@ -241,7 +253,7 @@ def harmonySegment (g : String) : Option Segment :=
 (footnote 6). -/
 def shareRound : List Segment → List Segment
   | [] => []
-  | v :: w => v :: w.map (Function.update · .round (v .round))
+  | v :: w => v :: w.map (Segment.piecewise {.round} v)
 
 /-- The suffix vowels of a cell, in the order of the suffixes: /A/ of the plural -lAr, then /I/ of
 the accusative -I or the genitive -In (§3.3). -/
@@ -275,14 +287,14 @@ def cand14d : Candidate 2 :=
 
 -- (14), (17a,b), (14b), (14d)
 theorem profile_14 :
-    ofLex ((tableau sonlAr 1).profile cand14a) = ![0, 2, 0, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14b) = ![0, 1, 2, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14c) = ![0, 2, 2, 2] ∧
-      ofLex ((tableau sonlAr 1).profile cand14d) = ![0, 1, 4, 2] := by
+    (ranking sonlAr 1).map (· cand14a) = [0, 2, 0, 2] ∧
+      (ranking sonlAr 1).map (· cand14b) = [0, 1, 2, 2] ∧
+      (ranking sonlAr 1).map (· cand14c) = [0, 2, 2, 2] ∧
+      (ranking sonlAr 1).map (· cand14d) = [0, 1, 4, 2] := by
   decide
 
 -- (14b)
-theorem optimal_sonlAr : (tableau sonlAr 1).optimal = {cand14b} := by
+theorem optimal_sonlAr : Constraint.eval Finset.univ (ranking sonlAr 1) = {cand14b} := by
   decide +kernel
 
 /-- /pul-lAr-In/ of (20). -/
@@ -300,12 +312,12 @@ def cand20c : Candidate 3 :=
 
 -- (20), (20c)
 theorem profile_20 :
-    ofLex ((tableau pullArIn 1).profile cand20b) = ![0, 0, 3, 4] ∧
-      ofLex ((tableau pullArIn 1).profile cand20c) = ![0, 0, 6, 4] := by
+    (ranking pullArIn 1).map (· cand20b) = [0, 0, 3, 4] ∧
+      (ranking pullArIn 1).map (· cand20c) = [0, 0, 6, 4] := by
   decide
 
 /-- /(petr)olʸ-I/ of (22), the lateral sharing the vowel's [+round]. -/
-def petrolI : Fin 3 → Segment := ![o, Function.update l' .round (some true), I]
+def petrolI : Fin 3 → Segment := ![o, l'.setFeature .round true, I]
 
 /-- (22a) {[o]+B[lʸ-ü]−B}+R, the attested form. -/
 def cand22a : Candidate 3 :=
@@ -329,14 +341,14 @@ def cand22d : Candidate 3 :=
 
 -- (22), (22b), (22c)
 theorem profile_22 :
-    ofLex ((tableau petrolI 2).profile cand22a) = ![0, 1, 3, 2] ∧
-      ofLex ((tableau petrolI 2).profile cand22b) = ![1, 1, 0, 3] ∧
-      ofLex ((tableau petrolI 2).profile cand22c) = ![1, 1, 0, 3] ∧
-      ofLex ((tableau petrolI 2).profile cand22d) = ![0, 1, 6, 2] := by
+    (ranking petrolI 2).map (· cand22a) = [0, 1, 3, 2] ∧
+      (ranking petrolI 2).map (· cand22b) = [1, 1, 0, 3] ∧
+      (ranking petrolI 2).map (· cand22c) = [1, 1, 0, 3] ∧
+      (ranking petrolI 2).map (· cand22d) = [0, 1, 6, 2] := by
   decide
 
 -- (22a)
-theorem optimal_petrolI : (tableau petrolI 2).optimal = {cand22a} := by
+theorem optimal_petrolI : Constraint.eval Finset.univ (ranking petrolI 2) = {cand22a} := by
   decide +kernel
 
 /-! ### The forms -/
@@ -389,11 +401,12 @@ theorem predictTotal_son_lAr : predictTotal [o, A'] 1 = {[o, o]} ∧
 /-! ### Class nodes -/
 
 /-- Spreading the Color node of (3) from `src` onto `tgt`. -/
-def colorSpreading (src tgt : Segment) : Segment := (featureClass node .color).piecewise src tgt
+def colorSpreading (src tgt : Segment) : Segment :=
+  Segment.piecewise (featureClass node .color) src tgt
 
 theorem eqOn_colorSpreading (src tgt : Segment) :
     Set.EqOn (colorSpreading src tgt) src ↑color :=
-  classes_eq_featureClass.2.2.2.2 ▸ eqOn_piecewise_of_le src tgt le_rfl
+  classes_eq_featureClass.2.2.2.2 ▸ Finset.eqOn_piecewise_of_subset subset_rfl
 
 /-- No spreading or non-spreading of a Color node yields the suffix vowel of [son-lar] (9) or of
 [petrolʸ-ü] (23). -/

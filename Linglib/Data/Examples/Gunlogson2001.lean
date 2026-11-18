@@ -24,7 +24,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "On a tax form."
     judgment := .acceptable
-    alternatives := [("During the tax year, you received a distribution from a foreign trust?", .unacceptable), ("During the tax year, you received a distribution from a foreign trust.", .unacceptable)]
+    contrasts := [("During the tax year, you received a distribution from a foreign trust?", .unacceptable), ("During the tax year, you received a distribution from a foreign trust.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -37,7 +37,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := "In a guessing game."
     judgment := .acceptable
-    alternatives := [("It's bigger than a breadbox?", .unacceptable), ("It's bigger than a breadbox.", .unacceptable)]
+    contrasts := [("It's bigger than a breadbox?", .unacceptable), ("It's bigger than a breadbox.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -50,7 +50,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "It's an open question."
     judgment := .acceptable
-    alternatives := [("She lied to the grand jury?", .unacceptable), ("She lied to the grand jury.", .unacceptable)]
+    contrasts := [("She lied to the grand jury?", .unacceptable), ("She lied to the grand jury.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -63,7 +63,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("You can (please) pass the salt?", .unacceptable), ("You can (please) pass the salt.", .unacceptable)]
+    contrasts := [("You can (please) pass the salt?", .unacceptable), ("You can (please) pass the salt.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -76,7 +76,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := "Radio station DJ: Good morning Susan. Where are you calling from? The caller answers."
     judgment := .unacceptable
-    alternatives := [("I'm from Skokie?", .acceptable), ("I'm from Skokie.", .acceptable)]
+    contrasts := [("I'm from Skokie?", .acceptable), ("I'm from Skokie.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "informativeRising"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -89,7 +89,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The manager has of course been informed?", .acceptable), ("The manager has of course been informed.", .acceptable)]
+    contrasts := [("The manager has of course been informed?", .acceptable), ("The manager has of course been informed.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "biasMarker"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -102,7 +102,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := "A and B are looking at a co-worker's much-dented car. A: His driving has gotten a lot better. B responds."
     judgment := .acceptable
-    alternatives := [("It has? I don't see much evidence of that.", .acceptable), ("It has. I don't see much evidence of that.", .unacceptable)]
+    contrasts := [("It has? I don't see much evidence of that.", .acceptable), ("It has. I don't see much evidence of that.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -115,7 +115,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := "A: That copier is broken. B responds."
     judgment := .acceptable
-    alternatives := [("It is? Thanks, I'll use a different one.", .acceptable), ("(Oh), it is. Thanks, I'll use a different one.", .acceptable)]
+    contrasts := [("It is? Thanks, I'll use a different one.", .acceptable), ("(Oh), it is. Thanks, I'll use a different one.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -128,7 +128,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := "A: Jake's here. B responds."
     judgment := .acceptable
-    alternatives := [("Jake's here? Then let's get started.", .acceptable), ("(Oh), Jake's here. Then let's get started.", .acceptable)]
+    contrasts := [("Jake's here? Then let's get started.", .acceptable), ("(Oh), Jake's here. Then let's get started.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -141,7 +141,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := "A: The king of France is bald. B responds."
     judgment := .acceptable
-    alternatives := [("France is a monarchy?", .acceptable), ("France is a monarchy.", .unacceptable)]
+    contrasts := [("France is a monarchy?", .acceptable), ("France is a monarchy.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -154,7 +154,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := "Uttered to insinuate that the addressee has shoplifted."
     judgment := .acceptable
-    alternatives := [("Shoplifting's fun?", .acceptable), ("Shoplifting's fun.", .unacceptable)]
+    contrasts := [("Shoplifting's fun?", .acceptable), ("Shoplifting's fun.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -167,7 +167,7 @@ def ex_100 : Datum :=
     glossedTokens := []
     context := "A is watching a bird fly away; neither A nor B has a prior commitment about its identity."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "entailedButInformative")] }
 
@@ -180,7 +180,7 @@ def ex_102 : Datum :=
     glossedTokens := []
     context := "A: I've just searched the refrigerator and there's absolutely nothing cold to drink. B responds."
     judgment := .acceptable
-    alternatives := [("We're out of beer?", .acceptable), ("(So) we're out of beer.", .acceptable)]
+    contrasts := [("We're out of beer?", .acceptable), ("(So) we're out of beer.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -193,7 +193,7 @@ def ex_103 : Datum :=
     glossedTokens := []
     context := "B: I've just searched the refrigerator and there's absolutely nothing cold to drink. A: Yeah, I know. We're out of just about everything. B responds."
     judgment := .unacceptable
-    alternatives := [("We're out of beer?", .unacceptable), ("(So) we're out of beer.", .unacceptable)]
+    contrasts := [("We're out of beer?", .unacceptable), ("(So) we're out of beer.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -206,7 +206,7 @@ def ex_118 : Datum :=
     glossedTokens := []
     context := "A: Maria's husband was at the party. B responds."
     judgment := .acceptable
-    alternatives := [("Maria's married?", .acceptable), ("Maria's married.", .unacceptable)]
+    contrasts := [("Maria's married?", .acceptable), ("Maria's married.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
@@ -219,7 +219,7 @@ def ex_128 : Datum :=
     glossedTokens := []
     context := "Robin is sitting, as before, in a windowless computer room when another person enters. The newcomer is wearing a wet raincoat and boots. Robin says:"
     judgment := .acceptable
-    alternatives := [("It's raining?", .acceptable), ("(I see that/So) It's raining.", .acceptable)]
+    contrasts := [("It's raining?", .acceptable), ("(I see that/So) It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 

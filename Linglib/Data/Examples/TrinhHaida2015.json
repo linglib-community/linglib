@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John went for a run and didn't smoke], so John smoked", "judgment": "acceptable"}
     ],
@@ -33,7 +33,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John passed some and failed some], so John passed all", "judgment": "unacceptable"}
     ],
@@ -57,7 +57,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John does not have four chairs", "judgment": "acceptable"}
     ],
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: John did not do all of the homework", "judgment": "acceptable"}
     ],
@@ -101,7 +101,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John works hard and doesn't watch TV]", "judgment": "acceptable"}
     ],
@@ -124,7 +124,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John is tall and not bald]", "judgment": "acceptable"}
     ],
@@ -147,7 +147,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John ate exactly three cookies]", "judgment": "unacceptable"}
     ],
@@ -171,7 +171,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John fathered children and no twins]", "judgment": "unacceptable"}
     ],
@@ -195,7 +195,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [John passed some of the fitness tests and failed some]", "judgment": "unacceptable"}
     ],
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: Detective B did not conclude that they stole the book and not the jewelry", "judgment": "acceptable"},
       {"name": "inference: Detective B did not conclude that they stole the book and the jewelry", "judgment": "acceptable"}
@@ -242,7 +242,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: the committee passed some of my students", "judgment": "acceptable"}
     ],
@@ -264,7 +264,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: not [all of my students did some of the readings]", "judgment": "unacceptable"}
     ],
@@ -286,7 +286,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inference: all of my students did some of the readings", "judgment": "acceptable"}
     ],

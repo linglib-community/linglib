@@ -26,7 +26,7 @@
     "translation": "I thought that (s)he left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -68,7 +68,7 @@
     "translation": "I want food.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ngi-ku-funa ukudla.",
         "judgment": "ungrammatical"
@@ -123,7 +123,7 @@
     "translation": "I want Zodwa to cook.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Ngi-ku-funa ukuthi uZodwa a-pheke.",
         "judgment": "ungrammatical"
@@ -178,7 +178,7 @@
     "translation": "I was worried by *(the fact) that you left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -228,7 +228,7 @@
     "translation": "We are talking about *(the fact) that people are united.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -278,7 +278,7 @@
     "translation": "That enemies were coming was written on the roof.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

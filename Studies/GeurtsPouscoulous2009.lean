@@ -188,7 +188,7 @@ def Mainstream (q : Quant) (t : Trial) : Prop :=
     (¬ PredictsLocalSI (q.sem : Det (Fin 3)) ∧ Classical q t)
 
 theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : Det (Fin 3)) := fun h ↦
-  h Set.univ (Set.empty_subset _) (fun _ _ ↦ trivial) (Set.mem_univ 0)
+  h Set.univ (Set.empty_subset _) (Set.subset_univ _) (Set.mem_univ 0)
 
 theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : Det (Fin 3)) := by
   intro h

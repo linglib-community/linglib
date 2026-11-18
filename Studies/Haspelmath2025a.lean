@@ -39,19 +39,6 @@ Schemas](##predpossessiveStrategy?_eq_some_iff).
 * The Turkish fragment follows Göksel and Kerslake in taking -(y)DI as the past copular marker,
   its y the buffer consonant after a vowel; the paper, citing Kornfilt, bolds the y alone.
 
-## Errata
-
-* Table 1 places the hyparctic type in neither its predicational nor its nonpredicational row,
-  while the abstract and §13 count it among the four nonpredicational types; `Predicational`
-  follows the text.
-* Table 1 lists three subtypes of the equational type, without the tautotic type that §2 and (12)
-  give as the fourth.
-* The Hamar form of (61) and (66) is glossed as an existive, but (66) is a hyparctic clause and an
-  existive is a copula found in no clauses but existential and predpossessive ones, so [by the
-  definitions the form is a copula and not an existive](##hamar_existive).
-* Appendix 1 points the characterizational example to (25a) for (35a), the locopossessional entry
-  to Table 2 "in §11" for §13, and the presentational entry to n. 13 for n. 16.
-
 ## TODO
 
 * The rows hold the examples that introduce the types, the duonominal pairs, the strategy

@@ -29,7 +29,7 @@ study files.
 * `Graph.IsPlanar`: no two links cross.
 * `Graph.Interleave` and `Graph.IsWellNested`: subtrees that interleave, and the ban on
   interleaving subtrees neither of whose roots dominates the other.
-* `Graph.gapDegree`: the greatest number of discontinuities in the projection of a position.
+* `Graph.gapDegree`: the greatest number of discontinuities in the yield of a position.
 * `Graph.crossings`: the number of crossing pairs of links.
 
 ## Main statements
@@ -122,14 +122,12 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
-theorem Graph.projection_pairwise_lt (v : Fin n) :
-    (g.projection v).Pairwise (· < ·) := (List.pairwise_lt_finRange n).filter _
-
-/-- The gap degree of a position counts the discontinuities in its projection, the adjacent
-members more than one position apart ([kuhlmann-nivre-2006], Definition 6). -/
-def Graph.gapDegreeAt (v : Fin n) : Nat :=
-  ((g.projection v).zip (g.projection v).tail).countP
-    (fun p ↦ decide (1 < p.2.val - p.1.val))
+/-- The gap degree of a position counts the discontinuities in its yield: the positions of the
+yield whose successor lies outside it though a later position lies inside
+([kuhlmann-nivre-2006], Definition 6). -/
+def Graph.gapDegreeAt (v : Fin n) : ℕ :=
+  (Finset.univ.filter fun x : Fin n ↦ x ∈ g.yield v ∧
+    ∃ z : Fin n, z.val = x.val + 1 ∧ z ∉ g.yield v ∧ ∃ y, z < y ∧ y ∈ g.yield v).card
 
 /-- The gap degree of a graph is the maximum over its positions. -/
 def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
@@ -158,72 +156,29 @@ theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 :=
   · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
 
 
-private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)) :
-    (∀ q ∈ l.zip l.tail, q.2 - q.1 ≤ 1) ↔ Set.OrdConnected {x | x ∈ l} := by
-  rw [Set.ordConnected_iff]
-  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, and_imp]
-  induction h with
-  | nil => simp
-  | singleton a => simp; omega
-  | @cons_cons a b t hab hchain ih =>
-    have hpw : (b :: t).Pairwise (· < ·) := List.isChain_iff_pairwise.mp hchain
-    have hble : ∀ y ∈ b :: t, b ≤ y := by
-      rintro y hy
-      rcases List.mem_cons.mp hy with rfl | hy'
-      exacts [Nat.le_refl _, ((List.pairwise_cons.mp hpw).1 y hy').le]
-    rw [List.tail_cons, List.zip_cons_cons, List.forall_mem_cons]
-    constructor
-    · rintro ⟨hba, hrest⟩ x hx y hy hxy z hxz hzy
-      have hb : b = a + 1 := by omega
-      have hconv := ih.mp hrest
-      rcases List.mem_cons.mp hx with rfl | hx'
-      · rcases Nat.eq_or_lt_of_le hxz with rfl | hlt
-        · exact List.mem_cons_self
-        rcases List.mem_cons.mp hy with rfl | hy'
-        · omega
-        · exact List.mem_cons_of_mem _
-            (hconv b List.mem_cons_self y hy' (hble y hy') z (by omega) hzy)
-      · rcases List.mem_cons.mp hy with rfl | hy'
-        · exact absurd (hble x hx') (by omega)
-        · exact List.mem_cons_of_mem _ (hconv x hx' y hy' hxy z hxz hzy)
-    · intro hconv
-      refine ⟨?_, ih.mpr (fun x hx y hy hxy z hxz hzy ↦ ?_)⟩
-      · by_contra hgap
-        rcases List.mem_cons.mp (hconv a List.mem_cons_self b
-          (List.mem_cons_of_mem _ List.mem_cons_self) hab.le (a + 1) (by omega) (by omega))
-          with heq | hin
-        · omega
-        · exact absurd (hble _ hin) (by omega)
-      · rcases List.mem_cons.mp (hconv x (List.mem_cons_of_mem _ hx)
-          y (List.mem_cons_of_mem _ hy) hxy z hxz hzy) with rfl | hin
-        · exact absurd (hble x hx) (by omega)
-        · exact hin
-
-private theorem mem_projection_map {v : Fin n} {k : ℕ} :
-    k ∈ (g.projection v).map (·.val) ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
-  simp [List.mem_map]
-
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
     g.gapDegreeAt v = 0 ↔ (g.yield v).OrdConnected := by
-  have hmap : g.gapDegreeAt v =
-      (((g.projection v).map (·.val)).zip ((g.projection v).map (·.val)).tail).countP
-        (fun p ↦ decide (1 < p.2 - p.1)) := by
-    simp [Graph.gapDegreeAt, ← List.map_tail, List.zip_map, List.countP_map,
-      Function.comp_def]
-  rw [hmap, List.countP_eq_zero]
-  have hgf := gapfree_iff_ordConnected (l := (g.projection v).map (·.val))
-    (List.isChain_iff_pairwise.mpr
-      (List.Pairwise.map _ (fun _ _ h ↦ h) (g.projection_pairwise_lt v)))
-  simp only [decide_eq_true_eq, Nat.not_lt] at *
-  rw [hgf, Set.ordConnected_iff, Set.ordConnected_iff]
-  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projection_map,
-    Graph.mem_yield, and_imp]
-  constructor
-  · rintro h x hx y hy hxy z hxz hzy
-    obtain ⟨w, hw, hwv⟩ := h x.val ⟨x, hx, rfl⟩ y.val ⟨y, hy, rfl⟩ hxy z.val hxz hzy
-    exact (Fin.val_injective (hwv : w.val = z.val)) ▸ hw
-  · rintro h k ⟨x, hx, rfl⟩ m ⟨y, hy, rfl⟩ hxy z hxz hzy
-    exact ⟨⟨z, lt_of_le_of_lt hzy y.isLt⟩, h x hx y hy hxy ⟨z, _⟩ hxz hzy, rfl⟩
+  rw [Graph.gapDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff, Set.ordConnected_iff]
+  refine ⟨fun h x hx y hy _ z hz ↦ ?_, fun h x _ ⟨hx, z, hz, hzY, y, hzy, hy⟩ ↦
+    hzY (h x hx y hy (by omega) ⟨by omega, hzy.le⟩)⟩
+  by_contra hzY
+  have hxz : x.val < z.val := lt_of_le_of_ne hz.1 fun e ↦ hzY (Fin.ext e ▸ hx)
+  -- the least position after `x` outside the yield, and its predecessor inside
+  have hex : ∃ k, x.val < k ∧ ∃ w : Fin n, w.val = k ∧ w ∉ g.yield v := ⟨z, hxz, z, rfl, hzY⟩
+  classical
+  obtain ⟨k, hk⟩ : ∃ k, k = Nat.find hex := ⟨_, rfl⟩
+  obtain ⟨hxk, w, hwk, hwY⟩ := Nat.find_spec hex
+  have hkz : k ≤ z := hk ▸ Nat.find_min' hex ⟨hxz, z, rfl, hzY⟩
+  rw [← hk] at hxk hwk
+  have hp : k - 1 < n := by omega
+  have hpY : (⟨k - 1, hp⟩ : Fin n) ∈ g.yield v := by
+    by_contra hpY
+    rcases Nat.lt_or_ge x.val (k - 1) with hlt | hge
+    · exact Nat.find_min hex (by omega : k - 1 < Nat.find hex) ⟨hlt, _, rfl, hpY⟩
+    · exact hpY ((Fin.ext (by simp only; omega) : (⟨k - 1, hp⟩ : Fin n) = x) ▸ hx)
+  have hwy : w < y :=
+    lt_of_le_of_ne (Fin.le_def.2 (by have := Fin.le_def.1 hz.2; omega)) fun e ↦ hwY (e ▸ hy)
+  exact h (Finset.mem_univ ⟨k - 1, hp⟩) ⟨hpY, w, by simp only; omega, hwY, y, hwy, hy⟩
 
 /-- **Projectivity is gap degree zero**: the parametric constraint at its
 least value is the binary one. -/

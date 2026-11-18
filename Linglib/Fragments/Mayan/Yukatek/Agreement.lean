@@ -92,7 +92,9 @@ Tables 24.54, 24.56). -/
 def markerSet : StatusCategory → ArgumentRole → Option MarkerSet
   | .incompletive => Mayan.extendedErgativeMarking
   | .completive | .subjunctive => Mayan.ergativeMarking
-  | .imperative => fun r ↦ if r = .P then some .setB else none
+  | .imperative => fun
+    | .P => some .setB
+    | _ => none
 
 /-- The marking is ergative exactly under the statuses of perfective aspect, the completive and
 the subjunctive, Bohnemeyer's association of the split with the aspect of the status

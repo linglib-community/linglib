@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Word.Features
+public import Linglib.Data.Examples.Gloss
 
 /-!
 # Leipzig category labels of tokens
@@ -23,6 +24,7 @@ names nothing.
 
 * `Morphology.Feature.labels`: the standard abbreviations of the values of a feature.
 * `Morphology.Features.ofLabels`: the features a list of labels names.
+* `GlossedWord.features`: the features the labels of a word of a row's gloss line name.
 
 ## Implementation notes
 
@@ -83,3 +85,6 @@ def ofLabels (ls : List (List Char)) : Features
 end Features
 
 end Morphology
+
+/-- The features the category labels of a glossed word name. -/
+def GlossedWord.features (w : GlossedWord) : Morphology.Features := .ofLabels w.labels

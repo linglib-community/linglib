@@ -21,15 +21,15 @@ of the first-person singular *ng* form and the second-person singular *ang* form
 
 ## Main definitions
 
-* `Tagalog.ang`, `Tagalog.ng`, `Tagalog.sa` — the three case series, a form for each category
-* `Tagalog.entry`, `Tagalog.pronouns` — the pronoun entries, with the person and number of
-  their category
+* `Tagalog.Pronouns.ang`, `Tagalog.Pronouns.ng`, `Tagalog.Pronouns.sa` — the three case series, a form for each category
+* `Tagalog.Pronouns.entry`, `Tagalog.Pronouns.personal` — the pronoun entries, with the person
+  and number of their category
 
 ## Main results
 
-* `Tagalog.entry_categories`, `Tagalog.entry_wellFormed` — an entry denotes its category
-* `Tagalog.paradigm_nom` — the inventory's subject paradigm is the *ang* series
-* `Tagalog.ang_injective` — no two categories share an *ang* form
+* `Tagalog.Pronouns.entry_categories`, `Tagalog.Pronouns.entry_wellFormed` — an entry denotes its category
+* `Tagalog.Pronouns.paradigm_nom` — the inventory's subject paradigm is the *ang* series
+* `Tagalog.Pronouns.ang_injective` — no two categories share an *ang* form
 
 ## References
 
@@ -41,7 +41,7 @@ of the first-person singular *ng* form and the second-person singular *ang* form
 
 @[expose] public section
 
-namespace Tagalog
+namespace Tagalog.Pronouns
 
 open Person (Category)
 
@@ -88,7 +88,7 @@ def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
   { form, person := some c.person, number := some (number c), cases := {k.label} }
 
 /-- The pronoun inventory: the three series over the eight categories. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   Finset.univ.biUnion fun c ↦ {entry c .ang (ang c), entry c .ng (ng c), entry c .sa (sa c)}
 
 /-- An entry denotes exactly its category. -/
@@ -105,10 +105,10 @@ theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
 forms. -/
 theorem paradigm_nom (c : Category) :
-    PersonalPronoun.paradigm (pronouns.filter (.nom ∈ ·.cases)) c = {ang c} := by
+    PersonalPronoun.paradigm (personal.filter (.nom ∈ ·.cases)) c = {ang c} := by
   cases c <;> decide +kernel
 
 /-- No two categories share an *ang* form. -/
 theorem ang_injective : Function.Injective ang := by decide
 
-end Tagalog
+end Tagalog.Pronouns

@@ -28,11 +28,6 @@ tune](##omxobm_stem_unvalued).
 * Positions are the three of one configuration; a trigger–target pair on a larger spine is read
   at the configuration containing both.
 
-## Errata
-
-* The discussion of the table summarizing the dominant-tone asymmetry calls the reverse of its
-  row a. "row b."; it is row f.
-
 ## TODO
 
 * The Izon and Hausa case studies and the treatment of apparent outward dominance.
@@ -238,7 +233,7 @@ theorem recessive (host : List (TBU S)) (tier : C → Fin host.length → TRN) {
       simp [obmomx, culmin, absentViol_eq_zero_iff, hdt, hhost]
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, obmomx,
     culmin, absentViol_eq_zero_iff] at h0
-  have hT := hpriv c (Tableau.optimal_subset hc)
+  have hT := hpriv c (Cophonology.optimal_subset hc)
   have hH := hdt ▸ hpriv d hd
   -- Every unit bearing `t` in the target bears it in the winner, and the winner bears it once.
   have hsub : Finset.univ.filter (tonalTier host · = t) ⊆ Finset.univ.filter (tier c · = t) :=

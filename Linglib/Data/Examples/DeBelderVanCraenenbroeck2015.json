@@ -49,7 +49,7 @@
     "translation": "I have never understood the motivation behind the case.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -130,7 +130,7 @@
     "translation": "In a newspaper article the what/how/who/where always precedes the why.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -187,7 +187,7 @@
     "translation": "The students are on a first-name basis with each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -248,7 +248,7 @@
     "translation": "Martha is my best friend.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -301,7 +301,7 @@
     "translation": "Don't object!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -358,7 +358,7 @@
     "translation": "Paard takes a neuter article.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -419,7 +419,7 @@
     "translation": "the ticking of the clock",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -480,7 +480,7 @@
     "translation": "the whistling of the birds",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -545,7 +545,7 @@
     "translation": "I don't like those constant objections.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -610,7 +610,7 @@
     "translation": "I don't like those constant considerations.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -675,7 +675,7 @@
     "translation": "I don't like those constant alternatives.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -740,7 +740,7 @@
     "translation": "I don't like this constant need for confirmation.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -805,7 +805,7 @@
     "translation": "I don't like this constant need for justification.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -870,7 +870,7 @@
     "translation": "I don't like this constant unwillingness.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -935,7 +935,7 @@
     "translation": "I don't like all this egocentricity.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -996,7 +996,7 @@
     "translation": "My best friend is unhappy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Mijn tweede ik ben ongelukkig.",
         "judgment": "ungrammatical"
@@ -1070,7 +1070,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

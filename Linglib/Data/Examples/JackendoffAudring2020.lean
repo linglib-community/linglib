@@ -24,7 +24,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
@@ -37,7 +37,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
@@ -50,7 +50,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
@@ -63,7 +63,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
@@ -76,7 +76,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
@@ -89,7 +89,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
@@ -102,7 +102,7 @@ def ex_4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
@@ -115,7 +115,7 @@ def ex_4d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
@@ -128,7 +128,7 @@ def ex_44a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
@@ -141,7 +141,7 @@ def ex_44a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
@@ -154,7 +154,7 @@ def ex_44a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
@@ -167,7 +167,7 @@ def ex_44a_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
@@ -180,7 +180,7 @@ def ex_44a_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
@@ -193,7 +193,7 @@ def ex_44b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
@@ -206,7 +206,7 @@ def ex_44b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
@@ -219,7 +219,7 @@ def ex_44b_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
@@ -232,7 +232,7 @@ def trumpism : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the sister relation is open-ended")] }
 
@@ -245,7 +245,7 @@ def cynic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("cynicist", .ungrammatical)]
+    contrasts := [("cynicist", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the expected regular form is blocked by a lexical competitor")] }
 
@@ -258,7 +258,7 @@ def casuist : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("casuism", .ungrammatical)]
+    contrasts := [("casuism", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the expected regular form is blocked by a lexical competitor")] }
 
@@ -271,7 +271,7 @@ def ex_48a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
@@ -284,7 +284,7 @@ def ex_48a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
@@ -297,7 +297,7 @@ def ex_48a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
@@ -310,7 +310,7 @@ def ex_48b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
@@ -323,7 +323,7 @@ def ex_48b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
@@ -336,7 +336,7 @@ def ex_48b_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
@@ -349,7 +349,7 @@ def ex_48b_vivid : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("vivor", .ungrammatical)]
+    contrasts := [("vivor", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the -id ~ -or schemas are nonproductive")] }
 
@@ -362,7 +362,7 @@ def ex_48b_vigor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("vigid", .ungrammatical)]
+    contrasts := [("vigid", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the -id ~ -or schemas are nonproductive")] }
 
@@ -375,7 +375,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present"), ("stem", "walk")] }
 
@@ -388,7 +388,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present 3 singular"), ("stem", "walk")] }
 
@@ -401,7 +401,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "past"), ("stem", "walk")] }
 
@@ -414,7 +414,7 @@ def ex_19d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "infinitive"), ("stem", "walk")] }
 
@@ -427,7 +427,7 @@ def ex_19e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present participle"), ("stem", "walk")] }
 
@@ -440,7 +440,7 @@ def ex_19f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "past participle"), ("stem", "walk")] }
 
@@ -453,7 +453,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/æ"), ("relation", "sister entries")] }
 
@@ -466,7 +466,7 @@ def t51_drink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/æ"), ("instances", "begin, ring, (shrink), sing, sink, sit, (spit), spring, (stink), swim")] }
 
@@ -479,7 +479,7 @@ def t51_cling : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/ʌ"), ("instances", "dig, fling, (shrink), sling, slink, spin, stick, sting, (stink), string, swing, win, wring")] }
 
@@ -492,7 +492,7 @@ def t51_eat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "i/ej"), ("instances", "")] }
 
@@ -505,7 +505,7 @@ def t51_hang : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "æ/ʌ"), ("claim", "alternates in the opposite direction from run/ran")] }
 
@@ -518,7 +518,7 @@ def t51_run : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ʌ/æ")] }
 
@@ -531,7 +531,7 @@ def ex_41_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 1 sg"), ("stem", "sprechen")] }
 
@@ -544,7 +544,7 @@ def ex_41_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 2 sg"), ("stem", "sprechen")] }
 
@@ -557,7 +557,7 @@ def ex_41_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 sg"), ("stem", "sprechen")] }
 
@@ -570,7 +570,7 @@ def ex_41_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 1 pl"), ("stem", "sprechen")] }
 
@@ -583,7 +583,7 @@ def ex_41_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 2 pl"), ("stem", "sprechen")] }
 
@@ -596,7 +596,7 @@ def ex_41_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 pl"), ("stem", "sprechen")] }
 
@@ -609,7 +609,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("alternation", "ɛ/a"), ("relation", "stem and past tense stem")] }
 
@@ -622,7 +622,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 sg"), ("claim", "a special schema for the errant present-tense vowel")] }
 
@@ -635,7 +635,7 @@ def ex_44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "26")] }
 
@@ -648,7 +648,7 @@ def ex_44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "18")] }
 
@@ -661,7 +661,7 @@ def ex_44c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "6")] }
 
@@ -674,7 +674,7 @@ def ex_44d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "2")] }
 
@@ -687,7 +687,7 @@ def ex_44e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "1")] }
 
@@ -700,7 +700,7 @@ def ex_56_take : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across a main verb, idioms, a light verb and complex verbs")] }
 
@@ -713,7 +713,7 @@ def ex_56_do : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across a light verb, an anaphor, an idiom, a complex verb and a meaningless auxiliary")] }
 
@@ -726,7 +726,7 @@ def ex_56_go : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "suppletion shared across idioms")] }
 
@@ -739,7 +739,7 @@ def ex_56_draw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across readings")] }
 
@@ -752,7 +752,7 @@ def ex_56_staan : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "a prefixed verb inflects like its base")] }
 
@@ -765,7 +765,7 @@ def ex_56_stehen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "a prefixed verb inflects like its base")] }
 
@@ -778,7 +778,7 @@ def ex_56_ring : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "homophonous verbs that inflect differently are different verbs")] }
 
@@ -791,7 +791,7 @@ def ex_56_zeggen : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "homophonous verbs that inflect differently are different verbs")] }
 
@@ -804,7 +804,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("relation", "sister words"), ("claim", "morphosyntax and phonology shared, semantics not")] }
 
@@ -817,7 +817,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("relation", "sister words"), ("claim", "morphosyntax and phonology shared, semantics not")] }
 
@@ -830,7 +830,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "the past tense retains the relational link")] }
 
@@ -843,7 +843,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "the verbal stem is linked with the other manifestations of draw")] }
 

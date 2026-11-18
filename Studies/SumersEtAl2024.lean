@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Decision
-public import Linglib.Pragmatics.RSA.Uniform
+public import Mathlib.MeasureTheory.Measure.Real
+public import Linglib.Pragmatics.Probabilistic.Decision
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -140,8 +140,8 @@ instance [Nonempty U] : IsMarkovKernel (speaker βS lam cost sem π R) :=
 theorem speaker_real_lt_iff (hβ : 0 < βS) :
     (speaker βS lam cost sem π R w).real {u} < (speaker βS lam cost sem π R w).real {u'} ↔
       combinedUtility lam cost sem π R u w < combinedUtility lam cost sem π R u' w := by
-  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ ↦ EReal.coe_ne_top _)
-    ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ ↦ EReal.coe_ne_top _),
+    EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :
@@ -188,7 +188,7 @@ theorem expectedReward_cellReward (u : U) :
     ∫ w, cellReward r s c 0 w ∂(L u) = s + (r - s) * cellMass L c u ∧
       ∫ w, cellReward r s c 1 w ∂(L u) = r + (s - r) * cellMass L c u := by
   have htot := sum_filter_add_sum_filter_not univ (· ∈ c) fun w ↦ (L u).real {w}
-  have h1 : ∑ w, (L u).real {w} = 1 := sum_measureReal_singleton_eq_one (L u)
+  have h1 : ∑ w, (L u).real {w} = 1 := by simp
   rw [filter_mem_eq_inter, univ_inter, h1] at htot
   have hB : ∑ w with w ∉ c, (L u).real {w} = 1 - cellMass L c u := by
     rw [cellMass]; linarith
@@ -303,10 +303,10 @@ theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p :
     [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w ↦ p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
     ∫ w, reward val feat a w
-        ∂(RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))) u) =
+        ∂(RSA.literalListener (uniformOn Set.univ) (fun u ↦ (S u : Set (K → V))) u) =
       ∑ k ∈ feat a, if k = f then (∑ x with p x, val x) / (univ.filter p).card
         else (∑ x, val x) / Fintype.card V := by
-  simp only [integral_fintype .of_finite, smul_eq_mul, listener_uniformOn_truthful_real_singleton,
+  simp only [integral_fintype .of_finite, smul_eq_mul, literalListener_uniformOn_real_singleton,
       hS, mem_filter, mem_univ,
     true_and,
     reward, mul_sum]
@@ -359,11 +359,11 @@ def featSpotted : Fin 3 → Finset Feature
 
 /-- The literal listener (3) at the uniform prior over worlds. -/
 noncomputable abbrev listener : Kernel (Feature × Value) (Feature → Value) :=
-  RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (sem u : Set (Feature → Value)))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (sem u : Set (Feature → Value)))
 
 /-- The prior as a listener who has heard nothing. -/
 noncomputable abbrev prior : Kernel (Feature × Value) (Feature → Value) :=
-  RSA.listener (uniformOn Set.univ) (truthful fun _ ↦ ((univ : Finset (Feature → Value)) : Set _))
+  RSA.literalListener (uniformOn Set.univ) (fun _ ↦ ((univ : Finset (Feature → Value)) : Set _))
 
 variable (fs : Fin 3 → Finset Feature) (u : Feature × Value) (a : Fin 3) {β βS : ℝ}
 

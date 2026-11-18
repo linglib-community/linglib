@@ -14,7 +14,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises? Simplified from Walsh & Johnson-Laird's original items.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -51,7 +51,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -85,7 +85,7 @@
     "glossedTokens": [],
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -122,7 +122,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -155,7 +155,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -192,7 +192,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -228,7 +228,7 @@
     "glossedTokens": [],
     "context": "Reasoning task, flat structure: both premises combined into one sentence.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -264,7 +264,7 @@
     "glossedTokens": [],
     "context": "Reasoning task, flat structure: both premises combined into one sentence.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -301,7 +301,7 @@
     "glossedTokens": [],
     "context": "Reasoning task, reversed structure: the hint precedes the alternative-raising premise.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -338,7 +338,7 @@
     "glossedTokens": [],
     "context": "Reasoning task, reversed structure: the hint precedes the alternative-raising premise.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -372,7 +372,7 @@
     "glossedTokens": [],
     "context": "Package deal (Merin 1992, van Rooy 2000): permission for both actions or neither.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "John is allowed to steal from the rich (16a)",
@@ -406,7 +406,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow from the two premises?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

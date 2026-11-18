@@ -24,7 +24,7 @@ def bs2022_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("numeral", "0.9"), ("unit", "grams")] }
 
@@ -37,7 +37,7 @@ def bs2022_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "the sample's volume is at least 1 milliliter")] }
 
@@ -50,7 +50,7 @@ def bs2022_10 : Datum :=
     glossedTokens := []
     context := "This cube weighs 1 kg while that cube weighs 2 kg."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("same weight", .acceptable), ("same density", .unacceptable)]
     paperFeatures := [("construction", "free relative")] }
 
@@ -63,7 +63,7 @@ def bs2022_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("comparing weight", .acceptable), ("comparing density", .unacceptable)]
     paperFeatures := [("construction", "comparative")] }
 
@@ -76,7 +76,7 @@ def bs2022_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("asking for weight", .acceptable), ("asking for density", .unacceptable)]
     paperFeatures := [("construction", "wh-interrogative")] }
 
@@ -89,7 +89,7 @@ def bs2022_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.9"), ("unit", "grams"), ("measure_function", "weight")] }
 
@@ -102,7 +102,7 @@ def bs2022_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.8"), ("unit", "milliliters"), ("measure_function", "volume")] }
 
@@ -115,7 +115,7 @@ def bs2022_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The mixture contains 0.1 grams of salt per milliliter.", .acceptable)]
+    contrasts := [("The mixture contains 0.1 grams of salt per milliliter.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "the mixture's volume is at least 1 milliliter")] }
 
@@ -128,7 +128,7 @@ def bs2022_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("asking for absolute weight or volume", .acceptable), ("asking for concentration", .acceptable)]
     paperFeatures := [("construction", "wh-interrogative"), ("measure_function", "underspecified")] }
 
@@ -141,7 +141,7 @@ def bs2022_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("knowing the absolute weight or volume", .acceptable), ("knowing the concentration", .acceptable)]
     paperFeatures := [("construction", "embedded question"), ("measure_function", "underspecified")] }
 
@@ -154,7 +154,7 @@ def bs2022_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.1"), ("unit", "kilograms"), ("per_unit", "liter"), ("unit_sensitivity", "the mixture's volume is at least 1 liter")] }
 
@@ -167,7 +167,7 @@ def bs2022_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "5 mL ≥ mL")] }
 
@@ -180,7 +180,7 @@ def bs2022_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "liter"), ("unit_sensitivity", "5 mL ≥ L")] }
 
@@ -193,7 +193,7 @@ def bs2022_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "0.1"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "0.1 mL ≥ mL")] }
 
@@ -206,7 +206,7 @@ def bs2022_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "page"), ("unit_sensitivity", "a monograph has at least one page")] }
 
@@ -219,7 +219,7 @@ def bs2022_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "line"), ("unit_sensitivity", "a paragraph has at least one line")] }
 
@@ -232,7 +232,7 @@ def bs2022_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "page"), ("unit_sensitivity", "a paragraph comprises less than a whole page")] }
 
@@ -245,7 +245,7 @@ def bs2022_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "5 mL ≥ mL")] }
 
@@ -258,7 +258,7 @@ def bs2022_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "kilograms"), ("per_unit", "liter"), ("unit_sensitivity", "5 mL ≥ L")] }
 
@@ -271,7 +271,7 @@ def bs2022_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "0.1"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "0.1 mL ≥ mL")] }
 
@@ -284,7 +284,7 @@ def bs2022_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
@@ -297,7 +297,7 @@ def bs2022_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams")] }
 
@@ -310,7 +310,7 @@ def bs2022_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams"), ("quantifier", "for every")] }
 
@@ -323,7 +323,7 @@ def bs2022_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "968"), ("unit", "people"), ("quantifier", "for every")] }
 

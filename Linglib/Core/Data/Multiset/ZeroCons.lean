@@ -22,13 +22,7 @@ namespace Multiset
 variable {α : Type*} {a b c d : α}
 
 theorem pair_eq_pair_iff : ({a, b} : Multiset α) = {c, d} ↔ a = c ∧ b = d ∨ a = d ∧ b = c := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · simp only [insert_eq_cons] at h
-    rcases mem_cons.1 (h ▸ mem_cons_self a {b}) with rfl | ha
-    · exact .inl ⟨rfl, singleton_inj.1 ((cons_inj_right a).1 h)⟩
-    · obtain rfl := mem_singleton.1 ha
-      exact .inr ⟨rfl, singleton_inj.1 ((cons_inj_right a).1 (h.trans (pair_comm c a)))⟩
-  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-    exacts [rfl, pair_comm _ _]
+  simp only [insert_eq_cons, cons_eq_cons, singleton_inj, singleton_eq_cons_iff]
+  grind
 
 end Multiset

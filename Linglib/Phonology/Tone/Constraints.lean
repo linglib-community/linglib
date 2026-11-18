@@ -13,9 +13,10 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 # Tonal constraints
 
 OT and harmonic-serialism constraints over the candidates `Candidate u` of an autosegmental form
-`u : Form S TRN M`, generic over the segment type `S` and the opaque sponsor type `M`. Each is
-an `OptimalityTheory.Constraint`, a violation count. Equation numbers are McPherson and
-Lamont's.
+`u : AR (TwoTier (Sponsored TRN M) (Sponsored S M))`, generic over the segment type `S` and the
+opaque
+sponsor type `M`. Each is an `OptimalityTheory.Constraint`, a violation count. Equation numbers
+are McPherson and Lamont's.
 
 ## Main definitions
 
@@ -55,16 +56,18 @@ open Autosegmental
 open Tone (TRN)
 open OptimalityTheory
 
-variable {S M : Type*} [DecidableEq S] [DecidableEq M] {u : Form S TRN M}
+variable {S M : Type} [DecidableEq S] [DecidableEq M] {u :
+    AR (TwoTier (Sponsored TRN M) (Sponsored S M))}
 
 /-! ### Tone-value predicate
 
 Link faithfulness (`Candidate.insertedLinks` / `deletedLinks`) and the morphemes
-(`Form.morphemes`, `Form.lowerOfMorpheme`) are tone-agnostic and live on the substrate; only
+(`AR.morphemes`, `AR.lowerOfMorpheme`) are tone-agnostic and live on the substrate; only
 the `TRN`-reading predicate is here. -/
 
 /-- The tone at index `k` has value `t`. -/
-abbrev ToneHasValue (k : Fin u.upper.length) (t : TRN) : Prop := u.upper[k].value = t
+abbrev ToneHasValue (k : Fin (u.word .upper).length) (t : TRN) : Prop :=
+  (u.word .upper)[k].value = t
 
 /-! ### *FLOAT (Directional) -/
 
@@ -73,7 +76,7 @@ abbrev ToneHasValue (k : Fin u.upper.length) (t : TRN) : Prop := u.upper[k].valu
     is `*FLOAT^→`, and the directional EVAL is recovered as the canonical lex order over the
     block ([lamont-2022b]). -/
 def starFloatBlock : List (Constraint (Candidate u)) :=
-  (List.finRange u.upper.length).map fun i c ↦ if c.IsFloating i then 1 else 0
+  (List.finRange (u.word .upper).length).map fun i c ↦ if c.IsFloating i then 1 else 0
 
 /-- `*FLOAT^←` is `starFloatBlock` laid out in reverse position order, for right-to-left
     evaluation. -/
@@ -95,9 +98,9 @@ def starTautDock : Constraint (Candidate u) :=
 
 /-- The tones counting toward morpheme `m`'s tonal mass are its surviving underlying tones
     and the tones surface-linked to its TBUs. -/
-def tonesForMorpheme (c : Candidate u) (m : M) : Finset (Fin u.upper.length) :=
-  (Finset.univ.filter fun k ↦ k ∉ c.deleted ∧ u.upper[k].morpheme = m) ∪
-    (c.links.filter fun l ↦ u.lower[l.2].morpheme = m).image Prod.fst
+def tonesForMorpheme (c : Candidate u) (m : M) : Finset (Fin (u.word .upper).length) :=
+  (Finset.univ.filter fun k ↦ k ∉ c.deleted ∧ (u.word .upper)[k].morpheme = m) ∪
+    (c.links.filter fun l ↦ (u.word .lower)[l.2].morpheme = m).image Prod.fst
 
 /-- `*CROWD` (paper eq. 5) assigns one violation per morpheme with more than `threshold`
     tones (default 2), counting its surviving underlying tones plus tones docked onto its
@@ -137,7 +140,7 @@ def starFall : Constraint (Candidate u) :=
     deletions skip positions. -/
 def starMlessL : Constraint (Candidate u) :=
   fun c ↦ Constraint.forbidPairs (fun a b ↦ a = TRN.M ∧ b = TRN.L)
-    (c.alive.map fun k ↦ u.upper[k].value)
+    (c.alive.map fun k ↦ (u.word .upper)[k].value)
 
 /-! ### HAVETONE -/
 

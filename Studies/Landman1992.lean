@@ -61,13 +61,6 @@ drawing wrong.
   type. Landman's statement of it (p. 3) takes the longer interval after the inertia world; the two
   agree when, as for the truck, the actual world is the only inertia world.
 
-## Errata
-
-* The definition of stopping (p. 24) says that `f`, going on at `j`, stops when nothing of which
-  it is a stage goes on beyond `i`, the interval of `e`. Since `f` is a stage of itself, `f` would
-  then never stop at an interval ending later than `i`, and the continuation branch could not
-  leave the world of `e`; `j` is meant, and `Stops` reads it.
-
 ## TODO
 
 * The rival proposals of §1, the normality, subjunctive and part-of proposals, are not
@@ -105,7 +98,7 @@ namespace Model
 
 open Event (τ)
 
-variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [Event.TemporalTrace E T]
+variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
   (M : Model E W)
 
 /-- An event continues in a world when it goes on there and so does something of which it is a
@@ -192,7 +185,7 @@ inside the run time of an actual event of its type, like Bennett and Partee's pr
 wherever it holds the perfective holds too: it validates the inference from (3) to (4) that the
 imperfective paradox rejects. -/
 theorem prfv_nonempty_of_impf_nonempty {E W T : Type*} [LinearOrder T]
-    [Event.TemporalTrace E T] {P : W → E → Prop} {w : W}
+    [TemporalTrace E T] {P : W → E → Prop} {w : W}
     (h : (Aspect.IMPF (fun w _ ↦ {w}) P w).Nonempty) : (Aspect.PRFV (T := T) P w).Nonempty :=
   let ⟨_, ht⟩ := h; let ⟨e, _, he⟩ := ht w rfl; ⟨Event.τ e, e, le_rfl, he⟩
 
@@ -389,21 +382,21 @@ noncomputable abbrev miracle : Model (NonemptyInterval ℕ) ℕ := interrupted 0
 the event semantics makes the interrupted drawing (3) false. -/
 theorem truthValue_rows :
     ((once.progAt (complete 1) 0).Nonempty ↔
-        Examples.ex3.feature? "truthValue" = some "true") ∧
+        Examples.ex3.verdict = some true) ∧
       ((Aspect.PRFV (T := ℕ) (complete 1) 0).Nonempty ↔
-        Examples.ex4.feature? "truthValue" = some "true") ∧
+        Examples.ex4.verdict = some true) ∧
       ((once.progAt (complete 1) 0).Nonempty ↔
-        Examples.ex13.feature? "truthValue" = some "true") ∧
+        Examples.ex13.verdict = some true) ∧
       ((hopeless.progAt (complete 5) 0).Nonempty ↔
-        Examples.ex17_sink.feature? "truthValue" = some "true") ∧
+        Examples.ex17_sink.verdict = some true) ∧
       ((miracle.progAt (complete 0) 0).Nonempty ↔
-        Examples.ex17_miracle.feature? "truthValue" = some "true") ∧
+        Examples.ex17_miracle.verdict = some true) ∧
       ((twoTrucks.progAt (complete 2) 0).Nonempty ↔
-        Examples.ex18.feature? "truthValue" = some "true") ∧
+        Examples.ex18.verdict = some true) ∧
       ((hopeless.progAt (complete 5) 0).Nonempty ↔
-        Examples.ex20.feature? "truthValue" = some "true") ∧
+        Examples.ex20.verdict = some true) ∧
       ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete 1) 0).Nonempty ↔
-        Examples.ex3.feature? "truthValue" = some "true") := by
+        Examples.ex3.verdict = some true) := by
   have hu (n : ℕ) : Set.Icc 1 n ⊆ (Set.univ : Set ℕ) := Set.subset_univ _
   have hh : ¬ Set.Icc 1 5 ⊆ Set.Iic (2 : ℕ) := fun h ↦ absurd (h ⟨by decide, by decide⟩ :
     (3 : ℕ) ∈ Set.Iic 2) (by decide)

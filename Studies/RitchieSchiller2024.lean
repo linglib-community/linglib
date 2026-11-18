@@ -153,11 +153,11 @@ theorem not_isDefault_of_not_subset {C : Set E} (hC : ¬ C ⊆ s.present v) (hu 
   · exact hu (hh ▸ rfl)
   · exact hC (default_subset_present s v hh)
 
-theorem every_salient_of_every_available (R S : E → Prop) :
+theorem every_salient_of_every_available (R S : Set E) :
     adjRestrict every (s.available v) R S → adjRestrict every (s.salient v) R S :=
   restrictorAntitone_every S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩
 
-theorem some_available_of_some_salient (R S : E → Prop) :
+theorem some_available_of_some_salient (R S : Set E) :
     adjRestrict Quantifier.Det.some (s.salient v) R S →
       adjRestrict Quantifier.Det.some (s.available v) R S :=
   restrictorMonotone_some S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩

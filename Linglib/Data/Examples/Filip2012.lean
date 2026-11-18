@@ -24,7 +24,7 @@ def ex_1a_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "in")] }
 
@@ -37,7 +37,7 @@ def ex_1a_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "for")] }
 
@@ -50,7 +50,7 @@ def ex_1b_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "in")] }
 
@@ -63,7 +63,7 @@ def ex_1b_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "for")] }
 
@@ -76,7 +76,7 @@ def ex_25a_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "in")] }
 
@@ -89,7 +89,7 @@ def ex_25a_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")] }
 
@@ -102,7 +102,7 @@ def ex_25b_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "in")] }
 
@@ -115,7 +115,7 @@ def ex_25b_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "for")] }
 
@@ -128,7 +128,7 @@ def ex_26a_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "in")] }
 
@@ -141,7 +141,7 @@ def ex_26a_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "for")] }
 
@@ -154,7 +154,7 @@ def ex_26b_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "in")] }
 
@@ -167,7 +167,7 @@ def ex_26b_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "for")] }
 
@@ -180,7 +180,7 @@ def ex_31a_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")] }
 
@@ -193,7 +193,7 @@ def ex_37a_for : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "for")] }
 
@@ -206,7 +206,7 @@ def ex_37a_in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "in")] }
 

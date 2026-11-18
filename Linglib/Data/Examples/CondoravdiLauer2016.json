@@ -9,7 +9,7 @@
     "translation": "",
     "context": "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -75,7 +75,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -120,7 +120,7 @@
     "context": "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "hoboken"]
@@ -138,7 +138,7 @@
     "translation": "",
     "context": "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "conflict"],
@@ -179,7 +179,7 @@
     "translation": "",
     "context": "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "conflict"],
@@ -198,7 +198,7 @@
     "translation": "",
     "context": "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "conflict"],
@@ -217,7 +217,7 @@
     "translation": "",
     "context": "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "conflict"],
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "strong"]
@@ -254,7 +254,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -276,7 +276,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -298,7 +298,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -320,7 +320,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -339,7 +339,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -361,7 +361,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -381,7 +381,7 @@
     "context": "You can only take three days off work, and this is mutually known.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "counterfactual"]
@@ -399,7 +399,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -421,7 +421,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -462,7 +462,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -484,7 +484,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -503,7 +503,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "counterfactual"]
@@ -521,7 +521,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "vacuity"]
@@ -539,7 +539,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "vacuity"]
@@ -557,7 +557,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negation"]
@@ -575,7 +575,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "readings"],
@@ -594,7 +594,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "readings"],
@@ -616,7 +616,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "readings"],
@@ -638,7 +638,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "readings"],
@@ -657,7 +657,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "incompatibleWants"],
@@ -676,7 +676,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "incompatibleWants"],
@@ -695,7 +695,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "incompatibleWants"],
@@ -714,7 +714,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "incompatibleWants"],
@@ -734,7 +734,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "levinson"]
@@ -752,7 +752,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "levinson"]
@@ -770,7 +770,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "levinson"]
@@ -788,7 +788,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "readings"],
@@ -807,7 +807,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "upwardEntailment"]
@@ -825,7 +825,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "upwardEntailment"]
@@ -843,7 +843,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "upwardEntailment"]
@@ -861,7 +861,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "upwardEntailment"]
@@ -879,7 +879,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "normsAntecedent"]
@@ -897,7 +897,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -916,7 +916,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -935,7 +935,7 @@
     "translation": "",
     "context": "Dog owners have to pay a special dog tax, but service dogs for the blind are exempt; John's eyesight is currently perfect and he does not currently have a dog.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -954,7 +954,7 @@
     "translation": "",
     "context": "Dog owners have to pay a special dog tax, but service dogs for the blind are exempt; John's eyesight is currently perfect and he does not currently have a dog.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -973,7 +973,7 @@
     "translation": "",
     "context": "Getting a ride is the most preferable way to get to the airport.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -992,7 +992,7 @@
     "translation": "",
     "context": "Getting a ride is the most preferable way to get to the airport.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -1014,7 +1014,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -1036,7 +1036,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -1058,7 +1058,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sobel"],
@@ -1080,7 +1080,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "mood"],
@@ -1102,7 +1102,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "mood"],
@@ -1122,7 +1122,7 @@
     "translation": "",
     "context": "There are two trains to Vladivostok, one Russian and one Chinese. The Chinese train is much more comfortable.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1145,7 +1145,7 @@
     "context": "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "strength"],
@@ -1164,7 +1164,7 @@
     "translation": "",
     "context": "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "strength"],
@@ -1186,7 +1186,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "mood"],
@@ -1208,7 +1208,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "mood"],
@@ -1227,7 +1227,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -1246,7 +1246,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -1265,7 +1265,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -1284,7 +1284,7 @@
     "translation": "",
     "context": "The speaker knows that a deadly virus has just been set free in Harlem, and that anyone who goes there is likely to be infected. As far as the speaker knows, the addressee is unaware of this.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "asymmetry"]
@@ -1305,7 +1305,7 @@
     "translation": "",
     "context": "A and B are watching a disaster movie in which a virus is set free in Harlem. After a scene of people dropping dead in the street, the movie cuts to the hero, C, who is going about his day in Manhattan, oblivious to the outbreak. C is studying the schedule for the A train.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "asymmetry"]
@@ -1326,7 +1326,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1351,7 +1351,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1376,7 +1376,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1398,7 +1398,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "purpose"],
@@ -1417,7 +1417,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "vacuity"]
@@ -1435,7 +1435,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1457,7 +1457,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1480,7 +1480,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1503,7 +1503,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1526,7 +1526,7 @@
     "context": "",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1549,7 +1549,7 @@
     "context": "",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1572,7 +1572,7 @@
     "context": "",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1595,7 +1595,7 @@
     "context": "",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],
@@ -1618,7 +1618,7 @@
     "context": "",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "construal"],

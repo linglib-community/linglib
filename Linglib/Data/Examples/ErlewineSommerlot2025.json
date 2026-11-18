@@ -12,7 +12,7 @@
     "translation": "Fera wrote that letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -38,7 +38,7 @@
     "translation": "That letter was written by Fera.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -63,7 +63,7 @@
     "translation": "I wrote that letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -88,7 +88,7 @@
     "translation": "The book that Wati wrote is on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -138,7 +138,7 @@
     "translation": "We will not read this book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -188,7 +188,7 @@
     "translation": "We will not read this book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -213,7 +213,7 @@
     "translation": "Who has read the book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -238,7 +238,7 @@
     "translation": "clothes that Ali isn't washing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -263,7 +263,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -288,7 +288,7 @@
     "translation": "To Ani, Hasan sent the letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -313,7 +313,7 @@
     "translation": "To whom were those flowers given?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -338,7 +338,7 @@
     "translation": "To whom did you give those flowers?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -362,7 +362,7 @@
     "translation": "This book, Badu has read.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -387,7 +387,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -412,7 +412,7 @@
     "translation": "Who will the door be opened by?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "standard"],
@@ -436,7 +436,7 @@
     "translation": "S/he ties the boat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -460,7 +460,7 @@
     "translation": "S/he ties the boat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -485,7 +485,7 @@
     "translation": "Food will be sent to Meliau (by my mother).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -509,7 +509,7 @@
     "translation": "I touch the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -533,7 +533,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -557,7 +557,7 @@
     "translation": "S/he is bringing wood.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -581,7 +581,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -605,7 +605,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -629,7 +629,7 @@
     "translation": "My mother makes chicken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -653,7 +653,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -677,7 +677,7 @@
     "translation": "The book was written.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -702,7 +702,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -727,7 +727,7 @@
     "translation": "The man is writing the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -751,7 +751,7 @@
     "translation": "Who tied the boat?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -775,7 +775,7 @@
     "translation": "Who took my basket?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -800,7 +800,7 @@
     "translation": "What can be planted in the field?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -825,7 +825,7 @@
     "translation": "It's this book that my father bought.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -850,7 +850,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -874,7 +874,7 @@
     "translation": "What isn't s/he looking for?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -898,7 +898,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -923,7 +923,7 @@
     "translation": "Where did s/he buy this shirt?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -948,7 +948,7 @@
     "translation": "Where did s/he buy this shirt?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -973,7 +973,7 @@
     "translation": "Where was this shirt bought by him/her?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -998,7 +998,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -1023,7 +1023,7 @@
     "translation": "I saw the man that tied the rope.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -1048,7 +1048,7 @@
     "translation": "I saw the man that tied the rope.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "desa"],
@@ -1072,7 +1072,7 @@
     "translation": "The child is reading a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1096,7 +1096,7 @@
     "translation": "The child is reading a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1120,7 +1120,7 @@
     "translation": "Who is reading a book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1144,7 +1144,7 @@
     "translation": "Who is reading a book?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1168,7 +1168,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1192,7 +1192,7 @@
     "translation": "What is the child reading?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1217,7 +1217,7 @@
     "translation": "The book that I am not reading is expensive.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "jakarta"],
@@ -1241,7 +1241,7 @@
     "translation": "What did you plant?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "kuching"],
@@ -1265,7 +1265,7 @@
     "translation": "What did you plant?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "kuching"],
@@ -1291,7 +1291,7 @@
     "translation": "Father called his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "politeMadurese"],
@@ -1317,7 +1317,7 @@
     "translation": "The son was called by father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "politeMadurese"],
@@ -1343,7 +1343,7 @@
     "translation": "Father called his son.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "politeMadurese"],
@@ -1368,7 +1368,7 @@
     "translation": "Ali called his child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "familiarMadurese"],
@@ -1393,7 +1393,7 @@
     "translation": "The child was called by Ali.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "familiarMadurese"],
@@ -1418,7 +1418,7 @@
     "translation": "I called his child.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "familiarMadurese"],
@@ -1444,7 +1444,7 @@
     "translation": "It's that book that father read.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "politeMadurese"],
@@ -1470,7 +1470,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "politeMadurese"],
@@ -1496,7 +1496,7 @@
     "translation": "It's that book that David read.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "familiarMadurese"],
@@ -1522,7 +1522,7 @@
     "translation": "It's that book that David read.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["grammar", "familiarMadurese"],

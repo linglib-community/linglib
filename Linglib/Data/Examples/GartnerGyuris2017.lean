@@ -24,7 +24,7 @@ def gg2017_1 : Datum :=
     glossedTokens := []
     context := "A enters S's windowless office in a manifestly dripping wet raincoat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -37,7 +37,7 @@ def gg2017_2a : Datum :=
     glossedTokens := []
     context := "S has just learned that A hosted a party last night but has no idea who did or should have attended."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
@@ -50,7 +50,7 @@ def gg2017_2b : Datum :=
     glossedTokens := []
     context := "S has just learned that A hosted a party last night but has no idea who did or should have attended."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
@@ -61,9 +61,11 @@ def gg2017_8_neg : Datum :=
     language := "hung1274"
     primaryText := "Süt-e a nap?"
     glossedTokens := [("Süt-e", "shine-Q"), ("a", "the"), ("nap", "sun")]
+    glossedWords := [⟨['S', 'ü', 't', '-', 'e'], ['s', 'h', 'i', 'n', 'e', '-', 'Q'], [⟨['S', 'ü', 't'], ['s', 'h', 'i', 'n', 'e'], none⟩, ⟨['e'], ['Q'], some '-'⟩]⟩, ⟨['a'], ['t', 'h', 'e'], [⟨['a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['n', 'a', 'p'], ['s', 'u', 'n'], [⟨['n', 'a', 'p'], ['s', 'u', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A enters S's windowless office in a manifestly dripping wet raincoat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -74,9 +76,11 @@ def gg2017_8_pos : Datum :=
     language := "hung1274"
     primaryText := "Süt-e a nap?"
     glossedTokens := [("Süt-e", "shine-Q"), ("a", "the"), ("nap", "sun")]
+    glossedWords := [⟨['S', 'ü', 't', '-', 'e'], ['s', 'h', 'i', 'n', 'e', '-', 'Q'], [⟨['S', 'ü', 't'], ['s', 'h', 'i', 'n', 'e'], none⟩, ⟨['e'], ['Q'], some '-'⟩]⟩, ⟨['a'], ['t', 'h', 'e'], [⟨['a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['n', 'a', 'p'], ['s', 'u', 'n'], [⟨['n', 'a', 'p'], ['s', 'u', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A comes in with dark sunglasses, T-shirt, shorts, a straw hat and suntan lotion, humming a song about sunshine."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "+")] }
 
@@ -87,9 +91,11 @@ def gg2017_9a : Datum :=
     language := "hung1274"
     primaryText := "Nincs-e itt egy francia étterem?"
     glossedTokens := [("Nincs-e", "not.is-Q"), ("itt", "here"), ("egy", "a"), ("francia", "French"), ("étterem", "restaurant")]
+    glossedWords := [⟨['N', 'i', 'n', 'c', 's', '-', 'e'], ['n', 'o', 't', '.', 'i', 's', '-', 'Q'], [⟨['N', 'i', 'n', 'c', 's'], ['n', 'o', 't', '.', 'i', 's'], none⟩, ⟨['e'], ['Q'], some '-'⟩]⟩, ⟨['i', 't', 't'], ['h', 'e', 'r', 'e'], [⟨['i', 't', 't'], ['h', 'e', 'r', 'e'], none⟩]⟩, ⟨['e', 'g', 'y'], ['a'], [⟨['e', 'g', 'y'], ['a'], none⟩]⟩, ⟨['f', 'r', 'a', 'n', 'c', 'i', 'a'], ['F', 'r', 'e', 'n', 'c', 'h'], [⟨['f', 'r', 'a', 'n', 'c', 'i', 'a'], ['F', 'r', 'e', 'n', 'c', 'h'], none⟩]⟩, ⟨['é', 't', 't', 'e', 'r', 'e', 'm'], ['r', 'e', 's', 't', 'a', 'u', 'r', 'a', 'n', 't'], [⟨['é', 't', 't', 'e', 'r', 'e', 'm'], ['r', 'e', 's', 't', 'a', 'u', 'r', 'a', 'n', 't'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "S and A stand in front of a billboard in a small village saying that the last restaurant there has just closed for good."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "-")] }
 
@@ -102,7 +108,7 @@ def gg2017_9b : Datum :=
     glossedTokens := []
     context := "The billboard announces the opening of several new restaurants in the village."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "+")] }
 

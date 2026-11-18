@@ -39,12 +39,6 @@ its felicity judgments otherwise; the attested *hope whether* examples are recor
 *temer* with a polar question and *haipa* with a constituent question are recorded but not
 predicted.
 
-## Errata
-
-* Non-distributivity is said to block triviality (pp. 10, 13, 16), but the examples refute only the
-  inference from the question to an answer, and [a predicate can fail it and stay
-  L-analytic](##QingEtAl2025.isLAnalytic_degreeComparisonOr).
-
 ## References
 
 * [qing-uegaki-2025]
@@ -365,21 +359,21 @@ theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 
 section Asymmetry
 
-variable {V : Type*} {p Bp Bnp : V → Prop} {v₁ v₂ : V}
+variable {V : Type*} {p Bp Bnp : Set V} {v₁ v₂ : V}
 
 /-- The goals of a hopeful event whose agent hopes `φ` are `φ` or the agent's believing `φ`
 (89). -/
-def HopefulGoals (φ Bφ : V → Prop) (G : Set (V → Prop)) : Prop := ∀ g ∈ G, g = φ ∨ g = Bφ
+def HopefulGoals (φ Bφ : Set V) (G : Set (Set V)) : Prop := ∀ g ∈ G, g = φ ∨ g = Bφ
 
-theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[{Bp}] v₂ := by
+theorem hopes_radical (h₁ : v₁ ∈ Bp) (h₂ : v₂ ∉ Bp) : v₁ <[{Bp}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
     Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h₂ h).elim, fun h ↦ h₂ (h h₁)⟩
 
 /-- When the agent hopes for the negation (89), coming to believe `p` is no better than not, so the
 wondering cannot be hopeful. -/
-theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p v) Bnp G)
-    (hp₁ : p v₁) (hn₁ : ¬ Bnp v₁) : ¬ v₁ <[G] v₂ := by
+theorem hopes_negation {G : Set (Set V)} (hG : HopefulGoals pᶜ Bnp G)
+    (hp₁ : v₁ ∈ p) (hn₁ : v₁ ∉ Bnp) : ¬ v₁ <[G] v₂ := by
   rintro ⟨-, h⟩
   refine h fun g hg hg₁ ↦ ?_
   rcases hG g hg with rfl | rfl
@@ -387,8 +381,8 @@ theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p
   · exact absurd hg₁ hn₁
 
 -- (87)
-theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
-    v₁ <[{fun v ↦ Bp v ∨ Bnp v}] v₂ := by
+theorem fears (h₁ : v₁ ∈ Bp) (h₂ : v₂ ∉ Bp) (hn₂ : v₂ ∉ Bnp) :
+    v₁ <[{Bp ∪ Bnp}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
     Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h.elim h₂ hn₂).elim, fun h ↦ (h (Or.inl h₁)).elim h₂ hn₂⟩

@@ -61,19 +61,19 @@ everywhere.
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order
+open RoseTree SyntacticObject
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-! ### Ellipsis -/
 
 /-- The [E] heads. -/
-def eHeads : List TreePath := occurrencesWith t (·.item.HasE)
+def eHeads : List GornAddress := occurrencesWith t (·.item.HasE)
 
 /-- The complements of the [E] heads, one per elided term, the last of its positions. -/
-def elidedDomains : List TreePath :=
+def elidedDomains : List GornAddress :=
   ((eHeads t).map complement).pwFilter
-    fun p q ↦ t.val[p]? ≠ t.val[q]?
+    fun p q ↦ t.toRoseTree[p]? ≠ t.toRoseTree[q]?
 
 /-- `tok` is silenced when one of its occurrences lies in the complement of an [E] head. -/
 def IsSilenced (tok : LexicalItem.Token) : Prop :=
@@ -88,20 +88,20 @@ theorem isSilenced_iff_exists_mem_elidedDomains {tok : LexicalItem.Token} :
     IsSilenced t tok ↔ ∃ K ∈ elidedDomains t, ∃ p ∈ occurrences t tok, K ≤ p := by
   refine ⟨fun ⟨h, hh, p, hp, ⟨q, hq⟩⟩ ↦ ?_, fun ⟨K, hK, hp⟩ ↦ ?_⟩
   · obtain ⟨K, hK, hKh⟩ : ∃ K ∈ elidedDomains t,
-        t.val[(complement h).toList]? = t.val[K.toList]? := by
+        t.toRoseTree[(complement h).toList]? = t.toRoseTree[K.toList]? := by
       by_contra! hne
       refine (List.forall_mem_pwFilter (fun hxz ↦ ?_) _ _).1 hne _ (List.mem_map_of_mem hh) rfl
       exact Decidable.or_iff_not_imp_left.2 fun hxy hyz ↦ hxz ((not_not.1 hxy).trans hyz)
     refine ⟨K, hK, ⟨K.toList ++ q⟩, ?_, ⟨q, rfl⟩⟩
     rw [mem_occurrences, tokenList, mem_positions_iff] at hp ⊢
-    rwa [getElem?_treePath, getElem?_append, ← hKh, ← getElem?_append, hq]
+    rwa [getElem?_gornAddress, getElem?_append, ← hKh, ← getElem?_append, hq]
   · obtain ⟨h, hh, rfl⟩ := List.mem_map.1 (List.pwFilter_subset _ hK)
     exact ⟨h, hh, hp⟩
 
 /-! ### Pronunciation -/
 
 /-- The tokens with a pronounced copy, left to right, each once, at its last occurrence. -/
-def tokens : List LexicalItem.Token := ((tokenList t.val).map Prod.snd).dedup
+def tokens : List LexicalItem.Token := ((tokenList t.toRoseTree).map Prod.snd).dedup
 
 /-- The pronounced tokens, left to right, each at its last occurrence unless silenced. -/
 def pfYield : List LexicalItem.Token := (tokens t).filter (¬ IsSilenced t ·)
@@ -119,19 +119,19 @@ instance (lex : List LexicalItem) (ws : List String) : Decidable (SpellsOut t le
   inferInstanceAs (Decidable (_ ∧ _))
 
 theorem mem_pfYield {tok : LexicalItem.Token} :
-    tok ∈ pfYield t ↔ (∃ p, (p, tok) ∈ tokenList t.val) ∧ ¬ IsSilenced t tok := by
+    tok ∈ pfYield t ↔ (∃ p, (p, tok) ∈ tokenList t.toRoseTree) ∧ ¬ IsSilenced t tok := by
   simp [pfYield, tokens, List.mem_dedup]
 
 /-- A token is pronounced once at most, however many mothers dominate it. -/
 theorem nodup_pfYield : (pfYield t).Nodup := (List.nodup_dedup _).filter _
 
-theorem pfYield_sublist : (pfYield t).Sublist ((tokenList t.val).map Prod.snd) :=
+theorem pfYield_sublist : (pfYield t).Sublist ((tokenList t.toRoseTree).map Prod.snd) :=
   List.filter_sublist.trans (List.dedup_sublist _)
 
 /-! ### Pronunciation Economy -/
 
 /-- The pronounced tokens when ellipsis applies at the domains `Ks` alone. -/
-def pfYieldEliding (Ks : List TreePath) : List LexicalItem.Token :=
+def pfYieldEliding (Ks : List GornAddress) : List LexicalItem.Token :=
   (tokens t).filter fun tok ↦ ¬ ∃ K ∈ Ks, ∃ p ∈ occurrences t tok, K ≤ p
 
 theorem pfYieldEliding_elidedDomains : pfYieldEliding t (elidedDomains t) = pfYield t :=
@@ -139,10 +139,10 @@ theorem pfYieldEliding_elidedDomains : pfYieldEliding t (elidedDomains t) = pfYi
     decide_eq_decide.2 (not_congr (isSilenced_iff_exists_mem_elidedDomains t)).symm
 
 /-- Ellipsis applies vacuously at `K` when the other applications alone pronounce the same forms. -/
-def AppliesVacuously (K : TreePath) : Prop :=
+def AppliesVacuously (K : GornAddress) : Prop :=
   (pfYieldEliding t ((elidedDomains t).erase K)).filterMap (·.item.phonForm?) = pfPhon t
 
-instance (K : TreePath) : Decidable (AppliesVacuously t K) :=
+instance (K : GornAddress) : Decidable (AppliesVacuously t K) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Pronunciation Economy: ellipsis applies only where it has an effect on pronunciation. -/

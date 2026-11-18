@@ -12,7 +12,7 @@
     "translation": "",
     "context": "There is a meeting.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -40,7 +40,7 @@
     "translation": "",
     "context": "There is a meeting.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -68,7 +68,7 @@
     "translation": "",
     "context": "It is open whether there is a meeting.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -96,7 +96,7 @@
     "translation": "",
     "context": "There is no meeting.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -145,7 +145,7 @@
     "translation": "Mom is under the impression that I'm sick.",
     "context": "The speaker faked illness to avoid school.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -198,7 +198,7 @@
     "translation": "Mom is under the impression that I'm sick.",
     "context": "The speaker is definitely sick.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -251,7 +251,7 @@
     "translation": "Mom thinks I'm sick.",
     "context": "The speaker faked illness to avoid school.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -304,7 +304,7 @@
     "translation": "Mom thinks I'm sick.",
     "context": "The speaker feels exhausted and thinks she may indeed be sick, citing her mother's belief as evidence.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -381,7 +381,7 @@
     "translation": "I don't know whether the player scored or not, but he's under the impression that he did.",
     "context": "The athlete caught the ball on the edge of the end zone and celebrates while the referees debate the catch; the speaker does not know whether he scored.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

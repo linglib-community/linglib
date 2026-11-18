@@ -12,7 +12,7 @@
   "translation": "",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -40,7 +40,7 @@
   "translation": "",
   "context": "",
   "judgment": "ungrammatical",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -85,7 +85,7 @@
   "translation": "Ali killed Hasan.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -130,7 +130,7 @@
   "translation": "Keeho caused Jinee to smile.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -183,7 +183,7 @@
   "translation": "Hanako made Ziroo go.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -232,7 +232,7 @@
   "translation": "I make the child eat.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -289,7 +289,7 @@
   "translation": "Keeho caused Jinee to smile, but she didn't smile.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -354,7 +354,7 @@
   "translation": "I'll make Nicole read the book.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -407,7 +407,7 @@
   "translation": "He tried to make her sad, but she didn't become sad.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -448,7 +448,7 @@
   "translation": "Keeho went.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -485,7 +485,7 @@
   "translation": "The mother sent Keeho.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -526,7 +526,7 @@
   "translation": "Jinee laughed.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -563,7 +563,7 @@
   "translation": "Keeho caused Jinee to smile.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -624,7 +624,7 @@
   "translation": "Keeho caused Jinee to drink the fruit juice.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -697,7 +697,7 @@
   "translation": "Keeho called Jinee at home so that she could come to the party.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -750,7 +750,7 @@
   "translation": "Keeho caused Jinee to drink the fruit juice.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [
+  "contrasts": [
    {
     "form": "kiho-ka cini-ka kwail cɨp-ɨl masi-ke-lɨl ha-əss-ta",
     "judgment": "acceptable"
@@ -804,7 +804,7 @@
   "translation": "",
   "context": "",
   "judgment": "ungrammatical",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -853,7 +853,7 @@
   "translation": "Keeho called her at home.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -906,7 +906,7 @@
   "translation": "Keeho caused Jinee to drink the fruit juice.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -979,7 +979,7 @@
   "translation": "Keeho called Jinee at home so that she could come to the party.",
   "context": "",
   "judgment": "ungrammatical",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -1040,7 +1040,7 @@
   "translation": "Keeho called Jinee at home so that she could come to the party.",
   "context": "",
   "judgment": "ungrammatical",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -1097,7 +1097,7 @@
   "translation": "Keeho told a lie so that Jinee would drink the fruit juice.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [],
+  "contrasts": [],
   "readings": [],
   "paperFeatures": [
    [
@@ -1158,7 +1158,7 @@
   "translation": "He told me to eat pickled cabbage, but I did not eat it.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [
+  "contrasts": [
    {
     "form": "kɨ-ka na-lɨl kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta",
     "judgment": "acceptable"
@@ -1240,7 +1240,7 @@
   "translation": "He told me to eat pickled cabbage, but I did not eat it.",
   "context": "",
   "judgment": "acceptable",
-  "alternatives": [
+  "contrasts": [
    {
     "form": "kɨ-ka na-eke kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta",
     "judgment": "acceptable"

@@ -14,7 +14,7 @@
     "translation": "The Fulani is chewing colanut.",
     "context": "Who is chewing colanut?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"}
     ],
@@ -38,7 +38,7 @@
     "translation": "He is gathering the seeds.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"},
       {"name": "verb", "judgment": "acceptable"},
@@ -65,7 +65,7 @@
     "translation": "Always, Mai Dawa used to eat rice.",
     "context": "discourse-initial",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -89,7 +89,7 @@
     "translation": "She washed clothes yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -114,7 +114,7 @@
     "translation": "He is bringing water to his father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "phrase within VP", "judgment": "acceptable"}
     ],
@@ -137,7 +137,7 @@
     "translation": "Atim ate a mango.",
     "context": "Who ate a mango?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"}
     ],
@@ -161,7 +161,7 @@
     "translation": "Atim ate my mango.",
     "context": "Why are you angry?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -184,7 +184,7 @@
     "translation": "He ate a mango.",
     "context": "What did Atim do? / What did Atim eat?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "VP", "judgment": "acceptable"},
       {"name": "object", "judgment": "acceptable"}
@@ -209,7 +209,7 @@
     "translation": "No, Atim insulted Amoak.",
     "context": "Atim hit Amoak.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "verb", "judgment": "acceptable"}
     ],
@@ -233,7 +233,7 @@
     "translation": "Kande is cooking fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"}
     ],
@@ -256,7 +256,7 @@
     "translation": "Kande is cooking fish.",
     "context": "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"},
       {"name": "verb", "judgment": "acceptable"},
@@ -284,7 +284,7 @@
     "translation": "Kande is cooking fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"}
     ],
@@ -309,7 +309,7 @@
     "translation": "Kande is cooking fish.",
     "context": "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"},
       {"name": "verb", "judgment": "acceptable"},
@@ -337,7 +337,7 @@
     "translation": "Kande is cooking banana.",
     "context": "What is Kande cooking?",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kànde ta-nàa dafà àyàbà cee.", "judgment": "ungrammatical"}
     ],
     "readings": [
@@ -366,7 +366,7 @@
     "translation": "No this white horse kicked this boy.",
     "context": "A black horse kicked the boy.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "part of subject", "judgment": "acceptable"}
     ],
@@ -392,7 +392,7 @@
     "translation": "Tanko bought chicken at the market.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"}
     ],
@@ -417,7 +417,7 @@
     "translation": "I eat fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject", "judgment": "acceptable"}
     ],
@@ -441,7 +441,7 @@
     "translation": "I eat fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"}
     ],
@@ -465,7 +465,7 @@
     "translation": "He is eating fish.",
     "context": "What is Omar doing? / Is he buying fish?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "verb", "judgment": "acceptable"},
       {"name": "VP", "judgment": "acceptable"}
@@ -489,7 +489,7 @@
     "translation": "He is drinking water.",
     "context": "What is happening?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -513,7 +513,7 @@
     "translation": "Fatou wrote a book.",
     "context": "What happened?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -539,7 +539,7 @@
     "translation": "Maria gave bread to the baby.",
     "context": "What happened?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "clause", "judgment": "acceptable"}
     ],
@@ -563,7 +563,7 @@
     "translation": "(She didn't make it!) She just ate it!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "verb", "judgment": "acceptable"}
     ],
@@ -589,7 +589,7 @@
     "translation": "He doesn't only like football, he also likes fishing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "VP", "judgment": "acceptable"}
     ],
@@ -613,7 +613,7 @@
     "translation": "Alombah cooked maize.",
     "context": "What did Alombah cook? / What did Alombah do with the maize? / What did Alombah do? / Who cooked the maize? / What happened?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "object", "judgment": "acceptable"},
       {"name": "verb", "judgment": "acceptable"},
@@ -631,7 +631,7 @@
     "id": "assmannetal2023_53",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(53)"},
     "reportedIn": null,
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Kim ATE the yogurt.",
     "discourseSegments": [],
@@ -639,7 +639,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "verb", "judgment": "acceptable"},
       {"name": "object", "judgment": "unacceptable"},
@@ -668,7 +668,7 @@
     "translation": "No, some children stole it.",
     "context": "Can I borrow your car?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject and verb", "judgment": "acceptable"}
     ],
@@ -692,7 +692,7 @@
     "translation": "The police officer arrested him/Jean.",
     "context": "What happened to Jean?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject and verb", "judgment": "acceptable"}
     ],
@@ -716,7 +716,7 @@
     "translation": "No, Amoak sold it!",
     "context": "Did Atim eat the mango?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject and verb", "judgment": "acceptable"}
     ],

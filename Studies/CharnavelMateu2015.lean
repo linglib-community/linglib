@@ -122,11 +122,13 @@ theorem licit_iff {l : List LogophoricCenter} :
 
 /-! ### Clitics as centers -/
 
-/-- The center a clitic realizes (53). A first- or second-person clitic is a discourse participant
-and a third-person dative an empathy locus, while a third-person accusative, which bears no person
-feature (41), realizes none unless it is read de se. -/
+/-- The center a clitic realizes (53). A clitic denoting the speaker or the addressee is a
+discourse participant and a third-person dative an empathy locus, while a third-person accusative,
+which bears no person feature (41), realizes none unless it is read de se. The person read is the
+one the clitic denotes, so a polite clitic with third person agreement is a discourse
+participant. -/
 def center (c : PersonalPronoun) : Option LogophoricCenter :=
-  if ∃ p ∈ c.person, p.IsSAP then some .discourseParticipant
+  if ∃ p ∈ c.referentialPerson, p.IsSAP then some .discourseParticipant
   else if .dat ∈ c.cases then some .empathyLocus else none
 
 /-- A Spanish dative and accusative clitic are licit together exactly when the accusative is third

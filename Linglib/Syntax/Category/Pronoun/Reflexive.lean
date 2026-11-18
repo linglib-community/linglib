@@ -40,8 +40,7 @@ instance : DecidableEq ReflexivePronoun :=
 namespace ReflexivePronoun
 
 /-- The paradigm of an inventory assigns each category the forms of the reflexives whose person
-and number realize it. A reflexive denotes what its antecedent does, so its cells are those of
-its agreement features. -/
+and number realize it: the cells of a reflexive are those of its agreement features. -/
 def paradigm : Finset ReflexivePronoun → Person.Category → Finset String :=
   Morphology.formsAt (·.categories) (·.form)
 

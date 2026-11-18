@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := "Only half of the kids laughed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the context", .unacceptable)]
     paperFeatures := [("polarity", "positive"), ("predicate", "laugh")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := "Only half of the kids laughed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true in the context", .unacceptable)]
     paperFeatures := [("polarity", "negative"), ("predicate", "laugh")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if the people together weigh exactly 250 lbs", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("predicate", "weigh 250 lbs"), ("homogeneity", "distributive")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if the people together do not weigh exactly 250 lbs", .acceptable), ("true if two of them together weigh 250 lbs and the other two each weigh less", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("predicate", "weigh 250 lbs"), ("homogeneity", "distributive")] }
 
@@ -76,7 +76,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if half of the kids lifted the table together and the other half did nothing", .unacceptable), ("true if half of the kids lifted the table together and the other half did too", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("predicate", "lift the table"), ("homogeneity", "total")] }
 
@@ -89,7 +89,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if half of the kids lifted the table together and the other half did nothing", .unacceptable)]
     paperFeatures := [("polarity", "negative"), ("predicate", "lift the table"), ("homogeneity", "total")] }
 
@@ -102,7 +102,7 @@ def ex_13_together : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("predicate", "lift the table")] }
 
@@ -115,7 +115,7 @@ def ex_13_individually : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("predicate", "lift the table")] }
 
@@ -128,7 +128,7 @@ def ex_17_together : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("predicate", "weigh 250 lbs")] }
 
@@ -141,7 +141,7 @@ def ex_17_individually : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("predicate", "weigh 250 lbs")] }
 

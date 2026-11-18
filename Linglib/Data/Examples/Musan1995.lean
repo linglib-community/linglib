@@ -24,7 +24,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := "Past tense with a stage-level predicate (`silent`). Does NOT implicate that Gregory is dead — silence is a temporary state; the sentence is felicitous regardless of Gregory's current existence."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no-lifetime-implicature (stage-level)", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := "Past tense with an individual-level predicate (`from America` — a permanent origin/property). IMPLICATES that Gregory is dead. The lifetime effect: past tense + individual-level predicate → subject's lifetime has ended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lifetime-implicature (Gregory is dead)", .acceptable)]
     paperFeatures := [] }
 

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "presupposition"), ("sequence", "assertion-denial-correction")] }
 
@@ -37,7 +37,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "proposition"), ("problem", "referent must survive")] }
 
@@ -50,7 +50,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "presupposition"), ("problem", "one of two presuppositions")] }
 
@@ -63,7 +63,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("problem", "part acknowledged, part denied")] }
 
@@ -76,7 +76,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("layers", "pr: the Pope; fr: possibly right; imp: not necessarily right")] }
 
@@ -89,7 +89,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1")] }
 
@@ -102,7 +102,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "Someone points at a woman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1"), ("sequence", "assertion-affirmation-denial-correction")] }
 
@@ -115,7 +115,7 @@ def fn12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("denial", "register")] }
 

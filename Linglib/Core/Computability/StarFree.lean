@@ -15,29 +15,16 @@ public import Linglib.Core.Computability.Variety.Basic
 /-!
 # Star-free languages
 
-This file defines the star-free languages as the regular languages with an aperiodic syntactic
-monoid. The name is Schützenberger's theorem, not proved here: the languages of the star-free
-regular expressions, built from finite sets by union, concatenation and complement without
-Kleene star, are exactly these. McNaughton and Papert show that they are also the counter-free
-and the first-order definable languages. Star-free
-is the instance `Monoid.aperiodicVariety` of the languages of a pseudovariety, so its closure
-properties come from the Boolean algebra `Monoid.Pseudovariety.languages`.
-
-## Main definitions
-
-* `Language.IsStarFree`: the languages of `Monoid.aperiodicVariety`.
-
-## Main results
-
-* `Language.isStarFree_iff`: a language is star-free exactly when it is regular with an aperiodic
-  syntactic monoid.
-* `Language.IsStarFree.compl`, `Language.IsStarFree.inter`, `Language.IsStarFree.union`: Boolean
-  closure.
-* `Language.IsStarFree.of_recognizes`, `Language.IsStarFree.of_factorsThrough`: a language is
-  star-free when a finite aperiodic monoid recognizes it, or when membership factors through a
-  finite invariant that respects concatenation and stabilizes on powers.
-* `Language.IsStarFree.comap`: closure under inverse homomorphisms, with the erasing instance
-  `Language.IsStarFree.preimage_filter`.
+This file defines the [star-free languages](##Language.IsStarFree) as the regular languages with
+[an aperiodic syntactic monoid](##Language.isStarFree_iff). The name is Schützenberger's theorem,
+not proved here: the languages of the star-free regular expressions, built from finite sets by
+union, concatenation and complement without Kleene star, are exactly these. Star-free is the
+instance `Monoid.aperiodicVariety` of the languages of a pseudovariety, so its Boolean closure
+comes from `Monoid.Pseudovariety.languages`. A language is star-free when
+[a finite aperiodic monoid recognizes it](##Language.IsStarFree.of_recognizes), or when membership
+[factors through a finite invariant](##Language.IsStarFree.of_factorsThrough) that respects
+concatenation and stabilizes on powers, and the class is closed under
+[inverse homomorphisms](##Language.IsStarFree.comap).
 
 ## References
 

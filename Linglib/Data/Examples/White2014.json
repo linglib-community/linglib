@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["role", "the embedded content"]
@@ -69,7 +69,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hope"],
@@ -131,7 +131,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "turn out"],
@@ -151,7 +151,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite with overt modal"],
@@ -171,7 +171,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -191,7 +191,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "coordination"]
@@ -230,7 +230,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "gapping"]
@@ -249,7 +249,7 @@
     "translation": "",
     "context": "In the same context as (9a).",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "detachability"]
@@ -268,7 +268,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -288,7 +288,7 @@
     "translation": "",
     "context": "Jo told Bo to fill the bird feeder. He remembered this but didn't fill it. The next week, she asked again.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
@@ -309,7 +309,7 @@
     "translation": "",
     "context": "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
@@ -330,7 +330,7 @@
     "translation": "",
     "context": "Jo told Bo to fill the bird feeder. He remembered that he had to, but didn't. The next week, she asked again.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -351,7 +351,7 @@
     "translation": "",
     "context": "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
@@ -372,7 +372,7 @@
     "translation": "",
     "context": "Bo hoped to get a ticket to Jo's show. He couldn't, but when Jo came again...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hope"],
@@ -393,7 +393,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "finite with overt modal"],
@@ -413,7 +413,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hope"],

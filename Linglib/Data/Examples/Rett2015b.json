@@ -13,7 +13,7 @@
     "translation": "",
     "context": "Entails Adam's height exceeds the standard for tallness.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -46,7 +46,7 @@
     "translation": "",
     "context": "Entails Adam's height is below the standard for shortness.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -79,7 +79,7 @@
     "translation": "",
     "context": "True even if both Adam and Doug are short.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "True even if both Adam and Doug are tall.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "Does not presuppose that either is tall.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "Presupposes both Adam and Doug are short.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -211,7 +211,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -244,7 +244,7 @@
     "translation": "",
     "context": "Measure phrases do not combine with negative-polar adjectives.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -273,7 +273,7 @@
     "translation": "",
     "context": "Felicitous regardless of Adam's height.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -306,7 +306,7 @@
     "translation": "",
     "context": "Presupposes Adam is short.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -339,7 +339,7 @@
     "translation": "",
     "context": "A and B are looking at Adam, so his exact height is salient; acceptable after both 'Adam's really short' and 'Adam's really tall' ((17)-(18)).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -372,7 +372,7 @@
     "translation": "",
     "context": "A and B are looking at Adam, so his exact height is salient; acceptable after 'Adam's really short' and infelicitous after 'Adam's really tall' ((17)-(18)).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

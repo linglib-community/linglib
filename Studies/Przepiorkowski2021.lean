@@ -42,7 +42,7 @@ open HPSG.RSRL Interpretation
 section Quantification
 
 variable {Srt : Type*} [PartialOrder Srt] {Sig : Signature Srt} {U : Type*}
-  {I : Interpretation Sig U} {G : Grammar Sig} {g : ℕ → U} {u : U} {d : Desc Sig}
+  {I : Interpretation Sig U} {G : Grammar Sig} {g : ℕ → U} {u : U} {d : Formula Sig}
 
 /-- An interpretation is a model of a grammar when every entity satisfies every principle with
 quantifiers over the whole universe (Definition 7). -/
@@ -68,12 +68,12 @@ theorem modelsFO_generated_iff (r : U) :
     fun h v d hd ↦ satisfiesOn_univ_generated.2 (h v.1 v.2 d hd)⟩
 
 theorem modelsFO_generated_iff_of_isColonFree (r : U)
-    (hG : ∀ d ∈ G, d.IsColonFree ∧ d.freeVars = ∅) :
+    (hG : ∀ d ∈ G, d.toFormula.IsColonFree) :
     ModelsFO (I.generated r) G ↔ ∀ d ∈ G, I.Satisfies (fun _ ↦ r) r d := by
   rw [modelsFO_generated_iff]
   refine ⟨fun h d hd ↦ h r .refl d hd, fun h v _ d hd ↦ ?_⟩
-  exact (satisfiesOn_iff_of_isColonFree (hG d hd).1).1
-    ((satisfiesOn_congr fun x hx ↦ by simp [(hG d hd).2] at hx).1 (h d hd))
+  exact (satisfiesOn_iff_of_isColonFree (hG d hd)).1
+    ((satisfiesOn_congr fun x hx ↦ by simp at hx).1 (h d hd))
 
 end Quantification
 
@@ -95,7 +95,8 @@ example : (clause .ana .iSubj .gFem .nSing).SatisfiesOn Set.univ (fun _ ↦ .sub
 likes himself* is not. -/
 example : ModelsFO ((clause .ana .iSubj .gFem .nSing).generated .s) Binding.grammar ∧
     ¬ ModelsFO ((clause .ana .iSubj .gMasc .nSing).generated .s) Binding.grammar := by
-  simp only [modelsFO_generated_iff_of_isColonFree _ (by decide : ∀ d ∈ Binding.grammar, _)]
+  simp only [modelsFO_generated_iff_of_isColonFree _
+    (by simp only [Grammar.mem_ofList]; decide : ∀ d ∈ Binding.grammar, _), Grammar.mem_ofList]
   decide
 
 end Binding
@@ -127,7 +128,7 @@ example : strandedIndex.Models grammar ∧ twoGaps.Models grammar := by decide +
 
 /-- The principles of the root, which require a construct whose mother has an empty `GAP` list,
 as (9) requires an empty `SLASH`. -/
-def rootPrinciples : List (Desc sig) :=
+def rootPrinciples : List (Formula sig) :=
   [.sortAssign .colon .construct, .sortAssign (.path [.MTR, .GAP]) .elist]
 
 /-- An interpretation is an utterance with root `r` when it is rooted at `r` (8), is a model of
@@ -150,7 +151,7 @@ whose mother still has a gap nor the stranded index does. -/
 example : IsUtterance (oneGap.generated .cxt) ⟨.cxt, .refl⟩ ∧
     ¬ IsUtterance (twoGaps.generated .cxt) ⟨.cxt, .refl⟩ ∧
     ¬ IsUtterance (strandedIndex.generated ()) ⟨(), .refl⟩ := by
-  simp only [isUtterance_generated_iff]
+  simp only [isUtterance_generated_iff, Grammar.mem_ofList]
   refine ⟨?_, ?_, ?_⟩ <;> decide +kernel
 
 end Stranded
@@ -223,38 +224,39 @@ variable {Srt : Type*} [PartialOrder Srt] {Sig : Signature Srt} (ρ : Sig.Rel)
   (hρ : Sig.arity ρ = 2)
 
 /-- The formula `ρ(x, y)` for a binary relation symbol `ρ`. -/
-def relApp (x y : ℕ) : Desc Sig := .rel ρ fun i ↦ ![x, y] (i.cast hρ)
+def relApp (x y : ℕ) : Formula Sig := .rel ρ fun i ↦ ![x, y] (i.cast hρ)
 
 /-- The binary relation that an interpretation assigns to `ρ`. -/
 def binRel {U : Type*} (I : Interpretation Sig U) (a b : U) : Prop :=
-  I.R ρ fun i ↦ ![a, b] (i.cast hρ)
+  (fun i ↦ ![a, b] (i.cast hρ)) ∈ I.R ρ
 
 /-- The objects at the variables `1` and `2` have the same sort among `σs`. -/
-def sameSpecies (σs : List Srt) : Desc Sig :=
+def sameSpecies (σs : List Srt) : Formula Sig :=
   .disj (σs.map fun σ ↦ .and (.sortAssign (.var 1) σ) (.sortAssign (.var 2) σ))
 
 /-- If the attribute `α` is defined on the object at `1`, its values at `1` and `2` are
 copies. -/
-def copiesAt (α : Sig.Attr) : Desc Sig :=
+def copiesAt (α : Sig.Attr) : Formula Sig :=
   .imp (.pathEq (.feat (.var 1) α) (.feat (.var 1) α))
     (.ex 3 (.ex 4 (.and (.pathEq (.var 3) (.feat (.var 1) α))
       (.and (.pathEq (.var 4) (.feat (.var 2) α)) (relApp ρ hρ 3 4)))))
 
 /-- The definition (13) of the copy relation `ρ`, whose disjunction ranges over the sorts `σs`
 and whose conjunction ranges over the attributes `αs`. -/
-def copiesDef (σs : List Srt) (αs : List Sig.Attr) : Desc Sig :=
+def copiesDef (σs : List Srt) (αs : List Sig.Attr) : Formula Sig :=
   .all 1 (.all 2 (.iff (relApp ρ hρ 1 2)
     (.and (sameSpecies σs) (.conj (αs.map (copiesAt ρ hρ))))))
 
 /-- The General Identity Principle (12) says that copies are the same object. -/
-def generalIdentity : Desc Sig :=
+def generalIdentity : Formula Sig :=
   .all 1 (.all 2 (.imp (relApp ρ hρ 1 2) (.pathEq (.var 1) (.var 2))))
 
 variable {U : Type*} {I : Interpretation Sig U} {ρ hρ} {D : Set U} {g : ℕ → U} {u r a b : U}
 
 private theorem satisfiesOn_relApp {x y : ℕ} :
     I.SatisfiesOn D g u (relApp ρ hρ x y) ↔ binRel ρ hρ I (g x) (g y) :=
-  Iff.of_eq <| congrArg (I.R ρ) <| funext fun i ↦ congrFun (Matrix.comp_vec2' g x y) (i.cast hρ)
+  Iff.of_eq <| congrArg (· ∈ I.R ρ) <| funext fun i ↦
+    congrFun (Matrix.comp_vec2' g x y) (i.cast hρ)
 
 private theorem satisfiesOn_sameSpecies {σs : List Srt} (hσ : ∀ σ, σ ∈ σs ↔ IsSpecies σ) :
     I.SatisfiesOn D (Function.update (Function.update g 1 a) 2 b) u (sameSpecies σs) ↔
@@ -375,22 +377,24 @@ theorem mem_species_iff : ∀ σ, σ ∈ species ↔ IsSpecies σ := by decide
 theorem mem_attrs : ∀ α, α ∈ attrs := by decide
 
 /-- The Unique Empty List Condition (11) says that any two empty lists are the same object. -/
-def uniqueEmptyList {i : Bool} : Desc (sig i) :=
+def uniqueEmptyList {i : Bool} : Formula (sig i) :=
   .all 1 (.all 2 (.imp (.and (.sortAssign (.var 1) .elist) (.sortAssign (.var 2) .elist))
     (.pathEq (.var 1) (.var 2))))
 
 /-- The Universal Intensionality Principle (15) says that the `INT` value of an object is the
 object itself. -/
-def intensionality {i : Bool} : Desc (sig i) :=
+def intensionality {i : Bool} : Formula (sig i) :=
   .all 1 (.all 2 (.imp (.pathEq (.feat (.var 1) .INT) (.var 2)) (.pathEq (.var 1) (.var 2))))
 
 /-- The identity principles are the definition (13), the General Identity Principle (12) and
 the Universal Intensionality Principle (15). -/
-def principles (i : Bool) : Grammar (sig i) :=
-  [copiesDef .copies rfl species attrs, generalIdentity .copies rfl, intensionality]
+abbrev principles (i : Bool) : Grammar (sig i) :=
+  .ofList [⟨copiesDef .copies rfl species attrs, by cases i <;> decide⟩,
+    ⟨generalIdentity .copies rfl, by cases i <;> decide⟩,
+    ⟨intensionality, by cases i <;> decide⟩]
 
-theorem isColonFree_principles (i : Bool) :
-    ∀ d ∈ principles i, d.IsColonFree ∧ d.freeVars = ∅ := by
+theorem isColonFree_principles (i : Bool) : ∀ d ∈ principles i, d.toFormula.IsColonFree := by
+  simp only [Grammar.mem_ofList]
   cases i <;> decide
 
 /-! #### The utterance *She says she loves you* -/
@@ -421,9 +425,9 @@ list or two, with each index its own `INT` value when the signature declares `IN
     | .INT, .i1 => if intensional then some .i1 else none
     | .INT, .i2 => if intensional then some .i2 else none
     | _, _ => none
-  R _ _ := False
+  R _ := ∅
 
-instance (c o i : Bool) (ρ : (sig i).Rel) : DecidablePred ((utterance c o i).R ρ) :=
+instance (c o i : Bool) (ρ : (sig i).Rel) : DecidablePred (· ∈ (utterance c o i).R ρ) :=
   fun _ ↦ inferInstanceAs (Decidable False)
 
 section WithCopies
@@ -432,9 +436,9 @@ variable {i : Bool} {U : Type*} (I : Interpretation (sig i) U) (C : U → U → 
 
 /-- The interpretation `I` with the copy relation `C`. -/
 @[reducible] def withCopies : Interpretation (sig i) U :=
-  { I with R := fun _ xs ↦ C (xs 0) (xs 1) }
+  { I with R := fun _ ↦ {xs | C (xs 0) (xs 1)} }
 
-instance [DecidableRel C] (ρ : (sig i).Rel) : DecidablePred ((withCopies I C).R ρ) :=
+instance [DecidableRel C] (ρ : (sig i).Rel) : DecidablePred (· ∈ (withCopies I C).R ρ) :=
   fun xs ↦ inferInstanceAs (Decidable (C (xs 0) (xs 1)))
 
 variable {I C} {r a b : U}
@@ -534,12 +538,13 @@ theorem modelsFO_utterance :
       (principles true)) ∧
       ∀ c i C, ¬ ModelsFO ((withCopies (utterance c false i) C).generated .p) (principles i) := by
   simp only [modelsFO_generated_iff_of_isColonFree _ (isColonFree_principles _)]
-  refine ⟨by decide +kernel, fun c i C h ↦ ?_⟩
+  refine ⟨by simp only [Grammar.mem_ofList]; decide +kernel, fun c i C h ↦ ?_⟩
   have hD : ∀ c i, (utterance c false i).IsComponentOf .p .e1 ∧
       (utterance c false i).IsComponentOf .p .e2 := by decide
   exact nomatch eq_of_attributeless
-    (satisfies_copiesDef_withCopies_iff.1 (h _ (List.mem_cons_self ..)))
-    (h _ (List.mem_cons_of_mem _ (List.mem_cons_self ..))) (isComponentOf_withCopies.2 (hD c i).1)
+    (satisfies_copiesDef_withCopies_iff.1 (h _ (Grammar.mem_ofList.2 (List.mem_cons_self ..))))
+    (h _ (Grammar.mem_ofList.2 (List.mem_cons_of_mem _ (List.mem_cons_self ..))))
+    (isComponentOf_withCopies.2 (hD c i).1)
     (isComponentOf_withCopies.2 (hD c i).2) (by decide : IsSpecies Srt.elist) rfl
     (by intro α; cases α <;> rfl)
 

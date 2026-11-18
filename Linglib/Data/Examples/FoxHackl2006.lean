@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John doesn't have 4 children", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John doesn't have more than 4 children", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
@@ -50,7 +50,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
@@ -63,7 +63,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
@@ -76,7 +76,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John only weighs 120 pounds", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
@@ -89,7 +89,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: for every degree d greater than 120, John does not weigh more than d pounds", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
@@ -102,7 +102,7 @@ def ex_7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
@@ -115,7 +115,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: there is no degree d greater than 30 such that you are required to read more than d books", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "upward")] }
 
@@ -128,7 +128,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "universal"), ("property", "upward")] }
 
@@ -141,7 +141,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: there is no degree d greater than 30 such that you are allowed to smoke more than d cigarettes", .ungrammatical)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "upward")] }
 
@@ -154,7 +154,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "upward")] }
 
@@ -167,7 +167,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
@@ -180,7 +180,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I have the amount of water that you do.", .acceptable)]
+    contrasts := [("I have the amount of water that you do.", .acceptable)]
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "downward")] }
 
@@ -193,7 +193,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "indefinite"), ("modal", "none"), ("property", "downward")] }
 
@@ -206,7 +206,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
@@ -219,7 +219,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "downward")] }
 
@@ -232,7 +232,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := "The addressee does not know how much the vessel will weigh but can put an upper bound on possible weights."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
@@ -245,7 +245,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
@@ -258,7 +258,7 @@ def ex_27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "universal"), ("property", "downward")] }
 
@@ -271,7 +271,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
@@ -284,7 +284,7 @@ def ex_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
@@ -297,7 +297,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
@@ -310,7 +310,7 @@ def ex_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
@@ -323,7 +323,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "existential"), ("property", "downward")] }
 
@@ -336,7 +336,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
@@ -349,7 +349,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
@@ -362,7 +362,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := "Addressed to a guest of a youth hostel whose doors are locked at 10 pm."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
@@ -375,7 +375,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John smoked 29 cigarettes", .ungrammatical)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "downward")] }
 
@@ -388,7 +388,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John read 29 books", .ungrammatical)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "downward")] }
 
@@ -401,7 +401,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John is allowed to smoke 29 cigarettes", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "downward")] }
 
@@ -414,7 +414,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John is allowed to smoke 29 cigarettes", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "downward")] }
 
@@ -427,7 +427,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John is required to read 29 books", .ungrammatical)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "downward")] }
 
@@ -440,7 +440,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("implicature: John is required to read 29 books", .ungrammatical)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "downward")] }
 
@@ -453,7 +453,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "downward")] }
 
@@ -466,7 +466,7 @@ def ex_57c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "downward")] }
 
@@ -479,7 +479,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "universal"), ("property", "downward")] }
 
@@ -492,7 +492,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "downward")] }
 
@@ -505,7 +505,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "downward")] }
 
@@ -518,7 +518,7 @@ def ex_62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "upward")] }
 
@@ -531,7 +531,7 @@ def ex_62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "upward")] }
 
@@ -544,7 +544,7 @@ def ex_62c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "upward"), ("alsoJudged", "ungrammatical")] }
 
@@ -557,7 +557,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "upward")] }
 
@@ -570,7 +570,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "upward")] }
 
@@ -583,7 +583,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "upward")] }
 
@@ -596,7 +596,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "universal"), ("property", "upward")] }
 
@@ -609,7 +609,7 @@ def ex_64c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "existential"), ("property", "upward")] }
 
@@ -622,7 +622,7 @@ def ex_100a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
@@ -635,7 +635,7 @@ def ex_100b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 

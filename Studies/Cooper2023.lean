@@ -90,7 +90,7 @@ abbrev Ppty (E : Type) := E → Type
 abbrev Quant (E : Type) := Ppty E → Type
 
 /-- A property is witnessed at an individual of its property extension `[↓P]`. -/
-abbrev Ppty.Witnessed (P : Ppty E) (a : E) : Prop := Nonempty (P a)
+abbrev Ppty.Witnessed (P : Ppty E) : Set E := {a | Nonempty (P a)}
 
 /-- `SemPropName(a)` (33) applies a property to the individual `a`. -/
 def SemPropName (a : E) : Quant E := fun P ↦ P a
@@ -696,23 +696,24 @@ section WitnessType
 
 open scoped Finset
 
-variable [Fintype E] (P : E → Prop) [DecidablePred P] {c : CardRel} {X : Finset E}
+variable [Fintype E] (P : Set E) [DecidablePred (· ∈ P)] {c : CardRel} {X : Finset E}
 
 /-- The type `qʷ(P)` of witness sets (20)–(35) holds the subsets of the extension `[↓P]` whose
 cardinality stands in the relation `c` to the extension's. -/
-def WitnessType (c : CardRel) (X : Finset E) : Prop := X ⊆ ({x | P x} : Finset E) ∧ c #X #{x | P x}
+def WitnessType (c : CardRel) (X : Finset E) : Prop :=
+  X ⊆ ({x | x ∈ P} : Finset E) ∧ c #X #{x | x ∈ P}
 
 variable {P}
 
 -- (20a) [barwise-cooper-1981]
 theorem witnessType_iff_witness :
     WitnessType P c X ↔ Witness ((NumberTree.ofSizes c).toDet P) P (X : Set E) := by
-  have hsub : X ⊆ ({x | P x} : Finset E) ↔ ∀ x, x ∈ X → P x := by simp [Finset.subset_iff]
+  have hsub : X ⊆ ({x | x ∈ P} : Finset E) ↔ ∀ x, x ∈ X → x ∈ P := by simp [Finset.subset_iff]
   refine (and_congr_right fun h ↦ ?_).trans (and_congr_left' hsub)
-  have hX : {x | P x} ∩ (X : Set E) = X := Set.inter_eq_right.2 fun x hx ↦ hsub.1 h x hx
-  have hP := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} (X : Set E)
-  rw [hX, Set.ncard_coe_finset, Set.ncard_setOf_eq_card_filter] at hP
-  show _ ↔ (NumberTree.ofSizes c).toDet {x | P x} X
+  have hX : {x | x ∈ P} ∩ (X : Set E) = X := Set.inter_eq_right.2 fun x hx ↦ hsub.1 h x hx
+  have hP := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | x ∈ P} (X : Set E)
+  rw [hX, Set.ncard_coe_finset, Set.ncard_setOf_eq_card_filter (· ∈ P)] at hP
+  show _ ↔ (NumberTree.ofSizes c).toDet {x | x ∈ P} X
   rw [NumberTree.toDet_apply, NumberTree.ofSizes_apply, hX, Set.ncard_coe_finset, Nat.add_comm, hP]
 
 theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (X : Set E) := by
@@ -728,7 +729,7 @@ theorem existW_iff_minimal_witness [DecidableEq E] :
     Finset.card_eq_one]
   constructor
   · rintro ⟨hs, a, rfl⟩
-    have hPa : P a := (Finset.mem_filter.1 (hs (Finset.mem_singleton_self a))).2
+    have hPa : a ∈ P := (Finset.mem_filter.1 (hs (Finset.mem_singleton_self a))).2
     refine ⟨⟨fun x hx ↦ Finset.mem_singleton.1 hx ▸ hPa, a, hPa, Finset.mem_singleton_self a⟩,
       fun Y hY ⟨_, b, _, hb⟩ ↦ ?_⟩
     rw [Finset.ssubset_singleton_iff.1 hY] at hb
@@ -740,7 +741,7 @@ theorem existW_iff_minimal_witness [DecidableEq E] :
 
 -- (81b)
 theorem WitnessType.compAtMost_sdiff [DecidableEq E] {θ : ℕ} (h : WitnessType P (.atMost θ) X) :
-    WitnessType P (.compAtMost θ) (({x | P x} : Finset E) \ X) :=
+    WitnessType P (.compAtMost θ) (({x | x ∈ P} : Finset E) \ X) :=
   ⟨Finset.sdiff_subset, by
     have := h.2
     simp only [CardRel.compAtMost, CardRel.atMost] at this ⊢
@@ -785,10 +786,10 @@ theorem uniformOn_eq_one_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
   exact ⟨h.antisymm, Eq.ge⟩
 
 /-- The probabilistic witness condition for *most* (50) is the cardinal one (29) (§7.3). -/
-theorem witnessType_propAtLeast_iff [Fintype E] {P : E → Prop} [DecidablePred P] {n d : ℕ}
-    (hd : 0 < d) (hX : X ⊆ ({x | P x} : Finset E)) (hP : 0 < #{x | P x}) :
+theorem witnessType_propAtLeast_iff [Fintype E] {P : Set E} [DecidablePred (· ∈ P)] {n d : ℕ}
+    (hd : 0 < d) (hX : X ⊆ ({x | x ∈ P} : Finset E)) (hP : 0 < #{x | x ∈ P}) :
     WitnessType P (.propAtLeast n d) X ↔
-      (n / d : ℝ≥0∞) ≤ uniformOn (({x | P x} : Finset E) : Set E) X := by
+      (n / d : ℝ≥0∞) ≤ uniformOn (({x | x ∈ P} : Finset E) : Set E) X := by
   rw [uniformOn_of_subset hX, ENNReal.le_div_iff_mul_le (.inl (by exact_mod_cast hP.ne'))
       (.inl (ENNReal.natCast_ne_top _)), ← ENNReal.mul_div_right_comm,
     ENNReal.div_le_iff (by simpa using hd.ne') (by simp), ← Nat.cast_mul, ← Nat.cast_mul,
@@ -816,7 +817,7 @@ section WitnessCondition
 
 open scoped Finset
 
-variable [Fintype E] {P : E → Prop} [DecidablePred P] {c : CardRel} {Q Q' : Ppty E}
+variable [Fintype E] {P : Set E} [DecidablePred (· ∈ P)] {c : CardRel} {Q Q' : Ppty E}
 
 variable (P c Q) in
 /-- The general witness condition for monotone increasing quantifiers (59a) provides a witness set
@@ -832,7 +833,7 @@ and a function into it from the objects with both properties. -/
 structure GeneralWCDecr where
   X : Finset E
   witness : WitnessType P c X
-  f : ∀ a, P a → Q.Witnessed a → a ∈ X
+  f : ∀ a, a ∈ P → a ∈ Q.Witnessed → a ∈ X
 
 variable (P c Q) in
 /-- The particular witness conditions for `no` over `everyʷ(P)` (70) and for `few` over its
@@ -877,25 +878,25 @@ theorem nonempty_generalWCDecr_iff_toDet (hc : ∀ p, Antitone (c · p)) :
 
 open Classical in
 theorem GeneralWCIncr.X_subset (w : GeneralWCIncr P c Q) :
-    w.X ⊆ ({x | P x ∧ Q.Witnessed x} : Finset E) :=
+    w.X ⊆ ({x | x ∈ P ∧ x ∈ Q.Witnessed} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
     ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, ⟨w.f a ha⟩⟩
 
 open Classical in
 theorem ParticularWCNeg.X_subset (w : ParticularWCNeg P c Q) :
-    w.X ⊆ ({x | P x ∧ ¬ Q.Witnessed x} : Finset E) :=
+    w.X ⊆ ({x | x ∈ P ∧ x ∉ Q.Witnessed} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
     ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, fun ⟨q⟩ ↦ (w.f a ha q).elim⟩
 
 open Classical in
 theorem GeneralWCDecr.subset_X (w : GeneralWCDecr P c Q) :
-    ({x | P x ∧ Q.Witnessed x} : Finset E) ⊆ w.X :=
+    ({x | x ∈ P ∧ x ∈ Q.Witnessed} : Finset E) ⊆ w.X :=
   fun a ha ↦ (Finset.mem_filter.1 ha).2.elim (w.f a)
 
 open Classical in
 -- (59b), p. 315
 theorem GeneralWCDecr.exists_X_eq (hc : ∀ p, Antitone (c · p)) (w : GeneralWCDecr P c Q) :
-    ∃ w' : GeneralWCDecr P c Q, w'.X = ({x | P x ∧ Q.Witnessed x} : Finset E) :=
+    ∃ w' : GeneralWCDecr P c Q, w'.X = ({x | x ∈ P ∧ x ∈ Q.Witnessed} : Finset E) :=
   ⟨⟨_, ⟨Finset.monotone_filter_right _ fun _ _ h ↦ h.1,
       hc _ (Finset.card_le_card w.subset_X) w.witness.2⟩,
     fun a hP hQ ↦ Finset.mem_filter.2 ⟨Finset.mem_univ a, hP, hQ⟩⟩, rfl⟩
@@ -905,7 +906,7 @@ theorem nonempty_generalWCIncr_every_iff :
     Nonempty (GeneralWCIncr P .every Q) ↔ every P Q.Witnessed :=
   ⟨fun ⟨w⟩ a ha ↦ ⟨w.f a (Finset.eq_of_subset_of_card_le w.witness.1 w.witness.2.ge ▸
       Finset.mem_filter.2 ⟨Finset.mem_univ a, ha⟩)⟩,
-    fun h ↦ ⟨⟨{x | P x}, ⟨subset_rfl, rfl⟩,
+    fun h ↦ ⟨⟨{x | x ∈ P}, ⟨subset_rfl, rfl⟩,
       fun _ ha ↦ (h (Finset.mem_filter.1 ha).2).some⟩⟩⟩
 
 -- (62), (60)
@@ -933,10 +934,10 @@ theorem nonempty_generalWCDecr_atMost_iff {θ : ℕ} :
 -- (74), (78), (90)
 theorem nonempty_generalWCIncr_propAtLeast_iff {n d : ℕ} :
     Nonempty (GeneralWCIncr P (.propAtLeast n d) Q) ↔
-      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toDet P Q.Witnessed := by
+      0 < P.ncard ∧ (NumberTree.threshold n d).toDet P Q.Witnessed := by
   rw [nonempty_generalWCIncr_iff_toDet (CardRel.monotone_propAtLeast n d),
-    ← Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} {x | Q.Witnessed x}]
-  exact and_congr_left' (by rw [Nat.add_comm]; rfl)
+    ← Set.ncard_inter_add_ncard_sdiff_eq_ncard P Q.Witnessed]
+  exact and_congr_left' (by rw [Nat.add_comm])
 
 -- (34)
 theorem few_and_aFew_iff {θ : ℕ} :
@@ -949,8 +950,8 @@ theorem few_and_aFew_iff {θ : ℕ} :
 theorem nonempty_particularWCNeg_iff_toDet (hc : ∀ p, Monotone (c · p)) :
     Nonempty (ParticularWCNeg P c Q) ↔ (NumberTree.ofSizes c).innerNeg.toDet P Q.Witnessed := by
   rw [nonempty_generalWCIncr_iff_toDet hc, NumberTree.toDet_innerNeg]
-  exact iff_of_eq (congrArg ((NumberTree.ofSizes c).toDet P) (funext fun _ ↦
-    propext ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩))
+  exact iff_of_eq (congrArg ((NumberTree.ofSizes c).toDet P) (Set.ext fun _ ↦
+    ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩))
 
 -- (85), (79)
 theorem nonempty_particularWCNeg_compAtMost_iff {θ : ℕ} :
@@ -969,20 +970,20 @@ theorem nonempty_particularWCNeg_compPropAtMost_iff {n d : ℕ} :
 
 -- (70)
 theorem nonempty_particularWCNeg_every_iff :
-    Nonempty (ParticularWCNeg P .every Q) ↔ Nonempty (ParticularWCNo (fun a ↦ PLift (P a)) Q) :=
+    Nonempty (ParticularWCNeg P .every Q) ↔ Nonempty (ParticularWCNo (fun a ↦ PLift (a ∈ P)) Q) :=
   nonempty_generalWCIncr_every_iff.trans
     ⟨fun h ↦ ⟨⟨fun _ p ↦ (h p.down).some⟩⟩, fun ⟨w⟩ a p ↦ ⟨w.f a ⟨p⟩⟩⟩
 
 /-- The particular condition for `exist` (63) gives the general one (60), with the singleton
 of its individual. -/
 def ParticularWCExist.toGeneralWCIncr [DecidableEq E] {R : Ppty E} (w : ParticularWCExist R Q)
-    (h : ∀ a, R a → P a) : GeneralWCIncr P .exist Q :=
+    (h : ∀ a, R a → a ∈ P) : GeneralWCIncr P .exist Q :=
   ⟨{w.x}, ⟨Finset.singleton_subset_iff.2 (Finset.mem_filter.2 ⟨Finset.mem_univ _, h _ w.pWit⟩),
     Finset.card_singleton _⟩, fun _ ha ↦ (Finset.mem_singleton.1 ha).symm ▸ w.qWit⟩
 
 /-- The particular condition for `no` (70) gives the general one (67), with the empty witness
 set. -/
-def ParticularWCNo.toGeneralWCDecr {R : Ppty E} (w : ParticularWCNo R Q) (h : ∀ a, P a → R a) :
+def ParticularWCNo.toGeneralWCDecr {R : Ppty E} (w : ParticularWCNo R Q) (h : ∀ a, a ∈ P → R a) :
     GeneralWCDecr P .no Q :=
   ⟨∅, ⟨Finset.empty_subset _, Finset.card_empty⟩, fun a hP ⟨q⟩ ↦ (w.f a (h a hP) q).elim⟩
 
@@ -1008,14 +1009,14 @@ inductive AnaphoraRef where
 
 open Classical in
 /-- `ref.set P Q` is the set each anaphora-set kind names over the properties `P` and `Q`. -/
-noncomputable def AnaphoraRef.set [Fintype E] (P : E → Prop) [DecidablePred P] (Q : Ppty E) :
+noncomputable def AnaphoraRef.set [Fintype E] (P : Set E) [DecidablePred (· ∈ P)] (Q : Ppty E) :
     AnaphoraRef → Finset E
-  | .refset => {x | P x ∧ Q.Witnessed x}
-  | .maxset => {x | P x}
-  | .compset => {x | P x ∧ ¬ Q.Witnessed x}
+  | .refset => {x | x ∈ P ∧ x ∈ Q.Witnessed}
+  | .maxset => {x | x ∈ P}
+  | .compset => {x | x ∈ P ∧ x ∉ Q.Witnessed}
 
 -- (59a), (76), (92)
-theorem AnaphoraRef.disjoint_set_refset_compset [Fintype E] (P : E → Prop) [DecidablePred P]
+theorem AnaphoraRef.disjoint_set_refset_compset [Fintype E] (P : Set E) [DecidablePred (· ∈ P)]
     (Q : Ppty E) : Disjoint (AnaphoraRef.refset.set P Q) (AnaphoraRef.compset.set P Q) := by
   classical
   simp only [AnaphoraRef.set, Finset.disjoint_left, Finset.mem_filter]
@@ -1040,14 +1041,14 @@ inductive WitnessCondition where
 
 namespace WitnessCondition
 
-variable [Fintype E] (P : E → Prop) [DecidablePred P] (c : CardRel) (Q : Ppty E)
+variable [Fintype E] (P : Set E) [DecidablePred (· ∈ P)] (c : CardRel) (Q : Ppty E)
 
 /-- `wc.Witness P c Q` is the type of witnesses of each condition over a restrictor `P`, a
 cardinality relation `c` and a scope `Q`, the condition for `no` (70) fixing `everyʷ`. -/
 def Witness : WitnessCondition → Type
   | .generalIncr => GeneralWCIncr P c Q
   | .generalDecr => GeneralWCDecr P c Q
-  | .particularExist => ParticularWCExist (fun a ↦ PLift (P a)) Q
+  | .particularExist => ParticularWCExist (fun a ↦ PLift (a ∈ P)) Q
   | .particularNo => ParticularWCNeg P .every Q
   | .particularFewComp => ParticularWCNeg P c Q
 
@@ -1136,13 +1137,13 @@ theorem noDogBarks_isEmpty : IsEmpty (SemNo dog bark) :=
   ⟨fun ⟨f⟩ ↦ (f .fido ⟨nofun⟩ ⟨.inl rfl⟩).elim⟩
 
 -- (71)
-theorem noDogBarksSet_isEmpty : IsEmpty (ParticularWCNeg IsDog .every bark) :=
+theorem noDogBarksSet_isEmpty : IsEmpty (ParticularWCNeg {x | IsDog x} .every bark) :=
   ⟨fun w ↦ (nonempty_particularWCNeg_every_iff.1 ⟨w⟩).elim noDogBarks_isEmpty.false⟩
 
 /-- *Most dogs bark* (74) is witnessed by the set of Fido and Spot, two of the three dogs, each
 barking, which *they* picks up in (75). The threshold `3 / 5` lies in the range `.5 < θ_most(P) < 1`
 of the book's appendix type list. -/
-def mostDogsBark : GeneralWCIncr IsDog (.propAtLeast 3 5) bark :=
+def mostDogsBark : GeneralWCIncr {x | IsDog x} (.propAtLeast 3 5) bark :=
   ⟨{.fido, .spot}, ⟨by decide, by simp only [CardRel.propAtLeast]; decide⟩,
     fun a ha ↦ ⟨by revert a; decide⟩⟩
 
@@ -1155,12 +1156,12 @@ theorem mostDogsBark_uniformOn :
 /-- *Few dogs barked. They didn't hear the intruder* (87) is witnessed under the particular
 condition for `few_p` (86), with `θ_fewp = 2 / 3`, by the complement witness set of Rex, who does
 not bark. -/
-def fewDogsBark : ParticularWCNeg IsDog (.compPropAtMost 2 3) bark :=
+def fewDogsBark : ParticularWCNeg {x | IsDog x} (.compPropAtMost 2 3) bark :=
   ⟨{.rex}, ⟨by decide, by simp only [CardRel.compPropAtMost]; decide⟩,
     fun a ha ⟨h⟩ ↦ absurd h (Finset.mem_singleton.1 ha ▸ by decide)⟩
 
 -- (80)
-theorem fewDogsBark_general : Nonempty (GeneralWCDecr IsDog (.propAtMost 2 3) bark) :=
+theorem fewDogsBark_general : Nonempty (GeneralWCDecr {x | IsDog x} (.propAtMost 2 3) bark) :=
   nonempty_particularWCNeg_compPropAtMost_iff.1 ⟨fewDogsBark⟩
 
 inductive Ty | dog | bark deriving DecidableEq, Repr

@@ -14,11 +14,11 @@ A glossed token is already structured: the Leipzig Glossing Rules segment the su
 its gloss at the same affix and clitic boundaries (Rule 2), separate by periods the several
 metalanguage elements that render one object-language element (Rule 4), and write grammatical
 category labels in capitals (Rule 3), so a row's gloss line determines a morph-by-morph token
-stream without any analysis beyond the source's own. This file reads that structure: a
-`GlossedWord` is a token's surface morphs beside their glosses, a gloss element is a category
-label or a lexical gloss by its capitalization, and `Datum.glossedWords` lists a row's
-well-aligned tokens. Readers built on it consult the row's form rather than a curated feature,
-the first step from annotated stimuli toward parsed ones.
+stream without any analysis beyond the source's own. The generator pairs each word's morphemes
+with their glosses in a `GlossedWord` of `Data/Examples/Schema.lean`, the row's `glossedWords`,
+and this file reads that structure: a gloss element is a category label or a lexical gloss by
+its capitalization. Readers built on it consult the row's form
+rather than a curated feature, the first step from annotated stimuli toward parsed ones.
 
 ## Main definitions
 
@@ -28,8 +28,9 @@ the first step from annotated stimuli toward parsed ones.
 * `Gloss.elements`, `Gloss.IsLabel`, `Gloss.labels`: the period-separated elements of a morph's
   gloss, an element being a category label when written without lower-case letters, and the
   labels of a gloss.
-* `GlossedWord`, `Datum.glossedWords`: a token's aligned surface and gloss morphs, and a row's
-  well-aligned tokens.
+* `GlossedWord.IsValid`, `GlossedWord.morphs`, `GlossedWord.glosses`, `GlossedWord.form`: the
+  word has its morphemes, their forms and glosses, and the word without separators.
+* `Datum.glossedWord?`: the glossed word of a row printed as a given form.
 * `GlossedWord.stem`, `GlossedWord.wordform`, `GlossedWord.labels`,
   `GlossedWord.lexicalGloss?`, `GlossedWord.lexicalMorph?`: the first surface morph and the
   joined word, decapitalized, the word's category labels, and its first lexical gloss with the
@@ -39,8 +40,9 @@ the first step from annotated stimuli toward parsed ones.
 
 * Everything is defined on `List Char`: the kernel reduces list operations where the positional
   `String` primitives get stuck, and the readers built here are consumed by `decide`.
-* A token whose surface and gloss segment differently, against Rule 2, contributes no
-  `GlossedWord`: the misalignment is the digitization's to fix, not the reader's to guess.
+* A word that is not valid, its surface and gloss segmented differently, has no morphemes but
+  keeps its category labels and its lexical gloss, read off its gloss; `GlossedWord.stem` and
+  `GlossedWord.lexicalMorph?` need the morphemes.
 
 ## References
 
@@ -147,46 +149,54 @@ def labels (g : String) : List (List Char) :=
 
 end Gloss
 
-/-- A token of the gloss line as the Leipzig rules structure it: each surface morph beside its
-gloss, in order. -/
-structure GlossedWord where
-  /-- The surface morphs with their glosses. -/
-  morphs : List (List Char × List Char)
-  deriving DecidableEq, Repr
-
 namespace GlossedWord
 
 variable (w : GlossedWord)
 
-/-- The word's first surface morph, decapitalized: the form that a lexicon keys. -/
-def stem : List Char := (w.morphs.headD ([], [])).1.map Gloss.toLower
+/-- The word and its gloss are segmented alike (Rule 2), so the word has its morphemes: `pyigt`'s
+`GlossedWord.is_valid`. -/
+def IsValid : Prop := w.glossedMorphemes ≠ []
+
+instance : Decidable w.IsValid := inferInstanceAs (Decidable (_ ≠ _))
+
+/-- The forms of the word's morphemes. -/
+def morphs : List (List Char) := w.glossedMorphemes.map (·.morpheme)
+
+/-- The glosses of the word's morphemes; of a word that is not valid, its gloss split at the
+morpheme separators. -/
+def glosses : List (List Char) :=
+  if w.IsValid then w.glossedMorphemes.map (·.gloss) else Gloss.split ['-', '=', '~'] w.gloss
+
+/-- The word without morpheme separators and the punctuation around it, `pyigt`'s
+`GlossedWord.form`. -/
+def form : List Char :=
+  if w.IsValid then w.morphs.flatten else Gloss.trim (w.word.filter (· ∉ ['-', '=', '~']))
+
+/-- The word's form, decapitalized: the form that a lexicon keys. -/
+def wordform : List Char := w.form.map Gloss.toLower
+
+/-- The word's first morpheme, decapitalized. -/
+def stem : List Char := (w.morphs.headD []).map Gloss.toLower
 
 /-- The category labels among the elements of the word's glosses. -/
 def labels : List (List Char) :=
-  (w.morphs.flatMap fun m ↦ Gloss.elements m.2).filter fun l ↦
-    decide (Gloss.IsLabel l) && !l.isEmpty
+  (w.glosses.flatMap Gloss.elements).filter fun l ↦ decide (Gloss.IsLabel l) && !l.isEmpty
 
 /-- The word's first lexical gloss, where it has one. -/
 def lexicalGloss? : Option (List Char) :=
-  (w.morphs.map (·.2)).find? fun g ↦ !decide (Gloss.IsLabel g)
+  w.glosses.find? fun g ↦ !decide (Gloss.IsLabel g)
 
-/-- The surface morph of the word's first lexical gloss, decapitalized: the form that a lexicon
-of roots keys. -/
+/-- The morpheme of the word's first lexical gloss, decapitalized: the form that a lexicon of
+roots keys. -/
 def lexicalMorph? : Option (List Char) :=
-  (w.morphs.find? fun m ↦ !decide (Gloss.IsLabel m.2)).map (·.1.map Gloss.toLower)
-
-/-- The word's surface form: its morphs joined, decapitalized. -/
-def wordform : List Char := (w.morphs.flatMap (·.1)).map Gloss.toLower
+  (w.glossedMorphemes.find? fun m ↦ !decide (Gloss.IsLabel m.gloss)).map
+    (·.morpheme.map Gloss.toLower)
 
 end GlossedWord
 
-/-- The row's tokens whose surface and gloss segment alike, each as a `GlossedWord`, its surface
-morphs trimmed of surrounding punctuation. -/
-def Datum.glossedWords (e : Datum) : List GlossedWord :=
-  e.glossedTokens.filterMap fun (s, g) ↦
-    let ss := (Gloss.segments s).map Gloss.trim
-    let gs := Gloss.segments g
-    if ss.length = gs.length then some ⟨ss.zip gs⟩ else none
+/-- The glossed word of the row printed as `w`, the first if there are several. -/
+def Datum.glossedWord? (e : Datum) (w : String) : Option GlossedWord :=
+  ((e.glossedTokens.map (·.1)).zip e.glossedWords).lookup w
 
 /-- The row's gloss-line stream: each glossed word's form, split at its internal spaces, the
 stream that declared forms are matched against. -/

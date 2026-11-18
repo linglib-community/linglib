@@ -15,7 +15,7 @@
     "context": "The boy is bathing. The dog is sitting and looking at him in the bathtub.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "sim"],
@@ -42,7 +42,7 @@
     "context": "The boy is bathing. The dog is sitting and looking at him in the bathtub.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -68,7 +68,7 @@
     "translation": "While the boy is fixing his car, he is singing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "sim"],
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "sim"],
@@ -115,7 +115,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -142,7 +142,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "sim"],
@@ -169,7 +169,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -197,7 +197,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -224,7 +224,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -252,7 +252,7 @@
     "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -280,7 +280,7 @@
     "context": "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],
@@ -309,7 +309,7 @@
     "context": "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "seq"],

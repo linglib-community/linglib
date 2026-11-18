@@ -24,7 +24,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := "Doctor to patient, handing him a prescription."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -37,7 +37,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := "Doctor to patient, handing him a prescription."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -50,7 +50,7 @@ def ex_61c : Datum :=
     glossedTokens := []
     context := "Doctor to patient, handing him a prescription."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -63,7 +63,7 @@ def ex_61d : Datum :=
     glossedTokens := []
     context := "Doctor to patient, handing him a prescription."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -76,7 +76,7 @@ def ex_61e : Datum :=
     glossedTokens := []
     context := "Doctor to patient, handing him a prescription."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -89,7 +89,7 @@ def ex_62a : Datum :=
     glossedTokens := []
     context := "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -102,7 +102,7 @@ def ex_62b : Datum :=
     glossedTokens := []
     context := "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -115,7 +115,7 @@ def ex_62c : Datum :=
     glossedTokens := []
     context := "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -128,7 +128,7 @@ def ex_62d : Datum :=
     glossedTokens := []
     context := "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -141,7 +141,7 @@ def ex_62e : Datum :=
     glossedTokens := []
     context := "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -154,7 +154,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a sunset. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -167,7 +167,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a sunset. Belinda says to Chris."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -180,7 +180,7 @@ def ex_63c : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a sunset. Belinda says to Chris."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -193,7 +193,7 @@ def ex_63d : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a sunset. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -206,7 +206,7 @@ def ex_63e : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a sunset. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -219,7 +219,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -232,7 +232,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -245,7 +245,7 @@ def ex_64c : Datum :=
     glossedTokens := []
     context := "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -258,7 +258,7 @@ def ex_64d : Datum :=
     glossedTokens := []
     context := "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -271,7 +271,7 @@ def ex_64e : Datum :=
     glossedTokens := []
     context := "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -284,7 +284,7 @@ def ex_65a : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
@@ -297,7 +297,7 @@ def ex_65b : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
@@ -310,7 +310,7 @@ def ex_65c : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
@@ -323,7 +323,7 @@ def ex_65d : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
@@ -336,7 +336,7 @@ def ex_65e : Datum :=
     glossedTokens := []
     context := "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
@@ -349,7 +349,7 @@ def ex_66a : Datum :=
     glossedTokens := []
     context := "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -362,7 +362,7 @@ def ex_66b : Datum :=
     glossedTokens := []
     context := "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -375,7 +375,7 @@ def ex_66c : Datum :=
     glossedTokens := []
     context := "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -388,7 +388,7 @@ def ex_66d : Datum :=
     glossedTokens := []
     context := "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -401,7 +401,7 @@ def ex_66e : Datum :=
     glossedTokens := []
     context := "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -414,7 +414,7 @@ def ex_67a : Datum :=
     glossedTokens := []
     context := "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -427,7 +427,7 @@ def ex_67b : Datum :=
     glossedTokens := []
     context := "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -440,7 +440,7 @@ def ex_67c : Datum :=
     glossedTokens := []
     context := "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -453,7 +453,7 @@ def ex_67d : Datum :=
     glossedTokens := []
     context := "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -466,7 +466,7 @@ def ex_67e : Datum :=
     glossedTokens := []
     context := "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -479,7 +479,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := "Amalia walks in and Bert is struck by her new hairstyle. Bert:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
@@ -492,7 +492,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := "Bert to Amalia, about himself."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -505,7 +505,7 @@ def ex_68_c : Datum :=
     glossedTokens := []
     context := "Mother sees child putting on cleats. Mother: What? You are going to play soccer? No way!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -518,7 +518,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := "Mother asks her child to set the table and he does a particularly bad job of it but appears to consider the chore finished."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -531,7 +531,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := "Chris is writing his dissertation and, on a sunny Sunday morning, Belinda sees him putting on his running shoes. Belinda: You are going jogging? I thought you would spend the morning writing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -544,7 +544,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -557,7 +557,7 @@ def ex_71b_rising : Datum :=
     glossedTokens := []
     context := "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -570,7 +570,7 @@ def ex_71b_falling : Datum :=
     glossedTokens := []
     context := "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -583,7 +583,7 @@ def ex_72a : Datum :=
     glossedTokens := []
     context := "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -596,7 +596,7 @@ def ex_72b_rising : Datum :=
     glossedTokens := []
     context := "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -609,7 +609,7 @@ def ex_72b_falling : Datum :=
     glossedTokens := []
     context := "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -622,7 +622,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -635,7 +635,7 @@ def ex_73b_rising : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -648,7 +648,7 @@ def ex_73b_falling : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -661,7 +661,7 @@ def ex_74a : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -674,7 +674,7 @@ def ex_74b_rising : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -687,7 +687,7 @@ def ex_74b_falling : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -700,7 +700,7 @@ def ex_75a : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -713,7 +713,7 @@ def ex_75b_rising : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -726,7 +726,7 @@ def ex_75b_falling : Datum :=
     glossedTokens := []
     context := "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -739,7 +739,7 @@ def ex_76 : Datum :=
     glossedTokens := []
     context := "Caller to Schiphol Information, after being told the flight times to Helsinki."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
@@ -752,7 +752,7 @@ def ex_77a_rising_tag : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -765,7 +765,7 @@ def ex_77a_falling_tag : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -778,7 +778,7 @@ def ex_77a_rising : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
@@ -791,7 +791,7 @@ def ex_77b_rising_tag : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -804,7 +804,7 @@ def ex_77b_falling_tag : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
@@ -817,7 +817,7 @@ def ex_77b_rising : Datum :=
     glossedTokens := []
     context := "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 

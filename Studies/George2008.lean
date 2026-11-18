@@ -4,7 +4,7 @@ public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Semantics.Quantification.NumberTree
-public import Mathlib.Logic.Function.DependsOn
+public import Linglib.Core.Logic.Function.DependsOn
 
 /-!
 # George (2008): a new predictive theory of presupposition projection
@@ -64,7 +64,7 @@ repair by truth where the argument is true of nothing in some set that `Q` depen
 set (Definitions 2 and 3). -/
 def availableRepairs (Q : Set E → Prop) (g : E → Trivalent) : Set (Set E) :=
   insert (repair .k3 g)
-    {X | (∃ Y, DependsOn Q Y ∧ ∀ y ∈ Y, g y ≠ .true) ∧ X = repair .lp g}
+    {X | (∃ Y, Set.DependsOn Q Y ∧ ∀ y ∈ Y, g y ≠ .true) ∧ X = repair .lp g}
 
 /-- The deployment of `Q` on an argument (Definition 1): the value every available repair gives,
 and failure where they differ. -/
@@ -91,7 +91,7 @@ variable {Q : Set E → Prop} {g : E → Trivalent}
 theorem repair_k3_mem_availableRepairs : repair .k3 g ∈ availableRepairs Q g :=
   Set.mem_insert _ _
 
-theorem repair_lp_mem_availableRepairs {R : Set E} (hQ : DependsOn Q R)
+theorem repair_lp_mem_availableRepairs {R : Set E} (hQ : Set.DependsOn Q R)
     (hg : ∀ x ∈ R, g x ≠ .true) : repair .lp g ∈ availableRepairs Q g :=
   Set.mem_insert_of_mem _ ⟨⟨R, hQ, hg⟩, rfl⟩
 
@@ -101,16 +101,11 @@ theorem deploy_eq_true_iff : deploy Q g = .true ↔ ∀ X ∈ availableRepairs Q
 theorem apply_repair_k3_of_deploy_eq_true (h : deploy Q g = .true) : Q (repair .k3 g) :=
   deploy_eq_true_iff.1 h _ repair_k3_mem_availableRepairs
 
-theorem dependsOn_iff {R : Set E} :
-    DependsOn Q R ↔ ∀ X X' : Set E, (∀ x ∈ R, x ∈ X ↔ x ∈ X') → (Q X ↔ Q X') :=
-  ⟨fun hQ _ _ h ↦ Iff.of_eq (hQ fun x hx ↦ propext (h x hx)),
-    fun h X X' hX ↦ propext (h X X' fun x hx ↦ Iff.of_eq (hX x hx))⟩
-
-theorem apply_congr_of_dependsOn {R X X' : Set E} (hQ : DependsOn Q R)
+theorem apply_congr_of_dependsOn {R X X' : Set E} (hQ : Set.DependsOn Q R)
     (h : ∀ x ∈ R, x ∈ X ↔ x ∈ X') : Q X ↔ Q X' :=
-  dependsOn_iff.1 hQ X X' h
+  Iff.of_eq (Set.dependsOn_iff_forall_mem.1 hQ h)
 
-theorem deploy_eq_true_iff_of_defined {R : Set E} (hQ : DependsOn Q R)
+theorem deploy_eq_true_iff_of_defined {R : Set E} (hQ : Set.DependsOn Q R)
     (hg : ∀ x ∈ R, g x ≠ .undefined) : deploy Q g = .true ↔ Q (repair .k3 g) := by
   refine ⟨apply_repair_k3_of_deploy_eq_true, fun h ↦ deploy_eq_true_iff.2 fun X hX ↦ ?_⟩
   rcases hX with rfl | ⟨-, rfl⟩
@@ -119,7 +114,7 @@ theorem deploy_eq_true_iff_of_defined {R : Set E} (hQ : DependsOn Q R)
     have := hg x hx
     cases hgx : g x <;> simp_all
 
-theorem deploy_ne_undefined_of_defined {R : Set E} (hQ : DependsOn Q R)
+theorem deploy_ne_undefined_of_defined {R : Set E} (hQ : Set.DependsOn Q R)
     (hg : ∀ x ∈ R, g x ≠ .undefined) : deploy Q g ≠ .undefined := by
   rw [deploy, ne_eq, supervaluationOn_eq_undefined_iff]
   rintro ⟨⟨X, hX, hQX⟩, ⟨X', hX', hQX'⟩⟩
@@ -131,7 +126,7 @@ theorem deploy_ne_undefined_of_defined {R : Set E} (hQ : DependsOn Q R)
       cases hgx : g x <;> simp_all
   exact hQX' ((key X' hX').2 ((key X hX).1 hQX))
 
-theorem availableRepairs_eq_singleton {R : Set E} (hR : ∀ Y, DependsOn Q Y → R ⊆ Y)
+theorem availableRepairs_eq_singleton {R : Set E} (hR : ∀ Y, Set.DependsOn Q Y → R ⊆ Y)
     (hg : ∃ x ∈ R, g x = .true) : availableRepairs Q g = {repair .k3 g} := by
   refine Set.eq_singleton_iff_unique_mem.2 ⟨repair_k3_mem_availableRepairs, ?_⟩
   rintro X (rfl | ⟨⟨Y, hY, hYg⟩, -⟩)
@@ -147,15 +142,16 @@ section Determiner
 
 variable {q : NumberTree} {R : Set E}
 
-theorem dependsOn_toDet (q : NumberTree) (R : Set E) : DependsOn (q.toDet R) R := by
-  refine dependsOn_iff.2 fun B B' h ↦ ?_
+theorem dependsOn_toDet (q : NumberTree) (R : Set E) : Set.DependsOn (q.toDet R) R := by
+  refine Set.dependsOn_iff_forall_mem.2 fun B B' h ↦ propext ?_
   have hd : R \ B = R \ B' := Set.ext fun x ↦ and_congr_right fun hx ↦ not_congr (h x hx)
   have hi : R ∩ B = R ∩ B' := Set.ext fun x ↦ and_congr_right fun hx ↦ h x hx
   simp only [NumberTree.toDet_apply, hd, hi]
 
 -- §2.2.2
 theorem subset_of_dependsOn_toDet [Finite E] {a b : ℕ} (hab : a + b + 1 = R.ncard)
-    (hq : ¬ (q (a + 1) b ↔ q a (b + 1))) {Y : Set E} (hY : DependsOn (q.toDet R) Y) : R ⊆ Y := by
+    (hq : ¬ (q (a + 1) b ↔ q a (b + 1))) {Y : Set E} (hY : Set.DependsOn (q.toDet R) Y) :
+    R ⊆ Y := by
   intro x hxR
   by_contra hxY
   have hcard : (R \ {x}).ncard = a + b := by
@@ -329,7 +325,7 @@ theorem deployWithConcern_cardinal_eq_true_iff {n : ℕ} (hn : 1 ≤ n) :
       obtain ⟨x, hx⟩ := Set.nonempty_of_ncard_ne_zero (s := {x ∈ R | g x = .true}) (by omega)
       exact ⟨x, hx.1, hx.2⟩
     have hle : n ≤ R.ncard := h ▸ Set.ncard_le_ncard (Set.sep_subset R _)
-    have hR : ∀ Y, DependsOn ((NumberTree.cardinal {n}).toDet R) Y → R ⊆ Y :=
+    have hR : ∀ Y, Set.DependsOn ((NumberTree.cardinal {n}).toDet R) Y → R ⊆ Y :=
       fun Y hY ↦ subset_of_dependsOn_toDet (a := R.ncard - n) (b := n - 1) (by omega)
         (by simp; omega) hY
     have hd : deploy ((NumberTree.cardinal {n}).toDet R) g = .true := by
@@ -344,7 +340,7 @@ restrictor satisfy its presupposition, a weaker than universal presupposition. -
 theorem disappointing_cardinal_iff {n : ℕ} (hn : 1 ≤ n) (hnR : n ≤ R.ncard) :
     Disappointing ((NumberTree.cardinal {n}).toDet R) g ↔
       {x ∈ R | g x ≠ .undefined}.ncard < n := by
-  have hR : ∀ Y, DependsOn ((NumberTree.cardinal {n}).toDet R) Y → R ⊆ Y :=
+  have hR : ∀ Y, Set.DependsOn ((NumberTree.cardinal {n}).toDet R) Y → R ⊆ Y :=
     fun Y hY ↦ subset_of_dependsOn_toDet (a := R.ncard - n) (b := n - 1) (by omega)
       (by simp; omega) hY
   -- an argument true of exactly the individuals of a set `T ⊆ R` of size `n`, failing where

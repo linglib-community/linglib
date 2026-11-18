@@ -24,7 +24,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("translation", "left j")] }
 
@@ -37,7 +37,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("translation", "saw m j")] }
 
@@ -50,7 +50,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("translation", "∀x.saw x j"), ("quantifiers", "everyone")] }
 
@@ -63,7 +63,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("translation", "∀x.man x → saw x j"), ("quantifiers", "every")] }
 
@@ -76,7 +76,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("translation", "most(man)(λx.saw x j)"), ("quantifiers", "most")] }
 
@@ -89,7 +89,7 @@ def ex_17c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
     paperFeatures := [("quantifiers", "every a"), ("derivation", "every man saw a woman")] }
 
@@ -102,7 +102,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
@@ -115,7 +115,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
@@ -128,7 +128,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
@@ -141,7 +141,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("quantifiers", "a everyone"), ("translation", "∃y.man y ∧ thought(∀x.saw m x) y"), ("island", "tensed S")] }
 
@@ -154,7 +154,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no > a", .acceptable), ("a > no", .acceptable)]
     paperFeatures := [("quantifiers", "no a")] }
 
@@ -167,7 +167,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every > two > someone", .ungrammatical)]
     paperFeatures := [("quantifiers", "two someone every"), ("constituent", "someone every")] }
 
@@ -180,7 +180,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every > most > an", .ungrammatical)]
     paperFeatures := [("quantifiers", "most an every"), ("constituent", "an every")] }
 
@@ -193,7 +193,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "S"), ("translation", "and(left j)(slept j)")] }
 
@@ -206,7 +206,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "VP"), ("translation", "and(left j)(slept j)")] }
 
@@ -219,7 +219,7 @@ def ex_27c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "Vt"), ("translation", "and(saw m j)(liked m j)")] }
 
@@ -232,7 +232,7 @@ def ex_27d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("coordination", "NP"), ("translation", "and(left j)(left m)")] }
 
@@ -245,7 +245,7 @@ def ex_42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("someone > everyone", .acceptable), ("everyone > someone", .acceptable)]
     paperFeatures := [("quantifiers", "someone everyone"), ("derivation", "someone saw the friend of the friend of everyone")] }
 
@@ -258,7 +258,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("someone > a > everyone", .acceptable), ("someone > everyone > a", .acceptable), ("a > everyone > someone", .acceptable), ("everyone > a > someone", .acceptable), ("everyone > someone > a", .unacceptable), ("a > someone > everyone", .unacceptable)]
     paperFeatures := [("quantifiers", "someone a everyone"), ("constituent", "a everyone"), ("derivation", "someone saw a friend of everyone")] }
 

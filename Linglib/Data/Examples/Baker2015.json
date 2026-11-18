@@ -12,7 +12,7 @@
     "translation": "I came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -34,7 +34,7 @@
     "translation": "I broke the chair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -57,7 +57,7 @@
     "translation": "Erel bought the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -80,7 +80,7 @@
     "translation": "Maria found the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -103,7 +103,7 @@
     "translation": "Maria went.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -125,7 +125,7 @@
     "translation": "José is looking for a/the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -149,7 +149,7 @@
     "translation": "I am looking for a/the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -173,7 +173,7 @@
     "translation": "The man arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -196,7 +196,7 @@
     "translation": "The man shot the elk(PL).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -219,7 +219,7 @@
     "translation": "Has Farid come?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -241,7 +241,7 @@
     "translation": "Sadiq' drank water.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -264,7 +264,7 @@
     "translation": "I sat in the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -287,7 +287,7 @@
     "translation": "I hit the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -312,7 +312,7 @@
     "translation": "The girl sat in the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -336,7 +336,7 @@
     "translation": "The boy saw the girl.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],
@@ -361,7 +361,7 @@
     "translation": "Nadya bathed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "no"],
@@ -385,7 +385,7 @@
     "translation": "Ram has driven a car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["transitive", "yes"],

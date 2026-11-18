@@ -24,7 +24,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := "You pikey! Typical!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
@@ -37,7 +37,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := "Got a comb anywhere?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
@@ -50,7 +50,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := "We'll get the turkey out of the oven."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
@@ -63,7 +63,7 @@ def ex31 : Datum :=
     glossedTokens := []
     context := "because Donna is high in admir- admiration in fact I"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("np", "bareSingular")] }
 
@@ -76,7 +76,7 @@ def ex32 : Datum :=
     glossedTokens := []
     context := "It has only been burning coal in it!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "bareSingular")] }
 
@@ -89,7 +89,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := "Now I would like you to tell me about numbers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
@@ -102,7 +102,7 @@ def ex35 : Datum :=
     glossedTokens := []
     context := "Anyway, you were telling me about meals."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
@@ -115,7 +115,7 @@ def ex36 : Datum :=
     glossedTokens := []
     context := "You two hours ago"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determiner", .acceptable)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -128,7 +128,7 @@ def ex37 : Datum :=
     glossedTokens := []
     context := "Which way's North, do you know? That way."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
@@ -141,7 +141,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := "What was that lady?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
@@ -154,7 +154,7 @@ def ex39 : Datum :=
     glossedTokens := []
     context := "Oh God I hate these lot, they're so boring."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
@@ -167,7 +167,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := "It's, how many times did he spew up the stairs?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "pronoun")] }
 
@@ -180,7 +180,7 @@ def ex41 : Datum :=
     glossedTokens := []
     context := "bring the tourist around show them the spot"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -193,7 +193,7 @@ def ex42 : Datum :=
     glossedTokens := []
     context := "They would be working on the kidnapper's instructions, the police?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -206,7 +206,7 @@ def ex43 : Datum :=
     glossedTokens := []
     context := "took a blood sample. Er, the doctor"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -219,7 +219,7 @@ def ex44 : Datum :=
     glossedTokens := []
     context := "Richard hit the ball on the car."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -232,7 +232,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := "they would have to keep all the pools in good order"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("functional", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "attributiveDefinite")] }
 
@@ -245,7 +245,7 @@ def ex47 : Datum :=
     glossedTokens := []
     context := "I want you to write the names of these notes up here."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("domain", .acceptable), ("functional", .marginal), ("referent", .unacceptable)]
     paperFeatures := [("np", "attributiveDefinite")] }
 
@@ -258,7 +258,7 @@ def ex49 : Datum :=
     glossedTokens := []
     context := "On the back, the bushel, yes"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -271,7 +271,7 @@ def ex50 : Datum :=
     glossedTokens := []
     context := "The bird in my bed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
@@ -284,7 +284,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := "I've been treating it as a wart."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -297,7 +297,7 @@ def ex54 : Datum :=
     glossedTokens := []
     context := "Erm, it's a do- it's a log."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -310,7 +310,7 @@ def ex55 : Datum :=
     glossedTokens := []
     context := "It had twenty rooms in it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determiner", .acceptable), ("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -323,7 +323,7 @@ def ex56 : Datum :=
     glossedTokens := []
     context := "I've bought her a Ghost video."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -336,7 +336,7 @@ def ex57 : Datum :=
     glossedTokens := []
     context := "No it is a woman"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .marginal)]
     paperFeatures := [("np", "indefinite")] }
 
@@ -349,7 +349,7 @@ def ex58 : Datum :=
     glossedTokens := []
     context := "We're just going to Beckenham because we have to go to a shop there."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
@@ -362,7 +362,7 @@ def ex59 : Datum :=
     glossedTokens := []
     context := "waiting for a a man they mention tonight and that man is a well known killer of British soldiers"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
@@ -375,7 +375,7 @@ def ex62 : Datum :=
     glossedTokens := []
     context := "No I'll commute every day"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("determiner", .acceptable), ("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
@@ -388,7 +388,7 @@ def ex63 : Datum :=
     glossedTokens := []
     context := "No. Nothing at all."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determiner", .acceptable), ("referent", .marginal)]
     paperFeatures := [("np", "negative")] }
 
@@ -401,7 +401,7 @@ def ex64 : Datum :=
     glossedTokens := []
     context := "I want everyone in here to come with me."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
@@ -414,7 +414,7 @@ def ex65 : Datum :=
     glossedTokens := []
     context := "Most people came to the party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
@@ -427,7 +427,7 @@ def ex77 : Datum :=
     glossedTokens := []
     context := "she's got three rottweiler's now"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("determiner", .acceptable)]
     paperFeatures := [("np", "determiner")] }
 
@@ -440,7 +440,7 @@ def ex79 : Datum :=
     glossedTokens := []
     context := "How many procedures have we actually audited so far Richard?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("determiner", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "wh")] }
 
@@ -453,7 +453,7 @@ def ex80 : Datum :=
     glossedTokens := []
     context := "Why does the postman have to take all the letters away?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "wh")] }
 
@@ -466,7 +466,7 @@ def ex87 : Datum :=
     glossedTokens := []
     context := "Tell mum no meat."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("predicate", .acceptable), ("determiner", .acceptable)]
     paperFeatures := [("np", "monotoneDecreasing")] }
 
@@ -479,7 +479,7 @@ def ex88 : Datum :=
     glossedTokens := []
     context := "Did they come back? Not all."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("referent", .acceptable), ("complement", .marginal)]
     paperFeatures := [("np", "monotoneDecreasingReferential")] }
 
@@ -492,7 +492,7 @@ def ex90 : Datum :=
     glossedTokens := []
     context := "Not all of the journalists agreed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("complement", .acceptable)]
     paperFeatures := [("np", "monotoneDecreasingReferential")] }
 

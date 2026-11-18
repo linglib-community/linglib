@@ -17,17 +17,10 @@ public import Mathlib.Algebra.GroupWithZero.Defs
 
 An element `a` of a magma is a *left zero* when `a * b = a` for every `b`, and a *right zero* when
 `b * a = a` for every `b`. A one-sided zero is idempotent, and `MulOpposite` exchanges the two
-notions. In a semigroup the left zeros form a left ideal and the right zeros a right ideal.
-
-## Main definitions
-
-* `IsLeftZero`, `IsRightZero`: the left and right zeros.
-
-## Main results
-
-* `IsLeftZero.mul_left`, `IsRightZero.mul_right`: the ideal property.
-* `IsLeftZero.map_of_surjective`, `IsLeftZero.of_map` and their mirrors: transport along
-  surjective and injective homomorphisms.
+notions. One-sided zeros are carried forward by
+[surjective homomorphisms](##IsLeftZero.map_of_surjective) and back by
+[injective ones](##IsLeftZero.of_map). In a semigroup the left zeros form a
+[left ideal](##IsLeftZero.mul_left) and the right zeros a [right ideal](##IsRightZero.mul_right).
 
 ## References
 

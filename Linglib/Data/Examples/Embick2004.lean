@@ -24,7 +24,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theMetal"), ("merged", "hammer"), ("comp", "aP"), ("compRoot", "flat"), ("innerSpec", "none"), ("means", "argument")] }
 
@@ -37,7 +37,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theMetal"), ("merged", "hammer"), ("comp", "aP"), ("compRoot", "flat"), ("innerSpec", "none"), ("means", "argument")] }
 
@@ -50,7 +50,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theMetal"), ("merged", "none"), ("comp", "root"), ("compRoot", "hammer"), ("innerSpec", "none"), ("means", "none")] }
 
@@ -63,7 +63,7 @@ def flattened : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theMetal"), ("merged", "none"), ("comp", "root"), ("compRoot", "flat"), ("innerSpec", "none"), ("means", "none")] }
 
@@ -76,7 +76,7 @@ def ex_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "john"), ("merged", "none"), ("comp", "root"), ("compRoot", "laugh"), ("innerSpec", "none"), ("means", "none")] }
 
@@ -89,7 +89,7 @@ def laughed_hoarse : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "none"), ("merged", "laugh"), ("comp", "aP"), ("compRoot", "hoarse"), ("innerSpec", "none"), ("means", "noArgument")] }
 
@@ -102,7 +102,7 @@ def laughed_himself_hoarse : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "himself"), ("merged", "laugh"), ("comp", "aP"), ("compRoot", "hoarse"), ("innerSpec", "none"), ("means", "noArgument")] }
 
@@ -115,7 +115,7 @@ def froze_solid : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theRiver"), ("merged", "freeze"), ("comp", "aP"), ("compRoot", "solid"), ("innerSpec", "none"), ("means", "argument")] }
 
@@ -128,7 +128,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "himself"), ("merged", "smoke"), ("comp", "aP"), ("compRoot", "thin"), ("innerSpec", "none"), ("means", "noArgument")] }
 
@@ -141,7 +141,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "himself"), ("merged", "hammer"), ("comp", "aP"), ("compRoot", "thin"), ("innerSpec", "none"), ("means", "noArgument")] }
 
@@ -154,7 +154,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theDoor"), ("merged", "kick"), ("comp", "aP"), ("compRoot", "open"), ("innerSpec", "none"), ("means", "argument")] }
 
@@ -167,7 +167,7 @@ def ex_57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("spec", "theDoor"), ("merged", "kick"), ("comp", "participle"), ("compRoot", "open"), ("innerSpec", "none"), ("means", "argument")] }
 

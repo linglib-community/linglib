@@ -31,7 +31,7 @@ open scoped FinsetFamily
 
 namespace Person
 
-open Finset Discourse
+open Finset SpeechAct
 
 /-! ### Participant sets -/
 
@@ -69,6 +69,13 @@ instance : OrderBot Person where
   bot_le p := show .third ⊔ p = p by cases p <;> rfl
 
 @[simp] theorem bot_eq_third : (⊥ : Person) = .third := rfl
+
+theorem IsSAP.mono {p q : Person} (hp : p.IsSAP) (h : p ≤ q) : q.IsSAP := by
+  revert p q; decide
+
+theorem IncludesSpeaker.mono {p q : Person} (hp : p.IncludesSpeaker) (h : p ≤ q) :
+    q.IncludesSpeaker := by
+  revert p q; decide
 
 /-! ### The person of a participant set -/
 

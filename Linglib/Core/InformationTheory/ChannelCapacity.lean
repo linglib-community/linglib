@@ -8,7 +8,7 @@ module
 public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
@@ -100,7 +100,7 @@ private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilit
   rw [Measure.freeEnergy, integral_fintype .of_finite,
     toReal_klDiv_eq_sum_log_div (absolutelyContinuous_uniformOn_univ ν),
     show log (Fintype.card C : ℝ) = ∑ c, ν.real {c} * log (Fintype.card C) by
-      rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
+      rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul],
     ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun c _ ↦ ?_
   obtain hc | hc := eq_or_ne (ν.real {c}) 0
@@ -111,6 +111,7 @@ private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilit
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
+omit [Fintype W] [MeasurableSingletonClass W] in
 theorem condEntropy_snd_fst_compProd :
     H[Prod.snd | Prod.fst ; μ ⊗ₘ κ] = ∑ c, μ.real {c} * Hm[κ c] := by
   rw [condEntropy_eq_sum _ measurable_fst]
@@ -184,6 +185,13 @@ theorem measureMutualInfo_compProd :
   rw [sum_mul_toReal_klDiv κ μ _ fun c hc ↦ κ.absolutelyContinuous_comp μ hc, klDiv_self,
     ENNReal.toReal_zero, add_zero]
 
+/-- A deterministic channel carries the entropy of its output. -/
+theorem measureMutualInfo_compProd_deterministic {f : C → W} (hf : Measurable f) :
+    Im[μ ⊗ₘ Kernel.deterministic f hf] = Hm[μ.map f] := by
+  rw [Measure.compProd_deterministic hf, ← entropy_def]
+  exact (mutualInfo_eq_measureMutualInfo measurable_id hf μ).symm.trans
+    ((mutualInfo_comm μ measurable_id hf).trans (mutualInfo_comp_self (X := id) μ measurable_id f))
+
 theorem measureMutualInfo_compProd_le_log_card : Im[μ ⊗ₘ κ] ≤ log (Fintype.card W) :=
   (measureMutualInfo_le_measureEntropy_snd _).trans (measureEntropy_le_log_card _)
 
@@ -215,14 +223,14 @@ theorem measureMutualInfo_compProd_eq_channelCapacity
         Finset.sum_le_sum fun c _ ↦ mul_le_mul_of_nonneg_left
           (ENNReal.toReal_le_of_le_ofReal (measureMutualInfo_nonneg _) (h c)) measureReal_nonneg
     _ = Im[μ ⊗ₘ κ] := by
-        rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+        rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
 
 theorem toReal_klDiv_eq_integral_log_sub [Nonempty C] {c : C} (hc : μ {c} ≠ 0) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) - log (μ.real {c}) := by
   have hpc : μ.real {c} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
   rw [toReal_klDiv_eq_sum_log_div (κ.absolutelyContinuous_comp μ hc), integral_fintype .of_finite,
     show log (μ.real {c}) = ∑ w, (κ c).real {w} * log (μ.real {c}) by
-      rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
+      rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul],
     ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun w _ ↦ ?_
   obtain hk | hk := eq_or_ne ((κ c).real {w}) 0
@@ -375,7 +383,7 @@ theorem eq_channelCapacity_iff_eq_tilted :
     have hD := toReal_klDiv_of_eq_tilted κ μ h
     have hI : Im[μ ⊗ₘ κ] = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
       rw [measureMutualInfo_compProd, Finset.sum_congr rfl fun c _ ↦ by rw [hD c],
-        ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+        ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
     have hμ (c : C) : μ {c} ≠ 0 := by
       rw [h]
       exact fun h0 ↦ uniformOn_univ_singleton_ne_zero c (absolutelyContinuous_tilted .of_finite h0)
@@ -394,7 +402,7 @@ theorem toReal_klDiv_eq_channelCapacity (hμ : ∀ c, μ {c} ≠ 0)
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = channelCapacity κ := by
   have hD := toReal_klDiv_of_eq_tilted κ μ ((eq_channelCapacity_iff_eq_tilted κ μ).1 ⟨h, hμ⟩)
   rw [← h, measureMutualInfo_compProd, Finset.sum_congr rfl fun c _ ↦ by rw [hD c],
-    ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul, hD c]
+    ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul, hD c]
 
 end BlahutArimoto
 

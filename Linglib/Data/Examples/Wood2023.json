@@ -12,7 +12,7 @@
     "translation": "Guðrún washed the clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "þvo"]
@@ -34,7 +34,7 @@
     "translation": "Guðrún's washing of the clothes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complex event", "judgment": "acceptable"}
     ],
@@ -57,7 +57,7 @@
     "translation": "The washing took a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple event", "judgment": "acceptable"}
     ],
@@ -81,7 +81,7 @@
     "translation": "The washing (=laundry, clothes to be washed) should go into the washing machine.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple entity", "judgment": "acceptable"}
     ],
@@ -104,7 +104,7 @@
     "translation": "Guðrún repeatedly washed the clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prefix", "marg-"]
@@ -126,7 +126,7 @@
     "translation": "Guðrún's repeated washing of the clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complex event", "judgment": "acceptable"}
     ],
@@ -150,7 +150,7 @@
     "translation": "the repeated washing of the clothes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complex event", "judgment": "acceptable"}
     ],
@@ -175,7 +175,7 @@
     "translation": "The repeated washing took a long time.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple event", "judgment": "ungrammatical"}
     ],
@@ -200,7 +200,7 @@
     "translation": "The repeated washing (=laundry, clothes to be repeatedly washed) should go into the washing machine.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple entity", "judgment": "ungrammatical"}
     ],
@@ -224,7 +224,7 @@
     "translation": "I rewashed the clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prefix", "endur-"]
@@ -246,7 +246,7 @@
     "translation": "Guðrún's rewashing of the clothes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complex event", "judgment": "acceptable"}
     ],
@@ -271,7 +271,7 @@
     "translation": "The rewashing took a long time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple event", "judgment": "acceptable"}
     ],
@@ -296,7 +296,7 @@
     "translation": "The rewashing (=laundry, clothes to be rewashed) should go into the washing machine.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple entity", "judgment": "ungrammatical"}
     ],
@@ -321,7 +321,7 @@
     "translation": "I hope she doesn't lose the reprinting.",
     "context": "I printed the rules for her yesterday, but now she can't find the print out. I need to reprint the rules today.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "result", "judgment": "acceptable"}
     ],
@@ -345,7 +345,7 @@
     "translation": "to discuss this",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "að um-ræða þetta", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -369,7 +369,7 @@
     "translation": "discussion about this",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["preposition", "um"],
@@ -391,7 +391,7 @@
     "translation": "Guðrún thought about this.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["preposition", "um"],
@@ -413,7 +413,7 @@
     "translation": "the thinking about this",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["preposition", "um"],
@@ -436,7 +436,7 @@
     "translation": "Guðrún's repairing of my car with a sledge hammer",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complex event", "judgment": "acceptable"}
     ],
@@ -462,7 +462,7 @@
     "translation": "to shopify the health care service",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "-væða"]
@@ -483,7 +483,7 @@
     "translation": "institutionization",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["suffix", "-væðing"]
@@ -504,7 +504,7 @@
     "translation": "Guðrún touched the admiration.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple entity", "judgment": "ungrammatical"}
     ],
@@ -528,7 +528,7 @@
     "translation": "I touched the warning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simple entity", "judgment": "acceptable"}
     ],

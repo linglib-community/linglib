@@ -67,23 +67,9 @@ Champollion and Bernard report as a typo. It is stated here with the closure. Th
 are proved by computing the inexact verifiers and the subject-matter of each side, which determine
 a regular proposition (`Truthmaker.regularClosure_eq_iff`). Fine states that negation does not see
 regular closure for regular propositions only and his de Morgan laws for regular ones, but they
-hold without regularity. The law for conjunctions needs no distributivity, only that the conjuncts
-have verifiers and that the null state verifies none of them.
-
-## Errata
-
-Fine's de Morgan law for conjunctions (Lemma 24(ii)) asks only that the conjuncts be regular and
-verifiable, and his Theorem 25 lifts double negation from single states to every proposition. Both
-fail for a proposition that the null state verifies: nothing excludes the null state, so the
-exclusionary negation of such a proposition has no verifiers. Under mirror exclusion in the
-canonical space, which satisfies Upward and Null Exclusion and Downward Exclusion with the regular
-closure that Fine's own proofs use, the negation of the conjunction of `{□, q}` and `{p}` has the
-verifier `p̄ ⊔ q̄`, which the disjunction of their negations lacks
-(`Canonical.exclusionaryNeg_iSups_ne`), and the double negation of `{□, q}` is `{□}` although every
-single state is its own double negation (`Canonical.exclusionaryNeg_exclusionaryNeg_ne`). Fine's
-proof of Lemma 24(ii) breaks where it distributes the conjunction over disjunctions with the empty
-negation of the null state as a disjunct. The theorems here add the condition that the null state
-verify none of the propositions.
+hold without regularity. The law for disjunctions needs neither Null Exclusion nor verifiers. The
+law for conjunctions needs no distributivity, only that the conjuncts have verifiers and that the
+null state verifies none of them.
 
 ## References
 
@@ -286,7 +272,7 @@ theorem exclusiveNeg_iUnion {ι : Type*} (P : ι → Set S) :
   constructor
   · rintro ⟨Q, ⟨hQ, hPQ⟩, rfl⟩
     refine Set.mem_iSups.2 ⟨fun i ↦ sSup {q ∈ Q | ∃ p ∈ P i, excl q p},
-      fun i ↦ ⟨_, ⟨fun q hq ↦ hq.2, fun p hp ↦ ?_⟩, rfl⟩, ?_⟩
+      fun i ↦ ⟨_, ⟨fun q hq ↦ (Set.mem_sep_iff.1 hq).2, fun p hp ↦ ?_⟩, rfl⟩, ?_⟩
     · obtain ⟨q, hq, hqp⟩ := hPQ (Set.mem_iUnion_of_mem i hp)
       exact ⟨q, ⟨hq, p, hp, hqp⟩, hqp⟩
     · rw [← sSup_iUnion]
@@ -417,8 +403,8 @@ theorem exclusionaryNeg_iSups {ι : Type*} (hU : UpwardExclusion excl)
   · rw [mem_upperClosure_exclusiveNeg, upperClosure_iUnion, UpperSet.mem_iInf_iff]
     simp only [mem_upperClosure_exclusiveNeg, ← hU.conflict_iff]
     refine ⟨fun h ↦ by_contra fun hcon ↦ ?_, fun ⟨i, hi⟩ y hy ↦ ?_⟩
-    · obtain ⟨f, hf⟩ := Set.univ_pi_nonempty_iff.2 fun i ↦
-        (show ∃ p ∈ P i, ¬ Conflict excl x p by simpa using not_exists.1 hcon i)
+    · obtain ⟨f, hf⟩ := (Set.univ_pi_nonempty_iff (t := fun i ↦ {p ∈ P i | ¬ Conflict excl x p})).2
+        fun i ↦ (show ∃ p ∈ P i, ¬ Conflict excl x p by simpa using not_exists.1 hcon i)
       have hc := h _ (Set.iSup_mem_iSups fun i ↦ (Set.mem_univ_pi.1 hf i).1)
       rw [← sSup_range] at hc
       obtain ⟨_, ⟨i, rfl⟩, hci⟩ := exists_conflict_of_conflict_sSup hU hD hc
@@ -488,15 +474,14 @@ section Frame
 
 variable [Order.Frame S] {excl : S → S → Prop}
 
-/-- In a distributive space, under Upward, Downward and Null Exclusion, the exclusionary negation of
-the disjunction of a family of propositions not verified by the null state is the conjunction of
-their exclusionary negations. -/
+/-- In a distributive space, under Upward and Downward Exclusion, the exclusionary negation of the
+disjunction of a family of propositions is the conjunction of their exclusionary negations. -/
 theorem exclusionaryNeg_regularClosure_iUnion {ι : Type*} (hU : UpwardExclusion excl)
-    (hD : DownwardExclusion excl) (hN : NullExclusion excl) {P : ι → Set S}
-    (hP : ∀ i, ⊥ ∉ P i) : exclusionaryNeg excl (regularClosure (⋃ i, P i)) =
+    (hD : DownwardExclusion excl) (P : ι → Set S) :
+    exclusionaryNeg excl (regularClosure (⋃ i, P i)) =
       Set.iSups fun i ↦ exclusionaryNeg excl (P i) := by
   rw [exclusionaryNeg_regularClosure hU hD, exclusionaryNeg, exclusiveNeg_iUnion,
-    regularClosure_iSups fun i ↦ exclusiveNeg_nonempty hN (hP i)]
+    regularClosure_iSups]
   rfl
 
 /-- In a distributive space, under Upward, Downward and Null Exclusion, if double exclusionary
@@ -504,7 +489,7 @@ negation restores every single state, it restores every regular proposition that
 does not verify. -/
 theorem exclusionaryNeg_exclusionaryNeg (hU : UpwardExclusion excl) (hD : DownwardExclusion excl)
     (hN : NullExclusion excl) (h : ∀ p : S, exclusionaryNeg excl (exclusionaryNeg excl {p}) = {p})
-    {P : Set S} (hP : regularClosure.IsClosed P) (hP' : ⊥ ∉ P) :
+    {P : Set S} (hP : IsRegular P) (hP' : ⊥ ∉ P) :
     exclusionaryNeg excl (exclusionaryNeg excl P) = P := by
   rcases P.eq_empty_or_nonempty with rfl | hne
   · have h₀ : exclusionaryNeg excl (∅ : Set S) = {⊥} := by
@@ -515,12 +500,12 @@ theorem exclusionaryNeg_exclusionaryNeg (hU : UpwardExclusion excl) (hD : Downwa
   have hsingle : ∀ p : P, ⊥ ∉ ({(p : S)} : Set S) := fun p hp ↦
     hP' (Set.mem_singleton_iff.1 hp ▸ p.2)
   have h₁ : exclusionaryNeg excl P = Set.iSups fun p : P ↦ exclusionaryNeg excl {(p : S)} := by
-    conv_lhs => rw [← hP.closure_eq, ← Set.iUnion_of_singleton_coe P]
-    exact exclusionaryNeg_regularClosure_iUnion hU hD hN hsingle
+    conv_lhs => rw [← hP.regularClosure_eq, ← Set.iUnion_of_singleton_coe P]
+    exact exclusionaryNeg_regularClosure_iUnion hU hD _
   rw [h₁, exclusionaryNeg_iSups hU hD hN (fun p ↦ exclusionaryNeg_nonempty hN (hsingle p))
     fun p ↦ bot_not_mem_exclusionaryNeg hN (Set.singleton_nonempty _)]
   simp only [h]
-  rw [Set.iUnion_of_singleton_coe, hP.closure_eq]
+  rw [Set.iUnion_of_singleton_coe, hP.regularClosure_eq]
 
 end Frame
 
@@ -610,8 +595,8 @@ theorem exclusionaryNeg_exclusionaryNeg_singleton (s : Set (α × Bool)) :
       obtain rfl : z = y := mirror_involutive.injective (Set.mem_singleton_iff.1 (hqy z hz))
       exact Set.mem_sUnion.2 ⟨q, hq, hz⟩
 
-private theorem isClosed_insert_empty_singleton (x : α × Bool) :
-    regularClosure.IsClosed ({∅, {x}} : Set (Set (α × Bool))) := by
+private theorem isRegular_insert_empty_singleton (x : α × Bool) :
+    IsRegular ({∅, {x}} : Set (Set (α × Bool))) := by
   refine regularClosure.isClosed_iff_closure_le.2 fun s hs ↦ ?_
   have hs' : s ⊆ {x} := by simpa using (mem_regularClosure.1 hs).2
   rcases Set.subset_singleton_iff_eq.1 hs' with rfl | rfl
@@ -621,10 +606,10 @@ private theorem isClosed_insert_empty_singleton (x : α × Bool) :
 is not its own double exclusionary negation, which is `{□}`, although every single state is
 (`exclusionaryNeg_exclusionaryNeg_singleton`). -/
 theorem exclusionaryNeg_exclusionaryNeg_ne (b : α) :
-    regularClosure.IsClosed ({∅, {(b, true)}} : Set (Set (α × Bool))) ∧
+    IsRegular ({∅, {(b, true)}} : Set (Set (α × Bool))) ∧
       exclusionaryNeg mirrorExcl (exclusionaryNeg mirrorExcl {∅, {(b, true)}}) ≠
         {∅, {(b, true)}} := by
-  refine ⟨isClosed_insert_empty_singleton _, ?_⟩
+  refine ⟨isRegular_insert_empty_singleton _, ?_⟩
   rw [exclusionaryNeg_eq_empty_of_bot_mem (P := {∅, {(b, true)}}) nullExclusion_mirrorExcl
     (Set.mem_insert _ _), exclusionaryNeg, exclusiveNeg_empty, regularClosure_singleton]
   intro h
@@ -637,14 +622,14 @@ propositions `{□, q}` and `{p}`: the negation of their conjunction has the ver
 the disjunction of their negations, the propositions `∅` and `∼{p}`, lacks. -/
 theorem exclusionaryNeg_iSups_ne {a b : α} (hab : a ≠ b) :
     let P : Bool → Set (Set (α × Bool)) := fun i ↦ if i then {∅, {(b, true)}} else {{(a, true)}}
-    (∀ i, (P i).Nonempty ∧ regularClosure.IsClosed (P i)) ∧
+    (∀ i, (P i).Nonempty ∧ IsRegular (P i)) ∧
       exclusionaryNeg mirrorExcl (Set.iSups P) ≠
         regularClosure (⋃ i, exclusionaryNeg mirrorExcl (P i)) := by
   intro P
   refine ⟨fun i ↦ ?_, fun h ↦ ?_⟩
   · cases i
-    · exact ⟨Set.singleton_nonempty _, regularClosure_singleton _⟩
-    · exact ⟨Set.insert_nonempty _ _, isClosed_insert_empty_singleton _⟩
+    · exact ⟨Set.singleton_nonempty _, isRegular_singleton _⟩
+    · exact ⟨Set.insert_nonempty _ _, isRegular_insert_empty_singleton _⟩
   -- every verifier of `∼{p}`, and so of the disjunction, is part of `p̄`
   have hbound : ∀ x ∈ regularClosure (⋃ i, exclusionaryNeg mirrorExcl (P i)), x ⊆ {(a, false)} := by
     refine fun x hx ↦ (mem_regularClosure.1 hx).2.trans (sSup_le fun y hy ↦ ?_)

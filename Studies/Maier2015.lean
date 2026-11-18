@@ -61,14 +61,6 @@ def maierLang : Language := ⟨fun _ ↦ Empty, MaierRel⟩
 /-- Conditions over `maierLang` with `ℕ` discourse referents. -/
 abbrev MCond := Condition maierLang ℕ
 
-/-- A condition introducing no box. -/
-def MCond.IsAtomic : MCond → Prop
-  | .atom _ | .eq _ _ => True
-  | _ => False
-
-instance : DecidablePred MCond.IsAtomic := fun c ↦ by
-  cases c <;> unfold MCond.IsAtomic <;> infer_instance
-
 /-! ### Mental-state descriptions (§3.1) -/
 
 /-- The attitude modes of the non-doxastic compartments, desire, imagination and intention. -/
@@ -100,41 +92,40 @@ def MentalState.flatten (K : MentalState) : DRS maierLang ℕ :=
 
 /-! ### Parasitism as accessibility -/
 
-private theorem not_scopeStep_of_atomic {bs : List (DRS maierLang ℕ)} {D : DRS maierLang ℕ}
-    {q : List (DRS maierLang ℕ) × DRS maierLang ℕ} (h : ∀ c ∈ D.conditions, MCond.IsAtomic c) :
-    ¬ ScopeStep (bs, D) q := by
-  rintro (⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩) <;> exact h _ hc
+private theorem not_mem_subordinates_of_atomic {c : MCond} (h : c.IsAtomic)
+    (s : List (DRS maierLang ℕ)) : s ∉ c.subordinates := by
+  simp [Condition.subordinates_eq_nil_iff.2 h]
 
 theorem not_accessible_of_belief (K : MentalState) (hb : ∀ c ∈ K.beliefConds, c.IsAtomic)
     (hcs : ∀ c ∈ K.compartments, ∀ cd ∈ c.conds, cd.IsAtomic) {x y : ℕ}
     (hxc : ∀ c ∈ K.compartments, x ∉ c.drefs) (hy : y ∉ K.beliefDrefs) :
     ¬ DRS.Accessible K.flatten x y := by
-  rintro ⟨p, hp, hx, hyp⟩
-  rcases hp.cases_head with rfl | ⟨q, hq, hqp⟩
-  · simp [MentalState.flatten, hy] at hyp
-  · cases hq with
-    | neg hc =>
-      rcases List.mem_append.1 hc with hc | hc
-      · exact absurd (hb _ hc) id
-      · obtain ⟨c, hcK, hbox⟩ := List.mem_map.1 hc
-        simp only [Compartment.box, Condition.neg.injEq] at hbox
-        subst hbox
-        rcases hqp.cases_head with rfl | ⟨r, hr, -⟩
-        · exact hxc c hcK (by simpa using hx)
-        · exact not_scopeStep_of_atomic (hcs c hcK) hr
-    | impAnte hc | impCons hc | disL hc | disR hc =>
-      rcases List.mem_append.1 hc with hc | hc
-      · exact absurd (hb _ hc) id
-      · obtain ⟨c, -, hbox⟩ := List.mem_map.1 hc
-        simp [Compartment.box] at hbox
+  rw [DRS.accessible_iff_exists_occurrence]
+  rintro ⟨K', bs, hp, hx, hyp⟩
+  rcases hp.cases_head with h | ⟨q, hq, hqp⟩
+  · obtain ⟨rfl, rfl⟩ := List.cons.inj h
+    simp [MentalState.flatten, hy] at hyp
+  · obtain @⟨_, K₁, _, s, d, hd, hsub⟩ := hq
+    rcases List.mem_append.1 hd with hd | hd
+    · exact not_mem_subordinates_of_atomic (hb _ hd) _ hsub
+    · obtain ⟨c, hcK, rfl⟩ := List.mem_map.1 hd
+      obtain ⟨rfl, rfl⟩ : K₁ = .mk c.drefs.toFinset c.conds ∧ s = [] := by
+        simpa [Compartment.box] using hsub
+      rcases hqp.cases_head with h | ⟨r, hr, -⟩
+      · obtain ⟨rfl, rfl⟩ := List.cons.inj h
+        exact hxc c hcK (by simpa using hx)
+      · obtain @⟨_, _, _, _, e, he, hsub'⟩ := hr
+        exact not_mem_subordinates_of_atomic (hcs c hcK e he) _ hsub'
 
 /-- A compartment sees the belief layer. Where a compartment declares a referent every belief
 referent is accessible, parasitism in the paper's sense (§3.1). -/
 theorem accessible_belief_of_compartment (K : MentalState) {x y : ℕ} (hx : x ∈ K.beliefDrefs)
     (hyc : ∃ c ∈ K.compartments, y ∈ c.drefs) : DRS.Accessible K.flatten y x := by
   obtain ⟨c, hc, hy⟩ := hyc
-  exact ⟨_, .single (.neg (D := K.flatten) (List.mem_append_right _ (List.mem_map_of_mem hc))),
-    by simpa using hy, by simp [MentalState.flatten, hx]⟩
+  have hsub : DirectlySubordinate (.mk c.drefs.toFinset c.conds) K.flatten :=
+    ⟨c.box, List.mem_append_right _ (List.mem_map_of_mem hc), [], by simp [Compartment.box]⟩
+  exact ⟨_, _, .subordinate .refl (.single hsub), by simp [MentalState.flatten, hx],
+    by simpa using hy⟩
 
 /-! ### Attitude merge (58) and presupposition binding -/
 

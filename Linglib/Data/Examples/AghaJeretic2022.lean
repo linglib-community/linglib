@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("continuation", "but you could also take a bus if you have all morning"), ("continuation_felicity", "felicitous")] }
 
@@ -37,7 +37,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("continuation", "but you could also take a bus if you have all morning"), ("continuation_felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir"), ("force", "strong")] }
 
@@ -63,7 +63,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("force", "weak"), ("derivation", "CF"), ("base", "necessity")] }
 
@@ -76,7 +76,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "mesthi"), ("force", "strong")] }
 
@@ -89,7 +89,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "mesthi+NE"), ("force", "weak"), ("derivation", "NE"), ("base", "necessity")] }
 
@@ -102,7 +102,7 @@ def should_pos_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("modal", "should")] }
 
@@ -115,7 +115,7 @@ def should_pos_none : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("modal", "should")] }
 
@@ -128,7 +128,7 @@ def should_pos_gap : Datum :=
     glossedTokens := []
     context := "Two doors lead to the living room; both are equally good options."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("modal", "should"), ("gap_detected", "true")] }
 
@@ -141,7 +141,7 @@ def should_neg_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("modal", "should")] }
 
@@ -154,7 +154,7 @@ def should_neg_none : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("modal", "should")] }
 
@@ -167,7 +167,7 @@ def should_neg_gap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("gap_detected", "true"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -180,7 +180,7 @@ def haveTo_pos_gap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("modal", "have to"), ("gap_detected", "false"), ("classical_value", "false")] }
 
@@ -193,7 +193,7 @@ def haveTo_neg_gap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("modal", "have to"), ("gap_detected", "false"), ("classical_value", "true"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
@@ -206,7 +206,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "none"), ("continuation", "but you are allowed not to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -219,7 +219,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "none"), ("continuation", "but you are allowed not to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -232,7 +232,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -245,7 +245,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
@@ -258,7 +258,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -271,7 +271,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
@@ -284,7 +284,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "clausemate"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
@@ -297,7 +297,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
@@ -310,7 +310,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("continuation", "but that you can go"), ("continuation_felicity", "infelicitous")] }
 
@@ -323,7 +323,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("remover", "necessarily"), ("continuation", "but that you can go"), ("continuation_felicity", "felicitous")] }
 
@@ -336,7 +336,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("continuation", "but it is allowed"), ("continuation_felicity", "infelicitous")] }
 
@@ -349,7 +349,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("remover", "necessarily"), ("continuation", "but it is allowed"), ("continuation_felicity", "felicitous")] }
 
@@ -362,7 +362,7 @@ def ex_17a_qud1 : Datum :=
     glossedTokens := []
     context := "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "What is a way to get a perfect grade?")] }
 
@@ -375,7 +375,7 @@ def ex_17a_qud2 : Datum :=
     glossedTokens := []
     context := "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "What are the minimal requirements to get a perfect grade?")] }
 
@@ -388,7 +388,7 @@ def ex_17b_qud1 : Datum :=
     glossedTokens := []
     context := "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "What is a way to get a perfect grade?")] }
 
@@ -401,7 +401,7 @@ def ex_17b_qud2 : Datum :=
     glossedTokens := []
     context := "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "What are the minimal requirements to get a perfect grade?")] }
 
@@ -414,7 +414,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := "Two doors lead to the living room; both are equally good options."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("denial", "No, that's not true, you don't have to, but you can"), ("denial_felicity", "infelicitous"), ("well_response_felicity", "felicitous")] }
 
@@ -427,7 +427,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := "Two doors lead to the living room; both are equally good options."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("denial", "No, that's not true, you don't have to, but you can"), ("denial_felicity", "felicitous"), ("well_response_felicity", "infelicitous")] }
 
@@ -440,7 +440,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "iso"), ("force", "possibility")] }
 
@@ -453,7 +453,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "iso+NE"), ("derivation", "NE"), ("base", "possibility")] }
 
@@ -466,7 +466,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("derivation", "CF"), ("base", "necessity")] }
 
@@ -479,7 +479,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "pouvoir+CF"), ("derivation", "CF"), ("base", "possibility")] }
 
@@ -492,7 +492,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "future conditional"), ("continuation", "but I might be"), ("continuation_felicity", "infelicitous")] }
 
@@ -505,7 +505,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "future conditional"), ("remover", "necessarily"), ("continuation", "but I might be"), ("continuation_felicity", "felicitous")] }
 
@@ -518,7 +518,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "generic"), ("continuation", "but some of them do"), ("continuation_felicity", "infelicitous")] }
 
@@ -531,7 +531,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "generic"), ("remover", "necessarily"), ("continuation", "but some of them do"), ("continuation_felicity", "felicitous")] }
 
@@ -544,7 +544,7 @@ def ex_41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "habitual"), ("continuation", "but I do sometimes"), ("continuation_felicity", "infelicitous")] }
 
@@ -557,7 +557,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "habitual"), ("remover", "necessarily"), ("continuation", "but I do sometimes"), ("continuation_felicity", "felicitous")] }
 
@@ -570,7 +570,7 @@ def ex_47a : Datum :=
     glossedTokens := []
     context := "To get to 10 Washington Place from Astoria, you can take the N or the R, but the N is faster."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "Which train is best?")] }
 
@@ -583,7 +583,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := "To get to 10 Washington Place from Astoria, you can take the N or the R, but the N is faster."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "Which train is best?")] }
 

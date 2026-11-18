@@ -7,8 +7,11 @@ public import Linglib.Syntax.Category.Pronoun.Reflexive
 # Italian pronouns
 
 Italian has a tonic series of personal pronouns and an atonic series of object pronouns. The
-tonic second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
-third person singular, and the archaic polite plural *Loro*.
+tonic first and second person singular tell a subject form, *io* and *tu*, from a non-subject
+form, *me* and *te*, used as the stressed object of a verb and after a preposition. The tonic
+second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
+third person feminine singular, and the archaic polite plural *Loro*, which agrees as a third
+person plural.
 
 The atonic first and second persons have one form each for direct object, indirect object and
 reflexive use: *mi*, *ti*, *ci* and *vi*. Only the third person tells the three apart: accusative
@@ -19,7 +22,7 @@ but it follows the verb, never enters a cluster and bears word stress.
 
 ## Main declarations
 
-* `Italian.Pronouns.pronouns` — the tonic series
+* `Italian.Pronouns.personal` — the tonic series
 * `Italian.Pronouns.atonic` — the atonic object pronouns by person, number, gender and case
 * `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexiveForms`,
   `Italian.Pronouns.reflexive` — the atonic series
@@ -72,12 +75,20 @@ def tu : PersonalPronoun :=
   { form := "tu", person := some .second, number := some .singular,
     strength := some .strong }
 
-/-- The polite second person singular *Lei*, the V form. It agrees as a third person singular,
-patterns with the feminine singular clitics and binds the third-person reflexive *si*, but it
-denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person plural
-resolved agreement in coordination ([adamson-zompi-2025]). -/
+/-- *me* — 1sg, the non-subject form ([maiden-robustelli-2007] §6.19, p. 114). -/
+def me_tonic : PersonalPronoun :=
+  { form := "me", person := some .first, number := some .singular, strength := some .strong }
+
+/-- *te* — 2sg familiar, the non-subject form ([maiden-robustelli-2007] §6.19, p. 114). -/
+def te_tonic : PersonalPronoun :=
+  { form := "te", person := some .second, number := some .singular, strength := some .strong }
+
+/-- The polite second person singular *Lei*, the V form. It agrees as a third person feminine
+singular, patterns with the feminine singular clitics and binds the third-person reflexive *si*,
+but it denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person
+plural resolved agreement in coordination ([adamson-zompi-2025]). -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .singular,
+  { form := "Lei", person := some .third, number := some .singular, gender := some .Fem,
     referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
@@ -99,10 +110,12 @@ def voi : PersonalPronoun :=
   { form := "voi", person := some .second, number := some .plural,
     strength := some .strong }
 
-/-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
+/-- The polite second person plural *Loro*, archaic and largely replaced by *voi*. Like *Lei* it
+is identical in form to the third person pronoun and takes third person plural verb forms
+([maiden-robustelli-2007]), and it denotes the addressees. -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .plural,
-    strength := some .strong }
+  { form := "Loro", person := some .third, number := some .plural,
+    referential := voi.referential, strength := some .strong }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=
@@ -119,8 +132,8 @@ def addresseePl : Grade → PersonalPronoun
   | .polite => loro_formal
 
 /-- The strong-pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
-  {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
+def personal : Finset PersonalPronoun :=
+  {io, me_tonic, tu, te_tonic, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
 /-! ### The atonic series -/
 

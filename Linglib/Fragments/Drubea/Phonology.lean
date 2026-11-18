@@ -21,12 +21,11 @@ the syllable, `Prosody.Syllable.ofVowel` against `Prosody.Syllable.ofLongVowel`.
 front vowel /ɪ/ occurs long only. Syllables are open, (C)V(V). Register is in
 `Fragments/Drubea/Prosody`.
 
-The feature values come from the PHOIBLE chart. The chart holds no prenasalised or
-labialised segments, whose contours a two-valued matrix cannot express: a prenasalised stop
-takes the plain voiced stop's matrix, and a labialised consonant departs from its plain
-counterpart by `labialized`, [+round] with [+labial] for the velars. PHOIBLE has no Drubea
-inventory. A segment is named by the source's transcription where Lean admits the symbol,
-else by the symbol's name.
+The feature values come from the PHOIBLE chart. A prenasalised stop takes the plain voiced stop's
+matrix, which is the chart's prenasalised stop at the last phase of its contours. A labialised
+consonant is its chart entry at the last phase of its contour, [+round] with [+labial]. PHOIBLE
+has no Drubea inventory. A segment is named by the source's transcription where Lean admits the
+symbol, else by the symbol's name.
 
 ## Main definitions
 
@@ -56,14 +55,11 @@ namespace Drubea
 
 /-! ### Consonants -/
 
-/-- Labialisation: [+round], with [+labial] for a non-labial base. -/
-def labialized : Segment := Segment.ofSpecs [(.labial, true), (.round, true)]
-
 /-- /p/. -/
 def p : Segment := .ofChart .«p»
 
 /-- /pw/, the labialised bilabial plosive. -/
-def pw : Segment := .ofChart .«p» labialized
+def pw : Segment := .ofChart FeatureMatrix.last.«pʷ»
 
 /-- /t/. -/
 def t : Segment := .ofChart .«t»
@@ -78,13 +74,13 @@ def c : Segment := .ofChart .«c»
 def k : Segment := .ofChart .«k»
 
 /-- /kw/, the labialised velar plosive. -/
-def kw : Segment := .ofChart .«k» labialized
+def kw : Segment := .ofChart FeatureMatrix.last.«kʷ»
 
 /-- /b/, phonetically the prenasalised [ᵐb]. -/
 def b : Segment := .ofChart .«b»
 
 /-- /bw/, phonetically [ᵐbʷ]. -/
-def bw : Segment := .ofChart .«b» labialized
+def bw : Segment := .ofChart FeatureMatrix.last.«bʷ»
 
 /-- /d/, phonetically [ⁿd]. -/
 def d : Segment := .ofChart .«d»
@@ -99,13 +95,13 @@ def j : Segment := .ofChart .«ɟ»
 def g : Segment := .ofChart .«ɡ»
 
 /-- /gw/, phonetically [ᵑɡʷ]; Drubea only, where Numèè has /ŋw/. -/
-def gw : Segment := .ofChart .«ɡ» labialized
+def gw : Segment := .ofChart FeatureMatrix.last.«ɡʷ»
 
 /-- /m/. -/
 def m : Segment := .ofChart .«m»
 
 /-- /mw/. -/
-def mw : Segment := .ofChart .«m» labialized
+def mw : Segment := .ofChart FeatureMatrix.last.«mʷ»
 
 /-- /n/. -/
 def n : Segment := .ofChart .«n»

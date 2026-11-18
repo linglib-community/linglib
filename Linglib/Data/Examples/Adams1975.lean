@@ -24,7 +24,7 @@ def p15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "contraposition")] }
 
@@ -37,7 +37,7 @@ def p16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "disjunction")] }
 
@@ -50,7 +50,7 @@ def p16b : Datum :=
     glossedTokens := []
     context := "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "hypotheticalSyllogism")] }
 
@@ -63,7 +63,7 @@ def p17 : Datum :=
     glossedTokens := []
     context := "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pattern", "antecedentRestriction")] }
 

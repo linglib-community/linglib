@@ -14,7 +14,7 @@
     "translation": "John has read a certain book, but I don't know which.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "sluicing antecedent"]
@@ -36,7 +36,7 @@
     "translation": "Audu didn't buy SOME fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scope", "wide"],
@@ -59,7 +59,7 @@
     "translation": "Audu didn't buy any fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scope", "narrow"],
@@ -81,7 +81,7 @@
     "translation": "I am going to buy a certain pair of shoes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "specificity"]
@@ -102,7 +102,7 @@
     "translation": "I don't eat a certain (kind of) fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scope", "wide only"]
@@ -125,7 +125,7 @@
     "translation": "No student sent every letter (s)he wrote.",
     "context": "There were three students: Mary, Sue, and Joe. All of them wrote letters, but none of them sent all of them.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "ko"],
@@ -148,7 +148,7 @@
     "translation": "After the party, that certain man asked me for my number.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["co-occurrence", "INDEF and DEF"]
@@ -169,7 +169,7 @@
     "translation": "The/A water pot broke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["bare NP", "definite or indefinite"]

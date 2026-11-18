@@ -10,7 +10,7 @@
     "translation": "",
     "context": "What is being discussed is where Mary's friends are from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive", "judgment": "acceptable"},
       {"name": "ignorance", "judgment": "marginal"}
@@ -35,7 +35,7 @@
     "translation": "",
     "context": "What is being discussed is where Mary's friends are from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive", "judgment": "marginal"},
       {"name": "ignorance", "judgment": "acceptable"}
@@ -60,7 +60,7 @@
     "translation": "",
     "context": "What is being discussed is where Mary's friends are from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive", "judgment": "acceptable"},
       {"name": "ignorance", "judgment": "marginal"}
@@ -85,7 +85,7 @@
     "translation": "",
     "context": "What is being discussed is where Mary's friends are from.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive", "judgment": "marginal"},
       {"name": "ignorance", "judgment": "acceptable"}
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "unembedded"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "Peter invited three girls to the party.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "deviant-be"],
@@ -151,7 +151,7 @@
     "translation": "",
     "context": "Peter invited three girls to the party.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "non-deviant-called"],
@@ -172,7 +172,7 @@
     "translation": "",
     "context": "Tolstoy, Zola and Rowling are great writers.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "deviant-write"],
@@ -193,7 +193,7 @@
     "translation": "",
     "context": "Ann, John, and Bob are great students.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "non-deviant-read"],
@@ -214,7 +214,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["name", "paraphrase-of-deviant-be"]
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "singletonDenoting"],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "singletonDenoting"],
@@ -282,7 +282,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "singletonDenoting"],
@@ -305,7 +305,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "singletonDenoting"],
@@ -325,7 +325,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "write"],
@@ -345,7 +345,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "blindImplicature"]
@@ -364,7 +364,7 @@
     "translation": "",
     "context": "Ann played a card game in which, given the rules, the final score is always an even number of points. Bob knows this, and reports to Carl.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
@@ -383,7 +383,7 @@
     "translation": "",
     "context": "Ann played a card game in which, given the rules, the final score is always an even number of points. Bob knows this, and reports to Carl.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
@@ -402,7 +402,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not all of her 20 friends are French", "judgment": "unacceptable"}
     ],
@@ -423,7 +423,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "modalContrast"],
@@ -443,7 +443,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "modalContrast"],
@@ -463,7 +463,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "largerDomain"],
@@ -483,7 +483,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "downwardEntailing"]
@@ -502,7 +502,7 @@
     "translation": "",
     "context": "Mary works in the US, so her office-mates are very likely American.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "distributive", "judgment": "marginal"},
       {"name": "ignorance", "judgment": "acceptable"}

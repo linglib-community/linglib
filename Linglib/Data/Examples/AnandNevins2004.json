@@ -13,7 +13,7 @@
     "translation": "Hesen said that {I am, Hesen is} rich.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "acceptable"}
@@ -36,7 +36,7 @@
     "translation": "Hesen said that {Ali is, you are} rich.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "acceptable"}
@@ -60,7 +60,7 @@
     "translation": "When we were in Diyarbekir, Hesen told me he was born {here, in D.}.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "acceptable"}
@@ -84,7 +84,7 @@
     "translation": "A week ago, H. told me that he kissed Rojda {8 days ago, #yesterday}.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "unacceptable"}
@@ -107,7 +107,7 @@
     "translation": "Hesen believes that {I, *Hesen} is sick.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "unacceptable"}
@@ -129,7 +129,7 @@
     "translation": "I did not kiss anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mɨ kes paci kɛrd.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -151,7 +151,7 @@
     "translation": "Rojda didn't say that she kissed anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"}
     ],
@@ -170,7 +170,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"test": "extraction", "construction": "direct quotation"},
     "comment": "",
@@ -190,7 +190,7 @@
     "translation": "The girl that Hesen said {Hesen, I} kissed is pretty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "acceptable"}
@@ -213,7 +213,7 @@
     "translation": "Ali was the person that Rojda said {Rojda, I} kissed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "acceptable"}
@@ -236,7 +236,7 @@
     "translation": "Yesterday Rojda said to Bill, \"I am angry at you.\"",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "both utterance", "judgment": "acceptable"},
@@ -266,7 +266,7 @@
     "translation": "Hesen told me that he is coming here now.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -294,7 +294,7 @@
     "translation": "A week ago, Hesen planned: \"I will kiss you in two weeks.\" (not two weeks from now)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "mixed persons-reported time-utterance", "judgment": "unacceptable"}
@@ -322,7 +322,7 @@
     "translation": "Simon said that you (ADDR(U)) hit him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"}
     ],
@@ -344,7 +344,7 @@
     "translation": "She_j wants her_j friend to sew slippers for her_j.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "mixed friend-reported slippers-utterance", "judgment": "unacceptable"},
@@ -375,7 +375,7 @@
     "translation": "H. said that people that like me and the people that don't like me met.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "both utterance", "judgment": "acceptable"},
@@ -407,7 +407,7 @@
     "translation": "Ali said to Andrew that Hesen said to Andrew that {Hesen, Ali, *Andrew} is Rojda's brother.",
     "context": "Andrew, secretly the brother of the traitor Rojda, is confronted by Hesen; Ali overhears, then tells Andrew what Hesen said; Andrew reports Ali's words to his neighbor (31).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowest reported context", "judgment": "acceptable"},
       {"name": "intermediate reported context", "judgment": "acceptable"},
@@ -432,7 +432,7 @@
     "translation": "Ali said to Andrew that Hesen said to Fatima that {Hesen, Ali, Andrew} is Rojda's brother.",
     "context": "As for (32), but Ali overheard Hesen telling Fatima.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lowest reported context", "judgment": "acceptable"},
       {"name": "intermediate reported context", "judgment": "acceptable"},
@@ -453,7 +453,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"language_type": "non-shifting"},
     "comment": "English persons do not shift under any attitude verb.",
@@ -470,7 +470,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"language_type": "non-shifting"},
     "comment": "",
@@ -490,7 +490,7 @@
     "translation": "You sg. told me to buy it for you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "both reported", "judgment": "acceptable"}
     ],
@@ -516,7 +516,7 @@
     "translation": "Do you [ADDR(c*)] want to lick the spoon?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "unacceptable"}
@@ -538,7 +538,7 @@
     "translation": "Sister wants you [ADDR(c*)] to sing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "utterance context", "judgment": "acceptable"},
       {"name": "reported context", "judgment": "unacceptable"}
@@ -561,7 +561,7 @@
     "translation": "John wants {his, my} son to go hunting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "acceptable"}
@@ -583,7 +583,7 @@
     "translation": "Simon said that you hit {him, *me}.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "reported context", "judgment": "acceptable"},
       {"name": "utterance context", "judgment": "unacceptable"}
@@ -603,7 +603,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"test": "de_te"},
     "comment": "",
@@ -620,7 +620,7 @@
     "translation": "",
     "context": "John, thinking she was Mary's mother, begged of Mary that Mary should sing.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"test": "de_te"},
     "comment": "Object-controlled PRO is read de te: the addressee coordinate of the index.",
@@ -640,7 +640,7 @@
     "translation": "He_1 told me that I stopped in Jos.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"test": "context_blocking", "logophor": "ADDR-LOG"},
     "comment": "The addressee logophor cannot corefer with the utterance author, for whom an indexical is available (44). Data from Frajzyngier 1993.",
@@ -659,7 +659,7 @@
     "translation": "John_i said I_i will not obey me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "mixed I-reported me-utterance", "judgment": "unacceptable"}
     ],
@@ -682,7 +682,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "two days after each telling", "judgment": "acceptable"}
     ],
@@ -701,7 +701,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "May 16th", "judgment": "acceptable"},
       {"name": "May 23rd", "judgment": "unacceptable"}
@@ -721,7 +721,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "May 16th", "judgment": "unacceptable"},
       {"name": "May 23rd", "judgment": "acceptable"}
@@ -742,7 +742,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "I met John a week ago. Two days later he was sick.", "judgment": "acceptable"}
     ],
     "readings": [],

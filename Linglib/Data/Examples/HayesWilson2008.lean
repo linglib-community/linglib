@@ -24,7 +24,7 @@ def k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2764")] }
 
@@ -37,7 +37,7 @@ def r : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2752")] }
 
@@ -50,7 +50,7 @@ def d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2526")] }
 
@@ -63,7 +63,7 @@ def s : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2215")] }
 
@@ -76,7 +76,7 @@ def m : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1965")] }
 
@@ -89,7 +89,7 @@ def p : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1881")] }
 
@@ -102,7 +102,7 @@ def b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1544")] }
 
@@ -115,7 +115,7 @@ def l : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1225")] }
 
@@ -128,7 +128,7 @@ def f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1222")] }
 
@@ -141,7 +141,7 @@ def h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1153")] }
 
@@ -154,7 +154,7 @@ def t : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1146")] }
 
@@ -167,7 +167,7 @@ def pr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1046")] }
 
@@ -180,7 +180,7 @@ def w : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "780")] }
 
@@ -193,7 +193,7 @@ def n : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "716")] }
 
@@ -206,7 +206,7 @@ def v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "615")] }
 
@@ -219,7 +219,7 @@ def g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "537")] }
 
@@ -232,7 +232,7 @@ def dzh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "524")] }
 
@@ -245,7 +245,7 @@ def st : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "521")] }
 
@@ -258,7 +258,7 @@ def tr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "515")] }
 
@@ -271,7 +271,7 @@ def kr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "387")] }
 
@@ -284,7 +284,7 @@ def sh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "379")] }
 
@@ -297,7 +297,7 @@ def gr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "331")] }
 
@@ -310,7 +310,7 @@ def tsh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "329")] }
 
@@ -323,7 +323,7 @@ def br : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "319")] }
 
@@ -336,7 +336,7 @@ def sp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "313")] }
 
@@ -349,7 +349,7 @@ def fl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "290")] }
 
@@ -362,7 +362,7 @@ def kl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "285")] }
 
@@ -375,7 +375,7 @@ def sk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "278")] }
 
@@ -388,7 +388,7 @@ def j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "268")] }
 
@@ -401,7 +401,7 @@ def fr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "254")] }
 
@@ -414,7 +414,7 @@ def pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "238")] }
 
@@ -427,7 +427,7 @@ def bl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "213")] }
 
@@ -440,7 +440,7 @@ def sl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "213")] }
 
@@ -453,7 +453,7 @@ def dr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "211")] }
 
@@ -466,7 +466,7 @@ def kw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "201")] }
 
@@ -479,7 +479,7 @@ def str : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "183")] }
 
@@ -492,7 +492,7 @@ def th : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "173"), ("score", "1.85")] }
 
@@ -505,7 +505,7 @@ def sw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "153")] }
 
@@ -518,7 +518,7 @@ def gl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "131")] }
 
@@ -531,7 +531,7 @@ def hw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "111")] }
 
@@ -544,7 +544,7 @@ def sn : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "109")] }
 
@@ -557,7 +557,7 @@ def skr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "93")] }
 
@@ -570,7 +570,7 @@ def z : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "83"), ("score", "2.69")] }
 
@@ -583,7 +583,7 @@ def sm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "82")] }
 
@@ -596,7 +596,7 @@ def thr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "73"), ("score", "1.85")] }
 
@@ -609,7 +609,7 @@ def skw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "69")] }
 
@@ -622,7 +622,7 @@ def tw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "55"), ("score", "1.70")] }
 
@@ -635,7 +635,7 @@ def spr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "51")] }
 
@@ -648,7 +648,7 @@ def shr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "40"), ("score", "2.10")] }
 
@@ -661,7 +661,7 @@ def spl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "27")] }
 
@@ -674,7 +674,7 @@ def dh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "19"), ("score", "4.54")] }
 
@@ -687,7 +687,7 @@ def dw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "17"), ("score", "2.97")] }
 
@@ -700,7 +700,7 @@ def gw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "11"), ("score", "2.97")] }
 
@@ -713,7 +713,7 @@ def thw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "4"), ("score", "3.91"), ("gang", "18, 21")] }
 
@@ -726,7 +726,7 @@ def skl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1"), ("score", "3.05")] }
 
@@ -739,7 +739,7 @@ def stw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "3.76")] }
 
@@ -752,7 +752,7 @@ def dl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.40")] }
 
@@ -765,7 +765,7 @@ def hl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.82")] }
 
@@ -778,7 +778,7 @@ def hr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.82")] }
 
@@ -791,7 +791,7 @@ def vl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
@@ -804,7 +804,7 @@ def vr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
@@ -817,7 +817,7 @@ def shl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
@@ -830,7 +830,7 @@ def shw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
@@ -843,7 +843,7 @@ def sr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.90")] }
 
@@ -856,7 +856,7 @@ def fw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
@@ -869,7 +869,7 @@ def pw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
@@ -882,7 +882,7 @@ def spw : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
@@ -895,7 +895,7 @@ def rt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "21.81")] }
 
@@ -908,7 +908,7 @@ def stsh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("status", "unattested"), ("score", "6.21"), ("gang", "8, 14, 22")] }
 
@@ -921,7 +921,7 @@ def zh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("status", "unattested"), ("gang", "2, 16")] }
 

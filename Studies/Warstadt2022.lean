@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.ConditionalProbability
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Data.Examples.Warstadt2022
 
 /-!
@@ -114,8 +114,8 @@ variable [Fintype U] [MeasurableSpace U] [MeasurableSingletonClass U] (P : W →
 /-- The literal listener within a context set (3a) conditions the prior on the context set and
 on the utterance, and answers the question. -/
 noncomputable def L0 : Kernel U (Finset W) :=
-  (RSA.listener ((∑ w, (P w : ℝ≥0∞) • Measure.dirac w).restrict ↑C)
-    (truthful sem)).map (cell q)
+  (RSA.literalListener ((∑ w, (P w : ℝ≥0∞) • Measure.dirac w).restrict ↑C)
+    sem).map (cell q)
 
 instance : IsFiniteKernel (L0 P cell sem C q) := inferInstanceAs (IsFiniteKernel (Kernel.map _ _))
 

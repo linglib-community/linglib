@@ -24,7 +24,7 @@ def indefinite_persists : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
@@ -37,7 +37,7 @@ def universal_blocks : Datum :=
     glossedTokens := []
     context := "No referent for 'it' fixed independently of the preceding sentence."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none"), ("felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def negative_blocks : Datum :=
     glossedTokens := []
     context := "No referent for 'it' fixed independently of the preceding sentence."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "negative_quant"), ("context", "none"), ("felicity", "infelicitous")] }
 
@@ -63,7 +63,7 @@ def definite_reference : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
@@ -76,7 +76,7 @@ def conditional_donkey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("donkey_configuration", "conditional")] }
 
@@ -89,7 +89,7 @@ def relative_donkey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("donkey_configuration", "relative_clause")] }
 
@@ -102,7 +102,7 @@ def soldier_gun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Someone has a gun. He will shoot.", .acceptable)]
+    contrasts := [("Someone has a gun. He will shoot.", .acceptable)]
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none"), ("felicity", "infelicitous")] }
 
@@ -115,7 +115,7 @@ def cat_door : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
@@ -128,7 +128,7 @@ def woman_dog : Datum :=
     glossedTokens := []
     context := "Uttered against a file in whose domain neither 1 nor 2 occurs."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
@@ -141,7 +141,7 @@ def woman_dog_definite : Datum :=
     glossedTokens := []
     context := "Uttered against a true file in whose domain both 1 and 2 occur."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "none")] }
 
@@ -154,7 +154,7 @@ def pretzel : Datum :=
     glossedTokens := []
     context := "Uttered when an empty file obtains."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")] }
 
@@ -167,7 +167,7 @@ def flea_collar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")] }
 
@@ -180,7 +180,7 @@ def dog_bite : Datum :=
     glossedTokens := []
     context := "Said to the addressee walking up a driveway: no previous discourse, no dog in sight, no reason to believe a dog lives there."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "accommodation")] }
 
@@ -193,7 +193,7 @@ def king_of_france : Datum :=
     glossedTokens := []
     context := "The because-clause denies that France has a king."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow scope (local accommodation)", .acceptable), ("existence implied (global accommodation)", .acceptable)]
     paperFeatures := [("antecedent_type", "definite"), ("context", "negation")] }
 

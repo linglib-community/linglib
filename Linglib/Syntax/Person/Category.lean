@@ -17,9 +17,18 @@ speakers and an audience with no one else. A category's person keeps clusivity o
 (`Person.Category.person`), and [every category is recovered from its person at some
 number](##Person.Category.ofPersonNumber_person).
 
+The person of a category lies strictly between two partitions of the categories,
+[coarser](##Person.Category.person_eq_of_participants_eq_of_isGroup_iff) than participants
+together with being a group and [finer](##Person.Category.participants_eq_of_person_eq) than
+participants alone. The speaker alone and the speaker with others share their participants, so
+they are one person where a person is a set of participants, as for Harbour and for Dalrymple
+and Kaplan, and two where the exclusive is a group, as here.
+
 ## References
 
 * [cysouw-2003]
+* [harbour-2016]
+* [dalrymple-kaplan-2000]
 -/
 
 @[expose] public section
@@ -54,7 +63,7 @@ variable {c : Category}
 /-! ### Configurations -/
 
 /-- The speech-act participants a category contains. -/
-def participants : Category → Finset Discourse.Role
+def participants : Category → Finset SpeechAct.Role
   | speaker | speakerOthers => {.speaker}
   | addressee | addresseeOthers => {.addressee}
   | speakerAddressee | speakerAddresseeOthers => {.speaker, .addressee}
@@ -70,7 +79,7 @@ def otherCount : Category → Fin 3
 several others only on their own. The speaker and the addressee are unique individuals, so a
 group of speakers or of addressees does not arise, and a participant with one other or with
 several forms one group. -/
-def WellFormed (x : Finset Discourse.Role × Fin 3) : Prop :=
+def WellFormed (x : Finset SpeechAct.Role × Fin 3) : Prop :=
   (x.1.Nonempty ∨ x.2 ≠ 0) ∧ (x.2 = 2 → x.1 = ∅)
 
 instance : DecidablePred WellFormed := fun _ ↦ by unfold WellFormed; infer_instance
@@ -150,6 +159,32 @@ theorem participants_mem_participantSets_person (c : Category) :
 
 theorem person_separates_clusivity :
     Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide +kernel
+
+/-- Categories of one person have the same participants. -/
+theorem participants_eq_of_person_eq {a b : Category} (h : a.person = b.person) :
+    a.participants = b.participants := by
+  revert a b; decide
+
+/-- Categories with the same participants that are both groups or both individuals have one
+person. -/
+theorem person_eq_of_participants_eq_of_isGroup_iff {a b : Category}
+    (h : a.participants = b.participants) (hg : a.IsGroup ↔ b.IsGroup) : a.person = b.person := by
+  revert a b; decide
+
+/-- The speaker and the addressee together are a group. -/
+theorem isGroup_of_participants_eq_univ {c : Category} (h : c.participants = Finset.univ) :
+    c.IsGroup := by
+  revert c; decide
+
+/-- Both refinements are strict: the speaker alone and with others share their participants and
+not their person, and the addressee alone and with others share their person and are not both
+groups. -/
+theorem person_strictly_between :
+    (Category.speaker.participants = Category.speakerOthers.participants ∧
+      Category.speaker.person ≠ Category.speakerOthers.person) ∧
+    (Category.addressee.person = Category.addresseeOthers.person ∧
+      ¬ (Category.addressee.IsGroup ↔ Category.addresseeOthers.IsGroup)) := by
+  decide
 
 /-- The categories a (person, number) coordinate pair can realize. Clusivity rides on the
 person value and the minimal/augmented coordinates give the minimal/augmented inclusives

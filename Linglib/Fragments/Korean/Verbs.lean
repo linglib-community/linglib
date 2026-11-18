@@ -208,7 +208,6 @@ def yukamsuleweha : Verb where
   script := some "유감스러워하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative)
-  vendlerClass := some .state
 
 /-- *mit-ta* 'believe', a stative non-veridical doxastic. -/
 def mit : Verb where
@@ -216,7 +215,6 @@ def mit : Verb where
   script := some "믿다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .doxastic)
-  vendlerClass := some .state
   opaqueContext := true
 
 /-- *sayngkakha-ta* 'think', a non-veridical doxastic activity. -/
@@ -225,7 +223,6 @@ def sayngkakha : Verb where
   script := some "생각하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .doxastic)
-  vendlerClass := some .activity
   opaqueContext := true
 
 /-- *haysekha-ta* 'interpret'. -/
@@ -233,7 +230,6 @@ def haysekha : Verb where
   stem := [.root "haysekha"]
   script := some "해석하다"
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
   opaqueContext := true
 
 /-- *selmyengha-ta* 'explain', which takes its clause as a theme argument. -/
@@ -241,7 +237,6 @@ def selmyengha : Verb where
   stem := [.root "selmyengha"]
   script := some "설명하다"
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .accomplishment
 
 /-- The inventory. -/
 def verbs : List Verb :=
