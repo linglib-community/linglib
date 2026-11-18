@@ -21,8 +21,7 @@ Since every world has the same times,
 
 * Thomason's `□` is historical necessity, `Formula.N`; `Formula.box` is not in his language.
 * The chapter was read in the second edition of the Handbook (2002, vol. 7), whose pages the
-  locators give, which reprints it with bracketed editorial updates. The first edition was not
-  available, so the 1984 page numbers are unchecked.
+  locators give, which reprints it with bracketed editorial updates.
 
 ## TODO
 

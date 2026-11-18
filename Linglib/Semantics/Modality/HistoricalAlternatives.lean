@@ -65,7 +65,8 @@ theorem alternatives_eq_of_mem (h : v ∈ F.alternatives ⟨w, t⟩) :
     F.alternatives ⟨v, t⟩ = F.alternatives ⟨w, t⟩ :=
   Set.ext fun _ ↦ ⟨(F.sim t).trans' h, (F.sim t).trans' ((F.sim t).symm' h)⟩
 
-/-- The alternatives of a world shrink as time advances. -/
+/-- The alternatives of a world shrink as time advances: historical possibilities diminish
+monotonically with the passage of time ([thomason-1984]). -/
 theorem alternatives_anti (h : t ≤ t') : F.alternatives ⟨w, t'⟩ ⊆ F.alternatives ⟨w, t⟩ :=
   fun _ hv ↦ F.antitone_sim h hv
 
