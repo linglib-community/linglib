@@ -51,7 +51,7 @@ inductive PartOfSpeech where
   | nounAdverb
   deriving DecidableEq, Repr
 
-/-- semantic type: The seven semantic types which make up the word class Adjective, each with its English members (p. 16), and the columns of Table 2 (p. 35). Dixon sets aside position (*high*, *low*, *near*, *far*), which most languages express by adverbs (fn. 11). -/
+/-- semantic type: The seven semantic types which make up the word class Adjective, each with its English members (p. 16), and the columns of Table 2 (p. 35). Dixon omits position (*high*, *low*, *right*, *left*, *near*, *far*), a further type of the English class which other languages most often express by adverbs (fn. 11). -/
 inductive SemanticType where
   /-- `SPEED`: *fast*, *quick*, *slow* and just a few more items (p. 16). -/
   | speed
