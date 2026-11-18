@@ -165,8 +165,9 @@ structure Datum where
   language : Glottocode
   /-- The `Primary_Text` column holds the expression without judgment marks. -/
   primaryText : String
-  /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
-  source gives no gloss. -/
+  /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss, the gloss empty
+  for a word the source segments without glossing it; empty when the source gives no word
+  line. -/
   glossedTokens : List (String × String)
   /-- The words of `glossedTokens` with their morphemes, which the generator derives. -/
   glossedWords : List GlossedWord := []

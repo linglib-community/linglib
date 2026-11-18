@@ -22,10 +22,10 @@ _SPLIT = re.compile("([" + re.escape(MORPHEME_SEPARATORS) + "])")
 
 def lgr_conformance(pairs):
     """The `LGR_Conformance` of an example with the word-gloss `pairs`: `None` for an example
-    with no gloss, `MORPHEME_ALIGNED` when every word and its gloss have the same number of `-`
-    and of `=` boundaries (Rules 2 and 2A) and at least one word is segmented, else
-    `WORD_ALIGNED`."""
-    if not pairs:
+    with no gloss, its words unglossed or absent, `MORPHEME_ALIGNED` when every word and its gloss
+    have the same number of `-` and of `=` boundaries (Rules 2 and 2A) and at least one word is
+    segmented, else `WORD_ALIGNED`."""
+    if not any(g for _, g in pairs):
         return None
     aligned = all(w.count("-") == g.count("-") and w.count("=") == g.count("=")
                   for w, g in pairs)
@@ -37,7 +37,21 @@ def glossed_morphemes(word, gloss):
     """The (morpheme, gloss, separator) triples of a word, as `pyigt`'s `GlossedWord` pairs
     them, or `None` when the word is not valid: its gloss has a different number of morphemes,
     or a different separator somewhere. The separator is the one before the morpheme, `None` for
-    the first, and the morpheme is given without the punctuation written around it."""
+    the first, and the morpheme is given without the punctuation written around it. A word the
+    source segments without glossing it, its gloss empty, has its morphemes with empty glosses, as
+    `pyigt.lgrmorphemes.split_morphemes` segments a word alone."""
+    if not gloss:
+        out, sep = [], None
+        for m in _SPLIT.split(word):
+            if m in MORPHEME_SEPARATORS and len(m) == 1:
+                sep = m
+                continue
+            form = "".join(c for c in m if c not in PUNCT)
+            if not form:
+                return None
+            out.append((form, "", sep))
+            sep = None
+        return out or None
     mm, gg = _SPLIT.split(word), _SPLIT.split(gloss)
     if len(mm) != len(gg):
         return None

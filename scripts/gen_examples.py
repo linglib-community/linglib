@@ -33,7 +33,8 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "language": "stan1293",                  // Glottocode; "" for a constructed string
     "primaryText": "...",
     "discourseSegments": [],                 // empty for single-sentence
-    "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays
+    "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays; the gloss is "" for a
+                                             // word the source segments without glossing
     "translation": "...",
     "context": "",
     "judgment": "acceptable",                // one of the 6 cases
@@ -352,8 +353,9 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     pairs_      = ex.get("glossedTokens", [])
     gloss_lines = ""
     if pairs_:
-        gloss_lines = (f"\n    glossedWords := {emit_glossed_words(pairs_)}"
-                       f"\n    lgrConformance := some {CONFORMANCE[lgr_conformance(pairs_)]}")
+        gloss_lines = f"\n    glossedWords := {emit_glossed_words(pairs_)}"
+        if lgr_conformance(pairs_) is not None:
+            gloss_lines += f"\n    lgrConformance := some {CONFORMANCE[lgr_conformance(pairs_)]}"
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
     verdict     = ex.get("verdict")

@@ -154,7 +154,8 @@ namespace GlossedWord
 variable (w : GlossedWord)
 
 /-- The word and its gloss are segmented alike (Rule 2), so the word has its morphemes: `pyigt`'s
-`GlossedWord.is_valid`. -/
+`GlossedWord.is_valid`. A word the source segments without glossing it has its morphemes too,
+with empty glosses. -/
 def IsValid : Prop := w.glossedMorphemes ≠ []
 
 instance : Decidable w.IsValid := inferInstanceAs (Decidable (_ ≠ _))

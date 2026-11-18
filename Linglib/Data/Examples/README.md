@@ -51,7 +51,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English; must be in `languages.csv`; `""` only for a constructed string of no language (a formal-language pattern) |
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
-| `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
+| `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if the source prints no word line (e.g., English-glossed-as-English). Where it prints segmented words without glosses, as a reference grammar may, each word has the gloss `""`: CLDF's `Analyzed_Word` without `Gloss`. The generator then segments each word at its own boundaries, as `pyigt` segments a word alone, and the row has no `LGR_Conformance` |
 | `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
@@ -138,7 +138,10 @@ and a row writes `"spans": [{"start": 3, "length": 3, "label": "definite"}, {"st
 "determiner", "lexeme": "na"}]`. The generator rejects a span outside the gloss line, a label or
 lexeme not declared and a level no span names, and emits the two enums with the readers
 `Examples.label?` and `Examples.lexeme?` on `Datum.Span`. `Datum.Span.words` and `Datum.spansIn`
-in `Readers.lean` give the glossed words a span covers and the spans within a span.
+in `Readers.lean` give the glossed words a span covers and the spans within a span. A span may
+carry no lexeme: it then marks the word under test, as a source marks it in italics or bold, and
+replaces a column that repeats the word (`Karlsson2017.json`, whose rows have words and no
+glosses).
 
 The data layer does not see the fragments, so a lexeme is the file's own identifier and the study
 gives its entry by a total function, `Examples.Lexeme.entry : Examples.Lexeme → Entry`. A lexeme

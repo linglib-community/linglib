@@ -10,6 +10,9 @@ form of the entry its data names.
 
 ## Implementation notes
 
+* The map is on letters and stands in for a phonology of Mandarin: with the segments and tones of
+  a form given, a source that prints no tone marks writes the segments alone, and the toneless
+  spelling is derived.
 * Dropping the marks is not injective: *nà* 'that' and *nǎ* 'which' are both written *na*. The
   toneless spelling therefore confirms that a word is a form of a named entry and does not
   identify the entry.

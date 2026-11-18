@@ -161,7 +161,7 @@ def example_row(paper, row):
                         else judged_id(code) if MARK[row["judgment"]] else code),
         "Primary_Text": row.get("primaryText", ""),
         "Analyzed_Word": [w for w, _ in pairs],
-        "Gloss": [g for _, g in pairs],
+        "Gloss": [g for _, g in pairs] if any(g for _, g in pairs) else [],
         "Translated_Text": row.get("translation") or None,
         "Meta_Language_ID": META_LANGUAGE,
         "LGR_Conformance": lgr_conformance(pairs),
