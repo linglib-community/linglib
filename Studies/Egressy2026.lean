@@ -41,9 +41,10 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
   `readings` is `Tense.pastUnderPast` at it, and a chain of embeddings is read pairwise by
   `profile`.
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
-  feature; its matrix verb and the clause's grammatical role are read off its gloss line
-  (`Data/Examples/Gloss.lean`), the verb by its declared past stem in `Hungarian.Verbs` and the
-  role by the case cell of `Hungarian.Pronouns.az` its expletive realizes. Direct perception,
+  feature. A row marks its matrix verb and the clause's correlate and names them; the verb is
+  [checked against its declared past stem](##verbs_printed) in `Hungarian.Verbs`, the role is the
+  case cell of `Hungarian.Pronouns.az` the correlate realizes, and [no past verb the fragment
+  declares and no correlate goes unmarked](##words_marked). Direct perception,
   which the paper says removes the backshifted reading pragmatically, is its `directPerception`
   feature. Each single-embedding
   row also carries a linearized witness over a study lexicon that pronounces the row's gloss
@@ -261,16 +262,27 @@ theorem singleRows_predicted :
       Agrees e "" (predicted e ct) := by
   decide +kernel
 
-/-- The matrix word of a row with its verb: among the words before the first complementizer
-glossed *that*, the past-tense one whose stem is a stem the fragment declares, so *álmod-t-a*
-finds *álmodik*. Every condition is the row's own structure or the lexicon's own forms: matrix
-material precedes the *hogy*-clause, finiteness is the `PST` gloss label, every matrix of the
-paper being past, and the stem matches `Hungarian.Verbs.Verb.stem` exactly. -/
+/-- The verb of the Hungarian fragment that a lexeme of the data is, none for a correlate. -/
+def verb? : Lexeme → Option Hungarian.Verbs.Verb
+  | .lat => some Hungarian.Verbs.lat
+  | .hall => some Hungarian.Verbs.hall
+  | .almodik => some Hungarian.Verbs.almodik
+  | .gondol => some Hungarian.Verbs.gondol
+  | .aggaszt => some Hungarian.Verbs.aggaszt
+  | .mond => some Hungarian.Verbs.mond
+  | .rikolt => some Hungarian.Verbs.rikolt
+  | .morog => some Hungarian.Verbs.morog
+  | .telefonal => some Hungarian.Verbs.telefonal
+  | .az | .amiatt => none
+
+/-- The first word a row marks under a label, with the lexeme the row names for it. -/
+def marked? (e : Datum) (l : SpanLabel) : Option (GlossedWord × Lexeme) :=
+  (e.spans.find? (label? · = some l)).bind fun s ↦
+    (s.words e).head?.bind fun w ↦ (lexeme? s).map (w, ·)
+
+/-- The matrix word of a row with its verb, as the row marks and names them. -/
 def matrixWord? (e : Datum) : Option (GlossedWord × Hungarian.Verbs.Verb) :=
-  (e.glossedWords.takeWhile fun w ↦ w.lexicalGloss? != some "that".toList).findSome? fun w ↦
-    if w.features .tense == (UD.Tense.Past : Flat _) then
-      (verbs.find? fun v ↦ w.stem == v.stem.toList).map (w, ·)
-    else none
+  (marked? e .matrix).bind fun (w, l) ↦ (verb? l).map (w, ·)
 
 /-- The matrix verb of a row, by `matrixWord?`. -/
 def matrixVerb? (e : Datum) : Option Hungarian.Verbs.Verb := (matrixWord? e).map (·.2)
@@ -289,14 +301,35 @@ def roleTable : List (Option String × ClauseRole) :=
   [(Hungarian.Pronouns.az .acc, .object), (Hungarian.Pronouns.az .nom, .subject),
     (Hungarian.Pronouns.az .inst, .adjunct), (some Hungarian.Pronouns.amiatt, .adjunct)]
 
-/-- The clause's role, read off its expletive correlate: the word glossed *it* — the gloss
-setting the demonstrative apart from its article homograph — realizes a case cell of
-`Hungarian.Pronouns.az`, and `roleTable` names the cell's role. -/
+/-- The clause's role, read off its expletive correlate: the word the row marks as the correlate
+realizes a case cell of `Hungarian.Pronouns.az`, and `roleTable` names the cell's role. -/
 def clauseRole? (e : Datum) : Option ClauseRole :=
-  e.glossedWords.findSome? fun w ↦
-    if w.lexicalGloss? = some "it".toList then
-      (roleTable.find? fun x ↦ x.1.map (·.toList) == some w.wordform).map (·.2)
-    else none
+  (marked? e .correlate).bind fun (w, _) ↦
+    (roleTable.find? fun x ↦ x.1.map (·.toList) == some w.wordform).map (·.2)
+
+-- each marked verb is past and has the past stem of the verb its row names
+theorem verbs_printed :
+    ∀ e ∈ Examples.all, ∀ s ∈ e.spans, ∀ l ∈ lexeme? s, ∀ v ∈ verb? l,
+      ∃ w ∈ (s.words e).head?,
+        (w.features .tense == (UD.Tense.Past : Flat _)) = true ∧ w.stem = v.stem.toList := by
+  decide +kernel
+
+-- each marked correlate is *amiatt* or a case form of *az*, as its row names it
+theorem correlates_printed :
+    ∀ e ∈ Examples.all, ∀ s ∈ e.spans, label? s = some .correlate →
+      ∃ w ∈ (s.words e).head?,
+        if w.wordform = Hungarian.Pronouns.amiatt.toList then lexeme? s = some .amiatt
+        else lexeme? s = some .az ∧ ∃ x ∈ roleTable, x.1.map (·.toList) = some w.wordform := by
+  decide +kernel
+
+-- no past word with a stem the fragment declares, and no word glossed *it*, goes unmarked: the
+-- gloss sets the demonstrative apart from its article homograph
+theorem words_marked :
+    ∀ e ∈ Examples.all, ∀ i < e.glossedWords.length, ∀ w ∈ e.glossedWords[i]?,
+      ((w.features .tense == (UD.Tense.Past : Flat _)) = true ∧
+          ∃ v ∈ verbs, w.stem = v.stem.toList) ∨ w.lexicalGloss? = some "it".toList →
+        ∃ s ∈ e.spans, s.start = i ∧ (lexeme? s).isSome := by
+  decide +kernel
 
 /-- The frame shape a clause role demands of the matrix verb: a clausal complement for an object
 clause, a clausal subject for a subject clause, and for an adjunct a frame with no clausal
