@@ -91,7 +91,7 @@ theorem isContrary_safe_iff : IsContrary (safe Θ .positive) (safe Θ .negative)
     mem_safe_negative.1 hn U₁ h₁ (mem_safe_positive.1 hp U₁ h₁),
       fun h ↦ hne (Set.ext fun d ↦ ?_)⟩⟩
   · obtain ⟨d, hd⟩ := (Set.ne_univ_iff_exists_notMem _).1 (mt codisjoint_iff.2 h.2)
-    simp only [Set.sup_eq_union, Set.mem_union, mem_safe_positive, mem_safe_negative, not_or] at hd
+    simp only [Set.mem_union, mem_safe_positive, mem_safe_negative, not_or] at hd
     push Not at hd
     obtain ⟨⟨U₂, h₂, hd₂⟩, U₁, h₁, hd₁⟩ := hd
     exact ⟨U₁, h₁, U₂, h₂, fun heq ↦ hd₂ (heq ▸ hd₁)⟩

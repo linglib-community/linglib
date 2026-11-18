@@ -198,7 +198,7 @@ variable {I : W → L.Structure E} {S T : W → Set E} {R : L.Relations 1} {x : 
 theorem valuedIn_inter_valuedIn :
     (valuedIn x S ∩ valuedIn x T : Set (Assign V Δ E × W)) = valuedIn x (S ⊓ T) := by
   ext ⟨g, w⟩
-  simp only [Set.mem_inter_iff, mem_valuedIn, Pi.inf_apply, Set.inf_eq_inter]
+  simp only [Set.mem_inter_iff, mem_valuedIn, Pi.inf_apply]
   constructor
   · rintro ⟨⟨a, hS, ha⟩, b, hT, hb⟩
     obtain rfl : b = a := Part.mem_unique hb ha
@@ -543,7 +543,7 @@ theorem satt_indef_atom₁ [Nonempty E] : (indef x (atom₁ F x) (atom₁ G x)).
     ⟨⟨fun _ ↦ Part.some e, fun _ _ ↦ ⊥⟩, by simp⟩
   rw [satt_indef, realize_indef_atom₁]
   simp only [satt_conj, satt_atom₁, hg', true_and, realize_conj, realize_atom₁, mem_valuedIn,
-    Pi.inf_apply, Set.inf_eq_inter, Set.mem_inter_iff]
+    Pi.inf_apply, Set.mem_inter_iff]
   constructor
   · rintro h hne
     obtain ⟨⟨⟨a, haF, hax⟩, b, hbG, hbx⟩, -, -⟩ := h hne
@@ -869,8 +869,7 @@ theorem posExt_bathroom [Nonempty E] :
   · simp [hgx, Part.bot_eq_none, Part.notMem_none]
   · simp only [Set.Nonempty, Set.mem_inter_iff, mem_extension, realize_atom₁, hgx,
       Part.mem_some_iff, exists_eq_right, ne_eq, Part.some_ne_bot, not_false_eq_true, and_self,
-      and_true, forall_exists_index, and_imp, not_exists, not_and, Pi.inf_apply,
-      Set.inf_eq_inter]
+      and_true, forall_exists_index, and_imp, not_exists, not_and, Pi.inf_apply]
     constructor
     · rintro ⟨h1, h2 | h2⟩
       · exact .inl h2

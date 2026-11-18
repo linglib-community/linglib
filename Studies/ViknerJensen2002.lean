@@ -48,7 +48,7 @@ def clitic (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier 
 -- (16)
 theorem clitic_apply (Q : Quantifier E) (R : E → E → S → Prop) (s : S) (P : Set E) :
     clitic Q R s P ↔ Q {u | ∃ x, (∀ y, R u y s ↔ y = x) ∧ x ∈ P} := by
-  simp only [clitic, PossNP, the, π_apply, Set.inf_eq_inter, Set.univ_inter]
+  simp only [clitic, PossNP, the, π_apply, Set.univ_inter]
   refine iff_of_eq (congrArg Q (Set.ext fun a ↦ and_iff_right_of_imp ?_))
   rintro ⟨x, hx, -⟩
   exact ⟨x, trivial, (hx x).2 rfl⟩

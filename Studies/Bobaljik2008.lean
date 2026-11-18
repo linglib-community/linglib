@@ -70,7 +70,7 @@ variable {α : Type*}
 
 /-- In a language whose least accessible category is `t`, the categories at or above `t` are
 accessible, so the accessible categories are closed upward. -/
-theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := isUpperSet_Ici t
+theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := IsUpperSet.Ici t
 
 /-- The controller of agreement is the highest noun phrase of the domain whose case is
 accessible. Noun phrases whose case is not accessible are invisible and do not intervene. -/

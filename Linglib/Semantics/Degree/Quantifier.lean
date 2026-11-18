@@ -209,7 +209,7 @@ theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hne : (scopeDegrees Q (Iic ∘ μ)).Nonempty) {t : D} :
     HighScope (MaxIn (Iio t)) Q (Iic ∘ μ) ↔ ¬ Q {x | t ≤ μ x} := by
-  have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (isUpperSet_Ici t)
+  have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (IsUpperSet.Ici t)
   simp only [lowScope_maxIn, mem_Ici] at h
   rw [← compl_Ici, ← h]
   obtain ⟨x, hx⟩ := exists_isGreatest_scopeDegrees hQ hQ₀ hne

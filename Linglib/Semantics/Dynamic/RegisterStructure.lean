@@ -115,7 +115,7 @@ instance cylindricAlgebra : CylindricAlgebra R (Set S) where
   le_cyl r C i hi := ⟨val r i, by rwa [extend_eq_self]⟩
   cyl_inf_cyl r C D := by
     ext i
-    simp only [Set.mem_ofPred_eq, Set.inf_eq_inter, Set.mem_inter_iff, extend_idem]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, extend_idem]
     exact ⟨fun ⟨e, h, e', h'⟩ ↦ ⟨⟨e, h⟩, e', h'⟩, fun ⟨⟨e, h⟩, e', h'⟩ ↦ ⟨e, h, e', h'⟩⟩
   cyl_comm r r' C := by
     ext i
@@ -127,7 +127,7 @@ instance cylindricAlgebra : CylindricAlgebra R (Set S) where
   diag_self r := by ext; simp
   cyl_diag_inf_diag {r r' r''} h h' := by
     ext i
-    simp only [Set.mem_ofPred_eq, Set.inf_eq_inter, Set.mem_inter_iff,
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff,
       val_extend_of_ne _ _ _ _ (Ne.symm h), val_extend_of_ne _ _ _ _ (Ne.symm h'), val_extend_self]
     exact ⟨fun ⟨_, h₁, h₂⟩ ↦ h₁.trans h₂, fun h ↦ ⟨_, rfl, h⟩⟩
   disjoint_cyl_diag_inf {r r'} h C := by

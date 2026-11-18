@@ -92,7 +92,7 @@ example :
     refine ⟨1, ⟨⟨1, by decide, rfl⟩, ?_⟩, 2, by decide, by decide⟩
     rintro _ ⟨s, hs, rfl⟩
     exact (by decide : ∀ s : Fin 3, decide (s = 2) = false → s ≤ 1) s hs
-  exact ⟨hb, hc, mem_image_of_maxComparative (isUpperSet_Ici 1) strictMono_id hb hc⟩
+  exact ⟨hb, hc, mem_image_of_maxComparative (IsUpperSet.Ici 1) strictMono_id hb hc⟩
 
 -- Without admissibility (19) fails on a total background: with the measure reversed on `Bool`,
 -- `true` has the property `Ici true` and `false` measures above it.
@@ -130,7 +130,7 @@ theorem total_iff_forall_mem_image_of_maxComparative {G : Type*} [AddCommGroup G
     obtain ⟨μ, hμ, hlt⟩ := hμ₀.exists_strictMono_lt_of_not_ge hts
     obtain ⟨hs, hc, hn⟩ :=
       not_mem_image_Ici_of_not_le hst hlt (fun _ h ↦ hinj h) (fun _ h ↦ hinj h)
-    exact hn (h μ hμ _ (isUpperSet_Ici s) _ _ hs hc)
+    exact hn (h μ hμ _ (IsUpperSet.Ici s) _ _ hs hc)
 
 -- With one state per holder, (19) holds under every admissible measure on a linearly ordered
 -- additive group, a total background, and fails under some admissible measure on its componentwise
@@ -157,7 +157,7 @@ holding one state each, are alike hot in every context iff their states are tied
 theorem antisymmRel_iff_forall_isUpperSet {s t : S} :
     AntisymmRel (· ≤ ·) s t ↔ ∀ T : Set S, IsUpperSet T → (s ∈ T ↔ t ∈ T) :=
   ⟨fun h _ hT ↦ ⟨hT h.1, hT h.2⟩, fun h ↦
-    ⟨(h _ (isUpperSet_Ici s)).1 self_mem_Ici, (h _ (isUpperSet_Ici t)).2 self_mem_Ici⟩⟩
+    ⟨(h _ (IsUpperSet.Ici s)).1 self_mem_Ici, (h _ (IsUpperSet.Ici t)).2 self_mem_Ici⟩⟩
 
 -- fn. 10
 theorem total_of_reflect_le {D : Type*} [LinearOrder D] {μ : S → D}
@@ -183,7 +183,7 @@ degree-based variant (28), iff the measure reflects the background. -/
 theorem forall_isUpperSet_exists_preimage_iff :
     (∀ T : Set S, IsUpperSet T → ∃ U : UpperSet D, T = μ ⁻¹' U) ↔ ∀ a b, μ a ≤ μ b → a ≤ b := by
   refine ⟨fun h a b hab ↦ ?_, fun h T hT ↦ ⟨upperClosure (μ '' T), ?_⟩⟩
-  · obtain ⟨U, hT⟩ := h (Ici a) (isUpperSet_Ici a)
+  · obtain ⟨U, hT⟩ := h (Ici a) (IsUpperSet.Ici a)
     exact (Set.ext_iff.1 hT b).2 (U.upper hab ((Set.ext_iff.1 hT a).1 self_mem_Ici))
   · refine Set.ext fun s ↦ ⟨fun hs ↦ subset_upperClosure ⟨s, hs, rfl⟩, ?_⟩
     rintro ⟨_, ⟨t, ht, rfl⟩, hts⟩
@@ -198,7 +198,7 @@ theorem isMonotoneOn_upperSets_iff :
   rw [Delineation.isMonotoneOn_ofExtension_iff]
   refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
   · obtain ⟨hst, hts⟩ := not_or.1 hst
-    exact hts (h (Ici s) (isUpperSet_Ici s) (Ici t) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
+    exact hts (h (Ici s) (IsUpperSet.Ici s) (Ici t) (IsUpperSet.Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
 -- §2: on a total background the comparative is the delineation comparative, some threshold
@@ -207,7 +207,7 @@ theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : S
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | holder s = b}) δ) :
     MaxComparative .gt (holder · = a) (holder · = b) μ ↔
       ∃ T, IsUpperSet T ∧ a ∈ holder '' T ∧ b ∉ holder '' T := by
-  refine ⟨fun ⟨δ, hδ, s, hsa, hlt⟩ ↦ ⟨Ici s, isUpperSet_Ici s, ⟨s, self_mem_Ici, hsa⟩, ?_⟩, ?_⟩
+  refine ⟨fun ⟨δ, hδ, s, hsa, hlt⟩ ↦ ⟨Ici s, IsUpperSet.Ici s, ⟨s, self_mem_Ici, hsa⟩, ?_⟩, ?_⟩
   · rintro ⟨t, hst, htb⟩
     exact ((hδ.2 ⟨t, htb, rfl⟩).trans_lt hlt).not_ge (hm hst)
   · rintro ⟨T, hT, ⟨s, hsT, hsa⟩, hbT⟩

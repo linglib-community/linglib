@@ -132,7 +132,7 @@ theorem posExt_negation_univ (R H : SetRel W W) :
 /-- A negated neg-raising predicate is anti-additive in its complement. -/
 theorem isAntiAdditive_posExt_negation (R H : SetRel W W) :
     IsAntiAdditive fun p ↦ Trivalent.posExt (negation R H p) := fun p q ↦ by
-  simp only [posExt_negation, Set.sup_eq_union, Set.inf_eq_inter, Set.compl_union, core_inter]
+  simp only [posExt_negation, Set.compl_union, core_inter]
   exact Set.inter_inter_distrib_left ..
 
 end NegRaising

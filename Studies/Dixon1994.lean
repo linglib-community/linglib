@@ -196,7 +196,7 @@ def ofCutoffs [Preorder H] [DecidableLE H] (a e : H) : ArgumentRole → H → Op
   split (a ≤ ·) (· ≤ e)
 
 theorem fits_ofCutoffs [Preorder H] [DecidableLE H] (a e : H) : Fits (ofCutoffs a e) :=
-  (fits_split_iff _ _).2 ⟨isUpperSet_Ici a, isLowerSet_Iic e⟩
+  (fits_split_iff _ _).2 ⟨IsUpperSet.Ici a, IsLowerSet.Iic e⟩
 
 /-- Dyirbal (Table 4.1) marks first and second person pronouns accusatively and NPs from third
 person pronouns rightwards ergatively, the two meeting without overlap. -/
@@ -221,8 +221,8 @@ def wagaWaga : ArgumentRole → Nominal → Option Case := split (.common .human
 -- §4.2
 theorem splits_fit : Fits dyirbal ∧ Fits cashinawa ∧ Fits yidiny ∧ Fits latin ∧ Fits wagaWaga :=
   ⟨fits_ofCutoffs _ _, fits_ofCutoffs _ _, fits_ofCutoffs _ _,
-    (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_empty⟩,
-    (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_univ⟩⟩
+    (fits_split_iff _ _).2 ⟨IsUpperSet.Ici _, isLowerSet_empty⟩,
+    (fits_split_iff _ _).2 ⟨IsUpperSet.Ici _, isLowerSet_univ⟩⟩
 
 theorem patterns :
     (∀ p, ¬ IsTripartite (dyirbal · p) ∧ ¬ IsNeutral (dyirbal · p)) ∧

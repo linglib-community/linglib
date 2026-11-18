@@ -422,7 +422,7 @@ theorem isStrawsonAntiAdditive_only_eq :
     IsStrawsonAntiAdditive fun P : ι → Set W ↦ only (· = ·) univ P x :=
   .of_isAntiAdditive (a := fun P w ↦ ∀ y, y ≠ x → w ∉ P y)
     (fun _ _ ↦ funext fun _ ↦ propext <| by
-      simp only [Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Set.mem_union,
+      simp only [Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.mem_union,
         not_or, imp_and, forall_and])
     fun P w h ↦ by
       have hx : w ∈ P x := by simpa using h
