@@ -22,9 +22,9 @@ number of probe segments each person bears, the person hierarchy of the language
 
 Béjar and Rezac specify persons per language, a second person as [participant] alone where
 the first bears [speaker] and a first person so where the second bears [addressee]. Here a
-person bears its whole specification `PersonSegment.spec`, and a probe sees of it the segments
+person bears its whole specification `Person.Segment.spec`, and a probe sees of it the segments
 the probe has, which are the person's specification in the probe's features
-(`PersonSegment.inter_spec`). The language's choice is therefore carried by its probe,
+(`Person.Segment.inter_spec`). The language's choice is therefore carried by its probe,
 `Finset.Iic .speaker` or `Finset.Iic .addressee`, and not by a second parameter.
 
 ## References
@@ -92,25 +92,25 @@ theorem specLE_iff_card_le (hP : IsChain (· ≤ ·) (P : Set F)) (hs : IsLowerS
 end SpecLE
 
 /-- The third person, bearing the root alone, is the least specified person on any segments. -/
-theorem specLE_third (P : Finset PersonSegment) (q : Person) :
-    SpecLE P (PersonSegment.spec .third) (PersonSegment.spec q) :=
+theorem specLE_third (P : Finset Person.Segment) (q : Person) :
+    SpecLE P (Person.Segment.spec .third) (Person.Segment.spec q) :=
   .of_subset fun x hx ↦ by
-    rw [show PersonSegment.spec Person.third = {.pi} by decide, Finset.mem_singleton] at hx
-    exact hx ▸ PersonSegment.pi_mem_spec q
+    rw [show Person.Segment.spec Person.third = {.pi} by decide, Finset.mem_singleton] at hx
+    exact hx ▸ Person.Segment.pi_mem_spec q
 
 end Minimalist
 
 namespace Minimalist.CyclicAgree
 
-open PersonSegment
+open Person.Segment
 open Clause (Scenario)
 
-variable (P : Finset PersonSegment) (s : Scenario Person) (p q : Person) {x : PersonSegment}
+variable (P : Finset Person.Segment) (s : Scenario Person) (p q : Person) {x : Person.Segment}
 
 /-! ### The residue and the two kinds of context -/
 
 /-- The residue of a probe after Agree with a goal, the segments the goal does not bear. -/
-def residue : Finset PersonSegment := P \ spec p
+def residue : Finset Person.Segment := P \ spec p
 
 variable {P p} in
 @[simp] theorem mem_residue : x ∈ residue P p ↔ x ∈ P ∧ x ∉ spec p := Finset.mem_sdiff
@@ -144,7 +144,7 @@ variable (P) in
 theorem isInverse_self : IsInverse P ⟨p, p⟩ := .refl P _
 
 /-- A probe with more segments has more direct contexts. -/
-theorem IsDirect.mono {Q : Finset PersonSegment} (h : P ⊆ Q) (hd : IsDirect P s) :
+theorem IsDirect.mono {Q : Finset Person.Segment} (h : P ⊆ Q) (hd : IsDirect P s) :
     IsDirect Q s :=
   fun hi ↦ hd (hi.anti h)
 
@@ -182,13 +182,13 @@ theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
 
 /-- When the segments of the probe form a chain, a context is direct iff the external argument
 outranks the internal one. -/
-theorem isDirect_iff_rank_lt (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
+theorem isDirect_iff_rank_lt (hP : IsChain (· ≤ ·) (P : Set Person.Segment)) :
     IsDirect P s ↔ rank P s.low < rank P s.high :=
   (not_congr (specLE_iff_card_le hP (spec_isLowerSet _) (spec_isLowerSet _))).trans not_le
 
 /-- When the segments of the probe form a chain, a context is direct iff it is downstream on the
 probe's rank, so the inverse contexts are the balanced and upstream scenarios. -/
-theorem isDirect_iff_kind_eq_downstream (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
+theorem isDirect_iff_kind_eq_downstream (hP : IsChain (· ≤ ·) (P : Set Person.Segment)) :
     IsDirect P s ↔ (s.map (rank P)).kind = .downstream :=
   (isDirect_iff_rank_lt hP).trans (Scenario.kind_eq_downstream_iff (s := s.map (rank P))).symm
 
@@ -197,7 +197,7 @@ theorem isDirect_iff_kind_eq_downstream (hP : IsChain (· ≤ ·) (P : Set Perso
 /-- The segment `[uF]` of a probe, as a probe over persons: it interacts with the persons bearing
 `F` and is satisfied by any person, since every person bears the root `π`, so that its search
 halts at the closest goal whether or not that goal bears `F`. -/
-def segmentProbe (x : PersonSegment) : Probe Person := (Probe.Spec.ofGeometry x ⊥).toProbe spec
+def segmentProbe (x : Person.Segment) : Probe Person := (Probe.Spec.ofGeometry x ⊥).toProbe spec
 
 variable (x) in
 theorem segmentProbe_int : (segmentProbe x).int p ↔ x ∈ spec p :=

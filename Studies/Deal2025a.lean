@@ -28,11 +28,11 @@ PCC typology through (30) and compares the outcomes.
 
 namespace Deal2025a
 
-open Deal2024 Minimalist PersonSegment Clause
+open Deal2024 Minimalist Person.Segment Clause
 
 /-- The probe of a 2024 grammar as a specification of (30), [INT:π], interacting with π and every
 segment it dominates, with its satisfaction feature. -/
-def toSpec (g : Grammar) : Probe.Spec PersonSegment :=
+def toSpec (g : Grammar) : Probe.Spec Person.Segment :=
   .ofFeatures (Finset.Ici .pi) g.satisfaction.toFinset
 
 /-- A clitic combination ⟨IO, DO⟩ is licit under (30) when the probe, meeting the direct object
