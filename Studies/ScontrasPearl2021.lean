@@ -465,8 +465,6 @@ theorem expectedProduction_anti {μ' : Measure (World n)} [IsProbabilityMeasure 
   rw [expectedProduction_eq_integral, expectedProduction_eq_integral]
   exact h.integral_le_of_antitone (by simp) hprod .of_discrete .of_finite .of_finite
 
-/-- A production is a `ν`-weighted average of shares, so it lies in every convex set that holds
-the shares. -/
 theorem production_mem {s : Set ℝ} (hs : Convex ℝ s) {w : World n}
     (h : ∀ l, share D n α l w ∈ s) : production D n α ν w ∈ s :=
   hs.sum_mem (fun _ _ ↦ measureReal_nonneg) (by simp) fun l _ ↦ h l
