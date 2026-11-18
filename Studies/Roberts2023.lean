@@ -79,6 +79,7 @@ rather than built into the domain of `realizes`.
 namespace Roberts2023
 
 open Temporal Modality Quantifier Filter
+open scoped SetRel
 
 variable {W T E : Type*}
 
@@ -113,10 +114,10 @@ variable [Preorder T] (F : TWFrame W T)
 /-- The timely future circumstances of a circumstance (50): its possible futures at which the
 goals held at it remain in force. -/
 def timelyFut (c : Index W T) : Set (Index W T) :=
-  {c' ∈ F.futureHistoryBase c | ∀ p ∈ g c, p ∈ g c'}
+  {c' | c ~[F.futureHistoryBase] c' ∧ ∀ p ∈ g c, p ∈ g c'}
 
 theorem timelyFut_subset (c : Index W T) :
-    timelyFut F g c ⊆ F.futureHistoryBase c :=
+    timelyFut F g c ⊆ {c' | c ~[F.futureHistoryBase] c'} :=
   fun _ h ↦ h.1
 
 variable (f : Background (Index W T)) (P : Index W T → E → Prop) (a : E)

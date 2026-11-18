@@ -6,6 +6,7 @@ public import Mathlib.Order.Interval.Set.LinearOrder
 public import Linglib.Semantics.Index
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
+public import Linglib.Semantics.Index.Rel
 
 /-!
 # Historical alternatives
@@ -15,8 +16,9 @@ particular fact up to that time ([lewis-1979-time-arrow]): its class under the h
 equivalence of a T × W frame ([thomason-1984]). They are the metaphysical modal base of
 [condoravdi-2002] and the modal parameter of *will* in [cariani-santorio-2018]. Since historical
 equivalence gets finer as time advances, the alternatives of a world
-[shrink over time](##Temporal.TWFrame.alternatives_anti). Paired with the times a tense cell
-admits they give the oriented modal bases of [klecha-2016], whose doxastic base carries
+[shrink over time](##Temporal.TWFrame.alternatives_anti). A step to an alternative
+followed by a step in time within a tense cell is an oriented modal base of [klecha-2016],
+a relation between indices, whose doxastic base carries
 [the Upper Limit Constraint](##Temporal.TWFrame.time_le_of_mem_actualHistoryBase) of
 [abusch-1997]. A property is settled over a common ground when the alternatives of each of its
 worlds agree on it ([kaufmann-condoravdi-harizanov-2006]), that is, when the property or its
@@ -78,8 +80,10 @@ end Alternatives
 
 A modal over historical alternatives evaluates its prejacent at the alternatives of its index
 and at times oriented to the index's time by a tense cell, Condoravdi's temporal orientation
-of a modal relative to its perspective. The historical base is oriented to the nonpast, and
-Klecha's doxastic and circumstantial bases to the nonfuture and the future. -/
+of a modal relative to its perspective. The base is a relation between indices, a step to a
+historical alternative at the index's time followed by a step in time. The historical base is
+oriented to the nonpast, and Klecha's doxastic and circumstantial bases to the nonfuture and
+the future. -/
 
 section Oriented
 
@@ -87,42 +91,58 @@ variable {C : PointAlgebra}
 
 section Preorder
 
-variable [Preorder T] (F : TWFrame W T) (s : Index W T) {s' : Index W T}
+variable [Preorder T] (F : TWFrame W T) {s s' : Index W T}
 
-/-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
-with the times standing to the index's time in a position of `C`. -/
-def orientedBase (C : PointAlgebra) : Set (Index W T) :=
-  {s' | s'.world ∈ F.alternatives s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time}
+/-- The base of the alternatives oriented by a tense cell `C` links an index to the alternatives
+of its world at the times standing to its time in a position of `C`. -/
+def orientedBase (C : PointAlgebra) : SetRel (Index W T) (Index W T) :=
+  Index.modal F.alt ○ Index.temporal (PointAlgebra.toSetRel C)
 
 /-- The historical modal base, the alternatives at times at or after the index's own, the past
 fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
-abbrev historicalBase : Set (Index W T) := F.orientedBase s Tense.nonpast
+abbrev historicalBase : SetRel (Index W T) (Index W T) := F.orientedBase Tense.nonpast
 
 /-- The actual-history base, [klecha-2016]'s doxastic base, the alternatives at times at or
 before the index's own. -/
-abbrev actualHistoryBase : Set (Index W T) := F.orientedBase s Tense.nonfuture
+abbrev actualHistoryBase : SetRel (Index W T) (Index W T) := F.orientedBase Tense.nonfuture
 
 /-- The future-history base, [klecha-2016]'s circumstantial base, the alternatives at times
 strictly after the index's own. -/
-abbrev futureHistoryBase : Set (Index W T) := F.orientedBase s ⟦Tense.future⟧
+abbrev futureHistoryBase : SetRel (Index W T) (Index W T) := F.orientedBase ⟦Tense.future⟧
 
-variable {F s}
+variable {F}
 
 theorem mem_orientedBase :
-    s' ∈ F.orientedBase s C ↔
+    s ~[F.orientedBase C] s' ↔
       s'.world ∈ F.alternatives s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time :=
-  Iff.rfl
+  Index.mem_modal_comp_temporal
+
+/-- Necessity over an oriented base is historical necessity of necessity at the times the cell
+admits, the settled tenses of [kaufmann-condoravdi-harizanov-2006]. -/
+theorem box_orientedBase (P : Index W T → Prop) :
+    □[F.orientedBase C] P =
+      □[Index.modal F.alt] (□[Index.temporal (PointAlgebra.toSetRel C)] P) :=
+  ModalLogic.box_comp _ _ P
+
+/-- The historical alternatives of a world at a later time are alternatives of it now: a step
+into the future and then to an alternative is a step to an alternative and then into the
+future. -/
+theorem temporal_future_comp_modal_alt_subset :
+    Index.temporal (PointAlgebra.toSetRel ⟦Tense.future⟧) ○ Index.modal F.alt ⊆
+      Index.modal F.alt ○ Index.temporal (PointAlgebra.toSetRel ⟦Tense.future⟧) :=
+  Index.temporal_comp_modal_subset fun _ _ h _ hp ↦
+    F.antitone_sim (Tense.mem_toSetRel_future.1 h).le hp
 
 theorem mem_futureHistoryBase :
-    s' ∈ F.futureHistoryBase s ↔ s'.world ∈ F.alternatives s ∧ s.time < s'.time := by
+    s ~[F.futureHistoryBase] s' ↔ s'.world ∈ F.alternatives s ∧ s.time < s'.time := by
   rw [mem_orientedBase, Tense.mem_toSetRel_future]
 
-theorem time_lt_of_mem_futureHistoryBase (h : s' ∈ F.futureHistoryBase s) : s.time < s'.time :=
+theorem time_lt_of_mem_futureHistoryBase (h : s ~[F.futureHistoryBase] s') : s.time < s'.time :=
   (mem_futureHistoryBase.1 h).2
 
 theorem orientedBase_sup (C D : PointAlgebra) :
-    F.orientedBase s (C ⊔ D) = F.orientedBase s C ∪ F.orientedBase s D := by
-  ext
+    F.orientedBase (C ⊔ D) = F.orientedBase C ∪ F.orientedBase D := by
+  ext ⟨s, s'⟩
   simp only [mem_orientedBase, PointAlgebra.toSetRel_sup, Set.mem_union, and_or_left]
 
 end Preorder
@@ -132,18 +152,18 @@ section PartialOrder
 variable [PartialOrder T] {F : TWFrame W T} {s s' : Index W T}
 
 theorem mem_historicalBase :
-    s' ∈ F.historicalBase s ↔ s'.world ∈ F.alternatives s ∧ s.time ≤ s'.time := by
+    s ~[F.historicalBase] s' ↔ s'.world ∈ F.alternatives s ∧ s.time ≤ s'.time := by
   rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, PointAlgebra.toSetRel_sup,
     Set.mem_union, Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
 
 theorem mem_actualHistoryBase :
-    s' ∈ F.actualHistoryBase s ↔ s'.world ∈ F.alternatives s ∧ s'.time ≤ s.time := by
+    s ~[F.actualHistoryBase] s' ↔ s'.world ∈ F.alternatives s ∧ s'.time ≤ s.time := by
   rw [mem_orientedBase, Tense.nonfuture_eq_past_sup_present, PointAlgebra.toSetRel_sup,
     Set.mem_union, Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
 
 /-- A situation in the actual-history base is no later than the index, the Upper Limit
 Constraint of [abusch-1997] as [klecha-2016] derives it from the doxastic base. -/
-theorem time_le_of_mem_actualHistoryBase (h : s' ∈ F.actualHistoryBase s) : s'.time ≤ s.time :=
+theorem time_le_of_mem_actualHistoryBase (h : s ~[F.actualHistoryBase] s') : s'.time ≤ s.time :=
   (mem_actualHistoryBase.1 h).2
 
 end PartialOrder
@@ -154,16 +174,15 @@ variable [LinearOrder T] {F : TWFrame W T} {s s' : Index W T}
 
 /-- On linear time the time of a situation in an oriented base stands to the index's time in a
 position of the cell. -/
-theorem compare_mem_of_mem_orientedBase (h : s' ∈ F.orientedBase s C) :
+theorem compare_mem_of_mem_orientedBase (h : s ~[F.orientedBase C] s') :
     compare s'.time s.time ∈ C :=
-  PointAlgebra.mem_toSetRel_iff.1 h.2
+  PointAlgebra.mem_toSetRel_iff.1 (mem_orientedBase.1 h).2
 
 /-- On linear time the actual and future bases together hold the alternatives at all times. -/
-theorem actualHistoryBase_union_futureHistoryBase :
-    F.actualHistoryBase s ∪ F.futureHistoryBase s = Index.world ⁻¹' F.alternatives s := by
-  rw [← orientedBase_sup, Tense.nonfuture_eq_compl_future, compl_sup_eq_top]
-  ext
-  simp [mem_orientedBase]
+theorem mem_actualHistoryBase_union_futureHistoryBase :
+    s ~[F.actualHistoryBase ∪ F.futureHistoryBase] s' ↔ s'.world ∈ F.alternatives s := by
+  rw [← orientedBase_sup, Tense.nonfuture_eq_compl_future, compl_sup_eq_top, mem_orientedBase]
+  simp
 
 end LinearOrder
 

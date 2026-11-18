@@ -90,7 +90,7 @@ abbrev past : Radical W T → Sit W T → Sit W T → Update (State W T) := temp
 /-- The subjunctive `subj^{s₁}_{s₀} ⇝ λℙ.[s₁ | s₁ ∈ hist s₀]; ℙ(s₁)(s₀)` is an indefinite over
 situations, introducing `s₁` among the historical alternatives of the anchor `s₀`. -/
 def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : Update (State W T) :=
-  box {s₁} {i | val s₁ i ∈ F.historicalBase (s₀ i)} ○ ℙ (val s₁) s₀
+  box {s₁} {i | s₀ i ~[F.historicalBase] val s₁ i} ○ ℙ (val s₁) s₀
 
 /-! ### Unpacking the entries -/
 
@@ -106,7 +106,7 @@ theorem isTest_temporal_radical : IsTest (temporal cell (radical P) s s') :=
 
 theorem subj_apply :
     i ~[subj F s₁ s ℙ] o ↔
-      ∃ e, e ∈ F.historicalBase (s (Function.update i s₁ e)) ∧
+      ∃ e, s (Function.update i s₁ e) ~[F.historicalBase] e ∧
         Function.update i s₁ e ~[ℙ (val s₁) s] o := by
   simp only [subj, box_singleton, mem_comp, mem_randomAssign, mem_test]
   constructor
@@ -147,7 +147,7 @@ alternative `e` of the anchor after it where `A` holds has the main-clause situa
 world, timed by the cell relative to `e`, satisfying `C`. -/
 theorem sfForm_true_at :
     i ∈ (sfForm F A C cell).dom ↔
-      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → A e →
+      ∀ e, i 0 ~[F.historicalBase] e → (i 0).time < e.time → A e →
         (i 2).world = e.world ∧ compare (i 2).time e.time ∈ cell ∧ C (i 2) := by
   rw [sfForm, dimp_eq, dom_test]
   simp only [mem_core, mem_dom, subj_apply, temporal_radical_apply, ind_apply,
@@ -156,13 +156,13 @@ theorem sfForm_true_at :
 
 theorem conditional_true_at (leaves wentWell : Index W T → Prop) :
     i ∈ (conditional F leaves wentWell).dom ↔
-      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → leaves e →
+      ∀ e, i 0 ~[F.historicalBase] e → (i 0).time < e.time → leaves e →
         (i 2).world = e.world ∧ (i 2).time < e.time ∧ wentWell (i 2) := by
   simp only [conditional, sfForm_true_at, Tense.compare_mem_past]
 
 theorem relativeClause_true_at (delivers chance : Index W T → Prop) :
     i ∈ (relativeClause F delivers chance).dom ↔
-      ∀ e ∈ F.historicalBase (i 0), (i 0).time < e.time → delivers e →
+      ∀ e, i 0 ~[F.historicalBase] e → (i 0).time < e.time → delivers e →
         (i 2).world = e.world ∧ (i 2).time = e.time ∧ chance (i 2) := by
   simp only [relativeClause, sfForm_true_at, Tense.compare_mem_present]
 
@@ -189,7 +189,7 @@ theorem modal_donkey_anaphora (hk : i ~[subj F 1 (val 0) (fut (radical A))] k)
   obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hk
   obtain ⟨hw, hl⟩ := ind_apply.mp hl
   obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hl
-  have h₁ := he.1
+  have h₁ := (TWFrame.mem_historicalBase.1 he).1
   simp at hw h₁ ⊢
   rwa [hw]
 
@@ -205,7 +205,7 @@ anchor's world. -/
 satisfying `A`. -/
 theorem subj_fut_true_at :
     i ∈ (subj F 1 (val 0) (fut (radical A))).dom ↔
-      ∃ e ∈ F.historicalBase (i 0), (i 0).time < e.time ∧ A e := by
+      ∃ e, i 0 ~[F.historicalBase] e ∧ (i 0).time < e.time ∧ A e := by
   simp [subj_apply, temporal_radical_apply]
 
 /-- The indicative restrictor is true iff its situation lies in the anchor's world, after the

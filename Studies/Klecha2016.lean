@@ -40,7 +40,7 @@ orientation](##hope_readings), as [the corpus sentences show](##rows_readings).
 
 namespace Klecha2016
 
-open scoped Denotes
+open scoped Denotes SetRel
 
 open Tense Temporal English English.Verbs
 
@@ -62,18 +62,18 @@ def orientations : Background → PointAlgebra
   | .dox => ⟦past⟧ ⊔ ⟦present⟧
   | .cir => ⟦future⟧
 
-/-- The situations a modal base makes accessible from `s`, (35), the alternatives at the times
-its orientations admit. -/
-def base [Preorder T] (m : Background) (F : TWFrame W T) (s : Index W T) : Set (Index W T) :=
-  F.orientedBase s m.orientations
+/-- The accessibility relation of a modal base, (35): a step to a historical alternative and
+then to a time its orientations admit. -/
+def base [Preorder T] (m : Background) (F : TWFrame W T) : SetRel (Index W T) (Index W T) :=
+  F.orientedBase m.orientations
 
-theorem base_dox_cir [Preorder T] (F : TWFrame W T) (s : Index W T) :
-    dox.base F s = F.actualHistoryBase s ∧ cir.base F s = F.futureHistoryBase s :=
+theorem base_dox_cir [Preorder T] (F : TWFrame W T) :
+    dox.base F = F.actualHistoryBase ∧ cir.base F = F.futureHistoryBase :=
   ⟨by rw [base, orientations, TWFrame.actualHistoryBase]; rfl, rfl⟩
 
 -- (53), (55)
 theorem compare_mem_orientations [LinearOrder T] (m : Background) (F : TWFrame W T)
-    {s s' : Index W T} (h : s' ∈ m.base F s) : compare s'.time s.time ∈ m.orientations :=
+    {s s' : Index W T} (h : s ~[m.base F] s') : compare s'.time s.time ∈ m.orientations :=
   TWFrame.compare_mem_of_mem_orientedBase h
 
 -- §4.2 [abusch-1997]
@@ -82,7 +82,7 @@ theorem orientations_dox : dox.orientations = nonfuture := by decide
 /-- The modal base `dox` carries the Upper Limit Constraint: its situations are never later than
 the evaluation time. -/
 theorem nonfuture_of_mem_dox [LinearOrder T] (F : TWFrame W T) {s s' : Index W T}
-    (h : s' ∈ dox.base F s) : compare s'.time s.time ∈ nonfuture :=
+    (h : s ~[dox.base F] s') : compare s'.time s.time ∈ nonfuture :=
   orientations_dox ▸ compare_mem_orientations .dox F h
 
 -- (55), (53), §3.3, (43), (45a), §3.2
