@@ -63,24 +63,24 @@ which would bring the Kashmiri past tense (31b) into the model.
 
 namespace BejarRezac2009
 
-open Minimalist Minimalist.CyclicAgree Agreement PersonSegment
+open Minimalist Minimalist.CyclicAgree Agreement Person.Segment
 open Clause (Scenario)
 
 /-! ### The systems -/
 
 /-- Swahili has the flat probe `[u-3]`, the root alone, as in (7) and (10). -/
-def swahili : Finset PersonSegment := .Iic .pi
+def swahili : Finset Person.Segment := .Iic .pi
 
 /-- Basque and Georgian have the partially articulated probe `[u-3-2]`, as in (8). -/
-def basque : Finset PersonSegment := .Iic .participant
+def basque : Finset Person.Segment := .Iic .participant
 
 /-- Nishnaabemwin has the fully articulated probe `[u-3-1-2]`, articulated down to [addressee], so
 that second person is the most specified, as in (17) and Table 2C. -/
-def nishnaabemwin : Finset PersonSegment := .Iic .addressee
+def nishnaabemwin : Finset Person.Segment := .Iic .addressee
 
 /-- Mohawk and Kashmiri have the fully articulated probe `[u-3-2-1]`, articulated down to
 [speaker], as in (9) and Tables 7 and 11. -/
-def kashmiri : Finset PersonSegment := .Iic .speaker
+def kashmiri : Finset Person.Segment := .Iic .speaker
 
 -- Table 2 (A)
 theorem kashmiri_inter_spec :
@@ -136,7 +136,7 @@ theorem basque_ranks_first_eq_second (r : Person → ℕ) (h : Ranks r (value ba
 
 /-- When the segments of the probe form a chain, the number of them a person bears ranks the
 controller, as in Mohawk and Algonquian (p. 38). -/
-theorem ranks_rank {P : Finset PersonSegment} (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
+theorem ranks_rank {P : Finset Person.Segment} (hP : IsChain (· ≤ ·) (P : Set Person.Segment)) :
     Ranks (rank P) (value P) := by
   intro s
   have hd := isDirect_iff_rank_lt (s := s) hP
@@ -198,8 +198,8 @@ inductive Locus where
 specification as in (12b). The core probe copies the internal argument on vI when some segment
 matches and the external argument on vII in a direct context, and when the core probe has
 property P the added probe copies the external argument on vII, as in (23). -/
-def valuations (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) :
-    List (Locus × Finset PersonSegment) :=
+def valuations (P : Finset Person.Segment) (hasP : Bool) (s : Scenario Person) :
+    List (Locus × Finset Person.Segment) :=
   ((if ∃ x ∈ P, x ∈ spec s.low then [(.vI, spec s.low)] else []) ++
     if IsDirect P s then [(.vII, spec s.high)] else []) ++
     if hasP then [(.vII, spec s.high)] else []
@@ -207,15 +207,15 @@ def valuations (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) :
 /-- A derivation converges when the core probe or the added one licenses the external argument's
 person, as the PLC (13) requires, and no two probes are valued alike on one projection, which
 would leave them indistinguishable (p. 58). -/
-def Converges (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) : Prop :=
+def Converges (P : Finset Person.Segment) (hasP : Bool) (s : Scenario Person) : Prop :=
   (EALicensed P s ∨ hasP = true) ∧ (valuations P hasP s).Nodup
 
-instance (P : Finset PersonSegment) (hasP : Bool) : DecidablePred (Converges P hasP) := fun _ ↦ by
+instance (P : Finset Person.Segment) (hasP : Bool) : DecidablePred (Converges P hasP) := fun _ ↦ by
   unfold Converges; infer_instance
 
 /-- A derivation converges iff its core probe has property P exactly in an inverse context ((25),
 Table 6). -/
-theorem converges_iff (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) :
+theorem converges_iff (P : Finset Person.Segment) (hasP : Bool) (s : Scenario Person) :
     Converges P hasP s ↔ (hasP = true ↔ IsInverse P s) := by
   unfold Converges valuations
   rw [eaLicensed_iff_isDirect, ← not_isDirect]
@@ -229,13 +229,13 @@ example : Converges kashmiri true ⟨.second, .first⟩ ∧ ¬ Converges kashmir
 
 /-- The value of the probe valued on the highest projection of v, the only probe Kashmiri spells
 out by (24a). -/
-def highestValue (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) :
-    Option (Finset PersonSegment) :=
+def highestValue (P : Finset Person.Segment) (hasP : Bool) (s : Scenario Person) :
+    Option (Finset Person.Segment) :=
   (valuations P hasP s).getLast?.map Prod.snd
 
 /-- In a convergent derivation the probe valued last is valued by the external argument (Table 11).
 -/
-theorem highestValue_eq_spec {P : Finset PersonSegment} {hasP : Bool} {s : Scenario Person}
+theorem highestValue_eq_spec {P : Finset Person.Segment} {hasP : Bool} {s : Scenario Person}
     (h : Converges P hasP s) : highestValue P hasP s = some (spec s.high) := by
   rw [converges_iff, ← not_isDirect] at h
   unfold highestValue valuations
@@ -246,7 +246,7 @@ theorem highestValue_eq_spec {P : Finset PersonSegment} {hasP : Bool} {s : Scena
 /-- The segment `s` of the probe searches nominals with Case. The search halts at the closest
 nominal, which bears `π` and so intervenes for every segment (fn. 6), and Agrees with it iff its
 Case is unvalued and it bears the segment. -/
-def segmentProbe (s : PersonSegment) : Probe BejarRezac2003.Nominal :=
+def segmentProbe (s : Person.Segment) : Probe BejarRezac2003.Nominal :=
   .ofInt fun n ↦ n.features.IsActive ∧ s ∈ spec n.features.agreement.person
 
 /-- The root segment `π` is the person probe of [bejar-rezac-2003]. -/
@@ -258,14 +258,14 @@ theorem segmentProbe_pi : segmentProbe .pi = BejarRezac2003.phiProbe := by
 
 /-- No segment reaches a nominal behind an oblique one, so a participant there goes unlicensed,
 the Person Case Constraint (14). -/
-theorem pcc (s : PersonSegment) (cd cn : Bundle) :
+theorem pcc (s : Person.Segment) (cd cn : Bundle) :
     (segmentProbe s).goal [.dat cd, .caseless cn] = none := by
   simp [segmentProbe, Probe.goal, Probe.ofInt_search]
 
 /-- A segment searching for the closest nominal bearing it would skip a third-person dative and
 reach a participant theme, the prediction fn. 6 excludes. -/
 example : (Probe.relativized fun n : BejarRezac2003.Nominal ↦
-    PersonSegment.participant ∈ spec n.features.agreement.person).search
+    Person.Segment.participant ∈ spec n.features.agreement.person).search
       [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)] =
     some (.caseless (.personNumber .first .singular)) := by
   decide
@@ -286,7 +286,7 @@ def person? (e : Datum) (key : String) : Option Person :=
 
 /-- `config? e` is the probe of an example's language with the scenario of its external over its
 internal argument. -/
-def config? (e : Datum) : Option (Finset PersonSegment × Scenario Person) := do
+def config? (e : Datum) : Option (Finset Person.Segment × Scenario Person) := do
   let sys ← e.byLanguage [(.basque, basque), (.georgian, basque), (.ottawa, nishnaabemwin),
     (.kashmiri, kashmiri)]
   return (sys, ⟨← person? e "ea", ← person? e "ia"⟩)
@@ -322,7 +322,7 @@ theorem basque_prefix_rows : ∀ e ∈ Examples.all, e.language = .basque →
 /-- The Georgian affix set that spells the core probe in (21) is Set A when the external argument
 values it on the second cycle, a direct context, and Set B when the internal argument values it
 on the first. -/
-def georgianSet (P : Finset PersonSegment) (s : Scenario Person) : Georgian.AffixSet :=
+def georgianSet (P : Finset Person.Segment) (s : Scenario Person) : Georgian.AffixSet :=
   if IsDirect P s then .A else .B
 
 -- (18)
