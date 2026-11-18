@@ -175,10 +175,11 @@ def aDescending : Grammar := ⟨some .addressee, {.participant}⟩
 [PART] and [ADDR] it bears, so that an inclusive first person ranks with the second. -/
 def addresseeRank (p : Person) : ℕ := (p.toFeatures {.participant, .addressee}).card
 
-/-- The hierarchy ranks a participant set by its highest role, the addressee above the speaker. -/
-theorem addresseeRank_ofParticipants (s : Finset SpeechAct.Role) :
-    addresseeRank (.ofParticipants s) = s.sup fun | .addressee => 2 | .speaker => 1 := by
-  revert s; decide
+/-- The ranking of the roles behind 2 > 1 > 3: the addressee above the speaker. A participant
+set has the rank of its highest role, so the inclusive ranks with the second person. -/
+def addresseeRoleRank : SpeechAct.Role → ℕ
+  | .addressee => 2
+  | .speaker => 1
 
 /-- The PCC varieties are the four of table (1), the two the feature [ADDR] adds, and none. -/
 inductive PCCType where
@@ -310,10 +311,12 @@ theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
   revert s
   decide +kernel
 
-theorem ad_off_diagonal_iff_outranks (s : Scenario Person)
-    (h : addresseeRank s.high ≠ addresseeRank s.low) :
-    Licit aDescending s ↔ addresseeRank s.low < addresseeRank s.high := by
-  revert s
+theorem ad_off_diagonal_iff_outranks (hi lo : Finset SpeechAct.Role)
+    (h : hi.sup addresseeRoleRank ≠ lo.sup addresseeRoleRank) :
+    LicitAt aDescending (Person.Specification.ofParticipants lo).segments
+        (Person.Specification.ofParticipants hi).segments ↔
+      lo.sup addresseeRoleRank < hi.sup addresseeRoleRank := by
+  revert hi lo
   decide +kernel
 
 /-! ### The competitors (section 7) -/

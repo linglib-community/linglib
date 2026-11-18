@@ -52,8 +52,8 @@ conjunction contributes a marker, which is where Slovene departs from same-gende
 * The resolved value of a coordination `cs` is `cs.toFinset.sup mark`. That it is the minimal
   model of the subset annotations (93) is `Finset.isLUB_sup`, and the intersection dual of
   §6.5 is `Finset.compl_sup`.
-* Fula's first singular *min* has the exclusive's marker set (87), so it is the quadripartition's
-  `firstExclusive`; the first person unmarked for clusivity has `{S,H}` (91).
+* Fula's first singular *min* has the exclusive's marker set (87), so it is the exclusive
+  specification; the first person unmarked for clusivity has `{S,H}` (91).
 * A union claim reads only which genders occur, as Corbett's rules do
   (`Agreement.ResolutionRule.resolve_congr`), so it is checked on the sublists of a language's
   genders.
@@ -238,22 +238,24 @@ abbrev PersonSet := Finset SpeechAct.Role
 theorem card_personSet : Fintype.card PersonSet = 4 := by
   rw [Fintype.card_finset, SpeechAct.Role.card]; rfl
 
-/-- The marker set of a person value is the largest participant set it covers: the single set
-of a quadripartition value (87), and the inclusive's `{S,H}` for the first person unmarked for
-clusivity, which makes only the attested distinctions (91). -/
-def markers (p : Person) : PersonSet := p.participantSets.sup id
+/-- The marker set of a person specification is the largest participant set it covers: the
+single set of an inclusive, exclusive, second or third person (87), and the inclusive's `{S,H}`
+for the first person unmarked for clusivity, which makes only the attested distinctions (91). -/
+def markers (x : Person.Specification) : PersonSet := x.sets.sup id
 
-@[simp] theorem markers_bot : markers ⊥ = ∅ := rfl
+@[simp] theorem markers_third : markers .third = ∅ := by decide
 
 /-- Union of marker sets is the join of persons, the resolution of Zwicky's hierarchy (§6). -/
-@[simp] theorem markers_sup (p q : Person) : markers (p ⊔ q) = markers p ∪ markers q := by
+@[simp] theorem markers_sup (p q : Person) :
+    markers ↑(p ⊔ q) = markers ↑p ∪ markers ↑q := by
   revert p q; decide
 
-theorem markers_finset_sup (s : Finset Person) : markers (s.sup id) = s.sup markers :=
-  Finset.apply_sup_eq_sup_comp markers markers_sup markers_bot
+theorem markers_finset_sup (s : Finset Person) :
+    markers ↑(s.sup id) = s.sup fun p ↦ markers ↑p :=
+  Finset.apply_sup_eq_sup_comp (fun p : Person ↦ markers ↑p) markers_sup (by decide)
 
 /-- The conjuncts of the paper's coordinations by person. -/
-def personConjuncts : List (String × List Person) :=
+def personConjuncts : List (String × List Person.Specification) :=
   [("3SG and 1SG", [.third, .first]), ("1SG and 2SG", [.first, .second]),
     ("3SG and 2SG", [.third, .second]), ("2 and 3", [.second, .third]),
     ("3 and 3", [.third, .third]), ("2 and 1", [.second, .firstExclusive]),
@@ -261,7 +263,7 @@ def personConjuncts : List (String × List Person) :=
     ("3 and 1EXCL", [.third, .firstExclusive])]
 
 /-- The agreement forms of the paper's coordinations by person. -/
-def personAgreement : List (String × Person) :=
+def personAgreement : List (String × Person.Specification) :=
   [("1PL", .first), ("2PL", .second), ("2", .second), ("3", .third),
     ("1INCL.PL", .firstInclusive), ("1EXCL.PL", .firstExclusive)]
 
@@ -272,18 +274,19 @@ theorem person_rows : ∀ row ∈ Examples.all, ∀ cs ∈ row.parse? "conjuncts
   decide +kernel
 
 -- (95), (98)
-theorem jose_y_tu : [Person.third, .second].toFinset.sup markers ≠ markers .first := by
+theorem jose_y_tu :
+    [Person.Specification.third, .second].toFinset.sup markers ≠ markers .first := by
   decide
 
 -- fn. 12
 theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
-    markers (Person.ofParticipants t).coarsen ⊆ markers (Person.ofParticipants s).coarsen ↔
+    markers ↑(Person.ofParticipants t).coarsen ⊆ markers ↑(Person.ofParticipants s).coarsen ↔
       (Person.ofParticipants t).coarsen.prominence ≤
         (Person.ofParticipants s).coarsen.prominence := by
   decide
 
 /-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/
-def dual (p : Person) : PersonSet := (markers p)ᶜ
+def dual (x : Person.Specification) : PersonSet := (markers x)ᶜ
 
 -- (100)
 theorem dual_tripartition :
@@ -291,7 +294,7 @@ theorem dual_tripartition :
   decide
 
 -- (101), (103)
-theorem inf_dual (s : Finset Person) : s.inf dual = (s.sup markers)ᶜ :=
+theorem inf_dual (s : Finset Person.Specification) : s.inf dual = (s.sup markers)ᶜ :=
   (Finset.compl_sup s markers).symm
 
 -- (101), (103)
