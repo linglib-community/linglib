@@ -80,12 +80,21 @@ namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x : E)
 
-/-- At a context of utterance, [speaker] is defined of the referents including the agent,
-[addressee] of those including the addressee, and [participant] of those including either. -/
-def Feature.dom : Feature → Set E
-  | .speaker => Set.Ici c.agent
-  | .addressee => Set.Ici c.addressee
-  | .participant => Set.Ici c.agent ∪ Set.Ici c.addressee
+/-- At a context of utterance, a person feature is defined of the referents including the holder
+of a role it is about: [speaker] of those including the agent, [addressee] of those including the
+addressee, and [participant] of those including either. -/
+def Feature.dom (f : Feature) : Set E := ⋃ r ∈ f.roles, Set.Ici (c.holder r)
+
+@[simp] theorem Feature.mem_dom_speaker {x : E} : x ∈ Feature.dom c .speaker ↔ c.agent ≤ x := by
+  simp [Feature.dom, Feature.speaker]
+
+@[simp] theorem Feature.mem_dom_addressee {x : E} :
+    x ∈ Feature.dom c .addressee ↔ c.addressee ≤ x := by
+  simp [Feature.dom, Feature.addressee]
+
+@[simp] theorem Feature.mem_dom_participant {x : E} :
+    x ∈ Feature.dom c .participant ↔ c.agent ≤ x ∨ c.addressee ≤ x := by
+  simp [Feature.dom, Feature.participant, SpeechAct.Role.exists_role]
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
 the inclusive of those including the agent and the addressee, and the second of those including
@@ -98,18 +107,18 @@ def dom : Option Person → Set E
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
 @[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := by
-  simp [dom, Feature.dom, or_and_right]
+  simp [dom, or_and_right]
 
 @[simp] theorem mem_dom_firstInclusive :
     x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
 
 @[simp] theorem mem_dom_firstExclusive :
     x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := by
-  simp [dom, Feature.dom, or_and_right]
+  simp [dom, or_and_right]
 
 @[simp] theorem mem_dom_second :
     x ∈ dom c (some .second) ↔ c.agent ≤ x ∨ c.addressee ≤ x := by
-  simp [dom, Feature.dom]
+  simp [dom]
 
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
@@ -126,7 +135,8 @@ variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x :
 
 /-- A person feature's domain holds the referents whose participants bear the feature. -/
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
-  cases f <;> simp [Feature.dom, Finset.Nonempty, SpeechAct.Role.exists_role]
+  simp only [Feature.dom, Set.mem_iUnion₂, Set.mem_Ici, Bears, Finset.not_disjoint_iff,
+    SpeechAct.Context.mem_participants, exists_prop, and_comm]
 
 /-- The referents whose participants bear every feature of `F` are those in each feature's
 domain. -/
@@ -155,8 +165,9 @@ theorem dom_firstInclusive_eq_preimage_lowerPolar :
   ext x
   simp only [mem_dom_firstInclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
     Set.mem_iInter]
-  exact ⟨fun h f ↦ by cases f <;> simp [Feature.dom, h.1, h.2],
-    fun h ↦ ⟨h .speaker, h .addressee⟩⟩
+  exact ⟨fun h f ↦ by cases f <;> simp [h.1, h.2],
+    fun h ↦ ⟨(Feature.mem_dom_speaker c).1 (h .speaker),
+      (Feature.mem_dom_addressee c).1 (h .addressee)⟩⟩
 
 /-- A referent is of a person of the standard tripartition exactly when the features of
 [participant] and [speaker] defined of it are that person's. -/
@@ -174,8 +185,9 @@ theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
   rw [participants_mem_participantSets_iff c x rfl]
-  refine ⟨fun h ↦ (h .speaker (by simp)).2 (by simp), fun h f hf ↦ ?_⟩
-  cases f <;> simp [Feature.dom, h] at hf ⊢
+  refine ⟨fun h ↦ (Feature.mem_dom_speaker c).1 ((h .speaker (by simp)).2 (by decide)),
+    fun h f hf ↦ ?_⟩
+  cases f <;> simp [h, mem_toFeatures] at hf ⊢
 
 end Person
 

@@ -14,10 +14,10 @@ public import Mathlib.Order.Hom.Lattice
 /-!
 # Person features
 
-A person feature is a property of participant sets preserved by union, which is to include one of
-[the roles the feature is about](##Person.Feature.roles): [participant] holds of the nonempty
-sets, [speaker] of those containing the speaker and [addressee] of those containing the
-addressee. A theory of person selects an inventory of them, and
+A person feature is a nonempty set of roles, [those it is about](##Person.Feature.roles), and a
+participant set bears it when it includes one of them, a property preserved by union:
+[participant] holds of the nonempty sets, [speaker] of those containing the speaker and
+[addressee] of those containing the addressee. A theory of person selects an inventory of them, and
 [the features of an inventory that a participant set bears](##Person.bundle) are its bundle there;
 the two features Béjar and Rezac cite from Halle, [participant] and [author], are the inventory
 of [participant] and [speaker], on which the second person bears [participant] alone, and Harley
@@ -54,25 +54,62 @@ open Finset SpeechAct Order
 
 namespace Person
 
-/-- A person feature. -/
-inductive Feature where
-  /-- [participant] holds of a referent including a speech-act participant. -/
-  | participant
-  /-- [speaker] holds of a referent including the speaker, [author] in other inventories. -/
-  | speaker
-  /-- [addressee] holds of a referent including the addressee, [hearer] in other inventories. -/
-  | addressee
-  deriving DecidableEq, Repr, Fintype
+/-- A person feature is a nonempty set of roles, those it is about. -/
+@[ext]
+structure Feature where
+  /-- The roles the feature is about. -/
+  roles : Finset Role
+  nonempty : roles.Nonempty
 
 namespace Feature
 
-/-- The roles a feature is about: [participant] both, [speaker] and [addressee] their own. -/
-def roles : Feature → Finset Role
-  | participant => univ
-  | speaker => {.speaker}
-  | addressee => {.addressee}
+theorem roles_injective : Function.Injective roles := fun _ _ ↦ Feature.ext
 
-theorem roles_injective : Function.Injective roles := by decide
+instance : DecidableEq Feature := fun f g ↦
+  decidable_of_iff (f.roles = g.roles) Feature.ext_iff.symm
+
+instance : Fintype Feature :=
+  .ofEquiv {A : Finset Role // A.Nonempty}
+    ⟨fun A ↦ ⟨A.1, A.2⟩, fun f ↦ ⟨f.1, f.2⟩, fun _ ↦ rfl, fun _ ↦ rfl⟩
+
+/-- [participant] holds of a referent including a speech-act participant. -/
+def participant : Feature := ⟨univ, univ_nonempty⟩
+
+/-- [speaker] holds of a referent including the speaker, [author] in other inventories. -/
+def speaker : Feature := ⟨{.speaker}, singleton_nonempty _⟩
+
+/-- [addressee] holds of a referent including the addressee, [hearer] in other inventories. -/
+def addressee : Feature := ⟨{.addressee}, singleton_nonempty _⟩
+
+@[simp] theorem roles_participant : participant.roles = univ := rfl
+@[simp] theorem roles_speaker : speaker.roles = {.speaker} := rfl
+@[simp] theorem roles_addressee : addressee.roles = {.addressee} := rfl
+
+@[simp] theorem participant_ne_speaker : participant ≠ speaker := by decide
+@[simp] theorem participant_ne_addressee : participant ≠ addressee := by decide
+@[simp] theorem speaker_ne_participant : speaker ≠ participant := by decide
+@[simp] theorem speaker_ne_addressee : speaker ≠ addressee := by decide
+@[simp] theorem addressee_ne_participant : addressee ≠ participant := by decide
+@[simp] theorem addressee_ne_speaker : addressee ≠ speaker := by decide
+
+/-- The features are [participant], [speaker] and [addressee]. -/
+theorem eq_participant_or_eq_speaker_or_eq_addressee (f : Feature) :
+    f = participant ∨ f = speaker ∨ f = addressee := by
+  revert f; decide
+
+/-- Case analysis on a feature: it is [participant], [speaker] or [addressee]. -/
+@[elab_as_elim, cases_eliminator]
+def casesOn' {motive : Feature → Sort*} (f : Feature) (participant : motive participant)
+    (speaker : motive speaker) (addressee : motive addressee) : motive f :=
+  if hp : f = Feature.participant then hp ▸ participant
+  else if hs : f = Feature.speaker then hs ▸ speaker
+  else
+    have ha : f = Feature.addressee :=
+      (f.eq_participant_or_eq_speaker_or_eq_addressee.resolve_left hp).resolve_left hs
+    ha ▸ addressee
+
+instance : Repr Feature where
+  reprPrec f _ := f.casesOn' "participant" "speaker" "addressee"
 
 /-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`, which is
 when `g` is about fewer roles. -/
@@ -105,10 +142,10 @@ instance (s : Finset Role) : DecidablePred (Bears s) := fun _ ↦ inferInstanceA
   revert s; decide
 
 @[simp] theorem bears_speaker {s : Finset Role} : Bears s .speaker ↔ .speaker ∈ s := by
-  simp [Bears, Feature.roles]
+  simp [Bears, Feature.speaker]
 
 @[simp] theorem bears_addressee {s : Finset Role} : Bears s .addressee ↔ .addressee ∈ s := by
-  simp [Bears, Feature.roles]
+  simp [Bears, Feature.addressee]
 
 /-- Bearing a feature is preserved by union, and the empty set bears none. -/
 theorem bears_union {s t : Finset Role} {f : Feature} :
