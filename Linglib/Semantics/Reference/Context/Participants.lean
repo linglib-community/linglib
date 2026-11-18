@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Core.Order.SupCon
+public import Mathlib.Order.Hom.Lattice
 public import Linglib.Semantics.Mereology.Atomic
 
 /-!
@@ -13,9 +13,9 @@ referent [has at least the participants](##SpeechAct.Context.monotone_participan
 one. Forming a group from two referents is their sum, and
 [the participants of a sum are those of its summands](##SpeechAct.Context.participants_sup_iff)
 exactly when each holder is an individual, part of a sum only by being part of a summand,
-[as an atom is](##SpeechAct.Context.participants_sup_of_atom). Person
-is then [a congruence for group formation](##SpeechAct.Context.personCon), which is why the
-person of a coordination is a function of its conjuncts' persons, their union as sets of roles.
+[as an atom is](##SpeechAct.Context.participants_sup_of_atom). The participants are then
+[a map preserving sums](##SpeechAct.Context.participantsHom), which is why the person of a
+coordination is a function of its conjuncts' persons, their union as sets of roles.
 
 ## References
 
@@ -48,9 +48,9 @@ theorem mem_participants {r : SpeechAct.Role} : r ∈ c.participants x ↔ c.hol
 
 /-! ### Group formation
 
-Forming a group from two referents is their sum. Person is a congruence for it and atomicity is
-not, so the person of a coordination is a function of its conjuncts' persons while its number is
-not a function of their numbers. -/
+Forming a group from two referents is their sum. The participants preserve it and atomicity
+does not factor through any map that does, so the person of a coordination is a function of its
+conjuncts' persons while its number is not a function of their numbers. -/
 
 section SemilatticeSup
 
@@ -87,9 +87,6 @@ noncomputable def participantsHom : SupHom E (Finset SpeechAct.Role) where
   map_sup' := c.participants_sup_iff.2 h
 
 @[simp] theorem participantsHom_apply (x : E) : c.participantsHom h x = c.participants x := rfl
-
-/-- Person as a congruence for group formation: the referents with the same participants. -/
-noncomputable def personCon : SupCon E := SupCon.ker (c.participantsHom h)
 
 end SemilatticeSup
 
