@@ -5,7 +5,7 @@ public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
 public import Linglib.Semantics.Composition.Rules
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.EffectFree
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -46,8 +46,11 @@ supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
 monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over application
-and predicate modification, and the interpreter is `Interpreter.Ty.combine`, checked here against
-the outputs the book prints. The base sort is `e`.
+and predicate modification. The book's `combine` is `Interpreter.Ty.combineWith` with Join and
+Lower applied once to each result, checked here against the outputs the book prints. The
+library's `Interpreter.Ty.combine` stacks them, and the two [differ at a type with three layers
+of one effect](##BumfordCharlow2026.combine_join_twice), which no entry of the book has. The base
+sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -313,7 +316,7 @@ theorem ejectL_structuredApp_joinMode_mapR {M : Type u → Type u} [Monad M] [La
 /-! ### The type-driven grammar
 
 Appendix B implements the grammar as a function from the types of two daughters to the modes
-that combine them and the types they yield, `Interpreter.Ty.combine` here. -/
+that combine them and the types they yield, `combine` below. -/
 
 open Interpreter
 
@@ -351,6 +354,26 @@ theorem baseGrammar_reads :
   | _, _, _, .inl .fa, hl, _ => hl
   | _, _, _, .inl .ba, hl, hr => absurd hl hr.1.not_reads
   | _, _, _, .inr .pm, hl, _ => hl
+
+/-- Application and predicate modification keep to the types without effects. -/
+theorem baseGrammar_effectFree : (baseGrammar B).EffectFree where
+  unary r := nomatch r
+  binary := @fun
+    | _, _, _, .inl .fa, hl, _ => hl.2
+    | _, _, _, .inl .ba, _, hr => hr.2
+    | _, _, _, .inr .pm, hl, _ => hl
+
+/-- Before any effect the effect-driven interpreter is the deterministic one it starts from:
+over words with one item each, of types without effects, a structure has at most one value,
+although interpretation is relational once a word has an effect. -/
+theorem length_values_effectDriven_baseGrammar_le_one [DecidableEq B] {D : B → Type}
+    {Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    {lex : Lx → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
+    (h₁ : ∀ x, (lex x).length ≤ 1) (s : Skeleton Node Lx) :
+    ((effectDriven (baseGrammar B)).values effectGrammar.structure ρ lex s).length ≤ 1 := by
+  rw [values_effectDriven_of_effectFree baseGrammar_effectFree ρ hlex, values, List.length_map]
+  exact length_derivs_le_one (fun _ _ ↦ by simp [typeDriven])
+    (fun _ l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ s
 
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes
@@ -397,8 +420,8 @@ example {u : Ty Unit}
 
 /-! ### The interpreter
 
-`Ty.combine` on the type combinations the book runs its interpreter on, with the modes named as
-the book prints them. -/
+The book's `combine` on the type combinations the book runs it on, with the modes named as the
+book prints them. -/
 
 /-- The names of the basic modes. -/
 inductive Name
@@ -444,9 +467,8 @@ def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,
 each with the type it yields. -/
 def combine (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
-  (Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit)) l r).map fun
-      p ↦
-    (shape Name.of p.2, p.1)
+  (Ty.combineWith (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
+    (fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)) l r).map fun p ↦ (shape Name.of p.2, p.1)
 
 section Interpreter
 
@@ -473,6 +495,22 @@ theorem combine_read_store : combine (R e) (W (e ⇒ T)) =
 -- section 5.5: lowering
 theorem combine_lower : combine (T ⇒ T) (C T) = [(.mapR FA, C T), (.lower (.mapR FA), T)] := by
   decide
+
+/-- The grammar has a mode that joins twice, flattening three layers of indeterminacy to one. -/
+example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=
+  .join trivial (.join trivial (.basic (.inl .fa)))
+
+/-- The book's `combine` applies Join once to the result of application, and lists the modes that
+give three layers and two. -/
+theorem combine_join_twice :
+    combine (e ⇒ S (S (S T))) e = [(FA, S (S (S T))), (.join FA, S (S T))] := by decide
+
+/-- The search that stacks Join and Lower finds it. -/
+example : (⟨S T, .join trivial (.join trivial (.basic (.inl .fa)))⟩ :
+      Σ u, Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e u) ∈
+    Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit)) _ _ :=
+  Ty.mem_combine (find := ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
+    (fun b ↦ ManySorted.Language.LocallyFinite.mem_symbols b) _
 
 -- section 5.3.4: the bind of the state monad is among the modes
 theorem mem_combine_state :

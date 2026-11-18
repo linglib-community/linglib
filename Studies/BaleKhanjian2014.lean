@@ -5,7 +5,7 @@ public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Composition.Rules
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.CallByValue
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.LiftRel

@@ -5,7 +5,7 @@ public import Linglib.Logic.Trivalent.Knowledge
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.PredicateAbstraction
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Combine
 public import Linglib.Semantics.Composition.Constituency
 public import Mathlib.Data.PFun
 public import Linglib.Semantics.Alternatives.WithAlternatives
