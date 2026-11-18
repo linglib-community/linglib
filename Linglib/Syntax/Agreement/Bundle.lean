@@ -112,24 +112,29 @@ namespace Bundle
 def set (d : Dimension) (v : d.Value) (b : Bundle) : Bundle :=
   Function.update b d (Dimension.Slot.ofFlat d (v : Flat d.Value))
 
-/-- The bundle valued in person and number alone. -/
-def personNumber (p : Person) (n : Number) : Bundle :=
-  set .number n (set .person p ⊥)
+/-- The bundle valued in person and number alone, the person a specification, as which a person
+value is read. -/
+def personNumber (x : Person.Specification) (n : Number) : Bundle :=
+  Function.update (set .number n ⊥) .person x
 
-@[simp] theorem personNumber_person (p : Person) (n : Number) :
-    personNumber p n .person = Person.Specification.ofPerson p :=
+@[simp] theorem personNumber_person (x : Person.Specification) (n : Number) :
+    personNumber x n .person = x :=
   rfl
 
-@[simp] theorem personNumber_number (p : Person) (n : Number) : personNumber p n .number = n :=
+@[simp] theorem personNumber_number (x : Person.Specification) (n : Number) :
+    personNumber x n .number = n :=
   rfl
 
-@[simp] theorem personNumber_gender (p : Person) (n : Number) : personNumber p n .gender = ⊥ :=
+@[simp] theorem personNumber_gender (x : Person.Specification) (n : Number) :
+    personNumber x n .gender = ⊥ :=
   rfl
 
-@[simp] theorem personNumber_case (p : Person) (n : Number) : personNumber p n .case = ⊥ := rfl
+@[simp] theorem personNumber_case (x : Person.Specification) (n : Number) :
+    personNumber x n .case = ⊥ :=
+  rfl
 
-@[simp] theorem personNumber_definiteness (p : Person) (n : Number) :
-    personNumber p n .definiteness = ⊥ :=
+@[simp] theorem personNumber_definiteness (x : Person.Specification) (n : Number) :
+    personNumber x n .definiteness = ⊥ :=
   rfl
 
 /-- The restriction of a token's features to the agreement dimensions reads them along
@@ -146,8 +151,8 @@ instance : DecidableLT Bundle := decidableLTOfDecidableLE
 
 /-- A bundle extends the person–number bundle exactly when its person is covered by that person
 and it has that number. -/
-theorem personNumber_le_iff {p : Person} {n : Number} {x : Bundle} :
-    personNumber p n ≤ x ↔ Person.Specification.ofPerson p ≤ x .person ∧ x .number = n := by
+theorem personNumber_le_iff {p : Person.Specification} {n : Number} {x : Bundle} :
+    personNumber p n ≤ x ↔ p ≤ x .person ∧ x .number = n := by
   refine ⟨fun h ↦ ⟨h .person, Flat.coe_le_iff.1 (h .number)⟩, ?_⟩
   rintro ⟨hp, hn⟩ d
   cases d
@@ -168,7 +173,7 @@ instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = 
 /-- The six bundles of the first, second and third persons in the singular and the plural, the
 cells of a paradigm without clusivity or a dual. -/
 def personNumberCells : List Bundle :=
-  [Number.singular, .plural].flatMap fun n ↦ [Person.first, .second, .third].map (personNumber · n)
+  [Number.singular, .plural].flatMap fun n ↦ [Person.Specification.first, .second, .third].map (personNumber · n)
 
 end Bundle
 

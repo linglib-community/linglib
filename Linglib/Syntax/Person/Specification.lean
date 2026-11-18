@@ -67,8 +67,20 @@ def ofPerson (p : Person) : Specification :=
 
 @[simp] theorem sets_ofPerson (p : Person) : (ofPerson p).sets = p.participantSets := rfl
 
+/-- A person value is read as the specification of what it covers. -/
+instance : Coe Person Specification := ⟨ofPerson⟩
+
 theorem ofPerson_injective : Function.Injective ofPerson := fun _ _ h ↦
   participantSets_injective (congrArg sets h)
+
+/-- The person value a specification is that of, if any. -/
+def toPerson? (x : Specification) : Option Person :=
+  [Person.first, .firstInclusive, .firstExclusive, .second, .third].find? fun p ↦ ofPerson p = x
+
+@[simp] theorem toPerson?_ofPerson (p : Person) : (ofPerson p).toPerson? = some p := by
+  revert p; decide
+
+theorem toPerson?_bot : (⊥ : Specification).toPerson? = none := by decide
 
 /-- The specification of the general first person. -/
 abbrev first : Specification := ofPerson .first
