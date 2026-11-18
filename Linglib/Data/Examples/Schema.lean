@@ -132,6 +132,21 @@ structure GlossedWord where
   glossedMorphemes : List GlossedMorpheme := []
   deriving DecidableEq, Repr
 
+/-- A span of an example is a run of its glossed words under a label the data file declares, with
+the lexeme it is a form of where the row names one. A span of length zero is an element the
+source's analysis posits without a word, before the word at its start. The identifiers are the
+data file's own; a study maps a lexeme to its entry in a language's fragment. -/
+structure Datum.Span where
+  /-- The position of the span's first word in the gloss line, counted from zero. -/
+  start : ℕ
+  /-- The number of words the span covers. -/
+  length : ℕ := 1
+  /-- The label of the span, as the data file names it. -/
+  label : String
+  /-- The lexeme the span is a form of, as the data file names it. -/
+  lexeme : Option String := none
+  deriving DecidableEq, Repr
+
 /-- A `Datum` is a piece of data a paper reports with one of its examples
 [tonhauser-matthewson-2016]: an expression of a language with its gloss, the context it is judged
 in, the judgment, the forms and readings the paper judges with it, and the paper's own
@@ -170,6 +185,8 @@ structure Datum where
   contrasts : List (String × Judgment) := []
   /-- The readings the source distinguishes for the expression, each with its judgment. -/
   readings : List (String × Judgment) := []
+  /-- The spans of the gloss line the row marks, each with its label and its lexeme. -/
+  spans : List Datum.Span := []
   /-- The paper's own columns, as key-value pairs. -/
   paperFeatures : List (String × String) := []
   deriving DecidableEq, Repr

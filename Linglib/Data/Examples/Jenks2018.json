@@ -39,29 +39,6 @@
       ]
     },
     {
-      "key": "form",
-      "lean": "form",
-      "type": "Form",
-      "doc": "The form of the definite noun phrase under test.",
-      "levels": [
-        {
-          "name": "bare",
-          "label": "bare",
-          "doc": "a bare noun"
-        },
-        {
-          "name": "demonstrative",
-          "label": "demonstrative",
-          "doc": "a demonstrative with a classifier and a noun, [Dem-Clf-N]"
-        },
-        {
-          "name": "classifier",
-          "label": "classifier",
-          "doc": "a classifier and a noun, [Clf-N]"
-        }
-      ]
-    },
-    {
       "key": "topic",
       "lean": "topic",
       "type": "Topic",
@@ -97,6 +74,50 @@
       }
     ]
   },
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "definite",
+          "label": "definite",
+          "doc": "the definite noun phrase under test"
+        },
+        {
+          "name": "determiner",
+          "label": "determiner",
+          "doc": "the determiner heading the noun phrase under test"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The determiners heading the noun phrases under test.",
+      "levels": [
+        {
+          "name": "na",
+          "label": "na",
+          "doc": "Mandarin na 'that'"
+        },
+        {
+          "name": "zhe",
+          "label": "zhe",
+          "doc": "Mandarin zhe 'this'"
+        },
+        {
+          "name": "go",
+          "label": "go",
+          "doc": "Cantonese go2 'that'"
+        },
+        {
+          "name": "clfN",
+          "label": "clfN",
+          "doc": "the Cantonese definite article exponed by a classifier phrase, [Clf-N]"
+        }
+      ]
+    }
+  },
   "examples": [
     {
       "id": "jenks2018_10a",
@@ -106,17 +127,21 @@
       "language": "mand1415",
       "primaryText": "Yueliang sheng shang lai le.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Yueliang", "moon"], ["sheng", "rise"], ["shang", "up"], ["lai", "come"], ["le", "LE"]
+      ],
       "translation": "The moon has risen.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "largerSituation"],
-        ["position", "subject"],
-        ["form", "bare"]
+        ["position", "subject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -127,38 +152,76 @@
       "language": "mand1415",
       "primaryText": "Taiwan (de) zongtong hen shengqi.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Taiwan", "Taiwan"], ["(de)", "MOD"], ["zongtong", "president"], ["hen", "very"],
+        ["shengqi", "angry"]
+      ],
       "translation": "The president of Taiwan is very angry.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 3, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "largerSituation"],
-        ["position", "subject"],
-        ["form", "bare"]
+        ["position", "subject"]
       ],
       "comment": "",
       "verified": "page-image"
     },
     {
-      "id": "jenks2018_10b_dem",
+      "id": "jenks2018_10b_na",
       "source": {"bibkey": "jenks-2018", "paperLabel": "(10b)"},
       "language": "mand1415",
-      "primaryText": "Na/Zhe ge Taiwan (de) zongtong hen shengqi.",
+      "primaryText": "Na ge Taiwan (de) zongtong hen shengqi.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Na", "that"], ["ge", "CLF"], ["Taiwan", "Taiwan"], ["(de)", "MOD"],
+        ["zongtong", "president"], ["hen", "very"], ["shengqi", "angry"]
+      ],
       "translation": "The president of Taiwan is very angry.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 5, "label": "definite"},
+        {"start": 0, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "largerSituation"],
-        ["position", "subject"],
-        ["form", "demonstrative"]
+        ["position", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "jenks2018_10b_zhe",
+      "source": {"bibkey": "jenks-2018", "paperLabel": "(10b)"},
+      "language": "mand1415",
+      "primaryText": "Zhe ge Taiwan (de) zongtong hen shengqi.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Zhe", "this"], ["ge", "CLF"], ["Taiwan", "Taiwan"], ["(de)", "MOD"],
+        ["zongtong", "president"], ["hen", "very"], ["shengqi", "angry"]
+      ],
+      "translation": "The president of Taiwan is very angry.",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "length": 5, "label": "definite"},
+        {"start": 0, "label": "determiner", "lexeme": "zhe"}
+      ],
+      "paperFeatures": [
+        ["section", "3.1"],
+        ["environment", "largerSituation"],
+        ["position", "subject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -171,17 +234,21 @@
       "language": "mand1415",
       "primaryText": "Hufei he-wan-le tang.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Hufei", "Hufei"], ["he-wan-le", "drink-finish-LE"], ["tang", "soup"]
+      ],
       "translation": "Hufei finished the soup.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 2, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "immediateSituation"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -194,17 +261,21 @@
       "language": "mand1415",
       "primaryText": "Gou yao guo malu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Gou", "dog"], ["yao", "want"], ["guo", "cross"], ["malu", "road"]
+      ],
       "translation": "The dog(s) want to cross the road.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "immediateSituation"],
-        ["position", "subject"],
-        ["form", "bare"]
+        ["position", "subject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -215,17 +286,23 @@
       "language": "mand1415",
       "primaryText": "Chezi bei jingcha lanjie le yinwei mei you tiezhi zai paizhao shang.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Chezi", "car"], ["bei", "PASS"], ["jingcha", "police"], ["lanjie", "intercept"],
+        ["le", "LE"], ["yinwei", "because"], ["mei", "NEG"], ["you", "have"], ["tiezhi", "sticker"],
+        ["zai", "at"], ["paizhao", "license.plate"], ["shang", "on"]
+      ],
       "translation": "The car was intercepted by the police because there wasn't a sticker on the license plate.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 10, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "partWholeBridging"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -236,17 +313,23 @@
       "language": "mand1415",
       "primaryText": "Paul renwei na shou shi hen youmei, jishi ta bu renshi shiren.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Paul", "Paul"], ["renwei", "think"], ["na", "that"], ["shou", "CLF"], ["shi", "poem"],
+        ["hen", "very"], ["youmei", "beautiful"], ["jishi", "although"], ["ta", "he"], ["bu", "NEG"],
+        ["renshi", "know"], ["shiren", "poet"]
+      ],
       "translation": "Paul thinks that poem is very beautiful although he doesn't know of the poet.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 11, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "producerBridging"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -257,17 +340,24 @@
       "language": "mand1415",
       "primaryText": "Paul renwei na shou shi hen youmei, jishi ta bu renshi na wei shiren.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Paul", "Paul"], ["renwei", "think"], ["na", "that"], ["shou", "CLF"], ["shi", "poem"],
+        ["hen", "very"], ["youmei", "beautiful"], ["jishi", "although"], ["ta", "he"], ["bu", "NEG"],
+        ["renshi", "know"], ["na", "that"], ["wei", "CLF"], ["shiren", "poet"]
+      ],
       "translation": "Paul thinks that poem is very beautiful although he doesn't know of the poet.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 11, "length": 3, "label": "definite"},
+        {"start": 11, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.1"],
         ["environment", "producerBridging"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -278,17 +368,21 @@
       "language": "mand1415",
       "primaryText": "Wo zuotian yudao nansheng.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["zuotian", "yesterday"], ["yudao", "meet"], ["nansheng", "boy"]
+      ],
       "translation": "I met the boy yesterday.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -299,17 +393,23 @@
       "language": "mand1415",
       "primaryText": "Wo zuotian yudao na ge nansheng.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["zuotian", "yesterday"], ["yudao", "meet"], ["na", "that"], ["ge", "CLF"],
+        ["nansheng", "boy"]
+      ],
       "translation": "I met the boy yesterday.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 3, "label": "definite"},
+        {"start": 3, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -320,17 +420,22 @@
       "language": "mand1415",
       "primaryText": "Wo dai gei nansheng yi ge liwu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["dai", "bring"], ["gei", "give"], ["nansheng", "boy"], ["yi", "one"],
+        ["ge", "CLF"], ["liwu", "gift"]
+      ],
       "translation": "I'm bringing a gift for the boy.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "indirectObject"],
-        ["form", "bare"]
+        ["position", "indirectObject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -341,17 +446,23 @@
       "language": "mand1415",
       "primaryText": "Wo dai gei na ge nansheng yi ge liwu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["dai", "bring"], ["gei", "give"], ["na", "that"], ["ge", "CLF"],
+        ["nansheng", "boy"], ["yi", "one"], ["ge", "CLF"], ["liwu", "gift"]
+      ],
       "translation": "I'm bringing a gift for the boy.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 3, "label": "definite"},
+        {"start": 3, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "indirectObject"],
-        ["form", "demonstrative"]
+        ["position", "indirectObject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -362,17 +473,22 @@
       "language": "mand1415",
       "primaryText": "Nansheng kanqilai you er-shi sui zuoyou.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Nansheng", "boy"], ["kanqilai", "look"], ["you", "have"], ["er-shi", "two-ten"],
+        ["sui", "year"], ["zuoyou", "or.so"]
+      ],
       "translation": "The boy looks twenty years old or so.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
         ["position", "subject"],
-        ["form", "bare"],
         ["topic", "continuing"]
       ],
       "comment": "Most speakers prefer the demonstrative.",
@@ -384,17 +500,23 @@
       "language": "mand1415",
       "primaryText": "Na ge nansheng kanqilai you er-shi sui zuoyou.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Na", "that"], ["ge", "CLF"], ["nansheng", "boy"], ["kanqilai", "look"], ["you", "have"],
+        ["er-shi", "two-ten"], ["sui", "year"], ["zuoyou", "or.so"]
+      ],
       "translation": "The boy looks twenty years old or so.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 3, "label": "definite"},
+        {"start": 0, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
         ["position", "subject"],
-        ["form", "demonstrative"],
         ["topic", "continuing"]
       ],
       "comment": "Most speakers prefer the demonstrative.",
@@ -406,17 +528,22 @@
       "language": "mand1415",
       "primaryText": "Wo bu renwei nansheng hen youqu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["bu", "NEG"], ["renwei", "think"], ["nansheng", "boy"], ["hen", "very"],
+        ["youqu", "interesting"]
+      ],
       "translation": "I don't think that the boy is very interesting.",
       "context": "",
       "judgment": "marginal",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
         ["position", "embeddedSubject"],
-        ["form", "bare"],
         ["topic", "continuing"]
       ],
       "comment": "Most speakers prefer the demonstrative.",
@@ -428,17 +555,23 @@
       "language": "mand1415",
       "primaryText": "Wo bu renwei na ge nansheng hen youqu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["bu", "NEG"], ["renwei", "think"], ["na", "that"], ["ge", "CLF"],
+        ["nansheng", "boy"], ["hen", "very"], ["youqu", "interesting"]
+      ],
       "translation": "I don't think that the boy is very interesting.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 3, "label": "definite"},
+        {"start": 3, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
         ["position", "embeddedSubject"],
-        ["form", "demonstrative"],
         ["topic", "continuing"]
       ],
       "comment": "",
@@ -450,17 +583,24 @@
       "language": "mand1415",
       "primaryText": "Jingcha huaiyi na ge nuren nashihou shou le shang.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Jingcha", "police"], ["huaiyi", "suspect"], ["na", "that"], ["ge", "CLF"],
+        ["nuren", "woman"], ["nashihou", "at.that.moment"], ["shou", "suffer"], ["le", "LE"],
+        ["shang", "injury"]
+      ],
       "translation": "Police suspect that the woman suffered an injury.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 2, "length": 3, "label": "definite"},
+        {"start": 2, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "embeddedSubject"],
-        ["form", "demonstrative"]
+        ["position", "embeddedSubject"]
       ],
       "comment": "Anaphoric reference de dicto to the woman of (16a).",
       "verified": "page-image"
@@ -471,7 +611,10 @@
       "language": "mand1415",
       "primaryText": "Jingcha huaiyi nuren nashihou shou le shang.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Jingcha", "police"], ["huaiyi", "suspect"], ["nuren", "woman"],
+        ["nashihou", "at.that.moment"], ["shou", "suffer"], ["le", "LE"], ["shang", "injury"]
+      ],
       "translation": "Police suspect that a woman suffered an injury.",
       "context": "",
       "judgment": "acceptable",
@@ -479,11 +622,13 @@
       "readings": [
         {"name": "definite", "judgment": "unacceptable"}
       ],
+      "spans": [
+        {"start": 2, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.2"],
         ["environment", "anaphoric"],
-        ["position", "embeddedSubject"],
-        ["form", "bare"]
+        ["position", "embeddedSubject"]
       ],
       "comment": "The bare noun receives only an indefinite interpretation.",
       "verified": "page-image"
@@ -496,17 +641,23 @@
       "language": "mand1415",
       "primaryText": "Ni jiao shei jinlai, wo dou jian na ge ren.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Ni", "you"], ["jiao", "ask"], ["shei", "who"], ["jinlai", "enter"], ["wo", "I"],
+        ["dou", "all"], ["jian", "see"], ["na", "that"], ["ge", "CLF"], ["ren", "person"]
+      ],
       "translation": "Whoever you ask to come in, I'll see that person.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 7, "length": 3, "label": "definite"},
+        {"start": 7, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.3"],
         ["environment", "donkey"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -517,17 +668,22 @@
       "language": "mand1415",
       "primaryText": "Ni jiao shei jinlai, wo dou jian ren.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Ni", "you"], ["jiao", "ask"], ["shei", "who"], ["jinlai", "enter"], ["wo", "I"],
+        ["dou", "all"], ["jian", "see"], ["ren", "person"]
+      ],
       "translation": "Whoever you ask to enter, I will see a person.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 7, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.3"],
         ["environment", "donkey"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -538,17 +694,23 @@
       "language": "mand1415",
       "primaryText": "Mei ge [you yi zhi shuiniu de] nongfu dou hui da shuiniu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mei", "every"], ["ge", "CLF"], ["[you", "have"], ["yi", "one"], ["zhi", "CLF"],
+        ["shuiniu", "buffalo"], ["de]", "REL"], ["nongfu", "farmer"], ["dou", "all"],
+        ["hui", "will"], ["da", "hit"], ["shuiniu", "buffalo"]
+      ],
       "translation": "Every farmer that has a buffalo hits that buffalo.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 11, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "3.3"],
         ["environment", "donkey"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -559,17 +721,24 @@
       "language": "mand1415",
       "primaryText": "Mei ge [you yi zhi shuiniu de] nongfu dou hui da na zhi shuiniu.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mei", "every"], ["ge", "CLF"], ["[you", "have"], ["yi", "one"], ["zhi", "CLF"],
+        ["shuiniu", "buffalo"], ["de]", "REL"], ["nongfu", "farmer"], ["dou", "all"],
+        ["hui", "will"], ["da", "hit"], ["na", "that"], ["zhi", "CLF"], ["shuiniu", "buffalo"]
+      ],
       "translation": "Every farmer that has a buffalo hits that buffalo.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 11, "length": 3, "label": "definite"},
+        {"start": 11, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "3.3"],
         ["environment", "donkey"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -578,42 +747,55 @@
       "id": "jenks2018_28_bare",
       "source": {"bibkey": "jenks-2018", "paperLabel": "(28)"},
       "language": "mand1415",
-      "primaryText": "Obama mei dao yi ge chengshi ta dou gen shizhang ji anmi an.",
+      "primaryText": "Obama mei dao yi ge chengshi ta dou gen shizhang jianmian.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Obama", "Obama"], ["mei", "every"], ["dao", "arrive"], ["yi", "one"], ["ge", "CLF"],
+        ["chengshi", "city"], ["ta", "he"], ["dou", "all"], ["gen", "with"], ["shizhang", "mayor"],
+        ["jianmian", "meet"]
+      ],
       "translation": "In every city that Obama visited, he met with the mayor (of that city).",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 9, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "4.3"],
         ["environment", "largerSituation"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
-      "comment": "The mayor covaries with the city.",
+      "comment": "The mayor covaries with the city. The source prints the verb as 'ji anmi an'.",
       "verified": "page-image"
     },
     {
       "id": "jenks2018_28_dem",
       "source": {"bibkey": "jenks-2018", "paperLabel": "(28)"},
       "language": "mand1415",
-      "primaryText": "Obama mei dao yi ge chengshi ta dou gen zhe wei shizhang ji anmi an.",
+      "primaryText": "Obama mei dao yi ge chengshi ta dou gen zhe wei shizhang jianmian.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Obama", "Obama"], ["mei", "every"], ["dao", "arrive"], ["yi", "one"], ["ge", "CLF"],
+        ["chengshi", "city"], ["ta", "he"], ["dou", "all"], ["gen", "with"], ["zhe", "this"],
+        ["wei", "CLF"], ["shizhang", "mayor"], ["jianmian", "meet"]
+      ],
       "translation": "In every city that Obama visited, he met with the mayor (of that city).",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 9, "length": 3, "label": "definite"},
+        {"start": 9, "label": "determiner", "lexeme": "zhe"}
+      ],
       "paperFeatures": [
         ["section", "4.3"],
         ["environment", "largerSituation"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
-      "comment": "",
+      "comment": "The source prints the verb as 'ji anmi an'.",
       "verified": "page-image"
     },
     {
@@ -622,17 +804,23 @@
       "language": "mand1415",
       "primaryText": "Mei ge mai le fangzi de ren dou xuyao xiuli wuding.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mei", "every"], ["ge", "CLF"], ["mai", "buy"], ["le", "LE"], ["fangzi", "house"],
+        ["de", "DE"], ["ren", "people"], ["dou", "all"], ["xuyao", "need"], ["xiuli", "fix"],
+        ["wuding", "roof"]
+      ],
       "translation": "Everyone that bought a house needed to fix the roof.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 10, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "5.2"],
         ["environment", "partWholeBridging"],
-        ["position", "object"],
-        ["form", "bare"]
+        ["position", "object"]
       ],
       "comment": "The example is also (30). The roof covaries with the house.",
       "verified": "page-image"
@@ -643,17 +831,24 @@
       "language": "mand1415",
       "primaryText": "Mei ge mai le fangzi de ren dou xuyao xiuli na ge wuding.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mei", "every"], ["ge", "CLF"], ["mai", "buy"], ["le", "LE"], ["fangzi", "house"],
+        ["de", "DE"], ["ren", "people"], ["dou", "all"], ["xuyao", "need"], ["xiuli", "fix"],
+        ["na", "that"], ["ge", "CLF"], ["wuding", "roof"]
+      ],
       "translation": "Everyone that bought a house needed to fix the roof.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 10, "length": 3, "label": "definite"},
+        {"start": 10, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "5.2"],
         ["environment", "partWholeBridging"],
-        ["position", "object"],
-        ["form", "demonstrative"]
+        ["position", "object"]
       ],
       "comment": "The example is also (30).",
       "verified": "page-image"
@@ -664,17 +859,21 @@
       "language": "mand1415",
       "primaryText": "Mao sha le (ta).",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mao", "cat"], ["sha", "killed"], ["le", "LE"], ["(ta)", "it"]
+      ],
       "translation": "That cat killed it.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "subject"],
-        ["form", "bare"],
         ["topic", "nontopic"]
       ],
       "comment": "The mouse, not the cat, is the topic of A's question.",
@@ -686,17 +885,23 @@
       "language": "mand1415",
       "primaryText": "Na zhi mao sha le (ta).",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Na", "that"], ["zhi", "CLF"], ["mao", "cat"], ["sha", "killed"], ["le", "LE"],
+        ["(ta)", "it"]
+      ],
       "translation": "That cat killed it.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 3, "label": "definite"},
+        {"start": 0, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "subject"],
-        ["form", "demonstrative"],
         ["topic", "nontopic"]
       ],
       "comment": "The mouse, not the cat, is the topic of A's question.",
@@ -708,17 +913,21 @@
       "language": "mand1415",
       "primaryText": "Ta bei mao sha le.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Ta", "it"], ["bei", "PASS"], ["mao", "cat"], ["sha", "kill"], ["le", "LE"]
+      ],
       "translation": "It was killed by that cat.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 2, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "object"],
-        ["form", "bare"],
         ["topic", "nontopic"]
       ],
       "comment": "The mouse, not the cat, is the topic of A's question.",
@@ -730,17 +939,23 @@
       "language": "mand1415",
       "primaryText": "Ta bei na zhi mao sha le.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Ta", "it"], ["bei", "PASS"], ["na", "that"], ["zhi", "CLF"], ["mao", "cat"],
+        ["sha", "kill"], ["le", "LE"]
+      ],
       "translation": "It was killed by that cat.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 2, "length": 3, "label": "definite"},
+        {"start": 2, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "object"],
-        ["form", "demonstrative"],
         ["topic", "nontopic"]
       ],
       "comment": "The mouse, not the cat, is the topic of A's question.",
@@ -752,17 +967,21 @@
       "language": "mand1415",
       "primaryText": "Nansheng, wo hen bu xihuan.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Nansheng", "boy"], ["wo", "I"], ["hen", "really"], ["bu", "not"], ["xihuan", "like"]
+      ],
       "translation": "The boy, I really don't like.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "leftDislocated"],
-        ["form", "bare"],
         ["topic", "new"]
       ],
       "comment": "",
@@ -774,17 +993,23 @@
       "language": "mand1415",
       "primaryText": "Na ge nansheng, wo hen bu xihuan.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Na", "that"], ["ge", "CLF"], ["nansheng", "boy"], ["wo", "I"], ["hen", "really"],
+        ["bu", "not"], ["xihuan", "like"]
+      ],
       "translation": "The boy, I really don't like.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 3, "label": "definite"},
+        {"start": 0, "label": "determiner", "lexeme": "na"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "leftDislocated"],
-        ["form", "demonstrative"],
         ["topic", "new"]
       ],
       "comment": "",
@@ -796,17 +1021,22 @@
       "language": "mand1415",
       "primaryText": "Nansheng ne, wo hen bu xihuan.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Nansheng", "boy"], ["ne", "CT"], ["wo", "I"], ["hen", "really"], ["bu", "not"],
+        ["xihuan", "like"]
+      ],
       "translation": "The boy, I really don't like.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "5.3"],
         ["environment", "anaphoric"],
         ["position", "leftDislocated"],
-        ["form", "bare"],
         ["topic", "continuing"]
       ],
       "comment": "The contrastive topic marker ne makes the topic a continuing one.",
@@ -818,12 +1048,18 @@
       "language": "cant1236",
       "primaryText": "Lou5baan2 haa6zau3 lei5 gim2caa4 gung1zok3.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Lou5baan2", "boss"], ["haa6zau3", "afternoon"], ["lei5", "come"], ["gim2caa4", "inspect"],
+        ["gung1zok3", "work"]
+      ],
       "translation": "The boss is coming for an inspection this afternoon.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "largerSituation"],
@@ -838,12 +1074,18 @@
       "language": "cant1236",
       "primaryText": "Zung2tung2 gam1maan5 baat3 dim2 soeng5 din6si6.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Zung2tung2", "president"], ["gam1maan5", "tonight"], ["baat3", "eight"],
+        ["dim2", "o'clock"], ["soeng5", "get.on"], ["din6si6", "television"]
+      ],
       "translation": "The president is going to be on TV at 8 p.m.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "length": 1, "label": "definite"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "largerSituation"],
@@ -858,17 +1100,23 @@
       "language": "cant1236",
       "primaryText": "Keoi5 m4 jing6wai4 go3 zing3zi6gaa1 hou2 jau5ceoi3.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Keoi5", "3SG"], ["m4", "NOT"], ["jing6wai4", "think"], ["go3", "CLF"],
+        ["zing3zi6gaa1", "politician"], ["hou2", "very"], ["jau5ceoi3", "interesting"]
+      ],
       "translation": "He didn't think that the politician was very interesting.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 2, "label": "definite"},
+        {"start": 3, "length": 0, "label": "determiner", "lexeme": "clfN"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "anaphoric"],
-        ["position", "embeddedSubject"],
-        ["form", "classifier"]
+        ["position", "embeddedSubject"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -879,17 +1127,23 @@
       "language": "cant1236",
       "primaryText": "Keoi5 m4 jing6wai4 go2 go3 zing3zi6gaa1 hou2 jau5ceoi3.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Keoi5", "3SG"], ["m4", "NOT"], ["jing6wai4", "think"], ["go2", "that"], ["go3", "CLF"],
+        ["zing3zi6gaa1", "politician"], ["hou2", "very"], ["jau5ceoi3", "interesting"]
+      ],
       "translation": "He didn't think that the politician was very interesting.",
       "context": "",
       "judgment": "unacceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "length": 3, "label": "definite"},
+        {"start": 3, "label": "determiner", "lexeme": "go"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "anaphoric"],
-        ["position", "embeddedSubject"],
-        ["form", "demonstrative"]
+        ["position", "embeddedSubject"]
       ],
       "comment": "Cantonese demonstratives are restricted to specific anaphoric environments, as in (57c).",
       "verified": "page-image"
@@ -900,17 +1154,24 @@
       "language": "cant1236",
       "primaryText": "Mui5 go3 jau5 jat1 zek3 maa5 ge3 nung4fu1 daa2 zek3 maa5.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Mui5", "every"], ["go3", "CLF"], ["jau5", "have"], ["jat1", "one"], ["zek3", "CLF"],
+        ["maa5", "horse"], ["ge3", "REL"], ["nung4fu1", "farmer"], ["daa2", "hit"], ["zek3", "CLF"],
+        ["maa5", "horse"]
+      ],
       "translation": "Every farmer that has a horse hits that horse.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 9, "length": 2, "label": "definite"},
+        {"start": 9, "length": 0, "label": "determiner", "lexeme": "clfN"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "donkey"],
-        ["position", "object"],
-        ["form", "classifier"]
+        ["position", "object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -921,17 +1182,25 @@
       "language": "cant1236",
       "primaryText": "Hai2 Ou3baa1maa2 heoi3 gwo3 ge3 mui5 jat1 go3 sing4si5, keoi5 dou1 tung4 go3 si5zoeng2 gin3 gwo3 min6.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Hai2", "be.at"], ["Ou3baa1maa2", "Obama"], ["heoi3", "go"], ["gwo3", "PFV"],
+        ["ge3", "POSS"], ["mui5", "every"], ["jat1", "one"], ["go3", "CLF"], ["sing4si5", "city"],
+        ["keoi5", "she/he"], ["dou1", "all"], ["tung4", "with"], ["go3", "CLF"],
+        ["si5zoeng2", "mayor"], ["gin3", "see"], ["gwo3", "PFV"], ["min6", "face"]
+      ],
       "translation": "In every city that Obama visited, he met with the mayor (of that city).",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 12, "length": 2, "label": "definite"},
+        {"start": 12, "length": 0, "label": "determiner", "lexeme": "clfN"}
+      ],
       "paperFeatures": [
         ["section", "6.1"],
         ["environment", "largerSituation"],
-        ["position", "object"],
-        ["form", "classifier"]
+        ["position", "object"]
       ],
       "comment": "The mayor covaries with the city.",
       "verified": "page-image"

@@ -58,6 +58,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
 | `contrasts` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
+| `spans` | array of `{start, length, label, lexeme}`, optional | runs of `glossedTokens` the row marks, each naming the lexeme it is a form of where it is one (see Spans) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
 | `verified` | `"page-image"` or `"text-layer"`, optional | how the row was last checked against its source |
@@ -116,6 +117,44 @@ reading not declared, a row that judges one twice, and a level no row judges. A 
 its own reading type into the enum by a total function (`AghaJeretic2026.forceReading`). A paper
 whose readings are open-ended, paraphrases or scope orders over arbitrary operators, leaves them
 as strings.
+
+### Spans
+
+A row links its words to the lexical entries of a language by naming them, not by their spelling.
+A span marks a run of the row's `glossedTokens` by the position `start` of its first word, counted
+from zero, and its `length` (1 if omitted), under a `label`, and gives the `lexeme` the run is a
+form of where it is one. A span of length zero is an element the source's analysis posits without
+a word, such as a null article, placed before the word at `start`. The file declares the labels
+and the lexemes beside `features`:
+
+```json
+"spans": {"labels":  {"type": "SpanLabel", "doc": "...",
+                      "levels": [{"name": "definite", "label": "definite", "doc": "..."}, ...]},
+          "lexemes": {"type": "Lexeme", "doc": "...",
+                      "levels": [{"name": "na", "label": "na", "doc": "Mandarin na 'that'"}, ...]}}
+```
+
+and a row writes `"spans": [{"start": 3, "length": 3, "label": "definite"}, {"start": 3, "label":
+"determiner", "lexeme": "na"}]`. The generator rejects a span outside the gloss line, a label or
+lexeme not declared and a level no span names, and emits the two enums with the readers
+`Examples.label?` and `Examples.lexeme?` on `Datum.Span`. `Datum.Span.words` and `Datum.spansIn`
+in `Readers.lean` give the glossed words a span covers and the spans within a span.
+
+The data layer does not see the fragments, so a lexeme is the file's own identifier and the study
+gives its entry by a total function, `Examples.Lexeme.entry : Examples.Lexeme → Entry`. A lexeme
+without a case, or an entry the fragment no longer has, then fails to compile. The study states
+three checks beside its prediction, so that a wrong or forgotten span fails a theorem and does not
+pass as an unmarked word:
+
+* each lexeme a row names is an entry of the fragment of the row's language;
+* each span that names a lexeme is printed as the entry is written, under the transcription of
+  the source, which the fragment gives (`Mandarin.toneless`), or as a form the entry realizes;
+* within a marked phrase, no word written as an entry of the inventory goes unmarked.
+
+Spelling confirms a named entry and does not find one: transcriptions differ between sources and
+lose distinctions, as pinyin without tone marks writes several words alike. `Jenks2018.json` and
+`Studies/Jenks2018.lean` are the example. Most data files instead name the item under test in a
+column by its form; such a column becomes a span when its study is next audited.
 
 ## Languages
 

@@ -97,6 +97,9 @@ CUSTOM_COLUMNS = [
      "dc:description": "Other forms the paper judges in the same frame, with their marks."},
     {"name": "Readings", "datatype": "json",
      "dc:description": "The readings the paper distinguishes, with their marks."},
+    {"name": "Spans", "datatype": "json",
+     "dc:description": "Spans of the analyzed words, each with the position of its first word, its "
+                       "length, its label and the lexeme it is a form of."},
     {"name": "Paper_Features", "datatype": "json",
      "dc:description": "The paper's own classifications of the example, as key-value pairs."},
     {"name": "Verified",
@@ -173,6 +176,7 @@ def example_row(paper, row):
                          for a in row.get("contrasts", [])] or None,
         "Readings": [{"name": r["name"], "mark": MARK[r["judgment"]]}
                      for r in row.get("readings", [])] or None,
+        "Spans": row.get("spans") or None,
         "Paper_Features": features(row) or None,
         "Verified": row.get("verified"),
         "Method": (None if row.get("method") == "unclassified"

@@ -2,11 +2,13 @@ module
 
 public import Linglib.Data.Examples.Jenks2018
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Languages
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Genericity.NominalMappingParameter
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Mandarin.Pinyin
 public import Linglib.Fragments.Cantonese.Determiners
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Akan.Determiners
@@ -37,12 +39,17 @@ uniqueness alone.
   paper's donkey paraphrases, and `Definite.anaphoric` is its value at an index shifted to a
   property.
 * The environments are the paper's six, read as `Definite.Use`s, the donkey environment being an
-  anaphoric use under quantification. A demonstrative is licit where an index is available, and
-  [Clf-N] where an article marks the environment's presupposition.
+  anaphoric use under quantification.
+* A row marks its definite noun phrase and, within it, the determiner that heads it, naming the
+  determiner's lexeme. `Examples.Lexeme.entry` gives the fragment entry of each lexeme, and the
+  rows are checked against the fragments: each lexeme is [an entry of the row's
+  language](##entry_mem_inventory), each marked determiner is [printed as its entry is
+  written](##printed), and [no demonstrative of a noun phrase goes
+  unmarked](##demonstratives_marked).
 * A row's topic is the discourse status the paper assigns its noun phrase. For the subjects of the
   narrative sequences this is the paper's reading of them.
 * Cantonese bare titles, which the paper reads as proper names, are outside the principles, and
-  their rows record no form.
+  `licit_iff_not_rejected` leaves their rows out.
 
 ## TODO
 
@@ -143,16 +150,21 @@ def Examples.Environment.use : Examples.Environment → Definite.Use
   | .producerBridging => .bridging .relational
   | .anaphoric | .donkey => .anaphoric
 
-/-- A form is licit in a use: the bare noun by `BareLicit`, a demonstrative where the language has
-one and an index is available, and [Clf-N] where an article marks the presupposition of the use. -/
-def Licit (inv : Inventory) (u : Definite.Use) (continuing : Prop) : Examples.Form → Prop
-  | .bare => BareLicit inv u continuing
-  | .demonstrative => inv.Realizes .demonstrative ∧ u.strength = .familiarity
-  | .classifier => inv.Marks u.strength
+/-- A noun phrase is licit in a use by the determiner that heads it: a bare noun by `BareLicit`,
+a demonstrative where an index is available, and any other determiner where it marks the
+presupposition of the use. -/
+def Licit (inv : Inventory) (u : Definite.Use) (continuing : Prop) : Option Entry → Prop
+  | none => BareLicit inv u continuing
+  | some (.demonstrative _) => u.strength = .familiarity
+  | some d => d.Marks u.strength
 
 instance (inv : Inventory) (u : Definite.Use) (continuing : Prop) [Decidable continuing] :
-    DecidablePred (Licit inv u continuing) := fun f ↦ by
-  cases f <;> unfold Licit <;> infer_instance
+    DecidablePred (Licit inv u continuing)
+  | none => inferInstanceAs (Decidable (BareLicit inv u continuing))
+  | some (.demonstrative _) => inferInstanceAs (Decidable (_ = _))
+  | some (.article a) => inferInstanceAs (Decidable ((Entry.article a).Marks _))
+  | some (.quantifier q) => inferInstanceAs (Decidable ((Entry.quantifier q).Marks _))
+  | some (.possessive p) => inferInstanceAs (Decidable ((Entry.possessive p).Marks _))
 
 -- (23)
 theorem lexicalizes_iota_cantonese_not_mandarin :
@@ -167,21 +179,84 @@ def inventory? (e : Datum) : Option Inventory :=
   e.byLanguage [(.mandarinChinese, Mandarin.Determiners.inventory),
     (.cantonese, Cantonese.Determiners.inventory)]
 
+/-- The fragment entry that a lexeme of the data is. -/
+def Examples.Lexeme.entry : Examples.Lexeme → Entry
+  | .na => .demonstrative Mandarin.Determiners.na
+  | .zhe => .demonstrative Mandarin.Determiners.zhe
+  | .go => .demonstrative Cantonese.Determiners.go
+  | .clfN => .article Cantonese.Determiners.clfN
+
+/-- How the paper writes a form of the row's language, Mandarin without tone marks. -/
+def written (e : Datum) (form : String) : List Char :=
+  if e.language = .mandarinChinese then Mandarin.toneless form else form.toList
+
+/-- The word is written as the entry, a demonstrative, is. -/
+def WritesDemonstrative (e : Datum) (w : GlossedWord) : Entry → Prop
+  | .demonstrative d => w.wordform = written e d.form
+  | _ => False
+
+instance (e : Datum) (w : GlossedWord) : DecidablePred (WritesDemonstrative e w)
+  | .demonstrative _ => inferInstanceAs (Decidable (_ = _))
+  | .article _ | .quantifier _ | .possessive _ => inferInstanceAs (Decidable False)
+
+/-- The span is printed as its entry is written: a demonstrative as one word, its form, and the
+article exponed by a classifier phrase as no word, before a word glossed as a classifier. -/
+def Printed (e : Datum) (p : Datum.Span) : Entry → Prop
+  | .article a => a.exponent = .classifierPhrase ∧ p.length = 0 ∧
+      ∃ w ∈ e.glossedWords[p.start]?, w.gloss = "CLF".toList
+  | d => ∃ w, p.words e = [w] ∧ WritesDemonstrative e w d
+
+instance (e : Datum) (p : Datum.Span) : DecidablePred (Printed e p)
+  | .article _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  | .demonstrative d =>
+    decidable_of_iff (∃ w ∈ (p.words e).head?, p.words e = [w] ∧
+        WritesDemonstrative e w (.demonstrative d))
+      ⟨fun ⟨w, _, h⟩ ↦ ⟨w, h⟩, fun ⟨w, h⟩ ↦ ⟨w, by simp [h.1], h⟩⟩
+  | .quantifier _ | .possessive _ => isFalse fun ⟨_, _, h⟩ ↦ h
+
+/-- The determiner heading the row's definite noun phrase, none for a bare noun: the entry of the
+determiner the row marks within the phrase. -/
+def head? (e : Datum) : Option (Option Entry) :=
+  (e.spans.find? (Examples.label? · = some .definite)).map fun np ↦
+    ((e.spansIn np).find? (Examples.label? · = some .determiner)).bind fun p ↦
+      (Examples.lexeme? p).map (·.entry)
+
 /-- The judgment on the definite reading of a row's noun phrase: the row's mark, or the judgment
 of the reading where the paper judges it apart from the sentence. -/
 def definiteJudgment (e : Datum) : Judgment := (Examples.reading e .definite).getD e.judgment
 
-theorem rows_read :
-    (∀ e ∈ Examples.all, (inventory? e).isSome ∧ (Examples.environment e).isSome) ∧
-      Datum.ReadCount Examples.form Examples.all 37 := by
+-- every lexeme a row names is a determiner of the fragment of the row's language
+theorem entry_mem_inventory :
+    ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p,
+      ∃ d ∈ inv, d = l.entry := by
   decide
 
-/-- In the Mandarin data of Sections 3 to 5 and the Cantonese data of Section 6, a form is licit
-in its environment exactly when the paper does not reject it. -/
+-- every span that names a lexeme is printed as its entry is written
+theorem printed :
+    ∀ e ∈ Examples.all, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p, Printed e p l.entry := by
+  decide
+
+-- within a definite noun phrase, a word written as a demonstrative of the language is marked
+theorem demonstratives_marked :
+    ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ np ∈ e.spans,
+      Examples.label? np = some .definite → ∀ i < np.length,
+        ∀ w ∈ e.glossedWords[np.start + i]?, (∃ d ∈ inv, WritesDemonstrative e w d) →
+          ∃ p ∈ e.spansIn np, p.start = np.start + i ∧ (Examples.lexeme? p).isSome := by
+  decide
+
+-- every row is read, and nineteen of the noun phrases are headed by a determiner
+theorem rows_read :
+    (∀ e ∈ Examples.all, (inventory? e).isSome ∧ (Examples.environment e).isSome ∧
+        (head? e).isSome) ∧
+      Datum.ReadCount (fun e ↦ (head? e).join) Examples.all 19 := by
+  decide
+
+/-- In the Mandarin data of Sections 3 to 5 and the Cantonese [Clf-N] data of Section 6, a noun
+phrase is licit in its environment exactly when the paper does not reject it. -/
 theorem licit_iff_not_rejected :
     ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ env ∈ Examples.environment e,
-      ∀ f ∈ Examples.form e, (e.language = .cantonese → f ≠ .demonstrative) →
-        (Licit inv env.use (Examples.topic e = some .continuing) f ↔
+      ∀ d ∈ head? e, (e.language = .cantonese → d.map Entry.kind = some .article) →
+        (Licit inv env.use (Examples.topic e = some .continuing) d ↔
           (definiteJudgment e).band ≠ .rejected) := by
   decide
 

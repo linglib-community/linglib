@@ -22,14 +22,28 @@ definite parallel to English *the*.
 
 namespace Cantonese.Determiners
 
-/-- The Cantonese determiners are the syncretic [Clf-N] definite, the
-    [jat-Clf-N] indefinite, and the demonstrative paradigm (*nei*). -/
+/-- The bare classifier phrase [Clf-N], the definite of unique and anaphoric environments
+alike. -/
+def clfN : Article :=
+  { form := "Clf-N", definiteness := {.definite}, exponent := .classifierPhrase,
+    uses := {.immediateSituation, .largerSituation, .anaphoric} }
+
+/-- The numeral-classifier phrase [jat-Clf-N], the indefinite. -/
+def jatClfN : Article :=
+  { form := "jat-Clf-N", definiteness := {.nonSpecific, .specific},
+    exponent := .numeralClassifier }
+
+/-- *nei* 'this', the proximal demonstrative, which stands before a classifier. -/
+def nei : DemonstrativeDeterminer := { form := "nei", deixis := Person.first.participantSets }
+
+/-- *go²* 'that', the distal demonstrative, which stands before a classifier; [jenks-2018]
+finds it restricted to particular anaphoric environments. -/
+def go : DemonstrativeDeterminer := { form := "go2", deixis := Person.first.participantSetsᶜ }
+
+/-- The Cantonese determiners are the syncretic [Clf-N] definite, the [jat-Clf-N] indefinite and
+the demonstratives. -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "Clf-N", definiteness := {.definite}, exponent := .classifierPhrase,
-               uses := {.immediateSituation, .largerSituation, .anaphoric} },
-    .article { form := "jat-Clf-N", definiteness := {.nonSpecific, .specific},
-               exponent := .numeralClassifier },
-    .demonstrative { form := "nei", deixis := Person.first.participantSets } ]
+  [.article clfN, .article jatClfN, .demonstrative nei, .demonstrative go]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 

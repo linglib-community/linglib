@@ -19,8 +19,9 @@ The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a top-level JSON array of example objects, or an object
-`{"features": [...], "readings": {...}, "examples": [...]}` that also declares the paper's
-feature taxonomy and its readings (see Typed features and Typed readings below). Each
+`{"features": [...], "readings": {...}, "spans": {...}, "examples": [...]}` that also declares
+the paper's feature taxonomy, its readings and the labels and lexemes of its spans (see Typed
+features, Typed readings and Spans below). Each
 object's keys are the fields of the `Datum` Lean struct, plus the
 record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
@@ -40,6 +41,8 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "contrasts": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
+    "spans":        [{"start": 3, "length": 3, "label": "definite"},     // optional: runs of
+                     {"start": 3, "label": "determiner", "lexeme": "na"}], // `glossedTokens`
     "paperFeatures": [["key", "value"], ...],  // the paper's own columns
     "comment": "..."
   }
@@ -99,6 +102,21 @@ and every level is judged in some row. The module emits the enum, its `label` an
 `reading : Datum → Reading → Option Judgment`, so that a study names a reading by a constructor
 and a name that drifts fails here. A paper that does not declare its readings keeps them as
 strings.
+
+Spans: a row's `spans` mark runs of its `glossedTokens`, each by the `start`, the position of its first word,
+and its `length` (1 if omitted, 0 for an element the source's analysis posits without a word),
+under a `label`, with the `lexeme` the span is a form of where it is one. A file whose rows have
+spans declares their labels and lexemes beside `features`:
+
+  "spans": {"labels":   {"type": "SpanLabel", "doc": "...", "levels": [{"name": "definite", ...}]},
+            "lexemes": {"type": "Lexeme", "doc": "...", "levels": [{"name": "na", ...}]}}
+
+Every label and lexeme a span names must be a declared level, every level is named by some span,
+and a span lies within the row's gloss line. The module emits the two enums and the readers
+`label? : Datum.Span → Option SpanLabel` and `lexeme? : Datum.Span → Option Lexeme`, so that a study
+maps each lexeme to its entry in a language's fragment by a total function: the row names the
+entry, and the study proves that the span is written as the entry is, rather than finding the
+entry by its spelling.
 
 Dependencies: pure stdlib (json module).
 """
@@ -344,6 +362,23 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     contrasts   = emit_form_judgment_list(ex.get("contrasts", []), where + ".contrasts", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
+    spans_line  = ""
+    span_items  = []
+    for i, p in enumerate(ex.get("spans", [])):
+        w = f"{where}.spans[{i}]"
+        if (not isinstance(p, dict) or set(p) - {"start", "length", "label", "lexeme"}
+                or not isinstance(p.get("label"), str)
+                or not isinstance(p.get("lexeme", ""), str)):
+            raise ValueError(f"{w}: expected `start`, `label` and optionally `length` and `lexeme`")
+        idx, ln = p.get("start"), p.get("length", 1)
+        if type(idx) is not int or type(ln) is not int or idx < 0 or ln < 0:
+            raise ValueError(f"{w}: `start` and `length` are natural numbers")
+        if idx + ln > len(pairs_) or idx + max(ln, 1) > len(pairs_):
+            raise ValueError(f"{w}: the span lies outside the {len(pairs_)} words of the gloss line")
+        lex = "none" if "lexeme" not in p else f"some {lean_string(p['lexeme'])}"
+        span_items.append(f"⟨{idx}, {ln}, {lean_string(p['label'])}, {lex}⟩")
+    if span_items:
+        spans_line = f"\n    spans := [{', '.join(span_items)}]"
     raw = ex.get("paperFeatures", [])
     pairs = raw.items() if isinstance(raw, dict) else [
         (e[0], e[1]) if isinstance(e, list) else (e["key"], e["value"]) for e in raw]
@@ -365,7 +400,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     context := {lean_string(context)}
     judgment := {judgment}{verdict_line}
     contrasts := {contrasts}
-    readings := {readings}
+    readings := {readings}{spans_line}
     paperFeatures := {features} }}"""
 
 
@@ -374,15 +409,15 @@ TYPE_IDENT = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 
 
 def split_data(data, where: str):
-    """The declared features, the declared readings (or `None`) and the example rows of a
-    paper's JSON."""
+    """The declared features, the declared readings (or `None`), the declared labels and lexemes
+    of spans (or `None`) and the example rows of a paper's JSON."""
     if isinstance(data, list):
-        return [], None, data
-    if (isinstance(data, dict) and set(data) <= {"features", "readings", "examples"}
+        return [], None, None, data
+    if (isinstance(data, dict) and set(data) <= {"features", "readings", "spans", "examples"}
             and "examples" in data):
-        return data.get("features", []), data.get("readings"), data["examples"]
+        return data.get("features", []), data.get("readings"), data.get("spans"), data["examples"]
     raise ValueError(f"{where}: top level must be an array of examples or an object with "
-                     f"`examples` and optionally `features` and `readings`")
+                     f"`examples` and optionally `features`, `readings` and `spans`")
 
 
 def validate_levels(levels: list, w: str) -> set:
@@ -459,6 +494,68 @@ def validate_features(features: list, examples: list, where: str) -> None:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
 
 
+SPAN_KINDS = (("labels", "label"), ("lexemes", "lexeme"))
+
+
+def validate_spans(decl, features: list, readings, examples: list, where: str) -> None:
+    w = f"{where}.spans"
+    if decl is None:
+        for ex in examples:
+            if ex.get("spans"):
+                raise ValueError(f"{where}: {ex.get('id')} has spans but the file declares no "
+                                 f"`spans` with their labels and lexemes")
+        return
+    if "labels" not in decl or set(decl) - {"labels", "lexemes"}:
+        raise ValueError(f"{w}: needs `labels` and optionally `lexemes`")
+    taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
+    names = {ft["lean"] for ft in features} | ({readings["lean"]} if readings else set())
+    if names & {"label?", "lexeme?"}:
+        raise ValueError(f"{w}: a feature or the readings use the reader name `label?` or `lexeme?`")
+    for kind, key in SPAN_KINDS:
+        d = decl.get(kind)
+        if d is None:
+            continue
+        if set(d) != {"type", "doc", "levels"}:
+            raise ValueError(f"{w}.{kind}: needs exactly `type`, `doc` and `levels`")
+        if not TYPE_IDENT.match(d["type"]) or d["type"] in taken:
+            raise ValueError(f"{w}.{kind}: `type` {d['type']!r} is not a fresh Lean type name")
+        taken.add(d["type"])
+        labels = validate_levels(d["levels"], f"{w}.{kind}")
+        seen = set()
+        for ex in examples:
+            for p in ex.get("spans", []):
+                if key in p:
+                    if p[key] not in labels:
+                        raise ValueError(f"{where}: {ex.get('id')}: {key} {p[key]!r} is not a "
+                                         f"declared level of {d['type']}")
+                    seen.add(p[key])
+        if seen != labels:
+            raise ValueError(f"{w}.{kind}: no span names {sorted(labels - seen)}")
+    if "lexemes" not in decl and any("lexeme" in p for ex in examples for p in ex.get("spans", [])):
+        raise ValueError(f"{w}: a span names a lexeme but the file declares no `lexemes`")
+
+
+def emit_spans(decl: dict) -> str:
+    out = []
+    for kind, key in SPAN_KINDS:
+        d = decl.get(kind)
+        if d is None:
+            continue
+        ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in d["levels"])
+        table = ", ".join(f"({lean_string(lv['label'])}, .{lv['name']})" for lv in d["levels"])
+        if key == "label":
+            reader = (f"/-- The label of a span, where it is a declared one. -/\n"
+                      f"def label? (p : Datum.Span) : Option {d['type']} :=\n"
+                      f"  List.lookup p.label [{table}]")
+        else:
+            reader = (f"/-- The lexeme a span is a form of, where it names a declared one. -/\n"
+                      f"def lexeme? (p : Datum.Span) : Option {d['type']} :=\n"
+                      f"  p.lexeme.bind (List.lookup · [{table}])")
+        out.append(f"/-- {d['doc']} -/\ninductive {d['type']} where\n{ctors}\n"
+                   f"  deriving DecidableEq, Repr, Fintype\n\n{reader}")
+    return "\n\n".join(out)
+
+
 def emit_feature(ft: dict) -> str:
     ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in ft["levels"])
     entries = [f"({lean_string(lv['label'])}, .{lv['name']})" for lv in ft["levels"]]
@@ -496,7 +593,7 @@ def emit_readings(rd: dict) -> str:
 
 
 def emit_module(author_year: str, examples: list, features: list | None = None,
-                readings: dict | None = None) -> str:
+                readings: dict | None = None, spans: dict | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -516,9 +613,12 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
     feats = "".join("\n\n" + emit_feature(ft) for ft in features)
     if readings is not None:
         feats += "\n\n" + emit_readings(readings)
+    if spans is not None:
+        feats += "\n\n" + emit_spans(spans)
+    typed = features or readings is not None or spans is not None
     imports = "import Linglib.Data.Examples.Schema" + (
         "\nimport Linglib.Data.Examples.Readers" if features else "") + (
-        "\nimport Mathlib.Tactic.DeriveFintype" if features or readings is not None else "")
+        "\nimport Mathlib.Tactic.DeriveFintype" if typed else "")
 
     return f"""{imports}
 
@@ -560,11 +660,12 @@ def process(author_year: str, check: bool) -> bool:
 
     try:
         where = str(json_path.relative_to(ROOT))
-        features, readings, examples = split_data(examples, where)
+        features, readings, spans, examples = split_data(examples, where)
         validate_features(features, examples, where)
         validate_readings(readings, features, examples, where)
+        validate_spans(spans, features, readings, examples, where)
         module_text = as_module_if_possible(
-            emit_module(author_year, examples, features, readings))
+            emit_module(author_year, examples, features, readings, spans))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -688,7 +789,7 @@ def process_languages(check: bool) -> bool:
 KEY_ORDER = [
     "id", "source", "reportedIn", "method", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
-    "judgment", "verdict", "contrasts", "readings", "paperFeatures", "comment",
+    "judgment", "verdict", "contrasts", "readings", "spans", "paperFeatures", "comment",
     "verified",
 ]
 
@@ -747,7 +848,7 @@ def _fmt_value(key: str, v, indent: str) -> str:
     if isinstance(v, list):
         if key == "glossedTokens":
             return _fmt_inline_list([_j(x) for x in v], indent)
-        if key in ("paperFeatures", "contrasts", "readings"):
+        if key in ("paperFeatures", "contrasts", "readings", "spans"):
             items = [
                 _fmt_obj_inline(x) if isinstance(x, dict) else _j(x) for x in v
             ]
@@ -781,11 +882,11 @@ def fmt(author_year: str) -> bool:
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
     if isinstance(data, dict):
-        features, readings, examples = split_data(data, str(json_path))
+        features, readings, spans, examples = split_data(data, str(json_path))
         body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
         head = ""
         for key, val in (("features", features if "features" in data else None),
-                         ("readings", readings)):
+                         ("readings", readings), ("spans", spans)):
             if val is not None:
                 dumped = json.dumps(val, ensure_ascii=False, indent=2).replace("\n", "\n  ")
                 head += f'  "{key}": {dumped},\n'
