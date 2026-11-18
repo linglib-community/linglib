@@ -141,19 +141,9 @@ positive mass on every color (Eq. 5). -/
 theorem capacityAchieving_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔
       ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
-  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
-  have hC : (0 : ℝ) < Fintype.card C := by exact_mod_cast Fintype.card_pos
   rw [eq_channelCapacity_iff_eq_tilted, eq_tilted_iff]
-  simp_rw [uniformOn_univ_real_singleton, ← neg_expectedSurprisal]
-  constructor
-  · rintro ⟨Z, hZ, h⟩
-    refine ⟨Z * Fintype.card C, by positivity, fun c => ?_⟩
-    rw [h]
-    field_simp
-  · rintro ⟨Z, hZ, h⟩
-    refine ⟨Z / Fintype.card C, by positivity, fun c => ?_⟩
-    rw [h]
-    field_simp
+  simp_rw [measureReal_def Measure.count, Measure.count_singleton, ENNReal.toReal_one, one_mul,
+    ← neg_expectedSurprisal]
 
 end Capacity
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -10,33 +10,24 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 /-!
 # The softmax kernel of an extended-real score
 
-This file defines `ProbabilityTheory.Kernel.softmax`, the kernel whose row at `w` is proportional
-to the exponential of an extended-real score. A point of score `⊥` gets no mass, so the score
-both ranks the points and says which of them are available.
+`ProbabilityTheory.Kernel.softmax` is the kernel whose row at `w` is proportional to the exponential
+of an extended-real score. A point of score `⊥` gets no mass, so the score both ranks the points and
+says which of them are available. Normalizing powers of weights [is the
+softmax](##ProbabilityTheory.Kernel.ofWeights_rpow_eq_softmax) of the scaled logarithms of the
+weights. Within a row, [preference is score
+comparison](##ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff), and with two available points
+the share of one [is the logistic
+function](##ProbabilityTheory.Kernel.softmax_real_singleton_of_pair) of the score difference.
+Scaling the score by a growing rationality [concentrates the
+row](##ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_atTop) on the strict maximizer,
+and by a vanishing one [makes it
+uniform](##ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_nhdsGT_zero) on the available
+points.
 
-## Main definitions
-
-* `ProbabilityTheory.Kernel.softmax`: the weight kernel of `EReal.exp (score w u)`.
-
-## Main results
-
-* `ProbabilityTheory.Kernel.softmax_coe_eq_count_tilted`,
-  `ProbabilityTheory.Kernel.softmax_coe_real_singleton`: a real score gives each row the counting
-  measure tilted by the score, whose atoms are `Real.softmax` of the score.
-* `ProbabilityTheory.Kernel.ofWeights_rpow_mul_eq_softmax`,
-  `ProbabilityTheory.Kernel.ofWeights_rpow_eq_softmax`: normalizing powers of weights is the
-  softmax of the scaled logarithms of the weights.
-* `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
-* `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
-  of one is the logistic function of the score difference.
-* `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_atTop`,
-  `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_nhdsGT_zero`: at a growing
-  rationality the rule concentrates on the strict maximizer of the utility, and at a vanishing one
-  it is uniform on the available points.
-* `ProbabilityTheory.Kernel.softmax_eq_tilted`,
-  `ProbabilityTheory.Kernel.isGreatest_freeEnergy_softmax`: a row is the uniform measure on the
-  available points tilted by the score, and so maximizes the expected score less the divergence
-  from that uniform measure, by the Gibbs variational principle.
+A row [is the uniform measure](##ProbabilityTheory.Kernel.softmax_eq_tilted) on the available points
+tilted by the score, and for a real score it [is the counting
+measure](##ProbabilityTheory.Kernel.softmax_coe_eq_count_tilted) tilted by the score, whose atoms
+[are](##ProbabilityTheory.Kernel.softmax_coe_real_singleton) `Real.softmax` of the score.
 -/
 
 @[expose] public section
@@ -61,6 +52,13 @@ theorem coe_mul_sub_coe (r c : ℝ) (x : EReal) :
     · simp
     · rw [top_sub_coe, coe_mul_top_of_pos h, top_sub_coe]
   | coe x => norm_cast; ring_nf
+
+/-- The logarithm of the exponential is the real part, also at `⊥` and `⊤`, where both are `0`. -/
+theorem log_toReal_exp (x : EReal) : Real.log (exp x).toReal = x.toReal := by
+  induction x with
+  | bot => simp
+  | top => simp
+  | coe x => rw [exp_coe, ENNReal.toReal_ofReal (Real.exp_pos x).le, Real.log_exp, toReal_coe]
 
 end EReal
 
@@ -253,10 +251,23 @@ end Limit
 
 section Gibbs
 
-open InformationTheory
-
 variable [Countable α] [MeasurableSingletonClass α] [Fintype β] [MeasurableSingletonClass β]
   {score : α → β → EReal} {w : α}
+
+/-- On a finite type, normalizing the atoms of `ν` reweighted by the exponential of `f` gives the
+tilt of `ν` by `f`. -/
+theorem ofWeights_apply_eq_tilted (ν : Measure β) [IsFiniteMeasure ν] [NeZero ν]
+    {w : α → β → ℝ≥0∞} {i : α} {f : β → ℝ}
+    (hw : ∀ a, w i a = ν {a} * ENNReal.ofReal (Real.exp (f a))) :
+    ofWeights w i = ν.tilted f := by
+  have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite
+  have hfin (a : β) : w i a ≠ ∞ := by
+    rw [hw]
+    exact ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
+  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
+  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
+    ← measureReal_def, ofWeights_real_singleton _ _ hfin, tilted_real_singleton]
+  simp only [hw, ENNReal.toReal_mul, ENNReal.toReal_ofReal, Real.exp_nonneg, ← measureReal_def]
 
 /-- A row of the softmax kernel is the uniform measure on the points of score above `⊥`, tilted by
 the score. -/
@@ -310,29 +321,6 @@ theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u'
         (softmax (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
   have : Nonempty β := ⟨u⟩
   rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
-
-theorem freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
-    (uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (softmax score w) =
-      cgf (fun u ↦ (score w u).toReal) (uniformOn {u | score w u ≠ ⊥}) 1 := by
-  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [softmax_eq_tilted htop h0]
-  exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
-
-/-- A row of the softmax kernel is the Gibbs optimizer. Among the distributions absolutely
-continuous with respect to the uniform measure on the points of score above `⊥`, it has the
-greatest expected score less divergence from that uniform measure. -/
-theorem isGreatest_freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤)
-    (h0 : ∃ u, score w u ≠ ⊥) :
-    IsGreatest ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal) ''
-        {q | IsProbabilityMeasure q ∧ q ≪ uniformOn {u | score w u ≠ ⊥} ∧
-          Integrable (llr q (uniformOn {u | score w u ≠ ⊥})) q ∧
-          Integrable (fun u ↦ (score w u).toReal) q})
-      ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (softmax score w)) := by
-  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [freeEnergy_softmax htop h0]
-  exact isGreatest_cgf _ .of_finite .of_finite .of_finite
 
 end Gibbs
 

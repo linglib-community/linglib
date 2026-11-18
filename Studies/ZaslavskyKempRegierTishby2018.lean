@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.InformationTheory.KullbackLeibler.Tilted
 public import Linglib.Core.Order.Pareto
 public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 
@@ -65,12 +65,12 @@ eq. S13).
   infinite divergence gives weight zero as in eq. 7. For meanings of full support every
   divergence is finite and each row is the word marginal tilted by `−β D[m ‖ m̂_w]`
   (`ibUpdate_apply_eq_tilted`), and `isIBOptimum_of_forall_objective_le` is the Gibbs variational
-  principle of `Core.Probability.GibbsVariational` applied to each row. `F_β + β I(M;U)` is the
-  source average of the negative free energies of the encoder's rows against its own word
-  marginal and Bayesian decoder, and at most that average against any other; each row's free
-  energy is at most its log partition function, with equality only at the tilt
-  (`eq_tilted_of_freeEnergy_eq_cgf`). The theorem assumes a source and meanings of full
-  support, as the paper's Gaussian meanings are.
+  principle (`InformationTheory.integral_sub_toReal_klDiv_le_log_integral_exp`) applied to each
+  row. `F_β + β I(M;U)` is the source average of the negative free energies of the encoder's rows
+  against its own word marginal and Bayesian decoder, and at most that average against any other;
+  each row's free energy is at most its log partition function, with equality only at the tilt
+  (`InformationTheory.integral_sub_toReal_klDiv_eq_log_integral_exp_iff`). The theorem assumes a
+  source and meanings of full support, as the paper's Gaussian meanings are.
 * The efficiency loss `ε_l` divides the minimal deviation by the fitted `β_l`; the fit itself is
   a numerical optimization outside the formalization. The empirical encoders of the World Color
   Survey are not in the library.
@@ -321,25 +321,25 @@ theorem IsIBOptimum.real_pos {β : ℝ} (hmeanings : ∀ m u, meanings m {u} ≠
     (measure_ne_top _ _)
 
 omit [Nonempty M] [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-private theorem neg_sum_freeEnergy (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
-    (d : Kernel W U) (β : ℝ) :
+private theorem neg_sum_integral_sub_toReal_klDiv (q : Kernel M W) [IsMarkovKernel q]
+    (ρ : Measure W) (d : Kernel W U) (β : ℝ) :
     -∑ m, source.real {m}
-        * ρ.freeEnergy (fun w => -β * (klDiv (meanings m) (d w)).toReal) (q m)
+        * (∫ w, -β * (klDiv (meanings m) (d w)).toReal ∂(q m) - (klDiv (q m) ρ).toReal)
       = ∑ m, source.real {m} * (klDiv (q m) ρ).toReal
         + β * ∫ p, (klDiv (meanings p.1) (d p.2)).toReal ∂(source ⊗ₘ q) := by
   rw [integral_compProd, mul_sum, ← sum_add_distrib, ← sum_neg_distrib]
   refine sum_congr rfl fun m _ => ?_
-  simp only [Measure.freeEnergy, integral_fintype .of_finite, smul_eq_mul, mul_sum]
+  simp only [integral_fintype .of_finite, smul_eq_mul, mul_sum]
   rw [mul_sub, mul_sum, neg_sub, sub_eq_add_neg, ← sum_neg_distrib]
   congr 1
   exact sum_congr rfl fun w _ => by ring
 
 private theorem objective_add_eq (β : ℝ) :
     objective meanings source encoder β + β * sourceInfo meanings source
-      = -∑ m, source.real {m} * (encoder ∘ₘ source).freeEnergy
-          (fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
-          (encoder m) := by
-  rw [neg_sum_freeEnergy, ← complexity_eq, ← distortion, distortion_eq, objective]
+      = -∑ m, source.real {m} *
+          (∫ w, -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal ∂(encoder m)
+            - (klDiv (encoder m) (encoder ∘ₘ source)).toReal) := by
+  rw [neg_sum_integral_sub_toReal_klDiv, ← complexity_eq, ← distortion, distortion_eq, objective]
   ring
 
 private theorem objective_add_le (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
@@ -347,8 +347,8 @@ private theorem objective_add_le (q : Kernel M W) [IsMarkovKernel q] (ρ : Measu
     (hd : ∀ m w, meanings m ≪ d w) {β : ℝ} (hβ : 0 ≤ β) :
     objective meanings source q β + β * sourceInfo meanings source
       ≤ -∑ m, source.real {m}
-          * ρ.freeEnergy (fun w => -β * (klDiv (meanings m) (d w)).toReal) (q m) := by
-  rw [neg_sum_freeEnergy, sum_mul_toReal_klDiv q source ρ fun m _ => hq m, objective,
+          * (∫ w, -β * (klDiv (meanings m) (d w)).toReal ∂(q m) - (klDiv (q m) ρ).toReal) := by
+  rw [neg_sum_integral_sub_toReal_klDiv, sum_mul_toReal_klDiv q source ρ fun m _ => hq m, objective,
     complexity]
   have h := mul_le_mul_of_nonneg_left (distortion_le meanings source q d hd) hβ
   rw [distortion_eq] at h
@@ -365,17 +365,17 @@ theorem isIBOptimum_of_forall_objective_le {β : ℝ} (hβ : 0 ≤ β)
   have hq (m : M) : encoder m ≪ encoder ∘ₘ source :=
     encoder.absolutelyContinuous_comp source (hsource m)
   -- each row's free energy is at most the log partition function, attained at the Boltzmann row
-  have hle (m : M) := freeEnergy_le_cgf (encoder ∘ₘ source) (encoder m)
+  have hle (m : M) := integral_sub_toReal_klDiv_le_log_integral_exp (μ := encoder ∘ₘ source)
     (f := fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
     (hq m) .of_finite .of_finite .of_finite
-  have hg (m : M) := freeEnergy_tilted (encoder ∘ₘ source)
+  have hg (m : M) := toReal_klDiv_tilted_left_self (μ := encoder ∘ₘ source)
     (f := fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
-    .of_finite .of_finite .of_finite
+    .of_finite .of_finite
   -- minimality forces the average to be attained too
-  have hsum : ∑ m, source.real {m} * (cgf (fun w => -β * (klDiv (meanings m)
-        (decoder meanings source encoder w)).toReal) (encoder ∘ₘ source) 1
-      - (encoder ∘ₘ source).freeEnergy (fun w => -β * (klDiv (meanings m)
-        (decoder meanings source encoder w)).toReal) (encoder m)) ≤ 0 := by
+  have hsum : ∑ m, source.real {m} * (log (∫ w, exp (-β * (klDiv (meanings m)
+        (decoder meanings source encoder w)).toReal) ∂(encoder ∘ₘ source))
+      - (∫ w, -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal ∂(encoder m)
+        - (klDiv (encoder m) (encoder ∘ₘ source)).toReal)) ≤ 0 := by
     have := isMarkovKernel_ibUpdate meanings source encoder hmeanings β
     have := objective_add_le meanings source (ibUpdate meanings source encoder β)
       (encoder ∘ₘ source) (fun m => by
@@ -383,12 +383,15 @@ theorem isIBOptimum_of_forall_objective_le {β : ℝ} (hβ : 0 ≤ β)
         exact tilted_absolutelyContinuous _ _)
       (decoder meanings source encoder) (absolutelyContinuous_decoder meanings source encoder
         hmeanings) hβ
-    simp only [ibUpdate_apply_eq_tilted meanings source encoder hmeanings, hg] at this
-    simp only [mul_sub, sum_sub_distrib]
-    linarith [objective_add_eq meanings source encoder β, hmin (ibUpdate meanings source encoder β)]
+    simp only [ibUpdate_apply_eq_tilted meanings source encoder hmeanings, hg,
+      sub_sub_cancel] at this
+    have he := objective_add_eq meanings source encoder β
+    simp only [mul_sub, sum_sub_distrib] at he ⊢
+    linarith [hmin (ibUpdate meanings source encoder β)]
   refine Kernel.ext fun m => ?_
   rw [ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
-  refine eq_tilted_of_freeEnergy_eq_cgf _ _ (hq m) .of_finite .of_finite .of_finite
+  refine (integral_sub_toReal_klDiv_eq_log_integral_exp_iff (hq m) .of_finite .of_finite
+    .of_finite).1
     (le_antisymm (hle m) ?_)
   have := (sum_eq_zero_iff_of_nonneg fun m _ => mul_nonneg measureReal_nonneg
     (sub_nonneg.2 (hle m))).1 (hsum.antisymm (sum_nonneg fun m _ => mul_nonneg

@@ -130,7 +130,6 @@ import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Distributions.Bernoulli
-import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior

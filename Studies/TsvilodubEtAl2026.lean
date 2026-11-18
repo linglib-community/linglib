@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Semantics.Questions.Value
 public import Studies.DongEtAl2026
 public import Mathlib.Probability.Distributions.Bernoulli

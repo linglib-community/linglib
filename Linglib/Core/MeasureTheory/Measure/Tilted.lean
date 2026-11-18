@@ -2,29 +2,22 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Mathlib.MeasureTheory.Measure.Real
-public import Linglib.Core.Probability.Kernel.OfWeights
 public import Mathlib.MeasureTheory.Measure.Tilted
 public import Mathlib.Probability.UniformOn
 
 /-!
 # Tilted measures
 
-Tilting is invariant under scaling the measure, `(c • μ).tilted f = μ.tilted f` for a finite
-nonzero `c`, since the normalization absorbs the factor. On a finite type the tilt reweights each
-atom by the exponential of `f` and renormalizes, so tilting the counting measure, or the uniform
-measure, gives `Real.softmax f`.
-
-## Main results
-
-* `MeasureTheory.tilted_smul`: tilting is invariant under scaling the measure.
-* `MeasureTheory.tilted_real_singleton`, `MeasureTheory.count_tilted_real_singleton`: the tilted
-  measure of an atom on a finite type.
-* `MeasureTheory.uniformOn_univ_tilted`: tilting the uniform measure on a finite type is tilting
-  the counting measure.
-* `MeasureTheory.eq_tilted_iff`: a measure on a finite type is a tilt exactly when its atoms are
-  proportional to the reweighted ones.
-* `ProbabilityTheory.Kernel.ofWeights_apply_eq_tilted`: normalizing the reweighted atoms gives
-  the tilt.
+Tilting [is invariant](##MeasureTheory.tilted_smul) under scaling the measure, `(c • μ).tilted f =
+μ.tilted f` for a finite nonzero `c`, since the normalization absorbs the factor; so tilting the
+uniform measure on a finite type [is tilting](##MeasureTheory.uniformOn_univ_tilted) the counting
+measure. On a finite type the tilt [reweights each atom](##MeasureTheory.tilted_real_singleton) by
+the exponential of `f` and renormalizes, a probability measure [is a
+tilt](##MeasureTheory.eq_tilted_iff) exactly when its atoms are proportional to the reweighted ones,
+and the counting measure tilted by `f` [gives each
+point](##MeasureTheory.count_tilted_real_singleton) the mass `Real.softmax f`, which is positive, so
+that [every measure](##MeasureTheory.absolutelyContinuous_count_tilted) is absolutely continuous
+with respect to it.
 -/
 
 public section
@@ -97,27 +90,18 @@ theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMe
     rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
       ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
 
-/-- On a finite type, normalizing the atoms of `ν` reweighted by the exponential of `f` gives the
-tilt of `ν` by `f`. -/
-theorem _root_.ProbabilityTheory.Kernel.ofWeights_apply_eq_tilted {ι : Type*} [MeasurableSpace ι]
-    [Countable ι] [MeasurableSingletonClass ι] (ν : Measure α) [IsFiniteMeasure ν] [NeZero ν]
-    {w : ι → α → ℝ≥0∞} {i : ι} {f : α → ℝ}
-    (hw : ∀ a, w i a = ν {a} * ENNReal.ofReal (Real.exp (f a))) :
-    Kernel.ofWeights w i = ν.tilted f := by
-  have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite
-  have hfin (a : α) : w i a ≠ ∞ := by
-    rw [hw]
-    exact ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
-  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
-  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
-    ← measureReal_def, Kernel.ofWeights_real_singleton _ _ hfin, tilted_real_singleton]
-  simp only [hw, ENNReal.toReal_mul, ENNReal.toReal_ofReal, Real.exp_nonneg, ← measureReal_def]
+/-- On a finite type every measure is absolutely continuous with respect to a tilt of the counting
+measure, which gives every point positive mass. -/
+theorem absolutelyContinuous_count_tilted (μ : Measure α) (f : α → ℝ) :
+    μ ≪ Measure.count.tilted f :=
+  (Measure.AbsolutelyContinuous.mk fun s _ hs ↦ by
+    rw [Measure.count_eq_zero_iff.1 hs, measure_empty]).trans
+      (absolutelyContinuous_tilted .of_finite)
 
 /-- On a finite type, the counting measure tilted by `f` gives each point its softmax
 probability. -/
 theorem count_tilted_real_singleton (f : α → ℝ) (a : α) :
     (Measure.count.tilted f).real {a} = Real.softmax f a := by
   simp [tilted_real_singleton, Real.softmax_apply]
-
 
 end MeasureTheory

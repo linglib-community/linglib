@@ -10,7 +10,7 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Entropy.Basic
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.MeasureTheory.Constructions.Pi
@@ -152,12 +152,8 @@ theorem maxEnt_real_singleton_pos (c : C) : 0 < (maxEnt T w).real {c} := by
   rw [maxEnt_real_singleton]
   exact softmax_pos _ c
 
-theorem absolutelyContinuous_maxEnt (q : Measure C) : q ≪ maxEnt T w := by
-  refine Measure.AbsolutelyContinuous.mk fun s _ hs ↦ ?_
-  rcases s.eq_empty_or_nonempty with rfl | ⟨c, hc⟩
-  · simp
-  · exact absurd (measure_mono_null (Set.singleton_subset_iff.2 hc) hs) fun h0 ↦
-      (maxEnt_real_singleton_pos T w c).ne' (by simp [measureReal_def, h0])
+theorem absolutelyContinuous_maxEnt (q : Measure C) : q ≪ maxEnt T w :=
+  absolutelyContinuous_count_tilted q _
 
 theorem log_maxEnt_real_singleton (c : C) :
     log ((maxEnt T w).real {c}) = harmony T w c - logPartition T w := by
