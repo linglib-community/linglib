@@ -44,7 +44,7 @@ def endings : Paradigm (List Segment) :=
 person. -/
 theorem realize_eq_realize_iff :
     ∀ p ∈ Bundle.personNumberCells, ∀ q ∈ Bundle.personNumberCells,
-      endings.realize p = endings.realize q ↔ p = q ∨ p.person = .third ∧ q.person = .third := by
+      endings.realize p = endings.realize q ↔ p = q ∨ p .person = .third ∧ q .person = .third := by
   decide
 
 end Finnish.Possession

@@ -126,7 +126,7 @@ private theorem isProbabilityMeasure_some : IsProbabilityMeasure (scalarListener
 private theorem some_someNotAll : (scalarListener α n .some).real {.someNotAll} =
     1 - (scalarListener α n .some).real {.all} := by
   have := isProbabilityMeasure_some hα n
-  have h := sum_measureReal_singleton_eq_one (scalarListener α n .some)
+  have h : ∑ w, (scalarListener α n .some).real {w} = 1 := by simp
   rw [sum_world] at h
   linarith
 
@@ -143,7 +143,7 @@ private theorem all_all : (scalarListener α n .all).real {.all} = 1 := by
     (eq_zero_or_isProbabilityMeasure _).resolve_left fun h ↦
       (iterate_recurse_literalListener_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
         (u := .all) (w := .all) hα n).2 ⟨rfl, uniform_ne_zero _⟩ (by rw [h]; rfl)
-  have h := sum_measureReal_singleton_eq_one (scalarListener α n .all)
+  have h : ∑ w, (scalarListener α n .all).real {w} = 1 := by simp
   rwa [sum_world, all_someNotAll_real hα n, add_zero] at h
 
 -- the table of (8)–(11), p. 20:16, at any rationality
@@ -932,7 +932,7 @@ private theorem L1_fst_real_freq_add_rare (hα : 0 < α) [IsFiniteMeasure μ] (h
           exact mul_ne_zero hf (uniformOn_univ_singleton_ne_zero _))
       ((speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα C μ _ _ _).2
         ⟨by cases u <;> simp [sem, base, Refinement.den, Form.toUtterance], hf⟩)
-  have h := sum_measureReal_singleton_eq_one (L1 α C μ u.toUtterance).fst
+  have h : ∑ m, (L1 α C μ u.toUtterance).fst.real {m} = 1 := by simp
   rwa [Fintype.sum_eq_add Meaning.freq Meaning.rare (by decide)
     fun m hm ↦ by cases m <;> simp at hm] at h
 

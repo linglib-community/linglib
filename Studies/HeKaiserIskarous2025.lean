@@ -243,7 +243,7 @@ include hm
 theorem L0_null_real [IsProbabilityMeasure P] (hnull : ∀ st, m .null st = 1) (st : State) :
     (L0 P m .null).real {st} = P.real {st} := by
   rw [gradedListener_real_singleton (hm _)]
-  simp only [hnull, one_mul, sum_measureReal_singleton_eq_one, div_one]
+  simp only [hnull, one_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, div_one]
 
 end Listener
 
@@ -463,7 +463,7 @@ theorem expectedTypicality_eq (st : State)
   have h1 : (s.wonkyListener ν S st.utterance).snd.real {true} +
       (s.wonkyListener ν S st.utterance).snd.real {false} = 1 := by
     rw [← Fintype.sum_bool fun w ↦ (s.wonkyListener ν S st.utterance).snd.real {w},
-      sum_measureReal_singleton_eq_one]
+      sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
   rw [expectedTypicality, Measure.comp_real_singleton, Fintype.sum_bool, worldPrior_true_real,
     worldPrior_false_real, wonkiness]
   linear_combination s.statePrior st * h1

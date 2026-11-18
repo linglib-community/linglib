@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.MunozPerez2026
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -110,7 +110,7 @@ theorem not_hasSemantics (a : Option Category) :
 /-- The bundle condition of the fission rule holds of an applicative head that is
 [+PART, +SING]. -/
 def IsFissionApplicable (c : Category) : Prop :=
-  .participant ∈ c.toFeatures ∧ c.IsSingular
+  .participant ∈ c.toFeatures Finset.univ ∧ c.IsSingular
 
 instance : DecidablePred IsFissionApplicable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 

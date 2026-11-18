@@ -32,6 +32,9 @@ parameters, their codes and the rows of a sample are generated per paper.
   type and no field. The values, long
   in the JSON as CLDF has them, are emitted as one row per language with a field for each
   parameter, so a theorem about the sample reads each language once.
+* Parameters a source tabulates side by side, as the columns of one table, may name a common
+  index. They are then the constructors of the index's type, and a row has one field for the
+  index, a function from that type to the lists of codes, so a theorem can quantify over them.
 * Each table of a paper is a contribution with its own list of rows. Languages, parameters and
   codes are shared, so a language two tables list is one `Language` with a row in each.
 * A language may take several codes for a parameter, or none: a row's field is a list.

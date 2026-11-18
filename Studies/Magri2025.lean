@@ -276,7 +276,8 @@ theorem abs_interaction_logit_maxEnt_le {X Y : Type*} [Fintype Y] [MeasurableSpa
   refine abs_interaction_logit_le (fun x ↦ maxEnt_real_singleton_pos _ w a)
     (fun x ↦ maxEnt_real_singleton_pos _ w b) (fun x ↦ ?_) (h.interaction_logOdds_maxEnt w)
   rw [← sum_pair (f := fun c ↦ (maxEnt (con.comap (x, ·)).violations w).real {c}) hab,
-    ← sum_measureReal_singleton_eq_one (maxEnt (con.comap (x, ·)).violations w)]
+    ← probReal_univ (μ := maxEnt (con.comap (x, ·)).violations w), ← Finset.coe_univ,
+    ← sum_measureReal_singleton]
   exact sum_le_sum_of_subset_of_nonneg (subset_univ _) fun _ _ _ ↦ measureReal_nonneg
 
 /-- MaxEnt predicts HZ's generalization (22): when the two variants are the only candidates, the
@@ -289,8 +290,8 @@ theorem interaction_logit_maxEnt {X Y : Type*} [Fintype Y] [DecidableEq Y] [Meas
   have : Nonempty Y := ⟨a⟩
   have hsum (x : X) : 1 - (maxEnt (con.comap (x, ·)).violations w).real {a} -
       (maxEnt (con.comap (x, ·)).violations w).real {b} = 0 := by
-    rw [← sum_measureReal_singleton_eq_one (maxEnt (con.comap (x, ·)).violations w), hY,
-      sum_pair hab]
+    rw [← probReal_univ (μ := maxEnt (con.comap (x, ·)).violations w), ← Finset.coe_univ,
+      ← sum_measureReal_singleton, hY, sum_pair hab]
     ring
   simpa [hsum] using abs_interaction_logit_maxEnt_le h hab w
 

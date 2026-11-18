@@ -50,7 +50,8 @@ open OptimalityTheory
 /-! ### The recruited values are the least specified cells (§4.1) -/
 
 -- (55)
-theorem third_eq_bot : Person.toFeatures .third = ⊥ := Person.toFeatures_third
+theorem third_eq_bot (F : Person.Features) : Person.toFeatures F .third = ⊥ :=
+  Person.toFeatures_third F
 
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2, §5) -/
 

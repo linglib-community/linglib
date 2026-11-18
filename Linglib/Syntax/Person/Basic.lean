@@ -11,14 +11,27 @@ public import Linglib.Discourse.SpeechAct.Role
 /-!
 # Grammatical person
 
-`Person` names the four persons of Harbour's quadripartition, first exclusive, first inclusive,
-second and third, and the general first person `first` into which his standard tripartition
-conflates the two clusives (English *we*), the conflation being `Person.coarsen`. A value means
-the participant sets its referents can have (`Person.participantSets`),
-[one for each person of the quadripartition](##Person.participantSets_eq_singleton_iff) and two
-for the general first person, and whether it includes the speaker, is a speech-act participant or
-marks clusivity is read off them. The merged cells of the bipartitions and the monopartition are
-not values, nor is the impersonal, `none : Option Person` as the Universal Dependencies tag
+The *person* of a form says whether its referents include the speaker and whether they include
+the addressee. The *participant set* of a referent is the set of these two roles it includes, so
+there are four: neither, the speaker, the addressee, and both.
+
+`Person` has the first, second and third persons, and the inclusive and exclusive first persons
+of languages that mark whether the addressee is included. Each value covers some participant
+sets: the third person covers neither role, the second the addressee alone, and the first the
+speaker with or without the addressee.
+
+## Main definitions
+
+* `Person`: the five values.
+* `Person.participantSets`: the participant sets a value covers.
+* `Person.ofParticipants`: the value that covers a participant set and no other.
+* `Person.IncludesSpeaker`, `Person.IsSAP`, `Person.MarksClusivity`: properties of a value, read
+  off the participant sets it covers.
+* `Person.coarsen`: the inclusive and the exclusive as the first person.
+
+## Implementation notes
+
+The impersonal is not a value: it is `none : Option Person`, as the Universal Dependencies tag
 `Person=0` is ingested (`Morphology/Word/UD.lean`).
 
 ## References
@@ -58,7 +71,9 @@ person and a single set for each person of the quadripartition. -/
 
 open SpeechAct
 
-/-- `p.participantSets` is the family of participant sets of the referents `p` covers. -/
+/-- `p.participantSets` is the family of participant sets of the referents `p` covers. This is
+what the value means, not what every form bearing it refers to: a third person form may be used
+of the addressee. -/
 def participantSets : Person → Finset (Finset Role)
   | .first => {{.speaker}, {.speaker, .addressee}}
   | .firstInclusive => {{.speaker, .addressee}}
@@ -67,6 +82,12 @@ def participantSets : Person → Finset (Finset Role)
   | .third => {∅}
 
 theorem participantSets_injective : Function.Injective participantSets := by decide
+
+/-- The general first person covers what the exclusive and the inclusive cover between them. -/
+theorem participantSets_first :
+    participantSets .first =
+      participantSets .firstExclusive ∪ participantSets .firstInclusive := by
+  decide
 
 @[simp] theorem participantSets_inj {p q : Person} :
     p.participantSets = q.participantSets ↔ p = q :=

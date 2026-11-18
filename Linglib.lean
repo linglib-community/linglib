@@ -118,7 +118,6 @@ import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
-import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice
@@ -802,7 +801,6 @@ import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.RunTimes
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat

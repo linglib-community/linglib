@@ -4,6 +4,7 @@ public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Fragments.Finnish.Declension
 public import Linglib.Fragments.Finnish.Infinitives
 public import Linglib.Fragments.Finnish.Possession
+public import Linglib.Morphology.Realization
 
 /-!
 # Finnish morphotactics
@@ -234,7 +235,7 @@ instance (c : Case) : Decidable (EndsInVowel c) := inferInstanceAs (Decidable (�
 ending is of the case `c`: after a case ending in a short vowel the third person is -Vn or
 -nsA, except after a partitive -A that follows a stem-final A. -/
 def possessiveForms (p : Bundle) (c : Option Case) (w : List Segment) : List (List Segment) :=
-  if p.person = .third ∧ (∃ c' ∈ c, EndsInVowel c') ∧
+  if p .person = .third ∧ (∃ c' ∈ c, EndsInVowel c') ∧
       ¬ (c = some .part ∧ (w.rtake 2 = [a, A] ∨ w.rtake 2 = [ä, A])) then
     [[V, n], [n, s, A]]
   else (Possession.endings.realize p).toList
@@ -274,6 +275,11 @@ plural, and in the nominative plural the -t that realizes both. -/
 def endings (num : numberSystem) (c : Case) : List (Σ σ, Exponent σ) :=
   Number.elim numberSystem [⟨_, .case c⟩]
     (if c = .nom then [⟨_, .nominativePlural⟩] else [⟨_, .plural⟩, ⟨_, .case c⟩]) (n := num)
+
+/-- The forms of a stem in a number and a case, as a realization: the index is the stem and the
+contexts are the numbers with the cases. -/
+def realization : Morphology.Realization (List Segment) (numberSystem × Case) (List Segment) :=
+  ⟨fun w (num, c) ↦ (realize w (endings num c)).toFinset⟩
 
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his

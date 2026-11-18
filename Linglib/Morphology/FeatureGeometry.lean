@@ -55,7 +55,7 @@ the parent `Order.pred`.
 
 @[expose] public section
 
-namespace Phi.Geometry
+namespace Morphology.FeatureGeometry
 
 /-- The nodes of the geometry are the root, the three organizing nodes, and
 their dependents. -/
@@ -250,4 +250,4 @@ theorem cell_isLowerSet {active : Finset Node} {p : Person} {n : Number} {g : Fi
   · exact key ns (numberNodes_isLowerSet hns)
   · cases hns; exact key ∅ (by decide)
 
-end Phi.Geometry
+end Morphology.FeatureGeometry

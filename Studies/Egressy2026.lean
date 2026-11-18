@@ -43,8 +43,8 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
   feature. A row marks its matrix verb and the clause's correlate and names them; the verb is
   [checked against its declared past stem](##verbs_printed) in `Hungarian.Verbs`, the role is the
-  case cell of `Hungarian.Pronouns.az` the correlate realizes, and [no past verb the fragment
-  declares and no correlate goes unmarked](##words_marked). Direct perception,
+  case cell of `Hungarian.Pronouns.azRealization` the correlate's form fills, and [no past verb
+  the fragment declares and no correlate goes unmarked](##words_marked). Direct perception,
   which the paper says removes the backshifted reading pragmatically, is its `directPerception`
   feature. Each single-embedding
   row also carries a linearized witness over a study lexicon that pronounces the row's gloss
@@ -294,18 +294,25 @@ inductive ClauseRole where
   | adjunct
   deriving DecidableEq, Repr
 
-/-- The case cells of the expletive paradigm with the clause role each diagnoses (§2.1–2.2):
-accusative *azt* for an object clause, nominative *az* for the subject clause, and instrumental
-*azzal* or *amiatt* 'because of that' for an adjunct. -/
-def roleTable : List (Option String × ClauseRole) :=
-  [(Hungarian.Pronouns.az .acc, .object), (Hungarian.Pronouns.az .nom, .subject),
-    (Hungarian.Pronouns.az .inst, .adjunct), (some Hungarian.Pronouns.amiatt, .adjunct)]
+/-- The clause role that a case of the expletive correlate diagnoses (§2.1–2.2): the accusative
+an object clause, the nominative the subject clause and the instrumental an adjunct. -/
+def ClauseRole.ofCase : Hungarian.Case → Option ClauseRole
+  | .acc => some .object
+  | .nom => some .subject
+  | .inst => some .adjunct
+  | _ => none
 
-/-- The clause's role, read off its expletive correlate: the word the row marks as the correlate
-realizes a case cell of `Hungarian.Pronouns.az`, and `roleTable` names the cell's role. -/
+/-- The clause role a correlate's form diagnoses: an adjunct for *amiatt* 'because of that', and
+otherwise the role of a case cell of *az* that the form fills. -/
+def roleOfForm? (f : List Char) : Option ClauseRole :=
+  if f = Hungarian.Pronouns.amiatt.toList then some .adjunct
+  else [ClauseRole.object, .subject, .adjunct].find? fun r ↦
+    ∃ c ∈ Hungarian.Pronouns.azRealization.cells () f, ClauseRole.ofCase c = some r
+
+/-- The clause's role, read off its expletive correlate: the word the row marks as the correlate,
+*amiatt* or a form filling a case cell of *az*. -/
 def clauseRole? (e : Datum) : Option ClauseRole :=
-  (marked? e .correlate).bind fun (w, _) ↦
-    (roleTable.find? fun x ↦ x.1.map (·.toList) == some w.wordform).map (·.2)
+  (marked? e .correlate).bind fun (w, _) ↦ roleOfForm? w.wordform
 
 -- each marked verb is past and has the past stem of the verb its row names
 theorem verbs_printed :
@@ -319,7 +326,7 @@ theorem correlates_printed :
     ∀ e ∈ Examples.all, ∀ s ∈ e.spans, label? s = some .correlate →
       ∃ w ∈ (s.words e).head?,
         if w.wordform = Hungarian.Pronouns.amiatt.toList then lexeme? s = some .amiatt
-        else lexeme? s = some .az ∧ ∃ x ∈ roleTable, x.1.map (·.toList) = some w.wordform := by
+        else lexeme? s = some .az ∧ (roleOfForm? w.wordform).isSome := by
   decide +kernel
 
 -- no past word with a stem the fragment declares, and no word glossed *it*, goes unmarked: the
@@ -557,11 +564,10 @@ def matrixToken? (t : PlanarSyntacticObject) : Option LexicalItem.Token :=
   ((Minimalist.pfYield t).takeWhile fun tok ↦ tok.item.cat ≠ .C).find? fun tok ↦
     tok.item.cat = .V
 
-/-- The clause role a witness shows: the role `roleTable` gives the paradigm cell its pronounced
-expletive realizes. -/
+/-- The clause role a witness shows: the role its pronounced expletive diagnoses. -/
 def roleOf (t : PlanarSyntacticObject) : Option ClauseRole :=
   (Minimalist.pfYield t).findSome? fun tok ↦
-    (roleTable.find? fun x ↦ x.1 == tok.item.phonForm?).map (·.2)
+    tok.item.phonForm?.bind fun f ↦ roleOfForm? f.toList
 
 /-- The single-embedding rows with their witnesses. -/
 def witnessRows : List (Datum × PlanarSyntacticObject) :=

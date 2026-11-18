@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Assignment
-public import Linglib.Core.Logic.Function.DependsOn
+public import Mathlib.Logic.Function.DependsOn
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Finset.BooleanAlgebra
@@ -113,7 +113,7 @@ theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : (ℕ → E) → Prop) (g :
 nominalization (106) is a familiar DP. -/
 theorem idxBind_eq_const {n : ℕ} {φ : (ℕ → E) → Prop} (h : DependsOn φ {n}ᶜ)
     (g : ℕ → E) : idxBind n φ g = fun _ ↦ φ g :=
-  funext fun x ↦ dependsOn_compl_singleton_iff.1 h g x
+  funext fun x ↦ h fun _ hj ↦ Function.update_of_ne hj x g
 
 /-! ### The exponence of idx and D, section 6 -/
 

@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Fragments.Hungarian.Case
+public import Linglib.Morphology.Realization
 
 /-!
 # Hungarian pronouns
@@ -101,6 +102,11 @@ def az : Case → Option String
   | .dat => some "annak"
   | .inst => some "azzal"
   | _ => none
+
+/-- The demonstrative *az* realized at its cases, each form as its letters: the paradigm above as a
+realization, so that a printed form is analysed by the cells it fills. -/
+def azRealization : Morphology.Realization Unit Case (List Char) :=
+  (Morphology.Realization.ofOption fun _ ↦ az).map String.toList
 
 /-- *amiatt* 'because of that': the demonstrative with the postposition *miatt*, written together
 with the reduced stem *a-*. -/

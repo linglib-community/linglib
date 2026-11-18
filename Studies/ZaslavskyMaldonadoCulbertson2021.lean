@@ -342,11 +342,11 @@ def groupGraph (form : Referent → Fin 6) : Finset (Finset Role × Finset Role)
     r.participants = P.1 ∧ r'.participants = P.2 ∧ form r = form r'
 
 theorem groupGraph_firstInclusive :
-    groupGraph firstInclusive = Harbour2016.graph {.participant, .author} := by
+    groupGraph firstInclusive = Harbour2016.graph {.participant, .speaker} := by
   decide
 
 theorem groupGraph_secondInclusive :
-    groupGraph secondInclusive = Harbour2016.graph {.hearer, .participant} := by
+    groupGraph secondInclusive = Harbour2016.graph {.addressee, .participant} := by
   decide
 
 /-- The two systems the unbiased model values alike are told apart by Harbour's parameters,

@@ -82,6 +82,10 @@ and a `ValueTable` (a language's codes, marked questionable, optional or minor
 as the source marks them). Each parameter with codes of its own becomes an
 inductive type; the long `ValueTable` is emitted as one row per language with
 a list-valued field per parameter, so a theorem reads each language once.
+Parameters a source tabulates side by side, as the seven semantic types head
+the columns of one table, may name a common `Index`: they become the
+constructors of its type, and a row has one field for the index, a function
+from that type to the lists of codes.
 
 - **Schema**: `Linglib/Data/StructureDataset/Schema.lean`
 - **Generator**: `scripts/gen_structure_dataset.py` (`--check` verifies sync)

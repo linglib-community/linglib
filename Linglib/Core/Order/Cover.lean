@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Data.List.Chain
 public import Mathlib.Order.Cover
+public import Mathlib.Order.WellFounded
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
@@ -16,7 +17,8 @@ public import Mathlib.Order.UpperLower.Basic
 `[UPSTREAM]` In a linear order the greatest element strictly below `b` is the one `b` covers, and a
 lower set has greatest element `a` exactly when it contains `a` and not the element covering it. A
 list in which each element is weakly covered by the next moves up a linear order one step at a
-time, so it cannot pass over a value.
+time, so it cannot pass over a value. When `>` is well-founded, an order with a non-maximal element
+[has one whose strict successors are all maximal](##exists_not_isMax_and_forall_gt_isMax).
 -/
 
 public section
@@ -59,3 +61,18 @@ theorem List.IsChain.mem_of_le_of_le [LinearOrder α] {x m : α} :
       · exact absurd (hlt.trans_le hxm) (lt_irrefl _)
       · exact List.mem_cons_of_mem _
           (mem_of_le_of_le hc.2 (not_lt.1 fun hxb ↦ hc.1.2 hlt hxb) hm' hxm)
+
+/-- Two distinct elements covering the same element are incomparable. -/
+theorem CovBy.not_le_of_ne [PartialOrder α] {a b c : α} (hab : a ⋖ b) (hac : a ⋖ c)
+    (hbc : b ≠ c) : ¬ b ≤ c :=
+  fun h ↦ hbc ((hac.eq_or_eq hab.le h).resolve_left hab.ne')
+
+/-- When `>` is well-founded, as on a finite order, an order with a non-maximal element has one
+all of whose strict successors are maximal. -/
+theorem exists_not_isMax_and_forall_gt_isMax [Preorder α] [WellFoundedGT α] {a : α}
+    (ha : ¬ IsMax a) : ∃ b : α, ¬ IsMax b ∧ ∀ c, b < c → IsMax c :=
+  let ⟨b, hb, hmax⟩ := (wellFounded_gt (α := α)).has_min {b | ¬ IsMax b} ⟨a, ha⟩
+  ⟨b, hb, fun c hbc ↦ of_not_not fun hc ↦ hmax c hc hbc⟩
+
+/-- An element is branching when at least two elements cover it. -/
+@[expose] def IsBranching [Preorder α] (a : α) : Prop := {b | a ⋖ b}.Nontrivial

@@ -146,12 +146,13 @@ structure Row where
   stem : List Segment
   form : List Segment
 
-/-- The printed object is a surface form of its stem in the case `c`, in the object's number. -/
+/-- The printed object fills the cell of its stem at the case `c`, in the object's number. -/
 def Row.Realizes (r : Row) (c : Finnish.Case) : Prop :=
-  r.form ∈ Finnish.Nominal.realize r.stem (Finnish.Nominal.endings r.object.number c)
+  (r.object.number, c) ∈ Finnish.Nominal.realization.cells r.stem r.form
 
 instance (r : Row) (c : Finnish.Case) : Decidable (r.Realizes c) :=
-  inferInstanceAs (Decidable (_ ∈ _))
+  inferInstanceAs
+    (Decidable (r.form ∈ Finnish.Nominal.realization.realize r.stem (r.object.number, c)))
 
 /-- The object of a row, the word the row marks as the grammar prints it in italics. -/
 def object? (e : Datum) : Option GlossedWord :=

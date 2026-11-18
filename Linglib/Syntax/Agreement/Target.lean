@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Logic.Function.DependsOn
+public import Mathlib.Logic.Function.DependsOn
 public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Agreement.Hierarchy
 
@@ -9,30 +9,16 @@ public import Linglib.Syntax.Agreement.Hierarchy
 
 An agreement target is an element whose form agreement determines. This file records a target
 by the positions of the Agreement Hierarchy at which it occurs, its form in each cell of a
-paradigm, and the dimensions it inflects for.
-
-A cell gives each dimension a value a language distinguishes, so a target's form is a function
-on a product, and the target inflects for a dimension when that function does not ignore it:
-changing that value alone changes the form somewhere. These dimensions are the least set the
-form depends on, so what a target agrees in is read off its forms, and the targets of one
-language may differ in it, as Corbett shows of the Upper Sorbian finite verb and participle.
-
-## Main definitions
-
-* `Agreement.Target`: an agreement target.
-* `Agreement.Target.ofDependsOn`: the target whose form depends on a set of dimensions each of
-  which changes the form somewhere.
-
-## Main results
-
-* `Agreement.Target.isLeast_inflection`: the inflection is the least set the form depends on.
-* `Agreement.Target.mem_inflection_iff`: a target inflects for a dimension when two cells
-  differing there alone take different forms.
+paradigm, and the dimensions it inflects for. A cell gives each dimension a value a language
+distinguishes, and the target inflects for a dimension when changing that value alone changes the
+form somewhere. What a target agrees in is thus read off its forms, and the targets of one
+language may differ in it, as the two tenses of the Russian verb do.
 
 ## Implementation notes
 
 The inflection is a finset, certified against the form by `mem_inflection`, so that it can be
-computed with, as `Fintype.elems` is certified by `Fintype.complete`.
+computed with, as the support of a `Finsupp` is certified by `Finsupp.mem_support_toFun`. It
+carries no information: a target [is its positions and its form](##Agreement.Target.ext).
 
 ## References
 
@@ -47,8 +33,8 @@ open Function
 namespace Agreement
 
 /-- An agreement target over the values `V d` of each dimension `d` records the positions of the
-Agreement Hierarchy at which it occurs, its form in each cell, and the dimensions it inflects for,
-those its form does not ignore. -/
+Agreement Hierarchy at which it occurs, its form in each cell, and the dimensions it inflects
+for. -/
 structure Target (V : Dimension → Type*) (F : Type*) where
   /-- The positions of the Agreement Hierarchy at which the target occurs. -/
   positions : Finset Position
@@ -56,8 +42,9 @@ structure Target (V : Dimension → Type*) (F : Type*) where
   form : (Π d, V d) → F
   /-- The dimensions the target inflects for. -/
   inflection : Finset Dimension
-  /-- The target inflects for a dimension exactly when its form does not ignore it. -/
-  mem_inflection : ∀ d, d ∈ inflection ↔ ¬ DependsOn form {d}ᶜ
+  /-- The target inflects for a dimension exactly when two cells differing there alone take
+  different forms. -/
+  mem_inflection : ∀ d, d ∈ inflection ↔ ∃ x a, form (update x d a) ≠ form x
 
 namespace Target
 
@@ -71,33 +58,19 @@ def ofDependsOn (positions : Finset Position) (form : (Π d, V d) → F) (s : Fi
   positions := positions
   form := form
   inflection := s
-  mem_inflection d := by
-    rw [dependsOn_compl_singleton_iff]
-    refine ⟨fun hd h' ↦ ?_, fun hd ↦ by_contra fun hds ↦ hd ?_⟩
-    · obtain ⟨x, a, hx⟩ := hs d hd
-      exact hx (h' x a)
-    · exact dependsOn_compl_singleton_iff.1 (h.mono (Set.subset_compl_singleton_iff.2 hds))
+  mem_inflection d := ⟨hs d, fun ⟨_, _, hx⟩ ↦ by_contra fun hd ↦
+    hx (h fun _ hj ↦ update_of_ne (ne_of_mem_of_not_mem hj hd) ..)⟩
 
-variable (t : Target V F)
-
-theorem coe_inflection : (t.inflection : Set Dimension) = {d | ¬ DependsOn t.form {d}ᶜ} :=
-  Set.ext t.mem_inflection
-
-/-- The inflection is the least set of dimensions the form depends on. -/
-theorem isLeast_inflection : IsLeast {s | DependsOn t.form s} t.inflection :=
-  t.coe_inflection ▸ isLeast_dependsOn_of_finite t.form
-
-theorem dependsOn_inflection : DependsOn t.form t.inflection :=
-  t.isLeast_inflection.1
-
-theorem dependsOn_form_iff {s : Set Dimension} : DependsOn t.form s ↔ ↑t.inflection ⊆ s :=
-  ⟨fun h ↦ t.isLeast_inflection.2 h, t.dependsOn_inflection.mono⟩
-
-/-- A target inflects for a dimension when two cells differing there alone take different
-forms. -/
-theorem mem_inflection_iff {d : Dimension} :
-    d ∈ t.inflection ↔ ∃ x a, t.form (update x d a) ≠ t.form x := by
-  simp [t.mem_inflection, dependsOn_compl_singleton_iff]
+/-- A target is its positions and its form. -/
+@[ext]
+theorem ext {t u : Target V F} (hp : t.positions = u.positions) (hf : t.form = u.form) :
+    t = u := by
+  obtain ⟨p, f, s, hs⟩ := t
+  obtain ⟨p', f', s', hs'⟩ := u
+  obtain rfl : p = p' := hp
+  obtain rfl : f = f' := hf
+  obtain rfl : s = s' := Finset.ext fun d ↦ (hs d).trans (hs' d).symm
+  rfl
 
 end Target
 

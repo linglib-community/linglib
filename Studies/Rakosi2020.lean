@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Restrict
-public import Linglib.Syntax.Agreement.Phi
+public import Linglib.Syntax.Agreement.HasPhi
 public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Fragments.Hungarian.Reciprocals
 public import Linglib.Fragments.Hungarian.Phonology

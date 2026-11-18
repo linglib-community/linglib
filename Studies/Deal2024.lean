@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Minimalist.Probe.Agree
-public import Linglib.Syntax.Agreement.PersonSegment
+public import Linglib.Syntax.Person.Segment
 public import Studies.CoonKeine2021
 public import Studies.PanchevaZubizarreta2018
 public import Studies.Haspelmath2021
@@ -25,7 +25,7 @@ meets the indirect object first yields the reverse PCC of section 6.2.
 
 ## Implementation notes
 
-The features of the geometry (7) are the person segments of `Phi.PersonSegment`, [φ] its
+The features of the geometry (7) are the person segments of `Person.Segment`, [φ] its
 root `π`, [PART] `participant`, [SPKR] `speaker` and [ADDR] `addressee`, so a second person and an
 inclusive first person bear [ADDR]. The interaction condition is the set of features copied so
 far, a goal being visible when it bears them all, which is the set conception the paper's
@@ -45,7 +45,7 @@ Table (1) has no reflexive cells, so the classification of grammars ranges over 
 
 namespace Deal2024
 
-open Minimalist Phi PersonSegment
+open Minimalist Person.Segment
 open Clause (Scenario)
 
 /-! ### Probes and their runs -/
@@ -53,8 +53,8 @@ open Clause (Scenario)
 /-- A grammar fixes the satisfaction condition, none for an insatiable probe, and the features
 that interact dynamically, copied into the interaction condition when a goal bears them. -/
 structure Grammar where
-  satisfaction : Option PersonSegment
-  dynamic : Finset PersonSegment
+  satisfaction : Option Person.Segment
+  dynamic : Finset Person.Segment
   deriving DecidableEq, Fintype
 
 /-- The run of grammar `g`'s probe over goals, each reading as a person. The state is the
@@ -62,7 +62,7 @@ interaction condition, the features copied into it so far, starting from [φ]. A
 when it bears them all; interacting with it copies its dynamic features into the condition, (44)
 and (45); and only a visible goal bearing the satisfaction feature satisfies the probe, (8b). -/
 def run {α : Type*} (g : Grammar) (person : α → Person) (goals : List α) :
-    Probe.Result α (Finset PersonSegment) :=
+    Probe.Result α (Finset Person.Segment) :=
   Probe.Dynamic.agree
     (fun int ↦ ⟨fun a ↦ decide (int ⊆ spec (person a)),
       fun a ↦ decide (int ⊆ spec (person a)) && g.satisfaction.any (· ∈ spec (person a))⟩)
@@ -152,11 +152,14 @@ def aDescending : Grammar := ⟨some .addressee, {.participant}⟩
 
 /-! ### The typology -/
 
-/-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC. -/
-def addresseeRank : Person → ℕ
-  | .second => 2
-  | .first | .firstInclusive | .firstExclusive => 1
-  | .third => 0
+/-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC, the number of
+[PART] and [ADDR] it bears, so that an inclusive first person ranks with the second. -/
+def addresseeRank (p : Person) : ℕ := (p.toFeatures {.participant, .addressee}).card
+
+/-- The hierarchy ranks a participant set by its highest role, the addressee above the speaker. -/
+theorem addresseeRank_ofParticipants (s : Finset SpeechAct.Role) :
+    addresseeRank (.ofParticipants s) = s.sup fun | .addressee => 2 | .speaker => 1 := by
+  revert s; decide
 
 /-- The PCC varieties are the four of table (1), the two the feature [ADDR] adds, and none. -/
 inductive PCCType where
@@ -254,14 +257,14 @@ table (53) as its rows and columns without [ADDR]; a probe satisfied by [φ] Agr
 direct object alone and derives no variety, and dynamic [φ] changes nothing. -/
 def table57 (g : Grammar) : Option PCCType :=
   match g.satisfaction with
-  | some .pi => none
-  | some .participant => some .strong
-  | some .speaker =>
-      some (if .addressee ∈ g.dynamic then .strong
-        else if .participant ∈ g.dynamic then .strictlyDescending else .meFirst)
-  | some .addressee =>
-      some (if .speaker ∈ g.dynamic then .strong
-        else if .participant ∈ g.dynamic then .aDescending else .youFirst)
+  | some a =>
+      Person.Segment.casesOn' (motive := fun _ ↦ Option PCCType) a
+        (pi := none)
+        (participant := some .strong)
+        (speaker := some (if .addressee ∈ g.dynamic then .strong
+          else if .participant ∈ g.dynamic then .strictlyDescending else .meFirst))
+        (addressee := some (if .speaker ∈ g.dynamic then .strong
+          else if .participant ∈ g.dynamic then .aDescending else .youFirst))
   | none =>
       some (if .speaker ∈ g.dynamic ∧ .addressee ∈ g.dynamic then .strong
         else if .participant ∈ g.dynamic ∧ .speaker ∈ g.dynamic then .strictlyDescending
@@ -277,7 +280,7 @@ theorem typology (g : Grammar) : g.pattern = table57 g := by
   revert g
   decide +kernel
 
-theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
+theorem licit_of_sat_part (d : Finset Person.Segment) (s : Scenario Person) :
     Licit ⟨some .participant, d⟩ s ↔ Licit strong s := by
   revert d s
   decide +kernel
@@ -285,6 +288,12 @@ theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
 theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
     (h : s.high.prominence ≠ s.low.prominence) :
     Licit strictlyDescending s ↔ s.low.prominence < s.high.prominence := by
+  revert s
+  decide +kernel
+
+theorem ad_off_diagonal_iff_outranks (s : Scenario Person)
+    (h : addresseeRank s.high ≠ addresseeRank s.low) :
+    Licit aDescending s ↔ addresseeRank s.low < addresseeRank s.high := by
   revert s
   decide +kernel
 

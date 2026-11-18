@@ -149,7 +149,8 @@ def AllActive : Head → FeatureType → Prop := fun _ _ ↦ True
 instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) := inferInstanceAs (Decidable True)
 
 /-- `[ϕ:p]`. -/
-def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Value := ⟨.person, .valued p⟩
+def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Value :=
+  ⟨.person, .valued (.ofPerson p)⟩
 
 /-! ### Standard Italian auxiliary selection (§3)
 
@@ -428,7 +429,7 @@ def lak (ps po : Person) : FeatureSlot FeatureType.person.Value :=
     .asp .person
 
 -- (31c), (31d)
-theorem lak_agrees_with_object (ps po : Person) : lak ps po = .valued po := by
+theorem lak_agrees_with_object (ps po : Person) : lak ps po = .valued (.ofPerson po) := by
   revert ps po; decide
 
 /-! ### Subject agreement in Spanish VOS (§4.2.2) -/
@@ -501,7 +502,8 @@ def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Va
   (run AllActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
 
 -- (37)
-theorem hindi_object_agreement (ps po : Person) : hindi .ergSubject ps po = .valued po := by
+theorem hindi_object_agreement (ps po : Person) :
+    hindi .ergSubject ps po = .valued (.ofPerson po) := by
   revert ps po; decide
 
 -- (38a)
@@ -510,7 +512,7 @@ theorem hindi_default_agreement (ps po : Person) : hindi .bothMarked ps po = .un
 
 -- (38b)
 theorem hindi_subject_agreement (ps po : Person) :
-    hindi .unmarkedSubject ps po = .valued ps := by
+    hindi .unmarkedSubject ps po = .valued (.ofPerson ps) := by
   revert ps po; decide
 
 end Amato2025

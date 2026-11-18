@@ -7,7 +7,7 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
-public import Linglib.Syntax.Agreement.Phi
+public import Linglib.Syntax.Agreement.HasPhi
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Person.Category
@@ -134,7 +134,7 @@ def categories : Finset Person.Category :=
 
 /-- A pronoun bears the bundle of its person, number, gender and case. -/
 def phi : Agreement.Bundle
-  | .person => p.person
+  | .person => Agreement.Dimension.Slot.ofFlat .person p.person
   | .number => p.number
   | .gender => p.gender
   | .case => p.case

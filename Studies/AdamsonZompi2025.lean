@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Person.Lattice
 public import Linglib.Fragments.Romance.Italian.Pronouns
 public import Linglib.Fragments.Romance.Spanish.Clitics
@@ -161,7 +161,7 @@ theorem deal_licenses_polite {g : Deal2024.Grammar} {t : Scenario Person}
   licit_formal_polite h.third hc o
 
 -- Feature gluttony: no probe is gluttonous over a polite accusative.
-theorem gluttony_licenses_polite (P : Finset Phi.PersonSegment) (ioOpaque : Bool)
+theorem gluttony_licenses_polite (P : Finset Person.Segment) (ioOpaque : Bool)
     (hc : c.person = some .third) (o : Option Person) :
     Licit (¬ CoonKeine2021.PCCViolation P ioOpaque ·) ⟨o, formal (polite c)⟩ :=
   licit_formal_polite (CoonKeine2021.direct_never_banned P ioOpaque) hc o

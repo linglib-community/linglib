@@ -71,7 +71,7 @@ forward hierarchy](##directionality).
 
 namespace ClemDeal2026
 
-open Deal2024 Phi.PersonSegment DistributedMorphology Morphology
+open Deal2024 Person.Segment DistributedMorphology Morphology
 open Clause (Scenario)
 open Baker2015 (Arg)
 open Minimalist (Derivation LexicalItem CaseAssigners HeadFunction)
@@ -88,7 +88,7 @@ inductive Locus
 /-- The features of a nominal and of a flag: a person segment, [AUG], the category feature of a
 head, and [D]. -/
 inductive Feature
-  | person (s : Phi.PersonSegment)
+  | person (s : Person.Segment)
   | aug
   | head (l : Locus)
   | d
@@ -170,7 +170,7 @@ theorem dependentCase_sd_iff (a b : Arg) :
       .speaker ∉ spec (nom a).1 ∧
         (.participant ∈ spec (nom a).1 → .participant ∈ spec (nom b).1) := by
   by_cases h : .participant ∈ spec (nom a).1 <;>
-    simp [dependentCase_pair_iff, licit_iff, Phi.specLE_iff, strictlyDescending, h]
+    simp [dependentCase_pair_iff, licit_iff, Minimalist.specLE_iff, strictlyDescending, h]
 
 end Flags
 
@@ -353,7 +353,7 @@ theorem applies_caseItem {e : String} {m : Finset Feature} {a : Nominal} :
 private theorem objectItems_site :
     ∀ i ∈ objectItems, ∀ y ∈ i.site, y.1 = 0 ∧ y.2 ≠ Feature.person .pi := by
   simp [objectItems]
-  grind
+  grind [WithBot.coe_ne_bot]
 
 theorem insertions_objectItems (env : Neighborhood (Finset Feature)) (ms : List (Finset Feature)) :
     insertions objectItems env ms = insertions objectItems ∅ ms :=
@@ -694,8 +694,8 @@ theorem kashmiri_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPair
 
 -- §3.1
 open Minimalist.CyclicAgree in
-theorem not_isDirect_of_isChain (P : Finset Phi.PersonSegment)
-    (h : IsChain (· ≤ ·) (P : Set Phi.PersonSegment)) :
+theorem not_isDirect_of_isChain (P : Finset Person.Segment)
+    (h : IsChain (· ≤ ·) (P : Set Person.Segment)) :
     ¬ (IsDirect P ⟨.first, .second⟩ ∧ IsDirect P ⟨.second, .first⟩) :=
   fun ⟨h₁, h₂⟩ ↦ by
     rw [isDirect_iff_rank_lt h] at h₁ h₂
