@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.Finset.Lattice.Fold
 public import Linglib.Syntax.Person.Category
 public import Linglib.Core.Order.UpperLower.Finset
 public import Mathlib.Order.Concept
@@ -13,8 +14,9 @@ public import Mathlib.Order.Hom.Lattice
 /-!
 # Person features
 
-A person feature is a property of participant sets preserved by union: [participant] holds of the
-nonempty sets, [speaker] of those containing the speaker and [addressee] of those containing the
+A person feature is a property of participant sets preserved by union, which is to include one of
+[the roles the feature is about](##Person.Feature.roles): [participant] holds of the nonempty
+sets, [speaker] of those containing the speaker and [addressee] of those containing the
 addressee. A theory of person selects an inventory of them, and
 [the features of an inventory that a participant set bears](##Person.bundle) are its bundle there;
 the two features Béjar and Rezac cite from Halle, [participant] and [author], are the inventory
@@ -23,7 +25,7 @@ and Ritter's geometry adds [addressee]. The three features tell
 [every participant set from every other](##Person.bundle_univ_injective), so the full inventory
 sees clusivity and the two-feature one [does not](##Person.toFeatures_coarsen).
 
-[speaker] and [addressee] depend on [participant], and
+[speaker] and [addressee] depend on [participant], being about fewer roles, and
 [the bundles closed under that dependency are exactly the closed sets of the
 context](##Person.wellFormed_iff_isIntent) of participant sets and features,
 [five in all](##Person.card_wellFormed): the third person's empty bundle and Harley and Ritter's
@@ -64,14 +66,22 @@ inductive Feature where
 
 namespace Feature
 
-/-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`. -/
-instance : PartialOrder Feature where
-  le f g := f = g ∨ f = participant
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
+/-- The roles a feature is about: [participant] both, [speaker] and [addressee] their own. -/
+def roles : Feature → Finset Role
+  | participant => univ
+  | speaker => {.speaker}
+  | addressee => {.addressee}
 
-instance : DecidableLE Feature := fun f g ↦ inferInstanceAs (Decidable (f = g ∨ f = participant))
+theorem roles_injective : Function.Injective roles := by decide
+
+/-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`, which is
+when `g` is about fewer roles. -/
+instance : PartialOrder Feature :=
+  PartialOrder.lift (fun f ↦ OrderDual.toDual f.roles) roles_injective
+
+theorem le_iff_roles_subset {f g : Feature} : f ≤ g ↔ g.roles ⊆ f.roles := Iff.rfl
+
+instance : DecidableLE Feature := fun f g ↦ inferInstanceAs (Decidable (g.roles ⊆ f.roles))
 
 instance : OrderBot Feature where
   bot := participant
@@ -84,38 +94,44 @@ abbrev Features := Finset Feature
 
 /-! ### The context of participant sets and features -/
 
-/-- A participant set bears [participant] when it is nonempty, [speaker] when it contains the
-speaker and [addressee] when it contains the addressee. -/
-def Bears (s : Finset Role) : Feature → Prop
-  | .participant => s.Nonempty
-  | .speaker => .speaker ∈ s
-  | .addressee => .addressee ∈ s
+/-- A participant set bears a feature when it includes a role the feature is about:
+[participant] when it is nonempty, [speaker] when it contains the speaker and [addressee] when it
+contains the addressee. -/
+def Bears (s : Finset Role) (f : Feature) : Prop := ¬ Disjoint s f.roles
 
-instance (s : Finset Role) : DecidablePred (Bears s) := fun f ↦ by
-  cases f <;> unfold Bears <;> infer_instance
+instance (s : Finset Role) : DecidablePred (Bears s) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
+
+@[simp] theorem bears_participant {s : Finset Role} : Bears s .participant ↔ s.Nonempty := by
+  revert s; decide
+
+@[simp] theorem bears_speaker {s : Finset Role} : Bears s .speaker ↔ .speaker ∈ s := by
+  simp [Bears, Feature.roles]
+
+@[simp] theorem bears_addressee {s : Finset Role} : Bears s .addressee ↔ .addressee ∈ s := by
+  simp [Bears, Feature.roles]
+
+/-- Bearing a feature is preserved by union, and the empty set bears none. -/
+theorem bears_union {s t : Finset Role} {f : Feature} :
+    Bears (s ∪ t) f ↔ Bears s f ∨ Bears t f := by
+  simp only [Bears, disjoint_union_left, not_and_or]
 
 theorem Bears.participant {s : Finset Role} {f : Feature} (h : Bears s f) :
-    Bears s .participant := by
-  cases f
-  · exact h
-  · exact ⟨_, h⟩
-  · exact ⟨_, h⟩
+    Bears s .participant :=
+  fun hd ↦ h (hd.mono_right (subset_univ _))
 
 /-- A feature depends on another exactly when bearing it entails bearing the other. -/
 theorem Feature.le_iff_forall_bears {f g : Feature} : f ≤ g ↔ ∀ s, Bears s g → Bears s f := by
   revert f g; decide
 
-/-- The features of the inventory `F` a participant set bears. The bundle of a union is the
-union of the bundles. -/
-def bundle (F : Features) : SupHom (Finset Role) Features where
-  toFun s := F.filter (Bears s)
-  map_sup' s t := by
-    ext f
-    cases f <;> simp [Bears, Finset.union_nonempty, and_or_left]
+/-- The features of the inventory `F` a participant set bears, the features about any of its
+roles. The bundle of a union is the union of the bundles. -/
+def bundle (F : Features) : SupBotHom (Finset Role) Features :=
+  supBotLift fun r ↦ F.filter (r ∈ ·.roles)
 
 @[simp] theorem mem_bundle {F : Features} {s : Finset Role} {f : Feature} :
-    f ∈ bundle F s ↔ f ∈ F ∧ Bears s f :=
-  Finset.mem_filter
+    f ∈ bundle F s ↔ f ∈ F ∧ Bears s f := by
+  simp only [bundle, supBotLift_apply, mem_sup, mem_filter, Bears, not_disjoint_iff]
+  exact ⟨fun ⟨r, hr, hf, hrf⟩ ↦ ⟨hf, r, hr, hrf⟩, fun ⟨hf, r, hr, hrf⟩ ↦ ⟨r, hr, hf, hrf⟩⟩
 
 /-- The three features tell every participant set from every other. -/
 theorem bundle_univ_injective : Function.Injective (bundle univ) := by decide
@@ -258,7 +274,7 @@ def toFeatures (F : Features) (c : Category) : Features := bundle F c.participan
   mem_bundle
 
 theorem speaker_mem_toFeatures : .speaker ∈ c.toFeatures univ ↔ c.IncludesSpeaker := by
-  simp [Bears, IncludesSpeaker]
+  simp [IncludesSpeaker]
 
 theorem participant_mem_toFeatures :
     .participant ∈ c.toFeatures univ ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by

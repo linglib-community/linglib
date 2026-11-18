@@ -77,11 +77,7 @@ theorem forall_sup_eq_iff (g : Role → β) (g' : Role → β') :
     rcases eq_empty_or_singleton_or_univ s with rfl | rfl | rfl | rfl <;>
       rcases eq_empty_or_singleton_or_univ t with rfl | rfl | rfl | rfl <;>
       simp only [sup_empty, sup_singleton, sup_insert] <;>
-      first
-        | exact h₁ | exact h₂ | exact e₁ | exact e₂ | exact e₃ | exact e₄
-        | exact eq_comm.trans (h₁.trans eq_comm) | exact eq_comm.trans (h₂.trans eq_comm)
-        | exact eq_comm.trans (e₁.trans eq_comm) | exact eq_comm.trans (e₂.trans eq_comm)
-        | exact eq_comm.trans (e₃.trans eq_comm) | exact eq_comm.trans (e₄.trans eq_comm)
+      grind
 
 /-- A linearly ordered system gives the inclusive the person of the exclusive or of the second
 person. -/

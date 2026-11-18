@@ -126,7 +126,7 @@ variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x :
 
 /-- A person feature's domain holds the referents whose participants bear the feature. -/
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
-  cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, SpeechAct.Role.exists_role]
+  cases f <;> simp [Feature.dom, Finset.Nonempty, SpeechAct.Role.exists_role]
 
 /-- The referents whose participants bear every feature of `F` are those in each feature's
 domain. -/
