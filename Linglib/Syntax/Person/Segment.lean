@@ -89,10 +89,7 @@ theorem isChain_Iic (a : PersonSegment) : IsChain (· ≤ ·) (↑(Finset.Iic a)
 
 /-- A person feature as a segment, the dependency of the features being that of the segments. -/
 def ofFeature : Person.Feature ↪o PersonSegment where
-  toFun
-    | .participant => participant
-    | .speaker => speaker
-    | .addressee => addressee
+  toFun f := f.casesOn' participant speaker addressee
   inj' := by decide
   map_rel_iff' := by decide
 
